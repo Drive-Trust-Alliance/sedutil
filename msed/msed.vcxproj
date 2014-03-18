@@ -81,12 +81,16 @@
     <Text Include="win32\ReadMe_Windows.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="D0Structures.h" />
+    <ClInclude Include="Discovery0.h" />
+    <ClInclude Include="Endianfixup.h" />
     <ClInclude Include="os.h" />
     <ClInclude Include="scandisk.h" />
     <ClInclude Include="win32\ioctoATA.h" />
     <ClInclude Include="win32\winos.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Discovery0.cpp" />
     <ClCompile Include="msed.cpp" />
     <ClCompile Include="win32\ioctlATA.cpp" />
     <ClCompile Include="win32\scandisk.cpp" />

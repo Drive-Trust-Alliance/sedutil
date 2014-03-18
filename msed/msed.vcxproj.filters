@@ -32,6 +32,15 @@
     <ClInclude Include="win32\ioctoATA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Discovery0.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D0Structures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Endianfixup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msed.cpp">
@@ -41,6 +50,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="win32\ioctlATA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Discovery0.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

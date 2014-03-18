@@ -26,6 +26,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include "../scandisk.h"
 #include "ioctoATA.h"
+#include "../Discovery0.h"
 
 driveList scandisk()
 {
@@ -59,7 +60,10 @@ driveList scandisk()
 		PVOID buffer = (PVOID)malloc(512);
 		if (NULL != buffer) {
 			if (0x00 == ioctlATA(fh, IF_RECV, 0x01, 0x0100, buffer, 512))
+			{
 				printf("YES\n");
+				new Discovery0(buffer);
+			}
 			else
 				printf("NO\n");
 			free(buffer);
