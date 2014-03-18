@@ -78,18 +78,18 @@
   <ItemGroup>
     <Text Include="Copyrite.txt" />
     <Text Include="ReadMe.txt" />
+    <Text Include="win32\ReadMe_Windows.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="os.h" />
-    <ClInclude Include="os\winos.h" />
     <ClInclude Include="scandisk.h" />
+    <ClInclude Include="win32\ioctoATA.h" />
+    <ClInclude Include="win32\winos.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msed.cpp" />
-    <ClCompile Include="scandisk.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="os\scandisk.win" />
+    <ClCompile Include="win32\ioctlATA.cpp" />
+    <ClCompile Include="win32\scandisk.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

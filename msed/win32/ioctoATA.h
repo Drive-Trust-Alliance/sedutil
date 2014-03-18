@@ -14,9 +14,9 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
-#pragma once
-#ifdef _WIN32
-#include "os\scandisk.win"
-#else
-#error "Unsupported Operating System"
-#endif
+
+typedef enum _ATACOMMAND{
+	IF_RECV = 0x5c,
+	IF_SEND = 0x5e
+} ATACOMMAND;
+UINT8 ioctlATA(HANDLE hDevice, ATACOMMAND cmd, UINT8 protocol, UINT16 comID, PVOID buffer, ULONG bufferlen);

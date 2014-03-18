@@ -16,7 +16,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 * C:E********************************************************************** */
 #pragma once
 #ifdef _WIN32
-#include "os\winos.h"
+#include "win32\winos.h"
 #else
 #error "Unsupported Operating System"
 #endif

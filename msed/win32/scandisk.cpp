@@ -22,11 +22,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 * **THIS MODULE CONTAINS OS SPECIFIC CODE**
 * ******************************************** */
 #include "winos.h"
-#include "scandisk.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "scandisk.h"
-
+#include "../scandisk.h"
+#include "ioctoATA.h"
 
 driveList scandisk()
 {
@@ -57,7 +56,14 @@ driveList scandisk()
 			break;
 		}
 		printf("Testing %s for TCG OPAL ... ", dev);
-		printf("\n");
+		PVOID buffer = (PVOID)malloc(512);
+		if (NULL != buffer) {
+			if (0x00 == ioctlATA(fh, IF_RECV, 0x01, 0x0100, buffer, 512))
+				printf("YES\n");
+			else
+				printf("NO\n");
+			free(buffer);
+		}
 		CloseHandle(fh);
 		i++;
 	}

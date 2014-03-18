@@ -17,15 +17,19 @@
   <ItemGroup>
     <Text Include="ReadMe.txt" />
     <Text Include="Copyrite.txt" />
+    <Text Include="win32\ReadMe_Windows.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="os\winos.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="os.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="win32\winos.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="scandisk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\ioctoATA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -33,11 +37,11 @@
     <ClCompile Include="msed.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scandisk.cpp">
+    <ClCompile Include="win32\scandisk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="os\scandisk.win" />
+    <ClCompile Include="win32\ioctlATA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
