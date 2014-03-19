@@ -81,20 +81,27 @@
     <Text Include="win32\ReadMe_Windows.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Class_Skeleton.h" />
     <ClInclude Include="D0Structures.h" />
     <ClInclude Include="Discovery0.h" />
     <ClInclude Include="DiskList.h" />
     <ClInclude Include="Endianfixup.h" />
+    <ClInclude Include="HexDump.h" />
     <ClInclude Include="os.h" />
     <ClInclude Include="scandisk.h" />
+    <ClInclude Include="Session.h" />
+    <ClInclude Include="TCGLexicon.h" />
     <ClInclude Include="win32\Device.h" />
     <ClInclude Include="win32\DiskList_Win32.h" />
     <ClInclude Include="win32\ioctlATA.h" />
     <ClInclude Include="win32\os_Win32.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Class_Skeleton.cpp" />
     <ClCompile Include="Discovery0.cpp" />
+    <ClCompile Include="HexDump.cpp" />
     <ClCompile Include="msed.cpp" />
+    <ClCompile Include="Session.cpp" />
     <ClCompile Include="win32\Device.cpp" />
     <ClCompile Include="win32\DiskList.cpp" />
     <ClCompile Include="win32\ioctlATA.cpp" />

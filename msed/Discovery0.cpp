@@ -18,6 +18,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "Discovery0.h"
 #include "D0Structures.h"
 #include "Endianfixup.h"
+#include "HexDump.h"
 #include <iostream>
 
 using namespace std;
@@ -39,6 +40,8 @@ Discovery0::Discovery0(LPVOID d0Response)
 	Discovery0Features * body;
 	epos = cpos = (UINT8 *)d0Response;
 	hdr = (Discovery0Header *)d0Response;
+	cout << "\nDumping D0Response"<< std::endl;
+	HexDump(hdr, SWAP32(hdr->length));
 	epos = epos + SWAP32(hdr->length);
 	cpos = cpos + 48;  // TODO: check header version 
 
