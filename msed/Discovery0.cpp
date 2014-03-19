@@ -31,9 +31,9 @@ using namespace std;
  */
 Discovery0::Discovery0(LPVOID d0Response)
 {
-	char * fc = (char *)malloc(10); 
-	char *ver = (char *)malloc(10);
-	char *scratch = (char *)malloc(25);
+	char fc[10];
+	char ver[10];
+	char scratch[25];
 	UINT8 * epos, *cpos;
 	Discovery0Header * hdr;
 	Discovery0Features * body;
@@ -41,14 +41,14 @@ Discovery0::Discovery0(LPVOID d0Response)
 	hdr = (Discovery0Header *)d0Response;
 	epos = epos + SWAP32(hdr->length);
 	cpos = cpos + 48;  // TODO: check header version 
-	
+
 	do  {
 		body = (Discovery0Features *)cpos;
 		sprintf_s(fc, 8, "0x%04x", SWAP16(body->TPer.featureCode));
 		sprintf_s(ver, 8, "0x%02x", body->TPer.version);
 		switch (SWAP16(body->TPer.featureCode)) {         /* could use of the structures here is a common field */
 		case FC_TPER:					/* TPer */
-			
+
 			cout << "\nParsing TPer functions  (" << fc << " ver " << ver << ")" << std::endl;
 			cout << "ACKNAK           = " << (body->TPer.acknack ? "Y" : "N") << std::endl;
 			cout << "ASYNC            = " << (body->TPer.Async ? "Y" : "N") << std::endl;
@@ -66,33 +66,33 @@ Discovery0::Discovery0(LPVOID d0Response)
 			cout << "MBREnabled         = " << (body->Locking.MBREnabled ? "Y" : "N") << std::endl;
 			cout << "MediaEncrypt       = " << (body->Locking.mediaEncryption ? "Y" : "N") << std::endl;
 			cout << std::endl;
-			break; 
+			break;
 		case FC_GEOMETRY:					/* Geometry Features */
 			cout << "\nParsing Geometry Information   (" << fc << " ver " << ver << ")" << std::endl;
 			cout << "Align                 = " << (body->Geometry.align ? "Y" : "N") << std::endl;
 			cout << "Alignment Granularity = " << SWAP32(body->Geometry.alignmentGranularity) << std::endl;
 			cout << "Logical Block size    = " << SWAP32(body->Geometry.logicalBlockSize) << std::endl;
 			cout << "Lowest Aligned LBA    = " << SWAP32(body->Geometry.lowestAlighedLBA) << std::endl;
-			break; 
+			break;
 		case FC_ENTERPRISE:					/* Enterprise SSC */
 			cout << "\nParsing Enterprise SSC   (" << fc << " ver " << ver << ")" << std::endl;
 			cout << "Range crossing      = " << (body->EnterpriseSSC.rangeCrossing ? "Y" : "N") << std::endl;
 			cout << "Base commID         = " << SWAP16(body->EnterpriseSSC.baseComID) << std::endl;
 			cout << "Number of commIDs   = " << SWAP16(body->EnterpriseSSC.numberComIDs) << std::endl;
-			break; 
+			break;
 		case FC_SINGLEUSER:					/* Single User Mode */
 			cout << "\nParsing Single User Mode   (" << fc << " ver " << ver << ")" << std::endl;
 			cout << "ALL                         = " << (body->SingleUserMode.all ? "Y" : "N") << std::endl;
 			cout << "ANY                         = " << (body->SingleUserMode.any ? "Y" : "N") << std::endl;
 			cout << "Policy                      = " << (body->SingleUserMode.policy ? "Y" : "N") << std::endl;
 			cout << "Number of Locking Objects   = " << SWAP32(body->SingleUserMode.numberLockingObjects) << std::endl;
-			break; 
+			break;
 		case FC_DATASTORE:					/* Datastore Tables */
 			cout << "\nParsing Extended Datastore   (" << fc << " ver " << ver << ")" << std::endl;
 			cout << "Max Tables             = " << SWAP16(body->Datastore.maxTables) << std::endl;
 			cout << "Max Size Tables        = " << SWAP32(body->Datastore.maxSizeTables) << std::endl;
 			cout << "Table size alignment   = " << SWAP32(body->Datastore.tableSizeAlignment) << std::endl;
-			break; 
+			break;
 		case FC_OPALV200:					/* OPAL V200 */
 			cout << "\nParsing OPAL V200   (" << fc << " ver " << ver << ")" << std::endl;
 			sprintf_s(scratch, 8, "0x%04x", SWAP16(body->OPALv200.baseCommID));
@@ -105,7 +105,7 @@ Discovery0::Discovery0(LPVOID d0Response)
 			cout << "Number of Locking Admins   = " << SWAP16(body->OPALv200.numlockingAdminAuth) << std::endl;
 			cout << "Number of Locking Users    = " << SWAP16(body->OPALv200.numlockingUserAuth) << std::endl;
 			cout << "Range Crossing             = " << (body->OPALv200.rangeCrossing ? "Y" : "N") << std::endl;
-			break; 
+			break;
 		default:
 			cout << "IGNORING unknown function code " << fc << " ver " << ver << std::endl;
 			/* should do something here */
@@ -113,9 +113,6 @@ Discovery0::Discovery0(LPVOID d0Response)
 		}
 		cpos = cpos + (body->TPer.length + 4);
 	} while (cpos < epos);
-	free(fc);
-	free(ver);
-	free(scratch);
 }
 
 Discovery0::~Discovery0()

@@ -83,15 +83,20 @@
   <ItemGroup>
     <ClInclude Include="D0Structures.h" />
     <ClInclude Include="Discovery0.h" />
+    <ClInclude Include="DiskList.h" />
     <ClInclude Include="Endianfixup.h" />
     <ClInclude Include="os.h" />
     <ClInclude Include="scandisk.h" />
-    <ClInclude Include="win32\ioctoATA.h" />
-    <ClInclude Include="win32\winos.h" />
+    <ClInclude Include="win32\Device.h" />
+    <ClInclude Include="win32\DiskList_Win32.h" />
+    <ClInclude Include="win32\ioctlATA.h" />
+    <ClInclude Include="win32\os_Win32.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Discovery0.cpp" />
     <ClCompile Include="msed.cpp" />
+    <ClCompile Include="win32\Device.cpp" />
+    <ClCompile Include="win32\DiskList.cpp" />
     <ClCompile Include="win32\ioctlATA.cpp" />
     <ClCompile Include="win32\scandisk.cpp" />
   </ItemGroup>

@@ -14,17 +14,21 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 * C:E********************************************************************** */
-#include "winos.h"
+#include "../os.h"
 #include <Ntddscsi.h>
 #include <stdio.h>
-#include "ioctoATA.h"
-
+#include "ioctlATA.h"
+/** sends a ioctl to the device using pass through.
+ * not sure this needs its own file now but it is and 
+ * integrating it would probably cause a lot of hard to 
+ * fing bugs due to my complete lack of a nameing standard
+ */
 UINT8 ioctlATA(HANDLE hDevice, ATACOMMAND cmd, UINT8 protocol, UINT16 comID, PVOID buffer, ULONG bufferlen) {
 	UINT8 result = 0xff;               
 	DWORD lasterr;
 	DWORD ignored = 0;                     // discard results
 	ATA_PASS_THROUGH_DIRECT * ata = (ATA_PASS_THROUGH_DIRECT *)malloc(sizeof(ATA_PASS_THROUGH_DIRECT));
-	if (NULL == ata) return false;
+	if (NULL == ata) return 0xff;
 	/* 
      * Initialize the ATA_PASS_THROUGH_DIRECT structures
      * per windows DOC with the secial sauce from the

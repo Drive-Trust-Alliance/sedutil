@@ -9,27 +9,31 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{941a8b0f-2973-43de-ae97-a4fa9af85ed3}</UniqueIdentifier>
+      <Extensions>txt</Extensions>
+    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-    <Text Include="Copyrite.txt" />
-    <Text Include="win32\ReadMe_Windows.txt" />
+    <Text Include="Copyrite.txt">
+      <Filter>Documentation</Filter>
+    </Text>
+    <Text Include="ReadMe.txt">
+      <Filter>Documentation</Filter>
+    </Text>
+    <Text Include="win32\ReadMe_Windows.txt">
+      <Filter>Documentation</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="os.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="win32\winos.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="scandisk.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\ioctoATA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Discovery0.h">
@@ -39,6 +43,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Endianfixup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DiskList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\DiskList_Win32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\os_Win32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\ioctlATA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\Device.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -53,6 +72,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Discovery0.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\DiskList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\Device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

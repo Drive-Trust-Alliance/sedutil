@@ -14,7 +14,7 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
-
+#pragma once
 typedef enum _ATACOMMAND{
 	IF_RECV = 0x5c,
 	IF_SEND = 0x5e

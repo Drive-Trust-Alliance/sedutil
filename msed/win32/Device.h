@@ -14,13 +14,19 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
-
-#include "os.h"
-#include "DiskList.h"
-
-int main(int argc, char * argv[])
+#pragma once
+#include "ioctlATA.h"
+class Device
 {
-	DiskList *dList = new DiskList();
-	return 0;
-}
+public:
+	Device();
+	~Device();
+	void init(TCHAR * dev);
+	void close();
+	UINT8 SendCmd(ATACOMMAND cmd, UINT8 protocol, UINT16 comID, PVOID buffer, ULONG bufferlen);
+private:
+	TCHAR * dev;
+	HANDLE hDev;
+	BOOL isOpen = FALSE;
+};
 

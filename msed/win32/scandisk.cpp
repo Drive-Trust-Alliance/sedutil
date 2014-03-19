@@ -21,11 +21,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* ********************************************
 * **THIS MODULE CONTAINS OS SPECIFIC CODE**
 * ******************************************** */
-#include "winos.h"
+#include "../os.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include "../scandisk.h"
-#include "ioctoATA.h"
+#include "ioctlATA.h"
 #include "../Discovery0.h"
 
 driveList scandisk()

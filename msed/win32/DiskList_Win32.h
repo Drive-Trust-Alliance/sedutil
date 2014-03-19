@@ -14,13 +14,21 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
-
-#include "os.h"
-#include "DiskList.h"
-
-int main(int argc, char * argv[])
+#pragma once
+#define MAX_DISKS 20
+#define IO_BUFFER_LENGTH 4096
+#include "Device.h"
+#include <vector>
+class DiskList
 {
-	DiskList *dList = new DiskList();
-	return 0;
-}
+public:
+	DiskList();
+	~DiskList();
+private:
+	std::vector<Device> disk;  /**< store the disk list for possible GUI */
+	char devname[25];
+	LPVOID buffer = NULL;
+	int bufferlen = IO_BUFFER_LENGTH;
+	
+};
 

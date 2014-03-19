@@ -14,13 +14,9 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
-
-#include "os.h"
-#include "DiskList.h"
-
-int main(int argc, char * argv[])
-{
-	DiskList *dList = new DiskList();
-	return 0;
-}
-
+#pragma once
+#ifdef _WIN32
+#include "win32\DiskList_Win32.h"
+#else
+#error "Unsupported Operating System"
+#endif
