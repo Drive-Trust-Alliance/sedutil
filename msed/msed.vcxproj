@@ -89,7 +89,7 @@
     <ClInclude Include="HexDump.h" />
     <ClInclude Include="os.h" />
     <ClInclude Include="scandisk.h" />
-    <ClInclude Include="Session.h" />
+    <ClInclude Include="TCGCommand.h" />
     <ClInclude Include="TCGLexicon.h" />
     <ClInclude Include="win32\Device.h" />
     <ClInclude Include="win32\DiskList_Win32.h" />
@@ -101,7 +101,7 @@
     <ClCompile Include="Discovery0.cpp" />
     <ClCompile Include="HexDump.cpp" />
     <ClCompile Include="msed.cpp" />
-    <ClCompile Include="Session.cpp" />
+    <ClCompile Include="TCGCommand.cpp" />
     <ClCompile Include="win32\Device.cpp" />
     <ClCompile Include="win32\DiskList.cpp" />
     <ClCompile Include="win32\ioctlATA.cpp" />

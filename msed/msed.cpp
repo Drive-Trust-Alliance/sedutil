@@ -17,10 +17,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "os.h"
 #include "DiskList.h"
+#include "TCGCommand.h"
 
 int main(int argc, char * argv[])
 {
-	DiskList *dList = new DiskList();
+	// DiskList *dList = new DiskList();
+	TCGCommand *cmd = new TCGCommand(TCG_USER::SMUID, TCG_METHOD::STARTSESSION);
+	cmd->addToken(TCG_TOKEN::STARTLIST);	// [  (Open Bracket)
+	cmd->addToken(TCG_TINY_ATOM::uINT01);   // HostSessionID : 0x01
+	cmd->addToken(TCG_USER::ADMINSP);		// SPID : ADMINSP 
+	cmd->addToken(TCG_TINY_ATOM::uINT01);  // write : 1
+	cmd->addToken(TCG_TOKEN::ENDLIST);	// ]  (Close Bracket)
+	cmd->complete();
+	cmd->dump();  // have a look see
 	return 0;
 }
 

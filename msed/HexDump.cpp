@@ -19,10 +19,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void HexDump(void * address, int length) {
 	UINT8 * cpos = (UINT8 *)address;
 	UINT8 * epos = cpos + length;
+	int rpos = 0;
 	printf("\n");
 	while (cpos < epos){
-		printf("%02x %02x %02x %02x %02x %02x %02x %02x ", cpos[0], cpos[1], cpos[2], cpos[3], cpos[4], cpos[5], cpos[6], cpos[7]);
-		printf("%02x %02x %02x %02x %02x %02x %02x %02x\n", cpos[8], cpos[9], cpos[10], cpos[11], cpos[12], cpos[13], cpos[14], cpos[15]);
-		cpos = cpos + 16;
+		printf("%04x %02x%02x%02x%02x %02x%02x%02x%02x ", rpos, cpos[0], cpos[1], cpos[2], cpos[3], cpos[4], cpos[5], cpos[6], cpos[7]);
+		printf("%02x%02x%02x%02x %02x%02x%02x%02x\n", cpos[8], cpos[9], cpos[10], cpos[11], cpos[12], cpos[13], cpos[14], cpos[15]);
+		cpos += 16;
+		rpos += 16;
 	}
 }

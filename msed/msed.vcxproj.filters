@@ -66,10 +66,10 @@
     <ClInclude Include="HexDump.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Session.h">
+    <ClInclude Include="TCGLexicon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TCGLexicon.h">
+    <ClInclude Include="TCGCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -98,7 +98,7 @@
     <ClCompile Include="HexDump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Session.cpp">
+    <ClCompile Include="TCGCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
