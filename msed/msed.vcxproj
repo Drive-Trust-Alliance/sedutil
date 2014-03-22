@@ -83,17 +83,16 @@
   <ItemGroup>
     <ClInclude Include="Class_Skeleton.h" />
     <ClInclude Include="D0Structures.h" />
+    <ClInclude Include="Device.h" />
     <ClInclude Include="Discovery0.h" />
     <ClInclude Include="DiskList.h" />
     <ClInclude Include="Endianfixup.h" />
     <ClInclude Include="HexDump.h" />
     <ClInclude Include="os.h" />
-    <ClInclude Include="scandisk.h" />
     <ClInclude Include="TCGCommand.h" />
     <ClInclude Include="TCGLexicon.h" />
-    <ClInclude Include="win32\Device.h" />
+    <ClInclude Include="win32\Device_Win32.h" />
     <ClInclude Include="win32\DiskList_Win32.h" />
-    <ClInclude Include="win32\ioctlATA.h" />
     <ClInclude Include="win32\os_Win32.h" />
   </ItemGroup>
   <ItemGroup>
@@ -104,8 +103,6 @@
     <ClCompile Include="TCGCommand.cpp" />
     <ClCompile Include="win32\Device.cpp" />
     <ClCompile Include="win32\DiskList.cpp" />
-    <ClCompile Include="win32\ioctlATA.cpp" />
-    <ClCompile Include="win32\scandisk.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

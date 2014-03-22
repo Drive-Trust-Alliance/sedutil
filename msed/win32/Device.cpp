@@ -15,11 +15,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
 #include "..\os.h"
-#include <cstdlib>
-#include <iostream>
 #include <stdio.h>
-#include "Device.h"
-#include "ioctlATA.h"
+#include "..\Device.h"
+#include <Ntddscsi.h>
 
 using namespace std;
 /** Device Class (win32) represents a single disk device.
@@ -27,33 +25,74 @@ using namespace std;
  *  copy operator and an assignment operator no custom destructor
  *  is used leading to this unfortunate class method structure
  */
-Device::Device() {}
-/** initializes the class device reference. */
-void Device::init(TCHAR * devref) {
+Device::Device(TCHAR * devref) {
+	ATA_PASS_THROUGH_DIRECT * ata = 
+		(ATA_PASS_THROUGH_DIRECT *)_aligned_malloc(sizeof(ATA_PASS_THROUGH_DIRECT),16);
+	ataPointer = (void *)ata;
 	dev = devref;
-}
-/** Send an ioctl to this device. */
-UINT8 Device::SendCmd(ATACOMMAND cmd, UINT8 protocol, UINT16 comID, PVOID buffer, ULONG bufferlen) {
-	if (!isOpen) {
-		hDev = CreateFile((TCHAR *)dev,
-			GENERIC_WRITE | GENERIC_READ,
-			FILE_SHARE_WRITE | FILE_SHARE_READ,
-			NULL,
-			OPEN_EXISTING,
-			0,
-			NULL);
-		if (INVALID_HANDLE_VALUE == hDev) {
-			DWORD err = GetLastError();
-			cout << "\nerror opening file " << dev << " " << err << "\n" << endl;
-			return 0xff;
-		}
+	hDev = CreateFile((TCHAR *)dev,
+		GENERIC_WRITE | GENERIC_READ,
+		FILE_SHARE_WRITE | FILE_SHARE_READ,
+		NULL,
+		OPEN_EXISTING,
+		0,
+		NULL);
+	if (INVALID_HANDLE_VALUE == hDev) {
+		DWORD err = GetLastError();
+		printf("\nerror opening device %s Error 0x%04x\n", dev, err);
 	}
-	isOpen = TRUE;
-	return(ioctlATA(hDev, cmd, protocol, comID, buffer, bufferlen));
+	else isOpen = TRUE;
+}
+
+/** Send an ioctl to the device using pass through. */
+UINT8 Device::SendCmd(ATACOMMAND cmd, UINT8 protocol, UINT16 comID,	PVOID buffer, INT16 bufferlen) {
+	DWORD bytesReturned = 0;                     // data returned
+	if (!isOpen) return 0xff; //disk open failed so this will too
+	/*
+	* Initialize the ATA_PASS_THROUGH_DIRECT structures
+	* per windows DOC with the secial sauce from the
+	* ATA Command set reference (protocol and commID)
+	*/
+	ATA_PASS_THROUGH_DIRECT * ata = (ATA_PASS_THROUGH_DIRECT *)ataPointer;
+	memset(ata, 0, sizeof(ATA_PASS_THROUGH_DIRECT));
+	ata->Length = sizeof(ATA_PASS_THROUGH_DIRECT);
+	if (IF_RECV == cmd)
+		ata->AtaFlags = 0x00 | ATA_FLAGS_DRDY_REQUIRED | ATA_FLAGS_DATA_IN;
+	else
+		ata->AtaFlags = 0x00 | ATA_FLAGS_DRDY_REQUIRED | ATA_FLAGS_DATA_OUT;
+	ata->DataBuffer = buffer;
+	ata->DataTransferLength = bufferlen;
+	ata->TimeOutValue = 30;
+	/* these were a b**** to find  defined in TCG specs but location is defined in ATA spec */
+	ata->CurrentTaskFile[0] = protocol;             // Protocol
+	ata->CurrentTaskFile[1] = int(bufferlen / 512);             // Payload in number of 512 blocks
+	// Damn self inflicted little endian bugs
+	ata->CurrentTaskFile[3] = ((comID & 0xff00) >> 8);        // Commid MSB
+	ata->CurrentTaskFile[4] = (comID & 0x00ff);             // Commid LSB
+	ata->CurrentTaskFile[6] = cmd;             // ata Command (0x5e or ox5c)
+
+	DeviceIoControl(hDev,							// device to be queried
+		IOCTL_ATA_PASS_THROUGH_DIRECT,							// operation to perform
+		ata, sizeof(ATA_PASS_THROUGH_DIRECT),
+		ata, sizeof(ATA_PASS_THROUGH_DIRECT),
+		&bytesReturned,											// # bytes returned
+		(LPOVERLAPPED)NULL);									// synchronous I/O
+	return(ata->CurrentTaskFile[0]);
+}
+/** Extract the comID from the CDB.
+ * even though the doc says it should be returned in
+ * the response it doesnt appear to be
+ */
+UINT32 Device::extractComID(){
+	ATA_PASS_THROUGH_DIRECT * ata = (ATA_PASS_THROUGH_DIRECT *)ataPointer;
+	UINT32 extcomID = 0 | ata->CurrentTaskFile[1];
+	extcomID = (extcomID << 8) | ata->CurrentTaskFile[2];
+	extcomID = (extcomID << 8) | ata->CurrentTaskFile[3];
+	extcomID = (extcomID << 8) | ata->CurrentTaskFile[4];
+	return extcomID;
 }
 /** Close the filehandle so this object can be delete. */
-void Device::close()
-{
-	if (isOpen) CloseHandle(hDev);
+Device::~Device(){
+	CloseHandle(hDev);
+	_aligned_free(ataPointer);
 }
-Device::~Device(){}

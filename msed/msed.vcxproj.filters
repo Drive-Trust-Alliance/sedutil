@@ -33,9 +33,6 @@
     <ClInclude Include="os.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scandisk.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Discovery0.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -54,12 +51,6 @@
     <ClInclude Include="win32\os_Win32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="win32\ioctlATA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\Device.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Class_Skeleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -72,15 +63,15 @@
     <ClInclude Include="TCGCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Device.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\Device_Win32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msed.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="win32\scandisk.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="win32\ioctlATA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Discovery0.cpp">

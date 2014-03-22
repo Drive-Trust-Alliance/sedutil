@@ -37,6 +37,7 @@ typedef enum _TCG_USER {
 * Links to TCGMETHOD in TCGCommand 
 */
 typedef enum _TCG_METHOD {
+	PROPERTIES,
 	STARTSESSION,
 } TCG_METHOD;
 /** TCG TOKENS 
@@ -53,6 +54,13 @@ typedef enum _TCG_TOKEN {
 	STARTTRANSACTON = 0xfb,
 	ENDTRANSACTON = 0xfC,
 } TCG_TOKEN;
+	/** Encoded Names.
+	 * Where are these documented?  I only found
+	 * this one in the Aplication Note :-(
+	 */
+typedef enum _TCG_NAME {
+	HOSTPROPERTIES = 0x00,
+} TCG_NAME;
 /** Usefull tiny atoms.
  * I am only declaring frequently used
  *
@@ -87,7 +95,8 @@ typedef struct _TCGComPacket {
 
 /** Defines the TCG Packet structure. */
 typedef struct _TCGPacket{
-	UINT8 Session[8];
+	UINT32 TSN;
+	UINT32 HSN;
 	UINT32 SeqNumber;
 	UINT16 reserved0;
 	UINT16 AckType;

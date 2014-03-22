@@ -15,6 +15,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
 #pragma once
+#define IO_BUFFER_LENGTH 2048
 #ifdef _WIN32
 #include "win32\os_Win32.h"
 #else

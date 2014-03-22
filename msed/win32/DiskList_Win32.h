@@ -16,7 +16,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 * C:E********************************************************************** */
 #pragma once
 #define MAX_DISKS 20
-#define IO_BUFFER_LENGTH 4096
 #include "Device.h"
 #include <vector>
 class DiskList

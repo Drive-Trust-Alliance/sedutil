@@ -19,4 +19,8 @@ typedef enum _ATACOMMAND{
 	IF_RECV = 0x5c,
 	IF_SEND = 0x5e
 } ATACOMMAND;
-UINT8 ioctlATA(HANDLE hDevice, ATACOMMAND cmd, UINT8 protocol, UINT16 comID, PVOID buffer, ULONG bufferlen);
+#ifdef _WIN32
+#include "win32\Device_Win32.h"
+#else
+#error "Unsupported Operating System"
+#endif

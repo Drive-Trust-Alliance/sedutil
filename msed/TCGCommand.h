@@ -16,38 +16,52 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
 #pragma once
-/** A class to build TCG Command streams.
+/** A class to build & send TCG Command streams to a TPer.
  * This class attempts to closely mimic the command 
  * pseudo code used in the TCG documents, the syntactic
  * sugar is not represented.  See TCG document Storage Archatecture
  Core Specification R2.00 V2.00 Section 3.2.1.2 for all 
  * the gory details.
  * 
- * This class works eith the session class to construct and exchange 
- * commands with the TPer.  
- *
- * see also TCGLexicon for structs, typedefs and enums used to encode 
+ * See also TCGLexicon for structs, typedefs and enums used to encode 
  * the bytestream.
  */
 #include "TCGLexicon.h"
+class Device;
 class TCGCommand
 {
 public:
-	TCGCommand(TCG_USER InvokingUid,TCG_METHOD method);
+	TCGCommand(UINT32 comIDex, TCG_USER InvokingUid,TCG_METHOD method);
 	~TCGCommand();
 	void addToken(TCG_TOKEN token);
 	void addToken(TCG_TINY_ATOM token);
 	void addToken(TCG_USER token);
+	void addToken(TCG_NAME token);
+	void addToken(char * bytestring);
+	void addToken(UINT16);
+
+	void setHSN(UINT32 value);
+	void setTSN(UINT32 value);
+	void setProtocol(UINT8 value);
 	void complete();
+	UINT8 execute(Device * device, LPVOID responseBuffer);
+	void reset(UINT32 comIDex, TCG_USER InvokingUid, TCG_METHOD method);
 	void dump();
 private:
 #define TCGUSER_SIZE 3
 	unsigned char TCGUSER[TCGUSER_SIZE][8];
-#define TCGMETHOD_SIZE 1
+#define TCGMETHOD_SIZE 2
 	unsigned char TCGMETHOD[TCGMETHOD_SIZE][8];
 	unsigned char *buffer;
 	UINT32 bufferpos = 0;
-	//TCG_USER InvokingUid;
-	//TCG_METHOD method;
+	/* The session numbers should be taken from the
+	 * syncsession response so there will be no 
+	 * issues with endianess
+	 */
+	UINT32 TSN = 0;
+	UINT32 HSN = 0;
+	UINT16 comID;
+	UINT32 excomID;   // this is taken from the Tper so it's big endian
+	UINT8 TCGProtocol = 0x00;
 };
 
