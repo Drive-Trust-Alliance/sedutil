@@ -29,15 +29,15 @@ int main(int argc, char * argv[])
 	memset(resp, 255, IO_BUFFER_LENGTH);
 	Device *device = new Device("\\\\.\\PhysicalDrive3");
 //	 get a commid
-	device->SendCmd(IF_RECV, 0x00, 0x0000, resp, 512);
-	HexDump(resp, 16);
-	extendedcomID = device->extractComID();
-//	return 0;
+//	device->SendCmd(IF_RECV, 0x00, 0x0000, resp, 512);
+//	HexDump(resp, 16);
+//	extendedcomID = device->extractComID();
+////	return 0;
 //TPer reset 
-	device->SendCmd(IF_RECV, 0x02, SWAP16(0x0004), resp, 512);
-	HexDump(resp, 16);
-	return 0;
-	 //DiskList *dList = new DiskList();
+	//device->SendCmd(IF_SEND, 0x02, 0x0004, resp, 512);
+	//HexDump(resp, 16);
+//	return 0;
+	 DiskList *dList = new DiskList();
 	 //return 0;
 // properties
 //
@@ -106,18 +106,22 @@ int main(int argc, char * argv[])
 	//_aligned_free(resp);
 	//return rc;
 //Start Session
-	TCGCommand *cmd = new TCGCommand(extendedcomID, TCG_USER::SMUID, TCG_METHOD::STARTSESSION);
-	cmd->addToken(TCG_TOKEN::STARTLIST);	// [  (Open Bracket)
-	cmd->addToken(TCG_TINY_ATOM::uINT01);   // HostSessionID : 0x01
-	cmd->addToken(TCG_USER::ADMINSP);		// SPID : ADMINSP 
-	cmd->addToken(TCG_TINY_ATOM::uINT01);  // write : 1
-	cmd->addToken(TCG_TOKEN::ENDLIST);	// ]  (Close Bracket)
-	cmd->complete();
-	cmd->dump();  // have a look see
-	int rc = cmd->execute(device, resp);
-	HexDump(resp, 128);
+	//TCGCommand *cmd = new TCGCommand (0x10000000, TCG_USER::SMUID, TCG_METHOD::STARTSESSION);
+	//cmd->addToken(TCG_TOKEN::STARTLIST);	// [  (Open Bracket)
+	//cmd->addToken(TCG_TINY_ATOM::uINT01);   // HostSessionID : 0x01
+	//cmd->addToken(TCG_USER::ADMINSP);		// SPID : ADMINSP 
+	//cmd->addToken(TCG_TINY_ATOM::uINT01);  // write : 1
+	//cmd->addToken(TCG_TOKEN::ENDLIST);	// ]  (Close Bracket)
+	//cmd->complete();
+	//cmd->setProtocol(0x01);
+	//cmd->dump();  // have a look see
+	//int rc = cmd->execute(device, resp);
+	//HexDump(resp, 128);
+/*  ******************  */
+/*  CLEANUP LEAVE HERE  */
+/*  ******************  */
 	delete device;
 	_aligned_free(resp);
-	return rc;
+	return 0;
 }
 

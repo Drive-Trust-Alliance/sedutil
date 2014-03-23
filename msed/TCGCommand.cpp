@@ -53,14 +53,14 @@ void TCGCommand::reset(UINT32 ID, TCG_USER InvokingUid, TCG_METHOD method) {
 	/* build the headers */
 	hdr = (TCGHeader *)buffer;
 	/* ComPacket */
-	//hdr->cp.ExtendedComID[0] = ((comID & 0xff00) >> 8);        // Commid MSB
-	//hdr->cp.ExtendedComID[1] = (comID & 0x00ff);
-	//hdr->cp.ExtendedComID[2] = 0x00;
-	//hdr->cp.ExtendedComID[3] = 0x00;
-	hdr->cp.ExtendedComID[0] = ((comID & 0xff000000) >> 24);        // already bigendian
-	hdr->cp.ExtendedComID[1] = ((comID & 0x00ff0000) >> 16);
-	hdr->cp.ExtendedComID[2] = ((comID & 0x0000ff00) >> 8);
-	hdr->cp.ExtendedComID[3] = (comID & 0x000000ff);
+	hdr->cp.ExtendedComID[0] = ((comID & 0xff00) >> 8);        // Commid MSB
+	hdr->cp.ExtendedComID[1] = (comID & 0x00ff);
+	hdr->cp.ExtendedComID[2] = 0x00;
+	hdr->cp.ExtendedComID[3] = 0x00;
+	//hdr->cp.ExtendedComID[0] = ((comID & 0xff000000) >> 24);        // already bigendian
+	//hdr->cp.ExtendedComID[1] = ((comID & 0x00ff0000) >> 16);
+	//hdr->cp.ExtendedComID[2] = ((comID & 0x0000ff00) >> 8);
+	//hdr->cp.ExtendedComID[3] = (comID & 0x000000ff);
 	/*
 	/*
 	* for session startup the packet and the data sub packet

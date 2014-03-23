@@ -18,6 +18,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include "..\Device.h"
 #include <Ntddscsi.h>
+#include "..\HexDump.h"
 
 using namespace std;
 /** Device Class (win32) represents a single disk device.
@@ -67,16 +68,19 @@ UINT8 Device::SendCmd(ATACOMMAND cmd, UINT8 protocol, UINT16 comID,	PVOID buffer
 	ata->CurrentTaskFile[0] = protocol;             // Protocol
 	ata->CurrentTaskFile[1] = int(bufferlen / 512);             // Payload in number of 512 blocks
 	// Damn self inflicted little endian bugs
-	ata->CurrentTaskFile[3] = ((comID & 0xff00) >> 8);        // Commid MSB
-	ata->CurrentTaskFile[4] = (comID & 0x00ff);             // Commid LSB
+	ata->CurrentTaskFile[4] = (comID & 0x00ff);					// Commid MSB
+	ata->CurrentTaskFile[3] = ((comID & 0xff00) >> 8);			// Commid LSB
 	ata->CurrentTaskFile[6] = cmd;             // ata Command (0x5e or ox5c)
-
+	printf("\nata before \n");
+	HexDump(ata, sizeof(ATA_PASS_THROUGH_DIRECT));
 	DeviceIoControl(hDev,							// device to be queried
 		IOCTL_ATA_PASS_THROUGH_DIRECT,							// operation to perform
 		ata, sizeof(ATA_PASS_THROUGH_DIRECT),
 		ata, sizeof(ATA_PASS_THROUGH_DIRECT),
 		&bytesReturned,											// # bytes returned
 		(LPOVERLAPPED)NULL);									// synchronous I/O
+	printf("\nata after \n");
+	HexDump(ata, sizeof(ATA_PASS_THROUGH_DIRECT));
 	return(ata->CurrentTaskFile[0]);
 }
 /** Extract the comID from the CDB.

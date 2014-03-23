@@ -35,6 +35,7 @@ DiskList::DiskList()
 	buffer = _aligned_malloc(IO_BUFFER_LENGTH,16);  // this doesn't work on the heap
 	while (true) {
 		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i);
+		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive3", i);
 		printf("Testing %s for TCG OPAL ... ", devname);
 		d = new Device(devname);
 //		disk.push_back(*d);
@@ -47,6 +48,7 @@ DiskList::DiskList()
 		} else {
 			printf(" No\n");
 		}
+		break;
 		if (i++ == MAX_DISKS) {
 			std::cout << "20+ disks, really?" << std::endl;
 			break;
