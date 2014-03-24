@@ -28,6 +28,9 @@
     <Text Include="win32\ReadMe_Windows.txt">
       <Filter>Documentation</Filter>
     </Text>
+    <Text Include="Warning.txt">
+      <Filter>Documentation</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="os.h">

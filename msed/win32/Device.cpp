@@ -28,7 +28,7 @@ using namespace std;
  */
 Device::Device(TCHAR * devref) {
 	ATA_PASS_THROUGH_DIRECT * ata = 
-		(ATA_PASS_THROUGH_DIRECT *)_aligned_malloc(sizeof(ATA_PASS_THROUGH_DIRECT),16);
+		(ATA_PASS_THROUGH_DIRECT *)_aligned_malloc(sizeof(ATA_PASS_THROUGH_DIRECT),512);
 	ataPointer = (void *)ata;
 	dev = devref;
 	hDev = CreateFile((TCHAR *)dev,
@@ -63,7 +63,7 @@ UINT8 Device::SendCmd(ATACOMMAND cmd, UINT8 protocol, UINT16 comID,	PVOID buffer
 		ata->AtaFlags = 0x00 | ATA_FLAGS_DRDY_REQUIRED | ATA_FLAGS_DATA_OUT;
 	ata->DataBuffer = buffer;
 	ata->DataTransferLength = bufferlen;
-	ata->TimeOutValue = 30;
+	ata->TimeOutValue = 300;
 	/* these were a b**** to find  defined in TCG specs but location is defined in ATA spec */
 	ata->CurrentTaskFile[0] = protocol;             // Protocol
 	ata->CurrentTaskFile[1] = int(bufferlen / 512);             // Payload in number of 512 blocks
@@ -82,18 +82,6 @@ UINT8 Device::SendCmd(ATACOMMAND cmd, UINT8 protocol, UINT16 comID,	PVOID buffer
 	printf("\nata after \n");
 	HexDump(ata, sizeof(ATA_PASS_THROUGH_DIRECT));
 	return(ata->CurrentTaskFile[0]);
-}
-/** Extract the comID from the CDB.
- * even though the doc says it should be returned in
- * the response it doesnt appear to be
- */
-UINT32 Device::extractComID(){
-	ATA_PASS_THROUGH_DIRECT * ata = (ATA_PASS_THROUGH_DIRECT *)ataPointer;
-	UINT32 extcomID = 0 | ata->CurrentTaskFile[1];
-	extcomID = (extcomID << 8) | ata->CurrentTaskFile[2];
-	extcomID = (extcomID << 8) | ata->CurrentTaskFile[3];
-	extcomID = (extcomID << 8) | ata->CurrentTaskFile[4];
-	return extcomID;
 }
 /** Close the filehandle so this object can be delete. */
 Device::~Device(){

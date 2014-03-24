@@ -15,11 +15,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
 #include "os.h"
+#include <stdio.h>
 #include "TCGCommand.h"
 #include "Device.h"
 #include "Endianfixup.h"
 #include "HexDump.h"
-#include <stdio.h>
+
 
 TCGCommand::TCGCommand(UINT32 comIDex, TCG_USER InvokingUid, TCG_METHOD method)
 {
@@ -42,7 +43,7 @@ TCGCommand::TCGCommand(UINT32 comIDex, TCG_USER InvokingUid, TCG_METHOD method)
 	/*
 	 * allocate the buffer and build the call *
 	 */
-	buffer = (unsigned char *)_aligned_malloc(IO_BUFFER_LENGTH,16);
+	buffer = (unsigned char *)_aligned_malloc(IO_BUFFER_LENGTH,512);
 	reset(comIDex, InvokingUid, method);
 }
 void TCGCommand::reset(UINT32 ID, TCG_USER InvokingUid, TCG_METHOD method) {
@@ -135,7 +136,8 @@ void TCGCommand::complete() {
 UINT8 TCGCommand::execute(Device * d, LPVOID resp) {
 	UINT8 iorc;
 	iorc = d->SendCmd(IF_SEND, TCGProtocol, comID, buffer, IO_BUFFER_LENGTH);
-	if (0x00 == iorc)
+//	if (0x00 == iorc)
+	Sleep(250);
 		iorc = d->SendCmd(IF_RECV, TCGProtocol, comID, resp, IO_BUFFER_LENGTH);
 	return iorc;
 }

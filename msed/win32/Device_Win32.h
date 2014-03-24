@@ -20,7 +20,6 @@ class Device
 {
 public:
 	Device(TCHAR * devref);
-	UINT32 extractComID();
 	~Device();
 	UINT8 SendCmd(ATACOMMAND cmd, UINT8 protocol, UINT16 comID, 
 		PVOID buffer, INT16 bufferlen);

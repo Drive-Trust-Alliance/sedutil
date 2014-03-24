@@ -25,9 +25,21 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 int main(int argc, char * argv[])
 {
 	UINT32 extendedcomID;
-	void *resp = _aligned_malloc(IO_BUFFER_LENGTH,16);
-	memset(resp, 255, IO_BUFFER_LENGTH);
+	void *resp = _aligned_malloc(IO_BUFFER_LENGTH,512);
+	memset(resp, 0, IO_BUFFER_LENGTH);
 	Device *device = new Device("\\\\.\\PhysicalDrive3");
+// reset the protocol stack
+	//unsigned char protocolReset[] = {
+	//	0x10, 0x00, 0x00, 0x00,
+	//	0x00, 0x00, 0x00, 0x00,
+	//};
+	//memcpy(resp, protocolReset,8);
+	//device->SendCmd(IF_SEND, 0x02, 0x1000, resp, 512);
+	//memset(resp, 0, IO_BUFFER_LENGTH);
+	//Sleep(250);
+	//device->SendCmd(IF_RECV, 0x02, 0x1000, resp, 512);
+	//HexDump(resp, 16);
+	
 //	 get a commid
 //	device->SendCmd(IF_RECV, 0x00, 0x0000, resp, 512);
 //	HexDump(resp, 16);
@@ -106,17 +118,17 @@ int main(int argc, char * argv[])
 	//_aligned_free(resp);
 	//return rc;
 //Start Session
-	//TCGCommand *cmd = new TCGCommand (0x10000000, TCG_USER::SMUID, TCG_METHOD::STARTSESSION);
-	//cmd->addToken(TCG_TOKEN::STARTLIST);	// [  (Open Bracket)
-	//cmd->addToken(TCG_TINY_ATOM::uINT01);   // HostSessionID : 0x01
-	//cmd->addToken(TCG_USER::ADMINSP);		// SPID : ADMINSP 
-	//cmd->addToken(TCG_TINY_ATOM::uINT01);  // write : 1
-	//cmd->addToken(TCG_TOKEN::ENDLIST);	// ]  (Close Bracket)
-	//cmd->complete();
-	//cmd->setProtocol(0x01);
-	//cmd->dump();  // have a look see
-	//int rc = cmd->execute(device, resp);
-	//HexDump(resp, 128);
+	TCGCommand *cmd = new TCGCommand (0x10000000, TCG_USER::SMUID, TCG_METHOD::STARTSESSION);
+	cmd->addToken(TCG_TOKEN::STARTLIST);	// [  (Open Bracket)
+	cmd->addToken(TCG_TINY_ATOM::uINT01);   // HostSessionID : 0x01
+	cmd->addToken(TCG_USER::ADMINSP);		// SPID : ADMINSP 
+	cmd->addToken(TCG_TINY_ATOM::uINT01);  // write : 1
+	cmd->addToken(TCG_TOKEN::ENDLIST);	// ]  (Close Bracket)
+	cmd->complete();
+	cmd->setProtocol(0x01);
+	cmd->dump();  // have a look see
+	int rc = cmd->execute(device, resp);
+	HexDump(resp, 128);
 /*  ******************  */
 /*  CLEANUP LEAVE HERE  */
 /*  ******************  */

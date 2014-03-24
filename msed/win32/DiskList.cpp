@@ -32,7 +32,7 @@ DiskList::DiskList()
 	int i = 0;
 	UINT8 iorc;
 	Device * d;
-	buffer = _aligned_malloc(IO_BUFFER_LENGTH,16);  // this doesn't work on the heap
+	buffer = _aligned_malloc(IO_BUFFER_LENGTH,512);  
 	while (true) {
 		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i);
 		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive3", i);
