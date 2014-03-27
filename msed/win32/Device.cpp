@@ -58,9 +58,11 @@ UINT8 Device::SendCmd(ATACOMMAND cmd, UINT8 protocol, UINT16 comID,	PVOID buffer
 	memset(ata, 0, sizeof(ATA_PASS_THROUGH_DIRECT));
 	ata->Length = sizeof(ATA_PASS_THROUGH_DIRECT);
 	if (IF_RECV == cmd)
-		ata->AtaFlags = 0x00 | ATA_FLAGS_DRDY_REQUIRED | ATA_FLAGS_DATA_IN;
+//		ata->AtaFlags = 0x00 | ATA_FLAGS_DRDY_REQUIRED | ATA_FLAGS_DATA_IN;
+		ata->AtaFlags = ATA_FLAGS_DATA_IN;
 	else
-		ata->AtaFlags = 0x00 | ATA_FLAGS_DRDY_REQUIRED | ATA_FLAGS_DATA_OUT;
+//		ata->AtaFlags = 0x00 | ATA_FLAGS_DRDY_REQUIRED | ATA_FLAGS_DATA_OUT;
+		ata->AtaFlags = ATA_FLAGS_DATA_OUT;
 	ata->DataBuffer = buffer;
 	ata->DataTransferLength = bufferlen;
 	ata->TimeOutValue = 300;

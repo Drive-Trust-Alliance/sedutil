@@ -48,7 +48,7 @@ public:
 	void reset(UINT32 comIDex, TCG_USER InvokingUid, TCG_METHOD method);
 	void dump();
 private:
-#define TCGUSER_SIZE 3
+#define TCGUSER_SIZE 4
 	unsigned char TCGUSER[TCGUSER_SIZE][8];
 #define TCGMETHOD_SIZE 2
 	unsigned char TCGMETHOD[TCGMETHOD_SIZE][8];

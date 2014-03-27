@@ -28,9 +28,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Links to TCGUSER in TCGCommand 
  */
 typedef enum _TCG_USER {
-	SMUID,			//< Session management
-	THISSP,			//< ThisSP -- not sure why this is
-	ADMINSP,		//< Administrative SP
+	SMUID,			
+	THISSP,			
+	ADMINSP,		
+	ANYBODY,		
 } TCG_USER;
 
 /** TCG Methods.

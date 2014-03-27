@@ -24,7 +24,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 int main(int argc, char * argv[])
 {
-	UINT32 extendedcomID;
 	void *resp = _aligned_malloc(IO_BUFFER_LENGTH,512);
 	memset(resp, 0, IO_BUFFER_LENGTH);
 	Device *device = new Device("\\\\.\\PhysicalDrive3");
@@ -40,10 +39,9 @@ int main(int argc, char * argv[])
 	//device->SendCmd(IF_RECV, 0x02, 0x1000, resp, 512);
 	//HexDump(resp, 16);
 	
-//	 get a commid
-//	device->SendCmd(IF_RECV, 0x00, 0x0000, resp, 512);
-//	HexDump(resp, 16);
-//	extendedcomID = device->extractComID();
+//	 get a commid  == should fail because the TPer doesnt support comID management
+	device->SendCmd(IF_RECV, 0x00, 0x0000, resp, 512);
+	HexDump(resp, 512);
 ////	return 0;
 //TPer reset 
 	//device->SendCmd(IF_SEND, 0x02, 0x0004, resp, 512);
@@ -118,17 +116,30 @@ int main(int argc, char * argv[])
 	//_aligned_free(resp);
 	//return rc;
 //Start Session
+
 	TCGCommand *cmd = new TCGCommand (0x10000000, TCG_USER::SMUID, TCG_METHOD::STARTSESSION);
 	cmd->addToken(TCG_TOKEN::STARTLIST);	// [  (Open Bracket)
-	cmd->addToken(TCG_TINY_ATOM::uINT01);   // HostSessionID : 0x01
+//	cmd->addToken(TCG_TINY_ATOM::uINT01);   // HostSessionID : 0x01
+	cmd->addToken(99);   // HostSessionID : 0x99
 	cmd->addToken(TCG_USER::ADMINSP);		// SPID : ADMINSP 
 	cmd->addToken(TCG_TINY_ATOM::uINT01);  // write : 1
+// try adding a user/host signing authority
+	cmd->addToken(TCG_TOKEN::STARTNAME);
+	cmd->addToken("HostChallenge");
+	cmd->addToken("anybody");
+	cmd->addToken(TCG_TOKEN::ENDNAME);
+	cmd->addToken(TCG_TOKEN::STARTNAME);
+	cmd->addToken("HostSigningAuthority");
+	cmd->addToken(TCG_USER::ANYBODY);
+	cmd->addToken(TCG_TOKEN::ENDNAME);
+// END user/signing auth code
 	cmd->addToken(TCG_TOKEN::ENDLIST);	// ]  (Close Bracket)
+// try adding a user/host signing authority
 	cmd->complete();
 	cmd->setProtocol(0x01);
 	cmd->dump();  // have a look see
 	int rc = cmd->execute(device, resp);
-	HexDump(resp, 128);
+//	HexDump(resp, 128);
 /*  ******************  */
 /*  CLEANUP LEAVE HERE  */
 /*  ******************  */

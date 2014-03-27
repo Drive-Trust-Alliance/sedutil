@@ -17,14 +17,35 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "os.h"
 #include <stdio.h>
 void HexDump(void * address, int length) {
+	unsigned char display[17];
 	UINT8 * cpos = (UINT8 *)address;
 	UINT8 * epos = cpos + length;
 	int rpos = 0;
-	printf("\n");
+	int dpos = 0;
+	printf("\n%04x ",rpos);
 	while (cpos < epos){
-		printf("%04x %02x%02x%02x%02x %02x%02x%02x%02x ", rpos, cpos[0], cpos[1], cpos[2], cpos[3], cpos[4], cpos[5], cpos[6], cpos[7]);
-		printf("%02x%02x%02x%02x %02x%02x%02x%02x\n", cpos[8], cpos[9], cpos[10], cpos[11], cpos[12], cpos[13], cpos[14], cpos[15]);
-		cpos += 16;
-		rpos += 16;
+		printf("%02x", cpos[0]);
+		if (!((++rpos) % 4)) printf(" ");
+		display[dpos++] = (isprint(cpos[0]) ? cpos[0] : 0x2e );
+		cpos += 1;
+		if (16 == dpos) {
+			dpos = 0;
+			display[16] = 0x00;
+			printf(" %s \n", display);
+			if(cpos < epos) printf("%04x ", rpos);
+			for (int i = 0; i < 17; i++) {
+				display[i] = 0x00;
+			}
+		}
+	}
+	if (dpos != 0) {
+		if (dpos % 4) printf(" ");
+			printf("  ");
+		for (int i = dpos ; i < 15; i++) {
+			if (!(i % 4)) printf(" ");
+			printf("  ");
+		}
+		display[dpos] = 0x00;
+		printf(" %s\n", display);
 	}
 }
