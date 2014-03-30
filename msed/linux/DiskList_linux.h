@@ -15,11 +15,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
 #pragma once
-#define IO_BUFFER_LENGTH 2048
-#ifdef _WIN32
-#include "win32\os_Win32.h"
-#elif defined __gnu_linux__
-#include "linux/os_linux.h"
-#else
-#error "Unsupported Operating System"
-#endif
+#define MAX_DISKS 20
+#include "../Device.h"
+#include <vector>
+class DiskList
+{
+public:
+	DiskList();
+	~DiskList();
+private:
+	std::vector<Device> disk;  /**< store the disk list for possible GUI */
+	char devname[25];
+	void * buffer = NULL;
+	int bufferlen = IO_BUFFER_LENGTH;
+	
+};
+

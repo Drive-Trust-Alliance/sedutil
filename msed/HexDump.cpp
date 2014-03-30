@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright ï¿½ 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -14,12 +14,13 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
-#include "os.h"
+#include "os.h" 
 #include <stdio.h>
+#include <ctype.h>
 void HexDump(void * address, int length) {
-	unsigned char display[17];
-	UINT8 * cpos = (UINT8 *)address;
-	UINT8 * epos = cpos + length;
+	uint8_t display[17];
+	uint8_t * cpos = (uint8_t *)address;
+	uint8_t * epos = cpos + length;
 	int rpos = 0;
 	int dpos = 0;
 	printf("\n%04x ",rpos);
@@ -33,9 +34,7 @@ void HexDump(void * address, int length) {
 			display[16] = 0x00;
 			printf(" %s \n", display);
 			if(cpos < epos) printf("%04x ", rpos);
-			for (int i = 0; i < 17; i++) {
-				display[i] = 0x00;
-			}
+			memset(&display,0,sizeof(display));
 		}
 	}
 	if (dpos != 0) {

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright ï¿½ 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -15,7 +15,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
 
-#include "os.h"
+#include "os.h" 
 #include "DiskList.h"
 #include "Device.h"
 #include "HexDump.h"
@@ -24,11 +24,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 int main(int argc, char * argv[])
 {
-	void *resp = _aligned_malloc(IO_BUFFER_LENGTH,512);
+	void *resp = aligned_alloc(512,IO_BUFFER_LENGTH);
 	memset(resp, 0, IO_BUFFER_LENGTH);
-	Device *device = new Device("\\\\.\\PhysicalDrive3");
+	Device *device = new Device("/dev/sdh");
 // reset the protocol stack
-	//unsigned char protocolReset[] = {
+	//uint8_t protocolReset[] = {
 	//	0x10, 0x00, 0x00, 0x00,
 	//	0x00, 0x00, 0x00, 0x00,
 	//};
@@ -42,19 +42,20 @@ int main(int argc, char * argv[])
 //	 get a commid  == should fail because the TPer doesnt support comID management
 	device->SendCmd(IF_RECV, 0x00, 0x0000, resp, 512);
 	HexDump(resp, 512);
-////	return 0;
+	return 0;
 //TPer reset 
 	//device->SendCmd(IF_SEND, 0x02, 0x0004, resp, 512);
 	//HexDump(resp, 16);
 //	return 0;
-	 DiskList *dList = new DiskList();
+//	 DiskList *dList = new DiskList();
 	 //return 0;
 // properties
 //
-// session[0:0] -> SMUID.Properties[ HostProperties = [“MaxComPacketSize” = 4096, 
-// “MaxResponseComPacketSize” = 4096, “MaxPacketSize” = 4076,
-// “MaxIndTokenSize” = 4040, “MaxPackets” = 1, “MaxSubpackets” = 1,
-// “MaxMethods” = 1] ]
+// session[0:0] -> SMUID.Properties[ HostProperties = ["MaxComPacketSize" = 4096, 
+// "MaxResponseComPacketSize" = 4096, "MaxPacketSize" = 4076,
+// "MaxIndTokenSize" = 4040, "MaxPackets" = 1, "MaxSubpackets" = 1,
+// "MaxMethods" = 1] ]
+         
 	//  0000 00000000 07FE0000 00000000 00000000
 	//	0010 000000D0 00000000 00000000 00000000
 	//	0020 00000000 00000000 000000B8 00000000
@@ -78,19 +79,19 @@ int main(int argc, char * argv[])
 	//cmd->addToken(TCG_TOKEN::STARTLIST);	// [  (Open Bracket)
 	//cmd->addToken(TCG_TOKEN::STARTNAME);
 	//cmd->addToken("MaxComPacketSize");
-	//cmd->addToken((UINT16) 4096);
+	//cmd->addToken((uint16_t) 4096);
 	//cmd->addToken(TCG_TOKEN::ENDNAME);
 	//cmd->addToken(TCG_TOKEN::STARTNAME);
 	//cmd->addToken("MaxResponseComPacketSize");
-	//cmd->addToken((UINT16)4096);
+	//cmd->addToken((uint16_t)4096);
 	//cmd->addToken(TCG_TOKEN::ENDNAME);
 	//cmd->addToken(TCG_TOKEN::STARTNAME);
 	//cmd->addToken("MaxPacketSize");
-	//cmd->addToken((UINT16)4076);
+	//cmd->addToken((uint16_t)4076);
 	//cmd->addToken(TCG_TOKEN::ENDNAME);
 	//cmd->addToken(TCG_TOKEN::STARTNAME);
 	//cmd->addToken("MaxIndTokenSize");
-	//cmd->addToken((UINT16)4040);
+	//cmd->addToken((uint16_t)4040);
 	//cmd->addToken(TCG_TOKEN::ENDNAME);
 	//cmd->addToken(TCG_TOKEN::STARTNAME);
 	//cmd->addToken("MaxPackets");
@@ -124,14 +125,14 @@ int main(int argc, char * argv[])
 	cmd->addToken(TCG_USER::ADMINSP);		// SPID : ADMINSP 
 	cmd->addToken(TCG_TINY_ATOM::uINT01);  // write : 1
 // try adding a user/host signing authority
-	cmd->addToken(TCG_TOKEN::STARTNAME);
-	cmd->addToken("HostChallenge");
-	cmd->addToken("anybody");
-	cmd->addToken(TCG_TOKEN::ENDNAME);
-	cmd->addToken(TCG_TOKEN::STARTNAME);
-	cmd->addToken("HostSigningAuthority");
-	cmd->addToken(TCG_USER::ANYBODY);
-	cmd->addToken(TCG_TOKEN::ENDNAME);
+//	cmd->addToken(TCG_TOKEN::STARTNAME);
+//	cmd->addToken("HostChallenge");
+//	cmd->addToken("anybody");
+//	cmd->addToken(TCG_TOKEN::ENDNAME);
+//	cmd->addToken(TCG_TOKEN::STARTNAME);
+//	cmd->addToken("HostSigningAuthority");
+//	cmd->addToken(TCG_USER::ANYBODY);
+//	cmd->addToken(TCG_TOKEN::ENDNAME);
 // END user/signing auth code
 	cmd->addToken(TCG_TOKEN::ENDLIST);	// ]  (Close Bracket)
 // try adding a user/host signing authority
@@ -144,7 +145,7 @@ int main(int argc, char * argv[])
 /*  CLEANUP LEAVE HERE  */
 /*  ******************  */
 	delete device;
-	_aligned_free(resp);
+	free(resp);
 	return 0;
 }
 

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright ï¿½ 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,7 +23,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * that are required for the basic functionalitly provided in this
  * program.
 */
-#include "os.h"
+#include "os.h" 
 /** TCG User IDs.
  * Links to TCGUSER in TCGCommand 
  */
@@ -79,7 +79,7 @@ typedef enum _TCG_SHORT_ATOM {
 } TCG_SHORT_ATOM;
 /* 
  * Structures to build and decode the TCG messages
- * fields that are NOT really numeric are defined as UINT8[] to
+ * fields that are NOT really numeric are defined as uint8_t[] to
  * help reduce the endianess issues
  */
 /** Defines the ComPacket (header) for TCG transmissions. */
@@ -87,29 +87,29 @@ typedef enum _TCG_SHORT_ATOM {
 #pragma pack(1)
 
 typedef struct _TCGComPacket {
-	UINT32 reserved0;
-	UINT8 ExtendedComID[4];
-	UINT32 OutstandingData;
-	UINT32 MinTransfer;
-	UINT32 Length;
+	uint32_t reserved0;
+	uint8_t ExtendedComID[4];
+	uint32_t OutstandingData;
+	uint32_t MinTransfer;
+	uint32_t Length;
 } TCGComPacket;
 
 /** Defines the TCG Packet structure. */
 typedef struct _TCGPacket{
-	UINT32 TSN;
-	UINT32 HSN;
-	UINT32 SeqNumber;
-	UINT16 reserved0;
-	UINT16 AckType;
-	UINT32 Aknowledgement;
-	UINT32 Length;
+	uint32_t TSN;
+	uint32_t HSN;
+	uint32_t SeqNumber;
+	uint16_t reserved0;
+	uint16_t AckType;
+	uint32_t Aknowledgement;
+	uint32_t Length;
 } TCGPacket;
 
 /** Define the TCG Data sub header. */
 typedef struct _TCGDataSubPacket {
-	UINT8 reserved0[6];
-	UINT16 Kind;
-	UINT32 Length;
+	uint8_t reserved0[6];
+	uint16_t Kind;
+	uint32_t Length;
 } TCGDataSubPacket;
 typedef struct _TCGHeader {
 	TCGComPacket cp;

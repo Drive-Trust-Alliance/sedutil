@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright ï¿½ 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -14,31 +14,33 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
-#include "os.h"
+#include "os.h" 
+#include <iostream>
+#include <stdio.h>
 #include "Discovery0.h"
 #include "D0Structures.h"
 #include "Endianfixup.h"
 #include "HexDump.h"
-#include <iostream>
+
 
 using namespace std;
-/** Decode the Discovery 0 response. Scans the D0 response and creates gettable 
-* variables that can be quried later as required.  This code also takes care of
+/** Decode the Discovery 0 response. Scans the D0 response and creates get-able 
+* variables that can be queried later as required.  This code also takes care of
 * the endianess conversions either via a bitswap in the structure or executing
 * a macro when the input buffer is read.
 */
 /* TODO: this should throw an exception if a request is made for a field that 
  * was not returned in the D0 response 
  */
-Discovery0::Discovery0(LPVOID d0Response)
+Discovery0::Discovery0(void * d0Response)
 {
 	char fc[10];
 	char ver[10];
 	char scratch[25];
-	UINT8 * epos, *cpos;
+	uint8_t * epos, *cpos;
 	Discovery0Header * hdr;
 	Discovery0Features * body;
-	epos = cpos = (UINT8 *)d0Response;
+	epos = cpos = (uint8_t *)d0Response;
 	hdr = (Discovery0Header *)d0Response;
 	cout << "\nDumping D0Response"<< std::endl;
 	HexDump(hdr, SWAP32(hdr->length));
@@ -47,8 +49,8 @@ Discovery0::Discovery0(LPVOID d0Response)
 
 	do  {
 		body = (Discovery0Features *)cpos;
-		sprintf_s(fc, 8, "0x%04x", SWAP16(body->TPer.featureCode));
-		sprintf_s(ver, 8, "0x%02x", body->TPer.version);
+                snprintf(fc, 8, "0x%04x", SWAP16(body->TPer.featureCode));
+		snprintf(ver, 8, "0x%02x", body->TPer.version);
 		switch (SWAP16(body->TPer.featureCode)) {         /* could use of the structures here is a common field */
 		case FC_TPER:					/* TPer */
 
@@ -98,11 +100,11 @@ Discovery0::Discovery0(LPVOID d0Response)
 			break;
 		case FC_OPALV200:					/* OPAL V200 */
 			cout << "\nParsing OPAL V200   (" << fc << " ver " << ver << ")" << std::endl;
-			sprintf_s(scratch, 8, "0x%04x", SWAP16(body->OPALv200.baseCommID));
+			snprintf(scratch, 8, "0x%04x", SWAP16(body->OPALv200.baseCommID));
 			cout << "Base commID                = " << scratch << std::endl;
-			sprintf_s(scratch, 8, "0x%02x", body->OPALv200.initialPin);
+			snprintf(scratch, 8, "0x%02x", body->OPALv200.initialPin);
 			cout << "Initial PIN                = " << scratch << std::endl;
-			sprintf_s(scratch, 8, "0x%02x", body->OPALv200.revertedPin);
+			snprintf(scratch, 8, "0x%02x", body->OPALv200.revertedPin);
 			cout << "Reverted PIN               = " << scratch << std::endl;
 			cout << "Number of commIDs          = " << SWAP16(body->OPALv200.numCommIDs) << std::endl;
 			cout << "Number of Locking Admins   = " << SWAP16(body->OPALv200.numlockingAdminAuth) << std::endl;

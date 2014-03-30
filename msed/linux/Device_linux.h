@@ -15,11 +15,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
 #pragma once
-#define IO_BUFFER_LENGTH 2048
-#ifdef _WIN32
-#include "win32\os_Win32.h"
-#elif defined __gnu_linux__
-#include "linux/os_linux.h"
-#else
-#error "Unsupported Operating System"
-#endif
+
+class Device
+{
+public:
+	Device(const char * devref);
+	~Device();
+	uint8_t SendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, 
+		void * buffer, int16_t bufferlen);
+private:
+	const char * dev;
+	int fd;
+	int isOpen = FALSE;
+	
+};
+

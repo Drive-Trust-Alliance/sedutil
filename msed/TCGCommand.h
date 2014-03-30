@@ -1,6 +1,5 @@
-#pragma once
 /* C:B**************************************************************************
-This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright ï¿½ 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -31,37 +30,37 @@ class Device;
 class TCGCommand
 {
 public:
-	TCGCommand(UINT32 comIDex, TCG_USER InvokingUid,TCG_METHOD method);
+	TCGCommand(uint32_t comIDex, TCG_USER InvokingUid,TCG_METHOD method);
 	~TCGCommand();
 	void addToken(TCG_TOKEN token);
 	void addToken(TCG_TINY_ATOM token);
 	void addToken(TCG_USER token);
 	void addToken(TCG_NAME token);
-	void addToken(char * bytestring);
-	void addToken(UINT16);
+	void addToken(const char * bytestring);
+	void addToken(uint16_t);
 
-	void setHSN(UINT32 value);
-	void setTSN(UINT32 value);
-	void setProtocol(UINT8 value);
+	void setHSN(uint32_t value);
+	void setTSN(uint32_t value);
+	void setProtocol(uint8_t value);
 	void complete();
-	UINT8 execute(Device * device, LPVOID responseBuffer);
-	void reset(UINT32 comIDex, TCG_USER InvokingUid, TCG_METHOD method);
+	uint8_t execute(Device * device, void * responseBuffer);
+	void reset(uint32_t comIDex, TCG_USER InvokingUid, TCG_METHOD method);
 	void dump();
 private:
 #define TCGUSER_SIZE 4
-	unsigned char TCGUSER[TCGUSER_SIZE][8];
+	uint8_t TCGUSER[TCGUSER_SIZE][8];
 #define TCGMETHOD_SIZE 2
-	unsigned char TCGMETHOD[TCGMETHOD_SIZE][8];
-	unsigned char *buffer;
-	UINT32 bufferpos = 0;
+	uint8_t TCGMETHOD[TCGMETHOD_SIZE][8];
+	uint8_t *buffer;
+	uint32_t bufferpos = 0;
 	/* The session numbers should be taken from the
 	 * syncsession response so there will be no 
 	 * issues with endianess
 	 */
-	UINT32 TSN = 0;
-	UINT32 HSN = 0;
-	UINT16 comID;
-	UINT32 excomID;   // this is taken from the Tper so it's big endian
-	UINT8 TCGProtocol = 0x00;
+	uint32_t TSN = 0;
+	uint32_t HSN = 0;
+	uint16_t comID;
+	uint32_t excomID;   // this is taken from the Tper so it's big endian
+	uint8_t TCGProtocol = 0x00;
 };
 

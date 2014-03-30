@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="94">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>msed/Class_Skeleton.h</itemPath>
+      <itemPath>msed/D0Structures.h</itemPath>
+      <itemPath>msed/Device.h</itemPath>
+      <itemPath>msed/linux/Device_linux.h</itemPath>
+      <itemPath>msed/Discovery0.h</itemPath>
+      <itemPath>msed/DiskList.h</itemPath>
+      <itemPath>msed/linux/DiskList_linux.h</itemPath>
+      <itemPath>msed/Endianfixup.h</itemPath>
+      <itemPath>msed/HexDump.h</itemPath>
+      <itemPath>msed/TCGCommand.h</itemPath>
+      <itemPath>msed/TCGLexicon.h</itemPath>
+      <itemPath>msed/os.h</itemPath>
+      <itemPath>msed/linux/os_linux.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+      <itemPath>msed/Copyrite.txt</itemPath>
+      <itemPath>msed/ReadMe.txt</itemPath>
+      <itemPath>msed/linux/ReadMe_linux.txt</itemPath>
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <logicalFolder name="msed" displayName="msed" projectFiles="true">
+        <itemPath>msed/Class_Skeleton.cpp</itemPath>
+        <itemPath>msed/linux/Device_linux.cpp</itemPath>
+        <itemPath>msed/Discovery0.cpp</itemPath>
+        <itemPath>msed/linux/DiskList_linux.cpp</itemPath>
+        <itemPath>msed/HexDump.cpp</itemPath>
+        <itemPath>msed/TCGCommand.cpp</itemPath>
+        <itemPath>msed/msed.cpp</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>msed</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <architecture>1</architecture>
+          <standard>8</standard>
+        </ccTool>
+      </compileType>
+      <item path="msed/Class_Skeleton.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/Class_Skeleton.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/Copyrite.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/D0Structures.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/Device.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/Discovery0.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/Discovery0.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/DiskList.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/Endianfixup.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/HexDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/HexDump.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/TCGCommand.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/TCGCommand.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/TCGLexicon.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/linux/Device_linux.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/linux/Device_linux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/linux/DiskList_linux.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/linux/DiskList_linux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/linux/ReadMe_linux.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/linux/os_linux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/msed.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/os.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <stripSymbols>true</stripSymbols>
+          <architecture>1</architecture>
+          <standard>8</standard>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+      </compileType>
+      <item path="msed/Class_Skeleton.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/Class_Skeleton.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/Copyrite.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/D0Structures.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/Device.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/Discovery0.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/Discovery0.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/DiskList.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/Endianfixup.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/HexDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/HexDump.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/TCGCommand.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/TCGCommand.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/TCGLexicon.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/linux/Device_linux.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/linux/Device_linux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/linux/DiskList_linux.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/linux/DiskList_linux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/linux/ReadMe_linux.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/linux/os_linux.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/msed.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/os.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

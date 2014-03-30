@@ -15,11 +15,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
 #pragma once
-#define IO_BUFFER_LENGTH 2048
-#ifdef _WIN32
-#include "win32\os_Win32.h"
-#elif defined __gnu_linux__
-#include "linux/os_linux.h"
-#else
-#error "Unsupported Operating System"
-#endif
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+#include <errno.h>
+// Why can't I find these??
+#define TRUE 1
+#define FALSE 0 
+
+

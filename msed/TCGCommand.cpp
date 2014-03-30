@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright ï¿½ 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -14,28 +14,29 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
-#include "os.h"
+#include "os.h" 
 #include <stdio.h>
+#include <unistd.h>
 #include "TCGCommand.h"
 #include "Device.h"
 #include "Endianfixup.h"
 #include "HexDump.h"
 
 
-TCGCommand::TCGCommand(UINT32 comIDex, TCG_USER InvokingUid, TCG_METHOD method)
+TCGCommand::TCGCommand(uint32_t comIDex, TCG_USER InvokingUid, TCG_METHOD method)
 {
 	/* ******************* BS ALERT **************************
 	 * this is ugly and stupid but VS2013 gives an error when I
 	 * try and initialize these in the header declareation
 	 */
-	unsigned char tu[TCGUSER_SIZE][8]{
+	uint8_t tu[TCGUSER_SIZE][8]{
 		{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff},  // session management
 		{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 },  // special "thisSP" syntax
 		{ 0x00, 0x00, 0x02, 0x05, 0x00, 0x00, 0x00, 0x01 },  // Administrative SP
 		{ 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x01 }, //anybody
 	};
 	memcpy(TCGUSER, tu, TCGUSER_SIZE * 8);
-	unsigned char tm[TCGMETHOD_SIZE][8]{
+	uint8_t tm[TCGMETHOD_SIZE][8]{
 		{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x01 }, // Properties
 		{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x02 } //STARTSESSION
 	};
@@ -44,10 +45,10 @@ TCGCommand::TCGCommand(UINT32 comIDex, TCG_USER InvokingUid, TCG_METHOD method)
 	/*
 	 * allocate the buffer and build the call *
 	 */
-	buffer = (unsigned char *)_aligned_malloc(IO_BUFFER_LENGTH,512);
+	buffer = (uint8_t *)aligned_alloc(512,IO_BUFFER_LENGTH);
 	reset(comIDex, InvokingUid, method);
 }
-void TCGCommand::reset(UINT32 ID, TCG_USER InvokingUid, TCG_METHOD method) {
+void TCGCommand::reset(uint32_t ID, TCG_USER InvokingUid, TCG_METHOD method) {
 	excomID = ID;
 	comID = ID >> 16;
 	memset(buffer, 0, IO_BUFFER_LENGTH);
@@ -78,12 +79,12 @@ void TCGCommand::reset(UINT32 ID, TCG_USER InvokingUid, TCG_METHOD method) {
 	memcpy(&buffer[bufferpos], &TCGMETHOD[method][0], 8); /* bytes 11-18 */
 	bufferpos += 8;
 }
-void TCGCommand::addToken(UINT16 number) {
+void TCGCommand::addToken(uint16_t number) {
 	buffer[bufferpos++] = 0x82;
 	buffer[bufferpos++] = ((number & 0xff00) >> 8);
 		buffer[bufferpos++] = (number & 0x00ff);
 }
-void TCGCommand::addToken(char * bytestring) {
+void TCGCommand::addToken(const char * bytestring) {
 	if (strlen(bytestring) < 16) {
 		/* use tiny atom */
 		buffer[bufferpos++] = strlen(bytestring) | 0xa0;
@@ -134,21 +135,21 @@ void TCGCommand::complete() {
 		- sizeof(TCGPacket));
 	hdr->cp.Length = SWAP32(bufferpos - sizeof(TCGComPacket));
 }
-UINT8 TCGCommand::execute(Device * d, LPVOID resp) {
-	UINT8 iorc;
+uint8_t TCGCommand::execute(Device * d, void * resp) {
+	uint8_t iorc;
 	iorc = d->SendCmd(IF_SEND, TCGProtocol, comID, buffer, IO_BUFFER_LENGTH);
 //	if (0x00 == iorc)
-	Sleep(250);
+	sleep(1);
 		iorc = d->SendCmd(IF_RECV, TCGProtocol, comID, resp, IO_BUFFER_LENGTH);
 	return iorc;
 }
-void TCGCommand::setHSN(UINT32 value) {
+void TCGCommand::setHSN(uint32_t value) {
 	HSN = value;
 }
-void TCGCommand::setTSN(UINT32 value) {
+void TCGCommand::setTSN(uint32_t value) {
 	TSN = value;
 }
-void TCGCommand::setProtocol(UINT8 value) {
+void TCGCommand::setProtocol(uint8_t value) {
 	TCGProtocol = value;
 }
 void TCGCommand::dump() {
@@ -156,5 +157,5 @@ void TCGCommand::dump() {
 }
 TCGCommand::~TCGCommand()
 {
-	_aligned_free(buffer);
+	free(buffer);
 }
