@@ -15,7 +15,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
 #pragma once
-#define IO_BUFFER_LENGTH 2048
+#define IO_BUFFER_LENGTH 2048  // minimum for OPAL 2.0 
 #ifdef _WIN32
 #include "win32\os_Win32.h"
 #elif defined __gnu_linux__

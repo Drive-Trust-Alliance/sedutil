@@ -5,7 +5,6 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>msed/Class_Skeleton.h</itemPath>
-      <itemPath>msed/D0Structures.h</itemPath>
       <itemPath>msed/Device.h</itemPath>
       <itemPath>msed/linux/Device_linux.h</itemPath>
       <itemPath>msed/Discovery0.h</itemPath>
@@ -15,6 +14,7 @@
       <itemPath>msed/HexDump.h</itemPath>
       <itemPath>msed/TCGCommand.h</itemPath>
       <itemPath>msed/TCGLexicon.h</itemPath>
+      <itemPath>msed/TCGStructures.h</itemPath>
       <itemPath>msed/os.h</itemPath>
       <itemPath>msed/linux/os_linux.h</itemPath>
     </logicalFolder>
@@ -49,6 +49,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>msed/tryed.txt</itemPath>
   </logicalFolder>
   <sourceRootList>
     <Elem>msed</Elem>
@@ -73,8 +74,6 @@
       </item>
       <item path="msed/Copyrite.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/D0Structures.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="msed/Device.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/Discovery0.cpp" ex="false" tool="1" flavor2="0">
@@ -97,6 +96,8 @@
       </item>
       <item path="msed/TCGLexicon.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="msed/TCGStructures.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="msed/linux/Device_linux.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/linux/Device_linux.h" ex="false" tool="3" flavor2="0">
@@ -112,6 +113,8 @@
       <item path="msed/msed.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/os.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/tryed.txt" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -143,8 +146,6 @@
       </item>
       <item path="msed/Copyrite.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/D0Structures.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="msed/Device.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/Discovery0.cpp" ex="false" tool="1" flavor2="0">
@@ -167,6 +168,8 @@
       </item>
       <item path="msed/TCGLexicon.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="msed/TCGStructures.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="msed/linux/Device_linux.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/linux/Device_linux.h" ex="false" tool="3" flavor2="0">
@@ -182,6 +185,8 @@
       <item path="msed/msed.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/os.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/tryed.txt" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

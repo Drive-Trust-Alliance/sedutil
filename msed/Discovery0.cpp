@@ -18,7 +18,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
 #include <stdio.h>
 #include "Discovery0.h"
-#include "D0Structures.h"
+#include "TCGStructures.h"
 #include "Endianfixup.h"
 #include "HexDump.h"
 

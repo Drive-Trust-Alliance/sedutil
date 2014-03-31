@@ -7,8 +7,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/r0m30/Projects/msed/msed/linux/os_linux.h</file>
-            <file>file:/home/r0m30/Projects/msed/msed/linux/Device_linux.cpp</file>
+            <file>file:/home/r0m30/Projects/msed/msed/TCGLexicon.h</file>
+            <file>file:/home/r0m30/Projects/msed/msed/TCGCommand.cpp</file>
+            <file>file:/home/r0m30/Projects/msed/msed/TCGCommand.h</file>
+            <file>file:/home/r0m30/Projects/msed/msed/msed.cpp</file>
         </group>
     </open-files>
 </project-private>
