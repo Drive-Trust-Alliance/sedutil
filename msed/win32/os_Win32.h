@@ -20,3 +20,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _WIN32_WINNT _WIN32_WINNT_WINXP
 #include <SDKDDKVer.h>
 #include <Windows.h>
+
+#define ALIGNED_ALLOC(alignment, length) _aligned_malloc(length,alignment)
+#define SNPRINTF sprintf_s
+#define ALIGNED_FREE _aligned_free
+typedef UINT8 uint8_t;
+typedef UINT16 uint16_t;
+typedef UINT32 uint32_t;
+typedef INT8 int8_t;
+typedef INT16 int16_t;
+typedef INT32 int32_t;

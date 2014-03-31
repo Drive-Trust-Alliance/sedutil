@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright � 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,9 +26,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 int main(int argc, char * argv[])
 {
-    void *resp = aligned_alloc(512, IO_BUFFER_LENGTH);
+    void *resp = ALIGNED_ALLOC(512, IO_BUFFER_LENGTH);
     memset(resp, 0, IO_BUFFER_LENGTH);
-    Device *device = new Device("/dev/sdh");
+//    Device *device = new Device("/dev/sdh");
+	Device *device = new Device("\\\\.\\PhysicalDrive3");
     //    int d0rc = device->SendCmd(IF_RECV, 0x01, 0x0100, resp, IO_BUFFER_LENGTH);
     //    HexDump(resp, 256);
     //Start Session
@@ -53,6 +54,7 @@ int main(int argc, char * argv[])
         HexDump(resp, 16);
         goto exit;
     }
+	HexDump(resp, 16);
     {
         StartSessionResponse * ssreply = (StartSessionResponse *) resp;
         cmd->setHSN(ssreply->HostSessionNumber);
@@ -69,7 +71,7 @@ exit:
     /*  CLEANUP LEAVE HERE  */
     /*  ******************  */
     delete device;
-    free(resp);
+    ALIGNED_FREE(resp);
     return 0;
 }
 

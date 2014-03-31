@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright � 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -49,8 +49,8 @@ Discovery0::Discovery0(void * d0Response)
 
 	do  {
 		body = (Discovery0Features *)cpos;
-                snprintf(fc, 8, "0x%04x", SWAP16(body->TPer.featureCode));
-		snprintf(ver, 8, "0x%02x", body->TPer.version);
+		SNPRINTF(fc, 8, "0x%04x", SWAP16(body->TPer.featureCode));
+		SNPRINTF(ver, 8, "0x%02x", body->TPer.version);
 		switch (SWAP16(body->TPer.featureCode)) {         /* could use of the structures here is a common field */
 		case FC_TPER:					/* TPer */
 
@@ -100,11 +100,11 @@ Discovery0::Discovery0(void * d0Response)
 			break;
 		case FC_OPALV200:					/* OPAL V200 */
 			cout << "\nParsing OPAL V200   (" << fc << " ver " << ver << ")" << std::endl;
-			snprintf(scratch, 8, "0x%04x", SWAP16(body->OPALv200.baseCommID));
+			SNPRINTF(scratch, 8, "0x%04x", SWAP16(body->OPALv200.baseCommID));
 			cout << "Base commID                = " << scratch << std::endl;
-			snprintf(scratch, 8, "0x%02x", body->OPALv200.initialPin);
+			SNPRINTF(scratch, 8, "0x%02x", body->OPALv200.initialPin);
 			cout << "Initial PIN                = " << scratch << std::endl;
-			snprintf(scratch, 8, "0x%02x", body->OPALv200.revertedPin);
+			SNPRINTF(scratch, 8, "0x%02x", body->OPALv200.revertedPin);
 			cout << "Reverted PIN               = " << scratch << std::endl;
 			cout << "Number of commIDs          = " << SWAP16(body->OPALv200.numCommIDs) << std::endl;
 			cout << "Number of Locking Admins   = " << SWAP16(body->OPALv200.numlockingAdminAuth) << std::endl;

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright � 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -16,7 +16,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * C:E********************************************************************* */
 #include "os.h"
 #include <stdio.h>
+#ifdef __gnu_linux__
 #include <unistd.h>
+#endif
 #include "TCGCommand.h"
 #include "Device.h"
 #include "Endianfixup.h"
@@ -52,7 +54,7 @@ TCGCommand::TCGCommand(uint16_t ID, TCG_UID InvokingUid, TCG_METHOD method)
     /*
      * allocate the buffer and build the call *
      */
-    buffer = (uint8_t *) aligned_alloc(512, IO_BUFFER_LENGTH);
+    buffer = (uint8_t *) ALIGNED_ALLOC(512, IO_BUFFER_LENGTH);
     reset(ID, InvokingUid, method);
 }
 
@@ -143,7 +145,7 @@ TCGCommand::addToken(TCG_UID token)
     bufferpos += 8;
 }
 
-uint8_t
+void
 TCGCommand::complete()
 {
     buffer[bufferpos++] = TCG_TOKEN::ENDOFDATA;
@@ -213,5 +215,5 @@ TCGCommand::dump()
 
 TCGCommand::~TCGCommand()
 {
-    free(buffer);
+    ALIGNED_FREE(buffer);
 }

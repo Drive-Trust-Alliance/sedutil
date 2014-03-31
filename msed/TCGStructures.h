@@ -114,7 +114,7 @@ typedef struct _Discovery0GeometryFeatures {
     uint8_t length;
     /* big Endian
     uint8_t reserved01 : 7;
-    uint8_t align : 1;		/// Tied to the Locking info table somehow??
+    uint8_t align : 1;		// Tied to the Locking info table somehow??
      */
     uint8_t align : 1; /// Tied to the Locking info table somehow??
     uint8_t reserved01 : 7;
@@ -260,7 +260,7 @@ typedef struct _TCGHeader {
 } TCGHeader;
 
 typedef struct _StartSessionResponse {
-    uint16_t HostSessionNumber;
-    uint16_t TPerSessionNumber;
+    uint32_t HostSessionNumber;
+    uint32_t TPerSessionNumber;
 } StartSessionResponse;
 #pragma pack(pop)

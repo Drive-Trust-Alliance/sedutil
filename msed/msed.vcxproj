@@ -76,14 +76,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="Copyrite.txt" />
+    <Text Include="Copyright.txt" />
     <Text Include="ReadMe.txt" />
+    <Text Include="tryed.txt" />
     <Text Include="Warning.txt" />
     <Text Include="win32\ReadMe_Windows.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class_Skeleton.h" />
-    <ClInclude Include="D0Structures.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="Discovery0.h" />
     <ClInclude Include="DiskList.h" />
@@ -92,6 +92,7 @@
     <ClInclude Include="os.h" />
     <ClInclude Include="TCGCommand.h" />
     <ClInclude Include="TCGLexicon.h" />
+    <ClInclude Include="TCGStructures.h" />
     <ClInclude Include="win32\Device_Win32.h" />
     <ClInclude Include="win32\DiskList_Win32.h" />
     <ClInclude Include="win32\os_Win32.h" />

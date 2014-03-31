@@ -19,9 +19,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Copyrite.txt">
-      <Filter>Documentation</Filter>
-    </Text>
     <Text Include="ReadMe.txt">
       <Filter>Documentation</Filter>
     </Text>
@@ -31,15 +28,18 @@
     <Text Include="Warning.txt">
       <Filter>Documentation</Filter>
     </Text>
+    <Text Include="tryed.txt">
+      <Filter>Documentation</Filter>
+    </Text>
+    <Text Include="Copyright.txt">
+      <Filter>Documentation</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="os.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Discovery0.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="D0Structures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Endianfixup.h">
@@ -70,6 +70,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="win32\Device_Win32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TCGStructures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

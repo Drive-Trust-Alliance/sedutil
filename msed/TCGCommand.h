@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright � 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -44,7 +44,7 @@ public:
     void setProtocol(uint8_t value);
     uint8_t SEND(Device * device);
     uint8_t RECV(Device * device, void * resp);
-    uint8_t complete();
+    void complete();
     uint8_t execute(Device * device, void * responseBuffer);
     void reset(uint16_t comID, TCG_UID InvokingUid, TCG_METHOD method);
     void dump();
