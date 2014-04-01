@@ -54,7 +54,7 @@ TCGCommand::TCGCommand(uint16_t ID, TCG_UID InvokingUid, TCG_METHOD method)
     /*
      * allocate the buffer and build the call *
      */
-    buffer = (uint8_t *) ALIGNED_ALLOC(512, IO_BUFFER_LENGTH);
+    buffer = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     reset(ID, InvokingUid, method);
 }
 

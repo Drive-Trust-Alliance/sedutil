@@ -28,7 +28,7 @@ using namespace std;
  */
 Device::Device(TCHAR * devref) {
 	ATA_PASS_THROUGH_DIRECT * ata = 
-		(ATA_PASS_THROUGH_DIRECT *)_aligned_malloc(sizeof(ATA_PASS_THROUGH_DIRECT),512);
+		(ATA_PASS_THROUGH_DIRECT *)_aligned_malloc(sizeof(ATA_PASS_THROUGH_DIRECT),4096);
 	ataPointer = (void *)ata;
 	dev = devref;
 	hDev = CreateFile((TCHAR *)dev,
@@ -58,11 +58,10 @@ UINT8 Device::SendCmd(ATACOMMAND cmd, UINT8 protocol, UINT16 comID,	PVOID buffer
 	memset(ata, 0, sizeof(ATA_PASS_THROUGH_DIRECT));
 	ata->Length = sizeof(ATA_PASS_THROUGH_DIRECT);
 	if (IF_RECV == cmd)
-//		ata->AtaFlags = 0x00 | ATA_FLAGS_DRDY_REQUIRED | ATA_FLAGS_DATA_IN;
-		ata->AtaFlags = ATA_FLAGS_DATA_IN;
+		ata->AtaFlags = 0x00 | ATA_FLAGS_DRDY_REQUIRED | ATA_FLAGS_DATA_IN;
 	else
-//		ata->AtaFlags = 0x00 | ATA_FLAGS_DRDY_REQUIRED | ATA_FLAGS_DATA_OUT;
-		ata->AtaFlags = ATA_FLAGS_DATA_OUT;
+		ata->AtaFlags = 0x00 | ATA_FLAGS_DRDY_REQUIRED | ATA_FLAGS_DATA_OUT;
+
 	ata->DataBuffer = buffer;
 	ata->DataTransferLength = bufferlen;
 	ata->TimeOutValue = 300;
@@ -70,8 +69,8 @@ UINT8 Device::SendCmd(ATACOMMAND cmd, UINT8 protocol, UINT16 comID,	PVOID buffer
 	ata->CurrentTaskFile[0] = protocol;             // Protocol
 	ata->CurrentTaskFile[1] = int(bufferlen / 512);             // Payload in number of 512 blocks
 	// Damn self inflicted little endian bugs
-	ata->CurrentTaskFile[4] = (comID & 0x00ff);					// Commid MSB
-	ata->CurrentTaskFile[3] = ((comID & 0xff00) >> 8);			// Commid LSB
+	ata->CurrentTaskFile[3] = (comID & 0x00ff);					// Commid MSB
+	ata->CurrentTaskFile[4] = ((comID & 0xff00) >> 8);			// Commid LSB
 	ata->CurrentTaskFile[6] = cmd;             // ata Command (0x5e or ox5c)
 	printf("\nata before \n");
 	HexDump(ata, sizeof(ATA_PASS_THROUGH_DIRECT));

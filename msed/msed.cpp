@@ -26,22 +26,24 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 int main(int argc, char * argv[])
 {
-    void *resp = ALIGNED_ALLOC(512, IO_BUFFER_LENGTH);
+    void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     memset(resp, 0, IO_BUFFER_LENGTH);
 //    Device *device = new Device("/dev/sdh");
 	Device *device = new Device("\\\\.\\PhysicalDrive3");
-    //    int d0rc = device->SendCmd(IF_RECV, 0x01, 0x0100, resp, IO_BUFFER_LENGTH);
-    //    HexDump(resp, 256);
+ //   int d0rc = device->SendCmd(IF_RECV, 0x01, 0x0001, resp, IO_BUFFER_LENGTH);
+ //   HexDump(resp, 256);
+	DiskList * dl = new DiskList();
+	delete dl;
     //Start Session
 
-    TCGCommand *cmd = new TCGCommand(SWAP16(0x1000), TCG_UID::SMUID,
+    TCGCommand *cmd = new TCGCommand(0x1000, TCG_UID::SMUID,
                                      TCG_METHOD::STARTSESSION);
     //    for (uint16_t i = 0x0000; i < 0xffff; i += 0x0001) {
-    //        cmd->reset(i, TCG_USER::SMUID, TCG_METHOD::STARTSESSION);
+    //        cmd->reset(i, TCG_UID::SMUID, TCG_METHOD::STARTSESSION);
     cmd->addToken(TCG_TOKEN::STARTLIST); // [  (Open Bracket)
     cmd->addToken(TCG_TINY_ATOM::uINT01); // HostSessionID : 0x01
-    cmd->addToken(99); // HostSessionID : 0x99
-    //    cmd->addToken(TCG_USER::ADMINSP); // SPID : ADMINSP
+    //cmd->addToken(99); // HostSessionID : 0x99
+    cmd->addToken(TCG_UID::ADMINSP); // SPID : ADMINSP
     cmd->addToken(TCG_TINY_ATOM::uINT01); // write : 1
     cmd->addToken(TCG_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
@@ -54,7 +56,7 @@ int main(int argc, char * argv[])
         HexDump(resp, 16);
         goto exit;
     }
-	HexDump(resp, 16);
+	HexDump(resp, 128);
     {
         StartSessionResponse * ssreply = (StartSessionResponse *) resp;
         cmd->setHSN(ssreply->HostSessionNumber);
@@ -62,7 +64,7 @@ int main(int argc, char * argv[])
     }
     // session[TSN:HSN] -> C_PIN_MSID_UID.Get[Cellblock : [startColumn = PIN,
     //                       endColumn = PIN]]
-    cmd->reset(SWAP16(0x1000), TCG_UID::C_PIN_MSID, TCG_METHOD::GET);
+    cmd->reset(0x1000, TCG_UID::C_PIN_MSID, TCG_METHOD::GET);
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::STARTLIST);
 

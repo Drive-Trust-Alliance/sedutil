@@ -32,15 +32,15 @@ DiskList::DiskList()
 	int i = 0;
 	UINT8 iorc;
 	Device * d;
-	buffer = _aligned_malloc(IO_BUFFER_LENGTH,512);  
+	buffer = _aligned_malloc(IO_BUFFER_LENGTH,4096);  
 	while (true) {
 		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i);
-		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive3", i);
+//		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive3", i);
 		printf("Testing %s for TCG OPAL ... ", devname);
 		d = new Device(devname);
 //		disk.push_back(*d);
 		memset(buffer, 0, IO_BUFFER_LENGTH);
-		iorc = d->SendCmd(IF_RECV, 0x01, 0x0100, buffer, bufferlen);
+		iorc = d->SendCmd(IF_RECV, 0x01, 0x0001, buffer, bufferlen);
 		if (0xff == iorc) break;
 		if (0x00 == iorc) {
 			printf(" Yes\n");
@@ -48,7 +48,7 @@ DiskList::DiskList()
 		} else {
 			printf(" No\n");
 		}
-		break;
+		//break;
 		if (i++ == MAX_DISKS) {
 			std::cout << "20+ disks, really?" << std::endl;
 			break;
