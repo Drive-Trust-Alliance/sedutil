@@ -13,30 +13,27 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 #pragma once
 
-#if (!defined _WIN32) && (!defined __gnu_linux__)
-#error "Unsupported Operating System"
-#endif
 #include "TCGStructures.h"
 
-class Device
-{
+class Device {
 public:
-	Device(char * devref);
-	~Device();
-	uint8_t SendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-		void * buffer, uint16_t bufferlen);
-	uint8_t isOpal2();
-	uint8_t isPresent();
-	uint16_t comID();
-	void Puke();
+    Device(const char * devref);
+    ~Device();
+    uint8_t SendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+            void * buffer, uint16_t bufferlen);
+    uint8_t isOpal2();
+    uint8_t isPresent();
+    uint16_t comID();
+    void Puke();
 private:
-	void Discovery0();
-	char * dev;
-	TCG_FILE_DESCRIPTOR hDev;
-	uint8_t isOpen = FALSE;
-	void *ataPointer;
-	TCG_DiskInfo disk_info;
+    void Discovery0();
+    const char * dev;
+    TCG_FILE_DESCRIPTOR hDev; // file descriptor (type is OS specific)
+    int fd;
+    uint8_t isOpen = FALSE;
+    void *ataPointer;
+    TCG_DiskInfo disk_info;
 };

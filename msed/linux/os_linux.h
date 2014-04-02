@@ -26,5 +26,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define SNPRINTF snprintf
 #define ALIGNED_ALLOC(alignment, length) aligned_alloc(alignment, length)
 #define ALIGNED_FREE free
+typedef int TCG_FILE_DESCRIPTOR;
 
 

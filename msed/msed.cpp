@@ -28,20 +28,23 @@ int main(int argc, char * argv[])
 {
     void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     memset(resp, 0, IO_BUFFER_LENGTH);
-//    Device *device = new Device("/dev/sdh");
-	Device *device = new Device("\\\\.\\PhysicalDrive3");
- //   int d0rc = device->SendCmd(IF_RECV, 0x01, 0x0001, resp, IO_BUFFER_LENGTH);
- //   HexDump(resp, 256);
-	DiskList * dl = new DiskList();
-	delete dl;
-// d0Response
-	device->Puke();
-//	Start Session
+#if defined __gnu_linux__
+    Device *device = new Device("/dev/sdh");
+#elif defined _WIN32
+    Device *device = new Device("\\\\.\\PhysicalDrive3");
+#endif
+    //   int d0rc = device->SendCmd(IF_RECV, 0x01, 0x0001, resp, IO_BUFFER_LENGTH);
+    //   HexDump(resp, 256);
+    DiskList * dl = new DiskList();
+    delete dl;
+    // d0Response
+    device->Puke();
+    //	Start Session
     TCGCommand *cmd = new TCGCommand(0x1000, TCG_UID::SMUID,
                                      TCG_METHOD::STARTSESSION);
-     cmd->addToken(TCG_TOKEN::STARTLIST); // [  (Open Bracket)
-  //  cmd->addToken(TCG_TINY_ATOM::uINT01); // HostSessionID : 0x01
-    cmd->addToken(99);						// HostSessionID : 0x99
+    cmd->addToken(TCG_TOKEN::STARTLIST); // [  (Open Bracket)
+    //  cmd->addToken(TCG_TINY_ATOM::uINT01); // HostSessionID : 0x01
+    cmd->addToken(99); // HostSessionID : 0x99
     cmd->addToken(TCG_UID::ADMINSP); // SPID : ADMINSP
     cmd->addToken(TCG_TINY_ATOM::uINT01); // write : 1
     cmd->addToken(TCG_TOKEN::ENDLIST); // ]  (Close Bracket)
@@ -55,8 +58,8 @@ int main(int argc, char * argv[])
         HexDump(resp, 16);
         goto exit;
     }
-	printf("\nDumping SyncSession Reply\n");
-	HexDump(resp, 128);
+    printf("\nDumping SyncSession Reply\n");
+    HexDump(resp, 128);
     {
         StartSessionResponse * ssreply = (StartSessionResponse *) resp;
         cmd->setHSN(ssreply->HostSessionNumber);

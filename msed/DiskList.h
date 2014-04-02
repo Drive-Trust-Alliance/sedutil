@@ -13,12 +13,15 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 #pragma once
-#ifdef _WIN32
-#include "win32\DiskList_Win32.h"
-#elif defined __gnu_linux__
-#include "linux/DiskList_linux.h"
-#else
-#error "Unsupported Operating System"
-#endif
+#define MAX_DISKS 20
+#include "Device.h"
+
+class DiskList {
+public:
+    DiskList();
+    ~DiskList();
+private:
+    char devname[25];
+};

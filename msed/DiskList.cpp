@@ -14,24 +14,29 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  * C:E********************************************************************** */
-#include "..\os.h"
+#include "os.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "..\Device.h"
-#include "..\DiskList.h"
-
+#include "Device.h"
+#include "DiskList.h"
 /** Brute force disk scan.
  * loops through the physical devices until
  * there is an open error. Creates a Device
  * and reports OPAL support.
  */
+#if defined _WIN32
+#define DEVICEMASK "\\\\.\\PhysicalDrive%i"
+#elif defined __gnu_linux__
+#define DEVICEMASK "/dev/sg%i"
+#endif
+
 DiskList::DiskList()
 {
     int i = 0;
     Device * d;
     printf("\nScanning for Opal 2.0 compliant disks\n");
     while (TRUE) {
-        SNPRINTF(devname, 23, "\\\\.\\PhysicalDrive%i", i);
+        SNPRINTF(devname, 23, DEVICEMASK, i);
         //		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive3", i);
         d = new Device(devname);
         if (d->isPresent()) {

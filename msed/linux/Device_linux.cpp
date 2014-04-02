@@ -30,19 +30,22 @@ using namespace std;
 
 /** The Device class represents a single disk device.
  *  Linux specific implementation using the SCSI generic interface and
- *  SCSI ATA Pass Through (12) command 0xa1
+ *  SCSI ATA Pass Through (12) command 0pa1
  */
 Device::Device(const char * devref)
 {
     dev = devref;
-    if ((fd = open(dev, O_RDWR)) < 0)
+    if ((hDev = open(dev, O_RDWR)) < 0)
         isOpen = FALSE;
-    else
+    else {
         isOpen = TRUE;
+        Discovery0();
+    }
 }
 
 /** Send an ioctl to the device using pass through. */
-uint8_t Device::SendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, void * buffer, int16_t bufferlen)
+uint8_t Device::SendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+                        void * buffer, uint16_t bufferlen)
 {
     sg_io_hdr_t sg;
     uint8_t sense[32]; // how big should this be??
@@ -81,8 +84,8 @@ uint8_t Device::SendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, void *
     cdb[3] = protocol; // ATA features / TRUSTED S/R security protocol
     cdb[4] = bufferlen / 512; // Sector count / transfer length (512b blocks)
     //      cdb[5] = reserved;
-    cdb[6] = ((comID & 0xff00) >> 8);
-    cdb[7] = (comID & 0x00ff);
+    cdb[7] = ((comID & 0xff00) >> 8);
+    cdb[6] = (comID & 0x00ff);
     //      cdb[8] = 0x00;              // device
     cdb[9] = cmd; // IF_SEND/IF_RECV
     //      cdb[10] = 0x00;              // reserved
@@ -111,26 +114,26 @@ uint8_t Device::SendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, void *
     /*
      * Do the IO
      */
-    if (ioctl(fd, SG_IO, &sg) < 0) {
-        printf("\ncdb after \n");
-        HexDump(cdb, sizeof (cdb));
-        printf("\nsg after \n");
-        HexDump(&sg, sizeof (sg));
-        printf("\nsense after \n");
-        HexDump(sense, sizeof (sense));
+    if (ioctl(hDev, SG_IO, &sg) < 0) {
+        //        printf("\ncdb after \n");
+        //        HexDump(cdb, sizeof (cdb));
+        //        printf("\nsg after \n");
+        //        HexDump(&sg, sizeof (sg));
+        //        printf("\nsense after \n");
+        //        HexDump(sense, sizeof (sense));
         return 0xff;
     }
-    printf("\ncdb after \n");
-    HexDump(cdb, sizeof (cdb));
-    printf("\nsg after \n");
-    HexDump(&sg, sizeof (sg));
-    printf("\nsense after \n");
-    HexDump(sense, sizeof (sense));
+    //    printf("\ncdb after \n");
+    //    HexDump(cdb, sizeof (cdb));
+    //    printf("\nsg after \n");
+    //    HexDump(&sg, sizeof (sg));
+    //    printf("\nsense after \n");
+    //    HexDump(sense, sizeof (sense));
     return (sense[11]);
 }
 
 /** Close the device reference so this object can be delete. */
 Device::~Device()
 {
-    close(fd);
+    close(hDev);
 }

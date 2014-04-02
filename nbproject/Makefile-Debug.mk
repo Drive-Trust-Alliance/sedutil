@@ -36,11 +36,11 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/msed/Class_Skeleton.o \
-	${OBJECTDIR}/msed/Discovery0.o \
+	${OBJECTDIR}/msed/Device_common.o \
+	${OBJECTDIR}/msed/DiskList.o \
 	${OBJECTDIR}/msed/HexDump.o \
 	${OBJECTDIR}/msed/TCGCommand.o \
 	${OBJECTDIR}/msed/linux/Device_linux.o \
-	${OBJECTDIR}/msed/linux/DiskList_linux.o \
 	${OBJECTDIR}/msed/msed.o
 
 
@@ -73,10 +73,15 @@ ${OBJECTDIR}/msed/Class_Skeleton.o: msed/Class_Skeleton.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/Class_Skeleton.o msed/Class_Skeleton.cpp
 
-${OBJECTDIR}/msed/Discovery0.o: msed/Discovery0.cpp 
+${OBJECTDIR}/msed/Device_common.o: msed/Device_common.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/Discovery0.o msed/Discovery0.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/Device_common.o msed/Device_common.cpp
+
+${OBJECTDIR}/msed/DiskList.o: msed/DiskList.cpp 
+	${MKDIR} -p ${OBJECTDIR}/msed
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/DiskList.o msed/DiskList.cpp
 
 ${OBJECTDIR}/msed/HexDump.o: msed/HexDump.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
@@ -92,11 +97,6 @@ ${OBJECTDIR}/msed/linux/Device_linux.o: msed/linux/Device_linux.cpp
 	${MKDIR} -p ${OBJECTDIR}/msed/linux
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/linux/Device_linux.o msed/linux/Device_linux.cpp
-
-${OBJECTDIR}/msed/linux/DiskList_linux.o: msed/linux/DiskList_linux.cpp 
-	${MKDIR} -p ${OBJECTDIR}/msed/linux
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/linux/DiskList_linux.o msed/linux/DiskList_linux.cpp
 
 ${OBJECTDIR}/msed/msed.o: msed/msed.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
