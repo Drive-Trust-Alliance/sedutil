@@ -15,15 +15,28 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
 #pragma once
-typedef enum _ATACOMMAND{
-	IF_RECV = 0x5c,
-	IF_SEND = 0x5e
-} ATACOMMAND;
-#ifdef _WIN32
-#include "win32\Device_Win32.h"
-#elif defined __gnu_linux__
 
-#include "linux/Device_linux.h"
-#else
+#if (!defined _WIN32) && (!defined __gnu_linux__)
 #error "Unsupported Operating System"
 #endif
+#include "TCGStructures.h"
+
+class Device
+{
+public:
+	Device(char * devref);
+	~Device();
+	uint8_t SendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+		void * buffer, uint16_t bufferlen);
+	uint8_t isOpal2();
+	uint8_t isPresent();
+	uint16_t comID();
+	void Puke();
+private:
+	void Discovery0();
+	char * dev;
+	TCG_FILE_DESCRIPTOR hDev;
+	uint8_t isOpen = FALSE;
+	void *ataPointer;
+	TCG_DiskInfo disk_info;
+};

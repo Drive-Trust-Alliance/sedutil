@@ -263,4 +263,57 @@ typedef struct _StartSessionResponse {
     uint32_t HostSessionNumber;
     uint32_t TPerSessionNumber;
 } StartSessionResponse;
+typedef enum _ATACOMMAND{
+	IF_RECV = 0x5c,
+	IF_SEND = 0x5e
+} ATACOMMAND;
+
+/** structure to store D0 information. */
+typedef struct _TCG_DiskInfo {
+	// parsed the Function block?
+	uint8_t TPer : 1;
+	uint8_t Locking : 1;
+	uint8_t Geometry : 1;
+	uint8_t Enterprise : 1;
+	uint8_t SingleUser : 1;
+	uint8_t DataStore : 1;
+	uint8_t OPAL20 : 1;
+	uint8_t Unknown;
+	// values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
+	uint8_t TPer_ACKNACK : 1;
+	uint8_t TPer_ASYNC : 1;
+	uint8_t TPer_BufferMgt : 1;
+	uint8_t TPer_comIDMgt : 1;
+	uint8_t TPer_Streaming : 1;
+	uint8_t TPer_SYNC : 1;
+	uint8_t Locking_Locked : 1;
+	uint8_t Locking_LockingEnabled : 1;
+	uint8_t Locking_LockingSupported : 1;
+	uint8_t Locking_MBRDone : 1;
+	uint8_t Locking_MBREnabled : 1;
+	uint8_t Locking_MediaEncrypt : 1;
+	uint8_t Geometry_Align : 1;
+	uint32_t Geometry_AlignmentGranularity;
+	uint32_t Geometry_LogicalBlockSize;
+	uint32_t Geometry_LowestAlignedLBA;
+	uint8_t Enterprise_RangeCrossing : 1;
+	uint16_t Enterprise_BasecomID;
+	uint16_t Enterprise_NumcomID;
+	uint8_t SingleUser_ANY : 1;
+	uint8_t SingleUser_ALL : 1;
+	uint8_t SingleUser_Policy : 1;
+	uint32_t SingleUser_LockingObjects;
+	uint16_t DataStore_MaxTables;
+	uint32_t DataStore_MaxTableSize;
+	uint32_t DataStore_Alignment;
+	uint16_t OPAL20_BasecomID;
+	uint16_t OPAL20_NumcomIDs;
+	uint8_t OPAL20_InitialPIN;
+	uint8_t OPAL20_RevertedPIN;
+	uint16_t OPAL20_NumAdmins;
+	uint16_t OPAL20_NumUsers;
+	uint8_t OPAL20_RangeCrossing;
+} TCG_DiskInfo;
+
+
 #pragma pack(pop)

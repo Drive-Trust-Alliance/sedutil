@@ -17,45 +17,36 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "..\os.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <iostream>
 #include "..\Device.h"
 #include "..\DiskList.h"
-#include "..\Discovery0.h"
-/** List of Devices and their OPAL status. 
+/** Brute force disk scan. 
  * loops through the physical devices until
- * there is an open error querying each one 
- * for an OPAL response, if we get an OPAL response
- * then it is parsed and optionally displayed. 
+ * there is an open error. Creates a Device 
+ * and reports OPAL support. 
  */
 DiskList::DiskList()
 {
 	int i = 0;
-	UINT8 iorc;
 	Device * d;
-	buffer = _aligned_malloc(IO_BUFFER_LENGTH,4096);  
-	while (true) {
-		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i);
-//		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive3", i);
-		printf("Testing %s for TCG OPAL ... ", devname);
+	printf("\nScanning for Opal 2.0 compliant disks\n");
+	while (TRUE) {
+		SNPRINTF(devname, 23, "\\\\.\\PhysicalDrive%i", i);
+		//		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive3", i);
 		d = new Device(devname);
-//		disk.push_back(*d);
-		memset(buffer, 0, IO_BUFFER_LENGTH);
-		iorc = d->SendCmd(IF_RECV, 0x01, 0x0001, buffer, bufferlen);
-		if (0xff == iorc) break;
-		if (0x00 == iorc) {
-			printf(" Yes\n");
-			new Discovery0(buffer);
-		} else {
-			printf(" No\n");
+		if (d->isPresent()) {
+			printf("%s %s", devname, (d->isOpal2() ? " Yes\n" : " No \n"));
+			if(MAX_DISKS == i) {
+				printf("%d + disks, really?\n",MAX_DISKS);
+				delete d;
+				break;
+			}
 		}
-		//break;
-		if (i++ == MAX_DISKS) {
-			std::cout << "20+ disks, really?" << std::endl;
-			break;
-		}
+		else break;
+
 		delete d;
+		i += 1;
 	}
-	printf(" No disk present Ending Scan\n");
+	printf("\n No more disks present ending scan\n");
 }
 
 

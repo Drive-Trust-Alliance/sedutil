@@ -25,9 +25,6 @@
     <Text Include="win32\ReadMe_Windows.txt">
       <Filter>Documentation</Filter>
     </Text>
-    <Text Include="Warning.txt">
-      <Filter>Documentation</Filter>
-    </Text>
     <Text Include="tryed.txt">
       <Filter>Documentation</Filter>
     </Text>
@@ -37,9 +34,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="os.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Discovery0.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Endianfixup.h">
@@ -69,18 +63,12 @@
     <ClInclude Include="Device.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="win32\Device_Win32.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TCGStructures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msed.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Discovery0.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="win32\DiskList.cpp">

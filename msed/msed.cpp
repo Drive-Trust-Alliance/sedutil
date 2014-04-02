@@ -34,15 +34,14 @@ int main(int argc, char * argv[])
  //   HexDump(resp, 256);
 	DiskList * dl = new DiskList();
 	delete dl;
-    //Start Session
-
+// d0Response
+	device->Puke();
+//	Start Session
     TCGCommand *cmd = new TCGCommand(0x1000, TCG_UID::SMUID,
                                      TCG_METHOD::STARTSESSION);
-    //    for (uint16_t i = 0x0000; i < 0xffff; i += 0x0001) {
-    //        cmd->reset(i, TCG_UID::SMUID, TCG_METHOD::STARTSESSION);
-    cmd->addToken(TCG_TOKEN::STARTLIST); // [  (Open Bracket)
-    cmd->addToken(TCG_TINY_ATOM::uINT01); // HostSessionID : 0x01
-    //cmd->addToken(99); // HostSessionID : 0x99
+     cmd->addToken(TCG_TOKEN::STARTLIST); // [  (Open Bracket)
+  //  cmd->addToken(TCG_TINY_ATOM::uINT01); // HostSessionID : 0x01
+    cmd->addToken(99);						// HostSessionID : 0x99
     cmd->addToken(TCG_UID::ADMINSP); // SPID : ADMINSP
     cmd->addToken(TCG_TINY_ATOM::uINT01); // write : 1
     cmd->addToken(TCG_TOKEN::ENDLIST); // ]  (Close Bracket)
@@ -56,6 +55,7 @@ int main(int argc, char * argv[])
         HexDump(resp, 16);
         goto exit;
     }
+	printf("\nDumping SyncSession Reply\n");
 	HexDump(resp, 128);
     {
         StartSessionResponse * ssreply = (StartSessionResponse *) resp;
