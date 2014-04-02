@@ -18,6 +18,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define MAX_DISKS 20
 #include "Device.h"
 
+#if defined _WIN32
+#define DEVICEMASK "\\\\.\\PhysicalDrive%i"
+#elif defined __gnu_linux__
+#define DEVICEMASK "/dev/sg%i"
+#endif
+
 class DiskList {
 public:
     DiskList();

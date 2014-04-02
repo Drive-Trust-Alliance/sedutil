@@ -91,16 +91,16 @@
     <ClInclude Include="TCGCommand.h" />
     <ClInclude Include="TCGLexicon.h" />
     <ClInclude Include="TCGStructures.h" />
-    <ClInclude Include="win32\DiskList_Win32.h" />
     <ClInclude Include="win32\os_Win32.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Class_Skeleton.cpp" />
+    <ClCompile Include="Device_common.cpp" />
+    <ClCompile Include="DiskList.cpp" />
     <ClCompile Include="HexDump.cpp" />
     <ClCompile Include="msed.cpp" />
     <ClCompile Include="TCGCommand.cpp" />
-    <ClCompile Include="win32\Device.cpp" />
-    <ClCompile Include="win32\DiskList.cpp" />
+    <ClCompile Include="win32\Device_win32.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

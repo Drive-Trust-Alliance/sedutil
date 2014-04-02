@@ -24,11 +24,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * there is an open error. Creates a Device
  * and reports OPAL support.
  */
-#if defined _WIN32
-#define DEVICEMASK "\\\\.\\PhysicalDrive%i"
-#elif defined __gnu_linux__
-#define DEVICEMASK "/dev/sg%i"
-#endif
 
 DiskList::DiskList()
 {
@@ -52,6 +47,7 @@ DiskList::DiskList()
         delete d;
         i += 1;
     }
+	delete d;
     printf("\n No more disks present ending scan\n");
 }
 

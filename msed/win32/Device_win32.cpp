@@ -30,7 +30,7 @@ using namespace std;
  *  copy operator and an assignment operator no custom destructor
  *  is used leading to this unfortunate class method structure
  */
-Device::Device(TCHAR * devref)
+Device::Device(const char * devref)
 {
     ATA_PASS_THROUGH_DIRECT * ata =
             (ATA_PASS_THROUGH_DIRECT *) _aligned_malloc(sizeof (ATA_PASS_THROUGH_DIRECT), 4096);
@@ -38,7 +38,7 @@ Device::Device(TCHAR * devref)
 
     dev = devref;
     memset(&disk_info, 0, sizeof (TCG_DiskInfo));
-    hDev = CreateFile((TCHAR *) dev,
+    hDev = CreateFile(dev,
                       GENERIC_WRITE | GENERIC_READ,
                       FILE_SHARE_WRITE | FILE_SHARE_READ,
                       NULL,
