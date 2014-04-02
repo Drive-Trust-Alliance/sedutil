@@ -27,33 +27,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 TCGCommand::TCGCommand(uint16_t ID, TCG_UID InvokingUid, TCG_METHOD method)
 {
-    /* ******************* BS ALERT **************************
-     * this is ugly and stupid but VS2013 gives an error when I
-     * try and initialize these in the header declaration
-     */
-    uint8_t tu[TCGUID_SIZE][8]{
-        // users
-        {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff}, // session management
-        {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01}, // special "thisSP" syntax
-        {0x00, 0x00, 0x02, 0x05, 0x00, 0x00, 0x00, 0x01}, // Administrative SP
-        {0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x01}, //anybody
-        {0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x06}, // SID
-        // tables
-        {0x00, 0x00, 0x00, 0x0B, 0x00, 0x00, 0x84, 0x02}, // C_PIN_MSID
-
-    };
-    memcpy(TCGUID, tu, TCGUID_SIZE * 8);
-
-    uint8_t tm[TCGMETHOD_SIZE][8]{
-        {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x01}, // Properties
-        {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x02}, //STARTSESSION
-        {0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x16}, // Get
-    };
-    memcpy(TCGMETHOD, tm, TCGMETHOD_SIZE * 8);
-    /* ******************* BS ALERT ************************* */
-    /*
-     * allocate the buffer and build the call *
-     */
+ /*
+  * allocate the buffer and build the call *
+  */
     buffer = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     reset(ID, InvokingUid, method);
 }
@@ -127,12 +103,6 @@ TCGCommand::addToken(TCG_TOKEN token)
 
 void
 TCGCommand::addToken(TCG_TINY_ATOM token)
-{
-    buffer[bufferpos++] = token;
-}
-
-void
-TCGCommand::addToken(TCG_NAME token)
 {
     buffer[bufferpos++] = token;
 }

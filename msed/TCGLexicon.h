@@ -24,11 +24,23 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * program.
  */
 #include "os.h"
-/** TCG User IDs.
- * Links to TCGUSER in TCGCommand
- */
+/* ******************* BS ALERT **************************
+* VS2013 gives an error when I try and initialize these 
+* as private variables in the header declaration
+* so they are defined here as static
+* ******************* BS ALERT ************************* */
 #define TCGUID_SIZE 6
+static uint8_t TCGUID[TCGUID_SIZE][8]{
+	// users
+	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff}, // session management
+	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 }, // special "thisSP" syntax
+	{ 0x00, 0x00, 0x02, 0x05, 0x00, 0x00, 0x00, 0x01 }, // Administrative SP
+	{ 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x01 }, //anybody
+	{ 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x06 }, // SID
+	// tables
+	{ 0x00, 0x00, 0x00, 0x0B, 0x00, 0x00, 0x84, 0x02 }, // C_PIN_MSID
 
+};
 typedef enum _TCG_UID {
     // users
     SMUID,
@@ -44,7 +56,11 @@ typedef enum _TCG_UID {
  * Links to TCGMETHOD in TCGCommand
  */
 #define TCGMETHOD_SIZE 3
-
+static uint8_t TCGMETHOD[TCGMETHOD_SIZE][8]{
+	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x01}, // Properties
+	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x02 }, //STARTSESSION
+	{ 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x16 }, // Get
+};
 typedef enum _TCG_METHOD {
     PROPERTIES,
     STARTSESSION,
@@ -72,29 +88,23 @@ typedef enum _TCG_TOKEN {
     ENDTRANSACTON = 0xfC,
 } TCG_TOKEN;
 
-/** Encoded Names.
- * Where are these documented?  I only found
- * this one in the Aplication Note :-(
- */
-typedef enum _TCG_NAME {
-    HOSTPROPERTIES = 0x00,
-} TCG_NAME;
-
 /** Useful tiny atoms.
- * I am only declaring frequently used
- *
- * start with lowercase u or s to avoid confusion with system types
+ * Useful for table columns etc
  */
 typedef enum _TCG_TINY_ATOM {
-    uINT00 = 0x00,
-    uINT01 = 0x01,
-    uINT02 = 0x02,
-    uINT03 = 0x03,
-    uINT04 = 0x04,
+    UINT_00 = 0x00,
+    UINT_01 = 0x01,
+    UINT_02 = 0x02,
+    UINT_03 = 0x03,
+    UINT_04 = 0x04,
+	UINT_05 = 0x05,
+	UINT_06 = 0x06,
+	UINT_07 = 0x07,
+	UINT_08 = 0x08,
+	UINT_09 = 0x09,
 } TCG_TINY_ATOM;
 
 /** Useful short atoms.
- * I am only declaring the ones frequently used
  */
 typedef enum _TCG_SHORT_ATOM {
     BYTESTRING8 = 0xa8,

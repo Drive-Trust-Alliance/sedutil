@@ -43,10 +43,10 @@ int main(int argc, char * argv[])
     TCGCommand *cmd = new TCGCommand(0x1000, TCG_UID::SMUID,
                                      TCG_METHOD::STARTSESSION);
     cmd->addToken(TCG_TOKEN::STARTLIST); // [  (Open Bracket)
-    //  cmd->addToken(TCG_TINY_ATOM::uINT01); // HostSessionID : 0x01
-    cmd->addToken(99); // HostSessionID : 0x99
+    //  cmd->addToken(TCG_TINY_ATOM::UINT_01); // HostSessionID : 0x01
+    cmd->addToken(99); // HostSessionID : 99
     cmd->addToken(TCG_UID::ADMINSP); // SPID : ADMINSP
-    cmd->addToken(TCG_TINY_ATOM::uINT01); // write : 1
+    cmd->addToken(TCG_TINY_ATOM::UINT_01); // write : 1
     cmd->addToken(TCG_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
     cmd->setProtocol(0x01);

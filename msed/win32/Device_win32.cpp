@@ -33,7 +33,7 @@ using namespace std;
 Device::Device(const char * devref)
 {
     ATA_PASS_THROUGH_DIRECT * ata =
-            (ATA_PASS_THROUGH_DIRECT *) _aligned_malloc(sizeof (ATA_PASS_THROUGH_DIRECT), 4096);
+            (ATA_PASS_THROUGH_DIRECT *) _aligned_malloc(sizeof (ATA_PASS_THROUGH_DIRECT), 8);
     ataPointer = (void *) ata;
 
     dev = devref;

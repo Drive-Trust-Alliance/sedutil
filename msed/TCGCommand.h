@@ -35,7 +35,6 @@ public:
     void addToken(TCG_TOKEN token);
     void addToken(TCG_TINY_ATOM token);
     void addToken(TCG_UID token);
-    void addToken(TCG_NAME token);
     void addToken(const char * bytestring);
     void addToken(uint16_t);
 
@@ -50,8 +49,8 @@ public:
     void dump();
 private:
 
-    uint8_t TCGUID[TCGUID_SIZE][8];
-    uint8_t TCGMETHOD[TCGMETHOD_SIZE][8];
+    //uint8_t TCGUID[TCGUID_SIZE][8];
+    //uint8_t TCGMETHOD[TCGMETHOD_SIZE][8];
     uint8_t *buffer;
     uint32_t bufferpos = 0;
     /* The session numbers should be taken from the
