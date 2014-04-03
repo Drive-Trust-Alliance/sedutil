@@ -25,31 +25,31 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * See also TCGLexicon for structs, typedefs and enums used to encode
  * the bytestream.
  */
-#include "TCGLexicon.h"
-class Device;
+#include "TCGlexicon.h"
+class TCGdev;
 
-class TCGCommand {
+class TCGcommand {
 public:
-    TCGCommand();
-    TCGCommand(uint16_t comIDex, TCG_UID InvokingUid, TCG_METHOD method);
-    ~TCGCommand();
+    TCGcommand();
+    TCGcommand(uint16_t comIDex, TCG_UID InvokingUid, TCG_METHOD method);
+    ~TCGcommand();
     void addToken(TCG_TOKEN token);
     void addToken(TCG_TINY_ATOM token);
     void addToken(TCG_UID token);
     void addToken(const char * bytestring);
     void addToken(uint16_t);
     void setProtocol(uint8_t value);
-    uint8_t SEND(Device * device);
-    uint8_t RECV(Device * device, void * resp);
+    uint8_t SEND(TCGdev * device);
+    uint8_t RECV(TCGdev * device, void * resp);
     void complete(uint8_t EOD = 1);
-    uint8_t execute(Device * device, void * responseBuffer);
+    uint8_t execute(TCGdev * device, void * responseBuffer);
     void reset(uint16_t comID);
     void reset(uint16_t comID, TCG_UID InvokingUid, TCG_METHOD method);
-    uint8_t startSession(Device * device, uint32_t HSN, TCG_UID SP,
+    uint8_t startSession(TCGdev * device, uint32_t HSN, TCG_UID SP,
             uint8_t Write,
             char * HostChallenge = NULL,
             TCG_UID SignAuthority = TCG_UID::TCG_UID_HEXFF);
-    uint8_t endSession(Device * device);
+    uint8_t endSession(TCGdev * device);
     void dump();
 private:
     uint8_t *buffer;

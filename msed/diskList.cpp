@@ -17,23 +17,23 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "os.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "Device.h"
-#include "DiskList.h"
+#include "TCGdev.h"
+#include "diskList.h"
 /** Brute force disk scan.
  * loops through the physical devices until
  * there is an open error. Creates a Device
  * and reports OPAL support.
  */
 
-DiskList::DiskList()
+diskList::diskList()
 {
     int i = 0;
-    Device * d;
+    TCGdev * d;
     printf("\nScanning for Opal 2.0 compliant disks\n");
     while (TRUE) {
         SNPRINTF(devname, 23, DEVICEMASK, i);
         //		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive3", i);
-        d = new Device(devname);
+        d = new TCGdev(devname);
         if (d->isPresent()) {
             printf("%s %s", devname, (d->isOpal2() ? " Yes\n" : " No \n"));
             if (MAX_DISKS == i) {
@@ -51,6 +51,6 @@ DiskList::DiskList()
     printf("\n No more disks present ending scan\n");
 }
 
-DiskList::~DiskList()
+diskList::~diskList()
 {
 }

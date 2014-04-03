@@ -15,7 +15,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  * C:E********************************************************************** */
 
-#include "TCGTasks.h"
+#include "TCGtasks.h"
 int main(int argc, char * argv[])
 {
 	return changeInitialPassword();

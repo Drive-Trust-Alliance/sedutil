@@ -14,26 +14,25 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  * C:E********************************************************************** */
+/* These are a few macros to fixup the endianess of the data
+ * returned by the drive as specified in the TCG OPAL SSC standards
+ * Since this is a low use utility porgram it shouldn't be to
+ * ugly that these are macros
+ */
+
+/*
+ * Windows provides system call in the network stack to do this but
+ * I've never had much luck when the winsock headers get in the mix
+ */
+//
+//TODO: add a test on the endianess of the system and define
+//  empty macros if the system is big endian
 #pragma once
-
-#include "TCGStructures.h"
-
-class Device {
-public:
-    Device(const char * devref);
-    ~Device();
-    uint8_t SendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-            void * buffer, uint16_t bufferlen);
-    uint8_t isOpal2();
-    uint8_t isPresent();
-    uint16_t comID();
-    void Puke();
-private:
-    void Discovery0();
-    const char * dev;
-    TCG_FILE_DESCRIPTOR hDev; // file descriptor (type is OS specific)
-    int fd;
-    uint8_t isOpen = FALSE;
-    void *ataPointer;
-    TCG_DiskInfo disk_info;
-};
+#ifdef __gnu_linux__
+#include <endian.h>
+#if __BYTE_ORDER != __LITTLE_ENDIAN
+#error This code does not support big endian architectures
+#endif
+#endif
+#define SWAP16(x) ((uint16_t) ((x & 0x00ff) << 8) | ((x & 0xff00) >> 8))
+#define SWAP32(x) ((uint32_t) ((x & 0x000000ff) << 24) | ((x & 0x0000ff00) << 8) | ((x & 0x00ff0000) >> 8) | ((x & 0xff000000) >> 24))

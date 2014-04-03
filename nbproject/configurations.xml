@@ -5,13 +5,14 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>msed/Class_Skeleton.h</itemPath>
-      <itemPath>msed/Device.h</itemPath>
-      <itemPath>msed/DiskList.h</itemPath>
-      <itemPath>msed/Endianfixup.h</itemPath>
-      <itemPath>msed/HexDump.h</itemPath>
-      <itemPath>msed/TCGCommand.h</itemPath>
-      <itemPath>msed/TCGLexicon.h</itemPath>
-      <itemPath>msed/TCGStructures.h</itemPath>
+      <itemPath>msed/TCGcommand.h</itemPath>
+      <itemPath>msed/TCGdev.h</itemPath>
+      <itemPath>msed/TCGlexicon.h</itemPath>
+      <itemPath>msed/TCGstructures.h</itemPath>
+      <itemPath>msed/TCGtasks.h</itemPath>
+      <itemPath>msed/diskList.h</itemPath>
+      <itemPath>msed/endianfixup.h</itemPath>
+      <itemPath>msed/hexDump.h</itemPath>
       <itemPath>msed/os.h</itemPath>
       <itemPath>msed/linux/os_linux.h</itemPath>
     </logicalFolder>
@@ -27,11 +28,12 @@
                    projectFiles="true">
       <logicalFolder name="msed" displayName="msed" projectFiles="true">
         <itemPath>msed/Class_Skeleton.cpp</itemPath>
-        <itemPath>msed/Device_common.cpp</itemPath>
-        <itemPath>msed/linux/Device_linux.cpp</itemPath>
-        <itemPath>msed/DiskList.cpp</itemPath>
-        <itemPath>msed/HexDump.cpp</itemPath>
-        <itemPath>msed/TCGCommand.cpp</itemPath>
+        <itemPath>msed/TCGcommand.cpp</itemPath>
+        <itemPath>msed/TCGdev_common.cpp</itemPath>
+        <itemPath>msed/linux/TCGdev_linux.cpp</itemPath>
+        <itemPath>msed/TCGtasks.cpp</itemPath>
+        <itemPath>msed/diskList.cpp</itemPath>
+        <itemPath>msed/hexDump.cpp</itemPath>
         <itemPath>msed/msed.cpp</itemPath>
       </logicalFolder>
     </logicalFolder>
@@ -46,7 +48,6 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
-    <itemPath>msed/tryed.txt</itemPath>
   </logicalFolder>
   <sourceRootList>
     <Elem>msed</Elem>
@@ -71,41 +72,43 @@
       </item>
       <item path="msed/Copyrite.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/Device.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/Device_common.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/DiskList.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/DiskList.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/Endianfixup.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/HexDump.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/HexDump.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/TCGCommand.cpp" ex="false" tool="1" flavor2="0">
+      <item path="msed/TCGcommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="msed/TCGCommand.h" ex="false" tool="3" flavor2="0">
+      <item path="msed/TCGcommand.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/TCGLexicon.h" ex="false" tool="3" flavor2="0">
+      <item path="msed/TCGdev.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/TCGStructures.h" ex="false" tool="3" flavor2="0">
+      <item path="msed/TCGdev_common.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="msed/linux/Device_linux.cpp" ex="false" tool="1" flavor2="0">
+      <item path="msed/TCGlexicon.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/TCGstructures.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/TCGtasks.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/TCGtasks.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/diskList.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/diskList.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/endianfixup.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/hexDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/hexDump.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/linux/ReadMe_linux.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/linux/TCGdev_linux.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/linux/os_linux.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/msed.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/os.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/tryed.txt" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -137,41 +140,43 @@
       </item>
       <item path="msed/Copyrite.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/Device.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/Device_common.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/DiskList.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/DiskList.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/Endianfixup.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/HexDump.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/HexDump.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/TCGCommand.cpp" ex="false" tool="1" flavor2="0">
+      <item path="msed/TCGcommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="msed/TCGCommand.h" ex="false" tool="3" flavor2="0">
+      <item path="msed/TCGcommand.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/TCGLexicon.h" ex="false" tool="3" flavor2="0">
+      <item path="msed/TCGdev.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/TCGStructures.h" ex="false" tool="3" flavor2="0">
+      <item path="msed/TCGdev_common.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="msed/linux/Device_linux.cpp" ex="false" tool="1" flavor2="0">
+      <item path="msed/TCGlexicon.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/TCGstructures.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/TCGtasks.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/TCGtasks.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/diskList.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/diskList.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/endianfixup.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/hexDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/hexDump.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/linux/ReadMe_linux.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/linux/TCGdev_linux.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/linux/os_linux.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/msed.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/os.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/tryed.txt" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

@@ -19,24 +19,24 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef __gnu_linux__
 #include <unistd.h>
 #endif
-#include "TCGCommand.h"
-#include "Device.h"
-#include "Endianfixup.h"
-#include "HexDump.h"
-#include "TCGStructures.h"
+#include "TCGcommand.h"
+#include "TCGdev.h"
+#include "endianfixup.h"
+#include "hexDump.h"
+#include "TCGstructures.h"
 #include "noparser.h"
 
 /*
  * Initialize: allocate the buffer ONLY reset needs to be called to
  * initialize the headers etc
  */
-TCGCommand::TCGCommand()
+TCGcommand::TCGcommand()
 {
     buffer = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
 }
 
 /* Fill in the header information and format the call */
-TCGCommand::TCGCommand(uint16_t ID, TCG_UID InvokingUid, TCG_METHOD method)
+TCGcommand::TCGcommand(uint16_t ID, TCG_UID InvokingUid, TCG_METHOD method)
 {
     /* allocate the buffer */
     buffer = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
@@ -45,22 +45,22 @@ TCGCommand::TCGCommand(uint16_t ID, TCG_UID InvokingUid, TCG_METHOD method)
 
 /* Fill in the header information ONLY (no call) */
 void
-TCGCommand::reset(uint16_t comID)
+TCGcommand::reset(uint16_t comID)
 {
     memset(buffer, 0, IO_BUFFER_LENGTH);
     TCGHeader * hdr;
     hdr = (TCGHeader *) buffer;
-    hdr->cp.ExtendedComID[0] = ((comID & 0xff00) >> 8);
-    hdr->cp.ExtendedComID[1] = (comID & 0x00ff);
-    hdr->cp.ExtendedComID[2] = 0x00;
-    hdr->cp.ExtendedComID[3] = 0x00;
+    hdr->cp.extendedComID[0] = ((comID & 0xff00) >> 8);
+    hdr->cp.extendedComID[1] = (comID & 0x00ff);
+    hdr->cp.extendedComID[2] = 0x00;
+    hdr->cp.extendedComID[3] = 0x00;
     hdr->pkt.TSN = TSN;
     hdr->pkt.HSN = HSN;
     bufferpos = sizeof (TCGHeader);
 }
 
 void
-TCGCommand::reset(uint16_t comID, TCG_UID InvokingUid, TCG_METHOD method)
+TCGcommand::reset(uint16_t comID, TCG_UID InvokingUid, TCG_METHOD method)
 {
     reset(comID); // build the headers
     buffer[bufferpos++] = TCG_TOKEN::CALL;
@@ -73,7 +73,7 @@ TCGCommand::reset(uint16_t comID, TCG_UID InvokingUid, TCG_METHOD method)
 }
 
 void
-TCGCommand::addToken(uint16_t number)
+TCGcommand::addToken(uint16_t number)
 {
     buffer[bufferpos++] = 0x82;
     buffer[bufferpos++] = ((number & 0xff00) >> 8);
@@ -81,7 +81,7 @@ TCGCommand::addToken(uint16_t number)
 }
 
 void
-TCGCommand::addToken(const char * bytestring)
+TCGcommand::addToken(const char * bytestring)
 {
     if (strlen(bytestring) < 16) {
         /* use tiny atom */
@@ -103,19 +103,19 @@ TCGCommand::addToken(const char * bytestring)
 }
 
 void
-TCGCommand::addToken(TCG_TOKEN token)
+TCGcommand::addToken(TCG_TOKEN token)
 {
     buffer[bufferpos++] = token;
 }
 
 void
-TCGCommand::addToken(TCG_TINY_ATOM token)
+TCGcommand::addToken(TCG_TINY_ATOM token)
 {
     buffer[bufferpos++] = token;
 }
 
 void
-TCGCommand::addToken(TCG_UID token)
+TCGcommand::addToken(TCG_UID token)
 {
     buffer[bufferpos++] = TCG_SHORT_ATOM::BYTESTRING8;
     memcpy(&buffer[bufferpos], &TCGUID[token][0], 8);
@@ -123,7 +123,7 @@ TCGCommand::addToken(TCG_UID token)
 }
 
 void
-TCGCommand::complete(uint8_t EOD)
+TCGcommand::complete(uint8_t EOD)
 {
     if (EOD) {
         buffer[bufferpos++] = TCG_TOKEN::ENDOFDATA;
@@ -136,17 +136,17 @@ TCGCommand::complete(uint8_t EOD)
     /* fill in the lengths and add the modulo 4 padding */
     TCGHeader * hdr;
     hdr = (TCGHeader *) buffer;
-    hdr->subpkt.Length = SWAP32(bufferpos - sizeof (TCGHeader));
+    hdr->subpkt.length = SWAP32(bufferpos - sizeof (TCGHeader));
     while (bufferpos % 4 != 0) {
         buffer[bufferpos++] = 0x00;
     }
-    hdr->pkt.Length = SWAP32((bufferpos - sizeof (TCGComPacket))
+    hdr->pkt.length = SWAP32((bufferpos - sizeof (TCGComPacket))
                              - sizeof (TCGPacket));
-    hdr->cp.Length = SWAP32(bufferpos - sizeof (TCGComPacket));
+    hdr->cp.length = SWAP32(bufferpos - sizeof (TCGComPacket));
 }
 
 uint8_t
-TCGCommand::execute(Device * d, void * resp)
+TCGcommand::execute(TCGdev * d, void * resp)
 {
     uint8_t iorc;
     iorc = SEND(d);
@@ -156,19 +156,19 @@ TCGCommand::execute(Device * d, void * resp)
 }
 
 uint8_t
-TCGCommand::SEND(Device * d)
+TCGcommand::SEND(TCGdev * d)
 {
-    return d->SendCmd(IF_SEND, TCGProtocol, d->comID(), buffer, IO_BUFFER_LENGTH);
+    return d->sendCmd(IF_SEND, TCGProtocol, d->comID(), buffer, IO_BUFFER_LENGTH);
 }
 
 uint8_t
-TCGCommand::RECV(Device * d, void * resp)
+TCGcommand::RECV(TCGdev * d, void * resp)
 {
-    return d->SendCmd(IF_RECV, TCGProtocol, d->comID(), resp, IO_BUFFER_LENGTH);
+    return d->sendCmd(IF_RECV, TCGProtocol, d->comID(), resp, IO_BUFFER_LENGTH);
 }
 
 uint8_t
-TCGCommand::startSession(Device * device,
+TCGcommand::startSession(TCGdev * device,
                          uint32_t hostSession,
                          TCG_UID SP,
                          uint8_t Write,
@@ -176,7 +176,7 @@ TCGCommand::startSession(Device * device,
                          TCG_UID SignAuthority)
 {
     int rc = 0;
-    reset(device->comID(), TCG_UID::TCG_UID_SMUID, TCG_METHOD::STARTSESSION);
+    reset(device->comID(), TCG_UID::TCG_SMUID_UID, TCG_METHOD::STARTSESSION);
     addToken(TCG_TOKEN::STARTLIST); // [  (Open Bracket)
     addToken(hostSession); // HostSessionID : sessionnumber
     addToken(SP); // SPID : SP
@@ -214,17 +214,17 @@ TCGCommand::startSession(Device * device,
     printf("\nDumping StartSession Reply (SyncSession)\n");
     dump();
     SSResponse * ssresp = (SSResponse *) buffer;
-	if (0x49 != SWAP32(ssresp->h.cp.Length) || (0 == ssresp->TPerSessionNumber)) {
-		printf("Invalid SyncSession response\n");
-		return 0xff;
-	}
+    if (0x49 != SWAP32(ssresp->h.cp.length) || (0 == ssresp->TPerSessionNumber)) {
+        printf("Invalid SyncSession response\n");
+        return 0xff;
+    }
     HSN = ssresp->HostSessionNumber;
     TSN = ssresp->TPerSessionNumber;
-	return 0;
+    return 0;
 }
 
 uint8_t
-TCGCommand::endSession(Device * device)
+TCGcommand::endSession(TCGdev * device)
 {
     int rc = 0;
     reset(device->comID());
@@ -243,30 +243,30 @@ TCGCommand::endSession(Device * device)
         printf("EndSession failed %d on recv\n", rc);
         return rc;
     }
-	TCGHeader * resp = (TCGHeader *)buffer;
-	if (0x25 != SWAP32(resp->cp.Length)) {
-		printf("Invalid EndSession response\n");
-		return 0xff;
-	}
+    TCGHeader * resp = (TCGHeader *) buffer;
+    if (0x25 != SWAP32(resp->cp.length)) {
+        printf("Invalid EndSession response\n");
+        return 0xff;
+    }
     printf("\nDumping EndSession Reply\n");
     dump();
     return 0;
 }
 
 void
-TCGCommand::setProtocol(uint8_t value)
+TCGcommand::setProtocol(uint8_t value)
 {
     TCGProtocol = value;
 }
 
 void
-TCGCommand::dump()
+TCGcommand::dump()
 {
     printf("\n TCGCommand buffer\n");
-    HexDump(buffer, bufferpos);
+    hexDump(buffer, bufferpos);
 }
 
-TCGCommand::~TCGCommand()
+TCGcommand::~TCGcommand()
 {
     ALIGNED_FREE(buffer);
 }

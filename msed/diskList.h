@@ -16,7 +16,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * C:E********************************************************************** */
 #pragma once
 #define MAX_DISKS 20
-#include "Device.h"
+#include "TCGdev.h"
 
 #if defined _WIN32
 #define DEVICEMASK "\\\\.\\PhysicalDrive%i"
@@ -24,10 +24,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define DEVICEMASK "/dev/sg%i"
 #endif
 
-class DiskList {
+class diskList {
 public:
-    DiskList();
-    ~DiskList();
+    diskList();
+    ~diskList();
 private:
     char devname[25];
 };

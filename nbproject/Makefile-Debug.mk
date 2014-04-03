@@ -36,11 +36,12 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/msed/Class_Skeleton.o \
-	${OBJECTDIR}/msed/Device_common.o \
-	${OBJECTDIR}/msed/DiskList.o \
-	${OBJECTDIR}/msed/HexDump.o \
-	${OBJECTDIR}/msed/TCGCommand.o \
-	${OBJECTDIR}/msed/linux/Device_linux.o \
+	${OBJECTDIR}/msed/TCGcommand.o \
+	${OBJECTDIR}/msed/TCGdev_common.o \
+	${OBJECTDIR}/msed/TCGtasks.o \
+	${OBJECTDIR}/msed/diskList.o \
+	${OBJECTDIR}/msed/hexDump.o \
+	${OBJECTDIR}/msed/linux/TCGdev_linux.o \
 	${OBJECTDIR}/msed/msed.o
 
 
@@ -73,30 +74,35 @@ ${OBJECTDIR}/msed/Class_Skeleton.o: msed/Class_Skeleton.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/Class_Skeleton.o msed/Class_Skeleton.cpp
 
-${OBJECTDIR}/msed/Device_common.o: msed/Device_common.cpp 
+${OBJECTDIR}/msed/TCGcommand.o: msed/TCGcommand.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/Device_common.o msed/Device_common.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/TCGcommand.o msed/TCGcommand.cpp
 
-${OBJECTDIR}/msed/DiskList.o: msed/DiskList.cpp 
+${OBJECTDIR}/msed/TCGdev_common.o: msed/TCGdev_common.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/DiskList.o msed/DiskList.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/TCGdev_common.o msed/TCGdev_common.cpp
 
-${OBJECTDIR}/msed/HexDump.o: msed/HexDump.cpp 
+${OBJECTDIR}/msed/TCGtasks.o: msed/TCGtasks.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/HexDump.o msed/HexDump.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/TCGtasks.o msed/TCGtasks.cpp
 
-${OBJECTDIR}/msed/TCGCommand.o: msed/TCGCommand.cpp 
+${OBJECTDIR}/msed/diskList.o: msed/diskList.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/TCGCommand.o msed/TCGCommand.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/diskList.o msed/diskList.cpp
 
-${OBJECTDIR}/msed/linux/Device_linux.o: msed/linux/Device_linux.cpp 
+${OBJECTDIR}/msed/hexDump.o: msed/hexDump.cpp 
+	${MKDIR} -p ${OBJECTDIR}/msed
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/hexDump.o msed/hexDump.cpp
+
+${OBJECTDIR}/msed/linux/TCGdev_linux.o: msed/linux/TCGdev_linux.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed/linux
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/linux/Device_linux.o msed/linux/Device_linux.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/linux/TCGdev_linux.o msed/linux/TCGdev_linux.cpp
 
 ${OBJECTDIR}/msed/msed.o: msed/msed.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed

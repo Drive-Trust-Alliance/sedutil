@@ -53,11 +53,11 @@ typedef struct _Discovery0TPerFeatures {
     uint8_t streaming : 1;
     uint8_t bufferManagement : 1;
     uint8_t acknack : 1;
-    uint8_t Async : 1;
-    uint8_t Sync : 1;
+    uint8_t async : 1;
+    uint8_t sync : 1;
      */
-    uint8_t Sync : 1;
-    uint8_t Async : 1;
+    uint8_t sync : 1;
+    uint8_t async : 1;
     uint8_t acknack : 1;
     uint8_t bufferManagement : 1;
     uint8_t streaming : 1;
@@ -87,9 +87,9 @@ typedef struct _Discovery0LockingFeatures {
     uint8_t mediaEncryption : 1;
     uint8_t locked : 1;
     uint8_t lockingEnabled : 1;
-    uint8_t LockingSupported : 1;
+    uint8_t lockingSupported : 1;
      */
-    uint8_t LockingSupported : 1;
+    uint8_t lockingSupported : 1;
     uint8_t lockingEnabled : 1;
     uint8_t locked : 1;
     uint8_t mediaEncryption : 1;
@@ -209,48 +209,48 @@ typedef struct _Discovery0OPALV200 {
 
     uint16_t numlockingAdminAuth;
     uint16_t numlockingUserAuth;
-    uint8_t initialPin;
-    uint8_t revertedPin;
+    uint8_t initialPIN;
+    uint8_t revertedPIN;
     uint8_t reserved02;
     uint32_t reserved03;
 } Discovery0OPALV200;
 
 union Discovery0Features {
     Discovery0TPerFeatures TPer;
-    Discovery0LockingFeatures Locking;
-    Discovery0GeometryFeatures Geometry;
-    Discovery0EnterpriseSSC EnterpriseSSC;
-    Discovery0SingleUserMode SingleUserMode;
-    Discovery0OPALV200 OPALv200;
-    Discovery0DatastoreTable Datastore;
+    Discovery0LockingFeatures locking;
+    Discovery0GeometryFeatures geometry;
+    Discovery0EnterpriseSSC enterpriseSSC;
+    Discovery0SingleUserMode singleUserMode;
+    Discovery0OPALV200 opalv200;
+    Discovery0DatastoreTable datastore;
 };
 
 /** Defines the ComPacket (header) for TCG transmissions. */
 
 typedef struct _TCGComPacket {
     uint32_t reserved0;
-    uint8_t ExtendedComID[4];
-    uint32_t OutstandingData;
-    uint32_t MinTransfer;
-    uint32_t Length;
+    uint8_t extendedComID[4];
+    uint32_t outstandingData;
+    uint32_t minTransfer;
+    uint32_t length;
 } TCGComPacket;
 
 /** Defines the TCG Packet structure. */
 typedef struct _TCGPacket {
     uint32_t TSN;
     uint32_t HSN;
-    uint32_t SeqNumber;
+    uint32_t seqNumber;
     uint16_t reserved0;
-    uint16_t AckType;
-    uint32_t Aknowledgement;
-    uint32_t Length;
+    uint16_t ackType;
+    uint32_t aknowledgement;
+    uint32_t length;
 } TCGPacket;
 
 /** Define the TCG Data sub header. */
 typedef struct _TCGDataSubPacket {
     uint8_t reserved0[6];
-    uint16_t Kind;
-    uint32_t Length;
+    uint16_t kind;
+    uint32_t length;
 } TCGDataSubPacket;
 
 typedef struct _TCGHeader {
@@ -259,57 +259,56 @@ typedef struct _TCGHeader {
     TCGDataSubPacket subpkt;
 } TCGHeader;
 
-
-typedef enum _ATACOMMAND{
-	IF_RECV = 0x5c,
-	IF_SEND = 0x5e
+typedef enum _ATACOMMAND {
+    IF_RECV = 0x5c,
+    IF_SEND = 0x5e
 } ATACOMMAND;
 
 /** structure to store D0 information. */
 typedef struct _TCG_DiskInfo {
-	// parsed the Function block?
-	uint8_t TPer : 1;
-	uint8_t Locking : 1;
-	uint8_t Geometry : 1;
-	uint8_t Enterprise : 1;
-	uint8_t SingleUser : 1;
-	uint8_t DataStore : 1;
-	uint8_t OPAL20 : 1;
-	uint8_t Unknown;
-	// values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
-	uint8_t TPer_ACKNACK : 1;
-	uint8_t TPer_ASYNC : 1;
-	uint8_t TPer_BufferMgt : 1;
-	uint8_t TPer_comIDMgt : 1;
-	uint8_t TPer_Streaming : 1;
-	uint8_t TPer_SYNC : 1;
-	uint8_t Locking_Locked : 1;
-	uint8_t Locking_LockingEnabled : 1;
-	uint8_t Locking_LockingSupported : 1;
-	uint8_t Locking_MBRDone : 1;
-	uint8_t Locking_MBREnabled : 1;
-	uint8_t Locking_MediaEncrypt : 1;
-	uint8_t Geometry_Align : 1;
-	uint32_t Geometry_AlignmentGranularity;
-	uint32_t Geometry_LogicalBlockSize;
-	uint32_t Geometry_LowestAlignedLBA;
-	uint8_t Enterprise_RangeCrossing : 1;
-	uint16_t Enterprise_BasecomID;
-	uint16_t Enterprise_NumcomID;
-	uint8_t SingleUser_ANY : 1;
-	uint8_t SingleUser_ALL : 1;
-	uint8_t SingleUser_Policy : 1;
-	uint32_t SingleUser_LockingObjects;
-	uint16_t DataStore_MaxTables;
-	uint32_t DataStore_MaxTableSize;
-	uint32_t DataStore_Alignment;
-	uint16_t OPAL20_BasecomID;
-	uint16_t OPAL20_NumcomIDs;
-	uint8_t OPAL20_InitialPIN;
-	uint8_t OPAL20_RevertedPIN;
-	uint16_t OPAL20_NumAdmins;
-	uint16_t OPAL20_NumUsers;
-	uint8_t OPAL20_RangeCrossing;
+    // parsed the Function block?
+    uint8_t TPer : 1;
+    uint8_t Locking : 1;
+    uint8_t Geometry : 1;
+    uint8_t Enterprise : 1;
+    uint8_t SingleUser : 1;
+    uint8_t DataStore : 1;
+    uint8_t OPAL20 : 1;
+    uint8_t Unknown;
+    // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
+    uint8_t TPer_ACKNACK : 1;
+    uint8_t TPer_async : 1;
+    uint8_t TPer_bufferMgt : 1;
+    uint8_t TPer_comIDMgt : 1;
+    uint8_t TPer_streaming : 1;
+    uint8_t TPer_sync : 1;
+    uint8_t Locking_locked : 1;
+    uint8_t Locking_lockingEnabled : 1;
+    uint8_t Locking_lockingSupported : 1;
+    uint8_t Locking_MBRDone : 1;
+    uint8_t Locking_MBREnabled : 1;
+    uint8_t Locking_mediaEncrypt : 1;
+    uint8_t Geometry_align : 1;
+    uint32_t Geometry_alignmentGranularity;
+    uint32_t Geometry_logicalBlockSize;
+    uint32_t Geometry_lowestAlignedLBA;
+    uint8_t Enterprise_rangeCrossing : 1;
+    uint16_t Enterprise_basecomID;
+    uint16_t Enterprise_numcomID;
+    uint8_t SingleUser_any : 1;
+    uint8_t SingleUser_all : 1;
+    uint8_t SingleUser_policy : 1;
+    uint32_t SingleUser_lockingObjects;
+    uint16_t DataStore_maxTables;
+    uint32_t DataStore_maxTableSize;
+    uint32_t DataStore_alignment;
+    uint16_t OPAL20_basecomID;
+    uint16_t OPAL20_numcomIDs;
+    uint8_t OPAL20_initialPIN;
+    uint8_t OPAL20_revertedPIN;
+    uint16_t OPAL20_numAdmins;
+    uint16_t OPAL20_numUsers;
+    uint8_t OPAL20_rangeCrossing;
 } TCG_DiskInfo;
 
 

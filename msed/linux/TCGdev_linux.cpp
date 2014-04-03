@@ -23,8 +23,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include "../Device.h"
-#include "../HexDump.h"
+#include "../TCGdev.h"
+#include "../hexDump.h"
 
 using namespace std;
 
@@ -32,19 +32,19 @@ using namespace std;
  *  Linux specific implementation using the SCSI generic interface and
  *  SCSI ATA Pass Through (12) command 0pa1
  */
-Device::Device(const char * devref)
+TCGdev::TCGdev(const char * devref)
 {
     dev = devref;
     if ((hDev = open(dev, O_RDWR)) < 0)
         isOpen = FALSE;
     else {
         isOpen = TRUE;
-        Discovery0();
+        discovery0();
     }
 }
 
 /** Send an ioctl to the device using pass through. */
-uint8_t Device::SendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                         void * buffer, uint16_t bufferlen)
 {
     sg_io_hdr_t sg;
@@ -133,7 +133,7 @@ uint8_t Device::SendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 }
 
 /** Close the device reference so this object can be delete. */
-Device::~Device()
+TCGdev::~TCGdev()
 {
     close(hDev);
 }
