@@ -30,6 +30,7 @@ class Device;
 
 class TCGCommand {
 public:
+	TCGCommand();
     TCGCommand(uint16_t comIDex, TCG_UID InvokingUid, TCG_METHOD method);
     ~TCGCommand();
     void addToken(TCG_TOKEN token);
@@ -43,15 +44,18 @@ public:
     void setProtocol(uint8_t value);
     uint8_t SEND(Device * device);
     uint8_t RECV(Device * device, void * resp);
-    void complete();
+    void complete(uint8_t EOD = 1);
     uint8_t execute(Device * device, void * responseBuffer);
+	void reset(uint16_t comID);
     void reset(uint16_t comID, TCG_UID InvokingUid, TCG_METHOD method);
+	uint8_t StartSession(Device * device, uint32_t HSN, TCG_UID SP, 
+							uint8_t Write,
+							static char * HostChallenge = NULL,
+							TCG_UID SignAuthority = TCG_UID::TCG_UID_HEXFF);
+							uint8_t EndSession(Device * device);
     void dump();
 private:
-
-    //uint8_t TCGUID[TCGUID_SIZE][8];
-    //uint8_t TCGMETHOD[TCGMETHOD_SIZE][8];
-    uint8_t *buffer;
+	uint8_t *buffer;
     uint32_t bufferpos = 0;
     /* The session numbers should be taken from the
      * syncsession response so there will be no
@@ -59,7 +63,6 @@ private:
      */
     uint32_t TSN = 0;
     uint32_t HSN = 0;
-    uint16_t comID;
     uint8_t TCGProtocol = 0x01;
 };
 

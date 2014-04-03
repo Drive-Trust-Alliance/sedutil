@@ -29,8 +29,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 * as private variables in the header declaration
 * so they are defined here as static
 * ******************* BS ALERT ************************* */
-#define TCGUID_SIZE 6
-static uint8_t TCGUID[TCGUID_SIZE][8]{
+//#define TCGUID_SIZE 6
+//static uint8_t TCGUID[TCGUID_SIZE][8]{
+static uint8_t TCGUID[][8]{
 	// users
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff}, // session management
 	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 }, // special "thisSP" syntax
@@ -39,24 +40,29 @@ static uint8_t TCGUID[TCGUID_SIZE][8]{
 	{ 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x06 }, // SID
 	// tables
 	{ 0x00, 0x00, 0x00, 0x0B, 0x00, 0x00, 0x84, 0x02 }, // C_PIN_MSID
+// special value for ommited optional paramater
+	{ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, // HEXFF for omitted
+
 
 };
 typedef enum _TCG_UID {
     // users
-    SMUID,
-    THISSP,
-    ADMINSP,
-    ANYBODY,
-    TCG_SID,
+	TCG_UID_SMUID,
+	TCG_UID_THISSP,
+	TCG_UID_ADMINSP,
+	TCG_UID_ANYBODY,
+    TCG_UID_SID,
     // tables
-    C_PIN_MSID,
+	TCG_TABLE_C_PIN_MSID,
+	// omitted optional paramater
+	TCG_UID_HEXFF,
 } TCG_UID;
 
 /** TCG Methods.
  * Links to TCGMETHOD in TCGCommand
  */
-#define TCGMETHOD_SIZE 3
-static uint8_t TCGMETHOD[TCGMETHOD_SIZE][8]{
+//#define TCGMETHOD_SIZE 3
+static uint8_t TCGMETHOD[][8]{
 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x01}, // Properties
 	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x02 }, //STARTSESSION
 	{ 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x16 }, // Get

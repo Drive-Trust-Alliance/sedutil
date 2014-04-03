@@ -87,6 +87,7 @@
     <ClInclude Include="DiskList.h" />
     <ClInclude Include="Endianfixup.h" />
     <ClInclude Include="HexDump.h" />
+    <ClInclude Include="noparser.h" />
     <ClInclude Include="os.h" />
     <ClInclude Include="TCGCommand.h" />
     <ClInclude Include="TCGLexicon.h" />

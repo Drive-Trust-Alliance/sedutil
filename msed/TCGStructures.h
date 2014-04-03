@@ -259,10 +259,7 @@ typedef struct _TCGHeader {
     TCGDataSubPacket subpkt;
 } TCGHeader;
 
-typedef struct _StartSessionResponse {
-    uint32_t HostSessionNumber;
-    uint32_t TPerSessionNumber;
-} StartSessionResponse;
+
 typedef enum _ATACOMMAND{
 	IF_RECV = 0x5c,
 	IF_SEND = 0x5e

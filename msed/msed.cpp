@@ -23,9 +23,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "TCGCommand.h"
 #include "Endianfixup.h"
 #include "TCGStructures.h"
+#include "noparser.h"
 
 int main(int argc, char * argv[])
 {
+	int rc = 0;
     void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     memset(resp, 0, IO_BUFFER_LENGTH);
 #if defined __gnu_linux__
@@ -33,43 +35,56 @@ int main(int argc, char * argv[])
 #elif defined _WIN32
     Device *device = new Device("\\\\.\\PhysicalDrive3");
 #endif
+	uint16_t comID = device->comID();
     //   int d0rc = device->SendCmd(IF_RECV, 0x01, 0x0001, resp, IO_BUFFER_LENGTH);
     //   HexDump(resp, 256);
     DiskList * dl = new DiskList();
     delete dl;
     // d0Response
-    device->Puke();
+   /* device->Puke();*/
     //	Start Session
-    TCGCommand *cmd = new TCGCommand(0x1000, TCG_UID::SMUID,
-                                     TCG_METHOD::STARTSESSION);
-    cmd->addToken(TCG_TOKEN::STARTLIST); // [  (Open Bracket)
-    //  cmd->addToken(TCG_TINY_ATOM::UINT_01); // HostSessionID : 0x01
-    cmd->addToken(99); // HostSessionID : 99
-    cmd->addToken(TCG_UID::ADMINSP); // SPID : ADMINSP
-    cmd->addToken(TCG_TINY_ATOM::UINT_01); // write : 1
-    cmd->addToken(TCG_TOKEN::ENDLIST); // ]  (Close Bracket)
-    cmd->complete();
-    cmd->setProtocol(0x01);
-    cmd->dump(); // have a look see
-    memset(resp, 0, IO_BUFFER_LENGTH);
-    int rc = cmd->execute(device, resp);
-    if (0 != rc) {
-        printf("StartSession failed %d", rc);
-        HexDump(resp, 16);
-        goto exit;
-    }
-    printf("\nDumping SyncSession Reply\n");
-    HexDump(resp, 128);
-    {
-        StartSessionResponse * ssreply = (StartSessionResponse *) resp;
-        cmd->setHSN(ssreply->HostSessionNumber);
-        cmd->setTSN(ssreply->TPerSessionNumber);
-    }
+    TCGCommand *cmd = new TCGCommand(); // Start with an empty class
+	cmd->StartSession(device, 1, TCG_UID::TCG_UID_ADMINSP, TRUE);
+   
     // session[TSN:HSN] -> C_PIN_MSID_UID.Get[Cellblock : [startColumn = PIN,
     //                       endColumn = PIN]]
-    cmd->reset(0x1000, TCG_UID::C_PIN_MSID, TCG_METHOD::GET);
+	cmd->reset(comID, TCG_UID::TCG_TABLE_C_PIN_MSID, TCG_METHOD::GET);
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::STARTLIST);
+	cmd->addToken(TCG_TOKEN::STARTNAME);
+	cmd->addToken(TCG_TOKEN::STARTCOLUMN);
+	cmd->addToken(TCG_TINY_ATOM::UINT_03);		// column 3 is the PIN
+	cmd->addToken(TCG_TOKEN::ENDNAME);
+	cmd->addToken(TCG_TOKEN::STARTNAME);
+	cmd->addToken(TCG_TOKEN::ENDCOLUMN);
+	cmd->addToken(TCG_TINY_ATOM::UINT_03);		// column 3 is the PIN
+	cmd->addToken(TCG_TOKEN::ENDNAME);
+	cmd->addToken(TCG_TOKEN::ENDLIST);
+	cmd->addToken(TCG_TOKEN::ENDLIST);
+	cmd->complete();
+	printf("\nDumping Get C_PIN\n");
+	cmd->dump();
+	memset(resp, 0, IO_BUFFER_LENGTH);
+	rc = cmd->execute(device, resp);
+	if (0 != rc) {
+		printf("Get C PIN failed %d", rc);
+		HexDump(resp, 16);
+		goto exit;
+	}
+	printf("\nDumping GET C PIN Reply\n");
+	HexDump(resp, 128);
+	/* The pin is the ever so original "micron" so
+	 * I'll just use that instead of pretending 
+	 * I'm parsing the reply
+	 */
+	// session[TSN:HSN] <- EOS
+	cmd->EndSession(device);
+	/* 
+	 * We now have the PIN to sign on and take ownership
+	 * so lets give it a shot 
+	 */
+	cmd->StartSession(device, 1, TCG_UID::TCG_UID_ADMINSP, TRUE, "micron", TCG_UID::TCG_UID_SID);
+
 
 exit:
     /*  ******************  */
