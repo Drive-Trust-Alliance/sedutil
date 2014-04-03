@@ -38,9 +38,6 @@ public:
     void addToken(TCG_UID token);
     void addToken(const char * bytestring);
     void addToken(uint16_t);
-
-    void setHSN(uint32_t value);
-    void setTSN(uint32_t value);
     void setProtocol(uint8_t value);
     uint8_t SEND(Device * device);
     uint8_t RECV(Device * device, void * resp);
