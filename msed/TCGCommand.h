@@ -48,11 +48,11 @@ public:
     uint8_t execute(Device * device, void * responseBuffer);
     void reset(uint16_t comID);
     void reset(uint16_t comID, TCG_UID InvokingUid, TCG_METHOD method);
-    uint8_t StartSession(Device * device, uint32_t HSN, TCG_UID SP,
+    uint8_t startSession(Device * device, uint32_t HSN, TCG_UID SP,
             uint8_t Write,
             char * HostChallenge = NULL,
             TCG_UID SignAuthority = TCG_UID::TCG_UID_HEXFF);
-    uint8_t EndSession(Device * device);
+    uint8_t endSession(Device * device);
     void dump();
 private:
     uint8_t *buffer;

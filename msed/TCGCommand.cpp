@@ -168,7 +168,7 @@ TCGCommand::RECV(Device * d, void * resp)
 }
 
 uint8_t
-TCGCommand::StartSession(Device * device,
+TCGCommand::startSession(Device * device,
                          uint32_t HSN,
                          TCG_UID SP,
                          uint8_t Write,
@@ -214,12 +214,17 @@ TCGCommand::StartSession(Device * device,
     printf("\nDumping StartSession Reply (SyncSession)\n");
     dump();
     SSResponse * ssresp = (SSResponse *) buffer;
+	if (0x49 != SWAP32(ssresp->h.cp.Length)) {
+		printf("Invalid SyncSession response");
+		return 0xff;
+	}
     setHSN(ssresp->HostSessionNumber);
     setTSN(ssresp->TPerSessionNumber);
+	return 0;
 }
 
 uint8_t
-TCGCommand::EndSession(Device * device)
+TCGCommand::endSession(Device * device)
 {
     int rc = 0;
     reset(device->comID());
@@ -229,15 +234,20 @@ TCGCommand::EndSession(Device * device)
     setTSN(0);
     rc = SEND(device);
     if (0 != rc) {
-        printf("EndSession failed %d on send", rc);
+        printf("EndSession failed %d on send\n", rc);
         return rc;
     }
     memset(buffer, 0, IO_BUFFER_LENGTH);
     rc = RECV(device, buffer);
     if (0 != rc) {
-        printf("EndSession failed %d on recv", rc);
+        printf("EndSession failed %d on recv\n", rc);
         return rc;
     }
+	TCGHeader * resp = (TCGHeader *)buffer;
+	if (0x25 != SWAP32(resp->cp.Length)) {
+		printf("Invalid EndSession response\n");
+		return 0xff;
+	}
     printf("\nDumping EndSession Reply\n");
     dump();
     return 0;

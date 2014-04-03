@@ -44,7 +44,11 @@ int main(int argc, char * argv[])
    /* device->Puke();*/
     //	Start Session
     TCGCommand *cmd = new TCGCommand(); // Start with an empty class
-	cmd->StartSession(device, 1, TCG_UID::TCG_UID_ADMINSP, TRUE);
+	rc = cmd->startSession(device, 1, TCG_UID::TCG_UID_ADMINSP, TRUE);
+	if (0 != rc) {
+		printf(" Unauthenticated StartSession failed %d\n", rc);
+		return rc;
+	}
    
     // session[TSN:HSN] -> C_PIN_MSID_UID.Get[Cellblock : [startColumn = PIN,
     //                       endColumn = PIN]]
@@ -67,7 +71,7 @@ int main(int argc, char * argv[])
 	memset(resp, 0, IO_BUFFER_LENGTH);
 	rc = cmd->execute(device, resp);
 	if (0 != rc) {
-		printf("Get C PIN failed %d", rc);
+		printf("Get C PIN failed %d\n", rc);
 		HexDump(resp, 16);
 		goto exit;
 	}
@@ -78,14 +82,61 @@ int main(int argc, char * argv[])
 	 * I'm parsing the reply
 	 */
 	// session[TSN:HSN] <- EOS
-	cmd->EndSession(device);
+	rc = cmd->endSession(device);
+	if (0 != rc) {
+		printf("EndSession failed %d\n", rc);
+		HexDump(resp, 128);
+		goto exit;
+	}
 	/* 
 	 * We now have the PIN to sign on and take ownership
 	 * so lets give it a shot 
 	 */
-	cmd->StartSession(device, 1, TCG_UID::TCG_UID_ADMINSP, TRUE, "micron", TCG_UID::TCG_UID_SID);
-
-
+	rc = cmd->startSession(device, 1, TCG_UID::TCG_UID_ADMINSP, TRUE,
+									"micron", TCG_UID::TCG_UID_SID);
+	if (0 != rc) {
+		printf(" Authenticated StartSession failed %d\n", rc);
+		return rc;
+	}
+	// session[TSN:HSN] -> C_PIN_SID_UID.Set[Values = [PIN = <new_SID_password>]]
+	/*
+	 * Change the password --- Yikes!!!
+	 */
+	cmd->reset(device->comID(), TCG_UID::TCG_TABLE_C_PIN_SID, TCG_METHOD::SET);
+	cmd->addToken(TCG_TOKEN::STARTLIST);
+	cmd->addToken(TCG_TOKEN::STARTNAME);
+	cmd->addToken(TCG_TINY_ATOM::UINT_01);  // Values
+	cmd->addToken(TCG_TOKEN::STARTLIST);
+	cmd->addToken(TCG_TOKEN::STARTNAME);
+	cmd->addToken(TCG_TINY_ATOM::UINT_03); // column 4 is the PIN
+	cmd->addToken("newPassword");
+	cmd->addToken(TCG_TOKEN::ENDNAME);
+	cmd->addToken(TCG_TOKEN::ENDLIST);
+	cmd->addToken(TCG_TOKEN::ENDNAME);
+	cmd->addToken(TCG_TOKEN::ENDLIST);
+	cmd->complete();
+	printf("Dumping SetPassword\n");
+	cmd->dump();
+	rc = cmd->execute(device, resp);
+	if (0 != rc) {
+		printf("Password Change Failed %d\n", rc);
+		HexDump(resp, 16);
+		goto exit;
+	}
+	printf("\nDumping Set new Password Reply\n");
+	HexDump(resp, 128);
+	TCGHeader * h = (TCGHeader *)resp;
+	if (0x2c != SWAP32(h->cp.Length)) {
+		printf("Set Failed\n");
+		goto exit;
+	}
+	// session[TSN:HSN] <- EOS
+	rc = cmd->endSession(device);
+	if (0 != rc) {
+		printf("EndSession failed %d\n", rc);
+		HexDump(resp, 128);
+		goto exit;
+	}
 exit:
     /*  ******************  */
     /*  CLEANUP LEAVE HERE  */
@@ -94,4 +145,3 @@ exit:
     ALIGNED_FREE(resp);
     return 0;
 }
-
