@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright � 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -24,35 +24,45 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "TCGstructures.h"
 #include "noparser.h"
 
+int diskScan(){
+#if defined __gnu_linux__
+	TCGdev *device = new TCGdev("/dev/sdh");
+#elif defined _WIN32
+	TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
+#endif
+	uint16_t comID = device->comID();
+	diskList * dl = new diskList();
+	delete dl;
+	// d0Response
+	IFLOG(D3) device->puke();
+	return 0;
+}
 int changeInitialPassword()
 {
-    int rc = 0;
+	LOG(D4) << "Entering changeInitialPassword()";
+
+#if defined __gnu_linux__
+	TCGdev *device = new TCGdev("/dev/sdh");
+#elif defined _WIN32
+	TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
+#endif
+
+	int rc = 0;
     TCGHeader * h;
     void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     memset(resp, 0, IO_BUFFER_LENGTH);
-#if defined __gnu_linux__
-    TCGdev *device = new TCGdev("/dev/sdh");
-#elif defined _WIN32
-    TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
-#endif
-    uint16_t comID = device->comID();
-    //   int d0rc = device->SendCmd(IF_RECV, 0x01, 0x0001, resp, IO_BUFFER_LENGTH);
-    //   HexDump(resp, 256);
-    diskList * dl = new diskList();
-    delete dl;
-    // d0Response
-    device->puke();
+
     //	Start Session
     TCGcommand *cmd = new TCGcommand(); // Start with an empty class
     rc = cmd->startSession(device, 1, TCG_UID::TCG_ADMINSP_UID, TRUE);
     if (0 != rc) {
-        printf(" Unauthenticated StartSession failed %d\n", rc);
+        LOG(E) << "Unauthenticated StartSession failed " << rc;
         return rc;
     }
 
     // session[TSN:HSN] -> C_PIN_MSID_UID.Get[Cellblock : [startColumn = PIN,
     //                       endColumn = PIN]]
-    cmd->reset(comID, TCG_UID::TCG_C_PIN_MSID_TABLE, TCG_METHOD::GET);
+    cmd->reset(device->comID(), TCG_UID::TCG_C_PIN_MSID_TABLE, TCG_METHOD::GET);
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::STARTNAME);
@@ -66,17 +76,17 @@ int changeInitialPassword()
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->complete();
-    printf("\nDumping Get C_PIN\n");
-    cmd->dump();
+    LOG(D3) << "Dumping Get C_PIN";
+    IFLOG(D3) cmd->dump();
     memset(resp, 0, IO_BUFFER_LENGTH);
     rc = cmd->execute(device, resp);
     if (0 != rc) {
-        printf("Get C PIN failed %d\n", rc);
-        hexDump(resp, 16);
+		LOG(E) << "Get C PIN failed "  << rc;
+        IFLOG(D3) hexDump(resp, 16);
         goto exit;
     }
-    printf("\nDumping GET C PIN Reply\n");
-    hexDump(resp, 128);
+    LOG(D3) << "Dumping GET C PIN Reply";
+    IFLOG(D3) hexDump(resp, 128);
     /* The pin is the ever so original "micron" so
      * I'll just use that instead of pretending
      * I'm parsing the reply
@@ -84,8 +94,8 @@ int changeInitialPassword()
     // session[TSN:HSN] <- EOS
     rc = cmd->endSession(device);
     if (0 != rc) {
-        printf("EndSession failed %d\n", rc);
-        hexDump(resp, 128);
+        LOG(E) << "EndSession failed " << rc;
+        IFLOG(D3) hexDump(resp, 128);
         goto exit;
     }
     /*
@@ -95,7 +105,7 @@ int changeInitialPassword()
     rc = cmd->startSession(device, 1, TCG_UID::TCG_ADMINSP_UID, TRUE,
                            (char *) "micron", TCG_UID::TCG_SID_UID);
     if (0 != rc) {
-        printf(" Authenticated StartSession failed %d\n", rc);
+        LOG(E) << " Authenticated StartSession failed " << rc;
         return rc;
     }
     // session[TSN:HSN] -> C_PIN_SID_UID.Set[Values = [PIN = <new_SID_password>]]
@@ -115,26 +125,26 @@ int changeInitialPassword()
     cmd->addToken(TCG_TOKEN::ENDNAME);
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->complete();
-    printf("Dumping SetPassword\n");
-    cmd->dump();
+    LOG(D3) << "Dumping SetPassword";
+    IFLOG(D3) cmd->dump();
     rc = cmd->execute(device, resp);
     if (0 != rc) {
-        printf("Password Change Failed %d\n", rc);
-        hexDump(resp, 16);
+        LOG(E) << "Password Change Failed " << rc;
+        IFLOG(D3) hexDump(resp, 16);
         goto exit;
     }
-    printf("\nDumping Set new Password Reply\n");
-    hexDump(resp, 128);
+    LOG(D3) << "Dumping Set new Password Reply";
+    IFLOG(D3) hexDump(resp, 128);
     h = (TCGHeader *) resp;
     if (0x2c != SWAP32(h->cp.length)) {
-        printf("Set Failed\n");
+        LOG(E) << "Set Failed";
         goto exit;
     }
     // session[TSN:HSN] <- EOS
     rc = cmd->endSession(device);
     if (0 != rc) {
-        printf("EndSession failed %d\n", rc);
-        hexDump(resp, 128);
+        LOG(E) << "EndSession failed " << rc;
+        IFLOG(D3) hexDump(resp, 128);
         goto exit;
     }
 exit:
@@ -143,33 +153,32 @@ exit:
     /*  ******************  */
     delete device;
     ALIGNED_FREE(resp);
+	LOG(D4) << "Exiting changeInitialPassword()";
     return 0;
 }
 
-int revertSP()
+int revertTPer()
 {
+	LOG(D4) << "Entering revertTPer()";
+
+#if defined __gnu_linux__
+	TCGdev *device = new TCGdev("/dev/sdh");
+#elif defined _WIN32
+	TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
+#endif
+
     int rc = 0;
     TCGHeader * h;
     void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     memset(resp, 0, IO_BUFFER_LENGTH);
-#if defined __gnu_linux__
-    TCGdev *device = new TCGdev("/dev/sdh");
-#elif defined _WIN32
-    TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
-#endif
-    uint16_t comID = device->comID();
-    diskList * dl = new diskList();
-    delete dl;
-    // d0Response
-    device->puke();
-    /*
-     * Revert the SP
-     */
+/*
+ * Revert the TPer
+ */
     TCGcommand *cmd = new TCGcommand(); // Start with an empty class
     rc = cmd->startSession(device, 1, TCG_UID::TCG_ADMINSP_UID, TRUE,
                            (char*) "newPassword", TCG_UID::TCG_SID_UID);
     if (0 != rc) {
-        printf(" Authenticated StartSession failed %d\n", rc);
+        LOG(E) << "Authenticated StartSession failed " << rc;
         return rc;
     }
     //	session[TSN:HSN]->AdminSP_UID.Revert[]
@@ -177,20 +186,20 @@ int revertSP()
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->complete();
-    printf("Dumping Revert\n");
-    cmd->dump();
+    LOG(D3) << "Dumping RevertTPer";
+    IFLOG(D3) cmd->dump();
 
     rc = cmd->execute(device, resp);
     if (0 != rc) {
-        printf("Revert Failed %d\n", rc);
+        LOG(E) << "RevertTper Failed " << rc;
         hexDump(resp, 128);
         goto exit;
     }
-    printf("Revert  Reply\n");
-    hexDump(resp, 128);
+    LOG(D3) << "Revert[]  Reply";
+    IFLOG(D3) hexDump(resp, 128);
     h = (TCGHeader *) resp;
     if (0x2c != SWAP32(h->cp.length)) {
-        printf("Revert Failed\n");
+       LOG(E) << "Revert Failed";
         goto exit;
     }
     // session is aborted by TPER
@@ -202,5 +211,6 @@ exit:
     /*  ******************  */
     delete device;
     ALIGNED_FREE(resp);
+	LOG(D4) << "Exiting RevertTperevertTPer()";
     return rc;
 }

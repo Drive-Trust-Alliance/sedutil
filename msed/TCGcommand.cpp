@@ -32,12 +32,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 TCGcommand::TCGcommand()
 {
+	LOG(D4) << "Creating TCGcommand()";
     buffer = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
 }
 
 /* Fill in the header information and format the call */
 TCGcommand::TCGcommand(uint16_t ID, TCG_UID InvokingUid, TCG_METHOD method)
 {
+	LOG(D4) << "Creating TCGvommand(uint16_t ID, TCG_UID InvokingUid, TCG_METHOD method)";
     /* allocate the buffer */
     buffer = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     reset(ID, InvokingUid, method);
@@ -47,6 +49,7 @@ TCGcommand::TCGcommand(uint16_t ID, TCG_UID InvokingUid, TCG_METHOD method)
 void
 TCGcommand::reset(uint16_t comID)
 {
+	LOG(D4) << "Entering TCGcommand::reset(uint16_t comID)";
     memset(buffer, 0, IO_BUFFER_LENGTH);
     TCGHeader * hdr;
     hdr = (TCGHeader *) buffer;
@@ -62,6 +65,7 @@ TCGcommand::reset(uint16_t comID)
 void
 TCGcommand::reset(uint16_t comID, TCG_UID InvokingUid, TCG_METHOD method)
 {
+	LOG(D4) << "Entering TCGcommand::reset(uint16_t comID, TCG_UID InvokingUid, TCG_METHOD method)";
     reset(comID); // build the headers
     buffer[bufferpos++] = TCG_TOKEN::CALL;
     buffer[bufferpos++] = TCG_SHORT_ATOM::BYTESTRING8;
@@ -75,6 +79,7 @@ TCGcommand::reset(uint16_t comID, TCG_UID InvokingUid, TCG_METHOD method)
 void
 TCGcommand::addToken(uint16_t number)
 {
+	LOG(D4) << "Entering TCGcommand::addToken(uint16_t number)";
     buffer[bufferpos++] = 0x82;
     buffer[bufferpos++] = ((number & 0xff00) >> 8);
     buffer[bufferpos++] = (number & 0x00ff);
@@ -83,6 +88,7 @@ TCGcommand::addToken(uint16_t number)
 void
 TCGcommand::addToken(const char * bytestring)
 {
+	LOG(D4) << "Entering TCGcommand::addToken(const char * bytestring)";
     if (strlen(bytestring) < 16) {
         /* use tiny atom */
         buffer[bufferpos++] = strlen(bytestring) | 0xa0;
@@ -95,7 +101,7 @@ TCGcommand::addToken(const char * bytestring)
     }
     else {
         /* Use Large Atom */
-        printf("\n\nFAIL missing code -- large atom for bytestring \n");
+        LOG(E) << "FAIL -- can't send LARGE ATOM size bytestring in 2048 Packet";
     }
     memcpy(&buffer[bufferpos], bytestring, (strlen(bytestring)));
     bufferpos += (strlen(bytestring));
@@ -105,19 +111,22 @@ TCGcommand::addToken(const char * bytestring)
 void
 TCGcommand::addToken(TCG_TOKEN token)
 {
-    buffer[bufferpos++] = token;
+	LOG(D4) << "Entering TCGcommand::addToken(TCG_TOKEN token)";
+	buffer[bufferpos++] = token;
 }
 
 void
 TCGcommand::addToken(TCG_TINY_ATOM token)
 {
-    buffer[bufferpos++] = token;
+	LOG(D4) << "Entering TCGcommand::addToken(TCG_TINY_ATOM token)";
+	buffer[bufferpos++] = token;
 }
 
 void
 TCGcommand::addToken(TCG_UID token)
 {
-    buffer[bufferpos++] = TCG_SHORT_ATOM::BYTESTRING8;
+	LOG(D4) << "Entering TCGcommand::addToken(TCG_UID token)";
+	buffer[bufferpos++] = TCG_SHORT_ATOM::BYTESTRING8;
     memcpy(&buffer[bufferpos], &TCGUID[token][0], 8);
     bufferpos += 8;
 }
@@ -125,6 +134,7 @@ TCGcommand::addToken(TCG_UID token)
 void
 TCGcommand::complete(uint8_t EOD)
 {
+	LOG(D4) << "Entering TCGcommand::complete(uint8_t EOD)";
     if (EOD) {
         buffer[bufferpos++] = TCG_TOKEN::ENDOFDATA;
         buffer[bufferpos++] = TCG_TOKEN::STARTLIST;
@@ -148,6 +158,7 @@ TCGcommand::complete(uint8_t EOD)
 uint8_t
 TCGcommand::execute(TCGdev * d, void * resp)
 {
+	LOG(D4) << "Entering TCGcommand::execute(TCGdev * d, void * resp)";
     uint8_t iorc;
     iorc = SEND(d);
     if (0x00 == iorc)
@@ -158,12 +169,14 @@ TCGcommand::execute(TCGdev * d, void * resp)
 uint8_t
 TCGcommand::SEND(TCGdev * d)
 {
+	LOG(D4) << "Entering TCGcommand::SEND(TCGdev * d)";
     return d->sendCmd(IF_SEND, TCGProtocol, d->comID(), buffer, IO_BUFFER_LENGTH);
 }
 
 uint8_t
 TCGcommand::RECV(TCGdev * d, void * resp)
 {
+	LOG(D4) << "Entering TCGcommand::RECV(TCGdev * d, void * resp)";
     return d->sendCmd(IF_RECV, TCGProtocol, d->comID(), resp, IO_BUFFER_LENGTH);
 }
 
@@ -175,7 +188,8 @@ TCGcommand::startSession(TCGdev * device,
                          char * HostChallenge,
                          TCG_UID SignAuthority)
 {
-    int rc = 0;
+	LOG(D4) << "Entering TCGcommand::startSession ";
+	int rc = 0;
     reset(device->comID(), TCG_UID::TCG_SMUID_UID, TCG_METHOD::STARTSESSION);
     addToken(TCG_TOKEN::STARTLIST); // [  (Open Bracket)
     addToken(hostSession); // HostSessionID : sessionnumber
@@ -197,25 +211,25 @@ TCGcommand::startSession(TCGdev * device,
     addToken(TCG_TOKEN::ENDLIST); // ]  (Close Bracket)
     complete();
     setProtocol(0x01);
-    printf("\nDumping StartSession \n");
-    dump(); // have a look see
+    LOG(D3) << "Dumping StartSession";
+    IFLOG(D3) dump(); 
     rc = SEND(device);
     if (0 != rc) {
-        printf("StartSession failed %d on send\n", rc);
+        LOG(E) << "StartSession failed on send " << rc;
         return rc;
     }
     //    Sleep(250);
     memset(buffer, 0, IO_BUFFER_LENGTH);
     rc = RECV(device, buffer);
     if (0 != rc) {
-        printf("StartSession failed %d on recv\n", rc);
+        LOG(E) << "StartSession failed on recv" <<  rc;
         return rc;
     }
-    printf("\nDumping StartSession Reply (SyncSession)\n");
-    dump();
+    LOG(D3) << "Dumping StartSession Reply (SyncSession)";
+    IFLOG(D3) dump();
     SSResponse * ssresp = (SSResponse *) buffer;
     if (0x49 != SWAP32(ssresp->h.cp.length) || (0 == ssresp->TPerSessionNumber)) {
-        printf("Invalid SyncSession response\n");
+        LOG(E) << "Invalid SyncSession response";
         return 0xff;
     }
     HSN = ssresp->HostSessionNumber;
@@ -226,6 +240,7 @@ TCGcommand::startSession(TCGdev * device,
 uint8_t
 TCGcommand::endSession(TCGdev * device)
 {
+	LOG(D4) << "Entering TCGcommand::endSession";
     int rc = 0;
     reset(device->comID());
     addToken(TCG_TOKEN::ENDOFSESSION); // [  (Open Bracket)
@@ -234,39 +249,42 @@ TCGcommand::endSession(TCGdev * device)
     TSN = 0;
     rc = SEND(device);
     if (0 != rc) {
-        printf("EndSession failed %d on send\n", rc);
+        LOG(E) << "EndSession failed on send rc =" << rc;
         return rc;
     }
     memset(buffer, 0, IO_BUFFER_LENGTH);
     rc = RECV(device, buffer);
     if (0 != rc) {
-        printf("EndSession failed %d on recv\n", rc);
+        LOG(E) << "EndSession failed on recv  rc =" << rc;
         return rc;
     }
     TCGHeader * resp = (TCGHeader *) buffer;
     if (0x25 != SWAP32(resp->cp.length)) {
-        printf("Invalid EndSession response\n");
+		LOG(E) << "Invalid EndSession response";
         return 0xff;
     }
-    printf("\nDumping EndSession Reply\n");
-    dump();
+	LOG(D3) << "Dumping EndSession Reply";
+    IFLOG(D3) dump();
     return 0;
 }
 
 void
 TCGcommand::setProtocol(uint8_t value)
 {
+	LOG(D4) << "Entering TCGcommand::setProtocol";
     TCGProtocol = value;
 }
 
 void
 TCGcommand::dump()
 {
-    printf("\n TCGCommand buffer\n");
+	LOG(D4) << "Entering TCGcommand::dump";
+	LOG(D3) << "Dumping TCGCommand buffer";
     hexDump(buffer, bufferpos);
 }
 
 TCGcommand::~TCGcommand()
 {
+	LOG(D4) << "Destroying TCGcommand";
     ALIGNED_FREE(buffer);
 }

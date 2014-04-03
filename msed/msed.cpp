@@ -15,9 +15,22 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  * C:E********************************************************************** */
 
+#include "os.h"
 #include "TCGtasks.h"
 int main(int argc, char * argv[])
 {
-	return changeInitialPassword();
-	//return revertSP();
+	CLog::Level() = CLog::FromString("DEBUG2");
+
+	LOG(E) << "ERROR";
+	LOG(W) << "WARNING";
+	LOG(I) << "INFO";
+	LOG(D) << "DEBUG";
+	LOG(D1) << "DEBUG1";
+	LOG(D2) << "DEBUG2";
+	LOG(D3) << "DEBUG3";
+	LOG(D4) << "DEBUG4";
+
+	diskScan();
+	//return changeInitialPassword();
+	return revertTPer();
 }

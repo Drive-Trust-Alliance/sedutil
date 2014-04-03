@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright � 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -18,10 +18,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <iostream>
 #include <Ntddscsi.h>
-#include "..\Device.h"
-#include "..\Endianfixup.h"
-#include "..\TCGStructures.h"
-#include "..\HexDump.h"
+#include "..\TCGdev.h"
+#include "..\endianfixup.h"
+#include "..\TCGstructures.h"
+#include "..\hexDump.h"
 
 using namespace std;
 
@@ -30,8 +30,9 @@ using namespace std;
  *  copy operator and an assignment operator no custom destructor
  *  is used leading to this unfortunate class method structure
  */
-Device::Device(const char * devref)
+TCGdev::TCGdev(const char * devref)
 {
+	LOG(D4) << "Creating TCGdev::TCGdev()" << devref;
     ATA_PASS_THROUGH_DIRECT * ata =
             (ATA_PASS_THROUGH_DIRECT *) _aligned_malloc(sizeof (ATA_PASS_THROUGH_DIRECT), 8);
     ataPointer = (void *) ata;
@@ -47,20 +48,25 @@ Device::Device(const char * devref)
                       NULL);
     if (INVALID_HANDLE_VALUE == hDev) {
         DWORD err = GetLastError();
-        //printf("\nerror opening device %s Error 0x%04x\n", dev, err);
+		// This is a D1 because diskscan looks for open fail to end scan
+        LOG(D1) << "Error opening device " << dev << " Error " << err; 
     }
     else {
         isOpen = TRUE;
-        Discovery0();
+        discovery0();
     }
 }
 
 /** Send an ioctl to the device using pass through. */
-UINT8 Device::SendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+UINT8 TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                       void * buffer, uint16_t bufferlen)
 {
+	LOG(D4) << "Entering TCGdev::sendCmd";
     DWORD bytesReturned = 0; // data returned
-    if (!isOpen) return 0xff; //disk open failed so this will too
+	if (!isOpen) {
+		LOG(D1) << "Device open failed";
+		return 0xff; //disk open failed so this will too
+	}
     /*
      * Initialize the ATA_PASS_THROUGH_DIRECT structures
      * per windows DOC with the secial sauce from the
@@ -87,22 +93,23 @@ UINT8 Device::SendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     ata->CurrentTaskFile[3] = (comID & 0x00ff); // Commid LSB
     ata->CurrentTaskFile[4] = ((comID & 0xff00) >> 8); // Commid MSB
     ata->CurrentTaskFile[6] = cmd; // ata Command (0x5e or ox5c)
-    //printf("\nata before \n");
-    //HexDump(ata, sizeof(ATA_PASS_THROUGH_DIRECT));
+    LOG(D3) << "ata before" ;
+    IFLOG(D3) hexDump(ata, sizeof(ATA_PASS_THROUGH_DIRECT));
     DeviceIoControl(hDev, // device to be queried
                     IOCTL_ATA_PASS_THROUGH_DIRECT, // operation to perform
                     ata, sizeof (ATA_PASS_THROUGH_DIRECT),
                     ata, sizeof (ATA_PASS_THROUGH_DIRECT),
                     &bytesReturned, // # bytes returned
                     (LPOVERLAPPED) NULL); // synchronous I/O
-    //printf("\nata after \n");
-    //HexDump(ata, sizeof(ATA_PASS_THROUGH_DIRECT));
+	LOG(D3) << "ata after";
+	IFLOG(D3) hexDump(ata, sizeof(ATA_PASS_THROUGH_DIRECT));
     return (ata->CurrentTaskFile[0]);
 }
 
 /** Close the filehandle so this object can be delete. */
-Device::~Device()
+TCGdev::~TCGdev()
 {
+	LOG(D4) << "Destroying TCGdev";
     CloseHandle(hDev);
     _aligned_free(ataPointer);
 }

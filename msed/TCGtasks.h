@@ -16,4 +16,5 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 * C:E********************************************************************** */
 
 int changeInitialPassword();
-int revertSP();
+int revertTPer();
+int diskScan();

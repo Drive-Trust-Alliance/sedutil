@@ -36,37 +36,37 @@
     <ClInclude Include="os.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Endianfixup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DiskList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="win32\os_Win32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Class_Skeleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HexDump.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TCGLexicon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TCGCommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Device.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TCGStructures.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="noparser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TCGTasks.h">
+    <ClInclude Include="TCGtasks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TCGstructures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TCGlexicon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TCGdev.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TCGcommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="endianfixup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="diskList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -77,22 +77,22 @@
     <ClCompile Include="Class_Skeleton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HexDump.cpp">
+    <ClCompile Include="TCGtasks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TCGCommand.cpp">
+    <ClCompile Include="TCGdev_common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DiskList.cpp">
+    <ClCompile Include="TCGcommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Device_common.cpp">
+    <ClCompile Include="hexDump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="win32\Device_win32.cpp">
+    <ClCompile Include="diskList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TCGTasks.cpp">
+    <ClCompile Include="win32\TCGdev_win32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

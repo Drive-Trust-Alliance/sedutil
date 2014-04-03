@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright � 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -29,6 +29,7 @@ diskList::diskList()
 {
     int i = 0;
     TCGdev * d;
+	LOG(D4) << "Creating diskList";
     printf("\nScanning for Opal 2.0 compliant disks\n");
     while (TRUE) {
         SNPRINTF(devname, 23, DEVICEMASK, i);
@@ -37,7 +38,7 @@ diskList::diskList()
         if (d->isPresent()) {
             printf("%s %s", devname, (d->isOpal2() ? " Yes\n" : " No \n"));
             if (MAX_DISKS == i) {
-                printf("%d + disks, really?\n", MAX_DISKS);
+                LOG(I) << MAX_DISKS << "% disks, really?";
                 delete d;
                 break;
             }
@@ -53,4 +54,5 @@ diskList::diskList()
 
 diskList::~diskList()
 {
+	LOG(D4) << "Destroying  diskList";
 }

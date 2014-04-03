@@ -23,3 +23,4 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #else
 #error "Unsupported Operating System"
 #endif
+#include "log.h"

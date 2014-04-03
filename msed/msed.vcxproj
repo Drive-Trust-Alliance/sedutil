@@ -83,30 +83,27 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class_Skeleton.h" />
-    <ClInclude Include="Device.h" />
-    <ClInclude Include="DiskList.h" />
-    <ClInclude Include="Endianfixup.h" />
-    <ClInclude Include="HexDump.h" />
+    <ClInclude Include="diskList.h" />
+    <ClInclude Include="endianfixup.h" />
+    <ClInclude Include="log.h" />
     <ClInclude Include="noparser.h" />
     <ClInclude Include="os.h" />
-    <ClInclude Include="TCGCommand.h" />
-    <ClInclude Include="TCGLexicon.h" />
-    <ClInclude Include="TCGStructures.h" />
-    <ClInclude Include="TCGTasks.h" />
+    <ClInclude Include="TCGcommand.h" />
+    <ClInclude Include="TCGdev.h" />
+    <ClInclude Include="TCGlexicon.h" />
+    <ClInclude Include="TCGstructures.h" />
+    <ClInclude Include="TCGtasks.h" />
     <ClInclude Include="win32\os_Win32.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Class_Skeleton.cpp" />
-    <ClCompile Include="Device_common.cpp">
-      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</TreatWarningAsError>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</MultiProcessorCompilation>
-    </ClCompile>
-    <ClCompile Include="DiskList.cpp" />
-    <ClCompile Include="HexDump.cpp" />
+    <ClCompile Include="diskList.cpp" />
+    <ClCompile Include="hexDump.cpp" />
     <ClCompile Include="msed.cpp" />
-    <ClCompile Include="TCGCommand.cpp" />
-    <ClCompile Include="TCGTasks.cpp" />
-    <ClCompile Include="win32\Device_win32.cpp" />
+    <ClCompile Include="TCGcommand.cpp" />
+    <ClCompile Include="TCGdev_common.cpp" />
+    <ClCompile Include="TCGtasks.cpp" />
+    <ClCompile Include="win32\TCGdev_win32.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

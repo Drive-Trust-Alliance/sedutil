@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright � 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -31,16 +31,19 @@ using namespace std;
  */
 uint8_t TCGdev::isOpal2()
 {
+	LOG(D4) << "Entering TCGdev::isOpal2()";
     return disk_info.OPAL20;
 }
 
 uint8_t TCGdev::isPresent()
 {
+	LOG(D4) << "Entering TCGdev::isPresent()";
     return isOpen;
 }
 
 uint16_t TCGdev::comID()
 {
+	LOG(D4) << "Entering TCGdev::comID()";
     if (disk_info.OPAL20)
         return disk_info.OPAL20_basecomID;
     else
@@ -57,6 +60,7 @@ uint16_t TCGdev::comID()
  */
 void TCGdev::discovery0()
 {
+	LOG(D4) << "Entering TCGdev::discovery0()";
     void * d0Response;
     uint8_t * epos, *cpos;
     Discovery0Header * hdr;
@@ -82,8 +86,6 @@ void TCGdev::discovery0()
 
     do {
         body = (Discovery0Features *) cpos;
-        //SNPRINTF(fc, 8, "0x%04x", SWAP16(body->TPer.featureCode));
-        //SNPRINTF(ver, 8, "0x%02x", body->TPer.version);
         switch (SWAP16(body->TPer.featureCode)) { /* could use of the structures here is a common field */
         case FC_TPER: /* TPer */
             disk_info.TPer = 1;
@@ -141,6 +143,7 @@ void TCGdev::discovery0()
             break;
         default:
             disk_info.Unknown += 1;
+			LOG(D) << "Unknown Feature in Descovery 0 resposne " << std::hex << SWAP16(body->TPer.featureCode) << std::dec;
             /* should do something here */
             break;
         }
@@ -153,6 +156,7 @@ void TCGdev::discovery0()
 /** Print out the Discovery 0 results */
 void TCGdev::puke()
 {
+	LOG(D4) << "Entering TCGdev::puke()";
     char scratch[25];
     /* TPer */
     if (disk_info.TPer) {
