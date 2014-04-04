@@ -93,16 +93,16 @@ UINT8 TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     ata->CurrentTaskFile[3] = (comID & 0x00ff); // Commid LSB
     ata->CurrentTaskFile[4] = ((comID & 0xff00) >> 8); // Commid MSB
     ata->CurrentTaskFile[6] = cmd; // ata Command (0x5e or ox5c)
-    LOG(D3) << "ata before" ;
-    IFLOG(D3) hexDump(ata, sizeof(ATA_PASS_THROUGH_DIRECT));
+    LOG(D4) << "ata before" ;
+    IFLOG(D4) hexDump(ata, sizeof(ATA_PASS_THROUGH_DIRECT));
     DeviceIoControl(hDev, // device to be queried
                     IOCTL_ATA_PASS_THROUGH_DIRECT, // operation to perform
                     ata, sizeof (ATA_PASS_THROUGH_DIRECT),
                     ata, sizeof (ATA_PASS_THROUGH_DIRECT),
                     &bytesReturned, // # bytes returned
                     (LPOVERLAPPED) NULL); // synchronous I/O
-	LOG(D3) << "ata after";
-	IFLOG(D3) hexDump(ata, sizeof(ATA_PASS_THROUGH_DIRECT));
+	LOG(D4) << "ata after";
+	IFLOG(D4) hexDump(ata, sizeof(ATA_PASS_THROUGH_DIRECT));
     return (ata->CurrentTaskFile[0]);
 }
 

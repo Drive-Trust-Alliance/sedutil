@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright Â© 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -14,14 +14,11 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
-#pragma once
-#define IO_BUFFER_LENGTH 2048  // minimum for OPAL 2.0 
-#define MSED_VERSION "0.1a"
-#ifdef _WIN32
-#include "win32\os_Win32.h"
-#elif defined __gnu_linux__
-#include "linux/os_linux.h"
-#else
-#error "Unsupported Operating System"
-#endif
-#include "log.h"
+typedef struct _MSED_OPTIONS {
+	uint8_t password;
+	uint8_t deviceref;
+	uint8_t action;
+} MSED_OPTIONS;
+void usage();
+uint8_t options(int argc, char * argv[], MSED_OPTIONS * opts);
+

@@ -87,6 +87,7 @@
     <ClInclude Include="endianfixup.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="noparser.h" />
+    <ClInclude Include="options.h" />
     <ClInclude Include="os.h" />
     <ClInclude Include="TCGcommand.h" />
     <ClInclude Include="TCGdev.h" />
@@ -100,6 +101,7 @@
     <ClCompile Include="diskList.cpp" />
     <ClCompile Include="hexDump.cpp" />
     <ClCompile Include="msed.cpp" />
+    <ClCompile Include="options.cpp" />
     <ClCompile Include="TCGcommand.cpp" />
     <ClCompile Include="TCGdev_common.cpp" />
     <ClCompile Include="TCGtasks.cpp" />

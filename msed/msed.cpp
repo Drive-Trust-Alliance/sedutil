@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright (c) 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -16,21 +16,41 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * C:E********************************************************************** */
 
 #include "os.h"
+
 #include "TCGtasks.h"
+#include "options.h"
+
 int main(int argc, char * argv[])
 {
-	CLog::Level() = CLog::FromString("DEBUG2");
-
-	LOG(E) << "ERROR";
-	LOG(W) << "WARNING";
-	LOG(I) << "INFO";
-	LOG(D) << "DEBUG";
-	LOG(D1) << "DEBUG1";
-	LOG(D2) << "DEBUG2";
-	LOG(D3) << "DEBUG3";
-	LOG(D4) << "DEBUG4";
-
-	diskScan();
-	//return changeInitialPassword();
-	return revertTPer();
+	MSED_OPTIONS opts;
+	if (options(argc, argv, &opts)) {
+		//LOG(E) << "Invalid command line options ";
+		return 1;
+	}
+	switch (opts.action){
+		case 's':
+			LOG(D) << "Performing diskScan() ";
+			diskScan();
+			break;
+		case 't':
+			if (0 == opts.password) {
+				LOG(E) << "Taking ownwership requires a *NEW* SID password (-p)";
+				break;
+			}
+			LOG(D) << "Performing takeOwnership of " << argv[argc-1] << " with password " << argv[opts.password];
+			return takeOwnership(argv[argc - 1], argv[opts.password]);
+			break;
+		case 'T':
+			if (0 == opts.password) {
+				LOG(E) << "Reverting the TPer requires a the SID password (-p)";
+				break;
+			}
+			LOG(D) << "Performing revertTPer on " << argv[argc - 1] << " with password " << argv[opts.password];
+			return revertTPer(argv[argc - 1], argv[opts.password]);
+			break;
+		default:
+			LOG(E) << "Uable to determing what you want to do ";
+			usage();
+	}
+	return 1;
 }

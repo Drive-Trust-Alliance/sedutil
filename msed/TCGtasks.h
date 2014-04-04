@@ -15,6 +15,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
 
-int changeInitialPassword();
-int revertTPer();
+int takeOwnership(char * devref, char * newpassword);
+int revertTPer(char * devref, char * password);
 int diskScan();
