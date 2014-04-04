@@ -69,6 +69,9 @@
     <ClInclude Include="log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="options.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msed.cpp">
@@ -93,6 +96,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="win32\TCGdev_win32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="options.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

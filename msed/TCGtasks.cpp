@@ -25,33 +25,26 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "noparser.h"
 
 int diskScan(){
-#if defined __gnu_linux__
-	TCGdev *device = new TCGdev("/dev/sdh");
-#elif defined _WIN32
-	TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
-#endif
-	uint16_t comID = device->comID();
 	diskList * dl = new diskList();
 	delete dl;
-	// d0Response
-	IFLOG(D3) device->puke();
 	return 0;
 }
-int changeInitialPassword()
+int takeOwnership(char * devref, char * newpassword)
 {
-	LOG(D4) << "Entering changeInitialPassword()";
+	LOG(D4) << "Entering takeOwnership(char * devref, char * newpassword)";
 
-#if defined __gnu_linux__
-	TCGdev *device = new TCGdev("/dev/sdh");
-#elif defined _WIN32
-	TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
-#endif
+//#if defined __gnu_linux__
+//	TCGdev *device = new TCGdev("/dev/sdh");
+//#elif defined _WIN32
+//	TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
+//#endif
 
 	int rc = 0;
     TCGHeader * h;
     void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     memset(resp, 0, IO_BUFFER_LENGTH);
-
+	TCGdev *device = new TCGdev(devref);
+	if (!device->isPresent()) LOG(E) << "Device was not present";
     //	Start Session
     TCGcommand *cmd = new TCGcommand(); // Start with an empty class
     rc = cmd->startSession(device, 1, TCG_UID::TCG_ADMINSP_UID, TRUE);
@@ -119,7 +112,7 @@ int changeInitialPassword()
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::STARTNAME);
     cmd->addToken(TCG_TINY_ATOM::UINT_03); // column 4 is the PIN
-    cmd->addToken("newPassword");
+    cmd->addToken(newpassword);
     cmd->addToken(TCG_TOKEN::ENDNAME);
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->addToken(TCG_TOKEN::ENDNAME);
@@ -157,15 +150,15 @@ exit:
     return 0;
 }
 
-int revertTPer()
+int revertTPer(char * devref, char * password)
 {
-	LOG(D4) << "Entering revertTPer()";
+	LOG(D4) << "Entering revertTPer(char * devref, char * password)";
 
-#if defined __gnu_linux__
-	TCGdev *device = new TCGdev("/dev/sdh");
-#elif defined _WIN32
-	TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
-#endif
+//#if defined __gnu_linux__
+//	TCGdev *device = new TCGdev("/dev/sdh");
+//#elif defined _WIN32
+//	TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
+//#endif
 
     int rc = 0;
     TCGHeader * h;
@@ -174,9 +167,11 @@ int revertTPer()
 /*
  * Revert the TPer
  */
+	TCGdev *device = new TCGdev(devref);
+	if (!device->isPresent()) LOG(E) << "Device was not present";
     TCGcommand *cmd = new TCGcommand(); // Start with an empty class
     rc = cmd->startSession(device, 1, TCG_UID::TCG_ADMINSP_UID, TRUE,
-                           (char*) "newPassword", TCG_UID::TCG_SID_UID);
+                           password, TCG_UID::TCG_SID_UID);
     if (0 != rc) {
         LOG(E) << "Authenticated StartSession failed " << rc;
         return rc;

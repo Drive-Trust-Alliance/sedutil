@@ -30,6 +30,7 @@ public:
 	static TLogLevel& Level();
 	static std::string ToString(TLogLevel level);
 	static TLogLevel FromString(const std::string& level);
+	static TLogLevel FromInt(const int level);
 protected:
 	std::ostringstream os;
 private:
@@ -95,6 +96,28 @@ TLogLevel Log<T>::FromString(const std::string& level)
 	return I;
 }
 
+template <typename T>
+TLogLevel Log<T>::FromInt(const int level)
+{
+	if (level == 7)
+		return D4;
+	if (level == 6)
+		return D3;
+	if (level == 5)
+		return D2;
+	if (level == 4)
+		return D1;
+	if (level == 3)
+		return D;
+	if (level == 2)
+		return I;
+	if (level == 1)
+		return W;
+	if (level == 0)
+		return E;
+	Log<T>().Get(W) << "Unknown logging level '" << level << "'. Using INFO level as default.";
+	return I;
+}
 class Output2FILE
 {
 public:
