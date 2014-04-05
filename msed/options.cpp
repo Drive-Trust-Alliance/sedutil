@@ -30,6 +30,8 @@ void usage()
     printf("-s, --scan \n");
     printf("                                scans the devices on the system \n");
     printf("                                identifying Opal 2.0 compliant devices \n");
+	printf("-q, --query \n");
+	printf("                                Display the Discovery 0 response of a device\n");
     printf("-t, --takeownership \n");
     printf("                                change the SID password of the device\n");
     printf("                                password(-p) option required to specify the\n");
@@ -78,6 +80,8 @@ uint8_t options(int argc, char * argv[], MSED_OPTIONS * opts)
             opts->action = 'T';
         else if (!(strcmp("-s", argv[i])) || !(strcmp("--scan", argv[i])))
             opts->action = 's';
+		else if (!(strcmp("-q", argv[i])) || !(strcmp("--query", argv[i])))
+			opts->action = 'q';
         else if (!(strcmp("-p", argv[i])) || !(strcmp("-password", argv[i])))
             opts->password = ++i;
         else if ('v' == argv[i][2]) {

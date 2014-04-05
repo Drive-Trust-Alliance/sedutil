@@ -24,6 +24,22 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "TCGstructures.h"
 #include "noparser.h"
 
+int diskQuery(char * devref)
+{
+	LOG(D4) << "Entering diskQuery(char * devref)" << devref;
+	TCGdev * dev = new TCGdev(devref);
+	if (!dev->isPresent()){
+		LOG(E) << "Device not present" << devref;
+		return 1;
+	}
+	if (!dev->isOpal2()) {
+		LOG(E) << "Device does not support Opal 2.0" << devref;
+		return 1;
+	}
+	dev->puke();
+	return 0;
+}
+
 int diskScan()
 {
     diskList * dl = new diskList();

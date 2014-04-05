@@ -32,6 +32,10 @@ int main(int argc, char * argv[])
 			LOG(D) << "Performing diskScan() ";
 			diskScan();
 			break;
+		case 'q':
+			LOG(D) << "Performing diskquery() on " << argv[argc - 1];
+			diskQuery(argv[argc - 1]);
+			break;
 		case 't':
 			if (0 == opts.password) {
 				LOG(E) << "Taking ownwership requires a *NEW* SID password (-p)";

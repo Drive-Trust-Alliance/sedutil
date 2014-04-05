@@ -106,9 +106,9 @@ void TCGdev::discovery0()
         case FC_GEOMETRY: /* Geometry Features */
             disk_info.Geometry = 1;
             disk_info.Geometry_align = body->geometry.align;
-            disk_info.Geometry_alignmentGranularity = SWAP32(body->geometry.alignmentGranularity);
+            disk_info.Geometry_alignmentGranularity = SWAP64(body->geometry.alignmentGranularity);
             disk_info.Geometry_logicalBlockSize = SWAP32(body->geometry.logicalBlockSize);
-            disk_info.Geometry_lowestAlignedLBA = SWAP32(body->geometry.lowestAlighedLBA);
+            disk_info.Geometry_lowestAlignedLBA = SWAP64(body->geometry.lowestAlighedLBA);
             break;
         case FC_ENTERPRISE: /* Enterprise SSC */
             disk_info.Enterprise = 1;
@@ -159,63 +159,73 @@ void TCGdev::puke()
     /* TPer */
     if (disk_info.TPer) {
         printf("\nTPer function (0x%04x)\n", FC_TPER);
-        cout << "ACKNAK           = " << (disk_info.TPer_ACKNACK ? "Y" : "N") << std::endl;
-        cout << "ASYNC            = " << (disk_info.TPer_async ? "Y" : "N") << std::endl;
-        cout << "BufferManagement = " << (disk_info.TPer_bufferMgt ? "Y" : "N") << std::endl;
-        cout << "comIDManagement  = " << (disk_info.TPer_comIDMgt ? "Y" : "N") << std::endl;
-        cout << "Streaming        = " << (disk_info.TPer_streaming ? "Y" : "N") << std::endl;
-        cout << "SYNC             = " << (disk_info.TPer_sync ? "Y" : "N") << std::endl;
-        cout << std::endl;
+        cout << "ACKNAK = " << (disk_info.TPer_ACKNACK ? "Y, " : "N, ");
+        cout << "ASYNC = " << (disk_info.TPer_async ? "Y, " : "N. ");
+        cout << "BufferManagement = " << (disk_info.TPer_bufferMgt ? "Y, " : "N, ");
+        cout << "comIDManagement  = " << (disk_info.TPer_comIDMgt ? "Y, " : "N, ");
+        cout << "Streaming = " << (disk_info.TPer_streaming ? "Y, " : "N, ");
+		cout << "SYNC = " << (disk_info.TPer_sync ? "Y" : "N");
+		cout << std::endl;
     }
     if (disk_info.Locking) {
         printf("\nLocking functions (0x%04x)\n", FC_LOCKING);
-        cout << "Locked             = " << (disk_info.Locking_locked ? "Y" : "N") << std::endl;
-        cout << "LockingEnabled     = " << (disk_info.Locking_lockingEnabled ? "Y" : "N") << std::endl;
-        cout << "LockingSupported   = " << (disk_info.Locking_lockingSupported ? "Y" : "N") << std::endl;
-        cout << "MBRDone            = " << (disk_info.Locking_MBRDone ? "Y" : "N") << std::endl;
-        cout << "MBREnabled         = " << (disk_info.Locking_MBREnabled ? "Y" : "N") << std::endl;
-        cout << "MediaEncrypt       = " << (disk_info.Locking_mediaEncrypt ? "Y" : "N") << std::endl;
+        cout << "Locked = " << (disk_info.Locking_locked ? "Y, " : "N, ");
+        cout << "LockingEnabled = " << (disk_info.Locking_lockingEnabled ? "Y, " : "N, ");
+        cout << "LockingSupported = " << (disk_info.Locking_lockingSupported ? "Y, " : "N, ");
+        cout << "MBRDone = " << (disk_info.Locking_MBRDone ? "Y, " : "N, ");
+        cout << "MBREnabled = " << (disk_info.Locking_MBREnabled ? "Y, " : "N, ");
+        cout << "MediaEncrypt = " << (disk_info.Locking_mediaEncrypt ? "Y" : "N");
         cout << std::endl;
     }
     if (disk_info.Geometry) {
         printf("\nGeometry functions (0x%04x)\n", FC_GEOMETRY);
-        cout << "Align                 = " << (disk_info.Geometry_align ? "Y" : "N") << std::endl;
-        cout << "Alignment Granularity = " << disk_info.Geometry_alignmentGranularity << std::endl;
-        cout << "Logical Block size    = " << disk_info.Geometry_logicalBlockSize << std::endl;
-        cout << "Lowest Aligned LBA    = " << disk_info.Geometry_lowestAlignedLBA << std::endl;
+        cout << "Align = " << (disk_info.Geometry_align ? "Y, " : "N, ");
+        cout << "Alignment Granularity = " << disk_info.Geometry_alignmentGranularity;
+		cout << " (" << // display bytes
+			(disk_info.Geometry_alignmentGranularity * 
+			 disk_info.Geometry_logicalBlockSize) 
+			 << ")";
+        cout << ", Logical Block size = " << disk_info.Geometry_logicalBlockSize;
+        cout << ", Lowest Aligned LBA = " << disk_info.Geometry_lowestAlignedLBA;
+		cout << std::endl;
     }
     if (disk_info.Enterprise) {
         printf("\nEnterprise functions (0x%04x)\n", FC_ENTERPRISE);
-        cout << "Range crossing      = " << (disk_info.Enterprise_rangeCrossing ? "Y" : "N") << std::endl;
-        cout << "Base commID         = " << disk_info.Enterprise_basecomID << std::endl;
-        cout << "Number of commIDs   = " << disk_info.Enterprise_numcomID << std::endl;
+        cout << "Range crossing = " << (disk_info.Enterprise_rangeCrossing ? "Y, " : "N, ");
+        cout << "Base commID = " << disk_info.Enterprise_basecomID;
+		cout << ", commIDs = " << disk_info.Enterprise_numcomID;
+		cout << std::endl;
     }
     if (disk_info.SingleUser) {
         printf("\nSingleUser functions (0x%04x)\n", FC_SINGLEUSER);
-        cout << "ALL                         = " << (disk_info.SingleUser_all ? "Y" : "N") << std::endl;
-        cout << "ANY                         = " << (disk_info.SingleUser_any ? "Y" : "N") << std::endl;
-        cout << "Policy                      = " << (disk_info.SingleUser_policy ? "Y" : "N") << std::endl;
-        cout << "Number of Locking Objects   = " << (disk_info.SingleUser_lockingObjects) << std::endl;
+        cout << "ALL = " << (disk_info.SingleUser_all ? "Y, " : "N, ");
+        cout << "ANY = " << (disk_info.SingleUser_any ? "Y, " : "N, ");
+        cout << "Policy = " << (disk_info.SingleUser_policy ? "Y, " : "N, ");
+		cout << "Locking Objects = " << (disk_info.SingleUser_lockingObjects);
+		cout << std::endl;
     }
     if (disk_info.DataStore) {
         printf("\nDataStore functions (0x%04x)\n", FC_DATASTORE);
-        cout << "Max Tables             = " << disk_info.DataStore_maxTables << std::endl;
-        cout << "Max Size Tables        = " << disk_info.DataStore_maxTableSize << std::endl;
-        cout << "Table size alignment   = " << disk_info.DataStore_alignment << std::endl;
+        cout << "Max Tables = " << disk_info.DataStore_maxTables;
+        cout << ", Max Size Tables = " << disk_info.DataStore_maxTableSize;
+        cout << ", Table size alignment = " << disk_info.DataStore_alignment;
+		cout << std::endl;
     }
     if (disk_info.OPAL20) {
         printf("\nOPAL 2.0 functions (0x%04x)\n", FC_OPALV200);
         SNPRINTF(scratch, 8, "0x%04x", disk_info.OPAL20_basecomID);
-        cout << "Base commID                = " << scratch << std::endl;
+        cout << "Base commID = " << scratch;
         SNPRINTF(scratch, 8, "0x%02x", disk_info.OPAL20_initialPIN);
-        cout << "Initial PIN                = " << scratch << std::endl;
+        cout << ", Initial PIN = " << scratch;
         SNPRINTF(scratch, 8, "0x%02x", disk_info.OPAL20_revertedPIN);
-        cout << "Reverted PIN               = " << scratch << std::endl;
-        cout << "Number of commIDs          = " << disk_info.OPAL20_numcomIDs << std::endl;
-        cout << "Number of Locking Admins   = " << disk_info.OPAL20_numAdmins << std::endl;
-        cout << "Number of Locking Users    = " << disk_info.OPAL20_numUsers << std::endl;
-        cout << "Range Crossing             = " << (disk_info.OPAL20_rangeCrossing ? "Y" : "N") << std::endl;
+		cout << ", Reverted PIN = " << scratch;
+        cout << ", commIDs = " << disk_info.OPAL20_numcomIDs;
+		cout << std::endl;
+        cout << "Locking Admins = " << disk_info.OPAL20_numAdmins;
+        cout << ", Locking Users = " << disk_info.OPAL20_numUsers;
+		cout << ", Range Crossing = " << (disk_info.OPAL20_rangeCrossing ? "Y" : "N");
+		cout << std::endl;
     }
     if (disk_info.Unknown)
-        cout << disk_info.Unknown << " unknown function codes IGNORED " << std::endl;
+        cout << disk_info.Unknown << " Unknown function codes IGNORED " << std::endl;
 }

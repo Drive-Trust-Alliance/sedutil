@@ -114,17 +114,14 @@ typedef struct _Discovery0GeometryFeatures {
     uint8_t length;
     /* big Endian
     uint8_t reserved01 : 7;
-    uint8_t align : 1;		// Tied to the Locking info table somehow??
+    uint8_t align : 1;		
      */
-    uint8_t align : 1; /// Tied to the Locking info table somehow??
+    uint8_t align : 1; 
     uint8_t reserved01 : 7;
-
-    uint8_t reserved02;
-    uint16_t reserved03;
-    uint32_t reserved04;
+    uint8_t reserved02[7];
     uint32_t logicalBlockSize;
-    uint32_t alignmentGranularity;
-    uint32_t lowestAlighedLBA;
+    uint64_t alignmentGranularity;
+    uint64_t lowestAlighedLBA;
 } Discovery0GeometryFeatures;
 
 /** Support for the Enterprise SSC Spec.
@@ -289,9 +286,9 @@ typedef struct _TCG_DiskInfo {
     uint8_t Locking_MBREnabled : 1;
     uint8_t Locking_mediaEncrypt : 1;
     uint8_t Geometry_align : 1;
-    uint32_t Geometry_alignmentGranularity;
+    uint64_t Geometry_alignmentGranularity;
     uint32_t Geometry_logicalBlockSize;
-    uint32_t Geometry_lowestAlignedLBA;
+    uint64_t Geometry_lowestAlignedLBA;
     uint8_t Enterprise_rangeCrossing : 1;
     uint16_t Enterprise_basecomID;
     uint16_t Enterprise_numcomID;

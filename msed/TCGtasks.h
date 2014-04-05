@@ -18,3 +18,4 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 int takeOwnership(char * devref, char * newpassword);
 int revertTPer(char * devref, char * password);
 int diskScan();
+int diskQuery(char * devref);
