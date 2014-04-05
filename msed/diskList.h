@@ -16,7 +16,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * C:E********************************************************************** */
 #pragma once
 #define MAX_DISKS 20
-#include "TCGdev.h"
 
 #if defined _WIN32
 #define DEVICEMASK "\\\\.\\PhysicalDrive%i"

@@ -15,13 +15,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
 #pragma once
-#define IO_BUFFER_LENGTH 2048  // minimum for OPAL 2.0 
-#define MSED_VERSION "0.1a"
-#ifdef _WIN32
-#include "win32\os_Win32.h"
-#elif defined __gnu_linux__
-#include "linux/os_linux.h"
-#else
-#error "Unsupported Operating System"
-#endif
-#include "log.h"
+#include "..\TCGbaseDev.h"
+
+class TCGdev : public TCGbaseDev {
+public:
+	TCGdev(const char * devref);
+	~TCGdev();
+	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+		void * buffer, uint16_t bufferlen);
+private:
+	HANDLE hDev;
+	void *ataPointer; 
+};

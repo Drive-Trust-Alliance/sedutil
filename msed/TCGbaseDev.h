@@ -13,15 +13,25 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 #pragma once
-#define IO_BUFFER_LENGTH 2048  // minimum for OPAL 2.0 
-#define MSED_VERSION "0.1a"
-#ifdef _WIN32
-#include "win32\os_Win32.h"
-#elif defined __gnu_linux__
-#include "linux/os_linux.h"
-#else
-#error "Unsupported Operating System"
-#endif
-#include "log.h"
+
+#include "TCGstructures.h"
+
+class TCGbaseDev {
+public:
+    TCGbaseDev();
+    ~TCGbaseDev();
+    virtual uint8_t 
+		sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+            void * buffer, uint16_t bufferlen) = 0;
+    uint8_t isOpal2();
+    uint8_t isPresent();
+    uint16_t comID();
+    void puke();
+protected:
+    void discovery0();
+    const char * dev;
+    uint8_t isOpen = FALSE;
+    TCG_DiskInfo disk_info;
+};

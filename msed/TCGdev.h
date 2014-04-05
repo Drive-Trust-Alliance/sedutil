@@ -13,26 +13,12 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
- * C:E********************************************************************** */
+* C:E********************************************************************** */
 #pragma once
-
-#include "TCGstructures.h"
-
-class TCGdev {
-public:
-    TCGdev(const char * devref);
-    ~TCGdev();
-    uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-            void * buffer, uint16_t bufferlen);
-    uint8_t isOpal2();
-    uint8_t isPresent();
-    uint16_t comID();
-    void puke();
-private:
-    void discovery0();
-    const char * dev;
-    TCG_FILE_DESCRIPTOR hDev; // file descriptor (type is OS specific)
-    uint8_t isOpen = FALSE;
-    void *ataPointer;
-    TCG_DiskInfo disk_info;
-};
+#ifdef _WIN32
+#include "win32\TCGdev.h"
+#elif defined __gnu_linux__
+#include "linux/TCGdev.h"
+#else
+#error "Unsupported Operating System"
+#endif

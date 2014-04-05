@@ -54,9 +54,6 @@
     <ClInclude Include="TCGlexicon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TCGdev.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TCGcommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -72,6 +69,15 @@
     <ClInclude Include="options.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TCGbaseDev.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\TCGdev.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TCGdev.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msed.cpp">
@@ -83,9 +89,6 @@
     <ClCompile Include="TCGtasks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TCGdev_common.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TCGcommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -95,10 +98,13 @@
     <ClCompile Include="diskList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="win32\TCGdev_win32.cpp">
+    <ClCompile Include="options.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="options.cpp">
+    <ClCompile Include="TCGbaseDev.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\TCGdev.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

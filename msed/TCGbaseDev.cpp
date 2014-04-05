@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright (c) 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -14,36 +14,42 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  * C:E********************************************************************** */
+/** Base device class.
+ * An OS port must create a subclass of this class
+ * and implement the sendcmd class specific to the 
+ * IO requirements of that OS
+ */
 #include "os.h"
 #include <stdio.h>
 #include <iostream>
-#include "TCGdev.h"
+#include "TCGbaseDev.h"
 #include "endianfixup.h"
 #include "TCGstructures.h"
 #include "hexDump.h"
 
 using namespace std;
 
-/** Device Class (Common) represents a single disk device.
+/** Device Class (Base) represents a single disk device.
  *  This is the functionality that is common to all OS's
- *  Later this should be made into a base class that the OD classes
- *  inherit from
  */
-uint8_t TCGdev::isOpal2()
+TCGbaseDev::TCGbaseDev() {}
+TCGbaseDev::~TCGbaseDev() {}
+
+uint8_t TCGbaseDev::isOpal2()
 {
-    LOG(D4) << "Entering TCGdev::isOpal2()";
+    LOG(D4) << "Entering TCGbaseDev::isOpal2()";
     return disk_info.OPAL20;
 }
 
-uint8_t TCGdev::isPresent()
+uint8_t TCGbaseDev::isPresent()
 {
-    LOG(D4) << "Entering TCGdev::isPresent()";
+    LOG(D4) << "Entering TCGbaseDev::isPresent()";
     return isOpen;
 }
 
-uint16_t TCGdev::comID()
+uint16_t TCGbaseDev::comID()
 {
-    LOG(D4) << "Entering TCGdev::comID()";
+    LOG(D4) << "Entering TCGbaseDev::comID()";
     if (disk_info.OPAL20)
         return disk_info.OPAL20_basecomID;
     else
@@ -58,9 +64,9 @@ uint16_t TCGdev::comID()
 /* TODO: this should throw an exception if a request is made for a field that
  * was not returned in the D0 response
  */
-void TCGdev::discovery0()
+void TCGbaseDev::discovery0()
 {
-    LOG(D4) << "Entering TCGdev::discovery0()";
+    LOG(D4) << "Entering TCGbaseDev::discovery0()";
     void * d0Response = NULL;
     uint8_t * epos, *cpos;
     Discovery0Header * hdr;
@@ -152,9 +158,9 @@ void TCGdev::discovery0()
 }
 
 /** Print out the Discovery 0 results */
-void TCGdev::puke()
+void TCGbaseDev::puke()
 {
-    LOG(D4) << "Entering TCGdev::puke()";
+    LOG(D4) << "Entering TCGbaseDev::puke()";
     char scratch[25];
     /* TPer */
     if (disk_info.TPer) {

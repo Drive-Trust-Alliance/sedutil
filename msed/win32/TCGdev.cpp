@@ -18,7 +18,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <iostream>
 #include <Ntddscsi.h>
-#include "..\TCGdev.h"
+#include "TCGdev.h"
 #include "..\endianfixup.h"
 #include "..\TCGstructures.h"
 #include "..\hexDump.h"
