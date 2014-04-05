@@ -34,9 +34,14 @@ using namespace std;
  */
 TCGdev::TCGdev(const char * devref)
 {
+    LOG(D4) << "Creating TCGdev::TCGdev() " << devref;
     dev = devref;
-    if ((hDev = open(dev, O_RDWR)) < 0)
+    memset(&disk_info, 0, sizeof (TCG_DiskInfo));
+    if ((hDev = open(dev, O_RDWR)) < 0) {
         isOpen = FALSE;
+        // This is a D1 because diskscan looks for open fail to end scan
+        LOG(D1) << "Error opening device " << dev;
+    }
     else {
         isOpen = TRUE;
         discovery0();
@@ -50,6 +55,8 @@ uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     sg_io_hdr_t sg;
     uint8_t sense[32]; // how big should this be??
     uint8_t cdb[12];
+
+    LOG(D4) << "Entering TCGdev::sendCmd";
     if (!isOpen) return 0xfe; //disk open failed so this will too
     memset(&cdb, 0, sizeof (cdb));
     memset(&sense, 0, sizeof (sense));
@@ -109,31 +116,34 @@ uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     sg.usr_ptr = NULL;
     LOG(D4) << "cdb before ";
     IFLOG(D4) hexDump(cdb, sizeof (cdb));
-    LOG(D4) << "sg before ";
-    IFLOG(D4) hexDump(&sg, sizeof (sg));
+    //    LOG(D4) << "sg before ";
+    //    IFLOG(D4) hexDump(&sg, sizeof (sg));
     /*
      * Do the IO
      */
     if (ioctl(hDev, SG_IO, &sg) < 0) {
         LOG(D4) << "cdb after ";
         IFLOG(D4) hexDump(cdb, sizeof (cdb));
-        LOG(D4) << "sg after ";
-        IFLOG(D4) hexDump(&sg, sizeof (sg));
+        //        LOG(D4) << "sg after ";
+        //        IFLOG(D4) hexDump(&sg, sizeof (sg));
         LOG(D4) << "sense after ";
         IFLOG(D4) hexDump(sense, sizeof (sense));
         return 0xff;
     }
     LOG(D4) << "cdb after ";
     IFLOG(D4) hexDump(cdb, sizeof (cdb));
-    LOG(D4) << "sg after ";
-    IFLOG(D4) hexDump(&sg, sizeof (sg));
+    //    LOG(D4) << "sg after ";
+    //    IFLOG(D4) hexDump(&sg, sizeof (sg));
     LOG(D4) << "sense after ";
     IFLOG(D4) hexDump(sense, sizeof (sense));
+    if ((0x00 != sense[0]) || (0x00 != sense[1]))
+        if ((0x72 != sense[0]) || (0x0b != sense[1])) return 0xff; // not ATA response
     return (sense[11]);
 }
 
 /** Close the device reference so this object can be delete. */
 TCGdev::~TCGdev()
 {
+    LOG(D4) << "Destroying TCGdev";
     close(hDev);
 }

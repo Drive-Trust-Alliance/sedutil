@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright (c) 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -24,27 +24,29 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "TCGstructures.h"
 #include "noparser.h"
 
-int diskScan(){
-	diskList * dl = new diskList();
-	delete dl;
-	return 0;
+int diskScan()
+{
+    diskList * dl = new diskList();
+    delete dl;
+    return 0;
 }
+
 int takeOwnership(char * devref, char * newpassword)
 {
-	LOG(D4) << "Entering takeOwnership(char * devref, char * newpassword)";
+    LOG(D4) << "Entering takeOwnership(char * devref, char * newpassword)";
 
-//#if defined __gnu_linux__
-//	TCGdev *device = new TCGdev("/dev/sdh");
-//#elif defined _WIN32
-//	TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
-//#endif
+    //#if defined __gnu_linux__
+    //	TCGdev *device = new TCGdev("/dev/sdh");
+    //#elif defined _WIN32
+    //	TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
+    //#endif
 
-	int rc = 0;
+    int rc = 0;
     TCGHeader * h;
     void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     memset(resp, 0, IO_BUFFER_LENGTH);
-	TCGdev *device = new TCGdev(devref);
-	if (!device->isPresent()) LOG(E) << "Device was not present";
+    TCGdev *device = new TCGdev(devref);
+    if (!device->isPresent()) LOG(E) << "Device was not present";
     //	Start Session
     TCGcommand *cmd = new TCGcommand(); // Start with an empty class
     rc = cmd->startSession(device, 1, TCG_UID::TCG_ADMINSP_UID, TRUE);
@@ -74,7 +76,7 @@ int takeOwnership(char * devref, char * newpassword)
     memset(resp, 0, IO_BUFFER_LENGTH);
     rc = cmd->execute(device, resp);
     if (0 != rc) {
-		LOG(E) << "Get C PIN failed "  << rc;
+        LOG(E) << "Get C PIN failed " << rc;
         IFLOG(D3) hexDump(resp, 16);
         goto exit;
     }
@@ -146,29 +148,29 @@ exit:
     /*  ******************  */
     delete device;
     ALIGNED_FREE(resp);
-	LOG(D4) << "Exiting changeInitialPassword()";
+    LOG(D4) << "Exiting changeInitialPassword()";
     return 0;
 }
 
 int revertTPer(char * devref, char * password)
 {
-	LOG(D4) << "Entering revertTPer(char * devref, char * password)";
+    LOG(D4) << "Entering revertTPer(char * devref, char * password)";
 
-//#if defined __gnu_linux__
-//	TCGdev *device = new TCGdev("/dev/sdh");
-//#elif defined _WIN32
-//	TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
-//#endif
+    //#if defined __gnu_linux__
+    //	TCGdev *device = new TCGdev("/dev/sdh");
+    //#elif defined _WIN32
+    //	TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
+    //#endif
 
     int rc = 0;
     TCGHeader * h;
     void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     memset(resp, 0, IO_BUFFER_LENGTH);
-/*
- * Revert the TPer
- */
-	TCGdev *device = new TCGdev(devref);
-	if (!device->isPresent()) LOG(E) << "Device was not present";
+    /*
+     * Revert the TPer
+     */
+    TCGdev *device = new TCGdev(devref);
+    if (!device->isPresent()) LOG(E) << "Device was not present";
     TCGcommand *cmd = new TCGcommand(); // Start with an empty class
     rc = cmd->startSession(device, 1, TCG_UID::TCG_ADMINSP_UID, TRUE,
                            password, TCG_UID::TCG_SID_UID);
@@ -194,7 +196,7 @@ int revertTPer(char * devref, char * password)
     IFLOG(D3) hexDump(resp, 128);
     h = (TCGHeader *) resp;
     if (0x2c != SWAP32(h->cp.length)) {
-       LOG(E) << "Revert Failed";
+        LOG(E) << "Revert Failed";
         goto exit;
     }
     // session is aborted by TPER
@@ -206,6 +208,6 @@ exit:
     /*  ******************  */
     delete device;
     ALIGNED_FREE(resp);
-	LOG(D4) << "Exiting RevertTperevertTPer()";
+    LOG(D4) << "Exiting RevertTperevertTPer()";
     return rc;
 }

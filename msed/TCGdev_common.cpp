@@ -31,19 +31,19 @@ using namespace std;
  */
 uint8_t TCGdev::isOpal2()
 {
-	LOG(D4) << "Entering TCGdev::isOpal2()";
+    LOG(D4) << "Entering TCGdev::isOpal2()";
     return disk_info.OPAL20;
 }
 
 uint8_t TCGdev::isPresent()
 {
-	LOG(D4) << "Entering TCGdev::isPresent()";
+    LOG(D4) << "Entering TCGdev::isPresent()";
     return isOpen;
 }
 
 uint16_t TCGdev::comID()
 {
-	LOG(D4) << "Entering TCGdev::comID()";
+    LOG(D4) << "Entering TCGdev::comID()";
     if (disk_info.OPAL20)
         return disk_info.OPAL20_basecomID;
     else
@@ -60,27 +60,25 @@ uint16_t TCGdev::comID()
  */
 void TCGdev::discovery0()
 {
-	LOG(D4) << "Entering TCGdev::discovery0()";
-    void * d0Response;
+    LOG(D4) << "Entering TCGdev::discovery0()";
+    void * d0Response = NULL;
     uint8_t * epos, *cpos;
     Discovery0Header * hdr;
     Discovery0Features * body;
     d0Response = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
-    if (NULL != d0Response) {
-        memset(d0Response, 0, IO_BUFFER_LENGTH);
-        uint8_t iorc = sendCmd(IF_RECV, 0x01, 0x0001, d0Response,
-                               IO_BUFFER_LENGTH);
-        if (0x00 != iorc) {
-            ALIGNED_FREE(d0Response);
-            return;
-        }
-    }
-    else
+    if (NULL == d0Response) return;
+    memset(d0Response, 0, IO_BUFFER_LENGTH);
+    uint8_t iorc = sendCmd(IF_RECV, 0x01, 0x0001, d0Response,
+                           IO_BUFFER_LENGTH);
+    if (0x00 != iorc) {
+        ALIGNED_FREE(d0Response);
         return;
+    }
+
     epos = cpos = (uint8_t *) d0Response;
     hdr = (Discovery0Header *) d0Response;
-    //cout << "\nDumping D0Response" << std::endl;
-    //HexDump(hdr, SWAP32(hdr->length));
+    LOG(D3) << "Dumping D0Response";
+    IFLOG(D3) hexDump(hdr, SWAP32(hdr->length));
     epos = epos + SWAP32(hdr->length);
     cpos = cpos + 48; // TODO: check header version
 
@@ -143,7 +141,7 @@ void TCGdev::discovery0()
             break;
         default:
             disk_info.Unknown += 1;
-			LOG(D) << "Unknown Feature in Descovery 0 resposne " << std::hex << SWAP16(body->TPer.featureCode) << std::dec;
+            LOG(D) << "Unknown Feature in Discovery 0 response " << std::hex << SWAP16(body->TPer.featureCode) << std::dec;
             /* should do something here */
             break;
         }
@@ -156,11 +154,11 @@ void TCGdev::discovery0()
 /** Print out the Discovery 0 results */
 void TCGdev::puke()
 {
-	LOG(D4) << "Entering TCGdev::puke()";
+    LOG(D4) << "Entering TCGdev::puke()";
     char scratch[25];
     /* TPer */
     if (disk_info.TPer) {
-        printf("\nTPer funcion (0x%04x)\n", FC_TPER);
+        printf("\nTPer function (0x%04x)\n", FC_TPER);
         cout << "ACKNAK           = " << (disk_info.TPer_ACKNACK ? "Y" : "N") << std::endl;
         cout << "ASYNC            = " << (disk_info.TPer_async ? "Y" : "N") << std::endl;
         cout << "BufferManagement = " << (disk_info.TPer_bufferMgt ? "Y" : "N") << std::endl;

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright (c) 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -19,6 +19,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include "TCGdev.h"
 #include "diskList.h"
+
 /** Brute force disk scan.
  * loops through the physical devices until
  * there is an open error. Creates a Device
@@ -29,7 +30,7 @@ diskList::diskList()
 {
     int i = 0;
     TCGdev * d;
-	LOG(D4) << "Creating diskList";
+    LOG(D4) << "Creating diskList";
     printf("\nScanning for Opal 2.0 compliant disks\n");
     while (TRUE) {
         SNPRINTF(devname, 23, DEVICEMASK, i);
@@ -48,11 +49,11 @@ diskList::diskList()
         delete d;
         i += 1;
     }
-	delete d;
+    delete d;
     printf("\n No more disks present ending scan\n");
 }
 
 diskList::~diskList()
 {
-	LOG(D4) << "Destroying  diskList";
+    LOG(D4) << "Destroying  diskList";
 }

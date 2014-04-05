@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright (c) 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -32,7 +32,7 @@ using namespace std;
  */
 TCGdev::TCGdev(const char * devref)
 {
-	LOG(D4) << "Creating TCGdev::TCGdev()" << devref;
+    LOG(D4) << "Creating TCGdev::TCGdev() " << devref;
     ATA_PASS_THROUGH_DIRECT * ata =
             (ATA_PASS_THROUGH_DIRECT *) _aligned_malloc(sizeof (ATA_PASS_THROUGH_DIRECT), 8);
     ataPointer = (void *) ata;
@@ -48,8 +48,8 @@ TCGdev::TCGdev(const char * devref)
                       NULL);
     if (INVALID_HANDLE_VALUE == hDev) {
         DWORD err = GetLastError();
-		// This is a D1 because diskscan looks for open fail to end scan
-        LOG(D1) << "Error opening device " << dev << " Error " << err; 
+        // This is a D1 because diskscan looks for open fail to end scan
+        LOG(D1) << "Error opening device " << dev << " Error " << err;
     }
     else {
         isOpen = TRUE;
@@ -61,15 +61,15 @@ TCGdev::TCGdev(const char * devref)
 UINT8 TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                       void * buffer, uint16_t bufferlen)
 {
-	LOG(D4) << "Entering TCGdev::sendCmd";
+    LOG(D4) << "Entering TCGdev::sendCmd";
     DWORD bytesReturned = 0; // data returned
-	if (!isOpen) {
-		LOG(D1) << "Device open failed";
-		return 0xff; //disk open failed so this will too
-	}
+    if (!isOpen) {
+        LOG(D1) << "Device open failed";
+        return 0xff; //disk open failed so this will too
+    }
     /*
      * Initialize the ATA_PASS_THROUGH_DIRECT structures
-     * per windows DOC with the secial sauce from the
+     * per windows DOC with the special sauce from the
      * ATA Command set reference (protocol and commID)
      */
     ATA_PASS_THROUGH_DIRECT * ata = (ATA_PASS_THROUGH_DIRECT *) ataPointer;
@@ -93,23 +93,23 @@ UINT8 TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     ata->CurrentTaskFile[3] = (comID & 0x00ff); // Commid LSB
     ata->CurrentTaskFile[4] = ((comID & 0xff00) >> 8); // Commid MSB
     ata->CurrentTaskFile[6] = cmd; // ata Command (0x5e or ox5c)
-    LOG(D4) << "ata before" ;
-    IFLOG(D4) hexDump(ata, sizeof(ATA_PASS_THROUGH_DIRECT));
+    LOG(D4) << "ata before";
+    IFLOG(D4) hexDump(ata, sizeof (ATA_PASS_THROUGH_DIRECT));
     DeviceIoControl(hDev, // device to be queried
                     IOCTL_ATA_PASS_THROUGH_DIRECT, // operation to perform
                     ata, sizeof (ATA_PASS_THROUGH_DIRECT),
                     ata, sizeof (ATA_PASS_THROUGH_DIRECT),
                     &bytesReturned, // # bytes returned
                     (LPOVERLAPPED) NULL); // synchronous I/O
-	LOG(D4) << "ata after";
-	IFLOG(D4) hexDump(ata, sizeof(ATA_PASS_THROUGH_DIRECT));
+    LOG(D4) << "ata after";
+    IFLOG(D4) hexDump(ata, sizeof (ATA_PASS_THROUGH_DIRECT));
     return (ata->CurrentTaskFile[0]);
 }
 
 /** Close the filehandle so this object can be delete. */
 TCGdev::~TCGdev()
 {
-	LOG(D4) << "Destroying TCGdev";
+    LOG(D4) << "Destroying TCGdev";
     CloseHandle(hDev);
     _aligned_free(ataPointer);
 }

@@ -67,6 +67,7 @@
         <ccTool>
           <architecture>1</architecture>
           <standard>8</standard>
+          <warningLevel>3</warningLevel>
         </ccTool>
       </compileType>
       <item path="msed/Class_Skeleton.cpp" ex="false" tool="1" flavor2="0">
