@@ -5,8 +5,9 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>msed/Class_Skeleton.h</itemPath>
+      <itemPath>msed/TCGbaseDev.h</itemPath>
       <itemPath>msed/TCGcommand.h</itemPath>
-      <itemPath>msed/TCGdev.h</itemPath>
+      <itemPath>msed/linux/TCGdev.h</itemPath>
       <itemPath>msed/TCGlexicon.h</itemPath>
       <itemPath>msed/TCGstructures.h</itemPath>
       <itemPath>msed/TCGtasks.h</itemPath>
@@ -14,9 +15,9 @@
       <itemPath>msed/endianfixup.h</itemPath>
       <itemPath>msed/hexDump.h</itemPath>
       <itemPath>msed/log.h</itemPath>
+      <itemPath>msed/msedConstants.h</itemPath>
       <itemPath>msed/options.h</itemPath>
-      <itemPath>msed/os.h</itemPath>
-      <itemPath>msed/linux/os_linux.h</itemPath>
+      <itemPath>msed/linux/os.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -30,9 +31,9 @@
                    projectFiles="true">
       <logicalFolder name="msed" displayName="msed" projectFiles="true">
         <itemPath>msed/Class_Skeleton.cpp</itemPath>
+        <itemPath>msed/TCGbaseDev.cpp</itemPath>
         <itemPath>msed/TCGcommand.cpp</itemPath>
-        <itemPath>msed/TCGdev_common.cpp</itemPath>
-        <itemPath>msed/linux/TCGdev_linux.cpp</itemPath>
+        <itemPath>msed/linux/TCGdev.cpp</itemPath>
         <itemPath>msed/TCGtasks.cpp</itemPath>
         <itemPath>msed/diskList.cpp</itemPath>
         <itemPath>msed/hexDump.cpp</itemPath>
@@ -67,6 +68,10 @@
         <ccTool>
           <architecture>1</architecture>
           <standard>8</standard>
+          <incDir>
+            <pElem>msed/linux</pElem>
+            <pElem>msed</pElem>
+          </incDir>
           <warningLevel>3</warningLevel>
         </ccTool>
       </compileType>
@@ -78,13 +83,13 @@
       </item>
       <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="msed/TCGbaseDev.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/TCGbaseDev.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="msed/TCGcommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/TCGcommand.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGdev.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGdev_common.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/TCGlexicon.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -106,19 +111,21 @@
       </item>
       <item path="msed/linux/ReadMe_linux.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/linux/TCGdev_linux.cpp" ex="false" tool="1" flavor2="0">
+      <item path="msed/linux/TCGdev.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="msed/linux/os_linux.h" ex="false" tool="3" flavor2="0">
+      <item path="msed/linux/TCGdev.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/linux/os.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/log.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/msed.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="msed/msedConstants.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="msed/options.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/options.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/os.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -152,13 +159,13 @@
       </item>
       <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="msed/TCGbaseDev.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/TCGbaseDev.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="msed/TCGcommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/TCGcommand.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGdev.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGdev_common.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/TCGlexicon.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -180,19 +187,21 @@
       </item>
       <item path="msed/linux/ReadMe_linux.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/linux/TCGdev_linux.cpp" ex="false" tool="1" flavor2="0">
+      <item path="msed/linux/TCGdev.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="msed/linux/os_linux.h" ex="false" tool="3" flavor2="0">
+      <item path="msed/linux/TCGdev.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/linux/os.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/log.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/msed.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="msed/msedConstants.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="msed/options.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/options.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/os.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

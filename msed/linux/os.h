@@ -13,15 +13,19 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 #pragma once
-#define IO_BUFFER_LENGTH 2048  // minimum for OPAL 2.0 
-#define MSED_VERSION "0.1a"
-#ifdef _WIN32
-#include "win32\os_Win32.h"
-#elif defined __gnu_linux__
-#include "linux/os_linux.h"
-#else
-#error "Unsupported Operating System"
-#endif
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+#include <errno.h>
+#include "msedConstants.h"
 #include "log.h"
+// Why can't I find these??
+#define TRUE 1
+#define FALSE 0
+// a few OS specific methods that need to be worked out
+#define SNPRINTF snprintf
+#define ALIGNED_ALLOC(alignment, length) aligned_alloc(alignment, length)
+#define ALIGNED_FREE free
+

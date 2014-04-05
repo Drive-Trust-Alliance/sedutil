@@ -26,18 +26,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 int diskQuery(char * devref)
 {
-	LOG(D4) << "Entering diskQuery(char * devref)" << devref;
-	TCGdev * dev = new TCGdev(devref);
-	if (!dev->isPresent()){
-		LOG(E) << "Device not present" << devref;
-		return 1;
-	}
-	if (!dev->isOpal2()) {
-		LOG(E) << "Device does not support Opal 2.0" << devref;
-		return 1;
-	}
-	dev->puke();
-	return 0;
+    LOG(D4) << "Entering diskQuery(char * devref)" << devref;
+    TCGdev * dev = new TCGdev(devref);
+    if (!dev->isPresent()) {
+        LOG(E) << "Device not present" << devref;
+        return 1;
+    }
+    if (!dev->isOpal2()) {
+        LOG(E) << "Device does not support Opal 2.0" << devref;
+        return 1;
+    }
+    dev->puke();
+    return 0;
 }
 
 int diskScan()
@@ -151,6 +151,7 @@ int takeOwnership(char * devref, char * newpassword)
         LOG(E) << "Set Failed";
         goto exit;
     }
+    LOG(I) << "takeownership complete new SID password = " << newpassword;
     // session[TSN:HSN] <- EOS
     rc = cmd->endSession(device);
     if (0 != rc) {
@@ -215,6 +216,7 @@ int revertTPer(char * devref, char * password)
         LOG(E) << "Revert Failed";
         goto exit;
     }
+    LOG(I) << "revertTper completed successfully";
     // session is aborted by TPER
     // so session[TSN:HSN] <- EOS
     // is not needed

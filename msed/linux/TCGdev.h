@@ -13,12 +13,16 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 #pragma once
-#ifdef _WIN32
-#include "win32\TCGdev.h"
-#elif defined __gnu_linux__
-#include "linux/TCGdev.h"
-#else
-#error "Unsupported Operating System"
-#endif
+#include "TCGbaseDev.h"
+
+class TCGdev : public TCGbaseDev {
+public:
+    TCGdev(const char * devref);
+    ~TCGdev();
+    uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+            void * buffer, uint16_t bufferlen);
+private:
+    int fd;
+};

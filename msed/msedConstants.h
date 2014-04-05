@@ -14,18 +14,5 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  * C:E********************************************************************** */
-#pragma once
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <errno.h>
-// Why can't I find these??
-#define TRUE 1
-#define FALSE 0
-// a few OS specific methods that need to be worked out
-#define SNPRINTF snprintf
-#define ALIGNED_ALLOC(alignment, length) aligned_alloc(alignment, length)
-#define ALIGNED_FREE free
-typedef int TCG_FILE_DESCRIPTOR;
-
-
+#define IO_BUFFER_LENGTH 2048
+#define MSED_VERSION "0.1a"

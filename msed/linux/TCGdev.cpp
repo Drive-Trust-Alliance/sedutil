@@ -14,7 +14,7 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  * C:E********************************************************************** */
-#include "../os.h"
+#include "os.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
@@ -23,21 +23,21 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include "../TCGdev.h"
-#include "../hexDump.h"
+#include "TCGdev.h"
+#include "hexDump.h"
 
 using namespace std;
 
 /** The Device class represents a single disk device.
  *  Linux specific implementation using the SCSI generic interface and
- *  SCSI ATA Pass Through (12) command 0pa1
+ *  SCSI ATA Pass Through (12) command
  */
 TCGdev::TCGdev(const char * devref)
 {
     LOG(D4) << "Creating TCGdev::TCGdev() " << devref;
     dev = devref;
     memset(&disk_info, 0, sizeof (TCG_DiskInfo));
-    if ((hDev = open(dev, O_RDWR)) < 0) {
+    if ((fd = open(dev, O_RDWR)) < 0) {
         isOpen = FALSE;
         // This is a D1 because diskscan looks for open fail to end scan
         LOG(D1) << "Error opening device " << dev;
@@ -121,7 +121,7 @@ uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     /*
      * Do the IO
      */
-    if (ioctl(hDev, SG_IO, &sg) < 0) {
+    if (ioctl(fd, SG_IO, &sg) < 0) {
         LOG(D4) << "cdb after ";
         IFLOG(D4) hexDump(cdb, sizeof (cdb));
         //        LOG(D4) << "sg after ";
@@ -136,8 +136,8 @@ uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     //    IFLOG(D4) hexDump(&sg, sizeof (sg));
     LOG(D4) << "sense after ";
     IFLOG(D4) hexDump(sense, sizeof (sense));
-    if ((0x00 != sense[0]) || (0x00 != sense[1]))
-        if ((0x72 != sense[0]) || (0x0b != sense[1])) return 0xff; // not ATA response
+    if (!((0x00 == sense[0]) && (0x00 == sense[1])))
+        if (!((0x72 == sense[0]) && (0x0b == sense[1]))) return 0xff; // not ATA response
     return (sense[11]);
 }
 
@@ -145,5 +145,5 @@ uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 TCGdev::~TCGdev()
 {
     LOG(D4) << "Destroying TCGdev";
-    close(hDev);
+    close(fd);
 }

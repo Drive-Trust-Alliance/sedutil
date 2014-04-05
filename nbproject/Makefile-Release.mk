@@ -36,12 +36,12 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/msed/Class_Skeleton.o \
+	${OBJECTDIR}/msed/TCGbaseDev.o \
 	${OBJECTDIR}/msed/TCGcommand.o \
-	${OBJECTDIR}/msed/TCGdev_common.o \
 	${OBJECTDIR}/msed/TCGtasks.o \
 	${OBJECTDIR}/msed/diskList.o \
 	${OBJECTDIR}/msed/hexDump.o \
-	${OBJECTDIR}/msed/linux/TCGdev_linux.o \
+	${OBJECTDIR}/msed/linux/TCGdev.o \
 	${OBJECTDIR}/msed/msed.o \
 	${OBJECTDIR}/msed/options.o
 
@@ -75,15 +75,15 @@ ${OBJECTDIR}/msed/Class_Skeleton.o: msed/Class_Skeleton.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/Class_Skeleton.o msed/Class_Skeleton.cpp
 
+${OBJECTDIR}/msed/TCGbaseDev.o: msed/TCGbaseDev.cpp 
+	${MKDIR} -p ${OBJECTDIR}/msed
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/TCGbaseDev.o msed/TCGbaseDev.cpp
+
 ${OBJECTDIR}/msed/TCGcommand.o: msed/TCGcommand.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/TCGcommand.o msed/TCGcommand.cpp
-
-${OBJECTDIR}/msed/TCGdev_common.o: msed/TCGdev_common.cpp 
-	${MKDIR} -p ${OBJECTDIR}/msed
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/TCGdev_common.o msed/TCGdev_common.cpp
 
 ${OBJECTDIR}/msed/TCGtasks.o: msed/TCGtasks.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
@@ -100,10 +100,10 @@ ${OBJECTDIR}/msed/hexDump.o: msed/hexDump.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/hexDump.o msed/hexDump.cpp
 
-${OBJECTDIR}/msed/linux/TCGdev_linux.o: msed/linux/TCGdev_linux.cpp 
+${OBJECTDIR}/msed/linux/TCGdev.o: msed/linux/TCGdev.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed/linux
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/linux/TCGdev_linux.o msed/linux/TCGdev_linux.cpp
+	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/linux/TCGdev.o msed/linux/TCGdev.cpp
 
 ${OBJECTDIR}/msed/msed.o: msed/msed.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
