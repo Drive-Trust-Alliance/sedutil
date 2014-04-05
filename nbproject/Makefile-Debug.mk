@@ -42,7 +42,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/msed/diskList.o \
 	${OBJECTDIR}/msed/hexDump.o \
 	${OBJECTDIR}/msed/linux/TCGdev_linux.o \
-	${OBJECTDIR}/msed/msed.o
+	${OBJECTDIR}/msed/msed.o \
+	${OBJECTDIR}/msed/options.o
 
 
 # C Compiler Flags
@@ -108,6 +109,11 @@ ${OBJECTDIR}/msed/msed.o: msed/msed.cpp
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/msed.o msed/msed.cpp
+
+${OBJECTDIR}/msed/options.o: msed/options.cpp 
+	${MKDIR} -p ${OBJECTDIR}/msed
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/options.o msed/options.cpp
 
 # Subprojects
 .build-subprojects:

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright (c) 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -20,9 +20,12 @@ msed - Manage Self Encrypting Drives
 This program and it's accompanying Pre-Boot Authorization image allow
 you to enable the locking in SED's that comply with the TCG OPAL 2.00
 standard.   
-
+                               ***** Warning  ******
 ***** Warning  ****** A FAILURE OF AND/OR IMPROPER USE OF THIS PROGRAM 
-COULD CAUSE YOU TO UNRECOVERABLE LOSS ALL OF THE DATA ON YOUR DRIVE 
-AND/OR PREVENT THE DRIVE FROM BEING USED AT ALL EVER AGAIN.
-IF YOU ARE UNSURE OF WHAT YOU ARE DOING THEN 
-*PLEASE* GET SOME HELP USING THIS PROGRAM.
+***** Warning  ****** COULD CAUSE AN UNRECOVERABLE LOSS ALL OF THE DATA ON YOUR 
+***** Warning  ****** AGAIN. DRIVE AND/OR PREVENT THE DRIVE FROM BEING USED AT 
+***** Warning  ****** ALL EVER AGAIN
+***** Warning  ******
+***** Warning  ****** IF YOU ARE UNSURE OF WHAT YOU ARE DOING THEN 
+***** Warning  ****** *PLEASE* GET SOME HELP USING THIS PROGRAM.
+                               ***** Warning  ******

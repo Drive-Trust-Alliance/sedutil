@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright " 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright (c) 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -107,28 +107,28 @@ uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     sg.flags = 0;
     sg.pack_id = 0;
     sg.usr_ptr = NULL;
-    //        printf("\ncdb before \n");
-    //	HexDump(cdb, sizeof(cdb));
-    //        printf("\nsg before \n");
-    //	HexDump(&sg, sizeof(sg));
+    LOG(D4) << "cdb before ";
+    IFLOG(D4) hexDump(cdb, sizeof (cdb));
+    LOG(D4) << "sg before ";
+    IFLOG(D4) hexDump(&sg, sizeof (sg));
     /*
      * Do the IO
      */
     if (ioctl(hDev, SG_IO, &sg) < 0) {
-        //        printf("\ncdb after \n");
-        //        HexDump(cdb, sizeof (cdb));
-        //        printf("\nsg after \n");
-        //        HexDump(&sg, sizeof (sg));
-        //        printf("\nsense after \n");
-        //        HexDump(sense, sizeof (sense));
+        LOG(D4) << "cdb after ";
+        IFLOG(D4) hexDump(cdb, sizeof (cdb));
+        LOG(D4) << "sg after ";
+        IFLOG(D4) hexDump(&sg, sizeof (sg));
+        LOG(D4) << "sense after ";
+        IFLOG(D4) hexDump(sense, sizeof (sense));
         return 0xff;
     }
-    //    printf("\ncdb after \n");
-    //    HexDump(cdb, sizeof (cdb));
-    //    printf("\nsg after \n");
-    //    HexDump(&sg, sizeof (sg));
-    //    printf("\nsense after \n");
-    //    HexDump(sense, sizeof (sense));
+    LOG(D4) << "cdb after ";
+    IFLOG(D4) hexDump(cdb, sizeof (cdb));
+    LOG(D4) << "sg after ";
+    IFLOG(D4) hexDump(&sg, sizeof (sg));
+    LOG(D4) << "sense after ";
+    IFLOG(D4) hexDump(sense, sizeof (sense));
     return (sense[11]);
 }
 

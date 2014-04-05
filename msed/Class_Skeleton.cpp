@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright © 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright (c) 2014 Michael Romeo <r0m30@r0m30.com>
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
 OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -13,15 +13,13 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-* C:E********************************************************************** */
-#include "os.h" 
+ * C:E********************************************************************** */
+#include "os.h"
 #include "Class_Skeleton.h"
-
 
 Class_Skeleton::Class_Skeleton()
 {
 }
-
 
 Class_Skeleton::~Class_Skeleton()
 {
