@@ -21,6 +21,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <SDKDDKVer.h>
 #include <Windows.h>
 
+#include "msedConstants.h"
+#pragma warning(disable: 4127) //C4127: conditional expression is constant
+#include "log.h"
 #define ALIGNED_ALLOC(alignment, length) _aligned_malloc(length,alignment)
 #define SNPRINTF sprintf_s
 #define ALIGNED_FREE _aligned_free

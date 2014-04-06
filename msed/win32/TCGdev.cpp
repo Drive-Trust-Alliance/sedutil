@@ -14,7 +14,7 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  * C:E********************************************************************** */
-#include "..\os.h"
+#include "os.h"
 #include <stdio.h>
 #include <iostream>
 #include <Ntddscsi.h>
@@ -86,13 +86,13 @@ UINT8 TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     /* these were a b**** to find  defined in TCG specs but location is defined
      * in ATA spec */
     ata->CurrentTaskFile[0] = protocol; // Protocol
-    ata->CurrentTaskFile[1] = int(bufferlen / 512); // Payload in number of 512 blocks
+    ata->CurrentTaskFile[1] = uint8_t(bufferlen / 512); // Payload in number of 512 blocks
     // Damn self inflicted endian bugs
     // The comID is passed in host endian format in the taskfile
     // don't know why?? Translated later?
     ata->CurrentTaskFile[3] = (comID & 0x00ff); // Commid LSB
     ata->CurrentTaskFile[4] = ((comID & 0xff00) >> 8); // Commid MSB
-    ata->CurrentTaskFile[6] = cmd; // ata Command (0x5e or ox5c)
+    ata->CurrentTaskFile[6] = (uint8_t) cmd; // ata Command (0x5e or ox5c)
     LOG(D4) << "ata before";
     IFLOG(D4) hexDump(ata, sizeof (ATA_PASS_THROUGH_DIRECT));
     DeviceIoControl(hDev, // device to be queried

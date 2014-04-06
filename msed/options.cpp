@@ -61,8 +61,8 @@ void usage()
  */
 uint8_t options(int argc, char * argv[], MSED_OPTIONS * opts)
 {
-    memset(opts, 0, sizeof (MSED_OPTIONS));
-    uint8_t loggingLevel = 6;
+	memset(opts, 0, sizeof (MSED_OPTIONS));
+    uint16_t loggingLevel = 2;
     CLog::Level() = CLog::FromInt(loggingLevel);
 
     if (2 > argc) {
@@ -84,11 +84,11 @@ uint8_t options(int argc, char * argv[], MSED_OPTIONS * opts)
 			opts->action = 'q';
         else if (!(strcmp("-p", argv[i])) || !(strcmp("-password", argv[i])))
             opts->password = ++i;
-        else if ('v' == argv[i][2]) {
-            loggingLevel += strnlen(argv[i], 10);
+        else if ('v' == argv[i][1]) {
+            loggingLevel += (uint16_t) (strlen(argv[i]) - 1);
             if (loggingLevel > 7) loggingLevel = 7;
-            LOG(D) << "Setting log level to " << loggingLevel;
             CLog::Level() = CLog::FromInt(loggingLevel);
+			LOG(D) << "Log level set to " << CLog::ToString(CLog::FromInt(loggingLevel));
         }
         else if (i != argc - 1) {
             LOG(E) << "Invalid command line argument " << argv[i];
@@ -104,12 +104,12 @@ uint8_t options(int argc, char * argv[], MSED_OPTIONS * opts)
     if ('s' != opts->action) {
         if (argc < 3) {
             LOG(E) << "To few command line options";
-            return -1;
+            return 1;
         }
         else {
             if ('-' == argv[argc - 1][1]) {
                 LOG(E) << "The last argument must be the device ";
-                return -1;
+                return 1;
             }
         }
     }

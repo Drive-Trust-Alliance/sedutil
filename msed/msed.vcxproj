@@ -47,11 +47,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(SolutionDir)\msed\win32;$(SolutionDir)\msed;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -78,7 +80,6 @@
   <ItemGroup>
     <Text Include="Copyright.txt" />
     <Text Include="ReadMe.txt" />
-    <Text Include="tryed.txt" />
     <Text Include="win32\ReadMe_Windows.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -88,14 +89,13 @@
     <ClInclude Include="log.h" />
     <ClInclude Include="noparser.h" />
     <ClInclude Include="options.h" />
-    <ClInclude Include="os.h" />
     <ClInclude Include="TCGcommand.h" />
     <ClInclude Include="TCGbaseDev.h" />
     <ClInclude Include="TCGdev.h" />
     <ClInclude Include="TCGlexicon.h" />
     <ClInclude Include="TCGstructures.h" />
     <ClInclude Include="TCGtasks.h" />
-    <ClInclude Include="win32\os_Win32.h" />
+    <ClInclude Include="win32\os.h" />
     <ClInclude Include="win32\TCGdev.h" />
   </ItemGroup>
   <ItemGroup>

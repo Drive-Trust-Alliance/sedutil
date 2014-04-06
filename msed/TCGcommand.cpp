@@ -89,15 +89,15 @@ void
 TCGcommand::addToken(const char * bytestring)
 {
 	LOG(D4) << "Entering TCGcommand::addToken(const char * bytestring)";
+	uint16_t length = (uint16_t) strlen(bytestring);
     if (strlen(bytestring) < 16) {
         /* use tiny atom */
-        buffer[bufferpos++] = strlen(bytestring) | 0xa0;
-
+        buffer[bufferpos++] = (uint8_t) length | 0xa0;
     }
-    else if (strlen(bytestring) < 2048) {
+    else if(length < 2048) {
         /* Use Medium Atom */
-        buffer[bufferpos++] = 0xd0;
-        buffer[bufferpos++] = 0x0000 | ((strlen(bytestring)) & 0x00ff);
+        buffer[bufferpos++] = 0xd0 | (uint8_t) ((length >> 8) & 0x07);
+        buffer[bufferpos++] = (uint8_t) (length & 0x00ff);
     }
     else {
         /* Use Large Atom */
@@ -112,14 +112,14 @@ void
 TCGcommand::addToken(TCG_TOKEN token)
 {
 	LOG(D4) << "Entering TCGcommand::addToken(TCG_TOKEN token)";
-	buffer[bufferpos++] = token;
+	buffer[bufferpos++] = (uint8_t) token;
 }
 
 void
 TCGcommand::addToken(TCG_TINY_ATOM token)
 {
 	LOG(D4) << "Entering TCGcommand::addToken(TCG_TINY_ATOM token)";
-	buffer[bufferpos++] = token;
+	buffer[bufferpos++] = (uint8_t) token;
 }
 
 void
@@ -182,14 +182,14 @@ TCGcommand::RECV(TCGdev * d, void * resp)
 
 uint8_t
 TCGcommand::startSession(TCGdev * device,
-                         uint32_t hostSession,
+                         uint16_t hostSession,
                          TCG_UID SP,
                          uint8_t Write,
                          char * HostChallenge,
                          TCG_UID SignAuthority)
 {
 	LOG(D4) << "Entering TCGcommand::startSession ";
-	int rc = 0;
+	uint8_t rc = 0;
     reset(device->comID(), TCG_UID::TCG_SMUID_UID, TCG_METHOD::STARTSESSION);
     addToken(TCG_TOKEN::STARTLIST); // [  (Open Bracket)
     addToken(hostSession); // HostSessionID : sessionnumber
@@ -241,7 +241,7 @@ uint8_t
 TCGcommand::endSession(TCGdev * device)
 {
 	LOG(D4) << "Entering TCGcommand::endSession";
-    int rc = 0;
+    uint8_t rc = 0;
     reset(device->comID());
     addToken(TCG_TOKEN::ENDOFSESSION); // [  (Open Bracket)
     complete(0);

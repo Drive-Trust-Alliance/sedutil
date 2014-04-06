@@ -25,20 +25,11 @@
     <Text Include="win32\ReadMe_Windows.txt">
       <Filter>Documentation</Filter>
     </Text>
-    <Text Include="tryed.txt">
-      <Filter>Documentation</Filter>
-    </Text>
     <Text Include="Copyright.txt">
       <Filter>Documentation</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="os.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\os_Win32.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Class_Skeleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -76,6 +67,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TCGdev.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\os.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
