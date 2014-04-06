@@ -37,13 +37,19 @@ void usage()
     printf("                                password(-p) option required to specify the\n");
     printf("                                new password\n");
 	printf("-l, --activatelockingsp \n");
-	printf("                                activeate the LockingSP\n");
+	printf("                                activate the LockingSP\n");
 	printf("                                password(-p) option required\n");
 	printf("-T, --revertTPer \n");
     printf("                                set the device back to factory defaults \n");
     printf("                                password(-p) option required to specify the SID password\n");
     printf("                                see TCG documentation for optional Vendor unique\n");
     printf("                                exceptions\n");
+	printf("-L, --revertLockingSP \n");
+	printf("                                revert the LockingSP\n");
+	printf("                                password(-p) option required\n");
+	printf("--revertLockingSPnoerase \n");
+	printf("                                revert the LockingSP without erasing the data \n");
+	printf("                                password(-p) option required\n");
     printf("options\n");
     printf("-p --password <password>     \n");
     printf("                                 the password for the action \n");
@@ -83,6 +89,10 @@ uint8_t options(int argc, char * argv[], MSED_OPTIONS * opts)
 			opts->action = 'l';
         else if (!(strcmp("-T", argv[i])) || !(strcmp("--revertTPer", argv[i])))
             opts->action = 'T';
+		else if (!(strcmp("-L", argv[i])) || !(strcmp("--revertLockingSP", argv[i])))
+			opts->action = 'L';
+		else if (!(strcmp("-Z", argv[i])) || !(strcmp("--revertLockingSPnoerase", argv[i])))
+			opts->action = 'Z';
         else if (!(strcmp("-s", argv[i])) || !(strcmp("--scan", argv[i])))
             opts->action = 's';
 		else if (!(strcmp("-q", argv[i])) || !(strcmp("--query", argv[i])))

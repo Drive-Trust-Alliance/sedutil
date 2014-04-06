@@ -60,6 +60,22 @@ int main(int argc, char * argv[])
 			LOG(D) << "Performing revertTPer on " << argv[argc - 1] << " with password " << argv[opts.password];
 			return revertTPer(argv[argc - 1], argv[opts.password]);
 			break;
+		case 'L':
+			if (0 == opts.password) {
+				LOG(E) << "Reverting the Locking SP requires a password (-p)";
+				break;
+			}
+			LOG(D) << "Performing revertTLockingSP on " << argv[argc - 1] << " with password " << argv[opts.password];
+			return revertLockingSP(argv[argc - 1], argv[opts.password]);
+			break;
+		case 'Z':
+			if (0 == opts.password) {
+				LOG(E) << "Reverting the Locking SP requires a password (-p)";
+				break;
+			}
+			LOG(D) << "Performing revertTLockingSP (KeepGlobalRangeKey) on " << argv[argc - 1] << " with password " << argv[opts.password];
+			return revertLockingSP(argv[argc - 1], argv[opts.password],1);
+			break;
 		default:
 			LOG(E) << "Uable to determing what you want to do ";
 			usage();

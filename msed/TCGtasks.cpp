@@ -323,3 +323,78 @@ exit:
 	LOG(D4) << "Exiting activatLockingSP()";
 	return rc;
 }
+int revertLockingSP(char * devref, char * password,uint8_t keep)
+{
+	LOG(D4) << "Entering revert LockingSP() keep = " << keep;
+	int rc = 0;
+	GenericResponse * reply;
+	void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
+	memset(resp, 0, IO_BUFFER_LENGTH);
+	/*
+	* revert the Locking SP
+	*/
+	TCGdev *device = new TCGdev(devref);
+	if (!device->isPresent()) LOG(E) << "Device was not present";
+	// session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
+	//                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
+	TCGcommand *cmd = new TCGcommand(); // Start with an empty class
+	rc = cmd->startSession(device, 1, TCG_UID::TCG_LOCKINGSP_UID, TRUE,
+		password, TCG_UID::TCG_ADMIN1_UID);
+	if (0 != rc) {
+		LOG(E) << "Authenticated StartSession failed " << rc;
+		return rc;
+	}
+	// session[TSN:HSN]->ThisSP.RevertSP[]
+	cmd->reset(device->comID(), TCG_UID::TCG_THISSP_UID, TCG_METHOD::REVERTSP);
+	cmd->addToken(TCG_TOKEN::STARTLIST);
+	if (keep) {
+		cmd->addToken(TCG_TOKEN::STARTNAME);
+		//KeepGlobalRangeKey SHALL be 0x060000
+		cmd->addToken(TCG_TINY_ATOM::UINT_06);
+		cmd->addToken(TCG_TINY_ATOM::UINT_00);
+		cmd->addToken(TCG_TINY_ATOM::UINT_00);
+//		cmd->addToken(TCG_TINY_ATOM::UINT_06);
+		cmd->addToken(TCG_TINY_ATOM::UINT_01); // KeepGlobalRangeKey = TRUE
+		cmd->addToken(TCG_TOKEN::ENDNAME);
+	}
+	cmd->addToken(TCG_TOKEN::ENDLIST);
+	cmd->complete();
+	LOG(D3) << "Dumping revertSP";
+	IFLOG(D3) cmd->dump();
+	memset(resp, 0, IO_BUFFER_LENGTH);
+	rc = cmd->execute(device, resp);
+	if (0 != rc) {
+		LOG(E) << "revertSP Failed " << rc;
+		hexDump(resp, 128);
+		goto exit;
+	}
+	LOG(D3) << "revertSP  Reply";
+	IFLOG(D3) hexDump(resp, 128);
+	// verify response
+	reply = (GenericResponse *)resp;
+	/* should return an empty list */
+	if ((0xf0 != reply->payload[0]) |
+		(0xf1 != reply->payload[1]) |
+		(0xf9 != reply->payload[2]) 
+		)
+	{
+		LOG(E) << "revertSP Failed";
+		goto exit;
+	}
+		LOG(I) << "Revert LockingSP complete";
+	// session[TSN:HSN] <- EOS
+	rc = cmd->endSession(device);
+	if (0 != rc) {
+		LOG(E) << "EndSession failed " << rc;
+		IFLOG(D3) hexDump(resp, 128);
+		goto exit;
+	}
+exit:
+	/*  ******************  */
+	/*  CLEANUP LEAVE HERE  */
+	/*  ******************  */
+	delete device;
+	ALIGNED_FREE(resp);
+	LOG(D4) << "Exiting activatLockingSP()";
+	return rc;
+}
