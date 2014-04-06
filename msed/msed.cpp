@@ -41,8 +41,16 @@ int main(int argc, char * argv[])
 				LOG(E) << "Taking ownwership requires a *NEW* SID password (-p)";
 				break;
 			}
-			LOG(D) << "Performing takeOwnership of " << argv[argc-1] << " with password " << argv[opts.password];
+			LOG(D) << "Taking Ownership of the drive at" << argv[argc - 1] << " with password " << argv[opts.password];
 			return takeOwnership(argv[argc - 1], argv[opts.password]);
+			break;
+		case 'l':
+			if (0 == opts.password) {
+				LOG(E) << "Activating the Locking SP required the SID password (-p)";
+				break;
+			}
+			LOG(D) << "Activating the LockingSP on" << argv[argc-1] << " with password " << argv[opts.password];
+			return activateLockingSP(argv[argc - 1], argv[opts.password]);
 			break;
 		case 'T':
 			if (0 == opts.password) {

@@ -32,4 +32,8 @@ typedef struct _SSResponse {
 	uint8_t smallatom02;
 	uint32_t TPerSessionNumber;
 } SSResponse;
+typedef struct _GenericResponse {
+	TCGHeader h;
+	uint8_t payload[500];
+} GenericResponse;
 #pragma pack(pop)

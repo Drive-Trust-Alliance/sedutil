@@ -172,14 +172,7 @@ exit:
 int revertTPer(char * devref, char * password)
 {
     LOG(D4) << "Entering revertTPer(char * devref, char * password)";
-
-    //#if defined __gnu_linux__
-    //	TCGdev *device = new TCGdev("/dev/sdh");
-    //#elif defined _WIN32
-    //	TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
-    //#endif
-
-    int rc = 0;
+	int rc = 0;
     TCGHeader * h;
     void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     memset(resp, 0, IO_BUFFER_LENGTH);
@@ -202,7 +195,7 @@ int revertTPer(char * devref, char * password)
     cmd->complete();
     LOG(D3) << "Dumping RevertTPer";
     IFLOG(D3) cmd->dump();
-
+	memset(resp, 0, IO_BUFFER_LENGTH);
     rc = cmd->execute(device, resp);
     if (0 != rc) {
         LOG(E) << "RevertTper Failed " << rc;
@@ -228,4 +221,105 @@ exit:
     ALIGNED_FREE(resp);
     LOG(D4) << "Exiting RevertTperevertTPer()";
     return rc;
+}
+int activateLockingSP(char * devref, char * password)
+{
+	LOG(D4) << "Entering activateLockingSP()";
+	int rc = 0;
+	GenericResponse * reply;
+	void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
+	memset(resp, 0, IO_BUFFER_LENGTH);
+	/*
+	* Activate the Locking SP
+	*/
+	TCGdev *device = new TCGdev(devref);
+	if (!device->isPresent()) LOG(E) << "Device was not present";
+	TCGcommand *cmd = new TCGcommand(); // Start with an empty class
+	rc = cmd->startSession(device, 1, TCG_UID::TCG_ADMINSP_UID, TRUE,
+		password, TCG_UID::TCG_SID_UID);
+	if (0 != rc) {
+		LOG(E) << "Authenticated StartSession failed " << rc;
+		return rc;
+	}
+	//session[TSN:HSN]->LockingSP_UID.Get[Cellblock:[startColumn = LifeCycle,
+	//                                               endColumn = LifeCycle]]
+	cmd->reset(device->comID(), TCG_UID::TCG_LOCKINGSP_UID, TCG_METHOD::GET);
+	cmd->addToken(TCG_TOKEN::STARTLIST);
+	cmd->addToken(TCG_TOKEN::STARTLIST);
+	cmd->addToken(TCG_TOKEN::STARTNAME);
+	cmd->addToken(TCG_TOKEN::STARTCOLUMN);
+	cmd->addToken(TCG_TINY_ATOM::UINT_06); // LifeCycle
+	cmd->addToken(TCG_TOKEN::ENDNAME);
+	cmd->addToken(TCG_TOKEN::STARTNAME);
+	cmd->addToken(TCG_TOKEN::ENDCOLUMN);
+	cmd->addToken(TCG_TINY_ATOM::UINT_06); // LifeCycle
+	cmd->addToken(TCG_TOKEN::ENDNAME);
+	cmd->addToken(TCG_TOKEN::ENDLIST);
+	cmd->addToken(TCG_TOKEN::ENDLIST);
+	cmd->complete();
+	LOG(D3) << "Dumping Get Lifecycle";
+	IFLOG(D3) cmd->dump();
+	memset(resp, 0, IO_BUFFER_LENGTH);
+	rc = cmd->execute(device, resp);
+	if (0 != rc) {
+		LOG(E) << "Get Lifecycle Failed " << rc;
+		hexDump(resp, 128);
+		goto exit;
+	}
+	LOG(D3) << "Get LifeCycle  Reply";
+	IFLOG(D3) hexDump(resp, 128);
+// verify response
+	reply = (GenericResponse *)resp;
+	//if ((0x34 != SWAP32(reply->h.cp.length)) |
+	// *BUG* micron/crucial m500 length field does not include padding
+	if ((0x06 != reply->payload[3]) |
+		(0x08 != reply->payload[4])
+		)
+	{
+		LOG(E) << "Get lifecycle Failed";
+		goto exit;
+	}
+// session[TSN:HSN] -> LockingSP_UID.Activate[]
+	cmd->reset(device->comID(), TCG_UID::TCG_LOCKINGSP_UID, TCG_METHOD::ACTIVATE);
+	cmd->addToken(TCG_TOKEN::STARTLIST);
+	cmd->addToken(TCG_TOKEN::ENDLIST);
+	cmd->complete();
+	LOG(D3) << "Dumping Locking SP Activate";
+	IFLOG(D3) cmd->dump();
+	memset(resp, 0, IO_BUFFER_LENGTH);
+	rc = cmd->execute(device, resp);
+	if (0 != rc) {
+		LOG(E) << "Locking SP Activate Failed " << rc;
+		hexDump(resp, 128);
+		goto exit;
+	}
+	LOG(D3) << "Locking SP Activate  Reply";
+	IFLOG(D3) hexDump(resp, 128);
+	// verify response
+	reply = (GenericResponse *)resp;
+	// reply is empty list
+	if ((0x2c != SWAP32(reply->h.cp.length)) |
+		(0xf0 != reply->payload[0]) |
+		(0xf1 != reply->payload[1])
+		)
+	{
+		LOG(E) << "Locking Activate Failed";
+		goto exit;
+	}
+	LOG(I) << "Locking SP Activate Complete";
+	// session[TSN:HSN] <- EOS
+	rc = cmd->endSession(device);
+	if (0 != rc) {
+		LOG(E) << "EndSession failed " << rc;
+		IFLOG(D3) hexDump(resp, 128);
+		goto exit;
+	}
+exit:
+	/*  ******************  */
+	/*  CLEANUP LEAVE HERE  */
+	/*  ******************  */
+	delete device;
+	ALIGNED_FREE(resp);
+	LOG(D4) << "Exiting activatLockingSP()";
+	return rc;
 }

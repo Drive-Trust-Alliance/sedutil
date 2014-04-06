@@ -36,7 +36,10 @@ void usage()
     printf("                                change the SID password of the device\n");
     printf("                                password(-p) option required to specify the\n");
     printf("                                new password\n");
-    printf("-T, --revertTPer \n");
+	printf("-l, --activatelockingsp \n");
+	printf("                                activeate the LockingSP\n");
+	printf("                                password(-p) option required\n");
+	printf("-T, --revertTPer \n");
     printf("                                set the device back to factory defaults \n");
     printf("                                password(-p) option required to specify the SID password\n");
     printf("                                see TCG documentation for optional Vendor unique\n");
@@ -76,16 +79,18 @@ uint8_t options(int argc, char * argv[], MSED_OPTIONS * opts)
         }
         else if (!(strcmp("-t", argv[i])) || !(strcmp("--takeownership", argv[i])))
             opts->action = 't';
+		else if (!(strcmp("-l", argv[i])) || !(strcmp("--activatelockingsp", argv[i])))
+			opts->action = 'l';
         else if (!(strcmp("-T", argv[i])) || !(strcmp("--revertTPer", argv[i])))
             opts->action = 'T';
         else if (!(strcmp("-s", argv[i])) || !(strcmp("--scan", argv[i])))
             opts->action = 's';
 		else if (!(strcmp("-q", argv[i])) || !(strcmp("--query", argv[i])))
 			opts->action = 'q';
-        else if (!(strcmp("-p", argv[i])) || !(strcmp("-password", argv[i])))
+        else if (!(strcmp("-p", argv[i])) || !(strcmp("--password", argv[i])))
             opts->password = ++i;
-        else if ('v' == argv[i][1]) {
-            loggingLevel += (uint16_t) (strlen(argv[i]) - 1);
+		else if ('v' == argv[i][1]) {
+			loggingLevel += (uint16_t) (strlen(argv[i]) - 1);
             if (loggingLevel > 7) loggingLevel = 7;
             CLog::Level() = CLog::FromInt(loggingLevel);
 			LOG(D) << "Log level set to " << CLog::ToString(CLog::FromInt(loggingLevel));
