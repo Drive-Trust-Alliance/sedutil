@@ -33,11 +33,13 @@ public:
     TCGcommand();
     TCGcommand(TCG_UID InvokingUid, TCG_METHOD method);
     ~TCGcommand();
-	void * getBuffer();
+	void * getCmdBuffer();
+	void * getRespBuffer();
     void addToken(TCG_TOKEN token);
     void addToken(TCG_TINY_ATOM token);
     void addToken(TCG_UID token);
     void addToken(const char * bytestring);
+	void addToken(uint8_t bytes[], uint16_t size);
     void addToken(uint16_t);
 	void setcomID(uint16_t comID);
 	void setHSN(uint32_t HSN);
@@ -47,7 +49,8 @@ public:
     void reset(TCG_UID InvokingUid, TCG_METHOD method);
     void dump();
 private:
-    uint8_t *buffer;
+    uint8_t *cmdbuf;
+	uint8_t *respbuf;
     uint32_t bufferpos = 0;
 };
 

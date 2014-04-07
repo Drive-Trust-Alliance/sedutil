@@ -38,6 +38,9 @@ TCGbaseDev::~TCGbaseDev() {}
 uint8_t TCGbaseDev::isOpal2()
 {
     LOG(D4) << "Entering TCGbaseDev::isOpal2()";
+	if (!disk_info.OPAL20) {
+		LOG(W) << "This disk does not support Opal2.0";
+	}
     return disk_info.OPAL20;
 }
 

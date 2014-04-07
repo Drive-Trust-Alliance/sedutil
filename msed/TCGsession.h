@@ -33,14 +33,13 @@ public:
             TCG_UID SignAuthority = TCG_UID::TCG_UID_HEXFF);
     void setProtocol(uint8_t value);
     void expectAbort();
-    uint8_t sendCommand(TCGcommand * cmd, void * responseBuffer);
+    uint8_t sendCommand(TCGcommand * cmd);
 private:
     TCGsession();
     uint8_t SEND(TCGcommand * cmd);
     uint8_t RECV(void * resp);
     char * methodStatus(uint8_t status);
     TCGdev * d;
-    uint8_t *buffer;
     uint32_t bufferpos = 0;
     /* The session numbers should be taken from the
      * syncsession response so there will be no

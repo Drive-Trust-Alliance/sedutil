@@ -31,14 +31,13 @@ TCGsession::TCGsession(TCGdev * device)
 {
     LOG(D4) << "Creating TCGsession()";
     d = device;
-    buffer = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
 }
 
 uint8_t
 TCGsession::SEND(TCGcommand * cmd)
 {
     LOG(D4) << "Entering TCGsession::SEND(TCGcommand * cmd)";
-    return d->sendCmd(IF_SEND, TCGProtocol, d->comID(), cmd->getBuffer(), IO_BUFFER_LENGTH);
+    return d->sendCmd(IF_SEND, TCGProtocol, d->comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH);
 }
 
 uint8_t
@@ -70,15 +69,15 @@ TCGsession::start(TCG_UID SP, char * HostChallenge, TCG_UID SignAuthority)
     }
     cmd->addToken(TCG_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
-    if (sendCommand(cmd, buffer)) return 0xff;
-    SSResponse * ssresp = (SSResponse *) buffer;
+    if (sendCommand(cmd)) return 0xff;
+    SSResponse * ssresp = (SSResponse *) cmd->getRespBuffer();
     HSN = ssresp->HostSessionNumber;
     TSN = ssresp->TPerSessionNumber;
     return 0;
 }
 
 uint8_t
-TCGsession::sendCommand(TCGcommand * cmd, void * resp)
+TCGsession::sendCommand(TCGcommand * cmd)
 {
     LOG(D4) << "Entering TCGsession::sendCommand()";
     uint8_t rc;
@@ -94,10 +93,10 @@ TCGsession::sendCommand(TCGcommand * cmd, void * resp)
         return rc;
     }
     //    Sleep(250);
-    memset(resp, 0, IO_BUFFER_LENGTH);
-    rc = RECV(resp);
+    memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
+    rc = RECV(cmd->getRespBuffer());
     LOG(D3) << "Dumping reply buffer";
-    IFLOG(D3) hexDump(resp, 128);
+    IFLOG(D3) hexDump(cmd->getRespBuffer(), 128);
     if (0 != rc) {
         LOG(E) << "Command failed on recv" << rc;
         return rc;
@@ -106,7 +105,7 @@ TCGsession::sendCommand(TCGcommand * cmd, void * resp)
      * Check out the basics that so that we know we
      * have a sane reply to work with
      */
-    r = (GenericResponse *) resp;
+    r = (GenericResponse *) cmd->getRespBuffer();
     // zero lengths -- these are big endian but it doesn't matter for uint = 0
     if ((0 == r->h.cp.length) |
         (0 == r->h.pkt.length) |
@@ -194,9 +193,8 @@ TCGsession::~TCGsession()
         cmd->reset();
         cmd->addToken(TCG_TOKEN::ENDOFSESSION);
         cmd->complete(0);
-        if (sendCommand(cmd, buffer)) {
+        if (sendCommand(cmd)) {
             LOG(E) << "EndSession Failed";
         }
     }
-    ALIGNED_FREE(buffer);
 }
