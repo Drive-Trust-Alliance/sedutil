@@ -34,11 +34,21 @@ void usage()
 	printf("                                Display the Discovery 0 response of a device\n");
     printf("-t, --takeownership \n");
     printf("                                change the SID password of the device\n");
-    printf("                                password(-p) option required to specify the\n");
+    printf("                                --password(-p) option required to specify the\n");
     printf("                                new password\n");
 	printf("-l, --activatelockingsp \n");
 	printf("                                activate the LockingSP\n");
-	printf("                                password(-p) option required\n");
+	printf("                                --password(-p) option required\n");
+	printf("-S, --setpassword \n");
+	printf("                                Change the password of a TPER authority\n");
+	printf("                                --password(-p) is the lockingSP ADMIN1 password\n");
+	printf("                                --newpassword(-n) is the new password\n");
+	printf("                                Note: when first activated the LockingSPs\n");
+	printf("                                      ADMIN1 password is set to the SID password\n");
+	printf("-n, --newpassword \n");
+	printf("                                new password (only valid for --setpassword(-s)\n");
+	printf("-u, --user \n");
+	printf("                                Userid to change password for\n");
 	printf("-T, --revertTPer \n");
     printf("                                set the device back to factory defaults \n");
     printf("                                password(-p) option required to specify the SID password\n");
@@ -87,6 +97,12 @@ uint8_t options(int argc, char * argv[], MSED_OPTIONS * opts)
             opts->action = 't';
 		else if (!(strcmp("-l", argv[i])) || !(strcmp("--activatelockingsp", argv[i])))
 			opts->action = 'l';
+		else if (!(strcmp("-S", argv[i])) || !(strcmp("--setpassword", argv[i])))
+			opts->action = 'S';
+		else if (!(strcmp("-n", argv[i])) || !(strcmp("--newpassword", argv[i])))
+			opts->newpassword = ++i;
+		else if (!(strcmp("-u", argv[i])) || !(strcmp("--user", argv[i])))
+			opts->userid = ++i;
         else if (!(strcmp("-T", argv[i])) || !(strcmp("--revertTPer", argv[i])))
             opts->action = 'T';
 		else if (!(strcmp("-L", argv[i])) || !(strcmp("--revertLockingSP", argv[i])))
@@ -128,6 +144,16 @@ uint8_t options(int argc, char * argv[], MSED_OPTIONS * opts)
             }
         }
     }
+	if ('S' == opts->action) {
+		if (0 == opts->newpassword) {
+			LOG(E) << "--newpassword(-n) required to set a newpassword";
+			return 1;
+		}
+		if (0 == opts->userid) {
+			LOG(E) << "--user(-u) required to set a newpassword";
+			return 1;
+		}
+	}
     // TODO: check for multiple actions specified
     //if (1 != opts->takeOwnership + opts->scanSystem + opts->revertSP) {
     //	LOG(E) << "only one action can be performed at a time";

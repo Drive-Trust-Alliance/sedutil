@@ -206,8 +206,8 @@ exit:
     /*  ******************  */
     /*  CLEANUP LEAVE HERE  */
     /*  ******************  */
-    delete device;
     delete session;
+	delete device;
     LOG(D4) << "Exiting activatLockingSP()";
     return rc;
 }
@@ -253,6 +253,7 @@ int revertLockingSP(char * devref, char * password, uint8_t keep)
         goto exit;
     }
     LOG(I) << "Revert LockingSP complete";
+	session->expectAbort();
 exit:
     /*  ******************  */
     /*  CLEANUP LEAVE HERE  */
@@ -261,4 +262,44 @@ exit:
     delete device;
     LOG(D4) << "Exiting activatLockingSP()";
     return rc;
+}
+int setNewPassword(char * password, char * userid, char * newpassword, char * devref)
+{
+	LOG(D4) << "Entering setNewPassword" <<
+		" ADMIN1 password = " << password << " user = " << userid <<
+		" newpassword = " << newpassword <<	" device = " << devref;
+//	int rc = 0;
+//	GenericResponse * reply;
+	/*
+	* Set new password
+	*/
+
+	TCGdev *device = new TCGdev(devref);
+	if (!(device->isOpal2())) return 0xff;
+	TCGcommand *cmd = new TCGcommand();
+	TCGsession * session = new TCGsession(device);
+	// session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE, 
+	//               HostChallenge = <new_SID_password>, HostSigningAuthority = Admin1_UID]
+	if (session->start(TCG_UID::TCG_LOCKINGSP_UID, password, TCG_UID::TCG_ADMIN1_UID)) return 0xff;
+	// session[TSN:HSN] -> C_PIN_user_UID.Set[Values = [PIN = <new_password>]]
+		cmd->reset(TCG_UID::TCG_C_PIN_ADMIN1_TABLE, TCG_METHOD::SET);
+	cmd->addToken(TCG_TOKEN::STARTLIST);
+	cmd->addToken(TCG_TOKEN::STARTNAME);
+	cmd->addToken(TCG_TINY_ATOM::UINT_01); // Values
+	cmd->addToken(TCG_TOKEN::STARTLIST);
+	cmd->addToken(TCG_TOKEN::STARTNAME);
+	cmd->addToken(TCG_TINY_ATOM::UINT_03); // PIN
+	cmd->addToken(newpassword);
+	cmd->addToken(TCG_TOKEN::ENDNAME);
+	cmd->addToken(TCG_TOKEN::ENDLIST);
+	cmd->addToken(TCG_TOKEN::ENDNAME);
+	cmd->addToken(TCG_TOKEN::ENDLIST);
+	cmd->complete();
+	if (session->sendCommand(cmd)) return 0xff;
+	LOG(I) << "ADMIN1 password changed to " << newpassword;
+	// session[TSN:HSN] <- EOS
+	delete session;
+	delete device;
+	LOG(D4) << "Exiting setNewPassword()";
+	return 0;
 }

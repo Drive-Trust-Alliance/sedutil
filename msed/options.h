@@ -16,6 +16,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * C:E********************************************************************** */
 typedef struct _MSED_OPTIONS {
     uint8_t password;
+	uint8_t userid;
+	uint8_t newpassword;
     uint8_t deviceref;
     uint8_t action;
 } MSED_OPTIONS;

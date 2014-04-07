@@ -76,6 +76,15 @@ int main(int argc, char * argv[])
 			LOG(D) << "Performing revertTLockingSP (KeepGlobalRangeKey) on " << argv[argc - 1] << " with password " << argv[opts.password];
 			return revertLockingSP(argv[argc - 1], argv[opts.password],1);
 			break;
+		case 'S':
+			LOG(D) << "Performing setpassword for user " << argv[opts.userid];
+			LOG(D4) <<"new password is " << argv[opts.newpassword] <<
+				" using " << argv[opts.password] << " as the LockingSP ADMIN1 password" <<
+				" on device " << argv[argc - 1];
+			return setNewPassword(argv[opts.password],argv[opts.userid],
+							argv[opts.newpassword], argv[argc-1]);
+			break;
+
 		default:
 			LOG(E) << "Uable to determing what you want to do ";
 			usage();
