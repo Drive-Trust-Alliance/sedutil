@@ -35,11 +35,12 @@ int main(int argc, char * argv[])
 		case 'q':
 			LOG(D) << "Performing diskquery() on " << argv[argc - 1];
 			diskQuery(argv[argc - 1]);
+			return 0;
 			break;
 		case 't':
 			if (0 == opts.password) {
 				LOG(E) << "Taking ownwership requires a *NEW* SID password (-p)";
-				break;
+				return 1;
 			}
 			LOG(D) << "Taking Ownership of the drive at" << argv[argc - 1] << " with password " << argv[opts.password];
 			return takeOwnership(argv[argc - 1], argv[opts.password]);
@@ -47,7 +48,7 @@ int main(int argc, char * argv[])
 		case 'l':
 			if (0 == opts.password) {
 				LOG(E) << "Activating the Locking SP required the SID password (-p)";
-				break;
+				return 1;
 			}
 			LOG(D) << "Activating the LockingSP on" << argv[argc-1] << " with password " << argv[opts.password];
 			return activateLockingSP(argv[argc - 1], argv[opts.password]);
@@ -55,7 +56,7 @@ int main(int argc, char * argv[])
 		case 'T':
 			if (0 == opts.password) {
 				LOG(E) << "Reverting the TPer requires a the SID password (-p)";
-				break;
+				return 1;
 			}
 			LOG(D) << "Performing revertTPer on " << argv[argc - 1] << " with password " << argv[opts.password];
 			return revertTPer(argv[argc - 1], argv[opts.password]);
@@ -63,7 +64,7 @@ int main(int argc, char * argv[])
 		case 'L':
 			if (0 == opts.password) {
 				LOG(E) << "Reverting the Locking SP requires a password (-p)";
-				break;
+				return 1;
 			}
 			LOG(D) << "Performing revertTLockingSP on " << argv[argc - 1] << " with password " << argv[opts.password];
 			return revertLockingSP(argv[argc - 1], argv[opts.password]);
@@ -71,7 +72,7 @@ int main(int argc, char * argv[])
 		case 'Z':
 			if (0 == opts.password) {
 				LOG(E) << "Reverting the Locking SP requires a password (-p)";
-				break;
+				return 1;
 			}
 			LOG(D) << "Performing revertTLockingSP (KeepGlobalRangeKey) on " << argv[argc - 1] << " with password " << argv[opts.password];
 			return revertLockingSP(argv[argc - 1], argv[opts.password],1);
@@ -84,7 +85,10 @@ int main(int argc, char * argv[])
 			return setNewPassword(argv[opts.password],argv[opts.userid],
 							argv[opts.newpassword], argv[argc-1]);
 			break;
-
+		case 'e':
+			LOG(D) << "Performing enable user for user " << argv[opts.userid];
+			return enableUser(argv[opts.password], argv[opts.userid], argv[argc - 1]);
+			break;
 		default:
 			LOG(E) << "Uable to determing what you want to do ";
 			usage();

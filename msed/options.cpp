@@ -39,6 +39,9 @@ void usage()
 	printf("-l, --activatelockingsp \n");
 	printf("                                activate the LockingSP\n");
 	printf("                                --password(-p) option required\n");
+	printf("-e, --enableuser \n");
+	printf("                                Enable a user in the lockingSP\n");
+	printf("                                --password(-p) is the lockingSP ADMIN1 password\n");
 	printf("-S, --setpassword \n");
 	printf("                                Change the password of a TPER authority\n");
 	printf("                                --password(-p) is the lockingSP ADMIN1 password\n");
@@ -48,7 +51,7 @@ void usage()
 	printf("-n, --newpassword \n");
 	printf("                                new password (only valid for --setpassword(-s)\n");
 	printf("-u, --user \n");
-	printf("                                Userid to change password for\n");
+	printf("                                Userid action is directed at\n");
 	printf("-T, --revertTPer \n");
     printf("                                set the device back to factory defaults \n");
     printf("                                password(-p) option required to specify the SID password\n");
@@ -95,6 +98,8 @@ uint8_t options(int argc, char * argv[], MSED_OPTIONS * opts)
         }
         else if (!(strcmp("-t", argv[i])) || !(strcmp("--takeownership", argv[i])))
             opts->action = 't';
+		else if (!(strcmp("-e", argv[i])) || !(strcmp("--enableuser", argv[i])))
+			opts->action = 'e';
 		else if (!(strcmp("-l", argv[i])) || !(strcmp("--activatelockingsp", argv[i])))
 			opts->action = 'l';
 		else if (!(strcmp("-S", argv[i])) || !(strcmp("--setpassword", argv[i])))
@@ -151,6 +156,16 @@ uint8_t options(int argc, char * argv[], MSED_OPTIONS * opts)
 		}
 		if (0 == opts->userid) {
 			LOG(E) << "--user(-u) required to set a newpassword";
+			return 1;
+		}
+	}
+	if ('e' == opts->action) {
+		if (0 == opts->password) {
+			LOG(E) << "--password(-p) of the lockingSP ADMIN1 password is required to enable a user";
+			return 1;
+		}
+		if (0 == opts->userid) {
+			LOG(E) << "--user(-u) required to enable a user";
 			return 1;
 		}
 	}

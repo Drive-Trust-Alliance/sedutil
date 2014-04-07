@@ -303,3 +303,39 @@ int setNewPassword(char * password, char * userid, char * newpassword, char * de
 	LOG(D4) << "Exiting setNewPassword()";
 	return 0;
 }
+int enableUser(char * password, char * userid, char * devref)
+{
+	LOG(D4) << "Enable User()" <<
+		" ADMIN1 password = " << password << " user = " << userid << " on" << devref;
+	/*
+	* Eanable a user in the lockingSP
+	*/
+	TCGdev *device = new TCGdev(devref);
+	if (!(device->isOpal2())) return 0xff;
+	TCGcommand *cmd = new TCGcommand();
+	TCGsession * session = new TCGsession(device);
+	// session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE, 
+	//               HostChallenge = <new_SID_password>, HostSigningAuthority = Admin1_UID]
+	if (session->start(TCG_UID::TCG_LOCKINGSP_UID, password, TCG_UID::TCG_ADMIN1_UID)) return 0xff;
+	// session[TSN:HSN] -> User1_UID.Set[Values = [Enabled = TRUE]]
+	cmd->reset(TCG_UID::TCG_USER1_UID, TCG_METHOD::SET);
+	cmd->addToken(TCG_TOKEN::STARTLIST);
+	cmd->addToken(TCG_TOKEN::STARTNAME);
+	cmd->addToken(TCG_TINY_ATOM::UINT_01); // Values
+	cmd->addToken(TCG_TOKEN::STARTLIST);
+	cmd->addToken(TCG_TOKEN::STARTNAME);
+	cmd->addToken(TCG_TINY_ATOM::UINT_05); // Enabled
+	cmd->addToken(TCG_TINY_ATOM::UINT_01); // TRUE
+	cmd->addToken(TCG_TOKEN::ENDNAME);
+	cmd->addToken(TCG_TOKEN::ENDLIST);
+	cmd->addToken(TCG_TOKEN::ENDNAME);
+	cmd->addToken(TCG_TOKEN::ENDLIST);
+	cmd->complete();
+	if (session->sendCommand(cmd)) return 0xff;
+	LOG(I) << "USER1 has been enabled ";
+	// session[TSN:HSN] <- EOS
+	delete session;
+	delete device;
+	LOG(D4) << "Exiting enable user()";
+	return 0;
+}
