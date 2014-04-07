@@ -17,6 +17,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 #include <stdlib.h>
 #include <stdint.h>
+#include <unistd.h>
 #include <string.h>
 #include <errno.h>
 #include "msedConstants.h"

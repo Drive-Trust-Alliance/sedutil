@@ -16,9 +16,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * C:E********************************************************************* */
 #include "os.h"
 #include <stdio.h>
-#ifdef __gnu_linux__
-#include <unistd.h>
-#endif
 #include "TCGcommand.h"
 #include "TCGdev.h"
 #include "endianfixup.h"
@@ -37,36 +34,31 @@ TCGcommand::TCGcommand()
 }
 
 /* Fill in the header information and format the call */
-TCGcommand::TCGcommand(uint16_t ID, TCG_UID InvokingUid, TCG_METHOD method)
+TCGcommand::TCGcommand(TCG_UID InvokingUid, TCG_METHOD method)
 {
 	LOG(D4) << "Creating TCGvommand(uint16_t ID, TCG_UID InvokingUid, TCG_METHOD method)";
     /* allocate the buffer */
     buffer = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
-    reset(ID, InvokingUid, method);
+    reset(InvokingUid, method);
 }
 
 /* Fill in the header information ONLY (no call) */
 void
-TCGcommand::reset(uint16_t comID)
+TCGcommand::reset()
 {
 	LOG(D4) << "Entering TCGcommand::reset(uint16_t comID)";
     memset(buffer, 0, IO_BUFFER_LENGTH);
     TCGHeader * hdr;
     hdr = (TCGHeader *) buffer;
-    hdr->cp.extendedComID[0] = ((comID & 0xff00) >> 8);
-    hdr->cp.extendedComID[1] = (comID & 0x00ff);
-    hdr->cp.extendedComID[2] = 0x00;
-    hdr->cp.extendedComID[3] = 0x00;
-    hdr->pkt.TSN = TSN;
-    hdr->pkt.HSN = HSN;
+
     bufferpos = sizeof (TCGHeader);
 }
 
 void
-TCGcommand::reset(uint16_t comID, TCG_UID InvokingUid, TCG_METHOD method)
+TCGcommand::reset(TCG_UID InvokingUid, TCG_METHOD method)
 {
 	LOG(D4) << "Entering TCGcommand::reset(uint16_t comID, TCG_UID InvokingUid, TCG_METHOD method)";
-    reset(comID); // build the headers
+    reset(); // build the headers
     buffer[bufferpos++] = TCG_TOKEN::CALL;
     buffer[bufferpos++] = TCG_SHORT_ATOM::BYTESTRING8;
     memcpy(&buffer[bufferpos], &TCGUID[InvokingUid][0], 8); /* bytes 2-9 */
@@ -155,130 +147,43 @@ TCGcommand::complete(uint8_t EOD)
     hdr->cp.length = SWAP32(bufferpos - sizeof (TCGComPacket));
 }
 
-uint8_t
-TCGcommand::execute(TCGdev * d, void * resp)
+void *
+TCGcommand::getBuffer()
 {
-	LOG(D4) << "Entering TCGcommand::execute(TCGdev * d, void * resp)";
-    uint8_t iorc;
-    iorc = SEND(d);
-    if (0x00 == iorc)
-        iorc = RECV(d, resp);
-    return iorc;
+	return buffer;
 }
-
-uint8_t
-TCGcommand::SEND(TCGdev * d)
-{
-	LOG(D4) << "Entering TCGcommand::SEND(TCGdev * d)";
-    return d->sendCmd(IF_SEND, TCGProtocol, d->comID(), buffer, IO_BUFFER_LENGTH);
-}
-
-uint8_t
-TCGcommand::RECV(TCGdev * d, void * resp)
-{
-	LOG(D4) << "Entering TCGcommand::RECV(TCGdev * d, void * resp)";
-    return d->sendCmd(IF_RECV, TCGProtocol, d->comID(), resp, IO_BUFFER_LENGTH);
-}
-
-uint8_t
-TCGcommand::startSession(TCGdev * device,
-                         uint16_t hostSession,
-                         TCG_UID SP,
-                         uint8_t Write,
-                         char * HostChallenge,
-                         TCG_UID SignAuthority)
-{
-	LOG(D4) << "Entering TCGcommand::startSession ";
-	uint8_t rc = 0;
-    reset(device->comID(), TCG_UID::TCG_SMUID_UID, TCG_METHOD::STARTSESSION);
-    addToken(TCG_TOKEN::STARTLIST); // [  (Open Bracket)
-    addToken(hostSession); // HostSessionID : sessionnumber
-    addToken(SP); // SPID : SP
-    if (Write)
-        addToken(TCG_TINY_ATOM::UINT_01);
-    else
-        addToken(TCG_TINY_ATOM::UINT_00);
-    if (NULL != HostChallenge) {
-        addToken(TCG_TOKEN::STARTNAME);
-        addToken(TCG_TINY_ATOM::UINT_00); // first optional paramater
-        addToken(HostChallenge);
-        addToken(TCG_TOKEN::ENDNAME);
-        addToken(TCG_TOKEN::STARTNAME);
-        addToken(TCG_TINY_ATOM::UINT_03); // fourth optional paramater
-        addToken(SignAuthority);
-        addToken(TCG_TOKEN::ENDNAME);
-    }
-    addToken(TCG_TOKEN::ENDLIST); // ]  (Close Bracket)
-    complete();
-    setProtocol(0x01);
-    LOG(D3) << "Dumping StartSession";
-    IFLOG(D3) dump(); 
-    rc = SEND(device);
-    if (0 != rc) {
-        LOG(E) << "StartSession failed on send " << rc;
-        return rc;
-    }
-    //    Sleep(250);
-    memset(buffer, 0, IO_BUFFER_LENGTH);
-    rc = RECV(device, buffer);
-    if (0 != rc) {
-        LOG(E) << "StartSession failed on recv" <<  rc;
-        return rc;
-    }
-    LOG(D3) << "Dumping StartSession Reply (SyncSession)";
-    IFLOG(D3) dump();
-    SSResponse * ssresp = (SSResponse *) buffer;
-    if (0x49 != SWAP32(ssresp->h.cp.length) || (0 == ssresp->TPerSessionNumber)) {
-        LOG(E) << "Invalid SyncSession response";
-        return 0xff;
-    }
-    HSN = ssresp->HostSessionNumber;
-    TSN = ssresp->TPerSessionNumber;
-    return 0;
-}
-
-uint8_t
-TCGcommand::endSession(TCGdev * device)
-{
-	LOG(D4) << "Entering TCGcommand::endSession";
-    uint8_t rc = 0;
-    reset(device->comID());
-    addToken(TCG_TOKEN::ENDOFSESSION); // [  (Open Bracket)
-    complete(0);
-    HSN = 0;
-    TSN = 0;
-    rc = SEND(device);
-    if (0 != rc) {
-        LOG(E) << "EndSession failed on send rc =" << rc;
-        return rc;
-    }
-    memset(buffer, 0, IO_BUFFER_LENGTH);
-    rc = RECV(device, buffer);
-    if (0 != rc) {
-        LOG(E) << "EndSession failed on recv  rc =" << rc;
-        return rc;
-    }
-    TCGHeader * resp = (TCGHeader *) buffer;
-    if (0x25 != SWAP32(resp->cp.length)) {
-		LOG(E) << "Invalid EndSession response";
-        return 0xff;
-    }
-	LOG(D3) << "Dumping EndSession Reply";
-    IFLOG(D3) dump();
-    return 0;
-}
-
 void
-TCGcommand::setProtocol(uint8_t value)
+TCGcommand::setcomID(uint16_t comID)
 {
-	LOG(D4) << "Entering TCGcommand::setProtocol";
-    TCGProtocol = value;
+	TCGHeader * hdr;
+	hdr = (TCGHeader *)buffer;
+	LOG(D4) << "Entering TCGcommand::setcomID()";
+	hdr->cp.extendedComID[0] = ((comID & 0xff00) >> 8);
+	hdr->cp.extendedComID[1] = (comID & 0x00ff);
+	hdr->cp.extendedComID[2] = 0x00;
+	hdr->cp.extendedComID[3] = 0x00;
+}
+
+void 
+TCGcommand::setTSN(uint32_t TSN) {
+	TCGHeader * hdr;
+	hdr = (TCGHeader *)buffer;
+	LOG(D4) << "Entering TCGcommand::setTSN()";
+	hdr->pkt.TSN = TSN;
+}
+
+void 
+TCGcommand::setHSN(uint32_t HSN) {
+	TCGHeader * hdr;
+	hdr = (TCGHeader *)buffer;
+	LOG(D4) << "Entering TCGcommand::setHSN()";
+	hdr->pkt.HSN = HSN;
 }
 
 void
 TCGcommand::dump()
 {
-	LOG(D4) << "Entering TCGcommand::dump";
+	LOG(D4) << "Entering TCGcommand::dump()";
 	LOG(D3) << "Dumping TCGCommand buffer";
     hexDump(buffer, bufferpos);
 }

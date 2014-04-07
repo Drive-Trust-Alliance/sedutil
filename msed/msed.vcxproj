@@ -93,6 +93,7 @@
     <ClInclude Include="TCGbaseDev.h" />
     <ClInclude Include="TCGdev.h" />
     <ClInclude Include="TCGlexicon.h" />
+    <ClInclude Include="TCGsession.h" />
     <ClInclude Include="TCGstructures.h" />
     <ClInclude Include="TCGtasks.h" />
     <ClInclude Include="win32\os.h" />
@@ -106,6 +107,7 @@
     <ClCompile Include="options.cpp" />
     <ClCompile Include="TCGcommand.cpp" />
     <ClCompile Include="TCGbaseDev.cpp" />
+    <ClCompile Include="TCGsession.cpp" />
     <ClCompile Include="TCGtasks.cpp" />
     <ClCompile Include="win32\TCGdev.cpp" />
   </ItemGroup>

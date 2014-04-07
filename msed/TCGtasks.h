@@ -20,4 +20,4 @@ int activateLockingSP(char * devref, char * password);
 int revertTPer(char * devref, char * password);
 int revertLockingSP(char * devref, char * password,uint8_t keep=0);
 int diskScan();
-int diskQuery(char * devref);
+int diskQuery(char * devref, uint8_t silent = 0);

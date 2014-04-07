@@ -20,13 +20,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "TCGdev.h"
 #include "hexDump.h"
 #include "TCGcommand.h"
+#include "TCGsession.h"
 #include "endianfixup.h"
 #include "TCGstructures.h"
 #include "noparser.h"
 
-int diskQuery(char * devref)
+int diskQuery(char * devref, uint8_t silent)
 {
-    LOG(D4) << "Entering diskQuery(char * devref)" << devref;
+    LOG(D4) << "Entering diskQuery()" << devref;
     TCGdev * dev = new TCGdev(devref);
     if (!dev->isPresent()) {
         LOG(E) << "Device not present" << devref;
@@ -36,7 +37,9 @@ int diskQuery(char * devref)
         LOG(E) << "Device does not support Opal 2.0" << devref;
         return 1;
     }
-    dev->puke();
+	if (!silent) {
+		dev->puke();
+	}
     return 0;
 }
 
@@ -51,29 +54,17 @@ int takeOwnership(char * devref, char * newpassword)
 {
     LOG(D4) << "Entering takeOwnership(char * devref, char * newpassword)";
 
-    //#if defined __gnu_linux__
-    //	TCGdev *device = new TCGdev("/dev/sdh");
-    //#elif defined _WIN32
-    //	TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
-    //#endif
-
-    int rc = 0;
-    TCGHeader * h;
     void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     memset(resp, 0, IO_BUFFER_LENGTH);
-    TCGdev *device = new TCGdev(devref);
-    if (!device->isPresent()) LOG(E) << "Device was not present";
-    //	Start Session
-    TCGcommand *cmd = new TCGcommand(); // Start with an empty class
-    rc = cmd->startSession(device, 1, TCG_UID::TCG_ADMINSP_UID, TRUE);
-    if (0 != rc) {
-        LOG(E) << "Unauthenticated StartSession failed " << rc;
-        return rc;
-    }
-
+	if (diskQuery(devref, 1)) return 0xff;
+	TCGcommand *cmd = new TCGcommand();
+	TCGdev *device = new TCGdev(devref);
+	//	Start Session
+	TCGsession * session = new TCGsession(device);
+	if (session->start(TCG_UID::TCG_ADMINSP_UID)) return 0xff;
     // session[TSN:HSN] -> C_PIN_MSID_UID.Get[Cellblock : [startColumn = PIN,
     //                       endColumn = PIN]]
-    cmd->reset(device->comID(), TCG_UID::TCG_C_PIN_MSID_TABLE, TCG_METHOD::GET);
+    cmd->reset(TCG_UID::TCG_C_PIN_MSID_TABLE, TCG_METHOD::GET);
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::STARTNAME);
@@ -87,82 +78,43 @@ int takeOwnership(char * devref, char * newpassword)
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->complete();
-    LOG(D3) << "Dumping Get C_PIN";
-    IFLOG(D3) cmd->dump();
     memset(resp, 0, IO_BUFFER_LENGTH);
-    rc = cmd->execute(device, resp);
-    if (0 != rc) {
-        LOG(E) << "Get C PIN failed " << rc;
-        IFLOG(D3) hexDump(resp, 16);
-        goto exit;
-    }
-    LOG(D3) << "Dumping GET C PIN Reply";
-    IFLOG(D3) hexDump(resp, 128);
+	if (session->sendCommand(cmd, resp)) return 0xff;
     /* The pin is the ever so original "micron" so
      * I'll just use that instead of pretending
      * I'm parsing the reply
      */
     // session[TSN:HSN] <- EOS
-    rc = cmd->endSession(device);
-    if (0 != rc) {
-        LOG(E) << "EndSession failed " << rc;
-        IFLOG(D3) hexDump(resp, 128);
-        goto exit;
-    }
-    /*
-     * We now have the PIN to sign on and take ownership
+    delete session;
+	/*
+	 * We now have the PIN to sign on and take ownership
      * so lets give it a shot
      */
-    rc = cmd->startSession(device, 1, TCG_UID::TCG_ADMINSP_UID, TRUE,
-                           (char *) "micron", TCG_UID::TCG_SID_UID);
-    if (0 != rc) {
-        LOG(E) << " Authenticated StartSession failed " << rc;
-        return rc;
-    }
+	//	Start Session
+	session = new TCGsession(device);
+	if(session->start(TCG_UID::TCG_ADMINSP_UID, "micron", TCG_UID::TCG_SID_UID))
+		return 0xff;
     // session[TSN:HSN] -> C_PIN_SID_UID.Set[Values = [PIN = <new_SID_password>]]
     /*
      * Change the password --- Yikes!!!
      */
-    cmd->reset(device->comID(), TCG_UID::TCG_C_PIN_SID_TABLE, TCG_METHOD::SET);
+    cmd->reset(TCG_UID::TCG_C_PIN_SID_TABLE, TCG_METHOD::SET);
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::STARTNAME);
     cmd->addToken(TCG_TINY_ATOM::UINT_01); // Values
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::STARTNAME);
-    cmd->addToken(TCG_TINY_ATOM::UINT_03); // column 4 is the PIN
+    cmd->addToken(TCG_TINY_ATOM::UINT_03); // PIN
     cmd->addToken(newpassword);
     cmd->addToken(TCG_TOKEN::ENDNAME);
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->addToken(TCG_TOKEN::ENDNAME);
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->complete();
-    LOG(D3) << "Dumping SetPassword";
-    IFLOG(D3) cmd->dump();
-    rc = cmd->execute(device, resp);
-    if (0 != rc) {
-        LOG(E) << "Password Change Failed " << rc;
-        IFLOG(D3) hexDump(resp, 16);
-        goto exit;
-    }
-    LOG(D3) << "Dumping Set new Password Reply";
-    IFLOG(D3) hexDump(resp, 128);
-    h = (TCGHeader *) resp;
-    if (0x2c != SWAP32(h->cp.length)) {
-        LOG(E) << "Set Failed";
-        goto exit;
-    }
+    if(session->sendCommand(cmd, resp)) return 0xff;
     LOG(I) << "takeownership complete new SID password = " << newpassword;
     // session[TSN:HSN] <- EOS
-    rc = cmd->endSession(device);
-    if (0 != rc) {
-        LOG(E) << "EndSession failed " << rc;
-        IFLOG(D3) hexDump(resp, 128);
-        goto exit;
-    }
-exit:
-    /*  ******************  */
-    /*  CLEANUP LEAVE HERE  */
-    /*  ******************  */
+    delete session;
     delete device;
     ALIGNED_FREE(resp);
     LOG(D4) << "Exiting changeInitialPassword()";
@@ -172,55 +124,31 @@ exit:
 int revertTPer(char * devref, char * password)
 {
     LOG(D4) << "Entering revertTPer(char * devref, char * password)";
-	int rc = 0;
-    TCGHeader * h;
+
     void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     memset(resp, 0, IO_BUFFER_LENGTH);
     /*
      * Revert the TPer
      */
+	if (diskQuery(devref, 1)) return 0xff;
     TCGdev *device = new TCGdev(devref);
-    if (!device->isPresent()) LOG(E) << "Device was not present";
-    TCGcommand *cmd = new TCGcommand(); // Start with an empty class
-    rc = cmd->startSession(device, 1, TCG_UID::TCG_ADMINSP_UID, TRUE,
-                           password, TCG_UID::TCG_SID_UID);
-    if (0 != rc) {
-        LOG(E) << "Authenticated StartSession failed " << rc;
-        return rc;
-    }
+    TCGcommand *cmd = new TCGcommand();
+	TCGsession * session = new TCGsession(device);
+	if (session->start(TCG_UID::TCG_ADMINSP_UID, password, TCG_UID::TCG_SID_UID)) return 0xff;
     //	session[TSN:HSN]->AdminSP_UID.Revert[]
-    cmd->reset(device->comID(), TCG_UID::TCG_ADMINSP_UID, TCG_METHOD::REVERT);
+    cmd->reset(TCG_UID::TCG_ADMINSP_UID, TCG_METHOD::REVERT);
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->complete();
-    LOG(D3) << "Dumping RevertTPer";
-    IFLOG(D3) cmd->dump();
-	memset(resp, 0, IO_BUFFER_LENGTH);
-    rc = cmd->execute(device, resp);
-    if (0 != rc) {
-        LOG(E) << "RevertTper Failed " << rc;
-        hexDump(resp, 128);
-        goto exit;
-    }
-    LOG(D3) << "Revert[]  Reply";
-    IFLOG(D3) hexDump(resp, 128);
-    h = (TCGHeader *) resp;
-    if (0x2c != SWAP32(h->cp.length)) {
-        LOG(E) << "Revert Failed";
-        goto exit;
-    }
+	session->expectAbort();
+    memset(resp, 0, IO_BUFFER_LENGTH);
+	if (session->sendCommand(cmd,resp)) return 0xff;
     LOG(I) << "revertTper completed successfully";
-    // session is aborted by TPER
-    // so session[TSN:HSN] <- EOS
-    // is not needed
-exit:
-    /*  ******************  */
-    /*  CLEANUP LEAVE HERE  */
-    /*  ******************  */
+	delete session;
     delete device;
     ALIGNED_FREE(resp);
     LOG(D4) << "Exiting RevertTperevertTPer()";
-    return rc;
+    return 0;
 }
 int activateLockingSP(char * devref, char * password)
 {
@@ -232,18 +160,14 @@ int activateLockingSP(char * devref, char * password)
 	/*
 	* Activate the Locking SP
 	*/
+	if (diskQuery(devref, 1)) return 0xff;
 	TCGdev *device = new TCGdev(devref);
-	if (!device->isPresent()) LOG(E) << "Device was not present";
-	TCGcommand *cmd = new TCGcommand(); // Start with an empty class
-	rc = cmd->startSession(device, 1, TCG_UID::TCG_ADMINSP_UID, TRUE,
-		password, TCG_UID::TCG_SID_UID);
-	if (0 != rc) {
-		LOG(E) << "Authenticated StartSession failed " << rc;
-		return rc;
-	}
+	TCGcommand *cmd = new TCGcommand();
+	TCGsession * session = new TCGsession(device);
+	if(session->start(TCG_UID::TCG_ADMINSP_UID,	password, TCG_UID::TCG_SID_UID)) return 0xff;
 	//session[TSN:HSN]->LockingSP_UID.Get[Cellblock:[startColumn = LifeCycle,
 	//                                               endColumn = LifeCycle]]
-	cmd->reset(device->comID(), TCG_UID::TCG_LOCKINGSP_UID, TCG_METHOD::GET);
+	cmd->reset(TCG_UID::TCG_LOCKINGSP_UID, TCG_METHOD::GET);
 	cmd->addToken(TCG_TOKEN::STARTLIST);
 	cmd->addToken(TCG_TOKEN::STARTLIST);
 	cmd->addToken(TCG_TOKEN::STARTNAME);
@@ -257,18 +181,9 @@ int activateLockingSP(char * devref, char * password)
 	cmd->addToken(TCG_TOKEN::ENDLIST);
 	cmd->addToken(TCG_TOKEN::ENDLIST);
 	cmd->complete();
-	LOG(D3) << "Dumping Get Lifecycle";
-	IFLOG(D3) cmd->dump();
 	memset(resp, 0, IO_BUFFER_LENGTH);
-	rc = cmd->execute(device, resp);
-	if (0 != rc) {
-		LOG(E) << "Get Lifecycle Failed " << rc;
-		hexDump(resp, 128);
-		goto exit;
-	}
-	LOG(D3) << "Get LifeCycle  Reply";
-	IFLOG(D3) hexDump(resp, 128);
-// verify response
+	if(session->sendCommand(cmd, resp)) return 0xff;
+	// verify response
 	reply = (GenericResponse *)resp;
 	//if ((0x34 != SWAP32(reply->h.cp.length)) |
 	// *BUG* micron/crucial m500 length field does not include padding
@@ -280,21 +195,12 @@ int activateLockingSP(char * devref, char * password)
 		goto exit;
 	}
 // session[TSN:HSN] -> LockingSP_UID.Activate[]
-	cmd->reset(device->comID(), TCG_UID::TCG_LOCKINGSP_UID, TCG_METHOD::ACTIVATE);
+	cmd->reset(TCG_UID::TCG_LOCKINGSP_UID, TCG_METHOD::ACTIVATE);
 	cmd->addToken(TCG_TOKEN::STARTLIST);
 	cmd->addToken(TCG_TOKEN::ENDLIST);
 	cmd->complete();
-	LOG(D3) << "Dumping Locking SP Activate";
-	IFLOG(D3) cmd->dump();
 	memset(resp, 0, IO_BUFFER_LENGTH);
-	rc = cmd->execute(device, resp);
-	if (0 != rc) {
-		LOG(E) << "Locking SP Activate Failed " << rc;
-		hexDump(resp, 128);
-		goto exit;
-	}
-	LOG(D3) << "Locking SP Activate  Reply";
-	IFLOG(D3) hexDump(resp, 128);
+	if(session->sendCommand(cmd, resp)) return 0xff;
 	// verify response
 	reply = (GenericResponse *)resp;
 	// reply is empty list
@@ -308,22 +214,17 @@ int activateLockingSP(char * devref, char * password)
 	}
 	LOG(I) << "Locking SP Activate Complete";
 	// session[TSN:HSN] <- EOS
-	rc = cmd->endSession(device);
-	if (0 != rc) {
-		LOG(E) << "EndSession failed " << rc;
-		IFLOG(D3) hexDump(resp, 128);
-		goto exit;
-	}
 exit:
 	/*  ******************  */
 	/*  CLEANUP LEAVE HERE  */
 	/*  ******************  */
 	delete device;
+	delete session;
 	ALIGNED_FREE(resp);
 	LOG(D4) << "Exiting activatLockingSP()";
 	return rc;
 }
-int revertLockingSP(char * devref, char * password,uint8_t keep)
+int revertLockingSP(char * devref, char * password, uint8_t keep)
 {
 	LOG(D4) << "Entering revert LockingSP() keep = " << keep;
 	int rc = 0;
@@ -333,23 +234,19 @@ int revertLockingSP(char * devref, char * password,uint8_t keep)
 	/*
 	* revert the Locking SP
 	*/
+	if (diskQuery(devref, 1)) return 0xff;
 	TCGdev *device = new TCGdev(devref);
-	if (!device->isPresent()) LOG(E) << "Device was not present";
+	TCGcommand *cmd = new TCGcommand();
+	TCGsession * session = new TCGsession(device);
 	// session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
 	//                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
-	TCGcommand *cmd = new TCGcommand(); // Start with an empty class
-	rc = cmd->startSession(device, 1, TCG_UID::TCG_LOCKINGSP_UID, TRUE,
-		password, TCG_UID::TCG_ADMIN1_UID);
-	if (0 != rc) {
-		LOG(E) << "Authenticated StartSession failed " << rc;
-		return rc;
-	}
+	if (session->start(TCG_UID::TCG_LOCKINGSP_UID, password, TCG_UID::TCG_ADMIN1_UID)) return 0xff;
 	// session[TSN:HSN]->ThisSP.RevertSP[]
-	cmd->reset(device->comID(), TCG_UID::TCG_THISSP_UID, TCG_METHOD::REVERTSP);
+	cmd->reset(TCG_UID::TCG_THISSP_UID, TCG_METHOD::REVERTSP);
 	cmd->addToken(TCG_TOKEN::STARTLIST);
 	if (keep) {
 		cmd->addToken(TCG_TOKEN::STARTNAME);
-		//KeepGlobalRangeKey SHALL be 0x060000
+		//KeepGlobalRangeKey SHALL be 0x060000  ????????
 		cmd->addToken(TCG_TINY_ATOM::UINT_06);
 		cmd->addToken(TCG_TINY_ATOM::UINT_00);
 		cmd->addToken(TCG_TINY_ATOM::UINT_00);
@@ -359,40 +256,24 @@ int revertLockingSP(char * devref, char * password,uint8_t keep)
 	}
 	cmd->addToken(TCG_TOKEN::ENDLIST);
 	cmd->complete();
-	LOG(D3) << "Dumping revertSP";
-	IFLOG(D3) cmd->dump();
 	memset(resp, 0, IO_BUFFER_LENGTH);
-	rc = cmd->execute(device, resp);
-	if (0 != rc) {
-		LOG(E) << "revertSP Failed " << rc;
-		hexDump(resp, 128);
-		goto exit;
-	}
-	LOG(D3) << "revertSP  Reply";
-	IFLOG(D3) hexDump(resp, 128);
+	if (session->sendCommand(cmd, resp)) return 0xff;
 	// verify response
 	reply = (GenericResponse *)resp;
 	/* should return an empty list */
 	if ((0xf0 != reply->payload[0]) |
 		(0xf1 != reply->payload[1]) |
 		(0xf9 != reply->payload[2]) 
-		)
-	{
+		) {
 		LOG(E) << "revertSP Failed";
 		goto exit;
 	}
-		LOG(I) << "Revert LockingSP complete";
-	// session[TSN:HSN] <- EOS
-	rc = cmd->endSession(device);
-	if (0 != rc) {
-		LOG(E) << "EndSession failed " << rc;
-		IFLOG(D3) hexDump(resp, 128);
-		goto exit;
-	}
+	LOG(I) << "Revert LockingSP complete";
 exit:
 	/*  ******************  */
 	/*  CLEANUP LEAVE HERE  */
 	/*  ******************  */
+	delete session;
 	delete device;
 	ALIGNED_FREE(resp);
 	LOG(D4) << "Exiting activatLockingSP()";

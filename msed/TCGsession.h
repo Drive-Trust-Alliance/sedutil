@@ -15,39 +15,40 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  * C:E********************************************************************** */
 #pragma once
-/** A class to build & send TCG Command streams to a TPer.
- * This class attempts to closely mimic the command
- * pseudo code used in the TCG documents, the syntactic
- * sugar is not represented.  See TCG document Storage Architecture
- * Core Specification R2.00 V2.00 Section 3.2.1.2 for all
- * the gory details.
- *
- * See also TCGLexicon for structs, typedefs and enums used to encode
- * the bytestream.
+/*
+ * Manage the session to a TPer.
  */
 #include "TCGlexicon.h"
+class TCGcommand;
 class TCGdev;
 
-class TCGcommand {
+class TCGdev;
+
+class TCGsession {
 public:
-    TCGcommand();
-    TCGcommand(TCG_UID InvokingUid, TCG_METHOD method);
-    ~TCGcommand();
-	void * getBuffer();
-    void addToken(TCG_TOKEN token);
-    void addToken(TCG_TINY_ATOM token);
-    void addToken(TCG_UID token);
-    void addToken(const char * bytestring);
-    void addToken(uint16_t);
-	void setcomID(uint16_t comID);
-	void setHSN(uint32_t HSN);
-	void setTSN(uint32_t TSN);
-    void complete(uint8_t EOD = 1);
-    void reset();
-    void reset(TCG_UID InvokingUid, TCG_METHOD method);
-    void dump();
+	TCGsession(TCGdev * device);
+    ~TCGsession();
+	uint8_t TCGsession::start(TCG_UID SP, 
+								char * HostChallenge = NULL,
+								TCG_UID SignAuthority = TCG_UID::TCG_UID_HEXFF);
+    void setProtocol(uint8_t value);
+	void expectAbort();
+    uint8_t sendCommand(TCGcommand * cmd, void * responseBuffer);
 private:
+	TCGsession();
+	uint8_t SEND(TCGcommand * cmd);
+	uint8_t RECV(void * resp);
+	char * methodStatus(uint8_t status);
+	TCGdev * d;
     uint8_t *buffer;
     uint32_t bufferpos = 0;
+    /* The session numbers should be taken from the
+     * syncsession response so there will be no
+     * issues with endianess
+     */
+    uint32_t TSN = 0;
+    uint32_t HSN = 0;
+	uint8_t willAbort = 0;
+    uint8_t TCGProtocol = 0x01;
 };
 

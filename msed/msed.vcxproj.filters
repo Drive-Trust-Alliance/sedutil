@@ -72,6 +72,9 @@
     <ClInclude Include="win32\os.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TCGsession.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msed.cpp">
@@ -99,6 +102,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="win32\TCGdev.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TCGsession.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

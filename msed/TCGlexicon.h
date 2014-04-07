@@ -159,5 +159,4 @@ typedef enum _TCGSTATUSCODE {
     RESPONSE_OVERFLOW = 0x11,
     AUTHORITY_LOCKED_OUT = 0x12,
     FAIL = 0x3f,
-    USER_ERROR_CODE = 0xff /* I use this code */
 } TCGSTATUSCODE;
