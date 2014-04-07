@@ -26,20 +26,20 @@ class TCGdev;
 
 class TCGsession {
 public:
-	TCGsession(TCGdev * device);
+    TCGsession(TCGdev * device);
     ~TCGsession();
-	uint8_t TCGsession::start(TCG_UID SP, 
-								char * HostChallenge = NULL,
-								TCG_UID SignAuthority = TCG_UID::TCG_UID_HEXFF);
+    uint8_t start(TCG_UID SP,
+            char * HostChallenge = NULL,
+            TCG_UID SignAuthority = TCG_UID::TCG_UID_HEXFF);
     void setProtocol(uint8_t value);
-	void expectAbort();
+    void expectAbort();
     uint8_t sendCommand(TCGcommand * cmd, void * responseBuffer);
 private:
-	TCGsession();
-	uint8_t SEND(TCGcommand * cmd);
-	uint8_t RECV(void * resp);
-	char * methodStatus(uint8_t status);
-	TCGdev * d;
+    TCGsession();
+    uint8_t SEND(TCGcommand * cmd);
+    uint8_t RECV(void * resp);
+    char * methodStatus(uint8_t status);
+    TCGdev * d;
     uint8_t *buffer;
     uint32_t bufferpos = 0;
     /* The session numbers should be taken from the
@@ -48,7 +48,7 @@ private:
      */
     uint32_t TSN = 0;
     uint32_t HSN = 0;
-	uint8_t willAbort = 0;
+    uint8_t willAbort = 0;
     uint8_t TCGProtocol = 0x01;
 };
 

@@ -37,9 +37,9 @@ int diskQuery(char * devref, uint8_t silent)
         LOG(E) << "Device does not support Opal 2.0" << devref;
         return 1;
     }
-	if (!silent) {
-		dev->puke();
-	}
+    if (!silent) {
+        dev->puke();
+    }
     return 0;
 }
 
@@ -56,12 +56,12 @@ int takeOwnership(char * devref, char * newpassword)
 
     void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     memset(resp, 0, IO_BUFFER_LENGTH);
-	if (diskQuery(devref, 1)) return 0xff;
-	TCGcommand *cmd = new TCGcommand();
-	TCGdev *device = new TCGdev(devref);
-	//	Start Session
-	TCGsession * session = new TCGsession(device);
-	if (session->start(TCG_UID::TCG_ADMINSP_UID)) return 0xff;
+    if (diskQuery(devref, 1)) return 0xff;
+    TCGcommand *cmd = new TCGcommand();
+    TCGdev *device = new TCGdev(devref);
+    //	Start Session
+    TCGsession * session = new TCGsession(device);
+    if (session->start(TCG_UID::TCG_ADMINSP_UID)) return 0xff;
     // session[TSN:HSN] -> C_PIN_MSID_UID.Get[Cellblock : [startColumn = PIN,
     //                       endColumn = PIN]]
     cmd->reset(TCG_UID::TCG_C_PIN_MSID_TABLE, TCG_METHOD::GET);
@@ -79,21 +79,21 @@ int takeOwnership(char * devref, char * newpassword)
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->complete();
     memset(resp, 0, IO_BUFFER_LENGTH);
-	if (session->sendCommand(cmd, resp)) return 0xff;
+    if (session->sendCommand(cmd, resp)) return 0xff;
     /* The pin is the ever so original "micron" so
      * I'll just use that instead of pretending
      * I'm parsing the reply
      */
     // session[TSN:HSN] <- EOS
     delete session;
-	/*
-	 * We now have the PIN to sign on and take ownership
+    /*
+     * We now have the PIN to sign on and take ownership
      * so lets give it a shot
      */
-	//	Start Session
-	session = new TCGsession(device);
-	if(session->start(TCG_UID::TCG_ADMINSP_UID, "micron", TCG_UID::TCG_SID_UID))
-		return 0xff;
+    //	Start Session
+    session = new TCGsession(device);
+    if (session->start(TCG_UID::TCG_ADMINSP_UID, (char *) "micron", TCG_UID::TCG_SID_UID))
+        return 0xff;
     // session[TSN:HSN] -> C_PIN_SID_UID.Set[Values = [PIN = <new_SID_password>]]
     /*
      * Change the password --- Yikes!!!
@@ -111,7 +111,7 @@ int takeOwnership(char * devref, char * newpassword)
     cmd->addToken(TCG_TOKEN::ENDNAME);
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->complete();
-    if(session->sendCommand(cmd, resp)) return 0xff;
+    if (session->sendCommand(cmd, resp)) return 0xff;
     LOG(I) << "takeownership complete new SID password = " << newpassword;
     // session[TSN:HSN] <- EOS
     delete session;
@@ -130,152 +130,152 @@ int revertTPer(char * devref, char * password)
     /*
      * Revert the TPer
      */
-	if (diskQuery(devref, 1)) return 0xff;
+    if (diskQuery(devref, 1)) return 0xff;
     TCGdev *device = new TCGdev(devref);
     TCGcommand *cmd = new TCGcommand();
-	TCGsession * session = new TCGsession(device);
-	if (session->start(TCG_UID::TCG_ADMINSP_UID, password, TCG_UID::TCG_SID_UID)) return 0xff;
+    TCGsession * session = new TCGsession(device);
+    if (session->start(TCG_UID::TCG_ADMINSP_UID, password, TCG_UID::TCG_SID_UID)) return 0xff;
     //	session[TSN:HSN]->AdminSP_UID.Revert[]
     cmd->reset(TCG_UID::TCG_ADMINSP_UID, TCG_METHOD::REVERT);
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->complete();
-	session->expectAbort();
+    session->expectAbort();
     memset(resp, 0, IO_BUFFER_LENGTH);
-	if (session->sendCommand(cmd,resp)) return 0xff;
+    if (session->sendCommand(cmd, resp)) return 0xff;
     LOG(I) << "revertTper completed successfully";
-	delete session;
+    delete session;
     delete device;
     ALIGNED_FREE(resp);
     LOG(D4) << "Exiting RevertTperevertTPer()";
     return 0;
 }
+
 int activateLockingSP(char * devref, char * password)
 {
-	LOG(D4) << "Entering activateLockingSP()";
-	int rc = 0;
-	GenericResponse * reply;
-	void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
-	memset(resp, 0, IO_BUFFER_LENGTH);
-	/*
-	* Activate the Locking SP
-	*/
-	if (diskQuery(devref, 1)) return 0xff;
-	TCGdev *device = new TCGdev(devref);
-	TCGcommand *cmd = new TCGcommand();
-	TCGsession * session = new TCGsession(device);
-	if(session->start(TCG_UID::TCG_ADMINSP_UID,	password, TCG_UID::TCG_SID_UID)) return 0xff;
-	//session[TSN:HSN]->LockingSP_UID.Get[Cellblock:[startColumn = LifeCycle,
-	//                                               endColumn = LifeCycle]]
-	cmd->reset(TCG_UID::TCG_LOCKINGSP_UID, TCG_METHOD::GET);
-	cmd->addToken(TCG_TOKEN::STARTLIST);
-	cmd->addToken(TCG_TOKEN::STARTLIST);
-	cmd->addToken(TCG_TOKEN::STARTNAME);
-	cmd->addToken(TCG_TOKEN::STARTCOLUMN);
-	cmd->addToken(TCG_TINY_ATOM::UINT_06); // LifeCycle
-	cmd->addToken(TCG_TOKEN::ENDNAME);
-	cmd->addToken(TCG_TOKEN::STARTNAME);
-	cmd->addToken(TCG_TOKEN::ENDCOLUMN);
-	cmd->addToken(TCG_TINY_ATOM::UINT_06); // LifeCycle
-	cmd->addToken(TCG_TOKEN::ENDNAME);
-	cmd->addToken(TCG_TOKEN::ENDLIST);
-	cmd->addToken(TCG_TOKEN::ENDLIST);
-	cmd->complete();
-	memset(resp, 0, IO_BUFFER_LENGTH);
-	if(session->sendCommand(cmd, resp)) return 0xff;
-	// verify response
-	reply = (GenericResponse *)resp;
-	//if ((0x34 != SWAP32(reply->h.cp.length)) |
-	// *BUG* micron/crucial m500 length field does not include padding
-	if ((0x06 != reply->payload[3]) |
-		(0x08 != reply->payload[4])
-		)
-	{
-		LOG(E) << "Get lifecycle Failed";
-		goto exit;
-	}
-// session[TSN:HSN] -> LockingSP_UID.Activate[]
-	cmd->reset(TCG_UID::TCG_LOCKINGSP_UID, TCG_METHOD::ACTIVATE);
-	cmd->addToken(TCG_TOKEN::STARTLIST);
-	cmd->addToken(TCG_TOKEN::ENDLIST);
-	cmd->complete();
-	memset(resp, 0, IO_BUFFER_LENGTH);
-	if(session->sendCommand(cmd, resp)) return 0xff;
-	// verify response
-	reply = (GenericResponse *)resp;
-	// reply is empty list
-	if ((0x2c != SWAP32(reply->h.cp.length)) |
-		(0xf0 != reply->payload[0]) |
-		(0xf1 != reply->payload[1])
-		)
-	{
-		LOG(E) << "Locking Activate Failed";
-		goto exit;
-	}
-	LOG(I) << "Locking SP Activate Complete";
-	// session[TSN:HSN] <- EOS
+    LOG(D4) << "Entering activateLockingSP()";
+    int rc = 0;
+    GenericResponse * reply;
+    void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
+    memset(resp, 0, IO_BUFFER_LENGTH);
+    /*
+     * Activate the Locking SP
+     */
+    if (diskQuery(devref, 1)) return 0xff;
+    TCGdev *device = new TCGdev(devref);
+    TCGcommand *cmd = new TCGcommand();
+    TCGsession * session = new TCGsession(device);
+    if (session->start(TCG_UID::TCG_ADMINSP_UID, password, TCG_UID::TCG_SID_UID)) return 0xff;
+    //session[TSN:HSN]->LockingSP_UID.Get[Cellblock:[startColumn = LifeCycle,
+    //                                               endColumn = LifeCycle]]
+    cmd->reset(TCG_UID::TCG_LOCKINGSP_UID, TCG_METHOD::GET);
+    cmd->addToken(TCG_TOKEN::STARTLIST);
+    cmd->addToken(TCG_TOKEN::STARTLIST);
+    cmd->addToken(TCG_TOKEN::STARTNAME);
+    cmd->addToken(TCG_TOKEN::STARTCOLUMN);
+    cmd->addToken(TCG_TINY_ATOM::UINT_06); // LifeCycle
+    cmd->addToken(TCG_TOKEN::ENDNAME);
+    cmd->addToken(TCG_TOKEN::STARTNAME);
+    cmd->addToken(TCG_TOKEN::ENDCOLUMN);
+    cmd->addToken(TCG_TINY_ATOM::UINT_06); // LifeCycle
+    cmd->addToken(TCG_TOKEN::ENDNAME);
+    cmd->addToken(TCG_TOKEN::ENDLIST);
+    cmd->addToken(TCG_TOKEN::ENDLIST);
+    cmd->complete();
+    memset(resp, 0, IO_BUFFER_LENGTH);
+    if (session->sendCommand(cmd, resp)) return 0xff;
+    // verify response
+    reply = (GenericResponse *) resp;
+    //if ((0x34 != SWAP32(reply->h.cp.length)) |
+    // *BUG* micron/crucial m500 length field does not include padding
+    if ((0x06 != reply->payload[3]) |
+        (0x08 != reply->payload[4])
+        ) {
+        LOG(E) << "Get lifecycle Failed";
+        goto exit;
+    }
+    // session[TSN:HSN] -> LockingSP_UID.Activate[]
+    cmd->reset(TCG_UID::TCG_LOCKINGSP_UID, TCG_METHOD::ACTIVATE);
+    cmd->addToken(TCG_TOKEN::STARTLIST);
+    cmd->addToken(TCG_TOKEN::ENDLIST);
+    cmd->complete();
+    memset(resp, 0, IO_BUFFER_LENGTH);
+    if (session->sendCommand(cmd, resp)) return 0xff;
+    // verify response
+    reply = (GenericResponse *) resp;
+    // reply is empty list
+    if ((0x2c != SWAP32(reply->h.cp.length)) |
+        (0xf0 != reply->payload[0]) |
+        (0xf1 != reply->payload[1])
+        ) {
+        LOG(E) << "Locking Activate Failed";
+        goto exit;
+    }
+    LOG(I) << "Locking SP Activate Complete";
+    // session[TSN:HSN] <- EOS
 exit:
-	/*  ******************  */
-	/*  CLEANUP LEAVE HERE  */
-	/*  ******************  */
-	delete device;
-	delete session;
-	ALIGNED_FREE(resp);
-	LOG(D4) << "Exiting activatLockingSP()";
-	return rc;
+    /*  ******************  */
+    /*  CLEANUP LEAVE HERE  */
+    /*  ******************  */
+    delete device;
+    delete session;
+    ALIGNED_FREE(resp);
+    LOG(D4) << "Exiting activatLockingSP()";
+    return rc;
 }
+
 int revertLockingSP(char * devref, char * password, uint8_t keep)
 {
-	LOG(D4) << "Entering revert LockingSP() keep = " << keep;
-	int rc = 0;
-	GenericResponse * reply;
-	void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
-	memset(resp, 0, IO_BUFFER_LENGTH);
-	/*
-	* revert the Locking SP
-	*/
-	if (diskQuery(devref, 1)) return 0xff;
-	TCGdev *device = new TCGdev(devref);
-	TCGcommand *cmd = new TCGcommand();
-	TCGsession * session = new TCGsession(device);
-	// session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
-	//                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
-	if (session->start(TCG_UID::TCG_LOCKINGSP_UID, password, TCG_UID::TCG_ADMIN1_UID)) return 0xff;
-	// session[TSN:HSN]->ThisSP.RevertSP[]
-	cmd->reset(TCG_UID::TCG_THISSP_UID, TCG_METHOD::REVERTSP);
-	cmd->addToken(TCG_TOKEN::STARTLIST);
-	if (keep) {
-		cmd->addToken(TCG_TOKEN::STARTNAME);
-		//KeepGlobalRangeKey SHALL be 0x060000  ????????
-		cmd->addToken(TCG_TINY_ATOM::UINT_06);
-		cmd->addToken(TCG_TINY_ATOM::UINT_00);
-		cmd->addToken(TCG_TINY_ATOM::UINT_00);
-//		cmd->addToken(TCG_TINY_ATOM::UINT_06);
-		cmd->addToken(TCG_TINY_ATOM::UINT_01); // KeepGlobalRangeKey = TRUE
-		cmd->addToken(TCG_TOKEN::ENDNAME);
-	}
-	cmd->addToken(TCG_TOKEN::ENDLIST);
-	cmd->complete();
-	memset(resp, 0, IO_BUFFER_LENGTH);
-	if (session->sendCommand(cmd, resp)) return 0xff;
-	// verify response
-	reply = (GenericResponse *)resp;
-	/* should return an empty list */
-	if ((0xf0 != reply->payload[0]) |
-		(0xf1 != reply->payload[1]) |
-		(0xf9 != reply->payload[2]) 
-		) {
-		LOG(E) << "revertSP Failed";
-		goto exit;
-	}
-	LOG(I) << "Revert LockingSP complete";
+    LOG(D4) << "Entering revert LockingSP() keep = " << keep;
+    int rc = 0;
+    GenericResponse * reply;
+    void *resp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
+    memset(resp, 0, IO_BUFFER_LENGTH);
+    /*
+     * revert the Locking SP
+     */
+    if (diskQuery(devref, 1)) return 0xff;
+    TCGdev *device = new TCGdev(devref);
+    TCGcommand *cmd = new TCGcommand();
+    TCGsession * session = new TCGsession(device);
+    // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
+    //                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
+    if (session->start(TCG_UID::TCG_LOCKINGSP_UID, password, TCG_UID::TCG_ADMIN1_UID)) return 0xff;
+    // session[TSN:HSN]->ThisSP.RevertSP[]
+    cmd->reset(TCG_UID::TCG_THISSP_UID, TCG_METHOD::REVERTSP);
+    cmd->addToken(TCG_TOKEN::STARTLIST);
+    if (keep) {
+        cmd->addToken(TCG_TOKEN::STARTNAME);
+        //KeepGlobalRangeKey SHALL be 0x060000  ????????
+        cmd->addToken(TCG_TINY_ATOM::UINT_06);
+        cmd->addToken(TCG_TINY_ATOM::UINT_00);
+        cmd->addToken(TCG_TINY_ATOM::UINT_00);
+        //		cmd->addToken(TCG_TINY_ATOM::UINT_06);
+        cmd->addToken(TCG_TINY_ATOM::UINT_01); // KeepGlobalRangeKey = TRUE
+        cmd->addToken(TCG_TOKEN::ENDNAME);
+    }
+    cmd->addToken(TCG_TOKEN::ENDLIST);
+    cmd->complete();
+    memset(resp, 0, IO_BUFFER_LENGTH);
+    if (session->sendCommand(cmd, resp)) return 0xff;
+    // verify response
+    reply = (GenericResponse *) resp;
+    /* should return an empty list */
+    if ((0xf0 != reply->payload[0]) |
+        (0xf1 != reply->payload[1]) |
+        (0xf9 != reply->payload[2])
+        ) {
+        LOG(E) << "revertSP Failed";
+        goto exit;
+    }
+    LOG(I) << "Revert LockingSP complete";
 exit:
-	/*  ******************  */
-	/*  CLEANUP LEAVE HERE  */
-	/*  ******************  */
-	delete session;
-	delete device;
-	ALIGNED_FREE(resp);
-	LOG(D4) << "Exiting activatLockingSP()";
-	return rc;
+    /*  ******************  */
+    /*  CLEANUP LEAVE HERE  */
+    /*  ******************  */
+    delete session;
+    delete device;
+    ALIGNED_FREE(resp);
+    LOG(D4) << "Exiting activatLockingSP()";
+    return rc;
 }
