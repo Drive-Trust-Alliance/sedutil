@@ -85,8 +85,8 @@ TCGsession::sendCommand(TCGcommand * cmd)
     cmd->setHSN(HSN);
     cmd->setTSN(TSN);
     cmd->setcomID(d->comID());
-    LOG(D3) << "Dumping request buffer";
-    IFLOG(D3) cmd->dump();
+	LOG(D3) << "Dumping command buffer";
+	IFLOG(D3) hexDump(cmd->getCmdBuffer(), 128);
     rc = SEND(cmd);
     if (0 != rc) {
         LOG(E) << "Command failed on send " << rc;

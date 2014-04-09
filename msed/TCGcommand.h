@@ -47,7 +47,7 @@ public:
     void complete(uint8_t EOD = 1);
     void reset();
     void reset(TCG_UID InvokingUid, TCG_METHOD method);
-    void dump();
+	void changeInvokingUid(uint8_t Invoker[]);
 private:
     uint8_t *cmdbuf;
 	uint8_t *respbuf;

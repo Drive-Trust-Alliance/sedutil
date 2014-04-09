@@ -156,6 +156,12 @@ TCGcommand::complete(uint8_t EOD)
                              - sizeof (TCGPacket));
     hdr->cp.length = SWAP32(bufferpos - sizeof (TCGComPacket));
 }
+void
+TCGcommand::changeInvokingUid(uint8_t Invoker[])
+{
+	LOG(D4) << "Entering TCGcommand::changeInvokingUid(uint8_t Invoker[])";
+	memcpy(&cmdbuf[sizeof (TCGHeader) + 2], &Invoker[0], 8); /* bytes 2-9 */
+}
 void *
 TCGcommand::getCmdBuffer()
 {
@@ -193,14 +199,6 @@ TCGcommand::setHSN(uint32_t HSN) {
 	hdr = (TCGHeader *)cmdbuf;
 	LOG(D4) << "Entering TCGcommand::setHSN()";
 	hdr->pkt.HSN = HSN;
-}
-
-void
-TCGcommand::dump()
-{
-	LOG(D4) << "Entering TCGcommand::dump()";
-	LOG(D3) << "Dumping TCGCommand cmdbuf";
-    hexDump(cmdbuf, bufferpos);
 }
 
 TCGcommand::~TCGcommand()

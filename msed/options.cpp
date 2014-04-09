@@ -63,6 +63,9 @@ void usage()
 	printf("--revertLockingSPnoerase \n");
 	printf("                                revert the LockingSP without erasing the data \n");
 	printf("                                password(-p) option required\n");
+	printf("--yesIreallywanttoERASE*ALL*mydatausingthePSID \n");
+	printf("                                revert the LockingSP without erasing the data \n");
+	printf("                                password(-p) option required\n");
     printf("options\n");
     printf("-p --password <password>     \n");
     printf("                                 the password for the action \n");
@@ -112,6 +115,9 @@ uint8_t options(int argc, char * argv[], MSED_OPTIONS * opts)
             opts->action = 'T';
 		else if (!(strcmp("-L", argv[i])) || !(strcmp("--revertLockingSP", argv[i])))
 			opts->action = 'L';
+		else if (!(strcmp("-Y", argv[i])) || 
+			!(strcmp("--yesIreallywanttoERASE*ALL*mydatausingthePSID", argv[i])))
+			opts->action = 'Y';
 		else if (!(strcmp("-Z", argv[i])) || !(strcmp("--revertLockingSPnoerase", argv[i])))
 			opts->action = 'Z';
         else if (!(strcmp("-s", argv[i])) || !(strcmp("--scan", argv[i])))

@@ -17,9 +17,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 int takeOwnership(char * devref, char * newpassword);
 int activateLockingSP(char * devref, char * password);
-int revertTPer(char * devref, char * password);
+int revertTPer(char * devref, char * password, uint8_t PSID=0);
 int revertLockingSP(char * devref, char * password,uint8_t keep=0);
 int diskScan();
-int diskQuery(char * devref, uint8_t silent = 0);
+int diskQuery(char * devref);
 int setNewPassword(char * password, char * userid, char * newpassword, char * devref);
 int enableUser(char * password, char * userid, char * devref);

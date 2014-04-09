@@ -66,15 +66,23 @@ int main(int argc, char * argv[])
 				LOG(E) << "Reverting the Locking SP requires a password (-p)";
 				return 1;
 			}
-			LOG(D) << "Performing revertTLockingSP on " << argv[argc - 1] << " with password " << argv[opts.password];
+			LOG(D) << "Performing revertLockingSP on " << argv[argc - 1] << " with password " << argv[opts.password];
 			return revertLockingSP(argv[argc - 1], argv[opts.password]);
+			break;
+		case 'Y':
+			if (0 == opts.password) {
+				LOG(E) << "PSID Revert requires a password (-p)";
+				return 1;
+			}
+			LOG(I) << "Performing a PSID Revert on " << argv[argc - 1] << " with password " << argv[opts.password];
+			return revertTPer(argv[argc - 1], argv[opts.password],1);
 			break;
 		case 'Z':
 			if (0 == opts.password) {
 				LOG(E) << "Reverting the Locking SP requires a password (-p)";
 				return 1;
 			}
-			LOG(D) << "Performing revertTLockingSP (KeepGlobalRangeKey) on " << argv[argc - 1] << " with password " << argv[opts.password];
+			LOG(D) << "Performing revertLockingSP (KeepGlobalRangeKey) on " << argv[argc - 1] << " with password " << argv[opts.password];
 			return revertLockingSP(argv[argc - 1], argv[opts.password],1);
 			break;
 		case 'S':
