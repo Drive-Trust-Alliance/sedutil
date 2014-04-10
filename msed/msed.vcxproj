@@ -79,6 +79,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="Copyright.txt" />
+    <Text Include="LICENSE.txt" />
     <Text Include="ReadMe.txt" />
     <Text Include="win32\ReadMe_Windows.txt" />
   </ItemGroup>
@@ -87,11 +88,11 @@
     <ClInclude Include="diskList.h" />
     <ClInclude Include="endianfixup.h" />
     <ClInclude Include="log.h" />
+    <ClInclude Include="msedConstants.h" />
     <ClInclude Include="noparser.h" />
     <ClInclude Include="options.h" />
     <ClInclude Include="TCGcommand.h" />
     <ClInclude Include="TCGbaseDev.h" />
-    <ClInclude Include="TCGdev.h" />
     <ClInclude Include="TCGlexicon.h" />
     <ClInclude Include="TCGsession.h" />
     <ClInclude Include="TCGstructures.h" />

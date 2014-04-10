@@ -28,6 +28,9 @@
     <Text Include="Copyright.txt">
       <Filter>Documentation</Filter>
     </Text>
+    <Text Include="LICENSE.txt">
+      <Filter>Documentation</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class_Skeleton.h">
@@ -66,13 +69,13 @@
     <ClInclude Include="win32\TCGdev.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TCGdev.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="win32\os.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TCGsession.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msedConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
