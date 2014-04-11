@@ -89,11 +89,11 @@
     <ClInclude Include="endianfixup.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="msedConstants.h" />
-    <ClInclude Include="noparser.h" />
     <ClInclude Include="options.h" />
     <ClInclude Include="TCGcommand.h" />
     <ClInclude Include="TCGbaseDev.h" />
     <ClInclude Include="TCGlexicon.h" />
+    <ClInclude Include="TCGresponse.h" />
     <ClInclude Include="TCGsession.h" />
     <ClInclude Include="TCGstructures.h" />
     <ClInclude Include="TCGtasks.h" />
@@ -108,6 +108,7 @@
     <ClCompile Include="options.cpp" />
     <ClCompile Include="TCGcommand.cpp" />
     <ClCompile Include="TCGbaseDev.cpp" />
+    <ClCompile Include="TCGresponse.cpp" />
     <ClCompile Include="TCGsession.cpp" />
     <ClCompile Include="TCGtasks.cpp" />
     <ClCompile Include="win32\TCGdev.cpp" />

@@ -37,3 +37,4 @@ typedef UINT64 uint64_t;
 typedef INT8 int8_t;
 typedef INT16 int16_t;
 typedef INT32 int32_t;
+typedef INT64 int64_t;

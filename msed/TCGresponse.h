@@ -18,25 +18,38 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
 #pragma once
-#pragma pack(push)
-#pragma pack(1)
-/*
- * These structures are here While I think about how to 
- * code a parser that isn't going to be a nightmare
- */
-typedef struct _SSResponse {
+#include <vector>
+#include <string>
+#include "TCGstructures.h"
+
+typedef enum _TCG_TOKENID {
+	TCG_TOKENID_BYTESTRING,
+	TCG_TOKENID_SINT,
+	TCG_TOKENID_UINT,
+	TCG_TOKENID_TOKEN, // actual token is returned
+} TCG_TOKENID;
+
+class TCGresponse {
+public:
+    TCGresponse(void * buffer);
+    ~TCGresponse();
+	TCG_TOKENID tokenIs(uint32_t tokenNum);
+	uint32_t getLength(uint32_t tokenNum);
+	uint64_t getUint64(uint32_t tokenNum);
+	uint32_t getUint32(uint32_t tokenNum);
+	uint16_t getUint16(uint32_t tokenNum);
+	uint8_t getUint8(uint32_t tokenNum);
+	uint32_t getTokenCount();
+	//int64_t getSint(uint32_t tokenNum);
+	std::string getString(uint32_t tokenNum);
+	void getBytes(uint32_t tokenNum, uint8_t bytearray[]);
+
+private:
+	TCGresponse();
+	uint32_t tokens = 0;
 	TCGHeader h;
-	uint8_t call;
-	uint8_t invoker[9];
-	uint8_t method[9];
-	uint8_t sl0;
-	uint8_t smallatom01;
-	uint32_t HostSessionNumber;
-	uint8_t smallatom02;
-	uint32_t TPerSessionNumber;
-} SSResponse;
-typedef struct _GenericResponse {
-	TCGHeader h;
-	uint8_t payload[500];
-} GenericResponse;
-#pragma pack(pop)
+	std::vector<std::vector<uint8_t>> response;
+};
+
+
+

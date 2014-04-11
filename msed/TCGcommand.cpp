@@ -24,7 +24,6 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "endianfixup.h"
 #include "hexDump.h"
 #include "TCGstructures.h"
-#include "noparser.h"
 
 /*
  * Initialize: allocate the buffers *ONLY*

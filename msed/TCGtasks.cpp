@@ -26,7 +26,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "TCGsession.h"
 #include "endianfixup.h"
 #include "TCGstructures.h"
-#include "noparser.h"
+#include "TCGresponse.h"
 
 int diskQuery(char * devref)
 {
@@ -54,7 +54,7 @@ int diskScan()
 int takeOwnership(char * devref, char * newpassword)
 {
     LOG(D4) << "Entering takeOwnership(char * devref, char * newpassword)";
-    
+	TCGresponse * response;
     TCGdev *device = new TCGdev(devref);
 	if (!(device->isOpal2())) {
 		delete device;
@@ -67,6 +67,7 @@ int takeOwnership(char * devref, char * newpassword)
 		delete device;
 		return 0xff;
 	}
+	// Get the default password
     // session[TSN:HSN] -> C_PIN_MSID_UID.Get[Cellblock : [startColumn = PIN,
     //                       endColumn = PIN]]
 	TCGcommand *cmd = new TCGcommand();
@@ -90,20 +91,26 @@ int takeOwnership(char * devref, char * newpassword)
 		delete device;
 		return 0xff;
 	}
-    /* The pin is the ever so original "micron" so
-     * I'll just use that instead of pretending
-     * I'm parsing the reply
-     */
+
+	response = new TCGresponse(cmd->getRespBuffer());
+	// SL,SL,SN,NAME,Value
+	//  0  1  2   3    4
+
     // session[TSN:HSN] <- EOS
     delete session;
     /*
-     * We now have the PIN to sign on and take ownership
-     * so lets give it a shot
+     * We now have the PIN, sign on and take ownership
      */
     //	Start Session
     session = new TCGsession(device);
-    if (session->start(TCG_UID::TCG_ADMINSP_UID, (char *) "micron", TCG_UID::TCG_SID_UID))
-        return 0xff;
+	if (session->start(TCG_UID::TCG_ADMINSP_UID, (char *)response->getString(4).c_str(), TCG_UID::TCG_SID_UID)){
+		delete response;
+		delete cmd;
+		delete session;
+		delete device;
+		return 0xff;
+	}
+	delete response;
     // session[TSN:HSN] -> C_PIN_SID_UID.Set[Values = [PIN = <new_SID_password>]]
     /*
      * Change the password --- Yikes!!!
@@ -185,8 +192,7 @@ int revertTPer(char * devref, char * password, uint8_t PSID)
 int activateLockingSP(char * devref, char * password)
 {
     LOG(D4) << "Entering activateLockingSP()";
-    int rc = 0;
-    GenericResponse * reply;
+ 	TCGresponse * response;
     /*
      * Activate the Locking SP
      */
@@ -220,51 +226,52 @@ int activateLockingSP(char * devref, char * password)
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->complete();
-    if (session->sendCommand(cmd)) return 0xff;
+	if (session->sendCommand(cmd)) {
+		delete cmd;
+		delete session;
+		delete device;
+		return 0xff;
+	}	
+	response = new TCGresponse(cmd->getRespBuffer());
+	// SL,SL,SN,NAME,Value
+	//  0  1  2   3    4
     // verify response
-    reply = (GenericResponse *) cmd->getRespBuffer();
-    //if ((0x34 != SWAP32(reply->h.cp.length)) |
-    // *BUG* micron/crucial m500 length field does not include padding
-    if ((0x06 != reply->payload[3]) |
-        (0x08 != reply->payload[4])
-        ) {
-        LOG(E) << "Get lifecycle Failed";
-        goto exit;
+     if ((0x06 != response->getUint8(3)) | // getlifecycle 
+		(0x08 != response->getUint8(4)))    // Manufactured-Inactive
+        {
+        LOG(E) << "Locking SP lifecycle is not Manufactured-Inactive";
+		delete cmd; 
+		delete response;
+		delete session;
+		delete device;
+		return 0xff;
     }
+	 delete response;
     // session[TSN:HSN] -> LockingSP_UID.Activate[]
     cmd->reset(TCG_UID::TCG_LOCKINGSP_UID, TCG_METHOD::ACTIVATE);
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->complete();
-    if (session->sendCommand(cmd)) return 0xff;
-    // verify response
-    reply = (GenericResponse *) cmd->getRespBuffer();
-    // reply is empty list
-    if ((0x2c != SWAP32(reply->h.cp.length)) |
-        (0xf0 != reply->payload[0]) |
-        (0xf1 != reply->payload[1])
-        ) {
-        LOG(E) << "LockingSP Activate Failed";
-        goto exit;
-    }
+	if (session->sendCommand(cmd)){
+		delete cmd;
+		delete session;
+		delete device;
+		return 0xff;
+	}
+    // method response code 00
     LOG(I) << "Locking SP Activate Complete";
-exit:
-    /*  ******************  */
-    /*  CLEANUP LEAVE HERE  */
-    /*  ******************  */
+
 	delete cmd;
     delete session;
 	delete device;
     LOG(D4) << "Exiting activatLockingSP()";
-    return rc;
+    return 0;
 }
 
 int revertLockingSP(char * devref, char * password, uint8_t keep)
 {
     LOG(D4) << "Entering revert LockingSP() keep = " << keep;
-    int rc = 0;
 	uint8_t keepgloballockingrange[] = { 0xa3, 0x06, 0x00, 0x00 };
-    GenericResponse * reply;
     /*
      * revert the Locking SP
      */
@@ -302,26 +309,14 @@ int revertLockingSP(char * devref, char * password, uint8_t keep)
 		delete device;
 		return 0xff;
 	}
-    // verify response
-    reply = (GenericResponse *) cmd->getRespBuffer();
-    /* should return an empty list */
-    if ((0xf0 != reply->payload[0]) |
-        (0xf1 != reply->payload[1]) |
-        (0xf9 != reply->payload[2])
-        ) {
-        LOG(E) << "revertSP Failed";
-        goto exit;
-    }
+// empty list returned so rely on method status
     LOG(I) << "Revert LockingSP complete";
 	session->expectAbort();
-exit:
-    /*  ******************  */
-    /*  CLEANUP LEAVE HERE  */
-    /*  ******************  */
+
     delete session;
     delete device;
     LOG(D4) << "Exiting activateLockingSP()";
-    return rc;
+    return 0;
 }
 int setNewPassword(char * password, char * userid, char * newpassword, char * devref)
 {
@@ -430,6 +425,7 @@ int getTable()
 	TCGcommand *get = new TCGcommand();
 	TCGcommand *next = new TCGcommand();
 	TCGsession * session = new TCGsession(device);
+	TCGresponse * response;
 	// session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
 	//                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
 	if (session->start(TCG_UID::TCG_ADMINSP_UID, "password", TCG_UID::TCG_SID_UID)) {
@@ -447,11 +443,11 @@ int getTable()
 	get->addToken(TCG_TOKEN::STARTLIST);
 	get->addToken(TCG_TOKEN::STARTNAME);
 	get->addToken(TCG_TOKEN::STARTCOLUMN);
-	get->addToken(TCG_TINY_ATOM::UINT_01);
+	get->addToken(TCG_TINY_ATOM::UINT_00);
 	get->addToken(TCG_TOKEN::ENDNAME);
 	get->addToken(TCG_TOKEN::STARTNAME);
 	get->addToken(TCG_TOKEN::ENDCOLUMN);
-	get->addToken(TCG_TINY_ATOM::UINT_10);
+	get->addToken(TCG_TINY_ATOM::UINT_12);
 	get->addToken(TCG_TOKEN::ENDNAME);
 	get->addToken(TCG_TOKEN::ENDLIST);
 	get->addToken(TCG_TOKEN::ENDLIST);
@@ -476,14 +472,15 @@ int getTable()
 		delete device;
 		return 0xff;
 	}
+
 	while (true)
 	{
-		uint8_t nextuid[10];
+		uint8_t nextuid[25];
 		uint8_t a8[] = { 0xa8, 00 };
-		GenericResponse * reply;
 		// Get the next UID
-		reply = (GenericResponse *)next->getRespBuffer();
-		memcpy(&nextuid[0], &reply->payload[3], 8);
+		response = new TCGresponse(next->getRespBuffer());
+		response->getBytes(3, nextuid);
+		delete response;
 		IFLOG(D1) hexDump(nextuid, 8);
 		LOG(D1) << "****LOOP**** get";
 		get->changeInvokingUid(nextuid);
@@ -494,15 +491,29 @@ int getTable()
 			delete device;
 			return 0xff;
 		}
-		reply = (GenericResponse *)get->getRespBuffer();
-		IFLOG(D1) hexDump(reply->payload, 128);
+		response = new TCGresponse(get->getRespBuffer());
+		LOG(I) << std::hex << std::showbase;
+		// bytestring
+		LOG(I) << "tokenIs (4) " << response->tokenIs(4);
+		response->getBytes(4, nextuid);
+		LOG(I) << "getBytes (4) " << nextuid;
+		// cstring
+		LOG(I) << "tokenIs (8) " << response->tokenIs(8);
+		LOG(I) << "getString (8) " << response->getString(8);
+		// tiny atom
+		LOG(I) << "tokenIs (11) " << response->tokenIs(11);
+		LOG(I) << "getUint (11) " << response->getUint64(11);
+		LOG(I) << std::dec << std::noshowbase;
+		delete response;
+
 		next->reset(TCG_UID::TCG_AUTHORITY_TABLE, TCG_METHOD::NEXT);
 		next->addToken(TCG_TOKEN::STARTLIST);
 		next->addToken(TCG_TOKEN::STARTNAME);
 		next->addToken(TCG_TINY_ATOM::UINT_00);
-		reply = (GenericResponse *)next->getRespBuffer();
-		if (0xa8 != reply->payload[11]) break; // no next row so bail
-		memcpy(&nextuid[0], &reply->payload[12], 8);
+		response = new TCGresponse(next->getRespBuffer());
+		if (9 != response->getLength(3)) break; // no next row so bail
+		response->getBytes(3, nextuid);
+		delete response;
 		next->addToken(a8, 1);
 		next->addToken(nextuid, 8);
 		next->addToken(TCG_TOKEN::ENDNAME);

@@ -36,9 +36,6 @@
     <ClInclude Include="Class_Skeleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="noparser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TCGtasks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -78,6 +75,9 @@
     <ClInclude Include="msedConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TCGresponse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msed.cpp">
@@ -108,6 +108,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TCGsession.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TCGresponse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

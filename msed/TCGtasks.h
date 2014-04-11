@@ -26,3 +26,4 @@ int diskScan();
 int diskQuery(char * devref);
 int setNewPassword(char * password, char * userid, char * newpassword, char * devref);
 int enableUser(char * password, char * userid, char * devref);
+int getTable();

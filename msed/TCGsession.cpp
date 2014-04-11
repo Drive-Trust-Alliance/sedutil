@@ -22,10 +22,10 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "TCGsession.h"
 #include "TCGdev.h"
 #include "TCGcommand.h"
+#include "TCGresponse.h"
 #include "endianfixup.h"
 #include "hexDump.h"
 #include "TCGstructures.h"
-#include "noparser.h"
 
 /*
  * Start a session
@@ -55,6 +55,7 @@ TCGsession::start(TCG_UID SP, char * HostChallenge, TCG_UID SignAuthority)
 {
     LOG(D4) << "Entering TCGsession::startSession ";
     TCGcommand *cmd = new TCGcommand();
+	TCGresponse * response;
     cmd->reset(TCG_UID::TCG_SMUID_UID, TCG_METHOD::STARTSESSION);
     cmd->addToken(TCG_TOKEN::STARTLIST); // [  (Open Bracket)
     cmd->addToken(105); // HostSessionID : sessionnumber
@@ -73,9 +74,13 @@ TCGsession::start(TCG_UID SP, char * HostChallenge, TCG_UID SignAuthority)
     cmd->addToken(TCG_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
     if (sendCommand(cmd)) return 0xff;
-    SSResponse * ssresp = (SSResponse *) cmd->getRespBuffer();
-    HSN = ssresp->HostSessionNumber;
-    TSN = ssresp->TPerSessionNumber;
+	response = new TCGresponse(cmd->getRespBuffer());
+	// call user method SL HSN TSN EL EOD SL 00 00 00 EL
+	//   0   1     2     3  4   5   6  7   8
+ 
+	HSN = SWAP32(response->getUint32(4));
+	TSN = SWAP32(response->getUint32(5));
+	delete response;
     return 0;
 }
 
@@ -84,11 +89,12 @@ TCGsession::sendCommand(TCGcommand * cmd)
 {
     LOG(D4) << "Entering TCGsession::sendCommand()";
     uint8_t rc;
-    GenericResponse * r;
+    TCGHeader * hdr;
+	TCGresponse * response;
     cmd->setHSN(HSN);
     cmd->setTSN(TSN);
     cmd->setcomID(d->comID());
-	LOG(D3) << "Dumping command buffer";
+	LOG(D3) << std::endl << "Dumping command buffer";
 	IFLOG(D3) hexDump(cmd->getCmdBuffer(), 128);
     rc = SEND(cmd);
     if (0 != rc) {
@@ -98,7 +104,7 @@ TCGsession::sendCommand(TCGcommand * cmd)
     //    Sleep(250);
     memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
     rc = RECV(cmd->getRespBuffer());
-    LOG(D3) << "Dumping reply buffer";
+    LOG(D3) << std::endl << "Dumping reply buffer";
     IFLOG(D3) hexDump(cmd->getRespBuffer(), 128);
     if (0 != rc) {
         LOG(E) << "Command failed on recv" << rc;
@@ -108,28 +114,33 @@ TCGsession::sendCommand(TCGcommand * cmd)
      * Check out the basics that so that we know we
      * have a sane reply to work with
      */
-    r = (GenericResponse *) cmd->getRespBuffer();
+    hdr = (TCGHeader *) cmd->getRespBuffer();
+	response = new TCGresponse(cmd->getRespBuffer());
     // zero lengths -- these are big endian but it doesn't matter for uint = 0
-    if ((0 == r->h.cp.length) |
-        (0 == r->h.pkt.length) |
-        (0 == r->h.subpkt.length)) {
+    if ((0 == hdr->cp.length) |
+        (0 == hdr->pkt.length) |
+        (0 == hdr->subpkt.length)) {
         LOG(E) << "One or more header fields have 0 length";
         return 0xff;
     }
     // if we get an endsession response return 0
-    if ((1 == SWAP32(r->h.subpkt.length)) && (0xfa == r->payload[0])) return 0;
+	if ((1 == SWAP32(hdr->subpkt.length)) && (0xfa == response->tokenIs(0))) {
+		delete response;
+		return 0;
+	}
     // IF we received a method status return it
-    if (!((0xf1 == r->payload[SWAP32(r->h.subpkt.length) - 1]) &&
-        (0xf0 == r->payload[SWAP32(r->h.subpkt.length) - 5]))) {
+    if (!((0xf1 == response->tokenIs(response->getTokenCount() - 1)) &&
+		(0xf0 == response->tokenIs(response->getTokenCount() - 5)))) {
         // no method status so we hope we reported the error someplace else
         LOG(E) << "Method Status missing";
         return 0xff;
     }
-    if (0x00 != r->payload[SWAP32(r->h.subpkt.length) - 4]) {
+	if (0x00 != response->getUint8(response->getTokenCount() - 4))
+	{
         LOG(E) << "Non-zero method status code " <<
-                methodStatus(r->payload[SWAP32(r->h.subpkt.length) - 4]);
+			methodStatus(response->getUint8(response->getTokenCount() - 4));
     }
-    return r->payload[SWAP32(r->h.subpkt.length) - 4];
+	return response->getUint8(response->getTokenCount() - 4);
 }
 
 void

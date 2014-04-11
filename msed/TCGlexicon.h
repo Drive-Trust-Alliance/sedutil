@@ -151,6 +151,11 @@ typedef enum _TCG_TINY_ATOM {
     UINT_08 = 0x08,
     UINT_09 = 0x09,
 	UINT_10 = 0x0a,
+	UINT_11 = 0x0b,
+	UINT_12 = 0x0c,
+	UINT_13 = 0x0d,
+	UINT_14 = 0x0e,
+	UINT_15 = 0x0f,
 } TCG_TINY_ATOM;
 
 /** Useful short atoms.

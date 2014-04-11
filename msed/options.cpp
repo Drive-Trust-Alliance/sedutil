@@ -61,13 +61,13 @@ void usage()
     printf("                                see TCG documentation for optional Vendor unique\n");
     printf("                                exceptions\n");
 	printf("-L, --revertLockingSP \n");
-	printf("                                revert the LockingSP\n");
+	printf("                                revert the LockingSP *ERASING* *ALL* the data \n");
 	printf("                                password(-p) option required\n");
 	printf("--revertLockingSPnoerase \n");
 	printf("                                revert the LockingSP without erasing the data \n");
 	printf("                                password(-p) option required\n");
 	printf("--yesIreallywanttoERASE*ALL*mydatausingthePSID \n");
-	printf("                                revert the LockingSP without erasing the data \n");
+	printf("                                revert the LockingSP using the PSID *ERASING* *ALL* the data \n");
 	printf("                                password(-p) option required\n");
     printf("options\n");
     printf("-p --password <password>     \n");
