@@ -39,15 +39,9 @@ public:
     uint8_t sendCommand(TCGcommand * cmd);
 private:
     TCGsession();
-    uint8_t SEND(TCGcommand * cmd);
-    uint8_t RECV(void * resp);
     char * methodStatus(uint8_t status);
     TCGdev * d;
     uint32_t bufferpos = 0;
-    /* The session numbers should be taken from the
-     * syncsession response so there will be no
-     * issues with endianess
-     */
     uint32_t TSN = 0;
     uint32_t HSN = 0;
     uint8_t willAbort = 0;

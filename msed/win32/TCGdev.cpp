@@ -61,7 +61,7 @@ TCGdev::TCGdev(const char * devref)
 }
 
 /** Send an ioctl to the device using pass through. */
-UINT8 TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                       void * buffer, uint16_t bufferlen)
 {
     LOG(D4) << "Entering TCGdev::sendCmd";
@@ -108,7 +108,9 @@ UINT8 TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     //IFLOG(D4) hexDump(ata, sizeof (ATA_PASS_THROUGH_DIRECT));
     return (ata->CurrentTaskFile[0]);
 }
-
+void TCGdev::osmsSleep(uint32_t milliseconds) {
+	Sleep(milliseconds);
+}
 /** Close the filehandle so this object can be delete. */
 TCGdev::~TCGdev()
 {

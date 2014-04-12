@@ -25,9 +25,11 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include <stdio.h>
 #include <iostream>
+#include<iomanip>
 #include "TCGbaseDev.h"
 #include "endianfixup.h"
 #include "TCGstructures.h"
+#include "TCGcommand.h"
 #include "hexDump.h"
 
 using namespace std;
@@ -58,7 +60,26 @@ uint16_t TCGbaseDev::comID()
     else
         return 0x0000;
 }
-
+uint8_t TCGbaseDev::exec(TCGcommand * cmd, uint8_t protocol) {
+	uint8_t rc = 0;
+	LOG(D3) << std::endl << "Dumping command buffer";
+	IFLOG(D3) hexDump(cmd->getCmdBuffer(), 128);
+	rc = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH);
+	if (0 != rc) {
+		LOG(E) << "Command failed on send " << rc;
+		return rc;
+	}
+	osmsSleep(50);
+	memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
+	rc = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
+	LOG(D3) << std::endl << "Dumping reply buffer";
+	IFLOG(D3) hexDump(cmd->getRespBuffer(), 128);
+	if (0 != rc) {
+		LOG(E) << "Command failed on recv" << rc;
+		return rc;
+	}
+	return 0;
+}
 /** Decode the Discovery 0 response.Scans the D0 response and creates structure
  * that can be queried later as required.This code also takes care of
  * the endianess conversions either via a bitswap in the structure or executing
@@ -163,78 +184,80 @@ void TCGbaseDev::discovery0()
 /** Print out the Discovery 0 results */
 void TCGbaseDev::puke()
 {
+#define HEXON(x) "0x" << std::hex << std::setw(x) << std::setfill('0') 
+#define HEXOFF std::dec << std::setw(0) << std::setfill(' ')
     LOG(D4) << "Entering TCGbaseDev::puke()";
-    char scratch[25];
     /* TPer */
     if (disk_info.TPer) {
-        printf("\nTPer function (0x%04x)\n", FC_TPER);
-        cout << "ACKNAK = " << (disk_info.TPer_ACKNACK ? "Y, " : "N, ");
-        cout << "ASYNC = " << (disk_info.TPer_async ? "Y, " : "N. ");
-        cout << "BufferManagement = " << (disk_info.TPer_bufferMgt ? "Y, " : "N, ");
-        cout << "comIDManagement  = " << (disk_info.TPer_comIDMgt ? "Y, " : "N, ");
-        cout << "Streaming = " << (disk_info.TPer_streaming ? "Y, " : "N, ");
-		cout << "SYNC = " << (disk_info.TPer_sync ? "Y" : "N");
-		cout << std::endl;
+		cout << "TPer function (" << HEXON(4) << FC_TPER << HEXOFF << ")" << std::endl;
+        cout << "    ACKNAK = " << (disk_info.TPer_ACKNACK ? "Y, " : "N, ")
+        << "ASYNC = " << (disk_info.TPer_async ? "Y, " : "N. ")
+        << "BufferManagement = " << (disk_info.TPer_bufferMgt ? "Y, " : "N, ")
+        << "comIDManagement  = " << (disk_info.TPer_comIDMgt ? "Y, " : "N, ")
+        << "Streaming = " << (disk_info.TPer_streaming ? "Y, " : "N, ")
+		<< "SYNC = " << (disk_info.TPer_sync ? "Y" : "N")
+		<< std::endl;
     }
     if (disk_info.Locking) {
-        printf("\nLocking functions (0x%04x)\n", FC_LOCKING);
-        cout << "Locked = " << (disk_info.Locking_locked ? "Y, " : "N, ");
-        cout << "LockingEnabled = " << (disk_info.Locking_lockingEnabled ? "Y, " : "N, ");
-        cout << "LockingSupported = " << (disk_info.Locking_lockingSupported ? "Y, " : "N, ");
-        cout << "MBRDone = " << (disk_info.Locking_MBRDone ? "Y, " : "N, ");
-        cout << "MBREnabled = " << (disk_info.Locking_MBREnabled ? "Y, " : "N, ");
-        cout << "MediaEncrypt = " << (disk_info.Locking_mediaEncrypt ? "Y" : "N");
-        cout << std::endl;
+
+		cout << "Locking function (" << HEXON(4) << FC_LOCKING << HEXOFF << ")" << std::endl;
+		cout << "    Locked = " << (disk_info.Locking_locked ? "Y, " : "N, ")
+			<< "LockingEnabled = " << (disk_info.Locking_lockingEnabled ? "Y, " : "N, ")
+			<< "LockingSupported = " << (disk_info.Locking_lockingSupported ? "Y, " : "N, ");
+        cout << "MBRDone = " << (disk_info.Locking_MBRDone ? "Y, " : "N, ")
+        << "MBREnabled = " << (disk_info.Locking_MBREnabled ? "Y, " : "N, ")
+        << "MediaEncrypt = " << (disk_info.Locking_mediaEncrypt ? "Y" : "N")
+        << std::endl;
     }
     if (disk_info.Geometry) {
-        printf("\nGeometry functions (0x%04x)\n", FC_GEOMETRY);
-        cout << "Align = " << (disk_info.Geometry_align ? "Y, " : "N, ");
-        cout << "Alignment Granularity = " << disk_info.Geometry_alignmentGranularity;
-		cout << " (" << // display bytes
+
+		cout << "Geometry function (" << HEXON(4) << FC_GEOMETRY << HEXOFF << ")" << std::endl;
+		cout << "    Align = " << (disk_info.Geometry_align ? "Y, " : "N, ")
+        << "Alignment Granularity = " << disk_info.Geometry_alignmentGranularity
+		<< " (" << // display bytes
 			(disk_info.Geometry_alignmentGranularity * 
 			 disk_info.Geometry_logicalBlockSize) 
-			 << ")";
-        cout << ", Logical Block size = " << disk_info.Geometry_logicalBlockSize;
-        cout << ", Lowest Aligned LBA = " << disk_info.Geometry_lowestAlignedLBA;
-		cout << std::endl;
+		<< ")"
+        << ", Logical Block size = " << disk_info.Geometry_logicalBlockSize
+        << ", Lowest Aligned LBA = " << disk_info.Geometry_lowestAlignedLBA
+		<< std::endl;
     }
-    if (disk_info.Enterprise) {
-        printf("\nEnterprise functions (0x%04x)\n", FC_ENTERPRISE);
-        cout << "Range crossing = " << (disk_info.Enterprise_rangeCrossing ? "Y, " : "N, ");
-        cout << "Base commID = " << disk_info.Enterprise_basecomID;
-		cout << ", commIDs = " << disk_info.Enterprise_numcomID;
-		cout << std::endl;
+	if (disk_info.Enterprise) {
+
+		cout << "Enterprise function (" << HEXON(4) << FC_ENTERPRISE << HEXOFF << ")" << std::endl;
+		cout << "    Range crossing = " << (disk_info.Enterprise_rangeCrossing ? "Y, " : "N, ")
+        << "Base commID = " << disk_info.Enterprise_basecomID
+		<< ", commIDs = " << disk_info.Enterprise_numcomID
+		<< std::endl;
     }
     if (disk_info.SingleUser) {
-        printf("\nSingleUser functions (0x%04x)\n", FC_SINGLEUSER);
-        cout << "ALL = " << (disk_info.SingleUser_all ? "Y, " : "N, ");
-        cout << "ANY = " << (disk_info.SingleUser_any ? "Y, " : "N, ");
-        cout << "Policy = " << (disk_info.SingleUser_policy ? "Y, " : "N, ");
-		cout << "Locking Objects = " << (disk_info.SingleUser_lockingObjects);
-		cout << std::endl;
+		cout << "SingleUser function (" << HEXON(4) << FC_SINGLEUSER << HEXOFF << ")" << std::endl;
+        cout << "    ALL = " << (disk_info.SingleUser_all ? "Y, " : "N, ")
+        << "ANY = " << (disk_info.SingleUser_any ? "Y, " : "N, ")
+        << "Policy = " << (disk_info.SingleUser_policy ? "Y, " : "N, ")
+		<< "Locking Objects = " << (disk_info.SingleUser_lockingObjects)
+		<< std::endl;
     }
     if (disk_info.DataStore) {
-        printf("\nDataStore functions (0x%04x)\n", FC_DATASTORE);
-        cout << "Max Tables = " << disk_info.DataStore_maxTables;
-        cout << ", Max Size Tables = " << disk_info.DataStore_maxTableSize;
-        cout << ", Table size alignment = " << disk_info.DataStore_alignment;
-		cout << std::endl;
+		cout << "DataStore function (" << HEXON(4) << FC_DATASTORE << HEXOFF << ")" << std::endl;
+		cout << "    Max Tables = " << disk_info.DataStore_maxTables
+        << ", Max Size Tables = " << disk_info.DataStore_maxTableSize
+        << ", Table size alignment = " << disk_info.DataStore_alignment
+		<< std::endl;
     }
+
     if (disk_info.OPAL20) {
-        printf("\nOPAL 2.0 functions (0x%04x)\n", FC_OPALV200);
-        SNPRINTF(scratch, 8, "0x%04x", disk_info.OPAL20_basecomID);
-        cout << "Base commID = " << scratch;
-        SNPRINTF(scratch, 8, "0x%02x", disk_info.OPAL20_initialPIN);
-        cout << ", Initial PIN = " << scratch;
-        SNPRINTF(scratch, 8, "0x%02x", disk_info.OPAL20_revertedPIN);
-		cout << ", Reverted PIN = " << scratch;
+		cout << "OPAL 2.0 function (" << HEXON(4) << FC_OPALV200 << ")" << HEXOFF << std::endl;
+		cout << "    Base commID = " << HEXON(4) << disk_info.OPAL20_basecomID << HEXOFF;
+		cout << ", Initial PIN = " << HEXON(2) << disk_info.OPAL20_initialPIN << HEXOFF;
+		cout << ", Reverted PIN = " << HEXON(2) << disk_info.OPAL20_revertedPIN << HEXOFF;
         cout << ", commIDs = " << disk_info.OPAL20_numcomIDs;
 		cout << std::endl;
-        cout << "Locking Admins = " << disk_info.OPAL20_numAdmins;
+        cout << "    Locking Admins = " << disk_info.OPAL20_numAdmins;
         cout << ", Locking Users = " << disk_info.OPAL20_numUsers;
 		cout << ", Range Crossing = " << (disk_info.OPAL20_rangeCrossing ? "Y" : "N");
 		cout << std::endl;
     }
     if (disk_info.Unknown)
-        cout << disk_info.Unknown << " Unknown function codes IGNORED " << std::endl;
+        cout << "**** " << disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
 }

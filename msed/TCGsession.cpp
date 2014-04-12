@@ -36,19 +36,6 @@ TCGsession::TCGsession(TCGdev * device)
     d = device;
 }
 
-uint8_t
-TCGsession::SEND(TCGcommand * cmd)
-{
-    LOG(D4) << "Entering TCGsession::SEND(TCGcommand * cmd)";
-    return d->sendCmd(IF_SEND, TCGProtocol, d->comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH);
-}
-
-uint8_t
-TCGsession::RECV(void * resp)
-{
-    LOG(D4) << "Entering TCGsession::RECV(void * resp)";
-    return d->sendCmd(IF_RECV, TCGProtocol, d->comID(), resp, IO_BUFFER_LENGTH);
-}
 
 uint8_t
 TCGsession::start(TCG_UID SP, char * HostChallenge, TCG_UID SignAuthority)
@@ -89,58 +76,46 @@ TCGsession::sendCommand(TCGcommand * cmd)
 {
     LOG(D4) << "Entering TCGsession::sendCommand()";
     uint8_t rc;
-    TCGHeader * hdr;
 	TCGresponse * response;
     cmd->setHSN(HSN);
     cmd->setTSN(TSN);
     cmd->setcomID(d->comID());
-	LOG(D3) << std::endl << "Dumping command buffer";
-	IFLOG(D3) hexDump(cmd->getCmdBuffer(), 128);
-    rc = SEND(cmd);
-    if (0 != rc) {
-        LOG(E) << "Command failed on send " << rc;
-        return rc;
-    }
-    //    Sleep(250);
-    memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
-    rc = RECV(cmd->getRespBuffer());
-    LOG(D3) << std::endl << "Dumping reply buffer";
-    IFLOG(D3) hexDump(cmd->getRespBuffer(), 128);
-    if (0 != rc) {
-        LOG(E) << "Command failed on recv" << rc;
-        return rc;
-    }
+
+	d->exec(cmd, TCGProtocol);
     /*
      * Check out the basics that so that we know we
      * have a sane reply to work with
      */
-    hdr = (TCGHeader *) cmd->getRespBuffer();
 	response = new TCGresponse(cmd->getRespBuffer());
     // zero lengths -- these are big endian but it doesn't matter for uint = 0
-    if ((0 == hdr->cp.length) |
-        (0 == hdr->pkt.length) |
-        (0 == hdr->subpkt.length)) {
+    if ((0 == response->h.cp.length) |
+		(0 == response->h.pkt.length) |
+		(0 == response->h.subpkt.length)) {
         LOG(E) << "One or more header fields have 0 length";
+		delete response;
         return 0xff;
     }
     // if we get an endsession response return 0
-	if ((1 == SWAP32(hdr->subpkt.length)) && (0xfa == response->tokenIs(0))) {
+	if ((1 == SWAP32(response->h.subpkt.length)) && (0xfa == response->tokenIs(0))) {
 		delete response;
 		return 0;
 	}
     // IF we received a method status return it
-    if (!((0xf1 == response->tokenIs(response->getTokenCount() - 1)) &&
-		(0xf0 == response->tokenIs(response->getTokenCount() - 5)))) {
+    if (!((TCG_TOKEN::ENDLIST == response->tokenIs(response->getTokenCount() - 1)) &&
+		(TCG_TOKEN::STARTLIST == response->tokenIs(response->getTokenCount() - 5)))) {
         // no method status so we hope we reported the error someplace else
         LOG(E) << "Method Status missing";
+		delete response;
         return 0xff;
     }
-	if (0x00 != response->getUint8(response->getTokenCount() - 4))
+	if (TCGSTATUSCODE::SUCCESS != response->getUint8(response->getTokenCount() - 4))
 	{
-        LOG(E) << "Non-zero method status code " <<
+        LOG(E) << "method status code " <<
 			methodStatus(response->getUint8(response->getTokenCount() - 4));
     }
-	return response->getUint8(response->getTokenCount() - 4);
+	rc = response->getUint8(response->getTokenCount() - 4);
+	delete response;
+	return rc;
 }
 
 void

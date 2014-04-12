@@ -43,11 +43,10 @@ public:
 	//int64_t getSint(uint32_t tokenNum);
 	std::string getString(uint32_t tokenNum);
 	void getBytes(uint32_t tokenNum, uint8_t bytearray[]);
+	TCGHeader h;  // this should be private with accessors but .....
 
 private:
 	TCGresponse();
-	uint32_t tokens = 0;
-	TCGHeader h;
 	std::vector<std::vector<uint8_t>> response;
 };
 

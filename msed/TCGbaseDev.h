@@ -18,6 +18,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
 #pragma once
+class TCGcommand;
 
 #include "TCGstructures.h"
 
@@ -28,11 +29,14 @@ public:
     virtual uint8_t 
 		sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
             void * buffer, uint16_t bufferlen) = 0;
+	
+	uint8_t exec(TCGcommand * cmd, uint8_t protocol = 0x01);
     uint8_t isOpal2();
     uint8_t isPresent();
     uint16_t comID();
     void puke();
 protected:
+	virtual void osmsSleep(uint32_t milliseconds) = 0;
     void discovery0();
     const char * dev;
     uint8_t isOpen = FALSE;

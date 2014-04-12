@@ -18,7 +18,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
 #pragma once
-#include "..\TCGbaseDev.h"
+#include "TCGbaseDev.h"
 
 class TCGdev : public TCGbaseDev {
 public:
@@ -27,6 +27,7 @@ public:
 	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 		void * buffer, uint16_t bufferlen);
 private:
+	void osmsSleep(uint32_t milliseconds);
 	HANDLE hDev;
 	void *ataPointer; 
 };

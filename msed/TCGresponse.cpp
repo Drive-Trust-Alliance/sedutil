@@ -28,6 +28,7 @@ TCGresponse::TCGresponse(void * buffer)
 	uint8_t * reply = (uint8_t *)buffer;
 	uint32_t cpos = 0;
 	uint32_t tokenLength;
+	uint32_t tokens = 0;
 	memcpy(&h, buffer, sizeof(TCGHeader));
 	tokens = 0;
 	response.clear();
@@ -106,6 +107,8 @@ uint64_t TCGresponse::getUint64(uint32_t tokenNum) {
 		}
 		else {
 			uint64_t whatever = 0;
+			if (response[tokenNum].size() > 9)
+				LOG(E) << "UINT64 with greater than 8 bytes";
 			int b = 0;
 			for (uint32_t i = response[tokenNum].size() - 1; i > 0; i--) {
 				whatever |= (response[tokenNum][i] << (8 * b));
@@ -131,13 +134,23 @@ uint64_t TCGresponse::getUint64(uint32_t tokenNum) {
 
 
 uint32_t TCGresponse::getUint32(uint32_t tokenNum) {
-	return (uint32_t) getUint64(tokenNum);
+	uint64_t i = getUint64(tokenNum);
+	if (i > 0xffffffff)
+		LOG(E) << "UINT32 truncated ";
+	return (uint32_t) i;
+
 }
 uint16_t TCGresponse::getUint16(uint32_t tokenNum) {
-	return (uint16_t) getUint64(tokenNum);
+	uint64_t i = getUint64(tokenNum);
+	if (i > 0xffff)
+		LOG(E) << "UINT16 truncated ";
+	return (uint16_t)i;
 }
 uint8_t TCGresponse::getUint8(uint32_t tokenNum) {
-	return (uint8_t) getUint64(tokenNum);
+	uint64_t i = getUint64(tokenNum);
+	if (i > 0xff)
+		LOG(E) << "UINT8 truncated ";
+	return (uint8_t)i;
 }
 //int64_t TCGresponse::getSint(uint32_t tokenNum) {
 //	LOG(E) << "TCGresponse::getSint() is not implemented";
@@ -192,7 +205,7 @@ void TCGresponse::getBytes(uint32_t tokenNum, uint8_t bytearray[]) {
 		bytearray[i-overhead] = response[tokenNum][i];
 	}
 }
-uint32_t TCGresponse::getTokenCount() { return tokens; }
+uint32_t TCGresponse::getTokenCount() { return response.size(); }
 TCGresponse::~TCGresponse()
 {
 }
