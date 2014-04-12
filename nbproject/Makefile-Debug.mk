@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/msed/Class_Skeleton.o \
 	${OBJECTDIR}/msed/TCGbaseDev.o \
 	${OBJECTDIR}/msed/TCGcommand.o \
+	${OBJECTDIR}/msed/TCGresponse.o \
 	${OBJECTDIR}/msed/TCGsession.o \
 	${OBJECTDIR}/msed/TCGtasks.o \
 	${OBJECTDIR}/msed/diskList.o \
@@ -85,6 +86,11 @@ ${OBJECTDIR}/msed/TCGcommand.o: msed/TCGcommand.cpp
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Werror -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/TCGcommand.o msed/TCGcommand.cpp
+
+${OBJECTDIR}/msed/TCGresponse.o: msed/TCGresponse.cpp 
+	${MKDIR} -p ${OBJECTDIR}/msed
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Werror -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/TCGresponse.o msed/TCGresponse.cpp
 
 ${OBJECTDIR}/msed/TCGsession.o: msed/TCGsession.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed

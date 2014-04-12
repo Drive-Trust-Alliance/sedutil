@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 #include "os.h"
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -142,6 +142,12 @@ uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     if (!((0x00 == sense[0]) && (0x00 == sense[1])))
         if (!((0x72 == sense[0]) && (0x0b == sense[1]))) return 0xff; // not ATA response
     return (sense[11]);
+}
+
+void TCGdev::osmsSleep(uint32_t ms)
+{
+    usleep(ms * 1000); //convert to microseconds
+    return;
 }
 
 /** Close the device reference so this object can be delete. */

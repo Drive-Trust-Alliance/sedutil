@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 #include "os.h"
 #include <stdio.h>
 #include "TCGsession.h"
@@ -36,13 +36,12 @@ TCGsession::TCGsession(TCGdev * device)
     d = device;
 }
 
-
 uint8_t
 TCGsession::start(TCG_UID SP, char * HostChallenge, TCG_UID SignAuthority)
 {
     LOG(D4) << "Entering TCGsession::startSession ";
     TCGcommand *cmd = new TCGcommand();
-	TCGresponse * response;
+    TCGresponse * response;
     cmd->reset(TCG_UID::TCG_SMUID_UID, TCG_METHOD::STARTSESSION);
     cmd->addToken(TCG_TOKEN::STARTLIST); // [  (Open Bracket)
     cmd->addToken(105); // HostSessionID : sessionnumber
@@ -61,13 +60,13 @@ TCGsession::start(TCG_UID SP, char * HostChallenge, TCG_UID SignAuthority)
     cmd->addToken(TCG_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
     if (sendCommand(cmd)) return 0xff;
-	response = new TCGresponse(cmd->getRespBuffer());
-	// call user method SL HSN TSN EL EOD SL 00 00 00 EL
-	//   0   1     2     3  4   5   6  7   8
- 
-	HSN = SWAP32(response->getUint32(4));
-	TSN = SWAP32(response->getUint32(5));
-	delete response;
+    response = new TCGresponse(cmd->getRespBuffer());
+    // call user method SL HSN TSN EL EOD SL 00 00 00 EL
+    //   0   1     2     3  4   5   6  7   8
+
+    HSN = SWAP32(response->getUint32(4));
+    TSN = SWAP32(response->getUint32(5));
+    delete response;
     return 0;
 }
 
@@ -76,46 +75,45 @@ TCGsession::sendCommand(TCGcommand * cmd)
 {
     LOG(D4) << "Entering TCGsession::sendCommand()";
     uint8_t rc;
-	TCGresponse * response;
+    TCGresponse * response;
     cmd->setHSN(HSN);
     cmd->setTSN(TSN);
     cmd->setcomID(d->comID());
 
-	d->exec(cmd, TCGProtocol);
+    d->exec(cmd, TCGProtocol);
     /*
      * Check out the basics that so that we know we
      * have a sane reply to work with
      */
-	response = new TCGresponse(cmd->getRespBuffer());
+    response = new TCGresponse(cmd->getRespBuffer());
     // zero lengths -- these are big endian but it doesn't matter for uint = 0
     if ((0 == response->h.cp.length) |
-		(0 == response->h.pkt.length) |
-		(0 == response->h.subpkt.length)) {
+        (0 == response->h.pkt.length) |
+        (0 == response->h.subpkt.length)) {
         LOG(E) << "One or more header fields have 0 length";
-		delete response;
+        delete response;
         return 0xff;
     }
     // if we get an endsession response return 0
-	if ((1 == SWAP32(response->h.subpkt.length)) && (0xfa == response->tokenIs(0))) {
-		delete response;
-		return 0;
-	}
+    if ((1 == SWAP32(response->h.subpkt.length)) && (0xfa == response->tokenIs(0))) {
+        delete response;
+        return 0;
+    }
     // IF we received a method status return it
-    if (!((TCG_TOKEN::ENDLIST == response->tokenIs(response->getTokenCount() - 1)) &&
-		(TCG_TOKEN::STARTLIST == response->tokenIs(response->getTokenCount() - 5)))) {
+    if (!(((uint8_t) TCG_TOKEN::ENDLIST == (uint8_t) response->tokenIs(response->getTokenCount() - 1)) &&
+        ((uint8_t) TCG_TOKEN::STARTLIST == (uint8_t) response->tokenIs(response->getTokenCount() - 5)))) {
         // no method status so we hope we reported the error someplace else
         LOG(E) << "Method Status missing";
-		delete response;
+        delete response;
         return 0xff;
     }
-	if (TCGSTATUSCODE::SUCCESS != response->getUint8(response->getTokenCount() - 4))
-	{
+    if (TCGSTATUSCODE::SUCCESS != response->getUint8(response->getTokenCount() - 4)) {
         LOG(E) << "method status code " <<
-			methodStatus(response->getUint8(response->getTokenCount() - 4));
+                methodStatus(response->getUint8(response->getTokenCount() - 4));
     }
-	rc = response->getUint8(response->getTokenCount() - 4);
-	delete response;
-	return rc;
+    rc = response->getUint8(response->getTokenCount() - 4);
+    delete response;
+    return rc;
 }
 
 void

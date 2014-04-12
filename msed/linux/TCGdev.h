@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 #pragma once
 #include "TCGbaseDev.h"
 
@@ -27,5 +27,6 @@ public:
     uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
             void * buffer, uint16_t bufferlen);
 private:
+    void osmsSleep(uint32_t ms);
     int fd;
 };
