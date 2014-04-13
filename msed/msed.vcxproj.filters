@@ -51,9 +51,6 @@
     <ClInclude Include="endianfixup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="diskList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -93,9 +90,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="hexDump.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="diskList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="options.cpp">

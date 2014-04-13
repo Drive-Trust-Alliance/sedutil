@@ -32,4 +32,5 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #define SNPRINTF snprintf
 #define ALIGNED_ALLOC(alignment, length) aligned_alloc(alignment, length)
 #define ALIGNED_FREE free
+#define DEVICEMASK "/dev/sg%i"
 

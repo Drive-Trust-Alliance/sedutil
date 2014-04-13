@@ -18,4 +18,5 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
 #define IO_BUFFER_LENGTH 2048
+#define MAX_DISKS 20
 #define MSED_VERSION "0.1a"

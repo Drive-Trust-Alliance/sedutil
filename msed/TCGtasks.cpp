@@ -19,7 +19,6 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 #include "os.h"
 #include <stdio.h>
-#include "diskList.h"
 #include "TCGdev.h"
 #include "hexDump.h"
 #include "TCGcommand.h"
@@ -47,9 +46,35 @@ int diskQuery(char * devref)
 
 int diskScan()
 {
-    diskList * dl = new diskList();
-    delete dl;
-    return 0;
+/** Brute force disk scan.
+ * loops through the physical devices until
+ * there is an open error.Creates a Device
+ * and reports OPAL support.
+ */
+	char devname[25];
+	int i = 0;
+	TCGdev * d;
+	LOG(D4) << "Creating diskList";
+	printf("\nScanning for Opal 2.0 compliant disks\n");
+	while (TRUE) {
+		SNPRINTF(devname, 23, DEVICEMASK, i);
+		//		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive3", i);
+		d = new TCGdev(devname);
+		if (d->isPresent()) {
+			printf("%s %s", devname, (d->isOpal2() ? " Yes\n" : " No \n"));
+			if (MAX_DISKS == i) {
+				LOG(I) << MAX_DISKS << "% disks, really?";
+				delete d;
+				break;
+			}
+		}
+		else break;
+		delete d;
+		i += 1;
+	}
+	delete d;
+	printf("No more disks present ending scan\n");
+	return 0;
 }
 
 int takeOwnership(char * devref, char * newpassword)

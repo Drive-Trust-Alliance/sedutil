@@ -85,7 +85,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class_Skeleton.h" />
-    <ClInclude Include="diskList.h" />
     <ClInclude Include="endianfixup.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="msedConstants.h" />
@@ -102,7 +101,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Class_Skeleton.cpp" />
-    <ClCompile Include="diskList.cpp" />
     <ClCompile Include="hexDump.cpp" />
     <ClCompile Include="msed.cpp" />
     <ClCompile Include="options.cpp" />
