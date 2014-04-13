@@ -44,13 +44,13 @@ void usage()
 	printf("                                --password(-p) option required\n");
 	printf("-e, --enableuser \n");
 	printf("                                Enable a user in the lockingSP\n");
-	printf("                                --password(-p) is the lockingSP ADMIN1 password\n");
+	printf("                                --password(-p) is the lockingSP Admin1 password\n");
 	printf("-S, --setpassword \n");
 	printf("                                Change the password of a TPER authority\n");
-	printf("                                --password(-p) is the lockingSP ADMIN1 password\n");
+	printf("                                --password(-p) is the lockingSP Admin1 password\n");
 	printf("                                --newpassword(-n) is the new password\n");
 	printf("                                Note: when first activated the LockingSPs\n");
-	printf("                                      ADMIN1 password is set to the SID password\n");
+	printf("                                      Admin1 password is set to the SID password\n");
 	printf("-n, --newpassword \n");
 	printf("                                new password (only valid for --setpassword(-s)\n");
 	printf("-u, --user \n");
@@ -62,6 +62,9 @@ void usage()
     printf("                                exceptions\n");
 	printf("-L, --revertLockingSP \n");
 	printf("                                revert the LockingSP *ERASING* *ALL* the data \n");
+	printf("                                password(-p) option required\n");
+	printf("-D, --dumpTable \n");
+	printf("                                *DEBUG* table Dump \n");
 	printf("                                password(-p) option required\n");
 	printf("--revertLockingSPnoerase \n");
 	printf("                                revert the LockingSP without erasing the data \n");
@@ -127,6 +130,8 @@ uint8_t options(int argc, char * argv[], MSED_OPTIONS * opts)
             opts->action = 's';
 		else if (!(strcmp("-q", argv[i])) || !(strcmp("--query", argv[i])))
 			opts->action = 'q';
+		else if (!(strcmp("-D", argv[i])) || !(strcmp("--dumpTable", argv[i])))
+			opts->action = 'D';
         else if (!(strcmp("-p", argv[i])) || !(strcmp("--password", argv[i])))
             opts->password = ++i;
 		else if ('v' == argv[i][1]) {

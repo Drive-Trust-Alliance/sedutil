@@ -28,6 +28,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
  * See also TCGLexicon for structs, typedefs and enums used to encode
  * the bytestream.
  */
+#include <vector>
 #include "TCGlexicon.h"
 class TCGdev;
 
@@ -43,6 +44,7 @@ public:
     void addToken(TCG_UID token);
     void addToken(const char * bytestring);
 	void addToken(uint8_t bytes[], uint16_t size);
+	void addToken(std::vector<uint8_t> token);
     void addToken(uint16_t);
 	void setcomID(uint16_t comID);
 	void setHSN(uint32_t HSN);
@@ -50,7 +52,7 @@ public:
     void complete(uint8_t EOD = 1);
     void reset();
     void reset(TCG_UID InvokingUid, TCG_METHOD method);
-	void changeInvokingUid(uint8_t Invoker[]);
+	void changeInvokingUid(std::vector<uint8_t> Invoker);
 private:
     uint8_t *cmdbuf;
 	uint8_t *respbuf;

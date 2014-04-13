@@ -31,8 +31,10 @@ typedef enum _TCG_TOKENID {
 
 class TCGresponse {
 public:
+	TCGresponse();
     TCGresponse(void * buffer);
-    ~TCGresponse();
+	~TCGresponse();
+	void init(void * buffer);
 	TCG_TOKENID tokenIs(uint32_t tokenNum);
 	uint32_t getLength(uint32_t tokenNum);
 	uint64_t getUint64(uint32_t tokenNum);
@@ -42,11 +44,12 @@ public:
 	uint32_t getTokenCount();
 	//int64_t getSint(uint32_t tokenNum);
 	std::string getString(uint32_t tokenNum);
+	std::vector<uint8_t> getRawToken(uint32_t tokenNum);
 	void getBytes(uint32_t tokenNum, uint8_t bytearray[]);
 	TCGHeader h;  // this should be private with accessors but .....
 
 private:
-	TCGresponse();
+
 	std::vector<std::vector<uint8_t>> response;
 };
 

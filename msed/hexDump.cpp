@@ -27,7 +27,7 @@ void hexDump(void * address, int length) {
 	LOG(D4) << "Entering hexDump";
 	int rpos = 0;
 	int dpos = 0;
-	printf("\n%04x ",rpos);
+	printf("%04x ",rpos);
 	while (cpos < epos){
 		printf("%02x", cpos[0]);
 		if (!((++rpos) % 4)) printf(" ");

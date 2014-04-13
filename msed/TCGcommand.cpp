@@ -80,7 +80,13 @@ TCGcommand::addToken(uint16_t number)
     cmdbuf[bufferpos++] = ((number & 0xff00) >> 8);
     cmdbuf[bufferpos++] = (number & 0x00ff);
 }
-
+void
+TCGcommand::addToken(std::vector<uint8_t> token) {
+	LOG(D4) << "Entering addToken(std::vector<uint8_t>)";
+	for (uint32_t i = 0; i < token.size(); i++) {
+		cmdbuf[bufferpos++] = token[i];
+	}
+}
 void
 TCGcommand::addToken(const char * bytestring)
 {
@@ -159,10 +165,14 @@ TCGcommand::complete(uint8_t EOD)
     hdr->cp.length = SWAP32(bufferpos - sizeof (TCGComPacket));
 }
 void
-TCGcommand::changeInvokingUid(uint8_t Invoker[])
+TCGcommand::changeInvokingUid(std::vector<uint8_t> Invoker)
 {
-	LOG(D4) << "Entering TCGcommand::changeInvokingUid(uint8_t Invoker[])";
-	memcpy(&cmdbuf[sizeof (TCGHeader) + 2], &Invoker[0], 8); /* bytes 2-9 */
+	LOG(D4) << "Entering TCGcommand::changeInvokingUid()";
+	int offset = sizeof(TCGHeader) + 1;  /* bytes 2-9 */
+	for (uint32_t i = 0; i < Invoker.size(); i++) {
+		cmdbuf[offset + i] = Invoker[i];
+	}
+
 }
 void *
 TCGcommand::getCmdBuffer()

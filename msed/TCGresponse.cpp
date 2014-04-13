@@ -18,11 +18,15 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
 #include "os.h"
-#include <string>
 #include "TCGresponse.h"
 #include "endianfixup.h"
 using namespace std;
-TCGresponse::TCGresponse(void * buffer)
+TCGresponse::TCGresponse(){};
+TCGresponse::TCGresponse(void * buffer) {
+	init(buffer);
+}
+void
+TCGresponse::init(void * buffer)
 {
 	std::vector<uint8_t> bytestring;
 	uint8_t * reply = (uint8_t *)buffer;
@@ -155,6 +159,9 @@ uint8_t TCGresponse::getUint8(uint32_t tokenNum) {
 //int64_t TCGresponse::getSint(uint32_t tokenNum) {
 //	LOG(E) << "TCGresponse::getSint() is not implemented";
 //}
+std::vector<uint8_t> TCGresponse::getRawToken(uint32_t tokenNum) {
+	return response[tokenNum];
+}
 std::string TCGresponse::getString(uint32_t tokenNum) {
 	std::string s;
 	s.erase();

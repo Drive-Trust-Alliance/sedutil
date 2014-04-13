@@ -27,7 +27,7 @@ int main(int argc, char * argv[])
 	///* *****************************************************************
 	// * *****************************************************************
 	// */
-	//getTable();
+	//dumpTable();
 	//if (argc > 0) return 0;
 	///* ******************************************************************
 	// * ******************************************************************
@@ -79,6 +79,14 @@ int main(int argc, char * argv[])
 			}
 			LOG(D) << "Performing revertLockingSP on " << argv[argc - 1] << " with password " << argv[opts.password];
 			return revertLockingSP(argv[argc - 1], argv[opts.password]);
+			break;
+		case 'D':
+			if (0 == opts.password) {
+				LOG(E) << "tableDump requires a password (-p)";
+				return 1;
+			}
+			LOG(I) << "Performing dumpTable() " ;
+			return dumpTable();
 			break;
 		case 'Y':
 			if (0 == opts.password) {

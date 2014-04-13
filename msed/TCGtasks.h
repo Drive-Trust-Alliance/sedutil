@@ -17,6 +17,9 @@ You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
+#include <vector>
+class TCGsession;
+class TCGresponse;
 
 int takeOwnership(char * devref, char * newpassword);
 int activateLockingSP(char * devref, char * password);
@@ -26,4 +29,9 @@ int diskScan();
 int diskQuery(char * devref);
 int setNewPassword(char * password, char * userid, char * newpassword, char * devref);
 int enableUser(char * password, char * userid, char * devref);
-int getTable();
+int dumpTable();
+int getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData, TCGsession * session);
+int getTable(TCGsession * session, std::vector<uint8_t> table,
+	uint16_t startcol, uint16_t endcol, TCGresponse & response);
+int nextTable(TCGsession * session, std::vector<uint8_t> table,
+	std::vector<uint8_t> startkey, TCGresponse & response);

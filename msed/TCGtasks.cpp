@@ -27,6 +27,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "endianfixup.h"
 #include "TCGstructures.h"
 #include "TCGresponse.h"
+#include "TCGtasks.h"
 
 int diskQuery(char * devref)
 {
@@ -322,14 +323,10 @@ int revertLockingSP(char * devref, char * password, uint8_t keep)
 int setNewPassword(char * password, char * userid, char * newpassword, char * devref)
 {
     LOG(D4) << "Entering setNewPassword" <<
-            " ADMIN1 password = " << password << " user = " << userid <<
+            " Admin1 password = " << password << " user = " << userid <<
             " newpassword = " << newpassword << " device = " << devref;
-    //	int rc = 0;
-    //	GenericResponse * reply;
-    /*
-     * Set new password
-     */
 
+	std::vector<uint8_t> userCPIN;
     TCGdev *device = new TCGdev(devref);
     if (!(device->isOpal2())) {
         delete device;
@@ -345,8 +342,17 @@ int setNewPassword(char * password, char * userid, char * newpassword, char * de
         delete device;
         return 0xff;
     }
+	// Get C_PIN ID  for user from Authority table
+	if (getAuth4User(userid, 10, userCPIN, session)) {
+		LOG(E) << "Unable to find user " << userid << " in Authority Table";
+		delete cmd;
+		delete session;
+		delete device;
+		return 0xff;
+	}
     // session[TSN:HSN] -> C_PIN_user_UID.Set[Values = [PIN = <new_password>]]
     cmd->reset(TCG_UID::TCG_C_PIN_ADMIN1, TCG_METHOD::SET);
+	cmd->changeInvokingUid(userCPIN);
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::STARTNAME);
     cmd->addToken(TCG_TINY_ATOM::UINT_01); // Values
@@ -365,7 +371,7 @@ int setNewPassword(char * password, char * userid, char * newpassword, char * de
         delete device;
         return 0xff;
     }
-    LOG(I) << "ADMIN1 password changed to " << newpassword;
+    LOG(I) << userid << " password changed to " << newpassword;
     // session[TSN:HSN] <- EOS
     delete session;
     delete device;
@@ -376,19 +382,34 @@ int setNewPassword(char * password, char * userid, char * newpassword, char * de
 int enableUser(char * password, char * userid, char * devref)
 {
     LOG(D4) << "Enable User()" <<
-            " ADMIN1 password = " << password << " user = " << userid << " on" << devref;
+            " Admin1 password = " << password << " user = " << userid << " on" << devref;
     /*
-     * Eanable a user in the lockingSP
+     * Enable a user in the lockingSP
      */
+	std::vector<uint8_t> userUID;
     TCGdev *device = new TCGdev(devref);
     if (!(device->isOpal2())) return 0xff;
     TCGcommand *cmd = new TCGcommand();
     TCGsession * session = new TCGsession(device);
     // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
     //               HostChallenge = <new_SID_password>, HostSigningAuthority = Admin1_UID]
-    if (session->start(TCG_UID::TCG_LOCKINGSP_UID, password, TCG_UID::TCG_ADMIN1_UID)) return 0xff;
+	if (session->start(TCG_UID::TCG_LOCKINGSP_UID, password, TCG_UID::TCG_ADMIN1_UID)) {
+		delete cmd;
+		delete session;
+		delete device;
+		return 0xff;
+	}
+	// Get UID for user from Authority table
+	if (getAuth4User(userid, 0, userUID, session)) {
+		LOG(E) << "Unable to find user " << userid << " in Authority Table";
+		delete cmd;
+		delete session;
+		delete device;
+		return 0xff;
+	}
     // session[TSN:HSN] -> User1_UID.Set[Values = [Enabled = TRUE]]
     cmd->reset(TCG_UID::TCG_USER1_UID, TCG_METHOD::SET);
+	cmd->changeInvokingUid(userUID);
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::STARTNAME);
     cmd->addToken(TCG_TINY_ATOM::UINT_01); // Values
@@ -407,7 +428,7 @@ int enableUser(char * password, char * userid, char * devref)
         delete device;
         return 0xff;
     }
-    LOG(I) << "USER1 has been enabled ";
+    LOG(I) << userid << " has been enabled ";
     // session[TSN:HSN] <- EOS
     delete cmd;
     delete session;
@@ -416,128 +437,169 @@ int enableUser(char * password, char * userid, char * devref)
     return 0;
 }
 
-int getTable()
+int getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData, TCGsession * session)
 {
-    CLog::Level() = CLog::FromInt(4);
-    LOG(D4) << "Entering getTable()";
-    TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
-    if (!(device->isOpal2())) {
-        delete device;
-        return 0xff;
-    }
-    TCGcommand *get = new TCGcommand();
-    TCGcommand *next = new TCGcommand();
-    TCGsession * session = new TCGsession(device);
-    TCGresponse * response;
-    // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
-    //                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
-    if (session->start(TCG_UID::TCG_ADMINSP_UID, (char *) "password", TCG_UID::TCG_SID_UID)) {
-        //if (session->start(TCG_UID::TCG_LOCKINGSP_UID, "password", TCG_UID::TCG_ADMIN1_UID)) {
-        delete get;
-        delete next;
-        delete session;
-        delete device;
-        return 0xff;
-    }
+   LOG(D4) << "Entering getAuth4User()";
+	std::vector<uint8_t> table, key, nextkey;
+	TCGresponse response;
+	// build a token for the authority table
+	table.push_back(0xa8);
+	for (int i = 0; i < 8; i++){
+		table.push_back(TCGUID[TCG_UID::TCG_AUTHORITY_TABLE][i]);
+	}
+ 	key.clear();
+	while (true) {
+// Get the next UID
+		if (nextTable(session, table, key, response)) {
+			return 0xff;
+		}
+		key = response.getRawToken(2);
+		nextkey = response.getRawToken(3);
 
-    //AUTHORITY_TABLE.Get[Cellblock : [startColumn = 0, endColumn = 2]]
-    get->reset(TCG_UID::TCG_AUTHORITY_TABLE, TCG_METHOD::GET);
-    get->addToken(TCG_TOKEN::STARTLIST);
-    get->addToken(TCG_TOKEN::STARTLIST);
-    get->addToken(TCG_TOKEN::STARTNAME);
-    get->addToken(TCG_TOKEN::STARTCOLUMN);
-    get->addToken(TCG_TINY_ATOM::UINT_00);
-    get->addToken(TCG_TOKEN::ENDNAME);
-    get->addToken(TCG_TOKEN::STARTNAME);
-    get->addToken(TCG_TOKEN::ENDCOLUMN);
-    get->addToken(TCG_TINY_ATOM::UINT_12);
-    get->addToken(TCG_TOKEN::ENDNAME);
-    get->addToken(TCG_TOKEN::ENDLIST);
-    get->addToken(TCG_TOKEN::ENDLIST);
-    get->complete();
-    next->reset(TCG_UID::TCG_AUTHORITY_TABLE, TCG_METHOD::NEXT);
-    next->addToken(TCG_TOKEN::STARTLIST);
-    //next->addToken(TCG_TOKEN::STARTNAME);
-    //next->addToken(TCG_TINY_ATOM::UINT_00);
-    //next->addToken(TCGUID[TCG_ADMIN1_UID],8);
-    //next->addToken(TCG_TOKEN::ENDNAME);
-    next->addToken(TCG_TOKEN::STARTNAME);
-    next->addToken(TCG_TINY_ATOM::UINT_01);
-    next->addToken(TCG_TINY_ATOM::UINT_02);
-    next->addToken(TCG_TOKEN::ENDNAME);
-    next->addToken(TCG_TOKEN::ENDLIST);
-    next->complete();
-    LOG(D1) << "Intitial Next";
-    if (session->sendCommand(next)) {
-        delete get;
-        delete next;
-        delete session;
-        delete device;
-        return 0xff;
-    }
-
-    while (true) {
-        uint8_t nextuid[25];
-        uint8_t a8[] = {0xa8, 00};
-        // Get the next UID
-        response = new TCGresponse(next->getRespBuffer());
-        response->getBytes(3, nextuid);
-        delete response;
-        IFLOG(D1) hexDump(nextuid, 8);
-        LOG(D1) << "****LOOP**** get";
-        get->changeInvokingUid(nextuid);
-        if (session->sendCommand(get)) {
-            delete get;
-            delete next;
-            delete session;
-            delete device;
-            return 0xff;
-        }
-        response = new TCGresponse(get->getRespBuffer());
-        LOG(I) << std::hex << std::showbase;
-        // bytestring
-        LOG(I) << "tokenIs (4) " << response->tokenIs(4);
-        response->getBytes(4, nextuid);
-        LOG(I) << "getBytes (4) " << nextuid;
-        // cstring
-        LOG(I) << "tokenIs (8) " << response->tokenIs(8);
-        LOG(I) << "getString (8) " << response->getString(8);
-        // tiny atom
-        LOG(I) << "tokenIs (11) " << response->tokenIs(11);
-        LOG(I) << "getUint (11) " << response->getUint64(11);
-        LOG(I) << std::dec << std::noshowbase;
-        delete response;
-
-        next->reset(TCG_UID::TCG_AUTHORITY_TABLE, TCG_METHOD::NEXT);
-        next->addToken(TCG_TOKEN::STARTLIST);
-        next->addToken(TCG_TOKEN::STARTNAME);
-        next->addToken(TCG_TINY_ATOM::UINT_00);
-        response = new TCGresponse(next->getRespBuffer());
-        if (9 != response->getLength(3)) break; // no next row so bail
-        response->getBytes(3, nextuid);
-        delete response;
-        next->addToken(a8, 1);
-        next->addToken(nextuid, 8);
-        next->addToken(TCG_TOKEN::ENDNAME);
-        next->addToken(TCG_TOKEN::STARTNAME);
-        next->addToken(TCG_TINY_ATOM::UINT_01);
-        next->addToken(TCG_TINY_ATOM::UINT_02);
-        next->addToken(TCG_TOKEN::ENDNAME);
-        next->addToken(TCG_TOKEN::ENDLIST);
-        next->complete();
-        LOG(D1) << "**NEXT***Next";
-        if (session->sendCommand(next)) {
-            delete get;
-            delete next;
-            delete session;
-            delete device;
-            return 0xff;
-        }
-
-    }
-    delete get;
-    delete next;
-    delete session;
-    delete device;
-    return 0;
+		//AUTHORITY_TABLE.Get[Cellblock : [startColumn = 0, endColumn = 10]]
+		if (getTable(session, key, 1, 1, response)){
+			return 0xff;
+		}
+		LOG(D1) << "Dumping Response";
+		IFLOG(D1) hexDump(response.getRawToken(4).data(), response.getRawToken(4).size());
+		if (!(strcmp(userid, response.getString(4).c_str()))) {
+			if (getTable(session, key, column, column, response)){
+				return 0xff;
+			}
+			userData = response.getRawToken(4);
+			return 0x00;
+		}
+		
+		if (9 != nextkey.size()) break; // no next row so bail
+		key = nextkey;
+	}
+    return 0xff;
 }
+int dumpTable()
+{
+	CLog::Level() = CLog::FromInt(4);
+	LOG(D4) << "Entering getTable()";
+	std::vector<uint8_t> table, key, nextkey;
+	table.push_back(0xa8);
+	for (int i = 0; i < 8; i++){
+		table.push_back(TCGUID[TCG_UID::TCG_AUTHORITY_TABLE][i]);
+	}
+	TCGdev *device = new TCGdev("\\\\.\\PhysicalDrive3");
+	if (!(device->isOpal2())) {
+		delete device;
+		return 0xff;
+	}
+	TCGsession * session = new TCGsession(device);
+	TCGresponse response;
+	// session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
+	//                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
+	//if (session->start(TCG_UID::TCG_ADMINSP_UID, (char *) "password", TCG_UID::TCG_SID_UID)) {
+	if (session->start(TCG_UID::TCG_LOCKINGSP_UID, "password", TCG_UID::TCG_ADMIN1_UID)) {
+		delete session;
+		delete device;
+		return 0xff;
+	}
+
+	key.clear();
+	while (true) {
+		// Get the next UID
+		if (nextTable(session, table, key, response)) {
+			delete session;
+			delete device;
+			return 0xff;
+		}
+		key = response.getRawToken(2);
+		nextkey = response.getRawToken(3);
+
+		//AUTHORITY_TABLE.Get[Cellblock : [startColumn = 0, endColumn = 10]]
+
+		if (getTable(session, key, 1, 10, response)){
+			delete session;
+			delete device;
+			return 0xff;
+		}
+		std::vector<uint8_t> temp = response.getRawToken(4);
+		LOG(D1) << "Dumping Response";
+		hexDump(temp.data(), temp.size());
+		temp = response.getRawToken(20);
+		hexDump(temp.data(), temp.size());
+
+		//if (getTable(session, key, 5, 5, response)){
+		//	delete session;
+		//	delete device;
+		//	return 0xff;
+		//}
+		//temp = response.getRawToken(4);
+		//hexDump(temp.data(), temp.size());
+
+		//if (getTable(session, key, 10, 10, response)){
+		//	delete session;
+		//	delete device;
+		//	return 0xff;
+		//}
+		//temp = response.getRawToken(4);
+		//hexDump(temp.data(), temp.size());
+
+		if (9 != nextkey.size()) break; // no next row so bail
+		key = nextkey;
+	}
+	delete session;
+	delete device;
+	return 0;
+}
+int nextTable(TCGsession * session, std::vector<uint8_t> table,
+	std::vector<uint8_t> startkey, TCGresponse & response) {
+	LOG(D4) << "Entering nextTable";
+	TCGcommand *next = new TCGcommand();
+	next->reset(TCG_UID::TCG_AUTHORITY_TABLE, TCG_METHOD::NEXT);
+	next->changeInvokingUid(table);
+	next->addToken(TCG_TOKEN::STARTLIST);
+	if (0 != startkey.size()) {
+		next->addToken(TCG_TOKEN::STARTNAME);
+		next->addToken(TCG_TINY_ATOM::UINT_00);
+		//startkey[0] = 0x00;
+		next->addToken(startkey);
+		next->addToken(TCG_TOKEN::ENDNAME);
+	}
+	next->addToken(TCG_TOKEN::STARTNAME);
+	next->addToken(TCG_TINY_ATOM::UINT_01);
+	next->addToken(TCG_TINY_ATOM::UINT_02);
+	next->addToken(TCG_TOKEN::ENDNAME);
+	next->addToken(TCG_TOKEN::ENDLIST);
+	next->complete();
+	if (session->sendCommand(next)) {
+		delete next;
+		return 0xff;
+	}
+	response.init(next->getRespBuffer());
+	delete next;
+	return 0;
+}
+int getTable(TCGsession * session, std::vector<uint8_t> table,
+	uint16_t startcol, uint16_t endcol, TCGresponse & response) {
+	LOG(D4) << "Entering getTable";
+	TCGcommand *get = new TCGcommand();
+	get->reset(TCG_UID::TCG_AUTHORITY_TABLE, TCG_METHOD::GET);
+	get->changeInvokingUid(table);
+	get->addToken(TCG_TOKEN::STARTLIST);
+	get->addToken(TCG_TOKEN::STARTLIST);
+	get->addToken(TCG_TOKEN::STARTNAME);
+	get->addToken(TCG_TOKEN::STARTCOLUMN);
+	get->addToken(startcol);
+	get->addToken(TCG_TOKEN::ENDNAME);
+	get->addToken(TCG_TOKEN::STARTNAME);
+	get->addToken(TCG_TOKEN::ENDCOLUMN);
+	get->addToken(endcol);
+	get->addToken(TCG_TOKEN::ENDNAME);
+	get->addToken(TCG_TOKEN::ENDLIST);
+	get->addToken(TCG_TOKEN::ENDLIST);
+	get->complete();
+	if (session->sendCommand(get)) {
+		delete get;
+		return 0xff;
+	}
+	response.init(get->getRespBuffer());
+	delete get;
+	return 0;
+}
+
