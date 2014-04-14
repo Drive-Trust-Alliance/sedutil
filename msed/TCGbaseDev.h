@@ -34,10 +34,13 @@ public:
     uint8_t isOpal2();
     uint8_t isPresent();
     uint16_t comID();
+	void getFirmwareRev(uint8_t bytes[8]);
+	void getModelNum(uint8_t bytes[40]);
     void puke();
 protected:
 	virtual void osmsSleep(uint32_t milliseconds) = 0;
     void discovery0();
+	void identify();
     const char * dev;
     uint8_t isOpen = FALSE;
     TCG_DiskInfo disk_info;

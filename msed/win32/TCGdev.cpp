@@ -57,6 +57,7 @@ TCGdev::TCGdev(const char * devref)
     else {
         isOpen = TRUE;
         discovery0();
+		identify();
     }
 }
 
@@ -78,23 +79,25 @@ uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     ATA_PASS_THROUGH_DIRECT * ata = (ATA_PASS_THROUGH_DIRECT *) ataPointer;
     memset(ata, 0, sizeof (ATA_PASS_THROUGH_DIRECT));
     ata->Length = sizeof (ATA_PASS_THROUGH_DIRECT);
-    if (IF_RECV == cmd)
-        ata->AtaFlags = 0x00 | ATA_FLAGS_DRDY_REQUIRED | ATA_FLAGS_DATA_IN;
-    else
+	if (IF_RECV == cmd)
+		ata->AtaFlags = 0x00 | ATA_FLAGS_DRDY_REQUIRED | ATA_FLAGS_DATA_IN;
+	else if (IDENTIFY == cmd)
+		ata->AtaFlags = ATA_FLAGS_DATA_IN;
+	else
         ata->AtaFlags = 0x00 | ATA_FLAGS_DRDY_REQUIRED | ATA_FLAGS_DATA_OUT;
 
     ata->DataBuffer = buffer;
     ata->DataTransferLength = bufferlen;
     ata->TimeOutValue = 300;
-    /* these were a b**** to find  defined in TCG specs but location is defined
-     * in ATA spec */
-    ata->CurrentTaskFile[0] = protocol; // Protocol
-    ata->CurrentTaskFile[1] = uint8_t(bufferlen / 512); // Payload in number of 512 blocks
-    // Damn self inflicted endian bugs
-    // The comID is passed in host endian format in the taskfile
-    // don't know why?? Translated later?
-    ata->CurrentTaskFile[3] = (comID & 0x00ff); // Commid LSB
-    ata->CurrentTaskFile[4] = ((comID & 0xff00) >> 8); // Commid MSB
+	/* these were a b**** to find  defined in TCG specs but location is defined
+	 * in ATA spec */
+	ata->CurrentTaskFile[0] = protocol; // Protocol
+	ata->CurrentTaskFile[1] = uint8_t(bufferlen / 512); // Payload in number of 512 blocks
+	// Damn self inflicted endian bugs
+	// The comID is passed in host endian format in the taskfile
+	// don't know why?? Translated later?
+	ata->CurrentTaskFile[3] = (comID & 0x00ff); // Commid LSB
+	ata->CurrentTaskFile[4] = ((comID & 0xff00) >> 8); // Commid MSB
     ata->CurrentTaskFile[6] = (uint8_t) cmd; // ata Command (0x5e or ox5c)
     //LOG(D4) << "ata before";
     //IFLOG(D4) hexDump(ata, sizeof (ATA_PASS_THROUGH_DIRECT));

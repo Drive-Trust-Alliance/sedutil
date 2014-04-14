@@ -19,6 +19,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 #include "os.h"
 #include <stdio.h>
+#include <iostream>
 #include "TCGdev.h"
 #include "hexDump.h"
 #include "TCGcommand.h"
@@ -28,6 +29,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "TCGresponse.h"
 #include "TCGtasks.h"
 
+using namespace std;
 int diskQuery(char * devref)
 {
     LOG(D4) << "Entering diskQuery()" << devref;
@@ -53,6 +55,8 @@ int diskScan()
  */
 	char devname[25];
 	int i = 0;
+	uint8_t FirmwareRev[8];
+	uint8_t ModelNum[40];
 	TCGdev * d;
 	LOG(D4) << "Creating diskList";
 	printf("\nScanning for Opal 2.0 compliant disks\n");
@@ -61,9 +65,21 @@ int diskScan()
 		//		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive3", i);
 		d = new TCGdev(devname);
 		if (d->isPresent()) {
-			printf("%s %s", devname, (d->isOpal2() ? " Yes\n" : " No \n"));
+			d->getFirmwareRev(FirmwareRev);
+			d->getModelNum(ModelNum);
+			printf("%s %s", devname, (d->isOpal2() ? " Yes " : " No "));
+			for (int x = 0; x < sizeof(ModelNum); x++) {
+				//if (0x20 == ModelNum[x]) break;
+				cout << ModelNum[x];
+			}
+			cout << " ";
+			for (int x = 0; x < sizeof(FirmwareRev); x++) {
+				//if (0x20 == FirmwareRev[x]) break;
+				cout << FirmwareRev[x];
+			}
+			cout << std::endl;
 			if (MAX_DISKS == i) {
-				LOG(I) << MAX_DISKS << "% disks, really?";
+				LOG(I) << MAX_DISKS << " disks, really?";
 				delete d;
 				break;
 			}

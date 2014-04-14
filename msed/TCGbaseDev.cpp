@@ -51,7 +51,12 @@ uint8_t TCGbaseDev::isPresent()
     LOG(D4) << "Entering TCGbaseDev::isPresent()";
     return isOpen;
 }
-
+void TCGbaseDev::getFirmwareRev(uint8_t bytes[8]) {
+	memcpy(&bytes[0], &disk_info.firmwareRev[0],8);
+}
+void TCGbaseDev::getModelNum(uint8_t bytes[40]) {
+	memcpy(&bytes[0], &disk_info.modelNum[0], 40);
+}
 uint16_t TCGbaseDev::comID()
 {
     LOG(D4) << "Entering TCGbaseDev::comID()";
@@ -69,7 +74,7 @@ uint8_t TCGbaseDev::exec(TCGcommand * cmd, uint8_t protocol) {
 		LOG(E) << "Command failed on send " << rc;
 		return rc;
 	}
-	osmsSleep(50);
+	osmsSleep(25);
 	memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
 	rc = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
 	LOG(D3) << std::endl << "Dumping reply buffer";
@@ -187,6 +192,22 @@ void TCGbaseDev::puke()
 #define HEXON(x) "0x" << std::hex << std::setw(x) << std::setfill('0') 
 #define HEXOFF std::dec << std::setw(0) << std::setfill(' ')
     LOG(D4) << "Entering TCGbaseDev::puke()";
+	/* IDENTIFY */
+	cout << dev << (disk_info.devType ? " OTHER " : " ATA ");
+	for (int i = 0; i < sizeof(disk_info.modelNum); i++) {
+		if (0x20 == disk_info.modelNum[i]) break;
+		cout << disk_info.modelNum[i];
+	}
+	cout << " ";
+	for (int i = 0; i < sizeof(disk_info.firmwareRev); i++) {
+		if (0x20 == disk_info.firmwareRev[i]) break;
+		cout << disk_info.firmwareRev[i];
+	}
+	cout << " ";
+	for (int i = 0; i < sizeof(disk_info.serialNum); i++) {
+		cout << disk_info.serialNum[i];
+	}
+	cout << std::endl << std::endl;
     /* TPer */
     if (disk_info.TPer) {
 		cout << "TPer function (" << HEXON(4) << FC_TPER << HEXOFF << ")" << std::endl;
@@ -260,4 +281,33 @@ void TCGbaseDev::puke()
     }
     if (disk_info.Unknown)
         cout << "**** " << disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
+}
+/** adds the IDENTIFY information to the disk_info structure */
+void TCGbaseDev::identify() {
+	LOG(D4) << "Entering TCGbaseDev::discovery0()";
+	void * identifyResp = NULL;
+	identifyResp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
+	if (NULL == identifyResp) return;
+	memset(identifyResp, 0, IO_BUFFER_LENGTH);
+	uint8_t iorc = sendCmd(IDENTIFY, 0x00, 0x0000, identifyResp,512);
+	if (0x00 != iorc) {
+		ALIGNED_FREE(identifyResp);
+		return;
+	}
+	IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *)identifyResp;
+	disk_info.devType = id->devType;
+	for (int i = 0; i < sizeof(disk_info.serialNum); i += 2) {
+		disk_info.serialNum[i] = id->serialNum[i + 1];
+		disk_info.serialNum[i + 1] = id->serialNum[i];
+	}
+	for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 2) {
+		disk_info.firmwareRev[i] = id->firmwareRev[i+1];
+		disk_info.firmwareRev[i+1] = id->firmwareRev[i];
+	}
+	for (int i = 0; i < sizeof(disk_info.modelNum); i += 2) {
+		disk_info.modelNum[i] = id->modelNum[i+1];
+		disk_info.modelNum[i+1] = id->modelNum[i];
+	}
+	ALIGNED_FREE(identifyResp);
+	return;
 }

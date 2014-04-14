@@ -261,7 +261,8 @@ typedef struct _TCGHeader {
 
 typedef enum _ATACOMMAND {
     IF_RECV = 0x5c,
-    IF_SEND = 0x5e
+    IF_SEND = 0x5e,
+	IDENTIFY = 0xec,
 } ATACOMMAND;
 
 /** structure to store D0 information. */
@@ -309,7 +310,21 @@ typedef struct _TCG_DiskInfo {
     uint16_t OPAL20_numAdmins;
     uint16_t OPAL20_numUsers;
     uint8_t OPAL20_rangeCrossing;
+	// IDENTIFY information
+	uint8_t devType: 1;  // 0 = ata device
+	uint8_t serialNum[20];
+	uint8_t firmwareRev[8];
+	uint8_t modelNum[40];
 } TCG_DiskInfo;
-
+typedef struct _IDENTIFY_RESPONSE {
+		uint8_t reserved0;
+		uint8_t reserved1 : 7;
+		uint8_t devType : 1;
+		uint8_t reserved2[18];
+ 		uint8_t  serialNum[20];
+		uint8_t reserved3[6];
+	    uint8_t firmwareRev[8];
+	    uint8_t modelNum[40];
+	} IDENTIFY_RESPONSE;
 
 #pragma pack(pop)
