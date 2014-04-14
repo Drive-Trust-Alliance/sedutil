@@ -13,7 +13,6 @@
       <itemPath>msed/TCGsession.h</itemPath>
       <itemPath>msed/TCGstructures.h</itemPath>
       <itemPath>msed/TCGtasks.h</itemPath>
-      <itemPath>msed/diskList.h</itemPath>
       <itemPath>msed/endianfixup.h</itemPath>
       <itemPath>msed/hexDump.h</itemPath>
       <itemPath>msed/log.h</itemPath>
@@ -40,7 +39,6 @@
         <itemPath>msed/TCGresponse.cpp</itemPath>
         <itemPath>msed/TCGsession.cpp</itemPath>
         <itemPath>msed/TCGtasks.cpp</itemPath>
-        <itemPath>msed/diskList.cpp</itemPath>
         <itemPath>msed/hexDump.cpp</itemPath>
         <itemPath>msed/msed.cpp</itemPath>
         <itemPath>msed/options.cpp</itemPath>
@@ -113,10 +111,6 @@
       <item path="msed/TCGtasks.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/TCGtasks.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/diskList.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/diskList.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/endianfixup.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -199,10 +193,6 @@
       <item path="msed/TCGtasks.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/TCGtasks.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/diskList.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/diskList.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/endianfixup.h" ex="false" tool="3" flavor2="0">
       </item>

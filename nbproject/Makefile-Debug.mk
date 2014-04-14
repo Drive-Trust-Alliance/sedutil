@@ -41,7 +41,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/msed/TCGresponse.o \
 	${OBJECTDIR}/msed/TCGsession.o \
 	${OBJECTDIR}/msed/TCGtasks.o \
-	${OBJECTDIR}/msed/diskList.o \
 	${OBJECTDIR}/msed/hexDump.o \
 	${OBJECTDIR}/msed/linux/TCGdev.o \
 	${OBJECTDIR}/msed/msed.o \
@@ -101,11 +100,6 @@ ${OBJECTDIR}/msed/TCGtasks.o: msed/TCGtasks.cpp
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Werror -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/TCGtasks.o msed/TCGtasks.cpp
-
-${OBJECTDIR}/msed/diskList.o: msed/diskList.cpp 
-	${MKDIR} -p ${OBJECTDIR}/msed
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/diskList.o msed/diskList.cpp
 
 ${OBJECTDIR}/msed/hexDump.o: msed/hexDump.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed

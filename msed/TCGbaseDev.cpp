@@ -16,10 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 /** Base device class.
  * An OS port must create a subclass of this class
- * and implement the sendcmd class specific to the 
+ * and implement the sendcmd class specific to the
  * IO requirements of that OS
  */
 #include "os.h"
@@ -37,8 +37,13 @@ using namespace std;
 /** Device Class (Base) represents a single disk device.
  *  This is the functionality that is common to all OS's
  */
-TCGbaseDev::TCGbaseDev() {}
-TCGbaseDev::~TCGbaseDev() {}
+TCGbaseDev::TCGbaseDev()
+{
+}
+
+TCGbaseDev::~TCGbaseDev()
+{
+}
 
 uint8_t TCGbaseDev::isOpal2()
 {
@@ -51,12 +56,17 @@ uint8_t TCGbaseDev::isPresent()
     LOG(D4) << "Entering TCGbaseDev::isPresent()";
     return isOpen;
 }
-void TCGbaseDev::getFirmwareRev(uint8_t bytes[8]) {
-	memcpy(&bytes[0], &disk_info.firmwareRev[0],8);
+
+void TCGbaseDev::getFirmwareRev(uint8_t bytes[8])
+{
+    memcpy(&bytes[0], &disk_info.firmwareRev[0], 8);
 }
-void TCGbaseDev::getModelNum(uint8_t bytes[40]) {
-	memcpy(&bytes[0], &disk_info.modelNum[0], 40);
+
+void TCGbaseDev::getModelNum(uint8_t bytes[40])
+{
+    memcpy(&bytes[0], &disk_info.modelNum[0], 40);
 }
+
 uint16_t TCGbaseDev::comID()
 {
     LOG(D4) << "Entering TCGbaseDev::comID()";
@@ -65,26 +75,29 @@ uint16_t TCGbaseDev::comID()
     else
         return 0x0000;
 }
-uint8_t TCGbaseDev::exec(TCGcommand * cmd, uint8_t protocol) {
-	uint8_t rc = 0;
-	LOG(D3) << std::endl << "Dumping command buffer";
-	IFLOG(D3) hexDump(cmd->getCmdBuffer(), 128);
-	rc = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH);
-	if (0 != rc) {
-		LOG(E) << "Command failed on send " << rc;
-		return rc;
-	}
-	osmsSleep(25);
-	memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
-	rc = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
-	LOG(D3) << std::endl << "Dumping reply buffer";
-	IFLOG(D3) hexDump(cmd->getRespBuffer(), 128);
-	if (0 != rc) {
-		LOG(E) << "Command failed on recv" << rc;
-		return rc;
-	}
-	return 0;
+
+uint8_t TCGbaseDev::exec(TCGcommand * cmd, uint8_t protocol)
+{
+    uint8_t rc = 0;
+    LOG(D3) << std::endl << "Dumping command buffer";
+    IFLOG(D3) hexDump(cmd->getCmdBuffer(), 128);
+    rc = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH);
+    if (0 != rc) {
+        LOG(E) << "Command failed on send " << rc;
+        return rc;
+    }
+    osmsSleep(25);
+    memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
+    rc = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
+    LOG(D3) << std::endl << "Dumping reply buffer";
+    IFLOG(D3) hexDump(cmd->getRespBuffer(), 128);
+    if (0 != rc) {
+        LOG(E) << "Command failed on recv" << rc;
+        return rc;
+    }
+    return 0;
 }
+
 /** Decode the Discovery 0 response.Scans the D0 response and creates structure
  * that can be queried later as required.This code also takes care of
  * the endianess conversions either via a bitswap in the structure or executing
@@ -189,125 +202,128 @@ void TCGbaseDev::discovery0()
 /** Print out the Discovery 0 results */
 void TCGbaseDev::puke()
 {
-#define HEXON(x) "0x" << std::hex << std::setw(x) << std::setfill('0') 
+#define HEXON(x) "0x" << std::hex << std::setw(x) << std::setfill('0')
 #define HEXOFF std::dec << std::setw(0) << std::setfill(' ')
     LOG(D4) << "Entering TCGbaseDev::puke()";
-	/* IDENTIFY */
-	cout << dev << (disk_info.devType ? " OTHER " : " ATA ");
-	for (int i = 0; i < sizeof(disk_info.modelNum); i++) {
-		if (0x20 == disk_info.modelNum[i]) break;
-		cout << disk_info.modelNum[i];
-	}
-	cout << " ";
-	for (int i = 0; i < sizeof(disk_info.firmwareRev); i++) {
-		if (0x20 == disk_info.firmwareRev[i]) break;
-		cout << disk_info.firmwareRev[i];
-	}
-	cout << " ";
-	for (int i = 0; i < sizeof(disk_info.serialNum); i++) {
-		cout << disk_info.serialNum[i];
-	}
-	cout << std::endl << std::endl;
+    /* IDENTIFY */
+    cout << dev << (disk_info.devType ? " OTHER " : " ATA ");
+    for (int i = 0; i < sizeof (disk_info.modelNum); i++) {
+        if (0x20 == disk_info.modelNum[i]) break;
+        cout << disk_info.modelNum[i];
+    }
+    cout << " ";
+    for (int i = 0; i < sizeof (disk_info.firmwareRev); i++) {
+        if (0x20 == disk_info.firmwareRev[i]) break;
+        cout << disk_info.firmwareRev[i];
+    }
+    cout << " ";
+    for (int i = 0; i < sizeof (disk_info.serialNum); i++) {
+        cout << disk_info.serialNum[i];
+    }
+    cout << std::endl << std::endl;
     /* TPer */
     if (disk_info.TPer) {
-		cout << "TPer function (" << HEXON(4) << FC_TPER << HEXOFF << ")" << std::endl;
+        cout << "TPer function (" << HEXON(4) << FC_TPER << HEXOFF << ")" << std::endl;
         cout << "    ACKNAK = " << (disk_info.TPer_ACKNACK ? "Y, " : "N, ")
-        << "ASYNC = " << (disk_info.TPer_async ? "Y, " : "N. ")
-        << "BufferManagement = " << (disk_info.TPer_bufferMgt ? "Y, " : "N, ")
-        << "comIDManagement  = " << (disk_info.TPer_comIDMgt ? "Y, " : "N, ")
-        << "Streaming = " << (disk_info.TPer_streaming ? "Y, " : "N, ")
-		<< "SYNC = " << (disk_info.TPer_sync ? "Y" : "N")
-		<< std::endl;
+                << "ASYNC = " << (disk_info.TPer_async ? "Y, " : "N. ")
+                << "BufferManagement = " << (disk_info.TPer_bufferMgt ? "Y, " : "N, ")
+                << "comIDManagement  = " << (disk_info.TPer_comIDMgt ? "Y, " : "N, ")
+                << "Streaming = " << (disk_info.TPer_streaming ? "Y, " : "N, ")
+                << "SYNC = " << (disk_info.TPer_sync ? "Y" : "N")
+                << std::endl;
     }
     if (disk_info.Locking) {
 
-		cout << "Locking function (" << HEXON(4) << FC_LOCKING << HEXOFF << ")" << std::endl;
-		cout << "    Locked = " << (disk_info.Locking_locked ? "Y, " : "N, ")
-			<< "LockingEnabled = " << (disk_info.Locking_lockingEnabled ? "Y, " : "N, ")
-			<< "LockingSupported = " << (disk_info.Locking_lockingSupported ? "Y, " : "N, ");
+        cout << "Locking function (" << HEXON(4) << FC_LOCKING << HEXOFF << ")" << std::endl;
+        cout << "    Locked = " << (disk_info.Locking_locked ? "Y, " : "N, ")
+                << "LockingEnabled = " << (disk_info.Locking_lockingEnabled ? "Y, " : "N, ")
+                << "LockingSupported = " << (disk_info.Locking_lockingSupported ? "Y, " : "N, ");
         cout << "MBRDone = " << (disk_info.Locking_MBRDone ? "Y, " : "N, ")
-        << "MBREnabled = " << (disk_info.Locking_MBREnabled ? "Y, " : "N, ")
-        << "MediaEncrypt = " << (disk_info.Locking_mediaEncrypt ? "Y" : "N")
-        << std::endl;
+                << "MBREnabled = " << (disk_info.Locking_MBREnabled ? "Y, " : "N, ")
+                << "MediaEncrypt = " << (disk_info.Locking_mediaEncrypt ? "Y" : "N")
+                << std::endl;
     }
     if (disk_info.Geometry) {
 
-		cout << "Geometry function (" << HEXON(4) << FC_GEOMETRY << HEXOFF << ")" << std::endl;
-		cout << "    Align = " << (disk_info.Geometry_align ? "Y, " : "N, ")
-        << "Alignment Granularity = " << disk_info.Geometry_alignmentGranularity
-		<< " (" << // display bytes
-			(disk_info.Geometry_alignmentGranularity * 
-			 disk_info.Geometry_logicalBlockSize) 
-		<< ")"
-        << ", Logical Block size = " << disk_info.Geometry_logicalBlockSize
-        << ", Lowest Aligned LBA = " << disk_info.Geometry_lowestAlignedLBA
-		<< std::endl;
+        cout << "Geometry function (" << HEXON(4) << FC_GEOMETRY << HEXOFF << ")" << std::endl;
+        cout << "    Align = " << (disk_info.Geometry_align ? "Y, " : "N, ")
+                << "Alignment Granularity = " << disk_info.Geometry_alignmentGranularity
+                << " (" << // display bytes
+                (disk_info.Geometry_alignmentGranularity *
+                disk_info.Geometry_logicalBlockSize)
+                << ")"
+                << ", Logical Block size = " << disk_info.Geometry_logicalBlockSize
+                << ", Lowest Aligned LBA = " << disk_info.Geometry_lowestAlignedLBA
+                << std::endl;
     }
-	if (disk_info.Enterprise) {
+    if (disk_info.Enterprise) {
 
-		cout << "Enterprise function (" << HEXON(4) << FC_ENTERPRISE << HEXOFF << ")" << std::endl;
-		cout << "    Range crossing = " << (disk_info.Enterprise_rangeCrossing ? "Y, " : "N, ")
-        << "Base commID = " << disk_info.Enterprise_basecomID
-		<< ", commIDs = " << disk_info.Enterprise_numcomID
-		<< std::endl;
+        cout << "Enterprise function (" << HEXON(4) << FC_ENTERPRISE << HEXOFF << ")" << std::endl;
+        cout << "    Range crossing = " << (disk_info.Enterprise_rangeCrossing ? "Y, " : "N, ")
+                << "Base commID = " << disk_info.Enterprise_basecomID
+                << ", commIDs = " << disk_info.Enterprise_numcomID
+                << std::endl;
     }
     if (disk_info.SingleUser) {
-		cout << "SingleUser function (" << HEXON(4) << FC_SINGLEUSER << HEXOFF << ")" << std::endl;
+        cout << "SingleUser function (" << HEXON(4) << FC_SINGLEUSER << HEXOFF << ")" << std::endl;
         cout << "    ALL = " << (disk_info.SingleUser_all ? "Y, " : "N, ")
-        << "ANY = " << (disk_info.SingleUser_any ? "Y, " : "N, ")
-        << "Policy = " << (disk_info.SingleUser_policy ? "Y, " : "N, ")
-		<< "Locking Objects = " << (disk_info.SingleUser_lockingObjects)
-		<< std::endl;
+                << "ANY = " << (disk_info.SingleUser_any ? "Y, " : "N, ")
+                << "Policy = " << (disk_info.SingleUser_policy ? "Y, " : "N, ")
+                << "Locking Objects = " << (disk_info.SingleUser_lockingObjects)
+                << std::endl;
     }
     if (disk_info.DataStore) {
-		cout << "DataStore function (" << HEXON(4) << FC_DATASTORE << HEXOFF << ")" << std::endl;
-		cout << "    Max Tables = " << disk_info.DataStore_maxTables
-        << ", Max Size Tables = " << disk_info.DataStore_maxTableSize
-        << ", Table size alignment = " << disk_info.DataStore_alignment
-		<< std::endl;
+        cout << "DataStore function (" << HEXON(4) << FC_DATASTORE << HEXOFF << ")" << std::endl;
+        cout << "    Max Tables = " << disk_info.DataStore_maxTables
+                << ", Max Size Tables = " << disk_info.DataStore_maxTableSize
+                << ", Table size alignment = " << disk_info.DataStore_alignment
+                << std::endl;
     }
 
     if (disk_info.OPAL20) {
-		cout << "OPAL 2.0 function (" << HEXON(4) << FC_OPALV200 << ")" << HEXOFF << std::endl;
-		cout << "    Base commID = " << HEXON(4) << disk_info.OPAL20_basecomID << HEXOFF;
-		cout << ", Initial PIN = " << HEXON(2) << disk_info.OPAL20_initialPIN << HEXOFF;
-		cout << ", Reverted PIN = " << HEXON(2) << disk_info.OPAL20_revertedPIN << HEXOFF;
+        cout << "OPAL 2.0 function (" << HEXON(4) << FC_OPALV200 << ")" << HEXOFF << std::endl;
+        cout << "    Base commID = " << HEXON(4) << disk_info.OPAL20_basecomID << HEXOFF;
+        cout << ", Initial PIN = " << HEXON(2) << disk_info.OPAL20_initialPIN << HEXOFF;
+        cout << ", Reverted PIN = " << HEXON(2) << disk_info.OPAL20_revertedPIN << HEXOFF;
         cout << ", commIDs = " << disk_info.OPAL20_numcomIDs;
-		cout << std::endl;
+        cout << std::endl;
         cout << "    Locking Admins = " << disk_info.OPAL20_numAdmins;
         cout << ", Locking Users = " << disk_info.OPAL20_numUsers;
-		cout << ", Range Crossing = " << (disk_info.OPAL20_rangeCrossing ? "Y" : "N");
-		cout << std::endl;
+        cout << ", Range Crossing = " << (disk_info.OPAL20_rangeCrossing ? "Y" : "N");
+        cout << std::endl;
     }
     if (disk_info.Unknown)
         cout << "**** " << disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
 }
+
 /** adds the IDENTIFY information to the disk_info structure */
-void TCGbaseDev::identify() {
-	LOG(D4) << "Entering TCGbaseDev::discovery0()";
-	void * identifyResp = NULL;
-	identifyResp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
-	if (NULL == identifyResp) return;
-	memset(identifyResp, 0, IO_BUFFER_LENGTH);
-	uint8_t iorc = sendCmd(IDENTIFY, 0x00, 0x0000, identifyResp,512);
-	if (0x00 != iorc) {
-		ALIGNED_FREE(identifyResp);
-		return;
-	}
-	IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *)identifyResp;
-	disk_info.devType = id->devType;
-	for (int i = 0; i < sizeof(disk_info.serialNum); i += 2) {
-		disk_info.serialNum[i] = id->serialNum[i + 1];
-		disk_info.serialNum[i + 1] = id->serialNum[i];
-	}
-	for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 2) {
-		disk_info.firmwareRev[i] = id->firmwareRev[i+1];
-		disk_info.firmwareRev[i+1] = id->firmwareRev[i];
-	}
-	for (int i = 0; i < sizeof(disk_info.modelNum); i += 2) {
-		disk_info.modelNum[i] = id->modelNum[i+1];
-		disk_info.modelNum[i+1] = id->modelNum[i];
-	}
-	ALIGNED_FREE(identifyResp);
-	return;
+void TCGbaseDev::identify()
+{
+    LOG(D4) << "Entering TCGbaseDev::discovery0()";
+    void * identifyResp = NULL;
+    identifyResp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
+    if (NULL == identifyResp) return;
+    memset(identifyResp, 0, IO_BUFFER_LENGTH);
+    uint8_t iorc = sendCmd(IDENTIFY, 0x00, 0x0000, identifyResp, 512);
+    if (0x00 != iorc) {
+        LOG(E) << "IDENTIFY Failed";
+        ALIGNED_FREE(identifyResp);
+        return;
+    }
+    IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) identifyResp;
+    disk_info.devType = id->devType;
+    for (int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
+        disk_info.serialNum[i] = id->serialNum[i + 1];
+        disk_info.serialNum[i + 1] = id->serialNum[i];
+    }
+    for (int i = 0; i < sizeof (disk_info.firmwareRev); i += 2) {
+        disk_info.firmwareRev[i] = id->firmwareRev[i + 1];
+        disk_info.firmwareRev[i + 1] = id->firmwareRev[i];
+    }
+    for (int i = 0; i < sizeof (disk_info.modelNum); i += 2) {
+        disk_info.modelNum[i] = id->modelNum[i + 1];
+        disk_info.modelNum[i + 1] = id->modelNum[i];
+    }
+    ALIGNED_FREE(identifyResp);
+    return;
 }
