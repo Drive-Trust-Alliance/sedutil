@@ -68,9 +68,9 @@ int diskScan()
         if (d->isPresent()) {
             d->getFirmwareRev(FirmwareRev);
             d->getModelNum(ModelNum);
-            printf("%s %s", devname, (d->isOpal2() ? " Yes " : " No "));
+            printf("%s %s", devname, (d->isOpal2() ? " Yes " : " No  "));
             for (int x = 0; x < sizeof (ModelNum); x++) {
-                //if (0x20 == ModelNum[x]) break;
+				if ((0x20 == ModelNum[x]) && (0x20 == ModelNum[x-1])) break;
                 cout << ModelNum[x];
             }
             cout << " ";

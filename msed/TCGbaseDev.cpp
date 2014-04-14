@@ -102,9 +102,6 @@ uint8_t TCGbaseDev::exec(TCGcommand * cmd, uint8_t protocol)
  * that can be queried later as required.This code also takes care of
  * the endianess conversions either via a bitswap in the structure or executing
  * a macro when the input buffer is read.
- * /
-/* TODO: this should throw an exception if a request is made for a field that
- * was not returned in the D0 response
  */
 void TCGbaseDev::discovery0()
 {
@@ -294,36 +291,4 @@ void TCGbaseDev::puke()
     }
     if (disk_info.Unknown)
         cout << "**** " << disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
-}
-
-/** adds the IDENTIFY information to the disk_info structure */
-void TCGbaseDev::identify()
-{
-    LOG(D4) << "Entering TCGbaseDev::discovery0()";
-    void * identifyResp = NULL;
-    identifyResp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
-    if (NULL == identifyResp) return;
-    memset(identifyResp, 0, IO_BUFFER_LENGTH);
-    uint8_t iorc = sendCmd(IDENTIFY, 0x00, 0x0000, identifyResp, 512);
-    if (0x00 != iorc) {
-        LOG(E) << "IDENTIFY Failed";
-        ALIGNED_FREE(identifyResp);
-        return;
-    }
-    IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) identifyResp;
-    disk_info.devType = id->devType;
-    for (int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
-        disk_info.serialNum[i] = id->serialNum[i + 1];
-        disk_info.serialNum[i + 1] = id->serialNum[i];
-    }
-    for (int i = 0; i < sizeof (disk_info.firmwareRev); i += 2) {
-        disk_info.firmwareRev[i] = id->firmwareRev[i + 1];
-        disk_info.firmwareRev[i + 1] = id->firmwareRev[i];
-    }
-    for (int i = 0; i < sizeof (disk_info.modelNum); i += 2) {
-        disk_info.modelNum[i] = id->modelNum[i + 1];
-        disk_info.modelNum[i + 1] = id->modelNum[i];
-    }
-    ALIGNED_FREE(identifyResp);
-    return;
 }

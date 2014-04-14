@@ -40,7 +40,7 @@ public:
 protected:
 	virtual void osmsSleep(uint32_t milliseconds) = 0;
     void discovery0();
-	void identify();
+	virtual void identify() = 0;
     const char * dev;
     uint8_t isOpen = FALSE;
     TCG_DiskInfo disk_info;

@@ -28,6 +28,7 @@ public:
 		void * buffer, uint16_t bufferlen);
 private:
 	void osmsSleep(uint32_t milliseconds);
+	void identify();
 	HANDLE hDev;
 	void *ataPointer; 
 };
