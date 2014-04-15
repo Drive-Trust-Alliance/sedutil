@@ -313,7 +313,11 @@ int activateLockingSP(char * devref, char * password)
 int revertLockingSP(char * devref, char * password, uint8_t keep)
 {
     LOG(D4) << "Entering revert LockingSP() keep = " << keep;
-    uint8_t keepgloballockingrange[] = {0xa3, 0x06, 0x00, 0x00};
+	std::vector<uint8_t> keepgloballockingrange; 
+	keepgloballockingrange.push_back(0xa3);
+	keepgloballockingrange.push_back(0x06);
+	keepgloballockingrange.push_back(0x00);
+	keepgloballockingrange.push_back(0x00);
     /*
      * revert the Locking SP
      */
@@ -339,7 +343,7 @@ int revertLockingSP(char * devref, char * password, uint8_t keep)
     if (keep) {
         cmd->addToken(TCG_TOKEN::STARTNAME);
         //KeepGlobalRangeKey SHALL be 0x060000  ????????
-        cmd->addToken(keepgloballockingrange, 3);
+        cmd->addToken(keepgloballockingrange);
         cmd->addToken(TCG_TINY_ATOM::UINT_01); // KeepGlobalRangeKey = TRUE
         cmd->addToken(TCG_TOKEN::ENDNAME);
     }
@@ -501,8 +505,6 @@ int getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData, 
         if (getTable(session, key, 1, 1, response)) {
             return 0xff;
         }
-        LOG(D1) << "Dumping Response";
-        IFLOG(D1) hexDump(response.getRawToken(4).data(), response.getRawToken(4).size());
         if (!(strcmp(userid, response.getString(4).c_str()))) {
             if (getTable(session, key, column, column, response)) {
                 return 0xff;

@@ -43,9 +43,8 @@ public:
     void addToken(TCG_TINY_ATOM token);
     void addToken(TCG_UID token);
     void addToken(const char * bytestring);
-	void addToken(uint8_t bytes[], uint16_t size);
 	void addToken(std::vector<uint8_t> token);
-    void addToken(uint16_t);
+    void addToken(uint64_t number);
 	void setcomID(uint16_t comID);
 	void setHSN(uint32_t HSN);
 	void setTSN(uint32_t TSN);

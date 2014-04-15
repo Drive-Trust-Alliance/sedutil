@@ -73,12 +73,40 @@ TCGcommand::reset(TCG_UID InvokingUid, TCG_METHOD method)
 }
 
 void
-TCGcommand::addToken(uint16_t number)
+TCGcommand::addToken(uint64_t number)
 {
-	LOG(D4) << "Entering TCGcommand::addToken(uint16_t number)";
-    cmdbuf[bufferpos++] = 0x82;
-    cmdbuf[bufferpos++] = ((number & 0xff00) >> 8);
-    cmdbuf[bufferpos++] = (number & 0x00ff);
+	int startat = 0;
+	LOG(D4) << "Entering TCGcommand::addToken(uint64_t number)";
+	//cmdbuf[bufferpos++] = 0x82;
+	//cmdbuf[bufferpos++] = ((number & 0xff00) >> 8);
+	//cmdbuf[bufferpos++] = (number & 0x00ff);
+	if (number < 64) {
+		cmdbuf[bufferpos++] = (uint8_t)number & 0x000000000000003f;
+	}
+	else
+	{
+		if (number < 0x100)
+		{
+			cmdbuf[bufferpos++] = 0x81;
+			startat = 0;
+		}
+		else if (number < 0x10000) {
+			cmdbuf[bufferpos++] = 0x82;
+			startat = 1;
+		}
+		else if (number < 0x100000000) {
+			cmdbuf[bufferpos++] = 0x84;
+			startat = 3;
+		}
+		else
+		{
+			cmdbuf[bufferpos++] = 0x88;
+			startat = 7;
+		}
+		for (int i = startat; i > -1; i--) {
+			cmdbuf[bufferpos++] = (uint8_t)((number >> (i * 8)) & 0x00000000000000ff);
+		}
+	}
 }
 void
 TCGcommand::addToken(std::vector<uint8_t> token) {
@@ -131,14 +159,6 @@ TCGcommand::addToken(TCG_UID token)
 	cmdbuf[bufferpos++] = TCG_SHORT_ATOM::BYTESTRING8;
     memcpy(&cmdbuf[bufferpos], &TCGUID[token][0], 8);
     bufferpos += 8;
-}
-
-void
-TCGcommand::addToken(uint8_t bytes[], uint16_t size)
-{
-	LOG(D4) << "Entering TCGcommand::addToken(uint8_t bytes[], uint16_t size)";
-	memcpy(&cmdbuf[bufferpos], &bytes[0], size);
-	bufferpos += size;
 }
 
 void
