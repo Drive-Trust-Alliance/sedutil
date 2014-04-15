@@ -28,5 +28,6 @@ public:
             void * buffer, uint16_t bufferlen);
 private:
     void osmsSleep(uint32_t ms);
+    void identify();
     int fd;
 };

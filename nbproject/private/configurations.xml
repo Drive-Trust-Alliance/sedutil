@@ -26,10 +26,10 @@
         <runcommandpicklist>
           <runcommandpicklistitem>"${OUTPUT_PATH} --scan"</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" --scan</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" --takeownership -p newPassword /dev/sg8</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" --scan</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" --takeownership -p newPassword /dev/sg8</runcommand>
+        <runcommand>"${OUTPUT_PATH}" --scan</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

@@ -205,7 +205,6 @@ void TCGbaseDev::puke()
     /* IDENTIFY */
     cout << dev << (disk_info.devType ? " OTHER " : " ATA ");
     for (int i = 0; i < sizeof (disk_info.modelNum); i++) {
-        if (0x20 == disk_info.modelNum[i]) break;
         cout << disk_info.modelNum[i];
     }
     cout << " ";

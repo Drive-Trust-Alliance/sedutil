@@ -48,6 +48,7 @@ TCGdev::TCGdev(const char * devref)
     else {
         isOpen = TRUE;
         discovery0();
+        identify();
     }
 }
 
@@ -79,7 +80,7 @@ uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
      * bit 4    RESERVED
      * bit 3    T_DIR   - transfer direction 1 in, 0 out
      * bit 2    BYTE_BLock  1 = transfer in blocks, 0 transfer in bytes
-     * bits 1-0 T_LENGTH - 10 = length in sector count
+     * bits 1-0 T_LENGTH -  10 = the length id in sector count
      */
     if (IF_RECV == cmd) {
         cdb[1] = 4 << 1; // PIO DATA IN
@@ -117,8 +118,8 @@ uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     sg.flags = 0;
     sg.pack_id = 0;
     sg.usr_ptr = NULL;
-    LOG(D4) << "cdb before ";
-    IFLOG(D4) hexDump(cdb, sizeof (cdb));
+    //    LOG(D4) << "cdb before ";
+    //    IFLOG(D4) hexDump(cdb, sizeof (cdb));
     //    LOG(D4) << "sg before ";
     //    IFLOG(D4) hexDump(&sg, sizeof (sg));
     /*
@@ -127,21 +128,86 @@ uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     if (ioctl(fd, SG_IO, &sg) < 0) {
         LOG(D4) << "cdb after ";
         IFLOG(D4) hexDump(cdb, sizeof (cdb));
-        //        LOG(D4) << "sg after ";
-        //        IFLOG(D4) hexDump(&sg, sizeof (sg));
         LOG(D4) << "sense after ";
         IFLOG(D4) hexDump(sense, sizeof (sense));
         return 0xff;
     }
-    LOG(D4) << "cdb after ";
-    IFLOG(D4) hexDump(cdb, sizeof (cdb));
+    //    LOG(D4) << "cdb after ";
+    //    IFLOG(D4) hexDump(cdb, sizeof (cdb));
     //    LOG(D4) << "sg after ";
     //    IFLOG(D4) hexDump(&sg, sizeof (sg));
-    LOG(D4) << "sense after ";
-    IFLOG(D4) hexDump(sense, sizeof (sense));
+    //    LOG(D4) << "sense after ";
+    //    IFLOG(D4) hexDump(sense, sizeof (sense));
     if (!((0x00 == sense[0]) && (0x00 == sense[1])))
         if (!((0x72 == sense[0]) && (0x0b == sense[1]))) return 0xff; // not ATA response
     return (sense[11]);
+}
+
+void TCGdev::identify()
+{
+    LOG(D4) << "Entering TCGdev::identify()";
+    sg_io_hdr_t sg;
+    uint8_t sense[32]; // how big should this be??
+    uint8_t cdb[6];
+    if (!isOpen) return; //disk open failed so this will too
+    uint8_t * buffer = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
+    memset(&cdb, 0, sizeof (cdb));
+    memset(&sense, 0, sizeof (sense));
+    memset(&sg, 0, sizeof (sg));
+    /*
+     * Initialize the CDB
+     */
+
+    cdb[0] = 0x12; // inquire
+    /*
+     * Byte 1 is the protocol 4 = PIO IN and 5 = PIO OUT
+     * Byte 2 is:
+     * bits 7-6 OFFLINE - Amount of time the command can take the bus offline
+     * bit 5    CK_COND - If set the command will always return a condition check
+     * bit 4    RESERVED
+     * bit 3    T_DIR   - transfer direction 1 in, 0 out
+     * bit 2    BYTE_BLock  1 = transfer in blocks, 0 transfer in bytes
+     * bits 1-0 T_LENGTH -  10 = the length id in sector count
+     */
+    cdb[1] = 4 << 1; // PIO DATA IN
+    cdb[2] = 0x0E; // T_DIR = 1, BYTE_BLOCK = 1, Length in Sector Count
+    sg.dxfer_direction = SG_DXFER_FROM_DEV;
+    cdb[3] = 0x00;
+    cdb[4] = 0x24;
+    cdb[5] = 0x00;
+    cdb[6] = 0x00;
+    /*
+     * Set up the SCSI Generic structure
+     * see the SG HOWTO for the best info I could find
+     */
+    sg.interface_id = 'S';
+    //      sg.dxfer_direction = Set in if above
+    sg.cmd_len = sizeof (cdb);
+    sg.mx_sb_len = sizeof (sense);
+    sg.iovec_count = 0;
+    sg.dxfer_len = IO_BUFFER_LENGTH;
+    sg.dxferp = buffer;
+    sg.cmdp = cdb;
+    sg.sbp = sense;
+    sg.timeout = 5000;
+    sg.flags = 0;
+    sg.pack_id = 0;
+    sg.usr_ptr = NULL;
+
+    if (ioctl(fd, SG_IO, &sg) < 0) {
+        LOG(D4) << "cdb after ";
+        IFLOG(D4) hexDump(cdb, sizeof (cdb));
+        LOG(D4) << "sense after ";
+        IFLOG(D4) hexDump(sense, sizeof (sense));
+        return;
+    }
+    buffer += 8;
+    for (int i = 0; i < 28; i++) {
+        disk_info.modelNum[i] = buffer[i];
+    }
+    buffer -= 8;
+    ALIGNED_FREE(buffer);
+    return;
 }
 
 void TCGdev::osmsSleep(uint32_t ms)
