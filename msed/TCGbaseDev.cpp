@@ -256,8 +256,8 @@ void TCGbaseDev::puke()
 
         cout << "Enterprise function (" << HEXON(4) << FC_ENTERPRISE << HEXOFF << ")" << std::endl;
         cout << "    Range crossing = " << (disk_info.Enterprise_rangeCrossing ? "Y, " : "N, ")
-                << "Base commID = " << disk_info.Enterprise_basecomID
-                << ", commIDs = " << disk_info.Enterprise_numcomID
+                << "Base comID = " << disk_info.Enterprise_basecomID
+                << ", comIDs = " << disk_info.Enterprise_numcomID
                 << std::endl;
     }
     if (disk_info.SingleUser) {
@@ -278,10 +278,10 @@ void TCGbaseDev::puke()
 
     if (disk_info.OPAL20) {
         cout << "OPAL 2.0 function (" << HEXON(4) << FC_OPALV200 << ")" << HEXOFF << std::endl;
-        cout << "    Base commID = " << HEXON(4) << disk_info.OPAL20_basecomID << HEXOFF;
+        cout << "    Base comID = " << HEXON(4) << disk_info.OPAL20_basecomID << HEXOFF;
         cout << ", Initial PIN = " << HEXON(2) << disk_info.OPAL20_initialPIN << HEXOFF;
         cout << ", Reverted PIN = " << HEXON(2) << disk_info.OPAL20_revertedPIN << HEXOFF;
-        cout << ", commIDs = " << disk_info.OPAL20_numcomIDs;
+        cout << ", comIDs = " << disk_info.OPAL20_numcomIDs;
         cout << std::endl;
         cout << "    Locking Admins = " << disk_info.OPAL20_numAdmins;
         cout << ", Locking Users = " << disk_info.OPAL20_numUsers;

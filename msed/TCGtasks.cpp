@@ -28,6 +28,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "TCGstructures.h"
 #include "TCGresponse.h"
 #include "TCGtasks.h"
+#include "MsedHashPwd.h"
 
 using namespace std;
 
@@ -96,6 +97,7 @@ int diskScan()
 int takeOwnership(char * devref, char * newpassword)
 {
     LOG(D4) << "Entering takeOwnership(char * devref, char * newpassword)";
+	vector<uint8_t> hash, salt(DEFAULTSALT);
     TCGresponse * response;
     TCGdev *device = new TCGdev(devref);
     if (!(device->isOpal2())) {
@@ -145,7 +147,9 @@ int takeOwnership(char * devref, char * newpassword)
      */
     //	Start Session
     session = new TCGsession(device);
-    if (session->start(TCG_UID::TCG_ADMINSP_UID, (char *) response->getString(4).c_str(), TCG_UID::TCG_SID_UID)) {
+    if (session->start(TCG_UID::TCG_ADMINSP_UID, response->getRawToken(4),
+		TCG_UID::TCG_SID_UID)) 
+	{
         delete response;
         delete cmd;
         delete session;
@@ -154,9 +158,6 @@ int takeOwnership(char * devref, char * newpassword)
     }
     delete response;
     // session[TSN:HSN] -> C_PIN_SID_UID.Set[Values = [PIN = <new_SID_password>]]
-    /*
-     * Change the password --- Yikes!!!
-     */
     cmd->reset(TCG_UID::TCG_C_PIN_SID, TCG_METHOD::SET);
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::STARTNAME);
@@ -164,7 +165,9 @@ int takeOwnership(char * devref, char * newpassword)
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::STARTNAME);
     cmd->addToken(TCG_TINY_ATOM::UINT_03); // PIN
-    cmd->addToken(newpassword);
+	hash.clear();
+	MsedHashPwd(hash, newpassword, salt);
+	cmd->addToken(hash);
     cmd->addToken(TCG_TOKEN::ENDNAME);
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->addToken(TCG_TOKEN::ENDNAME);
@@ -188,6 +191,7 @@ int takeOwnership(char * devref, char * newpassword)
 int revertTPer(char * devref, char * password, uint8_t PSID)
 {
     LOG(D4) << "Entering revertTPer(char * devref, char * password)";
+	vector<uint8_t> hash,salt(DEFAULTSALT);
     TCGdev *device = new TCGdev(devref);
     if (!(device->isOpal2())) {
         delete device;
@@ -196,7 +200,13 @@ int revertTPer(char * devref, char * password, uint8_t PSID)
     TCGcommand *cmd = new TCGcommand();
     TCGsession * session = new TCGsession(device);
     if (PSID) {
-        if (session->start(TCG_UID::TCG_ADMINSP_UID, password, TCG_UID::TCG_PSID_UID)) {
+		hash.clear();
+		hash.push_back(0xd0);
+		hash.push_back((uint8_t)strnlen(password, 255));
+		for (uint16_t i = 0; i < strnlen(password,255); i++) {
+			hash.push_back(password[i]);
+		}
+        if (session->start(TCG_UID::TCG_ADMINSP_UID, hash, TCG_UID::TCG_PSID_UID)) {
             delete cmd;
             delete session;
             delete device;
@@ -204,7 +214,9 @@ int revertTPer(char * devref, char * password, uint8_t PSID)
         }
     }
     else {
-        if (session->start(TCG_UID::TCG_ADMINSP_UID, password, TCG_UID::TCG_SID_UID)) {
+		hash.clear();
+		MsedHashPwd(hash, password, salt);
+        if (session->start(TCG_UID::TCG_ADMINSP_UID, hash, TCG_UID::TCG_SID_UID)) {
             delete cmd;
             delete session;
             delete device;
@@ -246,7 +258,10 @@ int activateLockingSP(char * devref, char * password)
     }
     TCGcommand *cmd = new TCGcommand();
     TCGsession * session = new TCGsession(device);
-    if (session->start(TCG_UID::TCG_ADMINSP_UID, password, TCG_UID::TCG_SID_UID)) {
+	vector<uint8_t> hash, salt(DEFAULTSALT);
+	hash.clear();
+	MsedHashPwd(hash, password, salt);
+    if (session->start(TCG_UID::TCG_ADMINSP_UID, hash, TCG_UID::TCG_SID_UID)) {
         delete cmd;
         delete session;
         delete device;
@@ -331,7 +346,11 @@ int revertLockingSP(char * devref, char * password, uint8_t keep)
     TCGsession * session = new TCGsession(device);
     // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
     //                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
-    if (session->start(TCG_UID::TCG_LOCKINGSP_UID, password, TCG_UID::TCG_ADMIN1_UID)) {
+	vector<uint8_t> hash, salt(DEFAULTSALT);
+	hash.clear();
+	MsedHashPwd(hash, password, salt);
+	if (session->start(TCG_UID::TCG_LOCKINGSP_UID, hash, TCG_UID::TCG_ADMIN1_UID)) 
+	{
         delete cmd;
         delete session;
         delete device;
@@ -381,7 +400,10 @@ int setNewPassword(char * password, char * userid, char * newpassword, char * de
     TCGsession * session = new TCGsession(device);
     // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
     //               HostChallenge = <new_SID_password>, HostSigningAuthority = Admin1_UID]
-    if (session->start(TCG_UID::TCG_LOCKINGSP_UID, password, TCG_UID::TCG_ADMIN1_UID)) {
+	vector<uint8_t> hash, salt(DEFAULTSALT);
+	hash.clear();
+	MsedHashPwd(hash, password, salt);
+	if (session->start(TCG_UID::TCG_LOCKINGSP_UID, hash, TCG_UID::TCG_ADMIN1_UID)) {
         delete cmd;
         delete session;
         delete device;
@@ -404,7 +426,8 @@ int setNewPassword(char * password, char * userid, char * newpassword, char * de
     cmd->addToken(TCG_TOKEN::STARTLIST);
     cmd->addToken(TCG_TOKEN::STARTNAME);
     cmd->addToken(TCG_TINY_ATOM::UINT_03); // PIN
-    cmd->addToken(newpassword);
+	MsedHashPwd(hash, newpassword, salt);
+	cmd->addToken(hash);
     cmd->addToken(TCG_TOKEN::ENDNAME);
     cmd->addToken(TCG_TOKEN::ENDLIST);
     cmd->addToken(TCG_TOKEN::ENDNAME);
@@ -438,7 +461,10 @@ int enableUser(char * password, char * userid, char * devref)
     TCGsession * session = new TCGsession(device);
     // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
     //               HostChallenge = <new_SID_password>, HostSigningAuthority = Admin1_UID]
-    if (session->start(TCG_UID::TCG_LOCKINGSP_UID, password, TCG_UID::TCG_ADMIN1_UID)) {
+	vector<uint8_t> hash, salt(DEFAULTSALT);
+	hash.clear();
+	MsedHashPwd(hash, password, salt);
+	if (session->start(TCG_UID::TCG_LOCKINGSP_UID, hash, TCG_UID::TCG_ADMIN1_UID)) {
         delete cmd;
         delete session;
         delete device;
@@ -538,7 +564,10 @@ int dumpTable()
     // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
     //                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
     //if (session->start(TCG_UID::TCG_ADMINSP_UID, (char *) "password", TCG_UID::TCG_SID_UID)) {
-    if (session->start(TCG_UID::TCG_LOCKINGSP_UID, (char *) "password", TCG_UID::TCG_ADMIN1_UID)) {
+	vector<uint8_t> hash, salt(DEFAULTSALT);
+	hash.clear();
+	MsedHashPwd(hash, "password", salt);
+	if (session->start(TCG_UID::TCG_LOCKINGSP_UID, hash, TCG_UID::TCG_ADMIN1_UID)) {
         delete session;
         delete device;
         return 0xff;

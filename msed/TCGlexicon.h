@@ -22,11 +22,18 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
  * Define the structures and enums needed to map the TCG
  * Pseudo code to procedures.
  *
- * no effort has been made to be complete, these are the ones
+ * no effort has been made to be complete, these are the values
  * that are required for the basic functionalitly provided in this
  * program.
  */
-
+/* 
+ * default salt value for now
+ */
+static uint8_t _DEFAULT_SALT_VALUES[] {
+	0xCB, 0xAB, 0xCC, 0xB7, 0x7B, 0x27, 0x47, 0x13,
+		0x87, 0x73, 0xEC, 0x72, 0x6E, 0x3F, 0x34, 0xA0,
+};
+#define DEFAULTSALT _DEFAULT_SALT_VALUES, _DEFAULT_SALT_VALUES + 16
 /* ******************* BS ALERT **************************
  * VS2013 gives an error when I try and initialize these
  * as private variables in the header declaration

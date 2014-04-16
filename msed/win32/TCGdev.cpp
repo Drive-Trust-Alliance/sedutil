@@ -74,7 +74,7 @@ uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     /*
      * Initialize the ATA_PASS_THROUGH_DIRECT structures
      * per windows DOC with the special sauce from the
-     * ATA Command set reference (protocol and commID)
+     * ATA Command set reference (protocol and comID)
      */
     ATA_PASS_THROUGH_DIRECT * ata = (ATA_PASS_THROUGH_DIRECT *) ataPointer;
     memset(ata, 0, sizeof (ATA_PASS_THROUGH_DIRECT));

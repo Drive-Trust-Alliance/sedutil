@@ -54,10 +54,14 @@
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(SolutionDir)\msed\win32;$(SolutionDir)\msed;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>U:\Users\r0m30\Documents\Visual Studio 2013\Projects\msed\cryptopp\Win32\Output\Debug</AdditionalLibraryDirectories>
+      <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
+      <AdditionalDependencies>cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -88,6 +92,7 @@
     <ClInclude Include="endianfixup.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="msedConstants.h" />
+    <ClInclude Include="MsedHashPwd.h" />
     <ClInclude Include="options.h" />
     <ClInclude Include="TCGcommand.h" />
     <ClInclude Include="TCGbaseDev.h" />
@@ -103,6 +108,7 @@
     <ClCompile Include="Class_Skeleton.cpp" />
     <ClCompile Include="hexDump.cpp" />
     <ClCompile Include="msed.cpp" />
+    <ClCompile Include="MsedHashPwd.cpp" />
     <ClCompile Include="options.cpp" />
     <ClCompile Include="TCGcommand.cpp" />
     <ClCompile Include="TCGbaseDev.cpp" />

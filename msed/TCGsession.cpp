@@ -27,6 +27,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "hexDump.h"
 #include "TCGstructures.h"
 
+using namespace std;
 /*
  * Start a session
  */
@@ -37,7 +38,14 @@ TCGsession::TCGsession(TCGdev * device)
 }
 
 uint8_t
-TCGsession::start(TCG_UID SP, char * HostChallenge, TCG_UID SignAuthority)
+TCGsession::start(TCG_UID SP)
+{
+	vector<uint8_t> pwd;
+	pwd.clear();
+	return(start(SP, pwd, TCG_UID::TCG_UID_HEXFF));
+}
+uint8_t
+TCGsession::start(TCG_UID SP, vector<uint8_t> HostChallenge, TCG_UID SignAuthority)
 {
     LOG(D4) << "Entering TCGsession::startSession ";
     TCGcommand *cmd = new TCGcommand();
@@ -47,7 +55,7 @@ TCGsession::start(TCG_UID SP, char * HostChallenge, TCG_UID SignAuthority)
     cmd->addToken(105); // HostSessionID : sessionnumber
     cmd->addToken(SP); // SPID : SP
     cmd->addToken(TCG_TINY_ATOM::UINT_01); // write
-    if (NULL != HostChallenge) {
+    if (0 != HostChallenge.size()) {
         cmd->addToken(TCG_TOKEN::STARTNAME);
         cmd->addToken(TCG_TINY_ATOM::UINT_00);
         cmd->addToken(HostChallenge);
@@ -175,13 +183,14 @@ TCGsession::methodStatus(uint8_t status)
 TCGsession::~TCGsession()
 {
     LOG(D4) << "Destroying TCGsession";
-    TCGcommand *cmd = new TCGcommand();
-    if (!willAbort) {
+	if (!willAbort) {
+		TCGcommand *cmd = new TCGcommand();
         cmd->reset();
         cmd->addToken(TCG_TOKEN::ENDOFSESSION);
         cmd->complete(0);
         if (sendCommand(cmd)) {
             LOG(E) << "EndSession Failed";
         }
+		delete cmd;
     }
 }

@@ -18,33 +18,8 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
 #pragma once
-/*
- * Manage the session to a TPer.
- */
-#include "TCGlexicon.h"
 #include <vector>
-class TCGcommand;
-class TCGdev;
 
 using namespace std;
-
-class TCGsession {
-public:
-    TCGsession(TCGdev * device);
-    ~TCGsession();
-	uint8_t start(TCG_UID SP);    // unauthenticated "Anybody" session
-    uint8_t start(TCG_UID SP, vector<uint8_t> HostChallenge, TCG_UID SignAuthority);
-    void setProtocol(uint8_t value);
-    void expectAbort();
-    uint8_t sendCommand(TCGcommand * cmd);
-private:
-    TCGsession();
-    char * methodStatus(uint8_t status);
-    TCGdev * d;
-    uint32_t bufferpos = 0;
-    uint32_t TSN = 0;
-    uint32_t HSN = 0;
-    uint8_t willAbort = 0;
-    uint8_t TCGProtocol = 0x01;
-};
-
+void MsedHashPwd(vector<uint8_t> &hash, char * password, vector<uint8_t> salt, 
+	unsigned int iter = 10000, uint8_t hashsize = 32);
