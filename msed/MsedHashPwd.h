@@ -16,10 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 #pragma once
 #include <vector>
 
 using namespace std;
-void MsedHashPwd(vector<uint8_t> &hash, char * password, vector<uint8_t> salt, 
-	unsigned int iter = 10000, uint8_t hashsize = 32);
+void MsedHashPwd(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
+        unsigned int iter = 10000, uint8_t hashsize = 32);
+int MsedTestPBDKF2();

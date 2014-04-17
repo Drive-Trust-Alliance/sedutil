@@ -17,31 +17,38 @@ You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
-#pragma once
-class TCGcommand;
-
-#include "TCGstructures.h"
-
-class TCGbaseDev {
-public:
-    TCGbaseDev();
-    ~TCGbaseDev();
-    virtual uint8_t 
-		sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-            void * buffer, uint16_t bufferlen) = 0;
-	
-	uint8_t exec(TCGcommand * cmd, uint8_t protocol = 0x01);
-    uint8_t isOpal2();
-    uint8_t isPresent();
-    uint16_t comID();
-	void getFirmwareRev(uint8_t bytes[8]);
-	void getModelNum(uint8_t bytes[40]);
-    void puke();
-protected:
-	virtual void osmsSleep(uint32_t milliseconds) = 0;
-    void discovery0();
-	virtual void identify() = 0;
-    const char * dev;
-    uint8_t isOpen = FALSE;
-    TCG_DiskInfo disk_info;
-};
+#include "os.h"
+#include <stdio.h>
+#include <ctype.h>
+void MsedHexDump(void * address, int length) {
+	uint8_t display[17];
+	uint8_t * cpos = (uint8_t *)address;
+	uint8_t * epos = cpos + length;
+	LOG(D4) << "Entering hexDump";
+	int rpos = 0;
+	int dpos = 0;
+	printf("%04x ",rpos);
+	while (cpos < epos){
+		printf("%02x", cpos[0]);
+		if (!((++rpos) % 4)) printf(" ");
+		display[dpos++] = (isprint(cpos[0]) ? cpos[0] : 0x2e );
+		cpos += 1;
+		if (16 == dpos) {
+			dpos = 0;
+			display[16] = 0x00;
+			printf(" %s \n", display);
+			if(cpos < epos) printf("%04x ", rpos);
+			memset(&display,0,sizeof(display));
+		}
+	}
+	if (dpos != 0) {
+		if (dpos % 4) printf(" ");
+			printf("  ");
+		for (int i = dpos ; i < 15; i++) {
+			if (!(i % 4)) printf(" ");
+			printf("  ");
+		}
+		display[dpos] = 0x00;
+		printf(" %s\n", display);
+	}
+}

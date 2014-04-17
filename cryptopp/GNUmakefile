@@ -1,4 +1,4 @@
-CXXFLAGS = -DNDEBUG -g -O2
+CXXFLAGS = -m32 -DNDEBUG -g -O2 -U_FORTIFY_SOURCE
 # -O3 fails to link on Cygwin GCC version 4.5.3
 # -fPIC is supported. Please report any breakage of -fPIC as a bug.
 # CXXFLAGS += -fPIC
@@ -39,7 +39,7 @@ ifneq ($(GCC42_OR_LATER),0)
 ifeq ($(UNAME),Darwin)
 CXXFLAGS += -arch x86_64 -arch i386
 else
-CXXFLAGS += -march=native
+CXXFLAGS += -march=i686
 endif
 endif
 

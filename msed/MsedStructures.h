@@ -16,12 +16,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 #pragma once
 #pragma pack(push)
 #pragma pack(1)
 /** The Discovery 0 Header. As defined in
- * TCG Documentation
+ * Opal SSC Documentation
  */
 
 #define FC_TPER		  0x0001
@@ -117,9 +117,9 @@ typedef struct _Discovery0GeometryFeatures {
     uint8_t length;
     /* big Endian
     uint8_t reserved01 : 7;
-    uint8_t align : 1;		
+    uint8_t align : 1;
      */
-    uint8_t align : 1; 
+    uint8_t align : 1;
     uint8_t reserved01 : 7;
     uint8_t reserved02[7];
     uint32_t logicalBlockSize;
@@ -129,7 +129,7 @@ typedef struct _Discovery0GeometryFeatures {
 
 /** Support for the Enterprise SSC Spec.
  * I doubt I'll ever care, if you do you can read all
- * about it in the TCG spec.
+ * about it in the spec.
  */
 typedef struct _Discovery0EnterpriseSSC {
     uint16_t featureCode; /* 0x0100 */
@@ -225,18 +225,18 @@ union Discovery0Features {
     Discovery0DatastoreTable datastore;
 };
 
-/** Defines the ComPacket (header) for TCG transmissions. */
+/** Defines the ComPacket (header) for transmissions. */
 
-typedef struct _TCGComPacket {
+typedef struct _OPALComPacket {
     uint32_t reserved0;
     uint8_t extendedComID[4];
     uint32_t outstandingData;
     uint32_t minTransfer;
     uint32_t length;
-} TCGComPacket;
+} OPALComPacket;
 
-/** Defines the TCG Packet structure. */
-typedef struct _TCGPacket {
+/** Defines the Packet structure. */
+typedef struct _OPALPacket {
     uint32_t TSN;
     uint32_t HSN;
     uint32_t seqNumber;
@@ -244,29 +244,29 @@ typedef struct _TCGPacket {
     uint16_t ackType;
     uint32_t aknowledgement;
     uint32_t length;
-} TCGPacket;
+} OPALPacket;
 
-/** Define the TCG Data sub header. */
-typedef struct _TCGDataSubPacket {
+/** Define the Data sub header. */
+typedef struct _OPALDataSubPacket {
     uint8_t reserved0[6];
     uint16_t kind;
     uint32_t length;
-} TCGDataSubPacket;
+} OPALDataSubPacket;
 
-typedef struct _TCGHeader {
-    TCGComPacket cp;
-    TCGPacket pkt;
-    TCGDataSubPacket subpkt;
-} TCGHeader;
+typedef struct _OPALHeader {
+    OPALComPacket cp;
+    OPALPacket pkt;
+    OPALDataSubPacket subpkt;
+} OPALHeader;
 
 typedef enum _ATACOMMAND {
     IF_RECV = 0x5c,
     IF_SEND = 0x5e,
-	IDENTIFY = 0xec,
+    IDENTIFY = 0xec,
 } ATACOMMAND;
 
 /** structure to store D0 information. */
-typedef struct _TCG_DiskInfo {
+typedef struct _OPAL_DiskInfo {
     // parsed the Function block?
     uint8_t TPer : 1;
     uint8_t Locking : 1;
@@ -310,21 +310,22 @@ typedef struct _TCG_DiskInfo {
     uint16_t OPAL20_numAdmins;
     uint16_t OPAL20_numUsers;
     uint8_t OPAL20_rangeCrossing;
-	// IDENTIFY information
-	uint8_t devType: 1;  // 0 = ata device
-	uint8_t serialNum[20];
-	uint8_t firmwareRev[8];
-	uint8_t modelNum[40];
-} TCG_DiskInfo;
+    // IDENTIFY information
+    uint8_t devType : 1; // 0 = ata device
+    uint8_t serialNum[20];
+    uint8_t firmwareRev[8];
+    uint8_t modelNum[40];
+} OPAL_DiskInfo;
+
 typedef struct _IDENTIFY_RESPONSE {
-		uint8_t reserved0;
-		uint8_t reserved1 : 7;
-		uint8_t devType : 1;
-		uint8_t reserved2[18];
- 		uint8_t  serialNum[20];
-		uint8_t reserved3[6];
-	    uint8_t firmwareRev[8];
-	    uint8_t modelNum[40];
-	} IDENTIFY_RESPONSE;
+    uint8_t reserved0;
+    uint8_t reserved1 : 7;
+    uint8_t devType : 1;
+    uint8_t reserved2[18];
+    uint8_t serialNum[20];
+    uint8_t reserved3[6];
+    uint8_t firmwareRev[8];
+    uint8_t modelNum[40];
+} IDENTIFY_RESPONSE;
 
 #pragma pack(pop)

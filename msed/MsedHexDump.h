@@ -15,4 +15,4 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
 #pragma once 
-void hexDump(void * address, int length);
+void MsedHexDump(void * address, int length);

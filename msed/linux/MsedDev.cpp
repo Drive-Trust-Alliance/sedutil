@@ -26,8 +26,8 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include "TCGdev.h"
-#include "hexDump.h"
+#include "MsedDev.h"
+#include "MsedHexDump.h"
 
 using namespace std;
 
@@ -35,11 +35,11 @@ using namespace std;
  *  Linux specific implementation using the SCSI generic interface and
  *  SCSI ATA Pass Through (12) command
  */
-TCGdev::TCGdev(const char * devref)
+MsedDev::MsedDev(const char * devref)
 {
-    LOG(D4) << "Creating TCGdev::TCGdev() " << devref;
+    LOG(D4) << "Creating MsedDev::MsedDev() " << devref;
     dev = devref;
-    memset(&disk_info, 0, sizeof (TCG_DiskInfo));
+    memset(&disk_info, 0, sizeof (OPAL_DiskInfo));
     if ((fd = open(dev, O_RDWR)) < 0) {
         isOpen = FALSE;
         // This is a D1 because diskscan looks for open fail to end scan
@@ -53,14 +53,14 @@ TCGdev::TCGdev(const char * devref)
 }
 
 /** Send an ioctl to the device using pass through. */
-uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                        void * buffer, uint16_t bufferlen)
+uint8_t MsedDev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+                         void * buffer, uint16_t bufferlen)
 {
     sg_io_hdr_t sg;
     uint8_t sense[32]; // how big should this be??
     uint8_t cdb[12];
 
-    LOG(D4) << "Entering TCGdev::sendCmd";
+    LOG(D4) << "Entering MsedDev::sendCmd";
     if (!isOpen) return 0xfe; //disk open failed so this will too
     memset(&cdb, 0, sizeof (cdb));
     memset(&sense, 0, sizeof (sense));
@@ -127,9 +127,9 @@ uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
      */
     if (ioctl(fd, SG_IO, &sg) < 0) {
         LOG(D4) << "cdb after ";
-        IFLOG(D4) hexDump(cdb, sizeof (cdb));
+        IFLOG(D4) MsedHexDump(cdb, sizeof (cdb));
         LOG(D4) << "sense after ";
-        IFLOG(D4) hexDump(sense, sizeof (sense));
+        IFLOG(D4) MsedHexDump(sense, sizeof (sense));
         return 0xff;
     }
     //    LOG(D4) << "cdb after ";
@@ -143,9 +143,9 @@ uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     return (sense[11]);
 }
 
-void TCGdev::identify()
+void MsedDev::identify()
 {
-    LOG(D4) << "Entering TCGdev::identify()";
+    LOG(D4) << "Entering MsedDev::identify()";
     sg_io_hdr_t sg;
     uint8_t sense[32]; // how big should this be??
     uint8_t cdb[6];
@@ -196,9 +196,9 @@ void TCGdev::identify()
 
     if (ioctl(fd, SG_IO, &sg) < 0) {
         LOG(D4) << "cdb after ";
-        IFLOG(D4) hexDump(cdb, sizeof (cdb));
+        IFLOG(D4) MsedHexDump(cdb, sizeof (cdb));
         LOG(D4) << "sense after ";
-        IFLOG(D4) hexDump(sense, sizeof (sense));
+        IFLOG(D4) MsedHexDump(sense, sizeof (sense));
         return;
     }
     buffer += 8;
@@ -210,15 +210,15 @@ void TCGdev::identify()
     return;
 }
 
-void TCGdev::osmsSleep(uint32_t ms)
+void MsedDev::osmsSleep(uint32_t ms)
 {
     usleep(ms * 1000); //convert to microseconds
     return;
 }
 
 /** Close the device reference so this object can be delete. */
-TCGdev::~TCGdev()
+MsedDev::~MsedDev()
 {
-    LOG(D4) << "Destroying TCGdev";
+    LOG(D4) << "Destroying MsedDev";
     close(fd);
 }

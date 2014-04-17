@@ -16,14 +16,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
-* C:E********************************************************************** */
-typedef struct _MSED_OPTIONS {
-    uint8_t password;
-	uint8_t userid;
-	uint8_t newpassword;
-    uint8_t deviceref;
-    uint8_t action;
-} MSED_OPTIONS;
-void usage();
-uint8_t options(int argc, char * argv[], MSED_OPTIONS * opts);
+ * C:E********************************************************************** */
+#pragma once
+#include "MsedBaseDev.h"
 
+class MsedDev : public MsedBaseDev {
+public:
+    MsedDev(const char * devref);
+    ~MsedDev();
+    uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+            void * buffer, uint16_t bufferlen);
+private:
+    void osmsSleep(uint32_t ms);
+    void identify();
+    int fd;
+};

@@ -26,61 +26,61 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <iostream>
 #include<iomanip>
-#include "TCGbaseDev.h"
-#include "endianfixup.h"
-#include "TCGstructures.h"
-#include "TCGcommand.h"
-#include "hexDump.h"
+#include "MsedBaseDev.h"
+#include "MsedEndianFixup.h"
+#include "MsedStructures.h"
+#include "MsedCommand.h"
+#include "MsedHexDump.h"
 
 using namespace std;
 
 /** Device Class (Base) represents a single disk device.
  *  This is the functionality that is common to all OS's
  */
-TCGbaseDev::TCGbaseDev()
+MsedBaseDev::MsedBaseDev()
 {
 }
 
-TCGbaseDev::~TCGbaseDev()
+MsedBaseDev::~MsedBaseDev()
 {
 }
 
-uint8_t TCGbaseDev::isOpal2()
+uint8_t MsedBaseDev::isOpal2()
 {
-    LOG(D4) << "Entering TCGbaseDev::isOpal2()";
+    LOG(D4) << "Entering MsedBaseDev::isOpal2()";
     return disk_info.OPAL20;
 }
 
-uint8_t TCGbaseDev::isPresent()
+uint8_t MsedBaseDev::isPresent()
 {
-    LOG(D4) << "Entering TCGbaseDev::isPresent()";
+    LOG(D4) << "Entering MsedBaseDev::isPresent()";
     return isOpen;
 }
 
-void TCGbaseDev::getFirmwareRev(uint8_t bytes[8])
+void MsedBaseDev::getFirmwareRev(uint8_t bytes[8])
 {
     memcpy(&bytes[0], &disk_info.firmwareRev[0], 8);
 }
 
-void TCGbaseDev::getModelNum(uint8_t bytes[40])
+void MsedBaseDev::getModelNum(uint8_t bytes[40])
 {
     memcpy(&bytes[0], &disk_info.modelNum[0], 40);
 }
 
-uint16_t TCGbaseDev::comID()
+uint16_t MsedBaseDev::comID()
 {
-    LOG(D4) << "Entering TCGbaseDev::comID()";
+    LOG(D4) << "Entering MsedBaseDev::comID()";
     if (disk_info.OPAL20)
         return disk_info.OPAL20_basecomID;
     else
         return 0x0000;
 }
 
-uint8_t TCGbaseDev::exec(TCGcommand * cmd, uint8_t protocol)
+uint8_t MsedBaseDev::exec(MsedCommand * cmd, uint8_t protocol)
 {
     uint8_t rc = 0;
     LOG(D3) << std::endl << "Dumping command buffer";
-    IFLOG(D3) hexDump(cmd->getCmdBuffer(), 128);
+    IFLOG(D3) MsedHexDump(cmd->getCmdBuffer(), 128);
     rc = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH);
     if (0 != rc) {
         LOG(E) << "Command failed on send " << rc;
@@ -90,7 +90,7 @@ uint8_t TCGbaseDev::exec(TCGcommand * cmd, uint8_t protocol)
     memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
     rc = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
     LOG(D3) << std::endl << "Dumping reply buffer";
-    IFLOG(D3) hexDump(cmd->getRespBuffer(), 128);
+    IFLOG(D3) MsedHexDump(cmd->getRespBuffer(), 128);
     if (0 != rc) {
         LOG(E) << "Command failed on recv" << rc;
         return rc;
@@ -103,9 +103,9 @@ uint8_t TCGbaseDev::exec(TCGcommand * cmd, uint8_t protocol)
  * the endianess conversions either via a bitswap in the structure or executing
  * a macro when the input buffer is read.
  */
-void TCGbaseDev::discovery0()
+void MsedBaseDev::discovery0()
 {
-    LOG(D4) << "Entering TCGbaseDev::discovery0()";
+    LOG(D4) << "Entering MsedBaseDev::discovery0()";
     void * d0Response = NULL;
     uint8_t * epos, *cpos;
     Discovery0Header * hdr;
@@ -123,7 +123,7 @@ void TCGbaseDev::discovery0()
     epos = cpos = (uint8_t *) d0Response;
     hdr = (Discovery0Header *) d0Response;
     LOG(D3) << "Dumping D0Response";
-    IFLOG(D3) hexDump(hdr, SWAP32(hdr->length));
+    IFLOG(D3) MsedHexDump(hdr, SWAP32(hdr->length));
     epos = epos + SWAP32(hdr->length);
     cpos = cpos + 48; // TODO: check header version
 
@@ -197,11 +197,11 @@ void TCGbaseDev::discovery0()
 }
 
 /** Print out the Discovery 0 results */
-void TCGbaseDev::puke()
+void MsedBaseDev::puke()
 {
 #define HEXON(x) "0x" << std::hex << std::setw(x) << std::setfill('0')
 #define HEXOFF std::dec << std::setw(0) << std::setfill(' ')
-    LOG(D4) << "Entering TCGbaseDev::puke()";
+    LOG(D4) << "Entering MsedBaseDev::puke()";
     /* IDENTIFY */
     cout << dev << (disk_info.devType ? " OTHER " : " ATA ");
     for (int i = 0; i < sizeof (disk_info.modelNum); i++) {

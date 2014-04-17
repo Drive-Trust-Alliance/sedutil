@@ -25,7 +25,7 @@ standard.
                                ***** Warning  ******
 ***** Warning  ****** A FAILURE OF AND/OR IMPROPER USE OF THIS PROGRAM 
 ***** Warning  ****** COULD CAUSE AN UNRECOVERABLE LOSS ALL OF THE DATA ON YOUR 
-***** Warning  ****** AGAIN. DRIVE AND/OR PREVENT THE DRIVE FROM BEING USED AT 
+***** Warning  ****** DRIVE AND/OR PREVENT THE DRIVE FROM BEING USED AT 
 ***** Warning  ****** ALL EVER AGAIN
 ***** Warning  ******
 ***** Warning  ****** IF YOU ARE UNSURE OF WHAT YOU ARE DOING THEN 

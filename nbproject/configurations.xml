@@ -5,19 +5,20 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>msed/Class_Skeleton.h</itemPath>
-      <itemPath>msed/TCGbaseDev.h</itemPath>
-      <itemPath>msed/TCGcommand.h</itemPath>
-      <itemPath>msed/linux/TCGdev.h</itemPath>
-      <itemPath>msed/TCGlexicon.h</itemPath>
-      <itemPath>msed/TCGresponse.h</itemPath>
-      <itemPath>msed/TCGsession.h</itemPath>
-      <itemPath>msed/TCGstructures.h</itemPath>
-      <itemPath>msed/TCGtasks.h</itemPath>
-      <itemPath>msed/endianfixup.h</itemPath>
-      <itemPath>msed/hexDump.h</itemPath>
+      <itemPath>msed/MsedBaseDev.h</itemPath>
+      <itemPath>msed/MsedCommand.h</itemPath>
+      <itemPath>msed/MsedConstants.h</itemPath>
+      <itemPath>msed/linux/MsedDev.h</itemPath>
+      <itemPath>msed/MsedEndianFixup.h</itemPath>
+      <itemPath>msed/MsedHashPwd.h</itemPath>
+      <itemPath>msed/MsedHexDump.h</itemPath>
+      <itemPath>msed/MsedLexicon.h</itemPath>
+      <itemPath>msed/MsedOptions.h</itemPath>
+      <itemPath>msed/MsedResponse.h</itemPath>
+      <itemPath>msed/MsedSession.h</itemPath>
+      <itemPath>msed/MsedStructures.h</itemPath>
+      <itemPath>msed/MsedTasks.h</itemPath>
       <itemPath>msed/log.h</itemPath>
-      <itemPath>msed/msedConstants.h</itemPath>
-      <itemPath>msed/options.h</itemPath>
       <itemPath>msed/linux/os.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -33,15 +34,16 @@
                    projectFiles="true">
       <logicalFolder name="msed" displayName="msed" projectFiles="true">
         <itemPath>msed/Class_Skeleton.cpp</itemPath>
-        <itemPath>msed/TCGbaseDev.cpp</itemPath>
-        <itemPath>msed/TCGcommand.cpp</itemPath>
-        <itemPath>msed/linux/TCGdev.cpp</itemPath>
-        <itemPath>msed/TCGresponse.cpp</itemPath>
-        <itemPath>msed/TCGsession.cpp</itemPath>
-        <itemPath>msed/TCGtasks.cpp</itemPath>
-        <itemPath>msed/hexDump.cpp</itemPath>
+        <itemPath>msed/MsedBaseDev.cpp</itemPath>
+        <itemPath>msed/MsedCommand.cpp</itemPath>
+        <itemPath>msed/linux/MsedDev.cpp</itemPath>
+        <itemPath>msed/MsedHashPwd.cpp</itemPath>
+        <itemPath>msed/MsedHexDump.cpp</itemPath>
+        <itemPath>msed/MsedOptions.cpp</itemPath>
+        <itemPath>msed/MsedResponse.cpp</itemPath>
+        <itemPath>msed/MsedSession.cpp</itemPath>
+        <itemPath>msed/MsedTasks.cpp</itemPath>
         <itemPath>msed/msed.cpp</itemPath>
-        <itemPath>msed/options.cpp</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -77,6 +79,14 @@
           </incDir>
           <warningLevel>3</warningLevel>
         </ccTool>
+        <linkerTool>
+          <linkerAddLib>
+            <pElem>cryptopp</pElem>
+          </linkerAddLib>
+          <linkerLibItems>
+            <linkerLibLibItem>cryptopp</linkerLibLibItem>
+          </linkerLibItems>
+        </linkerTool>
       </compileType>
       <item path="msed/Class_Skeleton.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -86,55 +96,59 @@
       </item>
       <item path="msed/LICENSE.txt" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="msed/MsedBaseDev.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedBaseDev.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedCommand.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedConstants.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedEndianFixup.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedHashPwd.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedHashPwd.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedHexDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedHexDump.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedLexicon.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedOptions.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedOptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedResponse.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedResponse.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedSession.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedSession.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedStructures.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedTasks.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedTasks.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/TCGbaseDev.cpp" ex="false" tool="1" flavor2="0">
+      <item path="msed/linux/MsedDev.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="msed/TCGbaseDev.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGcommand.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/TCGcommand.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGlexicon.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGresponse.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/TCGresponse.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGsession.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/TCGsession.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGstructures.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGtasks.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/TCGtasks.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/endianfixup.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/hexDump.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/hexDump.h" ex="false" tool="3" flavor2="0">
+      <item path="msed/linux/MsedDev.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/linux/ReadMe_linux.txt" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/linux/TCGdev.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/linux/TCGdev.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/linux/os.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/log.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/msed.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/msedConstants.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/options.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/options.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -168,55 +182,59 @@
       </item>
       <item path="msed/LICENSE.txt" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="msed/MsedBaseDev.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedBaseDev.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedCommand.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedConstants.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedEndianFixup.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedHashPwd.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedHashPwd.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedHexDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedHexDump.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedLexicon.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedOptions.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedOptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedResponse.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedResponse.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedSession.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedSession.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedStructures.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedTasks.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedTasks.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/TCGbaseDev.cpp" ex="false" tool="1" flavor2="0">
+      <item path="msed/linux/MsedDev.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="msed/TCGbaseDev.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGcommand.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/TCGcommand.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGlexicon.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGresponse.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/TCGresponse.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGsession.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/TCGsession.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGstructures.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/TCGtasks.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/TCGtasks.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/endianfixup.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/hexDump.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/hexDump.h" ex="false" tool="3" flavor2="0">
+      <item path="msed/linux/MsedDev.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/linux/ReadMe_linux.txt" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/linux/TCGdev.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/linux/TCGdev.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/linux/os.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/log.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/msed.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/msedConstants.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/options.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/options.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

@@ -20,22 +20,22 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 #include <vector>
 #include <string>
-#include "TCGstructures.h"
+#include "MsedStructures.h"
 
-typedef enum _TCG_TOKENID {
-	TCG_TOKENID_BYTESTRING,
-	TCG_TOKENID_SINT,
-	TCG_TOKENID_UINT,
-	TCG_TOKENID_TOKEN, // actual token is returned
-} TCG_TOKENID;
+typedef enum _OPAL_TOKENID {
+	OPAL_TOKENID_BYTESTRING,
+	OPAL_TOKENID_SINT,
+	OPAL_TOKENID_UINT,
+	OPAL_TOKENID_TOKEN, // actual token is returned
+} OPAL_TOKENID;
 
-class TCGresponse {
+class MsedResponse {
 public:
-	TCGresponse();
-    TCGresponse(void * buffer);
-	~TCGresponse();
+	MsedResponse();
+    MsedResponse(void * buffer);
+	~MsedResponse();
 	void init(void * buffer);
-	TCG_TOKENID tokenIs(uint32_t tokenNum);
+	OPAL_TOKENID tokenIs(uint32_t tokenNum);
 	uint32_t getLength(uint32_t tokenNum);
 	uint64_t getUint64(uint32_t tokenNum);
 	uint32_t getUint32(uint32_t tokenNum);
@@ -46,7 +46,7 @@ public:
 	std::string getString(uint32_t tokenNum);
 	std::vector<uint8_t> getRawToken(uint32_t tokenNum);
 	void getBytes(uint32_t tokenNum, uint8_t bytearray[]);
-	TCGHeader h;  // this should be private with accessors but .....
+	OPALHeader h;  // this should be private with accessors but .....
 
 private:
 

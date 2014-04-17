@@ -21,30 +21,30 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 /*
  * Manage the session to a TPer.
  */
-#include "TCGlexicon.h"
+#include "MsedLexicon.h"
 #include <vector>
-class TCGcommand;
-class TCGdev;
+class MsedCommand;
+class MsedDev;
 
 using namespace std;
 
-class TCGsession {
+class MsedSession {
 public:
-    TCGsession(TCGdev * device);
-    ~TCGsession();
-	uint8_t start(TCG_UID SP);    // unauthenticated "Anybody" session
-    uint8_t start(TCG_UID SP, vector<uint8_t> HostChallenge, TCG_UID SignAuthority);
+    MsedSession(MsedDev * device);
+    ~MsedSession();
+	uint8_t start(OPAL_UID SP);    // unauthenticated "Anybody" session
+    uint8_t start(OPAL_UID SP, vector<uint8_t> HostChallenge, OPAL_UID SignAuthority);
     void setProtocol(uint8_t value);
     void expectAbort();
-    uint8_t sendCommand(TCGcommand * cmd);
+    uint8_t sendCommand(MsedCommand * cmd);
 private:
-    TCGsession();
+    MsedSession();
     char * methodStatus(uint8_t status);
-    TCGdev * d;
+    MsedDev * d;
     uint32_t bufferpos = 0;
     uint32_t TSN = 0;
     uint32_t HSN = 0;
     uint8_t willAbort = 0;
-    uint8_t TCGProtocol = 0x01;
+    uint8_t SecurityProtocol = 0x01;
 };
 

@@ -19,56 +19,58 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 #include "os.h"
 #include <stdio.h>
-#include "TCGsession.h"
-#include "TCGdev.h"
-#include "TCGcommand.h"
-#include "TCGresponse.h"
-#include "endianfixup.h"
-#include "hexDump.h"
-#include "TCGstructures.h"
+#include "MsedSession.h"
+#include "MsedDev.h"
+#include "MsedCommand.h"
+#include "MsedResponse.h"
+#include "MsedEndianFixup.h"
+#include "MsedHexDump.h"
+#include "MsedStructures.h"
 
 using namespace std;
+
 /*
  * Start a session
  */
-TCGsession::TCGsession(TCGdev * device)
+MsedSession::MsedSession(MsedDev * device)
 {
-    LOG(D4) << "Creating TCGsession()";
+    LOG(D4) << "Creating MsedSsession()";
     d = device;
 }
 
 uint8_t
-TCGsession::start(TCG_UID SP)
+MsedSession::start(OPAL_UID SP)
 {
-	vector<uint8_t> pwd;
-	pwd.clear();
-	return(start(SP, pwd, TCG_UID::TCG_UID_HEXFF));
+    vector<uint8_t> pwd;
+    pwd.clear();
+    return (start(SP, pwd, OPAL_UID::OPAL_UID_HEXFF));
 }
+
 uint8_t
-TCGsession::start(TCG_UID SP, vector<uint8_t> HostChallenge, TCG_UID SignAuthority)
+MsedSession::start(OPAL_UID SP, vector<uint8_t> HostChallenge, OPAL_UID SignAuthority)
 {
-    LOG(D4) << "Entering TCGsession::startSession ";
-    TCGcommand *cmd = new TCGcommand();
-    TCGresponse * response;
-    cmd->reset(TCG_UID::TCG_SMUID_UID, TCG_METHOD::STARTSESSION);
-    cmd->addToken(TCG_TOKEN::STARTLIST); // [  (Open Bracket)
+    LOG(D4) << "Entering MsedSession::startSession ";
+    MsedCommand *cmd = new MsedCommand();
+    MsedResponse * response;
+    cmd->reset(OPAL_UID::OPAL_SMUID_UID, OPAL_METHOD::STARTSESSION);
+    cmd->addToken(OPAL_TOKEN::STARTLIST); // [  (Open Bracket)
     cmd->addToken(105); // HostSessionID : sessionnumber
     cmd->addToken(SP); // SPID : SP
-    cmd->addToken(TCG_TINY_ATOM::UINT_01); // write
+    cmd->addToken(OPAL_TINY_ATOM::UINT_01); // write
     if (0 != HostChallenge.size()) {
-        cmd->addToken(TCG_TOKEN::STARTNAME);
-        cmd->addToken(TCG_TINY_ATOM::UINT_00);
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken(OPAL_TINY_ATOM::UINT_00);
         cmd->addToken(HostChallenge);
-        cmd->addToken(TCG_TOKEN::ENDNAME);
-        cmd->addToken(TCG_TOKEN::STARTNAME);
-        cmd->addToken(TCG_TINY_ATOM::UINT_03);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken(OPAL_TINY_ATOM::UINT_03);
         cmd->addToken(SignAuthority);
-        cmd->addToken(TCG_TOKEN::ENDNAME);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
     }
-    cmd->addToken(TCG_TOKEN::ENDLIST); // ]  (Close Bracket)
+    cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
     if (sendCommand(cmd)) return 0xff;
-    response = new TCGresponse(cmd->getRespBuffer());
+    response = new MsedResponse(cmd->getRespBuffer());
     // call user method SL HSN TSN EL EOD SL 00 00 00 EL
     //   0   1     2     3  4   5   6  7   8
 
@@ -79,21 +81,21 @@ TCGsession::start(TCG_UID SP, vector<uint8_t> HostChallenge, TCG_UID SignAuthori
 }
 
 uint8_t
-TCGsession::sendCommand(TCGcommand * cmd)
+MsedSession::sendCommand(MsedCommand * cmd)
 {
-    LOG(D4) << "Entering TCGsession::sendCommand()";
+    LOG(D4) << "Entering MsedSession::sendCommand()";
     uint8_t rc;
-    TCGresponse * response;
+    MsedResponse * response;
     cmd->setHSN(HSN);
     cmd->setTSN(TSN);
     cmd->setcomID(d->comID());
 
-    d->exec(cmd, TCGProtocol);
+    d->exec(cmd, SecurityProtocol);
     /*
      * Check out the basics that so that we know we
      * have a sane reply to work with
      */
-    response = new TCGresponse(cmd->getRespBuffer());
+    response = new MsedResponse(cmd->getRespBuffer());
     // zero lengths -- these are big endian but it doesn't matter for uint = 0
     if ((0 == response->h.cp.length) |
         (0 == response->h.pkt.length) |
@@ -108,14 +110,14 @@ TCGsession::sendCommand(TCGcommand * cmd)
         return 0;
     }
     // IF we received a method status return it
-    if (!(((uint8_t) TCG_TOKEN::ENDLIST == (uint8_t) response->tokenIs(response->getTokenCount() - 1)) &&
-        ((uint8_t) TCG_TOKEN::STARTLIST == (uint8_t) response->tokenIs(response->getTokenCount() - 5)))) {
+    if (!(((uint8_t) OPAL_TOKEN::ENDLIST == (uint8_t) response->tokenIs(response->getTokenCount() - 1)) &&
+        ((uint8_t) OPAL_TOKEN::STARTLIST == (uint8_t) response->tokenIs(response->getTokenCount() - 5)))) {
         // no method status so we hope we reported the error someplace else
         LOG(E) << "Method Status missing";
         delete response;
         return 0xff;
     }
-    if (TCGSTATUSCODE::SUCCESS != response->getUint8(response->getTokenCount() - 4)) {
+    if (OPALSTATUSCODE::SUCCESS != response->getUint8(response->getTokenCount() - 4)) {
         LOG(E) << "method status code " <<
                 methodStatus(response->getUint8(response->getTokenCount() - 4));
     }
@@ -125,72 +127,72 @@ TCGsession::sendCommand(TCGcommand * cmd)
 }
 
 void
-TCGsession::setProtocol(uint8_t value)
+MsedSession::setProtocol(uint8_t value)
 {
-    LOG(D4) << "Entering TCGsession::setProtocol";
-    TCGProtocol = value;
+    LOG(D4) << "Entering MsedSession::setProtocol";
+    SecurityProtocol = value;
 }
 
 void
-TCGsession::expectAbort()
+MsedSession::expectAbort()
 {
-    LOG(D4) << "Entering TCGsession::methodStatus()";
+    LOG(D4) << "Entering MsedSession::methodStatus()";
     willAbort = 1;
 }
 
 char *
-TCGsession::methodStatus(uint8_t status)
+MsedSession::methodStatus(uint8_t status)
 {
-    LOG(D4) << "Entering TCGsession::methodStatus()";
+    LOG(D4) << "Entering MsedSession::methodStatus()";
     switch (status) {
-    case TCGSTATUSCODE::AUTHORITY_LOCKED_OUT:
+    case OPALSTATUSCODE::AUTHORITY_LOCKED_OUT:
         return (char *) "AUTHORITY_LOCKED_OUT";
-    case TCGSTATUSCODE::FAIL:
+    case OPALSTATUSCODE::FAIL:
         return (char *) "FAIL";
-    case TCGSTATUSCODE::INSUFFICIENT_ROWS:
+    case OPALSTATUSCODE::INSUFFICIENT_ROWS:
         return (char *) "INSUFFICIENT_ROWS";
-    case TCGSTATUSCODE::INSUFFICIENT_SPACE:
+    case OPALSTATUSCODE::INSUFFICIENT_SPACE:
         return (char *) "INSUFFICIENT_SPACE";
-    case TCGSTATUSCODE::INVALID_PARAMETER:
+    case OPALSTATUSCODE::INVALID_PARAMETER:
         return (char *) "INVALID_PARAMETER";
-    case TCGSTATUSCODE::NOT_AUTHORIZED:
+    case OPALSTATUSCODE::NOT_AUTHORIZED:
         return (char *) "NOT_AUTHORIZED";
-    case TCGSTATUSCODE::NO_SESSIONS_AVAILABLE:
+    case OPALSTATUSCODE::NO_SESSIONS_AVAILABLE:
         return (char *) "NO_SESSIONS_AVAILABLE";
-    case TCGSTATUSCODE::RESPONSE_OVERFLOW:
+    case OPALSTATUSCODE::RESPONSE_OVERFLOW:
         return (char *) "RESPONSE_OVERFLOW";
-    case TCGSTATUSCODE::SP_BUSY:
+    case OPALSTATUSCODE::SP_BUSY:
         return (char *) "SP_BUSY";
-    case TCGSTATUSCODE::SP_DISABLED:
+    case OPALSTATUSCODE::SP_DISABLED:
         return (char *) "SP_DISABLED";
-    case TCGSTATUSCODE::SP_FAILED:
+    case OPALSTATUSCODE::SP_FAILED:
         return (char *) "SP_FAILED";
-    case TCGSTATUSCODE::SP_FROZEN:
+    case OPALSTATUSCODE::SP_FROZEN:
         return (char *) "SP_FROZEN";
-    case TCGSTATUSCODE::SUCCESS:
+    case OPALSTATUSCODE::SUCCESS:
         return (char *) "SUCCESS";
-    case TCGSTATUSCODE::TPER_MALFUNCTION:
+    case OPALSTATUSCODE::TPER_MALFUNCTION:
         return (char *) "TPER_MALFUNCTION";
-    case TCGSTATUSCODE::TRANSACTION_FAILURE:
+    case OPALSTATUSCODE::TRANSACTION_FAILURE:
         return (char *) "TRANSACTION_FAILURE";
-    case TCGSTATUSCODE::UNIQUENESS_CONFLICT:
+    case OPALSTATUSCODE::UNIQUENESS_CONFLICT:
         return (char *) "UNIQUENESS_CONFLICT";
     default:
         return (char *) "Unknown status code";
     }
 }
 
-TCGsession::~TCGsession()
+MsedSession::~MsedSession()
 {
-    LOG(D4) << "Destroying TCGsession";
-	if (!willAbort) {
-		TCGcommand *cmd = new TCGcommand();
+    LOG(D4) << "Destroying MsedSession";
+    if (!willAbort) {
+        MsedCommand *cmd = new MsedCommand();
         cmd->reset();
-        cmd->addToken(TCG_TOKEN::ENDOFSESSION);
+        cmd->addToken(OPAL_TOKEN::ENDOFSESSION);
         cmd->complete(0);
         if (sendCommand(cmd)) {
             LOG(E) << "EndSession Failed";
         }
-		delete cmd;
+        delete cmd;
     }
 }

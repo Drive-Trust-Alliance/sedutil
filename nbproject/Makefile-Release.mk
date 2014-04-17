@@ -36,15 +36,16 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/msed/Class_Skeleton.o \
-	${OBJECTDIR}/msed/TCGbaseDev.o \
-	${OBJECTDIR}/msed/TCGcommand.o \
-	${OBJECTDIR}/msed/TCGresponse.o \
-	${OBJECTDIR}/msed/TCGsession.o \
-	${OBJECTDIR}/msed/TCGtasks.o \
-	${OBJECTDIR}/msed/hexDump.o \
-	${OBJECTDIR}/msed/linux/TCGdev.o \
-	${OBJECTDIR}/msed/msed.o \
-	${OBJECTDIR}/msed/options.o
+	${OBJECTDIR}/msed/MsedBaseDev.o \
+	${OBJECTDIR}/msed/MsedCommand.o \
+	${OBJECTDIR}/msed/MsedHashPwd.o \
+	${OBJECTDIR}/msed/MsedHexDump.o \
+	${OBJECTDIR}/msed/MsedOptions.o \
+	${OBJECTDIR}/msed/MsedResponse.o \
+	${OBJECTDIR}/msed/MsedSession.o \
+	${OBJECTDIR}/msed/MsedTasks.o \
+	${OBJECTDIR}/msed/linux/MsedDev.o \
+	${OBJECTDIR}/msed/msed.o
 
 
 # C Compiler Flags
@@ -76,50 +77,55 @@ ${OBJECTDIR}/msed/Class_Skeleton.o: msed/Class_Skeleton.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/Class_Skeleton.o msed/Class_Skeleton.cpp
 
-${OBJECTDIR}/msed/TCGbaseDev.o: msed/TCGbaseDev.cpp 
+${OBJECTDIR}/msed/MsedBaseDev.o: msed/MsedBaseDev.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/TCGbaseDev.o msed/TCGbaseDev.cpp
+	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedBaseDev.o msed/MsedBaseDev.cpp
 
-${OBJECTDIR}/msed/TCGcommand.o: msed/TCGcommand.cpp 
+${OBJECTDIR}/msed/MsedCommand.o: msed/MsedCommand.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/TCGcommand.o msed/TCGcommand.cpp
+	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedCommand.o msed/MsedCommand.cpp
 
-${OBJECTDIR}/msed/TCGresponse.o: msed/TCGresponse.cpp 
+${OBJECTDIR}/msed/MsedHashPwd.o: msed/MsedHashPwd.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/TCGresponse.o msed/TCGresponse.cpp
+	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedHashPwd.o msed/MsedHashPwd.cpp
 
-${OBJECTDIR}/msed/TCGsession.o: msed/TCGsession.cpp 
+${OBJECTDIR}/msed/MsedHexDump.o: msed/MsedHexDump.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/TCGsession.o msed/TCGsession.cpp
+	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedHexDump.o msed/MsedHexDump.cpp
 
-${OBJECTDIR}/msed/TCGtasks.o: msed/TCGtasks.cpp 
+${OBJECTDIR}/msed/MsedOptions.o: msed/MsedOptions.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/TCGtasks.o msed/TCGtasks.cpp
+	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedOptions.o msed/MsedOptions.cpp
 
-${OBJECTDIR}/msed/hexDump.o: msed/hexDump.cpp 
+${OBJECTDIR}/msed/MsedResponse.o: msed/MsedResponse.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/hexDump.o msed/hexDump.cpp
+	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedResponse.o msed/MsedResponse.cpp
 
-${OBJECTDIR}/msed/linux/TCGdev.o: msed/linux/TCGdev.cpp 
+${OBJECTDIR}/msed/MsedSession.o: msed/MsedSession.cpp 
+	${MKDIR} -p ${OBJECTDIR}/msed
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedSession.o msed/MsedSession.cpp
+
+${OBJECTDIR}/msed/MsedTasks.o: msed/MsedTasks.cpp 
+	${MKDIR} -p ${OBJECTDIR}/msed
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedTasks.o msed/MsedTasks.cpp
+
+${OBJECTDIR}/msed/linux/MsedDev.o: msed/linux/MsedDev.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed/linux
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/linux/TCGdev.o msed/linux/TCGdev.cpp
+	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/linux/MsedDev.o msed/linux/MsedDev.cpp
 
 ${OBJECTDIR}/msed/msed.o: msed/msed.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/msed.o msed/msed.cpp
-
-${OBJECTDIR}/msed/options.o: msed/options.cpp 
-	${MKDIR} -p ${OBJECTDIR}/msed
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/options.o msed/options.cpp
 
 # Subprojects
 .build-subprojects:

@@ -18,8 +18,8 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
 #include <vector>
-class TCGsession;
-class TCGresponse;
+class MsedSession;
+class MsedResponse;
 
 int takeOwnership(char * devref, char * newpassword);
 int activateLockingSP(char * devref, char * password);
@@ -30,8 +30,8 @@ int diskQuery(char * devref);
 int setNewPassword(char * password, char * userid, char * newpassword, char * devref);
 int enableUser(char * password, char * userid, char * devref);
 int dumpTable();
-int getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData, TCGsession * session);
-int getTable(TCGsession * session, std::vector<uint8_t> table,
-	uint16_t startcol, uint16_t endcol, TCGresponse & response);
-int nextTable(TCGsession * session, std::vector<uint8_t> table,
-	std::vector<uint8_t> startkey, TCGresponse & response);
+int getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData, MsedSession * session);
+int getTable(MsedSession * session, std::vector<uint8_t> table,
+	uint16_t startcol, uint16_t endcol, MsedResponse & response);
+int nextTable(MsedSession * session, std::vector<uint8_t> table,
+	std::vector<uint8_t> startkey, MsedResponse & response);

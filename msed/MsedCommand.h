@@ -16,45 +16,45 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 #pragma once
-/** A class to build & send TCG Command streams to a TPer.
+/** A class to build & send Opal Command streams to a TPer.
  * This class attempts to closely mimic the command
  * pseudo code used in the TCG documents, the syntactic
  * sugar is not represented.  See TCG document Storage Architecture
  * Core Specification R2.00 V2.00 Section 3.2.1.2 for all
  * the gory details.
  *
- * See also TCGLexicon for structs, typedefs and enums used to encode
+ * See also OpalLexicon for structs, typedefs and enums used to encode
  * the bytestream.
  */
 #include <vector>
-#include "TCGlexicon.h"
-class TCGdev;
+#include "MsedLexicon.h"
+class MsedDev;
 
-class TCGcommand {
+class MsedCommand {
 public:
-    TCGcommand();
-    TCGcommand(TCG_UID InvokingUid, TCG_METHOD method);
-    ~TCGcommand();
-	void * getCmdBuffer();
-	void * getRespBuffer();
-    void addToken(TCG_TOKEN token);
-    void addToken(TCG_TINY_ATOM token);
-    void addToken(TCG_UID token);
+    MsedCommand();
+    MsedCommand(OPAL_UID InvokingUid, OPAL_METHOD method);
+    ~MsedCommand();
+    void * getCmdBuffer();
+    void * getRespBuffer();
+    void addToken(OPAL_TOKEN token);
+    void addToken(OPAL_TINY_ATOM token);
+    void addToken(OPAL_UID token);
     void addToken(const char * bytestring);
-	void addToken(std::vector<uint8_t> token);
+    void addToken(std::vector<uint8_t> token);
     void addToken(uint64_t number);
-	void setcomID(uint16_t comID);
-	void setHSN(uint32_t HSN);
-	void setTSN(uint32_t TSN);
+    void setcomID(uint16_t comID);
+    void setHSN(uint32_t HSN);
+    void setTSN(uint32_t TSN);
     void complete(uint8_t EOD = 1);
     void reset();
-    void reset(TCG_UID InvokingUid, TCG_METHOD method);
-	void changeInvokingUid(std::vector<uint8_t> Invoker);
+    void reset(OPAL_UID InvokingUid, OPAL_METHOD method);
+    void changeInvokingUid(std::vector<uint8_t> Invoker);
 private:
     uint8_t *cmdbuf;
-	uint8_t *respbuf;
+    uint8_t *respbuf;
     uint32_t bufferpos = 0;
 };
 
