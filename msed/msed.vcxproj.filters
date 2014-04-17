@@ -36,46 +36,52 @@
     <ClInclude Include="Class_Skeleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TCGtasks.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TCGstructures.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TCGlexicon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TCGcommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="endianfixup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="options.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TCGbaseDev.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="win32\TCGdev.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="win32\os.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TCGsession.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="msedConstants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TCGresponse.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MsedHashPwd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MsedBaseDev.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MsedCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MsedEndianFixup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MsedHexDump.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MsedLexicon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MsedOptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MsedResponse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MsedSession.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MsedStructures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MsedTasks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="win32\MsedDev.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MsedConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -86,31 +92,31 @@
     <ClCompile Include="Class_Skeleton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TCGtasks.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TCGcommand.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="hexDump.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="options.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TCGbaseDev.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="win32\TCGdev.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TCGsession.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TCGresponse.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MsedHashPwd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MsedBaseDev.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MsedCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MsedHexDump.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MsedOptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MsedResponse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MsedSession.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MsedTasks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="win32\MsedDev.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

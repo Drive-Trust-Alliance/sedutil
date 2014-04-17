@@ -33,8 +33,9 @@ public:
     MsedSession(MsedDev * device);
     ~MsedSession();
 	uint8_t start(OPAL_UID SP);    // unauthenticated "Anybody" session
-    uint8_t start(OPAL_UID SP, vector<uint8_t> HostChallenge, OPAL_UID SignAuthority);
+    uint8_t start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority);
     void setProtocol(uint8_t value);
+	void dontHashPwd();
     void expectAbort();
     uint8_t sendCommand(MsedCommand * cmd);
 private:
@@ -45,6 +46,7 @@ private:
     uint32_t TSN = 0;
     uint32_t HSN = 0;
     uint8_t willAbort = 0;
+	uint8_t hashPwd = 1;
     uint8_t SecurityProtocol = 0x01;
 };
 

@@ -24,7 +24,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <SDKDDKVer.h>
 #include <Windows.h>
 
-#include "msedConstants.h"
+#include "MsedConstants.h"
 #pragma warning(disable: 4127) //C4127: conditional expression is constant
 #include "log.h"
 #define ALIGNED_ALLOC(alignment, length) _aligned_malloc(length,alignment)

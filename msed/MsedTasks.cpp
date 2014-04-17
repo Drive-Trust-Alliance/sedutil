@@ -37,10 +37,13 @@ int diskQuery(char * devref)
     LOG(D4) << "Entering diskQuery()" << devref;
     MsedDev * dev = new MsedDev(devref);
     if (!dev->isPresent()) {
-        LOG(E) << "Device not present" << devref;
+        LOG(E) << "Device not present " << devref;
+		delete dev;
         return 1;
     }
     if (!dev->isOpal2()) {
+		LOG(E) << "Device not Opal2 " << devref;
+		delete dev;
         return 1;
     }
     dev->puke();
@@ -81,8 +84,8 @@ int diskScan()
             cout << std::endl;
             if (MAX_DISKS == i) {
                 LOG(I) << MAX_DISKS << " disks, really?";
-                delete d;
-                break;
+				delete d;
+				return 1;
             }
         }
         else break;
@@ -101,6 +104,7 @@ int takeOwnership(char * devref, char * newpassword)
     MsedResponse * response;
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
+		LOG(E) << "Device not Opal2 " << devref;
         delete device;
         return 0xff;
     }
@@ -147,8 +151,11 @@ int takeOwnership(char * devref, char * newpassword)
      */
     //	Start Session
     session = new MsedSession(device);
-    if (session->start(OPAL_UID::OPAL_ADMINSP_UID, response->getRawToken(4),
-                       OPAL_UID::OPAL_SID_UID)) {
+	session->dontHashPwd();  // this should not be hashed
+	if (session->start(OPAL_UID::OPAL_ADMINSP_UID, 
+		(char *) response->getString(4).c_str(),
+        OPAL_UID::OPAL_SID_UID)) 
+	{
         delete response;
         delete cmd;
         delete session;
@@ -190,37 +197,25 @@ int takeOwnership(char * devref, char * newpassword)
 int revertTPer(char * devref, char * password, uint8_t PSID)
 {
     LOG(D4) << "Entering revertTPer(char * devref, char * password)";
-    vector<uint8_t> hash, salt(DEFAULTSALT);
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
+		LOG(E) << "Device not Opal2 " << devref;
         delete device;
         return 0xff;
     }
     MsedCommand *cmd = new MsedCommand();
     MsedSession * session = new MsedSession(device);
-    if (PSID) {
-        hash.clear();
-        hash.push_back(0xd0);
-        hash.push_back((uint8_t) strnlen(password, 255));
-        for (uint16_t i = 0; i < strnlen(password, 255); i++) {
-            hash.push_back(password[i]);
-        }
-        if (session->start(OPAL_UID::OPAL_ADMINSP_UID, hash, OPAL_UID::OPAL_PSID_UID)) {
-            delete cmd;
-            delete session;
-            delete device;
-            return 0xff;
-        }
-    }
-    else {
-        hash.clear();
-        MsedHashPwd(hash, password, salt);
-        if (session->start(OPAL_UID::OPAL_ADMINSP_UID, hash, OPAL_UID::OPAL_SID_UID)) {
-            delete cmd;
-            delete session;
-            delete device;
-            return 0xff;
-        }
+	OPAL_UID uid = OPAL_UID::OPAL_SID_UID;
+	if (PSID) {
+		session->expectAbort();  // seems to immed abort on PSID auth fail
+		session->dontHashPwd();  // PSID pwd should be passed as entered
+		uid = OPAL_UID::OPAL_PSID_UID;
+	}
+    if (session->start(OPAL_UID::OPAL_ADMINSP_UID, password,uid)) {
+        delete cmd;
+        delete session;
+        delete device;
+        return 0xff;
     }
     //	session[TSN:HSN]->AdminSP_UID.Revert[]
     cmd->reset(OPAL_UID::OPAL_ADMINSP_UID, OPAL_METHOD::REVERT);
@@ -246,21 +241,15 @@ int activateLockingSP(char * devref, char * password)
 {
     LOG(D4) << "Entering activateLockingSP()";
     MsedResponse * response;
-    /*
-     * Activate the Locking SP
-     */
-
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
+		LOG(E) << "Device not Opal2 " << devref;
         delete device;
         return 0xff;
     }
     MsedCommand *cmd = new MsedCommand();
     MsedSession * session = new MsedSession(device);
-    vector<uint8_t> hash, salt(DEFAULTSALT);
-    hash.clear();
-    MsedHashPwd(hash, password, salt);
-    if (session->start(OPAL_UID::OPAL_ADMINSP_UID, hash, OPAL_UID::OPAL_SID_UID)) {
+    if (session->start(OPAL_UID::OPAL_ADMINSP_UID, password, OPAL_UID::OPAL_SID_UID)) {
         delete cmd;
         delete session;
         delete device;
@@ -327,7 +316,7 @@ int activateLockingSP(char * devref, char * password)
 int revertLockingSP(char * devref, char * password, uint8_t keep)
 {
     LOG(D4) << "Entering revert LockingSP() keep = " << keep;
-    std::vector<uint8_t> keepgloballockingrange;
+	vector<uint8_t> keepgloballockingrange;
     keepgloballockingrange.push_back(0xa3);
     keepgloballockingrange.push_back(0x06);
     keepgloballockingrange.push_back(0x00);
@@ -335,9 +324,10 @@ int revertLockingSP(char * devref, char * password, uint8_t keep)
     /*
      * revert the Locking SP
      */
-
+	
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
+		LOG(E) << "Device not Opal2 " << devref;
         delete device;
         return 0xff;
     }
@@ -345,10 +335,8 @@ int revertLockingSP(char * devref, char * password, uint8_t keep)
     MsedSession * session = new MsedSession(device);
     // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
     //                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
-    vector<uint8_t> hash, salt(DEFAULTSALT);
-    hash.clear();
-    MsedHashPwd(hash, password, salt);
-    if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, hash, OPAL_UID::OPAL_ADMIN1_UID)) {
+    
+    if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) {
         delete cmd;
         delete session;
         delete device;
@@ -388,9 +376,10 @@ int setNewPassword(char * password, char * userid, char * newpassword, char * de
             " Admin1 password = " << password << " user = " << userid <<
             " newpassword = " << newpassword << " device = " << devref;
 
-    std::vector<uint8_t> userCPIN;
+	std::vector<uint8_t> userCPIN, hash, salt(DEFAULTSALT);
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
+		LOG(E) << "Device not Opal2 " << devref;
         delete device;
         return 0xff;
     }
@@ -398,10 +387,7 @@ int setNewPassword(char * password, char * userid, char * newpassword, char * de
     MsedSession * session = new MsedSession(device);
     // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
     //               HostChallenge = <new_SID_password>, HostSigningAuthority = Admin1_UID]
-    vector<uint8_t> hash, salt(DEFAULTSALT);
-    hash.clear();
-    MsedHashPwd(hash, password, salt);
-    if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, hash, OPAL_UID::OPAL_ADMIN1_UID)) {
+    if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) {
         delete cmd;
         delete session;
         delete device;
@@ -452,17 +438,18 @@ int enableUser(char * password, char * userid, char * devref)
     /*
      * Enable a user in the lockingSP
      */
-    std::vector<uint8_t> userUID;
+	vector<uint8_t> userUID;
     MsedDev *device = new MsedDev(devref);
-    if (!(device->isOpal2())) return 0xff;
+	if (!(device->isOpal2())) {
+		LOG(E) << "Device not Opal2 " << devref;
+		delete device;
+		return 0xff;
+	}
     MsedCommand *cmd = new MsedCommand();
     MsedSession * session = new MsedSession(device);
     // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
     //               HostChallenge = <new_SID_password>, HostSigningAuthority = Admin1_UID]
-    vector<uint8_t> hash, salt(DEFAULTSALT);
-    hash.clear();
-    MsedHashPwd(hash, password, salt);
-    if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, hash, OPAL_UID::OPAL_ADMIN1_UID)) {
+    if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) {
         delete cmd;
         delete session;
         delete device;
@@ -547,13 +534,14 @@ int dumpTable()
 {
     CLog::Level() = CLog::FromInt(4);
     LOG(D4) << "Entering getTable()";
-    std::vector<uint8_t> table, key, nextkey;
+	vector<uint8_t> table, key, nextkey, temp;
     table.push_back(0xa8);
     for (int i = 0; i < 8; i++) {
         table.push_back(OPALUID[OPAL_UID::OPAL_AUTHORITY_TABLE][i]);
     }
     MsedDev *device = new MsedDev("\\\\.\\PhysicalDrive3");
     if (!(device->isOpal2())) {
+		LOG(E) << "Device not Opal2 "; // << devref;
         delete device;
         return 0xff;
     }
@@ -561,10 +549,7 @@ int dumpTable()
     MsedResponse response;
     // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
     //                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
-    vector<uint8_t> hash, salt(DEFAULTSALT);
-    hash.clear();
-    MsedHashPwd(hash, (char *) "password", salt);
-    if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, hash, OPAL_UID::OPAL_ADMIN1_UID)) {
+    if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, "password", OPAL_UID::OPAL_ADMIN1_UID)) {
         delete session;
         delete device;
         return 0xff;
@@ -588,7 +573,7 @@ int dumpTable()
             delete device;
             return 0xff;
         }
-        std::vector<uint8_t> temp = response.getRawToken(4);
+        temp = response.getRawToken(4);
         LOG(D1) << "Dumping Response";
         MsedHexDump(temp.data(), temp.size());
         temp = response.getRawToken(20);
@@ -648,7 +633,7 @@ int nextTable(MsedSession * session, std::vector<uint8_t> table,
     return 0;
 }
 
-int getTable(MsedSession * session, std::vector<uint8_t> table,
+int getTable(MsedSession * session, vector<uint8_t> table,
              uint16_t startcol, uint16_t endcol, MsedResponse & response)
 {
     LOG(D4) << "Entering getTable";

@@ -25,6 +25,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <iomanip>
 #include "MsedHashPwd.h"
+#include "log.h"
 #include "../cryptopp/pch.h"
 #include "../cryptopp/stdcpp.h"
 #include "../cryptopp/hmac.h"
@@ -39,11 +40,13 @@ using namespace CryptoPP;
 void MsedHashPwd(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
                  unsigned int iter, uint8_t hashsize)
 {
+	LOG(D4) << " Entered MsedHashPwd";
     // if the hashsize can be > 255 the token overhead logic needs to be fixed
     assert(1 == sizeof (hashsize));
+	if (253 < hashsize) LOG(E) << "Hashsize > 253 incorrect token generated";
+
     hash.clear();
     hash.reserve(hashsize + 2); // hope this will prevent reallocation
-    //  hash is <hashsize> bytes
     for (uint16_t i = 0; i < hashsize; i++) {
         hash.push_back(' ');
     }
@@ -191,7 +194,7 @@ int MsedTestPBDKF2()
             cout << "passed\n";
         else
             cout << "**FAILED**\n";
-
-    }
+	}
+	return 0;
 }
 

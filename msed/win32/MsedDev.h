@@ -18,12 +18,12 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
 #pragma once
-#include "TCGbaseDev.h"
+#include "MsedBaseDev.h"
 
-class TCGdev : public TCGbaseDev {
+class MsedDev : public MsedBaseDev {
 public:
-	TCGdev(const char * devref);
-	~TCGdev();
+	MsedDev(const char * devref);
+	~MsedDev();
 	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 		void * buffer, uint16_t bufferlen);
 private:

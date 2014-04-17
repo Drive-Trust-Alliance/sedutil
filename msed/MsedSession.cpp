@@ -25,6 +25,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "MsedResponse.h"
 #include "MsedEndianFixup.h"
 #include "MsedHexDump.h"
+#include "MsedHashPwd.h"
 #include "MsedStructures.h"
 
 using namespace std;
@@ -41,15 +42,14 @@ MsedSession::MsedSession(MsedDev * device)
 uint8_t
 MsedSession::start(OPAL_UID SP)
 {
-    vector<uint8_t> pwd;
-    pwd.clear();
-    return (start(SP, pwd, OPAL_UID::OPAL_UID_HEXFF));
+    return (start(SP, NULL, OPAL_UID::OPAL_UID_HEXFF));
 }
 
 uint8_t
-MsedSession::start(OPAL_UID SP, vector<uint8_t> HostChallenge, OPAL_UID SignAuthority)
+MsedSession::start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority)
 {
     LOG(D4) << "Entering MsedSession::startSession ";
+	vector<uint8_t> hash, salt(DEFAULTSALT);
     MsedCommand *cmd = new MsedCommand();
     MsedResponse * response;
     cmd->reset(OPAL_UID::OPAL_SMUID_UID, OPAL_METHOD::STARTSESSION);
@@ -57,10 +57,16 @@ MsedSession::start(OPAL_UID SP, vector<uint8_t> HostChallenge, OPAL_UID SignAuth
     cmd->addToken(105); // HostSessionID : sessionnumber
     cmd->addToken(SP); // SPID : SP
     cmd->addToken(OPAL_TINY_ATOM::UINT_01); // write
-    if (0 != HostChallenge.size()) {
+    if (NULL != HostChallenge) {
         cmd->addToken(OPAL_TOKEN::STARTNAME);
         cmd->addToken(OPAL_TINY_ATOM::UINT_00);
-        cmd->addToken(HostChallenge);
+		if (hashPwd) {
+			hash.clear();
+			MsedHashPwd(hash, HostChallenge, salt);
+			cmd->addToken(hash);
+		}
+		else
+		    cmd->addToken(HostChallenge);
         cmd->addToken(OPAL_TOKEN::ENDNAME);
         cmd->addToken(OPAL_TOKEN::STARTNAME);
         cmd->addToken(OPAL_TINY_ATOM::UINT_03);
@@ -96,6 +102,12 @@ MsedSession::sendCommand(MsedCommand * cmd)
      * have a sane reply to work with
      */
     response = new MsedResponse(cmd->getRespBuffer());
+	// if outstanding data is <> 0 then the drive has more data but we dont support it
+	if (0 != response->h.cp.outstandingData) {
+		LOG(E) << "Outstanding data <> 0 -- no program support";
+		delete response;
+		return 0xff;
+	}
     // zero lengths -- these are big endian but it doesn't matter for uint = 0
     if ((0 == response->h.cp.length) |
         (0 == response->h.pkt.length) |
@@ -131,6 +143,13 @@ MsedSession::setProtocol(uint8_t value)
 {
     LOG(D4) << "Entering MsedSession::setProtocol";
     SecurityProtocol = value;
+}
+
+void
+MsedSession::dontHashPwd()
+{
+	LOG(D4) << "Entering MsedSession::setProtocol";
+	hashPwd = 0;
 }
 
 void

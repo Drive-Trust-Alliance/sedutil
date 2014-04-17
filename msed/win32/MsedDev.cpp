@@ -21,10 +21,10 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <iostream>
 #include <Ntddscsi.h>
-#include "TCGdev.h"
-#include "endianfixup.h"
-#include "TCGstructures.h"
-#include "hexDump.h"
+#include "MsedDev.h"
+#include "MsedEndianFixup.h"
+#include "MsedStructures.h"
+#include "MsedHexDump.h"
 
 using namespace std;
 
@@ -33,15 +33,15 @@ using namespace std;
  *  copy operator and an assignment operator no custom destructor
  *  is used leading to this unfortunate class method structure
  */
-TCGdev::TCGdev(const char * devref)
+MsedDev::MsedDev(const char * devref)
 {
-    LOG(D4) << "Creating TCGdev::TCGdev() " << devref;
+    LOG(D4) << "Creating MsedDev::TCGdev() " << devref;
     ATA_PASS_THROUGH_DIRECT * ata =
             (ATA_PASS_THROUGH_DIRECT *) _aligned_malloc(sizeof (ATA_PASS_THROUGH_DIRECT), 8);
     ataPointer = (void *) ata;
 
     dev = devref;
-    memset(&disk_info, 0, sizeof (TCG_DiskInfo));
+    memset(&disk_info, 0, sizeof (OPAL_DiskInfo));
     hDev = CreateFile(dev,
                       GENERIC_WRITE | GENERIC_READ,
                       FILE_SHARE_WRITE | FILE_SHARE_READ,
@@ -62,10 +62,10 @@ TCGdev::TCGdev(const char * devref)
 }
 
 /** Send an ioctl to the device using pass through. */
-uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+uint8_t MsedDev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                         void * buffer, uint16_t bufferlen)
 {
-    LOG(D4) << "Entering TCGdev::sendCmd";
+    LOG(D4) << "Entering MsedDev::sendCmd";
     DWORD bytesReturned = 0; // data returned
     if (!isOpen) {
         LOG(D1) << "Device open failed";
@@ -114,16 +114,16 @@ uint8_t TCGdev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     return (ata->CurrentTaskFile[0]);
 }
 
-void TCGdev::osmsSleep(uint32_t milliseconds)
+void MsedDev::osmsSleep(uint32_t milliseconds)
 {
     Sleep(milliseconds);
 }
 
 /** adds the IDENTIFY information to the disk_info structure */
 
-void TCGdev::identify()
+void MsedDev::identify()
 {
-    LOG(D4) << "Entering TCGdev::identify()";
+    LOG(D4) << "Entering MsedDev::identify()";
     void * identifyResp = NULL;
     identifyResp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     if (NULL == identifyResp) return;
@@ -154,7 +154,7 @@ void TCGdev::identify()
 }
 
 /** Close the filehandle so this object can be delete. */
-TCGdev::~TCGdev()
+MsedDev::~MsedDev()
 {
     LOG(D4) << "Destroying TCGdev";
     CloseHandle(hDev);
