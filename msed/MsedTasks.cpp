@@ -53,11 +53,6 @@ int diskQuery(char * devref)
 
 int diskScan()
 {
-    /** Brute force disk scan.
-     * loops through the physical devices until
-     * there is an open error.Creates a Device
-     * and reports OPAL support.
-     */
     char devname[25];
     int i = 0;
     uint8_t FirmwareRev[8];
@@ -240,7 +235,12 @@ int revertTPer(char * devref, char * password, uint8_t PSID)
 int activateLockingSP(char * devref, char * password)
 {
     LOG(D4) << "Entering activateLockingSP()";
-    MsedResponse * response;
+	vector<uint8_t> table;
+	table.push_back(0xa8);
+	for (int i = 0; i < 8; i++) {
+		table.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGSP_UID][i]);
+	}
+    MsedResponse response;
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
 		LOG(E) << "Device not Opal2 " << devref;
@@ -257,41 +257,26 @@ int activateLockingSP(char * devref, char * password)
     }
     //session[TSN:HSN]->LockingSP_UID.Get[Cellblock:[startColumn = LifeCycle,
     //                                               endColumn = LifeCycle]]
-    cmd->reset(OPAL_UID::OPAL_LOCKINGSP_UID, OPAL_METHOD::GET);
-    cmd->addToken(OPAL_TOKEN::STARTLIST);
-    cmd->addToken(OPAL_TOKEN::STARTLIST);
-    cmd->addToken(OPAL_TOKEN::STARTNAME);
-    cmd->addToken(OPAL_TOKEN::STARTCOLUMN);
-    cmd->addToken(OPAL_TINY_ATOM::UINT_06); // LifeCycle
-    cmd->addToken(OPAL_TOKEN::ENDNAME);
-    cmd->addToken(OPAL_TOKEN::STARTNAME);
-    cmd->addToken(OPAL_TOKEN::ENDCOLUMN);
-    cmd->addToken(OPAL_TINY_ATOM::UINT_06); // LifeCycle
-    cmd->addToken(OPAL_TOKEN::ENDNAME);
-    cmd->addToken(OPAL_TOKEN::ENDLIST);
-    cmd->addToken(OPAL_TOKEN::ENDLIST);
-    cmd->complete();
-    if (session->sendCommand(cmd)) {
+	if (getTable(session, table, 0x06, 0x06, response))   
+	{
+		LOG(E) << "Unable to determine LockingSP Lifecycle state";
         delete cmd;
         delete session;
         delete device;
         return 0xff;
     }
-    response = new MsedResponse(cmd->getRespBuffer());
     // SL,SL,SN,NAME,Value
     //  0  1  2   3    4
     // verify response
-    if ((0x06 != response->getUint8(3)) | // getlifecycle
-        (0x08 != response->getUint8(4))) // Manufactured-Inactive
+    if ((0x06 != response.getUint8(3)) | // getlifecycle
+        (0x08 != response.getUint8(4))) // Manufactured-Inactive
     {
         LOG(E) << "Locking SP lifecycle is not Manufactured-Inactive";
         delete cmd;
-        delete response;
         delete session;
         delete device;
         return 0xff;
     }
-    delete response;
     // session[TSN:HSN] -> LockingSP_UID.Activate[]
     cmd->reset(OPAL_UID::OPAL_LOCKINGSP_UID, OPAL_METHOD::ACTIVATE);
     cmd->addToken(OPAL_TOKEN::STARTLIST);
@@ -321,10 +306,6 @@ int revertLockingSP(char * devref, char * password, uint8_t keep)
     keepgloballockingrange.push_back(0x06);
     keepgloballockingrange.push_back(0x00);
     keepgloballockingrange.push_back(0x00);
-    /*
-     * revert the Locking SP
-     */
-	
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
 		LOG(E) << "Device not Opal2 " << devref;
@@ -366,7 +347,7 @@ int revertLockingSP(char * devref, char * password, uint8_t keep)
 
     delete session;
     delete device;
-    LOG(D4) << "Exiting activateLockingSP()";
+    LOG(D4) << "Exiting revert LockingSP()";
     return 0;
 }
 
@@ -402,29 +383,17 @@ int setNewPassword(char * password, char * userid, char * newpassword, char * de
         return 0xff;
     }
     // session[TSN:HSN] -> C_PIN_user_UID.Set[Values = [PIN = <new_password>]]
-    cmd->reset(OPAL_UID::OPAL_C_PIN_ADMIN1, OPAL_METHOD::SET);
-    cmd->changeInvokingUid(userCPIN);
-    cmd->addToken(OPAL_TOKEN::STARTLIST);
-    cmd->addToken(OPAL_TOKEN::STARTNAME);
-    cmd->addToken(OPAL_TINY_ATOM::UINT_01); // Values
-    cmd->addToken(OPAL_TOKEN::STARTLIST);
-    cmd->addToken(OPAL_TOKEN::STARTNAME);
-    cmd->addToken(OPAL_TINY_ATOM::UINT_03); // PIN
-    MsedHashPwd(hash, newpassword, salt);
-    cmd->addToken(hash);
-    cmd->addToken(OPAL_TOKEN::ENDNAME);
-    cmd->addToken(OPAL_TOKEN::ENDLIST);
-    cmd->addToken(OPAL_TOKEN::ENDNAME);
-    cmd->addToken(OPAL_TOKEN::ENDLIST);
-    cmd->complete();
-    if (session->sendCommand(cmd)) {
-        delete cmd;
-        delete session;
-        delete device;
-        return 0xff;
-    }
+	MsedHashPwd(hash, newpassword, salt);
+	if (setTable(session, userCPIN, (OPAL_TOKEN) 0x03, hash)) {
+		LOG(E) << "Unable to set user " << userid << " new password ";
+		delete cmd;
+		delete session;
+		delete device;
+		return 0xff;
+	}
     LOG(I) << userid << " password changed to " << newpassword;
     // session[TSN:HSN] <- EOS
+	delete cmd;
     delete session;
     delete device;
     LOG(D4) << "Exiting setNewPassword()";
@@ -438,7 +407,8 @@ int enableUser(char * password, char * userid, char * devref)
     /*
      * Enable a user in the lockingSP
      */
-	vector<uint8_t> userUID;
+	vector<uint8_t> userUID, opalTRUE;
+	opalTRUE.push_back(0x01);
     MsedDev *device = new MsedDev(devref);
 	if (!(device->isOpal2())) {
 		LOG(E) << "Device not Opal2 " << devref;
@@ -464,26 +434,13 @@ int enableUser(char * password, char * userid, char * devref)
         return 0xff;
     }
     // session[TSN:HSN] -> User1_UID.Set[Values = [Enabled = TRUE]]
-    cmd->reset(OPAL_UID::OPAL_USER1_UID, OPAL_METHOD::SET);
-    cmd->changeInvokingUid(userUID);
-    cmd->addToken(OPAL_TOKEN::STARTLIST);
-    cmd->addToken(OPAL_TOKEN::STARTNAME);
-    cmd->addToken(OPAL_TINY_ATOM::UINT_01); // Values
-    cmd->addToken(OPAL_TOKEN::STARTLIST);
-    cmd->addToken(OPAL_TOKEN::STARTNAME);
-    cmd->addToken(OPAL_TINY_ATOM::UINT_05); // Enabled
-    cmd->addToken(OPAL_TINY_ATOM::UINT_01); // TRUE
-    cmd->addToken(OPAL_TOKEN::ENDNAME);
-    cmd->addToken(OPAL_TOKEN::ENDLIST);
-    cmd->addToken(OPAL_TOKEN::ENDNAME);
-    cmd->addToken(OPAL_TOKEN::ENDLIST);
-    cmd->complete();
-    if (session->sendCommand(cmd)) {
-        delete cmd;
-        delete session;
-        delete device;
-        return 0xff;
-    }
+	if (setTable(session, userUID, (OPAL_TOKEN) 0x05 , opalTRUE)) {
+		LOG(E) << "Unable to enable user " << userid;
+		delete cmd;
+		delete session;
+		delete device;
+		return 0xff;
+	}
     LOG(I) << userid << " has been enabled ";
     // session[TSN:HSN] <- EOS
     delete cmd;
@@ -578,23 +535,6 @@ int dumpTable()
         MsedHexDump(temp.data(), temp.size());
         temp = response.getRawToken(20);
         MsedHexDump(temp.data(), temp.size());
-
-        //if (getTable(session, key, 5, 5, response)){
-        //	delete session;
-        //	delete device;
-        //	return 0xff;
-        //}
-        //temp = response.getRawToken(4);
-        //hexDump(temp.data(), temp.size());
-
-        //if (getTable(session, key, 10, 10, response)){
-        //	delete session;
-        //	delete device;
-        //	return 0xff;
-        //}
-        //temp = response.getRawToken(4);
-        //hexDump(temp.data(), temp.size());
-
         if (9 != nextkey.size()) break; // no next row so bail
         key = nextkey;
     }
@@ -661,4 +601,75 @@ int getTable(MsedSession * session, vector<uint8_t> table,
     delete get;
     return 0;
 }
+int setTable(MsedSession * session, vector<uint8_t> table,
+	OPAL_TOKEN name, vector<uint8_t> value)
+{
+	LOG(D4) << "Entering setTable";
+	MsedCommand *set = new MsedCommand();
+	set->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::SET);
+	set->changeInvokingUid(table);
+	set->addToken(OPAL_TOKEN::STARTLIST);
+	set->addToken(OPAL_TOKEN::STARTNAME);
+	set->addToken(OPAL_TOKEN::VALUES);   // "values"
+	set->addToken(OPAL_TOKEN::STARTLIST);
+	set->addToken(OPAL_TOKEN::STARTNAME);
+	set->addToken(name);
+	set->addToken(value);
+	set->addToken(OPAL_TOKEN::ENDNAME);
+	set->addToken(OPAL_TOKEN::ENDLIST);
+	set->addToken(OPAL_TOKEN::ENDNAME);
+	set->addToken(OPAL_TOKEN::ENDLIST);
+	set->complete();
+	if (session->sendCommand(set)) {
+		LOG(E) << "Set Failed ";
+		delete set;
+		return 0xff;
+	}
+	delete set;
+	LOG(D4) << "Leaving setTable";
+	return 0;
+}
+
+int MsedSetLSP(OPAL_UID table_uid, OPAL_TOKEN name, vector<uint8_t> value, 
+	char * password, char * devref)
+{
+	LOG(D) << "Entering MsedSetLSP()";
+	vector<uint8_t> table;
+	table.push_back(0xa8);
+	for (int i = 0; i < 8; i++) {
+		table.push_back(OPALUID[table_uid][i]);
+	}
+	MsedDev *device = new MsedDev(devref);
+	if (!(device->isOpal2())) {
+		LOG(E) << "Device not Opal2 " << devref;
+		delete device;
+		return 0xff;
+	}
+	MsedCommand *cmd = new MsedCommand();
+	MsedSession * session = new MsedSession(device);
+	// session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
+	//               HostChallenge = <password>, HostSigningAuthority = Admin1_UID]
+	if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) {
+		delete cmd;
+		delete session;
+		delete device;
+		return 0xff;
+	}
+	if (setTable(session, table, name, value)) {
+		LOG(E) << "Unable to update table";
+		delete cmd;
+		delete session;
+		delete device;
+		return 0xff;
+	}
+	MsedResponse response;
+	//getTable(session, table, 1, 10, response);
+	LOG(I) << "New value set ";
+	// session[TSN:HSN] <- EOS
+	delete session;
+	delete device;
+	LOG(D) << "Exiting MsedSetLSP()";
+	return 0;
+}
+
 

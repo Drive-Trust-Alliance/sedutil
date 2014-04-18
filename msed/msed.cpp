@@ -22,6 +22,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "MsedTasks.h"
 #include "MsedHashPwd.h"
 #include "MsedOptions.h"
+#include "MsedLexicon.h"
 
 int main(int argc, char * argv[])
 {
@@ -35,6 +36,10 @@ int main(int argc, char * argv[])
     // */
 
     MSED_OPTIONS opts;
+	vector<uint8_t> opalTRUE, opalFALSE;
+	opalTRUE.push_back(0x01);
+	opalFALSE.push_back(0x00);
+
     if (MsedOptions(argc, argv, &opts)) {
         //LOG(E) << "Invalid command line options ";
         return 1;
@@ -69,7 +74,132 @@ int main(int argc, char * argv[])
         LOG(D) << "Activating the LockingSP on" << argv[argc - 1] << " with password " << argv[opts.password];
         return activateLockingSP(argv[argc - 1], argv[opts.password]);
         break;
-    case 'T':
+	case 'a':
+		if (0 == opts.password) {
+			LOG(E) << "Enabling read Locking on the global range " << 
+				"requires the Admin1 password (-p)";
+			return 1;
+		}
+		LOG(I) << "Enabling read Locking on the global range " << argv[argc - 1];
+		return(MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+			OPAL_TOKEN::READLOCKENABLED, opalTRUE, 
+			argv[opts.password], argv[argc - 1]));
+		break;
+	case 'b':
+		if (0 == opts.password) {
+			LOG(E) << "Enabling write Locking on the global range " <<
+				"requires the Admin1 password (-p)";
+			return 1;
+		}
+		LOG(I) << "Enabling write Locking on the global range " << argv[argc - 1];
+		return(MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+			OPAL_TOKEN::WRITELOCKENABLED, opalTRUE, argv[opts.password], argv[argc - 1]));
+		break;
+	case 'c':
+		if (0 == opts.password) {
+			LOG(E) << "Disabling read Locking on the global range " <<
+				"requires the Admin1 password (-p)";
+			return 1;
+		}
+		LOG(I) << "Disabling read Locking on the global range " << argv[argc - 1];
+		return(MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+			OPAL_TOKEN::READLOCKENABLED, opalFALSE,
+			argv[opts.password], argv[argc - 1]));
+		break;
+	case 'd':
+		if (0 == opts.password) {
+			LOG(E) << "Disabling write Locking on the global range " <<
+				"requires the Admin1 password (-p)";
+			return 1;
+		}
+		LOG(I) << "Disabling write Locking on the global range " << argv[argc - 1];
+		return(MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+			OPAL_TOKEN::WRITELOCKENABLED, opalFALSE, 
+			argv[opts.password], argv[argc - 1]));
+		break;
+	case 'f':
+		if (0 == opts.password) {
+			LOG(E) << "Setting readLocked on the global range " <<
+				"requires the Admin1 password (-p)";
+			return 1;
+		}
+		LOG(I) << "Setting readLocked on the global range " << argv[argc - 1];
+		return(MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+			OPAL_TOKEN::READLOCKED , opalTRUE,
+			argv[opts.password], argv[argc - 1]));
+		break;
+	case 'g':
+		if (0 == opts.password) {
+			LOG(E) << "Setting writeLocked on the global range " <<
+				"requires the Admin1 password (-p)";
+			return 1;
+		}
+		LOG(I) << "Setting writeLocked on the global range " << argv[argc - 1];
+		return(MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+			OPAL_TOKEN::WRITELOCKED, opalTRUE,
+			argv[opts.password], argv[argc - 1]));
+		break;
+	case 'i':
+		if (0 == opts.password) {
+			LOG(E) << "Unsetting readLocked on the global range " <<
+				"requires the Admin1 password (-p)";
+			return 1;
+		}
+		LOG(I) << "Unsetting readLocking on the global range " << argv[argc - 1];
+		return(MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+			OPAL_TOKEN::READLOCKED, opalFALSE,
+			argv[opts.password], argv[argc - 1]));
+		break;
+	case 'j':
+		if (0 == opts.password) {
+			LOG(E) << "Unsetting writeLocked on the global range " <<
+				"requires the Admin1 password (-p)";
+			return 1;
+		}
+		LOG(I) << "Unsetting writeLocked on the global range " << argv[argc - 1];
+		return(MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+			OPAL_TOKEN::WRITELOCKED, opalFALSE,
+			argv[opts.password], argv[argc - 1]));
+		break;
+	case 'w':
+		if (0 == opts.password) {
+			LOG(E) << "Unsetting MBREnable " <<
+				"requires the Admin1 password (-p)";
+			return 1;
+		}
+		LOG(I) << "Unsetting MBREnable " << argv[argc - 1];
+		return(MsedSetLSP(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRENABLE, opalFALSE,
+			argv[opts.password], argv[argc - 1]));
+		break;
+	case 'x':
+		if (0 == opts.password) {
+			LOG(E) << "Unsetting MBRDone " <<
+				"requires the Admin1 password (-p)";
+			return 1;
+		}
+		LOG(I) << "Unsetting MBRDone " << argv[argc - 1];
+		return(MsedSetLSP(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRDONE, opalFALSE,
+			argv[opts.password], argv[argc - 1]));
+		break;
+	case 'y':
+		if (0 == opts.password) {
+			LOG(E) << "Setting MBREnable " <<	"requires the Admin1 password (-p)";
+			return 1;
+		}
+		LOG(I) << "Setting MBREnable " << argv[argc - 1];
+		return(MsedSetLSP(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRENABLE, opalTRUE,
+			argv[opts.password], argv[argc - 1]));
+		break;
+	case 'z':
+		if (0 == opts.password) {
+			LOG(E) << "Setting MBRDone " << "requires the Admin1 password (-p)";
+			return 1;
+		}
+		LOG(I) << "Setting MBRDone " << argv[argc - 1];
+		return(MsedSetLSP(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRDONE, opalTRUE,
+			argv[opts.password], argv[argc - 1]));
+		break;
+	case 'T':
         if (0 == opts.password) {
             LOG(E) << "Reverting the TPer requires a the SID password (-p)";
             return 1;

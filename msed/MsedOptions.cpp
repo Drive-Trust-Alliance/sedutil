@@ -31,17 +31,41 @@ void usage()
     printf("msed <action> <options> <device>\n\n");
     printf("actions \n");
     printf("-s, --scan \n");
-    printf("                                scans the devices on the system \n");
+    printf("                                Scans the devices on the system \n");
     printf("                                identifying Opal 2.0 compliant devices \n");
     printf("-q, --query \n");
     printf("                                Display the Discovery 0 response of a device\n");
     printf("-t, --takeownership \n");
-    printf("                                change the SID password of the device\n");
+    printf("                                Change the SID password of the device\n");
     printf("                                --password(-p) option required to specify the\n");
     printf("                                new password\n");
     printf("-l, --activatelockingsp \n");
-    printf("                                activate the LockingSP\n");
+    printf("                                Activate the LockingSP\n");
     printf("                                --password(-p) option required\n");
+	printf("--enableReadLockingGlobal \n");
+	printf("                                Enable Read Locking on the Global Range\n");
+	printf("                                --password(-p) option required\n");
+	printf("--enablWriteLockingGlobal \n");
+	printf("                                Enable Write Locking on the Global Range\n");
+	printf("                                --password(-p) option required\n");
+	printf("--disableReadLockingGlobal \n");
+	printf("                                Disable Read Locking on the Global Range\n");
+	printf("                                --password(-p) option required\n");
+	printf("--disablWriteLockingGlobal \n");
+	printf("                                Disable Write Locking on the Global Range\n");
+	printf("                                --password(-p) option required\n");
+	printf("--unsetMBREnable \n");
+	printf("                                Disable MBR shadowing \n");
+	printf("                                --password(-p) option required\n");
+	printf("--unsetMBRDone \n");
+	printf("                                 Shadow MBR \n");
+	printf("                                --password(-p) option required\n");
+	printf("--setMBREnable \n");
+	printf("                                Enable MBR shadowing \n");
+	printf("                                --password(-p) option required\n");
+	printf("--setMBRDone \n");
+	printf("                                 Unshadow MBR \n");
+	printf("                                --password(-p) option required\n");
     printf("-e, --enableuser \n");
     printf("                                Enable a user in the lockingSP\n");
     printf("                                --password(-p) is the lockingSP Admin1 password\n");
@@ -51,10 +75,6 @@ void usage()
     printf("                                --newpassword(-n) is the new password\n");
     printf("                                Note: when first activated the LockingSPs\n");
     printf("                                      Admin1 password is set to the SID password\n");
-    printf("-n, --newpassword \n");
-    printf("                                new password (only valid for --setpassword(-s)\n");
-    printf("-u, --user \n");
-    printf("                                Userid action is directed at\n");
     printf("-T, --revertTPer \n");
     printf("                                set the device back to factory defaults \n");
     printf("                                password(-p) option required to specify the SID password\n");
@@ -77,6 +97,10 @@ void usage()
     printf("options\n");
     printf("-p --password <password>     \n");
     printf("                                 the password for the action \n");
+	printf("-n, --newpassword \n");
+	printf("                                new password (only valid for --setpassword(-s)\n");
+	printf("-u, --user \n");
+	printf("                                Userid action is directed at\n");
     printf("-v	                             increase verbosity, can be repeated multiple times\n");
     printf("-q, --quiet                      suppress all but ERROR level messages\n");
     printf("-h, --help                       displays this message and ignores all other actions and options\n");
@@ -107,43 +131,71 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
             usage();
             return 1;
         }
-        else if (!(strcmp("-t", argv[i])) || !(strcmp("--takeownership", argv[i])))
-            opts->action = 't';
-        else if (!(strcmp("-e", argv[i])) || !(strcmp("--enableuser", argv[i])))
-            opts->action = 'e';
+		else if (!(strcmp("-a", argv[i])) || !(strcmp("--enableReadLockingGlobal", argv[i])))
+			opts->action = 'a';
+		else if (!(strcmp("-b", argv[i])) || !(strcmp("--enableWriteLockingGlobal", argv[i])))
+			opts->action = 'b';
+		else if (!(strcmp("-c", argv[i])) || !(strcmp("--disableReadLockingGlobal", argv[i])))
+			opts->action = 'c';
+		else if (!(strcmp("-d", argv[i])) || !(strcmp("--disableWriteLockingGlobal", argv[i])))
+			opts->action = 'd';
+		else if (!(strcmp("-e", argv[i])) || !(strcmp("--enableuser", argv[i])))
+			opts->action = 'e';
+		else if (!(strcmp("-f", argv[i])) || !(strcmp("--setReadLockedGlobal", argv[i])))
+			opts->action = 'f';
+		else if (!(strcmp("-g", argv[i])) || !(strcmp("--setWriteLockedGlobal", argv[i])))
+			opts->action = 'g';
+		//                 'h' = help
+		else if (!(strcmp("-i", argv[i])) || !(strcmp("--unsetReadLockedGlobal", argv[i])))
+			opts->action = 'i';
+		else if (!(strcmp("-j", argv[i])) || !(strcmp("--unsetWriteLockedGlobal", argv[i])))
+			opts->action = 'j';
+		
         else if (!(strcmp("-l", argv[i])) || !(strcmp("--activatelockingsp", argv[i])))
-            opts->action = 'l';
-        else if (!(strcmp("-S", argv[i])) || !(strcmp("--setpassword", argv[i])))
-            opts->action = 'S';
-        else if (!(strcmp("-n", argv[i])) || !(strcmp("--newpassword", argv[i])))
-            opts->newpassword = ++i;
+            opts->action = 'l';  
+		else if (!(strcmp("-n", argv[i])) || !(strcmp("--newpassword", argv[i])))
+			opts->newpassword = ++i;
+		else if (!(strcmp("-p", argv[i])) || !(strcmp("--password", argv[i])))
+			opts->password = ++i;
+		else if (!(strcmp("-q", argv[i])) || !(strcmp("--query", argv[i])))
+			opts->action = 'q';
+		else if (!(strcmp("-s", argv[i])) || !(strcmp("--scan", argv[i])))
+			opts->action = 's';
+		else if (!(strcmp("-t", argv[i])) || !(strcmp("--takeownership", argv[i])))
+			opts->action = 't';
         else if (!(strcmp("-u", argv[i])) || !(strcmp("--user", argv[i])))
             opts->userid = ++i;
+		else if ('v' == argv[i][1]) 
+		{
+			loggingLevel += (uint16_t)(strlen(argv[i]) - 1);
+			if (loggingLevel > 7) loggingLevel = 7;
+			CLog::Level() = CLog::FromInt(loggingLevel);
+			LOG(D) << "Log level set to " << CLog::ToString(CLog::FromInt(loggingLevel));
+		}
+		else if (!(strcmp("-w", argv[i])) || !(strcmp("--unsetMBREnable", argv[i])))
+			opts->action = 'w';
+		else if (!(strcmp("-x", argv[i])) || !(strcmp("--unsetMBRDone", argv[i])))
+			opts->action = 'x';
+		else if (!(strcmp("-y", argv[i])) || !(strcmp("--setMBREnable", argv[i])))
+			opts->action = 'y';
+		else if (!(strcmp("-z", argv[i])) || !(strcmp("--setMBRDone", argv[i])))
+			opts->action = 'z';
+		else if (!(strcmp("-D", argv[i])) || !(strcmp("--dumpTable", argv[i])))
+			opts->action = 'D';
+		else if (!(strcmp("-L", argv[i])) || !(strcmp("--revertLockingSP", argv[i])))
+			opts->action = 'L';
+		else if (!(strcmp("-S", argv[i])) || !(strcmp("--setpassword", argv[i])))
+			opts->action = 'S';
         else if (!(strcmp("-T", argv[i])) || !(strcmp("--revertTPer", argv[i])))
-            opts->action = 'T';
-        else if (!(strcmp("-L", argv[i])) || !(strcmp("--revertLockingSP", argv[i])))
-            opts->action = 'L';
+			opts->action = 'T';  
+		else if (!(strcmp("-V", argv[i])) || !(strcmp(" --ValidatePBKDF2", argv[i])))
+			opts->action = 'V';
         else if (!(strcmp("-Y", argv[i])) ||
                  !(strcmp("--yesIreallywanttoERASE*ALL*mydatausingthePSID", argv[i])))
             opts->action = 'Y';
         else if (!(strcmp("-Z", argv[i])) || !(strcmp("--revertLockingSPnoerase", argv[i])))
             opts->action = 'Z';
-        else if (!(strcmp("-s", argv[i])) || !(strcmp("--scan", argv[i])))
-            opts->action = 's';
-        else if (!(strcmp("-q", argv[i])) || !(strcmp("--query", argv[i])))
-            opts->action = 'q';
-        else if (!(strcmp("-D", argv[i])) || !(strcmp("--dumpTable", argv[i])))
-            opts->action = 'D';
-        else if (!(strcmp("-V", argv[i])) || !(strcmp(" --ValidatePBKDF2", argv[i])))
-            opts->action = 'V';
-        else if (!(strcmp("-p", argv[i])) || !(strcmp("--password", argv[i])))
-            opts->password = ++i;
-        else if ('v' == argv[i][1]) {
-            loggingLevel += (uint16_t) (strlen(argv[i]) - 1);
-            if (loggingLevel > 7) loggingLevel = 7;
-            CLog::Level() = CLog::FromInt(loggingLevel);
-            LOG(D) << "Log level set to " << CLog::ToString(CLog::FromInt(loggingLevel));
-        }
+       
         else if (i != argc - 1) {
             LOG(E) << "Invalid command line argument " << argv[i];
             return 1;

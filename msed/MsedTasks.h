@@ -18,8 +18,10 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
 #include <vector>
+#include "MsedLexicon.h"
 class MsedSession;
 class MsedResponse;
+using namespace std;
 
 int takeOwnership(char * devref, char * newpassword);
 int activateLockingSP(char * devref, char * password);
@@ -31,7 +33,11 @@ int setNewPassword(char * password, char * userid, char * newpassword, char * de
 int enableUser(char * password, char * userid, char * devref);
 int dumpTable();
 int getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData, MsedSession * session);
-int getTable(MsedSession * session, std::vector<uint8_t> table,
+int getTable(MsedSession * session, vector<uint8_t> table,
 	uint16_t startcol, uint16_t endcol, MsedResponse & response);
-int nextTable(MsedSession * session, std::vector<uint8_t> table,
-	std::vector<uint8_t> startkey, MsedResponse & response);
+int setTable(MsedSession * session, vector<uint8_t> table,
+	OPAL_TOKEN name, vector<uint8_t> value);
+int nextTable(MsedSession * session, vector<uint8_t> table,
+	vector<uint8_t> startkey, MsedResponse & response);
+int MsedSetLSP(OPAL_UID table_uid, OPAL_TOKEN name, vector<uint8_t> value,
+	char * password, char * devref);
