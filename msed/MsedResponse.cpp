@@ -41,9 +41,7 @@ MsedResponse::init(void * buffer)
     uint8_t * reply = (uint8_t *) buffer;
     uint32_t cpos = 0;
     uint32_t tokenLength;
-    uint32_t tokens = 0;
     memcpy(&h, buffer, sizeof (OPALHeader));
-    tokens = 0;
     response.clear();
     reply += sizeof (OPALHeader);
     while (cpos < SWAP32(h.subpkt.length)) {
@@ -53,7 +51,7 @@ MsedResponse::init(void * buffer)
         else if (!(reply[cpos] & 0x40)) // short atom
             tokenLength = (reply[cpos] & 0x0f) + 1;
         else if (!(reply[cpos] & 0x20)) // medium atom
-            tokenLength = ((reply[cpos] & 0x07) << 8) | reply[cpos + 1] + 2;
+            tokenLength = (((reply[cpos] & 0x07) << 8) | reply[cpos + 1]) + 2;
         else if (!(reply[cpos] & 0x10)) // long atom
             tokenLength = ((reply[cpos + 1] << 16) | (reply[cpos + 2] << 8) | reply[cpos + 3]) + 4;
         else // TOKEN
@@ -63,7 +61,6 @@ MsedResponse::init(void * buffer)
             bytestring.push_back(reply[cpos++]);
         }
         response.push_back(bytestring);
-        tokens++;
     }
 }
 

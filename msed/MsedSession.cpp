@@ -51,7 +51,7 @@ MsedSession::start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority)
     LOG(D4) << "Entering MsedSession::startSession ";
 	vector<uint8_t> hash, salt(DEFAULTSALT);
     MsedCommand *cmd = new MsedCommand();
-    MsedResponse * response;
+    MsedResponse response;
     cmd->reset(OPAL_UID::OPAL_SMUID_UID, OPAL_METHOD::STARTSESSION);
     cmd->addToken(OPAL_TOKEN::STARTLIST); // [  (Open Bracket)
     cmd->addToken(105); // HostSessionID : sessionnumber
@@ -75,66 +75,58 @@ MsedSession::start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority)
     }
     cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
-    if (sendCommand(cmd)) return 0xff;
-    response = new MsedResponse(cmd->getRespBuffer());
+    if (sendCommand(cmd, response)) return 0xff;
+   
     // call user method SL HSN TSN EL EOD SL 00 00 00 EL
     //   0   1     2     3  4   5   6  7   8
 
-    HSN = SWAP32(response->getUint32(4));
-    TSN = SWAP32(response->getUint32(5));
-    delete response;
+    HSN = SWAP32(response.getUint32(4));
+    TSN = SWAP32(response.getUint32(5));
     return 0;
 }
 
 uint8_t
-MsedSession::sendCommand(MsedCommand * cmd)
+MsedSession::sendCommand(MsedCommand * cmd, MsedResponse & response)
 {
     LOG(D4) << "Entering MsedSession::sendCommand()";
     uint8_t rc;
-    MsedResponse * response;
     cmd->setHSN(HSN);
     cmd->setTSN(TSN);
     cmd->setcomID(d->comID());
 
-    d->exec(cmd, SecurityProtocol);
+    d->exec(cmd, response, SecurityProtocol);
     /*
      * Check out the basics that so that we know we
      * have a sane reply to work with
      */
-    response = new MsedResponse(cmd->getRespBuffer());
-	// if outstanding data is <> 0 then the drive has more data but we dont support it
-	if (0 != response->h.cp.outstandingData) {
+    // if outstanding data is <> 0 then the drive has more data but we dont support it
+	if (0 != response.h.cp.outstandingData) {
 		LOG(E) << "Outstanding data <> 0 -- no program support";
-		delete response;
 		return 0xff;
 	}
     // zero lengths -- these are big endian but it doesn't matter for uint = 0
-    if ((0 == response->h.cp.length) |
-        (0 == response->h.pkt.length) |
-        (0 == response->h.subpkt.length)) {
+    if ((0 == response.h.cp.length) |
+        (0 == response.h.pkt.length) |
+        (0 == response.h.subpkt.length)) {
         LOG(E) << "One or more header fields have 0 length";
-        delete response;
         return 0xff;
     }
     // if we get an endsession response return 0
-    if ((1 == SWAP32(response->h.subpkt.length)) && (0xfa == response->tokenIs(0))) {
-        delete response;
+    if ((1 == SWAP32(response.h.subpkt.length)) && (0xfa == response.tokenIs(0))) {
         return 0;
     }
     // IF we received a method status return it
-    if (!(((uint8_t) OPAL_TOKEN::ENDLIST == (uint8_t) response->tokenIs(response->getTokenCount() - 1)) &&
-        ((uint8_t) OPAL_TOKEN::STARTLIST == (uint8_t) response->tokenIs(response->getTokenCount() - 5)))) {
+    if (!(((uint8_t) OPAL_TOKEN::ENDLIST == (uint8_t) response.tokenIs(response.getTokenCount() - 1)) &&
+        ((uint8_t) OPAL_TOKEN::STARTLIST == (uint8_t) response.tokenIs(response.getTokenCount() - 5)))) {
         // no method status so we hope we reported the error someplace else
         LOG(E) << "Method Status missing";
-        delete response;
         return 0xff;
     }
-    if (OPALSTATUSCODE::SUCCESS != response->getUint8(response->getTokenCount() - 4)) {
+    if (OPALSTATUSCODE::SUCCESS != response.getUint8(response.getTokenCount() - 4)) {
         LOG(E) << "method status code " <<
-                methodStatus(response->getUint8(response->getTokenCount() - 4));
+                methodStatus(response.getUint8(response.getTokenCount() - 4));
     }
-    rc = response->getUint8(response->getTokenCount() - 4);
-    delete response;
+    rc = response.getUint8(response.getTokenCount() - 4);
     return rc;
 }
 
@@ -204,12 +196,13 @@ MsedSession::methodStatus(uint8_t status)
 MsedSession::~MsedSession()
 {
     LOG(D4) << "Destroying MsedSession";
+	MsedResponse response;
     if (!willAbort) {
         MsedCommand *cmd = new MsedCommand();
         cmd->reset();
         cmd->addToken(OPAL_TOKEN::ENDOFSESSION);
         cmd->complete(0);
-        if (sendCommand(cmd)) {
+        if (sendCommand(cmd, response)) {
             LOG(E) << "EndSession Failed";
         }
         delete cmd;

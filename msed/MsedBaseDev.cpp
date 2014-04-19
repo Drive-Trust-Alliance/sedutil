@@ -30,6 +30,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "MsedEndianFixup.h"
 #include "MsedStructures.h"
 #include "MsedCommand.h"
+#include "MsedResponse.h"
 #include "MsedHexDump.h"
 
 using namespace std;
@@ -76,7 +77,7 @@ uint16_t MsedBaseDev::comID()
         return 0x0000;
 }
 
-uint8_t MsedBaseDev::exec(MsedCommand * cmd, uint8_t protocol)
+uint8_t MsedBaseDev::exec(MsedCommand * cmd, MsedResponse &response, uint8_t protocol)
 {
     uint8_t rc = 0;
     LOG(D3) << std::endl << "Dumping command buffer";
@@ -95,6 +96,7 @@ uint8_t MsedBaseDev::exec(MsedCommand * cmd, uint8_t protocol)
         LOG(E) << "Command failed on recv" << rc;
         return rc;
     }
+	response.init(cmd->getRespBuffer());
     return 0;
 }
 

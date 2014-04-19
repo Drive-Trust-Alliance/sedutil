@@ -19,6 +19,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 * C:E********************************************************************** */
 #pragma once
 class MsedCommand;
+class MsedResponse;
 
 #include "MsedStructures.h"
 
@@ -30,7 +31,7 @@ public:
 		sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
             void * buffer, uint16_t bufferlen) = 0;
 	
-	uint8_t exec(MsedCommand * cmd, uint8_t protocol = 0x01);
+	uint8_t exec(MsedCommand * cmd, MsedResponse &response, uint8_t protocol = 0x01);
     uint8_t isOpal2();
     uint8_t isPresent();
     uint16_t comID();

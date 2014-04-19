@@ -30,15 +30,14 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <vector>
 #include "MsedLexicon.h"
-class MsedDev;
+class MsedBaseDev;
 
 class MsedCommand {
+	friend class MsedBaseDev;
 public:
     MsedCommand();
     MsedCommand(OPAL_UID InvokingUid, OPAL_METHOD method);
     ~MsedCommand();
-    void * getCmdBuffer();
-    void * getRespBuffer();
     void addToken(OPAL_TOKEN token);
     void addToken(OPAL_TINY_ATOM token);
     void addToken(OPAL_UID token);
@@ -53,6 +52,8 @@ public:
     void reset(OPAL_UID InvokingUid, OPAL_METHOD method);
     void changeInvokingUid(std::vector<uint8_t> Invoker);
 private:
+	void * getCmdBuffer();
+	void * getRespBuffer();
     uint8_t *cmdbuf;
     uint8_t *respbuf;
     uint32_t bufferpos = 0;

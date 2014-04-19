@@ -25,6 +25,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 class MsedCommand;
 class MsedDev;
+class MsedResponse;
 
 using namespace std;
 
@@ -37,7 +38,7 @@ public:
     void setProtocol(uint8_t value);
 	void dontHashPwd();
     void expectAbort();
-    uint8_t sendCommand(MsedCommand * cmd);
+    uint8_t sendCommand(MsedCommand * cmd, MsedResponse & response);
 private:
     MsedSession();
     char * methodStatus(uint8_t status);
