@@ -61,6 +61,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>README.md</itemPath>
   </logicalFolder>
   <sourceRootList>
     <Elem>msed</Elem>
@@ -92,6 +93,8 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="README.md" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="msed/Class_Skeleton.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/Class_Skeleton.h" ex="false" tool="3" flavor2="0">
@@ -198,6 +201,8 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="README.md" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="msed/Class_Skeleton.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/Class_Skeleton.h" ex="false" tool="3" flavor2="0">
