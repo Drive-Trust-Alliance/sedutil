@@ -154,6 +154,8 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+# project specific files
 *.lnk
 /dist/
-/msed/win32/msed_WIN.zip
+*.zip
+*.tgz

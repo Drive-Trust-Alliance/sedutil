@@ -62,7 +62,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=
+LDLIBSOPTIONS=-Lcryptopp -lcryptopp
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -75,57 +75,57 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/msed: ${OBJECTFILES}
 ${OBJECTDIR}/msed/Class_Skeleton.o: msed/Class_Skeleton.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/Class_Skeleton.o msed/Class_Skeleton.cpp
+	$(COMPILE.cc) -O2 -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/Class_Skeleton.o msed/Class_Skeleton.cpp
 
 ${OBJECTDIR}/msed/MsedBaseDev.o: msed/MsedBaseDev.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedBaseDev.o msed/MsedBaseDev.cpp
+	$(COMPILE.cc) -O2 -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedBaseDev.o msed/MsedBaseDev.cpp
 
 ${OBJECTDIR}/msed/MsedCommand.o: msed/MsedCommand.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedCommand.o msed/MsedCommand.cpp
+	$(COMPILE.cc) -O2 -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedCommand.o msed/MsedCommand.cpp
 
 ${OBJECTDIR}/msed/MsedHashPwd.o: msed/MsedHashPwd.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedHashPwd.o msed/MsedHashPwd.cpp
+	$(COMPILE.cc) -O2 -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedHashPwd.o msed/MsedHashPwd.cpp
 
 ${OBJECTDIR}/msed/MsedHexDump.o: msed/MsedHexDump.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedHexDump.o msed/MsedHexDump.cpp
+	$(COMPILE.cc) -O2 -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedHexDump.o msed/MsedHexDump.cpp
 
 ${OBJECTDIR}/msed/MsedOptions.o: msed/MsedOptions.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedOptions.o msed/MsedOptions.cpp
+	$(COMPILE.cc) -O2 -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedOptions.o msed/MsedOptions.cpp
 
 ${OBJECTDIR}/msed/MsedResponse.o: msed/MsedResponse.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedResponse.o msed/MsedResponse.cpp
+	$(COMPILE.cc) -O2 -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedResponse.o msed/MsedResponse.cpp
 
 ${OBJECTDIR}/msed/MsedSession.o: msed/MsedSession.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedSession.o msed/MsedSession.cpp
+	$(COMPILE.cc) -O2 -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedSession.o msed/MsedSession.cpp
 
 ${OBJECTDIR}/msed/MsedTasks.o: msed/MsedTasks.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedTasks.o msed/MsedTasks.cpp
+	$(COMPILE.cc) -O2 -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedTasks.o msed/MsedTasks.cpp
 
 ${OBJECTDIR}/msed/linux/MsedDev.o: msed/linux/MsedDev.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed/linux
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/linux/MsedDev.o msed/linux/MsedDev.cpp
+	$(COMPILE.cc) -O2 -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/linux/MsedDev.o msed/linux/MsedDev.cpp
 
 ${OBJECTDIR}/msed/msed.o: msed/msed.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -s -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/msed.o msed/msed.cpp
+	$(COMPILE.cc) -O2 -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/msed.o msed/msed.cpp
 
 # Subprojects
 .build-subprojects:
