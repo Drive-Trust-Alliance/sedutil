@@ -5,7 +5,7 @@ If the libata.allow_tpm flag was not set at boot time you need to change it,
 optional steps 0.b & 0.c will do this:
 
 0.b chmod 0744 /sys/module/libata/parameters/allow_tpm
-0.b echo "1" /sys/module/libata/parameters/allow_tpm
+0.b echo "1" > /sys/module/libata/parameters/allow_tpm
 
 1. msed -s    <- SCAN to find Opal Drive (you should see Yes next the the drive
                      your working with.
@@ -18,8 +18,8 @@ optional steps 0.b & 0.c will do this:
 4.  You should see INFO: revertTper completed successfully.
     If you get a message that says NOT_AUTHORIZED you entered the PSID wrong.
 
-If it doesn't work please execute the command in step 3 with a -vvvvv (5 v's) as the first option and
-redirect the output to a file and send it back to me.
+If it doesn't work please execute the command in step 3 with a -vvvvv (5 v's) as the first option
+redirecting the output to a file and send it back to me.
 example:
 msed -vvvvv --yesIreallywanttoERASE*ALL*mydatausingthePSID -p thePSID_ALLCAPSNODASHES /dev/sg? > revertlog.txt
 
@@ -63,4 +63,4 @@ OPAL 2.0 function (0x0203)
 root@r0m30-PC:~# ./msed --yesIreallywanttoERASE*ALL*mydatausingthePSID -p thePSID_ALLCAPSNODASHES /dev/sg8
 - 01:14:10.996 INFO: Performing a PSID Revert on /dev/sg8 with password thePSID_ALLCAPSNODASHES
 - 01:14:11.165 INFO: revertTper completed successfully
-root@r0m30-PC:~/Projects/msed/dist/Release/GNU-Linux-x86# 
+root@r0m30-PC:~# 

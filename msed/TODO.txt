@@ -18,6 +18,23 @@ This software is Copyright 2014 Michael Romeo <r0m30@r0m30.com>
 
 * C:E********************************************************************** */
 
-This directory contains all of the OS dependent code for
-linux.  These are the functions that you will need to 
-recode when you port to a different os.
+1. Develop the PBA and add the code to load it to the shadow MBR.
+	At this point I am still researching what would be the best code base
+	for the PBA.  The two options I'm looking at right now are GRUB2 and
+	the PBA code used in Truecrypt.
+
+2. Rationalize and simplify the UI.
+	Currently the code does each task as a single, unique command.
+	This then requires multiple invocations to perform at task. I
+	think these need to be reduced to a few high level commands like:
+	  --initialSetup -p password 
+	  --setLockingRangeRO Global
+	  --setLockingRangeRW Global
+	  --setMBRShadow (enabled | disabled)
+	  --setMDRDone
+	The low-level commands would be left in place for advanced
+	use and/or troubleshooting.
+3. ADD more error checking.
+	At a minimum MsedCommand needs to check for overflow and memory allocations need
+	to be checked for failure.
+4. Find and fix the inevitable bugs.

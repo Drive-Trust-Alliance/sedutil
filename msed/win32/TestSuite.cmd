@@ -12,6 +12,7 @@ echo Last chance to hit Ctrl-c an keep the data on your drive
 pause
 :: test msed commands
 ::set MSED=..\..\Debug\msed.exe
+::set MSED=..\..\Release\msed.exe
 set MSED=msed.exe
 echo testing msed %date% @ %time% > msed_test.log
 %MSED% -V %1 >> msed_test.log

@@ -90,6 +90,7 @@
     <Text Include="Copyright.txt" />
     <Text Include="LICENSE.txt" />
     <Text Include="ReadMe.txt" />
+    <Text Include="TODO.txt" />
     <Text Include="win32\PSIDRevert_WINDOWS.txt" />
     <Text Include="win32\ReadMe_Windows.txt" />
   </ItemGroup>
