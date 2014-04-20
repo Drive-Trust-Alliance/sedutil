@@ -252,7 +252,7 @@ int main(int argc, char * argv[])
         return enableUser(argv[opts.password], argv[opts.userid], argv[argc - 1]);
         break;
     default:
-        LOG(E) << "Uable to determing what you want to do ";
+        LOG(E) << "Uable to determine what you want to do ";
         usage();
     }
     return 1;

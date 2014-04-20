@@ -20,9 +20,6 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 #pragma pack(push)
 #pragma pack(1)
-/** The Discovery 0 Header. As defined in
- * Opal SSC Documentation
- */
 
 #define FC_TPER		  0x0001
 #define FC_LOCKING    0x0002
@@ -31,7 +28,9 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #define FC_DATASTORE  0x0202
 #define FC_SINGLEUSER 0x0201
 #define FC_OPALV200   0x0203
-
+/** The Discovery 0 Header. As defined in
+* Opal SSC Documentation
+*/
 typedef struct _Discovery0Header {
     uint32_t length; /**< the lenght of the header 48 in 2.00.100*/
     uint32_t revision; /**< revision of the header 1 in 2.00.100 */
@@ -176,7 +175,7 @@ typedef struct _Discovery0SingleUserMode {
     uint32_t reserved04;
 } Discovery0SingleUserMode;
 
-/** Support for Additonal Datasotres.
+/** Support for Additonal Datastores.
  * This is probably usefull for enterprises but I doubt
  * it will be necessary for individuals
  */

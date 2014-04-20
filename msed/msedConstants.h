@@ -19,4 +19,6 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 * C:E********************************************************************** */
 #define IO_BUFFER_LENGTH 2048
 #define MAX_DISKS 20
+#define HEXON(x) "0x" << std::hex << std::setw(x) << std::setfill('0')
+#define HEXOFF std::dec << std::setw(0) << std::setfill(' ')
 #define MSED_VERSION "0.1a"

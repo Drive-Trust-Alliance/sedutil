@@ -31,6 +31,9 @@
     <Text Include="LICENSE.txt">
       <Filter>Documentation</Filter>
     </Text>
+    <Text Include="win32\PSIDRevert_WINDOWS.txt">
+      <Filter>Documentation</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class_Skeleton.h">
@@ -119,5 +122,16 @@
     <ClCompile Include="win32\MsedDev.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="win32\Package.cmd">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="win32\TestSuite.cmd">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="win32\msed_test.baseline">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
 </Project>

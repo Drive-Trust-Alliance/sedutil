@@ -19,7 +19,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 * C:E********************************************************************** */
 /* These are a few macros to fixup the endianess of the data
  * returned by the drive as specified in the TCG OPAL SSC standards
- * Since this is a low use utility porgram it shouldn't be to
+ * Since this is a low use utility program it shouldn't be to
  * ugly that these are macros
  */
 

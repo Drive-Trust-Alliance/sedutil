@@ -75,13 +75,18 @@ MsedSession::start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority)
     }
     cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
-    if (sendCommand(cmd, response)) return 0xff;
+	if (sendCommand(cmd, response)) {
+		LOG(E) << "Session start failed";
+		delete cmd;
+		return 0xff;
+	}
    
     // call user method SL HSN TSN EL EOD SL 00 00 00 EL
     //   0   1     2     3  4   5   6  7   8
 
     HSN = SWAP32(response.getUint32(4));
     TSN = SWAP32(response.getUint32(5));
+	delete cmd;
     return 0;
 }
 
@@ -89,7 +94,6 @@ uint8_t
 MsedSession::sendCommand(MsedCommand * cmd, MsedResponse & response)
 {
     LOG(D4) << "Entering MsedSession::sendCommand()";
-    uint8_t rc;
     cmd->setHSN(HSN);
     cmd->setTSN(TSN);
     cmd->setcomID(d->comID());
@@ -105,8 +109,8 @@ MsedSession::sendCommand(MsedCommand * cmd, MsedResponse & response)
 		return 0xff;
 	}
     // zero lengths -- these are big endian but it doesn't matter for uint = 0
-    if ((0 == response.h.cp.length) |
-        (0 == response.h.pkt.length) |
+    if ((0 == response.h.cp.length) ||
+        (0 == response.h.pkt.length) ||
         (0 == response.h.subpkt.length)) {
         LOG(E) << "One or more header fields have 0 length";
         return 0xff;
@@ -126,8 +130,7 @@ MsedSession::sendCommand(MsedCommand * cmd, MsedResponse & response)
         LOG(E) << "method status code " <<
                 methodStatus(response.getUint8(response.getTokenCount() - 4));
     }
-    rc = response.getUint8(response.getTokenCount() - 4);
-    return rc;
+    return response.getUint8(response.getTokenCount() - 4);
 }
 
 void

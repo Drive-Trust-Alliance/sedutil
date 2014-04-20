@@ -1,4 +1,3 @@
-/* C:B**************************************************************************
 This software is Copyright 2014 Michael Romeo <r0m30@r0m30.com>
 
     This file is part of msed.
@@ -16,13 +15,16 @@ This software is Copyright 2014 Michael Romeo <r0m30@r0m30.com>
     You should have received a copy of the GNU General Public License
     along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
-* C:E********************************************************************** */
 msed - Manage Self Encrypting Drives
 
-This program and it's accompanying Pre-Boot Authorization image allow
+This program and it's (tbd) accompanying Pre-Boot Authorization image allow
 you to enable the locking in SED's that comply with the TCG OPAL 2.00
 standard.   
                                ***** Warning  ******
+***** Warning  ****** PROPER USE OF CRETAIN FEATURES OF THIS PROGRAM 
+***** Warning  ****** **WILL** CAUSE AN UNRECOVERABLE LOSS ALL OF THE DATA ON YOUR 
+***** Warning  ****** DRIVE
+***** Warning  ******
 ***** Warning  ****** A FAILURE OF AND/OR IMPROPER USE OF THIS PROGRAM 
 ***** Warning  ****** COULD CAUSE AN UNRECOVERABLE LOSS ALL OF THE DATA ON YOUR 
 ***** Warning  ****** DRIVE AND/OR PREVENT THE DRIVE FROM BEING USED AT 

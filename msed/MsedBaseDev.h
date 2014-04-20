@@ -40,6 +40,11 @@ public:
     void puke();
 protected:
 	virtual void osmsSleep(uint32_t milliseconds) = 0;
+/** Decode the Discovery 0 response. Scans the D0 response and creates structure
+ * that can be queried later as required.This code also takes care of
+ * the endianess conversions either via a bitswap in the structure or executing
+ * a macro when the input buffer is read.
+ */
     void discovery0();
 	virtual void identify() = 0;
     const char * dev;

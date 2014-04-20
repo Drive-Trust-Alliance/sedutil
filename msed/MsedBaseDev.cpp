@@ -80,7 +80,7 @@ uint16_t MsedBaseDev::comID()
 uint8_t MsedBaseDev::exec(MsedCommand * cmd, MsedResponse &response, uint8_t protocol)
 {
     uint8_t rc = 0;
-    LOG(D3) << std::endl << "Dumping command buffer";
+    LOG(D3) << endl << "Dumping command buffer";
     IFLOG(D3) MsedHexDump(cmd->getCmdBuffer(), 128);
     rc = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH);
     if (0 != rc) {
@@ -100,11 +100,6 @@ uint8_t MsedBaseDev::exec(MsedCommand * cmd, MsedResponse &response, uint8_t pro
     return 0;
 }
 
-/** Decode the Discovery 0 response.Scans the D0 response and creates structure
- * that can be queried later as required.This code also takes care of
- * the endianess conversions either via a bitswap in the structure or executing
- * a macro when the input buffer is read.
- */
 void MsedBaseDev::discovery0()
 {
     LOG(D4) << "Entering MsedBaseDev::discovery0()";
@@ -115,9 +110,7 @@ void MsedBaseDev::discovery0()
     d0Response = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     if (NULL == d0Response) return;
     memset(d0Response, 0, IO_BUFFER_LENGTH);
-    uint8_t iorc = sendCmd(IF_RECV, 0x01, 0x0001, d0Response,
-                           IO_BUFFER_LENGTH);
-    if (0x00 != iorc) {
+	if (sendCmd(IF_RECV, 0x01, 0x0001, d0Response, IO_BUFFER_LENGTH)) {
         ALIGNED_FREE(d0Response);
         return;
     }
@@ -201,8 +194,6 @@ void MsedBaseDev::discovery0()
 /** Print out the Discovery 0 results */
 void MsedBaseDev::puke()
 {
-#define HEXON(x) "0x" << std::hex << std::setw(x) << std::setfill('0')
-#define HEXOFF std::dec << std::setw(0) << std::setfill(' ')
     LOG(D4) << "Entering MsedBaseDev::puke()";
     /* IDENTIFY */
     cout << dev << (disk_info.devType ? " OTHER " : " ATA ");
@@ -214,10 +205,10 @@ void MsedBaseDev::puke()
         if (0x20 == disk_info.firmwareRev[i]) break;
         cout << disk_info.firmwareRev[i];
     }
-    cout << " ";
-    for (int i = 0; i < sizeof (disk_info.serialNum); i++) {
-        cout << disk_info.serialNum[i];
-    }
+    //cout << " ";
+    //for (int i = 0; i < sizeof (disk_info.serialNum); i++) {
+    //    cout << disk_info.serialNum[i];
+    //}
     cout << std::endl << std::endl;
     /* TPer */
     if (disk_info.TPer) {

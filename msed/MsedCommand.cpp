@@ -77,9 +77,6 @@ MsedCommand::addToken(uint64_t number)
 {
     int startat = 0;
     LOG(D4) << "Entering MsedCommand::addToken(uint64_t number)";
-    //cmdbuf[bufferpos++] = 0x82;
-    //cmdbuf[bufferpos++] = ((number & 0xff00) >> 8);
-    //cmdbuf[bufferpos++] = (number & 0x00ff);
     if (number < 64) {
         cmdbuf[bufferpos++] = (uint8_t) number & 0x000000000000003f;
     }
@@ -120,7 +117,7 @@ MsedCommand::addToken(const char * bytestring)
 {
     LOG(D4) << "Entering MsedCommand::addToken(const char * bytestring)";
     uint16_t length = (uint16_t) strlen(bytestring);
-    if (strlen(bytestring) < 16) {
+    if (length < 16) {
         /* use tiny atom */
         cmdbuf[bufferpos++] = (uint8_t) length | 0xa0;
     }
@@ -133,8 +130,8 @@ MsedCommand::addToken(const char * bytestring)
         /* Use Large Atom */
         LOG(E) << "FAIL -- can't send LARGE ATOM size bytestring in 2048 Packet";
     }
-    memcpy(&cmdbuf[bufferpos], bytestring, (strlen(bytestring)));
-    bufferpos += (strlen(bytestring));
+    memcpy(&cmdbuf[bufferpos], bytestring, length);
+    bufferpos += length;
 
 }
 
@@ -223,18 +220,18 @@ MsedCommand::setcomID(uint16_t comID)
 void
 MsedCommand::setTSN(uint32_t TSN)
 {
+	LOG(D4) << "Entering MsedCommand::setTSN()";
     OPALHeader * hdr;
     hdr = (OPALHeader *) cmdbuf;
-    LOG(D4) << "Entering MsedCommand::setTSN()";
     hdr->pkt.TSN = TSN;
 }
 
 void
 MsedCommand::setHSN(uint32_t HSN)
 {
+	LOG(D4) << "Entering MsedCommand::setHSN()";
     OPALHeader * hdr;
     hdr = (OPALHeader *) cmdbuf;
-    LOG(D4) << "Entering MsedCommand::setHSN()";
     hdr->pkt.HSN = HSN;
 }
 

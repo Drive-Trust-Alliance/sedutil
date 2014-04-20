@@ -156,3 +156,4 @@ $RECYCLE.BIN/
 .DS_Store
 *.lnk
 /dist/
+/msed/win32/msed_WIN.zip

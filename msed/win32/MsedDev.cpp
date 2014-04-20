@@ -28,14 +28,9 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-/** Device Class (win32) represents a single disk device.
- *  This class is stored in a vector so to avoid writing a
- *  copy operator and an assignment operator no custom destructor
- *  is used leading to this unfortunate class method structure
- */
 MsedDev::MsedDev(const char * devref)
 {
-    LOG(D4) << "Creating MsedDev::TCGdev() " << devref;
+    LOG(D4) << "Creating MsedDev::Mseddev() " << devref;
     ATA_PASS_THROUGH_DIRECT * ata =
             (ATA_PASS_THROUGH_DIRECT *) _aligned_malloc(sizeof (ATA_PASS_THROUGH_DIRECT), 8);
     ataPointer = (void *) ata;
@@ -61,7 +56,6 @@ MsedDev::MsedDev(const char * devref)
     }
 }
 
-/** Send an ioctl to the device using pass through. */
 uint8_t MsedDev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                         void * buffer, uint16_t bufferlen)
 {

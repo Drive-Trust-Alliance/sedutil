@@ -90,6 +90,7 @@
     <Text Include="Copyright.txt" />
     <Text Include="LICENSE.txt" />
     <Text Include="ReadMe.txt" />
+    <Text Include="win32\PSIDRevert_WINDOWS.txt" />
     <Text Include="win32\ReadMe_Windows.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +124,11 @@
     <ClCompile Include="MsedSession.cpp" />
     <ClCompile Include="MsedTasks.cpp" />
     <ClCompile Include="win32\MsedDev.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="win32\msed_test.baseline" />
+    <None Include="win32\Package.cmd" />
+    <None Include="win32\TestSuite.cmd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

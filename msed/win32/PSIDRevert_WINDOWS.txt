@@ -1,0 +1,56 @@
+
+1. msed -s    <- SCAN to find Opal Drive (you should see Yes next the the drive
+                     your working with.
+2. msed -q \\.\PhysicalDrive? <--this will show the Opal status look at the locking
+                                               feature and see if it is Locked = Y
+                                               or LockingEnabled = Y that's a good
+                                                sign that this should work
+3.msed --yesIreallywanttoERASE*ALL*mydatausingthePSID -p thePSID_ALLCAPSNODASHES \\.\PhysicalDrive?
+
+4.  You should see INFO: revertTper completed successfully.
+    If you get a message that says NOT_AUTHORIZED you entered the PSID wrong.
+
+If it doesn't work please execute the command in step 3 with a -vvvvv (5 v's) as the first option and
+redirect the output to a file and send it back to me.
+example:
+msed -vvvvv --yesIreallywanttoERASE*ALL*mydatausingthePSID -p thePSID_ALLCAPSNODASHES \\.\PhysicalDrive? > revertlog.txt
+
+Hope this helps.
+********************************************************************
+********************************************************************
+The following is a sanitized log of the commands and expected responses.
+
+U:\msed\Release>msed -s
+Scanning for Opal 2.0 compliant disks
+\\.\PhysicalDrive0  No  KINGSTON SV100S264G                      120504
+\\.\PhysicalDrive1  No  Hitachi HDT725040VLA360                  V5COA7BA
+\\.\PhysicalDrive2  No  WDC WD5000AAKS-00TMA0                    12.01C01
+\\.\PhysicalDrive3  Yes Crucial_CT120M500SSD3                    MU05
+\\.\PhysicalDrive4  No
+\\.\PhysicalDrive5  No
+\\.\PhysicalDrive6  No
+\\.\PhysicalDrive7  No
+No more disks present ending scan
+
+U:\msed\Release>msed -q \\.\PhysicalDrive3
+\\.\PhysicalDrive3 ATA Crucial_CT120M500SSD3                    MU05         DRIVESERIALNO
+
+TPer function (0x0001)
+    ACKNAK = N, ASYNC = N. BufferManagement = N, comIDManagement  = N, Streaming = Y, SYNC = Y
+Locking function (0x0002)
+    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
+Geometry function (0x0003)
+    Align = Y, Alignment Granularity = 8 (4096), Logical Block size = 512, Lowest Aligned LBA = 0
+SingleUser function (0x0201)
+    ALL = N, ANY = N, Policy = Y, Locking Objects = 9
+DataStore function (0x0202)
+    Max Tables = 9, Max Size Tables = 94371840, Table size alignment = 1
+OPAL 2.0 function (0x0203)
+    Base comID = 0x1000, Initial PIN = 0x0 , Reverted PIN = 0x0 , comIDs = 1
+    Locking Admins = 4, Locking Users = 9, Range Crossing = N
+
+U:\msed\Release>msed --yesIreallywanttoERASE*ALL*mydatausingthePSID -pthePSID_ALLCAPSNODASHES \\.\PhysicalDrive3
+- 01:59:13.000 INFO: Performing a PSID Revert on \\.\PhysicalDrive3 with password thePSID_ALLCAPSNODASHES
+- 01:59:13.171 INFO: revertTper completed successfully
+
+U:\msed\Release>
