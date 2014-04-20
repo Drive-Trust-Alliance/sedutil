@@ -38,12 +38,12 @@ int diskQuery(char * devref)
     MsedDev * dev = new MsedDev(devref);
     if (!dev->isPresent()) {
         LOG(E) << "Device not present " << devref;
-		delete dev;
+        delete dev;
         return 1;
     }
     if (!dev->isOpal2()) {
-		LOG(E) << "Device not Opal2 " << devref;
-		delete dev;
+        LOG(E) << "Device not Opal2 " << devref;
+        delete dev;
         return 1;
     }
     dev->puke();
@@ -79,8 +79,8 @@ int diskScan()
             cout << std::endl;
             if (MAX_DISKS == i) {
                 LOG(I) << MAX_DISKS << " disks, really?";
-				delete d;
-				return 1;
+                delete d;
+                return 1;
             }
         }
         else break;
@@ -99,7 +99,7 @@ int takeOwnership(char * devref, char * newpassword)
     MsedResponse response;
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
-		LOG(E) << "Device not Opal2 " << devref;
+        LOG(E) << "Device not Opal2 " << devref;
         delete device;
         return 0xff;
     }
@@ -114,11 +114,11 @@ int takeOwnership(char * devref, char * newpassword)
     // session[TSN:HSN] -> C_PIN_MSID_UID.Get[Cellblock : [startColumn = PIN,
     //                       endColumn = PIN]]
     vector<uint8_t> table;
-	table.push_back(0xa8);
-	for (int i = 0; i < 8; i++) {
-		table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_MSID][i]);
-	}
-	if (getTable(session, table, 0x03, 0x03, response)){
+    table.push_back(0xa8);
+    for (int i = 0; i < 8; i++) {
+        table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_MSID][i]);
+    }
+    if (getTable(session, table, 0x03, 0x03, response)) {
         delete session;
         delete device;
         return 0xff;
@@ -130,24 +130,23 @@ int takeOwnership(char * devref, char * newpassword)
      */
     //	Start Session
     session = new MsedSession(device);
-	session->dontHashPwd();  // this should not be hashed
-	if (session->start(OPAL_UID::OPAL_ADMINSP_UID, 
-		(char *) response.getString(4).c_str(),
-        OPAL_UID::OPAL_SID_UID)) 
-	{
+    session->dontHashPwd(); // this should not be hashed
+    if (session->start(OPAL_UID::OPAL_ADMINSP_UID,
+                       (char *) response.getString(4).c_str(),
+                       OPAL_UID::OPAL_SID_UID)) {
         delete session;
         delete device;
         return 0xff;
     }
     // session[TSN:HSN] -> C_PIN_SID_UID.Set[Values = [PIN = <new_SID_password>]]
-	table.clear();
-	table.push_back(0xa8);
-	for (int i = 0; i < 8; i++) {
-		table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_SID][i]);
-	}
-	hash.clear();
-	MsedHashPwd(hash, newpassword, salt);
-	if (setTable(session, table, OPAL_TOKEN::PIN, hash)) {
+    table.clear();
+    table.push_back(0xa8);
+    for (int i = 0; i < 8; i++) {
+        table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_SID][i]);
+    }
+    hash.clear();
+    MsedHashPwd(hash, newpassword, salt);
+    if (setTable(session, table, OPAL_TOKEN::PIN, hash)) {
         delete session;
         delete device;
         return 0xff;
@@ -165,20 +164,20 @@ int revertTPer(char * devref, char * password, uint8_t PSID)
     LOG(D4) << "Entering revertTPer(char * devref, char * password)";
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
-		LOG(E) << "Device not Opal2 " << devref;
+        LOG(E) << "Device not Opal2 " << devref;
         delete device;
         return 0xff;
     }
     MsedCommand *cmd = new MsedCommand();
     MsedSession * session = new MsedSession(device);
-	MsedResponse response;
-	OPAL_UID uid = OPAL_UID::OPAL_SID_UID;
-	if (PSID) {
-		session->expectAbort();  // seems to immed abort on PSID auth fail
-		session->dontHashPwd();  // PSID pwd should be passed as entered
-		uid = OPAL_UID::OPAL_PSID_UID;
-	}
-    if (session->start(OPAL_UID::OPAL_ADMINSP_UID, password,uid)) {
+    MsedResponse response;
+    OPAL_UID uid = OPAL_UID::OPAL_SID_UID;
+    if (PSID) {
+        session->expectAbort(); // seems to immed abort on PSID auth fail
+        session->dontHashPwd(); // PSID pwd should be passed as entered
+        uid = OPAL_UID::OPAL_PSID_UID;
+    }
+    if (session->start(OPAL_UID::OPAL_ADMINSP_UID, password, uid)) {
         delete cmd;
         delete session;
         delete device;
@@ -190,7 +189,7 @@ int revertTPer(char * devref, char * password, uint8_t PSID)
     cmd->addToken(OPAL_TOKEN::ENDLIST);
     cmd->complete();
     session->expectAbort();
-    if (session->sendCommand(cmd,response)) {
+    if (session->sendCommand(cmd, response)) {
         delete cmd;
         delete session;
         delete device;
@@ -207,15 +206,15 @@ int revertTPer(char * devref, char * password, uint8_t PSID)
 int activateLockingSP(char * devref, char * password)
 {
     LOG(D4) << "Entering activateLockingSP()";
-	vector<uint8_t> table;
-	table.push_back(0xa8);
-	for (int i = 0; i < 8; i++) {
-		table.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGSP_UID][i]);
-	}
+    vector<uint8_t> table;
+    table.push_back(0xa8);
+    for (int i = 0; i < 8; i++) {
+        table.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGSP_UID][i]);
+    }
     MsedResponse response;
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
-		LOG(E) << "Device not Opal2 " << devref;
+        LOG(E) << "Device not Opal2 " << devref;
         delete device;
         return 0xff;
     }
@@ -229,9 +228,8 @@ int activateLockingSP(char * devref, char * password)
     }
     //session[TSN:HSN]->LockingSP_UID.Get[Cellblock:[startColumn = LifeCycle,
     //                                               endColumn = LifeCycle]]
-	if (getTable(session, table, 0x06, 0x06, response))   
-	{
-		LOG(E) << "Unable to determine LockingSP Lifecycle state";
+    if (getTable(session, table, 0x06, 0x06, response)) {
+        LOG(E) << "Unable to determine LockingSP Lifecycle state";
         delete cmd;
         delete session;
         delete device;
@@ -254,7 +252,7 @@ int activateLockingSP(char * devref, char * password)
     cmd->addToken(OPAL_TOKEN::STARTLIST);
     cmd->addToken(OPAL_TOKEN::ENDLIST);
     cmd->complete();
-    if (session->sendCommand(cmd,response)) {
+    if (session->sendCommand(cmd, response)) {
         delete cmd;
         delete session;
         delete device;
@@ -273,15 +271,15 @@ int activateLockingSP(char * devref, char * password)
 int revertLockingSP(char * devref, char * password, uint8_t keep)
 {
     LOG(D4) << "Entering revert LockingSP() keep = " << keep;
-	vector<uint8_t> keepgloballockingrange;
+    vector<uint8_t> keepgloballockingrange;
     keepgloballockingrange.push_back(0xa3);
     keepgloballockingrange.push_back(0x06);
     keepgloballockingrange.push_back(0x00);
     keepgloballockingrange.push_back(0x00);
-	MsedResponse response;
+    MsedResponse response;
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
-		LOG(E) << "Device not Opal2 " << devref;
+        LOG(E) << "Device not Opal2 " << devref;
         delete device;
         return 0xff;
     }
@@ -289,7 +287,7 @@ int revertLockingSP(char * devref, char * password, uint8_t keep)
     MsedSession * session = new MsedSession(device);
     // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
     //                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
-    
+
     if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) {
         delete cmd;
         delete session;
@@ -307,7 +305,7 @@ int revertLockingSP(char * devref, char * password, uint8_t keep)
     }
     cmd->addToken(OPAL_TOKEN::ENDLIST);
     cmd->complete();
-    if (session->sendCommand(cmd,response)) {
+    if (session->sendCommand(cmd, response)) {
         delete cmd;
         delete session;
         delete device;
@@ -328,10 +326,10 @@ int setNewPassword(char * password, char * userid, char * newpassword, char * de
             " Admin1 password = " << password << " user = " << userid <<
             " newpassword = " << newpassword << " device = " << devref;
 
-	std::vector<uint8_t> userCPIN, hash, salt(DEFAULTSALT);
+    std::vector<uint8_t> userCPIN, hash, salt(DEFAULTSALT);
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
-		LOG(E) << "Device not Opal2 " << devref;
+        LOG(E) << "Device not Opal2 " << devref;
         delete device;
         return 0xff;
     }
@@ -351,13 +349,13 @@ int setNewPassword(char * password, char * userid, char * newpassword, char * de
         return 0xff;
     }
     // session[TSN:HSN] -> C_PIN_user_UID.Set[Values = [PIN = <new_password>]]
-	MsedHashPwd(hash, newpassword, salt);
-	if (setTable(session, userCPIN, OPAL_TOKEN::PIN, hash)) {
-		LOG(E) << "Unable to set user " << userid << " new password ";
-		delete session;
-		delete device;
-		return 0xff;
-	}
+    MsedHashPwd(hash, newpassword, salt);
+    if (setTable(session, userCPIN, OPAL_TOKEN::PIN, hash)) {
+        LOG(E) << "Unable to set user " << userid << " new password ";
+        delete session;
+        delete device;
+        return 0xff;
+    }
     LOG(I) << userid << " password changed to " << newpassword;
     // session[TSN:HSN] <- EOS
     delete session;
@@ -373,14 +371,14 @@ int enableUser(char * password, char * userid, char * devref)
     /*
      * Enable a user in the lockingSP
      */
-	vector<uint8_t> userUID, opalTRUE;
-	opalTRUE.push_back(0x01);
+    vector<uint8_t> userUID, opalTRUE;
+    opalTRUE.push_back(0x01);
     MsedDev *device = new MsedDev(devref);
-	if (!(device->isOpal2())) {
-		LOG(E) << "Device not Opal2 " << devref;
-		delete device;
-		return 0xff;
-	}
+    if (!(device->isOpal2())) {
+        LOG(E) << "Device not Opal2 " << devref;
+        delete device;
+        return 0xff;
+    }
     MsedSession * session = new MsedSession(device);
     // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
     //               HostChallenge = <new_SID_password>, HostSigningAuthority = Admin1_UID]
@@ -397,12 +395,12 @@ int enableUser(char * password, char * userid, char * devref)
         return 0xff;
     }
     // session[TSN:HSN] -> User1_UID.Set[Values = [Enabled = TRUE]]
-	if (setTable(session, userUID, (OPAL_TOKEN) 0x05 , opalTRUE)) {
-		LOG(E) << "Unable to enable user " << userid;
-		delete session;
-		delete device;
-		return 0xff;
-	}
+    if (setTable(session, userUID, (OPAL_TOKEN) 0x05, opalTRUE)) {
+        LOG(E) << "Unable to enable user " << userid;
+        delete session;
+        delete device;
+        return 0xff;
+    }
     LOG(I) << userid << " has been enabled ";
     // session[TSN:HSN] <- EOS
     delete session;
@@ -452,14 +450,14 @@ int dumpTable()
 {
     CLog::Level() = CLog::FromInt(4);
     LOG(D4) << "Entering getTable()";
-	vector<uint8_t> table, key, nextkey, temp;
+    vector<uint8_t> table, key, nextkey, temp;
     table.push_back(0xa8);
     for (int i = 0; i < 8; i++) {
         table.push_back(OPALUID[OPAL_UID::OPAL_AUTHORITY_TABLE][i]);
     }
     MsedDev *device = new MsedDev("\\\\.\\PhysicalDrive3");
     if (!(device->isOpal2())) {
-		LOG(E) << "Device not Opal2 "; // << devref;
+        LOG(E) << "Device not Opal2 "; // << devref;
         delete device;
         return 0xff;
     }
@@ -467,7 +465,7 @@ int dumpTable()
     MsedResponse response;
     // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
     //                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
-    if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, "password", OPAL_UID::OPAL_ADMIN1_UID)) {
+    if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, (char *) "password", OPAL_UID::OPAL_ADMIN1_UID)) {
         delete session;
         delete device;
         return 0xff;
@@ -525,7 +523,7 @@ int nextTable(MsedSession * session, std::vector<uint8_t> table,
     next->addToken(OPAL_TOKEN::ENDNAME);
     next->addToken(OPAL_TOKEN::ENDLIST);
     next->complete();
-    if (session->sendCommand(next,response)) {
+    if (session->sendCommand(next, response)) {
         delete next;
         return 0xff;
     }
@@ -553,80 +551,81 @@ int getTable(MsedSession * session, vector<uint8_t> table,
     get->addToken(OPAL_TOKEN::ENDLIST);
     get->addToken(OPAL_TOKEN::ENDLIST);
     get->complete();
-    if (session->sendCommand(get,response)) {
+    if (session->sendCommand(get, response)) {
         delete get;
         return 0xff;
     }
     delete get;
     return 0;
 }
+
 int setTable(MsedSession * session, vector<uint8_t> table,
-	OPAL_TOKEN name, vector<uint8_t> value)
+             OPAL_TOKEN name, vector<uint8_t> value)
 {
-	LOG(D4) << "Entering setTable";
-	MsedResponse response;
-	MsedCommand *set = new MsedCommand();
-	set->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::SET);
-	set->changeInvokingUid(table);
-	set->addToken(OPAL_TOKEN::STARTLIST);
-	set->addToken(OPAL_TOKEN::STARTNAME);
-	set->addToken(OPAL_TOKEN::VALUES);   // "values"
-	set->addToken(OPAL_TOKEN::STARTLIST);
-	set->addToken(OPAL_TOKEN::STARTNAME);
-	set->addToken(name);
-	set->addToken(value);
-	set->addToken(OPAL_TOKEN::ENDNAME);
-	set->addToken(OPAL_TOKEN::ENDLIST);
-	set->addToken(OPAL_TOKEN::ENDNAME);
-	set->addToken(OPAL_TOKEN::ENDLIST);
-	set->complete();
-	if (session->sendCommand(set, response)) {
-		LOG(E) << "Set Failed ";
-		delete set;
-		return 0xff;
-	}
-	delete set;
-	LOG(D4) << "Leaving setTable";
-	return 0;
+    LOG(D4) << "Entering setTable";
+    MsedResponse response;
+    MsedCommand *set = new MsedCommand();
+    set->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::SET);
+    set->changeInvokingUid(table);
+    set->addToken(OPAL_TOKEN::STARTLIST);
+    set->addToken(OPAL_TOKEN::STARTNAME);
+    set->addToken(OPAL_TOKEN::VALUES); // "values"
+    set->addToken(OPAL_TOKEN::STARTLIST);
+    set->addToken(OPAL_TOKEN::STARTNAME);
+    set->addToken(name);
+    set->addToken(value);
+    set->addToken(OPAL_TOKEN::ENDNAME);
+    set->addToken(OPAL_TOKEN::ENDLIST);
+    set->addToken(OPAL_TOKEN::ENDNAME);
+    set->addToken(OPAL_TOKEN::ENDLIST);
+    set->complete();
+    if (session->sendCommand(set, response)) {
+        LOG(E) << "Set Failed ";
+        delete set;
+        return 0xff;
+    }
+    delete set;
+    LOG(D4) << "Leaving setTable";
+    return 0;
 }
 
-int MsedSetLSP(OPAL_UID table_uid, OPAL_TOKEN name, vector<uint8_t> value, 
-	char * password, char * devref)
+int MsedSetLSP(OPAL_UID table_uid, OPAL_TOKEN name, vector<uint8_t> value,
+               char * password, char * devref)
 {
-	LOG(D) << "Entering MsedSetLSP()";
-	vector<uint8_t> table;
-	table.push_back(0xa8);
-	for (int i = 0; i < 8; i++) {
-		table.push_back(OPALUID[table_uid][i]);
-	}
-	MsedDev *device = new MsedDev(devref);
-	if (!(device->isOpal2())) {
-		LOG(E) << "Device not Opal2 " << devref;
-		delete device;
-		return 0xff;
-	}
-	MsedSession * session = new MsedSession(device);
-	// session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
-	//               HostChallenge = <password>, HostSigningAuthority = Admin1_UID]
-	if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) {
-		delete session;
-		delete device;
-		return 0xff;
-	}
-	if (setTable(session, table, name, value)) {
-		LOG(E) << "Unable to update table";
-		delete session;
-		delete device;
-		return 0xff;
-	}
-	MsedResponse response;
-	//getTable(session, table, 1, 10, response);
-	LOG(I) << "New value set ";
-	// session[TSN:HSN] <- EOS
-	delete session;
-	delete device;
-	LOG(D) << "Exiting MsedSetLSP()";
-	return 0;
+    LOG(D) << "Entering MsedSetLSP()";
+    vector<uint8_t> table;
+    table.push_back(0xa8);
+    for (int i = 0; i < 8; i++) {
+        table.push_back(OPALUID[table_uid][i]);
+    }
+    MsedDev *device = new MsedDev(devref);
+    if (!(device->isOpal2())) {
+        LOG(E) << "Device not Opal2 " << devref;
+        delete device;
+        return 0xff;
+    }
+    MsedSession * session = new MsedSession(device);
+    // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
+    //               HostChallenge = <password>, HostSigningAuthority = Admin1_UID]
+    if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) {
+        delete session;
+        delete device;
+        return 0xff;
+    }
+    if (setTable(session, table, name, value)) {
+        LOG(E) << "Unable to update table";
+        delete session;
+        delete device;
+        return 0xff;
+    }
+    MsedResponse response;
+    //getTable(session, table, 1, 10, response);
+    LOG(I) << "New value set ";
+    // session[TSN:HSN] <- EOS
+    delete session;
+    delete device;
+    LOG(D) << "Exiting MsedSetLSP()";
+    return 0;
 }
 
 
