@@ -43,7 +43,11 @@ MsedDev::MsedDev(const char * devref)
     if ((fd = open(dev, O_RDWR)) < 0) {
         isOpen = FALSE;
         // This is a D1 because diskscan looks for open fail to end scan
-        LOG(D1) << "Error opening device " << dev;
+        LOG(D1) << "Error opening device " << dev << " " << (int32_t) fd;
+        if (-EPERM == fd) {
+            LOG(E) << "You do not have permission to access the raw disk in write mode";
+            LOG(E) << "Perhaps you might try sudo to run as root";
+        }
     }
     else {
         isOpen = TRUE;
