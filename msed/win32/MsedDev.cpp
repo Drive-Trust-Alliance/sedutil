@@ -48,6 +48,10 @@ MsedDev::MsedDev(const char * devref)
         DWORD err = GetLastError();
         // This is a D1 because diskscan looks for open fail to end scan
         LOG(D1) << "Error opening device " << dev << " Error " << err;
+		if (ERROR_ACCESS_DENIED == err) {
+			LOG(E) << "You do not have proper authority to access the raw disk";
+			LOG(E) << "Try running as Administrator";
+		}
     }
     else {
         isOpen = TRUE;
