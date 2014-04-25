@@ -115,7 +115,7 @@ uint64_t MsedResponse::getUint64(uint32_t tokenNum)
             return 0;
         }
         else {
-            return (response[tokenNum][0] & 0x3f);
+            return (uint64_t) (response[tokenNum][0] & 0x3f);
         }
     }
     else if (!(response[tokenNum][0] & 0x40)) { // short atom
@@ -129,7 +129,7 @@ uint64_t MsedResponse::getUint64(uint32_t tokenNum)
                 LOG(E) << "UINT64 with greater than 8 bytes";
             int b = 0;
             for (uint32_t i = response[tokenNum].size() - 1; i > 0; i--) {
-                whatever |= (response[tokenNum][i] << (8 * b));
+				whatever |= ((uint64_t)response[tokenNum][i] << (8 * b));
                 b++;
             }
             return whatever;

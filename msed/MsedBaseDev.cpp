@@ -104,10 +104,14 @@ uint8_t MsedBaseDev::exec(MsedCommand * cmd, MsedResponse &response, uint8_t pro
         LOG(E) << "Command failed on send " << (uint16_t) rc;
         return rc;
     }
-    osmsSleep(25);
-    memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
-    rc = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
 	hdr = (OPALHeader *)cmd->getRespBuffer();
+	do {
+		//LOG(I) << "read loop";
+		osmsSleep(25);
+		memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
+		rc = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
+		
+	} while ((0 != hdr->cp.outstandingData) && (0 == hdr->cp.minTransfer));
     LOG(D3) << std::endl << "Dumping reply buffer";
 	IFLOG(D3) MsedHexDump(cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof(OPALComPacket));
     if (0 != rc) {
