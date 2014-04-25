@@ -57,8 +57,5 @@ echo disable mbr shadowing
 echo Thanks for running the test suite 
 echo please e-mail msed_test.log to r0m30@r0m30.com
 echo along with the OS, OS level and type of drive you have
-echo -
-echo now PLEASE run another PSID revert on the drive
-echo leaving the SID password as password is a security risk
 pause
 exit /b
