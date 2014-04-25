@@ -80,6 +80,11 @@ void MsedBaseDev::getModelNum(uint8_t bytes[40])
     memcpy(&bytes[0], &disk_info.modelNum[0], 40);
 }
 
+void MsedBaseDev::getSerialNum(uint8_t bytes[20])
+{
+	memcpy(&bytes[0], &disk_info.serialNum[0], 20);
+}
+
 uint16_t MsedBaseDev::comID()
 {
     LOG(D4) << "Entering MsedBaseDev::comID()";

@@ -25,6 +25,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <iomanip>
 #include "MsedHashPwd.h"
+#include "MsedDev.h"
 #include "log.h"
 #include "../cryptopp/pch.h"
 #include "../cryptopp/stdcpp.h"
@@ -37,10 +38,20 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 using namespace std;
 using namespace CryptoPP;
 
-void MsedHashPwd(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
+void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedDev * d) {
+	LOG(D4) << " Entered MsedHashPwd";
+	uint8_t serNum[20];
+	d->getSerialNum(serNum);
+	vector<uint8_t> salt(serNum, &serNum[19]);
+	MsedHashPassword(hash, password, salt);
+	LOG(D4) << " Exit MsedHashPwd"; // log for hash timing
+
+}
+
+void MsedHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
                  unsigned int iter, uint8_t hashsize)
 {
-	LOG(D4) << " Entered MsedHashPwd";
+	LOG(D4) << " Entered MsedHashPassword";
     // if the hashsize can be > 255 the token overhead logic needs to be fixed
     assert(1 == sizeof (hashsize));
 	if (253 < hashsize) LOG(E) << "Hashsize > 253 incorrect token generated";
@@ -87,7 +98,7 @@ bool TestMsed(const PBKDF_TestTuple *testSet, unsigned int testSetSize)
         for (uint16_t i = 0; i < strnlen(tuple.hexSalt, 255); i++) {
             seaSalt.push_back(tuple.hexSalt[i]);
         }
-        MsedHashPwd(hash, (char *) tuple.hexPassword, seaSalt,
+        MsedHashPassword(hash, (char *) tuple.hexPassword, seaSalt,
                     tuple.iterations, derivedKey.size());
         bool fail = memcmp(hash.data() + 2, derivedKey.data(), derived.size()) != 0;
         pass = pass && !fail;

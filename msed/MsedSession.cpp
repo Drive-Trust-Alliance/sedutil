@@ -49,7 +49,7 @@ uint8_t
 MsedSession::start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority)
 {
     LOG(D4) << "Entering MsedSession::startSession ";
-	vector<uint8_t> hash, salt(DEFAULTSALT);
+	vector<uint8_t> hash;
     MsedCommand *cmd = new MsedCommand();
     MsedResponse response;
     cmd->reset(OPAL_UID::OPAL_SMUID_UID, OPAL_METHOD::STARTSESSION);
@@ -62,7 +62,7 @@ MsedSession::start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority)
         cmd->addToken(OPAL_TINY_ATOM::UINT_00);
 		if (hashPwd) {
 			hash.clear();
-			MsedHashPwd(hash, HostChallenge, salt);
+			MsedHashPwd(hash, HostChallenge, d);
 			cmd->addToken(hash);
 		}
 		else

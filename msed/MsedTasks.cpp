@@ -96,7 +96,7 @@ int diskScan()
 int takeOwnership(char * devref, char * newpassword)
 {
     LOG(D4) << "Entering takeOwnership(char * devref, char * newpassword)";
-    vector<uint8_t> hash, salt(DEFAULTSALT);
+    vector<uint8_t> hash;
     MsedResponse response;
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
@@ -146,7 +146,7 @@ int takeOwnership(char * devref, char * newpassword)
         table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_SID][i]);
     }
     hash.clear();
-    MsedHashPwd(hash, newpassword, salt);
+    MsedHashPwd(hash, newpassword, device);
     if (setTable(session, table, OPAL_TOKEN::PIN, hash)) {
         delete session;
         delete device;
@@ -336,7 +336,7 @@ int setNewPassword(char * password, char * userid, char * newpassword, char * de
             " Admin1 password = " << password << " user = " << userid <<
             " newpassword = " << newpassword << " device = " << devref;
 
-    std::vector<uint8_t> userCPIN, hash, salt(DEFAULTSALT);
+    std::vector<uint8_t> userCPIN, hash;
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
         LOG(E) << "Device not Opal2 " << devref;
@@ -359,7 +359,7 @@ int setNewPassword(char * password, char * userid, char * newpassword, char * de
         return 0xff;
     }
     // session[TSN:HSN] -> C_PIN_user_UID.Set[Values = [PIN = <new_password>]]
-    MsedHashPwd(hash, newpassword, salt);
+    MsedHashPwd(hash, newpassword, device);
     if (setTable(session, userCPIN, OPAL_TOKEN::PIN, hash)) {
         LOG(E) << "Unable to set user " << userid << " new password ";
         delete session;

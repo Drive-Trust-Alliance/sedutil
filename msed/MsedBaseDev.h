@@ -39,6 +39,7 @@ public:
     uint16_t comID();
 	void getFirmwareRev(uint8_t bytes[8]);
 	void getModelNum(uint8_t bytes[40]);
+	void MsedBaseDev::getSerialNum(uint8_t bytes[20]);
     void puke();
 protected:
 	virtual void osmsSleep(uint32_t milliseconds) = 0;
