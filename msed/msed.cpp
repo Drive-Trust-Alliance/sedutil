@@ -221,7 +221,7 @@ int main(int argc, char * argv[])
             return 1;
         }
         LOG(I) << "Performing dumpTable() ";
-        return dumpTable();
+		return dumpTable(argv[opts.password],argv[argc - 1]);
         break;
     case 'Y':
         if (0 == opts.password) {

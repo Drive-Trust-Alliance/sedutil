@@ -31,8 +31,8 @@ int diskScan();
 int diskQuery(char * devref);
 int setNewPassword(char * password, char * userid, char * newpassword, char * devref);
 int enableUser(char * password, char * userid, char * devref);
-int dumpTable();
-int getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData, MsedSession * session);
+int dumpTable(char * password, char * devref);
+int getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData);
 int getTable(MsedSession * session, vector<uint8_t> table,
 	uint16_t startcol, uint16_t endcol, MsedResponse & response);
 int setTable(MsedSession * session, vector<uint8_t> table,

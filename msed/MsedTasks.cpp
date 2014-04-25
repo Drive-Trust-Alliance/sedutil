@@ -20,6 +20,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include <stdio.h>
 #include <iostream>
+#include <iomanip>
 #include "MsedDev.h"
 #include "MsedHexDump.h"
 #include "MsedCommand.h"
@@ -342,7 +343,7 @@ int setNewPassword(char * password, char * userid, char * newpassword, char * de
         return 0xff;
     }
     // Get C_PIN ID  for user from Authority table
-    if (getAuth4User(userid, 10, userCPIN, session)) {
+    if (getAuth4User(userid, 10, userCPIN)) {
         LOG(E) << "Unable to find user " << userid << " in Authority Table";
         delete session;
         delete device;
@@ -388,7 +389,7 @@ int enableUser(char * password, char * userid, char * devref)
         return 0xff;
     }
     // Get UID for user from Authority table
-    if (getAuth4User(userid, 0, userUID, session)) {
+    if (getAuth4User(userid, 0, userUID)) {
         LOG(E) << "Unable to find user " << userid << " in Authority Table";
         delete session;
         delete device;
@@ -408,45 +409,103 @@ int enableUser(char * password, char * userid, char * devref)
     LOG(D4) << "Exiting enable user()";
     return 0;
 }
+int getAuth4User(char * userid, uint8_t uidorcpin, std::vector<uint8_t> &userData) {
+	uint8_t uidnum;
+	userData.clear();
+	userData.push_back(0xa8);
+	userData.push_back(0x00);
+	userData.push_back(0x00);
+	userData.push_back(0x00);
+	switch (uidorcpin) {
+	case 0:
+		userData.push_back(0x09);
+		break;
+	case 10:
+		userData.push_back(0x0b);
+		break;
+	default:
+		LOG(E) << "Invalid Userid data requested" << (uint16_t)uidorcpin;
+		return 0xff;
+	}
 
-int getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData, MsedSession * session)
-{
-    LOG(D4) << "Entering getAuth4User()";
-    std::vector<uint8_t> table, key, nextkey;
-    MsedResponse response;
-    // build a token for the authority table
-    table.push_back(0xa8);
-    for (int i = 0; i < 8; i++) {
-        table.push_back(OPALUID[OPAL_UID::OPAL_AUTHORITY_TABLE][i]);
-    }
-    key.clear();
-    while (true) {
-        // Get the next UID
-        if (nextTable(session, table, key, response)) {
-            return 0xff;
-        }
-        key = response.getRawToken(2);
-        nextkey = response.getRawToken(3);
 
-        //AUTHORITY_TABLE.Get[Cellblock : [startColumn = 0, endColumn = 10]]
-        if (getTable(session, key, 1, 1, response)) {
-            return 0xff;
-        }
-        if (!(strcmp(userid, response.getString(4).c_str()))) {
-            if (getTable(session, key, column, column, response)) {
-                return 0xff;
-            }
-            userData = response.getRawToken(4);
-            return 0x00;
-        }
-
-        if (9 != nextkey.size()) break; // no next row so bail
-        key = nextkey;
-    }
-    return 0xff;
+	switch (strnlen(userid, 20)) {
+	case 5:
+		if (memcmp("User", userid, 4)) {
+			LOG(E) << "Invalid Userid " << userid;
+			return 0xff;
+		}
+		else {
+			uidnum = userid[4] & 0x0f;
+			userData.push_back(0x00);
+			userData.push_back(0x03);
+			userData.push_back(0x00);
+			userData.push_back(uidnum);
+		}
+		break;
+	case 6:
+		if (memcmp("Admin", userid, 5)) {
+			LOG(E) << "Invalid Userid " << userid;
+			return 0xff;
+		}
+		else {
+			uidnum = userid[5] & 0x0f;
+			userData.push_back(0x00);
+			userData.push_back(0x01);
+			userData.push_back(0x00);
+			userData.push_back(uidnum);
+		}
+		break;
+	default:
+		LOG(E) << "Invalid Userid " << userid;
+		return 0xff;
+	}
+	if (0 == uidnum) {
+		LOG(E) << "Invalid Userid " << userid;
+		userData.clear();
+		return 0xff;
+	}
+	return 0;
 }
+// Samsung EVO 840 will not return userids from authority table (bug??)
+//int getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData, MsedSession * session)
+//{
+//    LOG(D4) << "Entering getAuth4User()";
+//    std::vector<uint8_t> table, key, nextkey;
+//    MsedResponse response;
+//    // build a token for the authority table
+//    table.push_back(0xa8);
+//    for (int i = 0; i < 8; i++) {
+//        table.push_back(OPALUID[OPAL_UID::OPAL_AUTHORITY_TABLE][i]);
+//    }
+//    key.clear();
+//    while (true) {
+//        // Get the next UID
+//        if (nextTable(session, table, key, response)) {
+//            return 0xff;
+//        }
+//        key = response.getRawToken(2);
+//        nextkey = response.getRawToken(3);
+//
+//        //AUTHORITY_TABLE.Get[Cellblock : [startColumn = 0, endColumn = 10]]
+//        if (getTable(session, key, 1, 1, response)) {
+//            return 0xff;
+//        }
+//        if (!(strcmp(userid, response.getString(4).c_str()))) {
+//            if (getTable(session, key, column, column, response)) {
+//                return 0xff;
+//            }
+//            userData = response.getRawToken(4);
+//            return 0x00;
+//        }
+//
+//        if (9 != nextkey.size()) break; // no next row so bail
+//        key = nextkey;
+//    }
+//    return 0xff;
+//}
 
-int dumpTable()
+int dumpTable(char * password, char * devref)
 {
     CLog::Level() = CLog::FromInt(4);
     LOG(D4) << "Entering getTable()";
@@ -455,9 +514,9 @@ int dumpTable()
     for (int i = 0; i < 8; i++) {
         table.push_back(OPALUID[OPAL_UID::OPAL_AUTHORITY_TABLE][i]);
     }
-    MsedDev *device = new MsedDev("\\\\.\\PhysicalDrive3");
+    MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
-        LOG(E) << "Device not Opal2 "; // << devref;
+        LOG(E) << "Device not Opal2 " << devref;
         delete device;
         return 0xff;
     }
@@ -465,7 +524,7 @@ int dumpTable()
     MsedResponse response;
     // session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
     //                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
-    if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, (char *) "password", OPAL_UID::OPAL_ADMIN1_UID)) {
+    if (session->start(OPAL_UID::OPAL_ADMINSP_UID, password, OPAL_UID::OPAL_SID_UID)) {
         delete session;
         delete device;
         return 0xff;
@@ -484,16 +543,22 @@ int dumpTable()
 
         //AUTHORITY_TABLE.Get[Cellblock : [startColumn = 0, endColumn = 10]]
 
-        if (getTable(session, key, 1, 10, response)) {
+        if (getTable(session, key, 0, 4, response)) {
             delete session;
             delete device;
             return 0xff;
         }
-        temp = response.getRawToken(4);
-        LOG(D1) << "Dumping Response";
-        MsedHexDump(temp.data(), temp.size());
-        temp = response.getRawToken(20);
-        MsedHexDump(temp.data(), temp.size());
+		uint32_t i = 0;
+		while(i < response.getTokenCount()) {
+			if (OPAL_TOKEN::STARTNAME == response.tokenIs(i)) {
+				LOG(I) << "col " << (uint32_t)response.getUint32(i + 1);
+				temp = response.getRawToken(i + 2);
+				MsedHexDump(temp.data(), temp.size());
+				i += 2;
+			}
+			i++;
+		} 
+
         if (9 != nextkey.size()) break; // no next row so bail
         key = nextkey;
     }
