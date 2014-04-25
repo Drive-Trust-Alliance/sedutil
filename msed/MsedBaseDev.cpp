@@ -48,8 +48,20 @@ MsedBaseDev::~MsedBaseDev()
 
 uint8_t MsedBaseDev::isOpal2()
 {
-    LOG(D4) << "Entering MsedBaseDev::isOpal2()";
-    return disk_info.OPAL20;
+	LOG(D4) << "Entering MsedBaseDev::isOpal2()";
+	return disk_info.OPAL20;
+}
+
+uint8_t MsedBaseDev::isOpal1()
+{
+	LOG(D4) << "Entering MsedBaseDev::isOpal1()";
+	return disk_info.OPAL10;
+}
+
+uint8_t MsedBaseDev::isEprise()
+{
+	LOG(D4) << "Entering MsedBaseDev::isOpal1()";
+	return disk_info.Enterprise;
 }
 
 uint8_t MsedBaseDev::isPresent()
@@ -73,27 +85,33 @@ uint16_t MsedBaseDev::comID()
     LOG(D4) << "Entering MsedBaseDev::comID()";
     if (disk_info.OPAL20)
         return disk_info.OPAL20_basecomID;
-    else
+	else if (disk_info.OPAL10)
+		return disk_info.OPAL10_basecomID;
+	else if (disk_info.Enterprise)
+		return disk_info.Enterprise_basecomID;
+	else
         return 0x0000;
 }
 
 uint8_t MsedBaseDev::exec(MsedCommand * cmd, MsedResponse &response, uint8_t protocol)
 {
     uint8_t rc = 0;
+	OPALHeader * hdr = (OPALHeader *)cmd->getCmdBuffer();
     LOG(D3) << endl << "Dumping command buffer";
-    IFLOG(D3) MsedHexDump(cmd->getCmdBuffer(), 128);
+    IFLOG(D3) MsedHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof(OPALComPacket));
     rc = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH);
     if (0 != rc) {
-        LOG(E) << "Command failed on send " << rc;
+        LOG(E) << "Command failed on send " << (uint16_t) rc;
         return rc;
     }
     osmsSleep(25);
     memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
     rc = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
+	hdr = (OPALHeader *)cmd->getRespBuffer();
     LOG(D3) << std::endl << "Dumping reply buffer";
-    IFLOG(D3) MsedHexDump(cmd->getRespBuffer(), 128);
+	IFLOG(D3) MsedHexDump(cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof(OPALComPacket));
     if (0 != rc) {
-        LOG(E) << "Command failed on recv" << rc;
+        LOG(E) << "Command failed on recv" << (uint16_t) rc;
         return rc;
     }
 	response.init(cmd->getRespBuffer());
@@ -156,6 +174,11 @@ void MsedBaseDev::discovery0()
             disk_info.Enterprise_basecomID = SWAP16(body->enterpriseSSC.baseComID);
             disk_info.Enterprise_numcomID = SWAP16(body->enterpriseSSC.numberComIDs);
             break;
+		case FC_OPALV100: /* Opal V1 */
+			disk_info.OPAL10 = 1;
+			disk_info.OPAL10_basecomID = SWAP16(body->opalv100.baseComID);
+			disk_info.OPAL10_numcomIDs = SWAP16(body->opalv100.numberComIDs);
+			break;
         case FC_SINGLEUSER: /* Single User Mode */
             disk_info.SingleUser = 1;
             disk_info.SingleUser_all = body->singleUserMode.all;
@@ -196,7 +219,7 @@ void MsedBaseDev::puke()
 {
     LOG(D4) << "Entering MsedBaseDev::puke()";
     /* IDENTIFY */
-    cout << dev << (disk_info.devType ? " OTHER " : " ATA ");
+    cout << endl << dev << (disk_info.devType ? " OTHER " : " ATA ");
     for (int i = 0; i < sizeof (disk_info.modelNum); i++) {
         cout << disk_info.modelNum[i];
     }
@@ -209,7 +232,7 @@ void MsedBaseDev::puke()
     //for (int i = 0; i < sizeof (disk_info.serialNum); i++) {
     //    cout << disk_info.serialNum[i];
     //}
-    cout << std::endl << std::endl;
+	cout << endl;
     /* TPer */
     if (disk_info.TPer) {
         cout << "TPer function (" << HEXON(4) << FC_TPER << HEXOFF << ")" << std::endl;
@@ -246,13 +269,18 @@ void MsedBaseDev::puke()
                 << std::endl;
     }
     if (disk_info.Enterprise) {
-
         cout << "Enterprise function (" << HEXON(4) << FC_ENTERPRISE << HEXOFF << ")" << std::endl;
         cout << "    Range crossing = " << (disk_info.Enterprise_rangeCrossing ? "Y, " : "N, ")
                 << "Base comID = " << disk_info.Enterprise_basecomID
                 << ", comIDs = " << disk_info.Enterprise_numcomID
                 << std::endl;
     }
+	if (disk_info.OPAL10) {
+		cout << "Opal V1.0 function (" << HEXON(4) << FC_OPALV100 << HEXOFF << ")" << std::endl;
+		cout << "Base comID = " << disk_info.OPAL10_basecomID
+			<< ", comIDs = " << disk_info.OPAL10_numcomIDs
+			<< std::endl;
+	}
     if (disk_info.SingleUser) {
         cout << "SingleUser function (" << HEXON(4) << FC_SINGLEUSER << HEXOFF << ")" << std::endl;
         cout << "    ALL = " << (disk_info.SingleUser_all ? "Y, " : "N, ")
@@ -282,5 +310,5 @@ void MsedBaseDev::puke()
         cout << std::endl;
     }
     if (disk_info.Unknown)
-        cout << "**** " << disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
+        cout << "**** " << (uint16_t) disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
 }

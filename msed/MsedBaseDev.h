@@ -33,6 +33,8 @@ public:
 	
 	uint8_t exec(MsedCommand * cmd, MsedResponse &response, uint8_t protocol = 0x01);
     uint8_t isOpal2();
+	uint8_t isOpal1();
+	uint8_t isEprise();
     uint8_t isPresent();
     uint16_t comID();
 	void getFirmwareRev(uint8_t bytes[8]);

@@ -165,9 +165,18 @@ int revertTPer(char * devref, char * password, uint8_t PSID)
     LOG(D4) << "Entering revertTPer(char * devref, char * password)";
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
-        LOG(E) << "Device not Opal2 " << devref;
-        delete device;
-        return 0xff;
+		if (PSID) {
+			if ((!(device->isOpal1())) && (!(device->isEprise()))) {
+				LOG(E) << "Device not supported for PSID Revert " << devref;
+				delete device;
+				return 0xff;
+			}
+		}
+		else {
+			LOG(E) << "Device not Opal2 " << devref;
+			delete device;
+			return 0xff;
+		}
     }
     MsedCommand *cmd = new MsedCommand();
     MsedSession * session = new MsedSession(device);

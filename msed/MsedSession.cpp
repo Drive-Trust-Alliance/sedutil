@@ -106,7 +106,7 @@ MsedSession::sendCommand(MsedCommand * cmd, MsedResponse & response)
     // if outstanding data is <> 0 then the drive has more data but we dont support it
 	if (0 != response.h.cp.outstandingData) {
 		LOG(E) << "Outstanding data <> 0 -- no program support";
-		return 0xff;
+		//return 0xff;
 	}
     // zero lengths -- these are big endian but it doesn't matter for uint = 0
     if ((0 == response.h.cp.length) ||

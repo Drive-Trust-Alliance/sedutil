@@ -27,6 +27,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #define FC_ENTERPRISE 0x0100
 #define FC_DATASTORE  0x0202
 #define FC_SINGLEUSER 0x0201
+#define FC_OPALV100   0x0200
 #define FC_OPALV200   0x0203
 /** The Discovery 0 Header. As defined in
 * Opal SSC Documentation
@@ -150,6 +151,16 @@ typedef struct _Discovery0EnterpriseSSC {
     uint32_t reserved05;
 } Discovery0EnterpriseSSC;
 
+/** Support for the Opal V1 Spec.
+ */
+typedef struct _Discovery0OpalV100 {
+	uint16_t featureCode; /* 0x0200 */
+	uint8_t reserved_v : 4;
+	uint8_t version : 4;
+	uint8_t length;
+	uint16_t baseComID;
+	uint16_t numberComIDs;
+} Discovery0OpalV100;
 /** Support for Single User Mode.
  * This might be interesting but who has the time?
  */
@@ -221,6 +232,7 @@ union Discovery0Features {
     Discovery0EnterpriseSSC enterpriseSSC;
     Discovery0SingleUserMode singleUserMode;
     Discovery0OPALV200 opalv200;
+	Discovery0OpalV100 opalv100;
     Discovery0DatastoreTable datastore;
 };
 
@@ -274,6 +286,7 @@ typedef struct _OPAL_DiskInfo {
     uint8_t SingleUser : 1;
     uint8_t DataStore : 1;
     uint8_t OPAL20 : 1;
+	uint8_t OPAL10 : 1;
     uint8_t Unknown;
     // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
     uint8_t TPer_ACKNACK : 1;
@@ -302,6 +315,8 @@ typedef struct _OPAL_DiskInfo {
     uint16_t DataStore_maxTables;
     uint32_t DataStore_maxTableSize;
     uint32_t DataStore_alignment;
+	uint16_t OPAL10_basecomID;
+	uint16_t OPAL10_numcomIDs;
     uint16_t OPAL20_basecomID;
     uint16_t OPAL20_numcomIDs;
     uint8_t OPAL20_initialPIN;
