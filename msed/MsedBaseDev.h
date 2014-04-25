@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 #pragma once
 class MsedCommand;
 class MsedResponse;
@@ -27,29 +27,29 @@ class MsedBaseDev {
 public:
     MsedBaseDev();
     ~MsedBaseDev();
-    virtual uint8_t 
-		sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+    virtual uint8_t
+    sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
             void * buffer, uint16_t bufferlen) = 0;
-	
-	uint8_t exec(MsedCommand * cmd, MsedResponse &response, uint8_t protocol = 0x01);
+
+    uint8_t exec(MsedCommand * cmd, MsedResponse &response, uint8_t protocol = 0x01);
     uint8_t isOpal2();
-	uint8_t isOpal1();
-	uint8_t isEprise();
+    uint8_t isOpal1();
+    uint8_t isEprise();
     uint8_t isPresent();
     uint16_t comID();
-	void getFirmwareRev(uint8_t bytes[8]);
-	void getModelNum(uint8_t bytes[40]);
-	void MsedBaseDev::getSerialNum(uint8_t bytes[20]);
+    void getFirmwareRev(uint8_t bytes[8]);
+    void getModelNum(uint8_t bytes[40]);
+    void getSerialNum(uint8_t bytes[20]);
     void puke();
 protected:
-	virtual void osmsSleep(uint32_t milliseconds) = 0;
-/** Decode the Discovery 0 response. Scans the D0 response and creates structure
- * that can be queried later as required.This code also takes care of
- * the endianess conversions either via a bitswap in the structure or executing
- * a macro when the input buffer is read.
- */
+    virtual void osmsSleep(uint32_t milliseconds) = 0;
+    /** Decode the Discovery 0 response. Scans the D0 response and creates structure
+     * that can be queried later as required.This code also takes care of
+     * the endianess conversions either via a bitswap in the structure or executing
+     * a macro when the input buffer is read.
+     */
     void discovery0();
-	virtual void identify() = 0;
+    virtual void identify() = 0;
     const char * dev;
     uint8_t isOpen = FALSE;
     OPAL_DiskInfo disk_info;

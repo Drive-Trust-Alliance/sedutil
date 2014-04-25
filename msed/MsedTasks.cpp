@@ -165,18 +165,18 @@ int revertTPer(char * devref, char * password, uint8_t PSID)
     LOG(D4) << "Entering revertTPer(char * devref, char * password)";
     MsedDev *device = new MsedDev(devref);
     if (!(device->isOpal2())) {
-		if (PSID) {
-			if ((!(device->isOpal1())) && (!(device->isEprise()))) {
-				LOG(E) << "Device not supported for PSID Revert " << devref;
-				delete device;
-				return 0xff;
-			}
-		}
-		else {
-			LOG(E) << "Device not Opal2 " << devref;
-			delete device;
-			return 0xff;
-		}
+        if (PSID) {
+            if ((!(device->isOpal1())) && (!(device->isEprise()))) {
+                LOG(E) << "Device not supported for PSID Revert " << devref;
+                delete device;
+                return 0xff;
+            }
+        }
+        else {
+            LOG(E) << "Device not Opal2 " << devref;
+            delete device;
+            return 0xff;
+        }
     }
     MsedCommand *cmd = new MsedCommand();
     MsedSession * session = new MsedSession(device);
@@ -418,63 +418,65 @@ int enableUser(char * password, char * userid, char * devref)
     LOG(D4) << "Exiting enable user()";
     return 0;
 }
-int getAuth4User(char * userid, uint8_t uidorcpin, std::vector<uint8_t> &userData) {
-	uint8_t uidnum;
-	userData.clear();
-	userData.push_back(0xa8);
-	userData.push_back(0x00);
-	userData.push_back(0x00);
-	userData.push_back(0x00);
-	switch (uidorcpin) {
-	case 0:
-		userData.push_back(0x09);
-		break;
-	case 10:
-		userData.push_back(0x0b);
-		break;
-	default:
-		LOG(E) << "Invalid Userid data requested" << (uint16_t)uidorcpin;
-		return 0xff;
-	}
+
+int getAuth4User(char * userid, uint8_t uidorcpin, std::vector<uint8_t> &userData)
+{
+    uint8_t uidnum;
+    userData.clear();
+    userData.push_back(0xa8);
+    userData.push_back(0x00);
+    userData.push_back(0x00);
+    userData.push_back(0x00);
+    switch (uidorcpin) {
+    case 0:
+        userData.push_back(0x09);
+        break;
+    case 10:
+        userData.push_back(0x0b);
+        break;
+    default:
+        LOG(E) << "Invalid Userid data requested" << (uint16_t) uidorcpin;
+        return 0xff;
+    }
 
 
-	switch (strnlen(userid, 20)) {
-	case 5:
-		if (memcmp("User", userid, 4)) {
-			LOG(E) << "Invalid Userid " << userid;
-			return 0xff;
-		}
-		else {
-			uidnum = userid[4] & 0x0f;
-			userData.push_back(0x00);
-			userData.push_back(0x03);
-			userData.push_back(0x00);
-			userData.push_back(uidnum);
-		}
-		break;
-	case 6:
-		if (memcmp("Admin", userid, 5)) {
-			LOG(E) << "Invalid Userid " << userid;
-			return 0xff;
-		}
-		else {
-			uidnum = userid[5] & 0x0f;
-			userData.push_back(0x00);
-			userData.push_back(0x01);
-			userData.push_back(0x00);
-			userData.push_back(uidnum);
-		}
-		break;
-	default:
-		LOG(E) << "Invalid Userid " << userid;
-		return 0xff;
-	}
-	if (0 == uidnum) {
-		LOG(E) << "Invalid Userid " << userid;
-		userData.clear();
-		return 0xff;
-	}
-	return 0;
+    switch (strnlen(userid, 20)) {
+    case 5:
+        if (memcmp("User", userid, 4)) {
+            LOG(E) << "Invalid Userid " << userid;
+            return 0xff;
+        }
+        else {
+            uidnum = userid[4] & 0x0f;
+            userData.push_back(0x00);
+            userData.push_back(0x03);
+            userData.push_back(0x00);
+            userData.push_back(uidnum);
+        }
+        break;
+    case 6:
+        if (memcmp("Admin", userid, 5)) {
+            LOG(E) << "Invalid Userid " << userid;
+            return 0xff;
+        }
+        else {
+            uidnum = userid[5] & 0x0f;
+            userData.push_back(0x00);
+            userData.push_back(0x01);
+            userData.push_back(0x00);
+            userData.push_back(uidnum);
+        }
+        break;
+    default:
+        LOG(E) << "Invalid Userid " << userid;
+        return 0xff;
+    }
+    if (0 == uidnum) {
+        LOG(E) << "Invalid Userid " << userid;
+        userData.clear();
+        return 0xff;
+    }
+    return 0;
 }
 // Samsung EVO 840 will not return userids from authority table (bug??)
 //int getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData, MsedSession * session)
@@ -557,16 +559,16 @@ int dumpTable(char * password, char * devref)
             delete device;
             return 0xff;
         }
-		uint32_t i = 0;
-		while(i < response.getTokenCount()) {
-			if (OPAL_TOKEN::STARTNAME == response.tokenIs(i)) {
-				LOG(I) << "col " << (uint32_t)response.getUint32(i + 1);
-				temp = response.getRawToken(i + 2);
-				MsedHexDump(temp.data(), temp.size());
-				i += 2;
-			}
-			i++;
-		} 
+        uint32_t i = 0;
+        while (i < response.getTokenCount()) {
+            if ((uint8_t) OPAL_TOKEN::STARTNAME == (uint8_t) response.tokenIs(i)) {
+                LOG(I) << "col " << (uint32_t) response.getUint32(i + 1);
+                temp = response.getRawToken(i + 2);
+                MsedHexDump(temp.data(), temp.size());
+                i += 2;
+            }
+            i++;
+        }
 
         if (9 != nextkey.size()) break; // no next row so bail
         key = nextkey;
