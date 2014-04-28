@@ -21,8 +21,11 @@ typedef struct _MSED_OPTIONS {
     uint8_t password;
 	uint8_t userid;
 	uint8_t newpassword;
+	uint8_t pbafile;
     uint8_t deviceref;
     uint8_t action;
+	uint8_t lockingrange;
+	uint8_t lockingstate;
 } MSED_OPTIONS;
 void usage();
 uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts);

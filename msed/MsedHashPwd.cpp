@@ -42,7 +42,7 @@ void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedDev * d) {
 	LOG(D4) << " Entered MsedHashPwd";
 	uint8_t serNum[20];
 	d->getSerialNum(serNum);
-	vector<uint8_t> salt(serNum, &serNum[19]);
+	vector<uint8_t> salt(serNum, serNum+20);
 	MsedHashPassword(hash, password, salt);
 	LOG(D4) << " Exit MsedHashPwd"; // log for hash timing
 

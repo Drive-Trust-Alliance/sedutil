@@ -45,9 +45,6 @@
     <ClInclude Include="log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="options.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="win32\os.h">
       <Filter>Header Files</Filter>
     </ClInclude>

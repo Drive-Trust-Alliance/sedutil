@@ -109,7 +109,6 @@
     <ClInclude Include="MsedSession.h" />
     <ClInclude Include="MsedStructures.h" />
     <ClInclude Include="MsedTasks.h" />
-    <ClInclude Include="options.h" />
     <ClInclude Include="win32\os.h" />
     <ClInclude Include="win32\MsedDev.h" />
   </ItemGroup>
