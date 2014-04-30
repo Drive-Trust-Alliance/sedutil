@@ -25,6 +25,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <iomanip>
 #include "MsedHashPwd.h"
+#include "MsedLexicon.h"
 #include "MsedDev.h"
 #include "log.h"
 #include "../cryptopp/pch.h"
@@ -40,9 +41,10 @@ using namespace CryptoPP;
 
 void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedDev * d) {
 	LOG(D4) << " Entered MsedHashPwd";
-	uint8_t serNum[20];
-	d->getSerialNum(serNum);
-	vector<uint8_t> salt(serNum, serNum+20);
+	//uint8_t serNum[20];
+	//d->getSerialNum(serNum);
+	//vector<uint8_t> salt(serNum, serNum+20);
+	vector<uint8_t> salt(DEFAULTSALT);
 	MsedHashPassword(hash, password, salt);
 	LOG(D4) << " Exit MsedHashPwd"; // log for hash timing
 
