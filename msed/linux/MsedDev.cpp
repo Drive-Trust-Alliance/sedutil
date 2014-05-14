@@ -26,6 +26,9 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <linux/hdreg.h>
+#include <errno.h>
+#include <vector>
 #include "MsedDev.h"
 #include "MsedHexDump.h"
 
@@ -51,8 +54,9 @@ MsedDev::MsedDev(const char * devref)
     }
     else {
         isOpen = TRUE;
-        discovery0();
+
         identify();
+        if (!disk_info.devType) discovery0();
     }
 }
 
@@ -150,72 +154,46 @@ uint8_t MsedDev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 void MsedDev::identify()
 {
     LOG(D4) << "Entering MsedDev::identify()";
-    sg_io_hdr_t sg;
-    uint8_t sense[32]; // how big should this be??
-    uint8_t cdb[6];
+    vector<uint8_t> nullz(512, 0x00);
     if (!isOpen) return; //disk open failed so this will too
     uint8_t * buffer = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
-    memset(&cdb, 0, sizeof (cdb));
-    memset(&sense, 0, sizeof (sense));
-    memset(&sg, 0, sizeof (sg));
-    /*
-     * Initialize the CDB
-     */
-
-    cdb[0] = 0x12; // inquire
-    /*
-     * Byte 1 is the protocol 4 = PIO IN and 5 = PIO OUT
-     * Byte 2 is:
-     * bits 7-6 OFFLINE - Amount of time the command can take the bus offline
-     * bit 5    CK_COND - If set the command will always return a condition check
-     * bit 4    RESERVED
-     * bit 3    T_DIR   - transfer direction 1 in, 0 out
-     * bit 2    BYTE_BLock  1 = transfer in blocks, 0 transfer in bytes
-     * bits 1-0 T_LENGTH -  10 = the length id in sector count
-     */
-    cdb[1] = 4 << 1; // PIO DATA IN
-    cdb[2] = 0x0E; // T_DIR = 1, BYTE_BLOCK = 1, Length in Sector Count
-    sg.dxfer_direction = SG_DXFER_FROM_DEV;
-    cdb[3] = 0x00;
-    cdb[4] = 0x24;
-    cdb[5] = 0x00;
-    cdb[6] = 0x00;
-    /*
-     * Set up the SCSI Generic structure
-     * see the SG HOWTO for the best info I could find
-     */
-    sg.interface_id = 'S';
-    //      sg.dxfer_direction = Set in if above
-    sg.cmd_len = sizeof (cdb);
-    sg.mx_sb_len = sizeof (sense);
-    sg.iovec_count = 0;
-    sg.dxfer_len = IO_BUFFER_LENGTH;
-    sg.dxferp = buffer;
-    sg.cmdp = cdb;
-    sg.sbp = sense;
-    sg.timeout = 5000;
-    sg.flags = 0;
-    sg.pack_id = 0;
-    sg.usr_ptr = NULL;
-
-    if (ioctl(fd, SG_IO, &sg) < 0) {
-        LOG(D4) << "cdb after ";
-        IFLOG(D4) MsedHexDump(cdb, sizeof (cdb));
-        LOG(D4) << "sense after ";
-        IFLOG(D4) MsedHexDump(sense, sizeof (sense));
+    memset(buffer, 0, IO_BUFFER_LENGTH);
+    if (ioctl(fd, HDIO_GET_IDENTITY, buffer) < 0) {
+        LOG(E) << "Identify failed " << strerror(errno);
+        disk_info.devType = 1;
         return;
     }
-    buffer += 8;
-    for (int i = 0; i < 28; i++) {
-        disk_info.modelNum[i] = buffer[i];
+
+    if (!(memcmp(nullz.data(), buffer, 512))) {
+        disk_info.devType = 1;
+        return;
     }
-    buffer -= 8;
+    IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) buffer;
+    disk_info.devType = id->devType;
+    memcpy(disk_info.serialNum, id->serialNum, sizeof (disk_info.serialNum));
+    memcpy(disk_info.firmwareRev, id->firmwareRev, sizeof (disk_info.firmwareRev));
+    memcpy(disk_info.modelNum, id->modelNum, sizeof (disk_info.modelNum));
+    // looks like linux does the byte flipping for you
+    //    for (int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
+    //        disk_info.serialNum[i] = id->serialNum[i + 1];
+    //        disk_info.serialNum[i + 1] = id->serialNum[i];
+    //    }
+    //    for (int i = 0; i < sizeof (disk_info.firmwareRev); i += 2) {
+    //        disk_info.firmwareRev[i] = id->firmwareRev[i + 1];
+    //        disk_info.firmwareRev[i + 1] = id->firmwareRev[i];
+    //    }
+    //    for (int i = 0; i < sizeof (disk_info.modelNum); i += 2) {
+    //        disk_info.modelNum[i] = id->modelNum[i + 1];
+    //        disk_info.modelNum[i + 1] = id->modelNum[i];
+    //    }
+
     ALIGNED_FREE(buffer);
     return;
 }
 
 void MsedDev::osmsSleep(uint32_t ms)
 {
+
     usleep(ms * 1000); //convert to microseconds
     return;
 }

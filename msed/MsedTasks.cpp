@@ -62,8 +62,8 @@ int diskScan()
     LOG(D4) << "Creating diskList";
     printf("\nScanning for Opal 2.0 compliant disks\n");
     while (TRUE) {
-        SNPRINTF(devname, 23, DEVICEMASK, i);
-        //		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive3", i);
+        DEVICEMASK;
+        //snprintf(devname,23,"/dev/sd%c",(char) 0x61+i)
         d = new MsedDev(devname);
         if (d->isPresent()) {
             d->getFirmwareRev(FirmwareRev);
@@ -93,201 +93,208 @@ int diskScan()
     return 0;
 }
 
-int initialsetup(char * password, char * devref) {
-	LOG(D4) << "Entering initialSetup()";
-	vector<uint8_t> opalTRUE(1, 0x01), opalFALSE(1, 0x00);
-	if (takeOwnership(devref, password)) {
-		LOG(E) << "Initial setup failed - unable to take ownership";
-		return 0xff;
-	}
-	if (activateLockingSP(devref, password)) {
-		LOG(E) << "Initial setup failed - unable to activate LockingSP";
-		return 0xff;
-	}
-	if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::READLOCKED, opalFALSE, password, devref,NULL)) {
-		LOG(E) << "Initial setup failed - unable to unlock for read";
-		return 0xff;
-	}
-	if(MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::WRITELOCKED, opalFALSE, password, devref, NULL)) {
-		LOG(E) << "Initial setup failed - unable to unlock for write";
-		return 0xff;
-	}
-	if(MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::READLOCKENABLED, opalTRUE, password, devref, NULL)) {
-		LOG(E) << "Initial setup failed - unable to enable readlocking";
-		return 0xff;
-	}
-	if( MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::WRITELOCKENABLED, opalTRUE, password, devref, NULL)) {
-		LOG(E) << "Initial setup failed - unable to enable writelocking";
-		return 0xff;
-	}
-	LOG(I) << "Initial setup of TPer complete on " << devref;
-	return 0;
+int initialsetup(char * password, char * devref)
+{
+    LOG(D4) << "Entering initialSetup()";
+    vector<uint8_t> opalTRUE(1, 0x01), opalFALSE(1, 0x00);
+    if (takeOwnership(devref, password)) {
+        LOG(E) << "Initial setup failed - unable to take ownership";
+        return 0xff;
+    }
+    if (activateLockingSP(devref, password)) {
+        LOG(E) << "Initial setup failed - unable to activate LockingSP";
+        return 0xff;
+    }
+    if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+                   OPAL_TOKEN::READLOCKED, opalFALSE, password, devref, NULL)) {
+        LOG(E) << "Initial setup failed - unable to unlock for read";
+        return 0xff;
+    }
+    if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+                   OPAL_TOKEN::WRITELOCKED, opalFALSE, password, devref, NULL)) {
+        LOG(E) << "Initial setup failed - unable to unlock for write";
+        return 0xff;
+    }
+    if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+                   OPAL_TOKEN::READLOCKENABLED, opalTRUE, password, devref, NULL)) {
+        LOG(E) << "Initial setup failed - unable to enable readlocking";
+        return 0xff;
+    }
+    if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+                   OPAL_TOKEN::WRITELOCKENABLED, opalTRUE, password, devref, NULL)) {
+        LOG(E) << "Initial setup failed - unable to enable writelocking";
+        return 0xff;
+    }
+    LOG(I) << "Initial setup of TPer complete on " << devref;
+    return 0;
 }
 
-int revertnoerase(char * SIDPassword, char * Admin1Password, char * devref) {
-	LOG(D4) << "Entering revertnoerase";
-	MsedResponse response;
-	vector<uint8_t> opalTRUE(1, 0x01), opalFALSE(1, 0x00);
-	if(MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::READLOCKED, opalFALSE,
-		Admin1Password, devref)) {
-		LOG(E) << "revertnoerase failed - unable to unlock for read";
-		return 0xff;
-	}
-	if(MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::WRITELOCKED, opalFALSE,
-		Admin1Password, devref)) {
-		LOG(E) << "revertnoerase failed - unable to unlock write";
-		return 0xff;
-	}
-	if(MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::READLOCKENABLED, opalFALSE,
-		Admin1Password, devref)) {
-		LOG(E) << "revertnoerase failed - unable to disable readlocking";
-		return 0xff;
-	}
-	if(MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::WRITELOCKENABLED, opalFALSE,
-		Admin1Password, devref)) {
-		LOG(E) << "revertnoerase failed - unable to disable writelocking";
-		return 0xff;
-	}
-	if (revertLockingSP(devref, Admin1Password, 1)) {
-		LOG(E) << "revertnoerase failed - unable to revert LockingSP (keepglobalrange) ";
-		return 0xff;
-	}
-	if (getDefaultPassword(response, devref)) {
-		LOG(E) << "Unable to retrieve default SID password";
-		return 0xff;
-	}
-	if (setSIDPassword(SIDPassword, (char *)response.getString(4).c_str(), devref, 1, 0)){
-		LOG(I) << "revertnoerase failed unable to reset SID password";
-		return 0xff;
-	}
-	LOG(I) << "revertnoerase complete";
-	return 0;
-}
-int setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
-	char * Admin1Password, char * devref)
+int revertnoerase(char * SIDPassword, char * Admin1Password, char * devref)
 {
-	LOG(D4) << "Entering setLockingRange";
-	vector<uint8_t> opalTRUE(1, 0x01), opalFALSE(1, 0x00);
-	if (lockingrange) {
-		LOG(E) << "Only global locking range is currently supported";
-		return 0xff;
-	}
-	switch (lockingstate) {
-	case 0x01:
-		if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_TOKEN::READLOCKED,
-			opalFALSE, Admin1Password, devref, NULL)) {
-			LOG(E) << "Set Lockingstate failed - unable to unlock for read";
-			return 0xff;
-		}
-		if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_TOKEN::WRITELOCKED,
-			opalFALSE, Admin1Password, devref, NULL)) {
-			LOG(E) << "Set Lockingstate failed - unable to unlock for write ";
-			return 0xff;
-		}
-		LOG(I) << "LockingRange" << (uint16_t)lockingrange << " set to RW";
-		return 0;
-	case 0x02:
-		if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_TOKEN::READLOCKED,
-			opalFALSE, Admin1Password, devref, NULL)) {
-			LOG(E) << "Set Lockingstate failed - unable to unlock for read";
-			return 0xff;
-		}
-		if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_TOKEN::WRITELOCKED,
-			opalTRUE, Admin1Password, devref, NULL)) {
-			LOG(E) << "Set Lockingstate failed - unable to lock for write";
-			return 0xff;
-		}
-		LOG(I) << "LockingRange" << (uint16_t)lockingrange << " set to RO";
-		return 0;
-	case 0x03:
-		if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_TOKEN::READLOCKED,
-			opalTRUE, Admin1Password, devref, NULL)) {
-			LOG(E) << "Set Lockingstate failed - unable to lock for read";
-			return 0xff;
-		}
-		if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_TOKEN::WRITELOCKED,
-			opalTRUE, Admin1Password, devref, NULL)) {
-			LOG(E) << "Set Lockingstate failed - unable to lock for write";
-			return 0xff;
-		}
-		LOG(I) << "LockingRange" << (uint16_t)lockingrange << " set to LK";
-		return 0;
-	default:
-		LOG(E) << "Invalid locking state for setLockingRange";
-		return 0xff;
-	}
+    LOG(D4) << "Entering revertnoerase";
+    MsedResponse response;
+    vector<uint8_t> opalTRUE(1, 0x01), opalFALSE(1, 0x00);
+    if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+                   OPAL_TOKEN::READLOCKED, opalFALSE,
+                   Admin1Password, devref)) {
+        LOG(E) << "revertnoerase failed - unable to unlock for read";
+        return 0xff;
+    }
+    if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+                   OPAL_TOKEN::WRITELOCKED, opalFALSE,
+                   Admin1Password, devref)) {
+        LOG(E) << "revertnoerase failed - unable to unlock write";
+        return 0xff;
+    }
+    if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+                   OPAL_TOKEN::READLOCKENABLED, opalFALSE,
+                   Admin1Password, devref)) {
+        LOG(E) << "revertnoerase failed - unable to disable readlocking";
+        return 0xff;
+    }
+    if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+                   OPAL_TOKEN::WRITELOCKENABLED, opalFALSE,
+                   Admin1Password, devref)) {
+        LOG(E) << "revertnoerase failed - unable to disable writelocking";
+        return 0xff;
+    }
+    if (revertLockingSP(devref, Admin1Password, 1)) {
+        LOG(E) << "revertnoerase failed - unable to revert LockingSP (keepglobalrange) ";
+        return 0xff;
+    }
+    if (getDefaultPassword(response, devref)) {
+        LOG(E) << "Unable to retrieve default SID password";
+        return 0xff;
+    }
+    if (setSIDPassword(SIDPassword, (char *) response.getString(4).c_str(), devref, 1, 0)) {
+        LOG(I) << "revertnoerase failed unable to reset SID password";
+        return 0xff;
+    }
+    LOG(I) << "revertnoerase complete";
+    return 0;
 }
+
+int setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
+                    char * Admin1Password, char * devref)
+{
+    LOG(D4) << "Entering setLockingRange";
+    vector<uint8_t> opalTRUE(1, 0x01), opalFALSE(1, 0x00);
+    if (lockingrange) {
+        LOG(E) << "Only global locking range is currently supported";
+        return 0xff;
+    }
+    switch (lockingstate) {
+    case 0x01:
+        if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_TOKEN::READLOCKED,
+                       opalFALSE, Admin1Password, devref, NULL)) {
+            LOG(E) << "Set Lockingstate failed - unable to unlock for read";
+            return 0xff;
+        }
+        if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_TOKEN::WRITELOCKED,
+                       opalFALSE, Admin1Password, devref, NULL)) {
+            LOG(E) << "Set Lockingstate failed - unable to unlock for write ";
+            return 0xff;
+        }
+        LOG(I) << "LockingRange" << (uint16_t) lockingrange << " set to RW";
+        return 0;
+    case 0x02:
+        if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_TOKEN::READLOCKED,
+                       opalFALSE, Admin1Password, devref, NULL)) {
+            LOG(E) << "Set Lockingstate failed - unable to unlock for read";
+            return 0xff;
+        }
+        if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_TOKEN::WRITELOCKED,
+                       opalTRUE, Admin1Password, devref, NULL)) {
+            LOG(E) << "Set Lockingstate failed - unable to lock for write";
+            return 0xff;
+        }
+        LOG(I) << "LockingRange" << (uint16_t) lockingrange << " set to RO";
+        return 0;
+    case 0x03:
+        if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_TOKEN::READLOCKED,
+                       opalTRUE, Admin1Password, devref, NULL)) {
+            LOG(E) << "Set Lockingstate failed - unable to lock for read";
+            return 0xff;
+        }
+        if (MsedSetLSP(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_TOKEN::WRITELOCKED,
+                       opalTRUE, Admin1Password, devref, NULL)) {
+            LOG(E) << "Set Lockingstate failed - unable to lock for write";
+            return 0xff;
+        }
+        LOG(I) << "LockingRange" << (uint16_t) lockingrange << " set to LK";
+        return 0;
+    default:
+        LOG(E) << "Invalid locking state for setLockingRange";
+        return 0xff;
+    }
+}
+
 int takeOwnership(char * devref, char * newpassword)
 {
-	LOG(D4) << "Entering takeOwnership()";
-	MsedResponse response;
-	if(getDefaultPassword(response, devref)) return 0xff;
-	if (setSIDPassword((char *)response.getString(4).c_str(), newpassword, devref, 0)){
-		LOG(I) << "takeownership failed";
-		return 0xff;
-	}
-	LOG(I) << "takeownership complete";
-	LOG(D4) << "Exiting takeOwnership()";
-	return 0;
+    LOG(D4) << "Entering takeOwnership()";
+    MsedResponse response;
+    if (getDefaultPassword(response, devref)) return 0xff;
+    if (setSIDPassword((char *) response.getString(4).c_str(), newpassword, devref, 0)) {
+        LOG(I) << "takeownership failed";
+        return 0xff;
+    }
+    LOG(I) << "takeownership complete";
+    LOG(D4) << "Exiting takeOwnership()";
+    return 0;
 }
-int getDefaultPassword(MsedResponse & response, char * devref) {
-	LOG(D4) << "Entering getDefaultPassword()";
-	vector<uint8_t> hash;
-	MsedDev *device = new MsedDev(devref);
-	if (!(device->isOpal2())) {
-		LOG(E) << "Device not Opal2 " << devref;
-		delete device;
-		return 0xff;
-	}
-	//	Start Session
-	MsedSession * session = new MsedSession(device);
-	if (session->start(OPAL_UID::OPAL_ADMINSP_UID)) {
-		LOG(E) << "Unable to start Unauthenticated session " << devref;
-		delete session;
-		delete device;
-		return 0xff;
-	}
-	// session[TSN:HSN] -> C_PIN_MSID_UID.Get[Cellblock : [startColumn = PIN,endColumn = PIN]]
-	vector<uint8_t> table;
-	table.push_back(0xa8);
-	for (int i = 0; i < 8; i++) {
-		table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_MSID][i]);
-	}
-	if (getTable(session, table, PIN, PIN, response)) {
-		delete session;
-		delete device;
-		return 0xff;
-	}
-	// session[TSN:HSN] <- EOS
-	delete session;
-	LOG(D4) << "Exiting getDefaultPassword()";
-	return 0;
+
+int getDefaultPassword(MsedResponse & response, char * devref)
+{
+    LOG(D4) << "Entering getDefaultPassword()";
+    vector<uint8_t> hash;
+    MsedDev *device = new MsedDev(devref);
+    if (!(device->isOpal2())) {
+        LOG(E) << "Device not Opal2 " << devref;
+        delete device;
+        return 0xff;
+    }
+    //	Start Session
+    MsedSession * session = new MsedSession(device);
+    if (session->start(OPAL_UID::OPAL_ADMINSP_UID)) {
+        LOG(E) << "Unable to start Unauthenticated session " << devref;
+        delete session;
+        delete device;
+        return 0xff;
+    }
+    // session[TSN:HSN] -> C_PIN_MSID_UID.Get[Cellblock : [startColumn = PIN,endColumn = PIN]]
+    vector<uint8_t> table;
+    table.push_back(0xa8);
+    for (int i = 0; i < 8; i++) {
+        table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_MSID][i]);
+    }
+    if (getTable(session, table, PIN, PIN, response)) {
+        delete session;
+        delete device;
+        return 0xff;
+    }
+    // session[TSN:HSN] <- EOS
+    delete session;
+    LOG(D4) << "Exiting getDefaultPassword()";
+    return 0;
 
 }
-int setSIDPassword(char * oldpassword, char * newpassword, 
-	char * devref, uint8_t hasholdpwd, uint8_t hashnewpwd) {
-	vector<uint8_t> hash,table;
-	MsedResponse response;
-	LOG(D4) << "Entering setSIDPassword()";
-	MsedDev *device = new MsedDev(devref);
-	if (!(device->isOpal2())) {
-		LOG(E) << "Device not Opal2 " << devref;
-		delete device;
-		return 0xff;
-	}
-	MsedSession * session = new MsedSession(device);
+
+int setSIDPassword(char * oldpassword, char * newpassword,
+                   char * devref, uint8_t hasholdpwd, uint8_t hashnewpwd)
+{
+    vector<uint8_t> hash, table;
+    MsedResponse response;
+    LOG(D4) << "Entering setSIDPassword()";
+    MsedDev *device = new MsedDev(devref);
+    if (!(device->isOpal2())) {
+        LOG(E) << "Device not Opal2 " << devref;
+        delete device;
+        return 0xff;
+    }
+    MsedSession * session = new MsedSession(device);
     if (!hasholdpwd) session->dontHashPwd();
     if (session->start(OPAL_UID::OPAL_ADMINSP_UID,
-                       oldpassword, OPAL_UID::OPAL_SID_UID)) 
-	{
+                       oldpassword, OPAL_UID::OPAL_SID_UID)) {
         delete session;
         delete device;
         return 0xff;
@@ -298,20 +305,19 @@ int setSIDPassword(char * oldpassword, char * newpassword,
     for (int i = 0; i < 8; i++) {
         table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_SID][i]);
     }
-	hash.clear();
-	if (hashnewpwd) {
-		MsedHashPwd(hash, newpassword, device);
-	}
-	else
-	{
-		hash.push_back(0xd0);
-		hash.push_back((uint8_t)strnlen(newpassword, 255));
-		for (uint16_t i = 0; i < strnlen(newpassword, 255); i++) {
-			hash.push_back(newpassword[i]);
-		}
-	}
+    hash.clear();
+    if (hashnewpwd) {
+        MsedHashPwd(hash, newpassword, device);
+    }
+    else {
+        hash.push_back(0xd0);
+        hash.push_back((uint8_t) strnlen(newpassword, 255));
+        for (uint16_t i = 0; i < strnlen(newpassword, 255); i++) {
+            hash.push_back(newpassword[i]);
+        }
+    }
     if (setTable(session, table, OPAL_TOKEN::PIN, hash)) {
-		LOG(E) << "Unable to set new SID password ";
+        LOG(E) << "Unable to set new SID password ";
         delete session;
         delete device;
         return 0xff;
@@ -319,7 +325,7 @@ int setSIDPassword(char * oldpassword, char * newpassword,
     // session[TSN:HSN] <- EOS
     delete session;
     delete device;
-	LOG(D4) << "Exiting setSIDPassword()";
+    LOG(D4) << "Exiting setSIDPassword()";
     return 0;
 }
 
@@ -858,9 +864,9 @@ int MsedSetLSP(OPAL_UID table_uid, OPAL_TOKEN name, vector<uint8_t> value,
     }
     MsedResponse response;
     //getTable(session, table, 1, 10, response);
-	if (NULL != msg) {
-		LOG(I) << msg;
-	}
+    if (NULL != msg) {
+        LOG(I) << msg;
+    }
     // session[TSN:HSN] <- EOS
     delete session;
     delete device;

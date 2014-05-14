@@ -39,24 +39,25 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 using namespace std;
 using namespace CryptoPP;
 
-void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedDev * d) {
-	LOG(D4) << " Entered MsedHashPwd";
-	//uint8_t serNum[20];
-	//d->getSerialNum(serNum);
-	//vector<uint8_t> salt(serNum, serNum+20);
-	vector<uint8_t> salt(DEFAULTSALT);
-	MsedHashPassword(hash, password, salt);
-	LOG(D4) << " Exit MsedHashPwd"; // log for hash timing
+void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedDev * d)
+{
+    LOG(D4) << " Entered MsedHashPwd";
+    uint8_t serNum[20];
+    d->getSerialNum(serNum);
+    vector<uint8_t> salt(serNum, serNum + 20);
+    //	vector<uint8_t> salt(DEFAULTSALT);
+    MsedHashPassword(hash, password, salt);
+    LOG(D4) << " Exit MsedHashPwd"; // log for hash timing
 
 }
 
 void MsedHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
-                 unsigned int iter, uint8_t hashsize)
+                      unsigned int iter, uint8_t hashsize)
 {
-	LOG(D4) << " Entered MsedHashPassword";
+    LOG(D4) << " Entered MsedHashPassword";
     // if the hashsize can be > 255 the token overhead logic needs to be fixed
     assert(1 == sizeof (hashsize));
-	if (253 < hashsize) LOG(E) << "Hashsize > 253 incorrect token generated";
+    if (253 < hashsize) LOG(E) << "Hashsize > 253 incorrect token generated";
 
     hash.clear();
     hash.reserve(hashsize + 2); // hope this will prevent reallocation
@@ -101,7 +102,7 @@ bool TestMsed(const PBKDF_TestTuple *testSet, unsigned int testSetSize)
             seaSalt.push_back(tuple.hexSalt[i]);
         }
         MsedHashPassword(hash, (char *) tuple.hexPassword, seaSalt,
-                    tuple.iterations, derivedKey.size());
+                         tuple.iterations, derivedKey.size());
         bool fail = memcmp(hash.data() + 2, derivedKey.data(), derived.size()) != 0;
         pass = pass && !fail;
 
@@ -207,7 +208,7 @@ int MsedTestPBDKF2()
             cout << "passed\n";
         else
             cout << "**FAILED**\n";
-	}
-	return 0;
+    }
+    return 0;
 }
 

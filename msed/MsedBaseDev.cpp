@@ -48,20 +48,20 @@ MsedBaseDev::~MsedBaseDev()
 
 uint8_t MsedBaseDev::isOpal2()
 {
-	LOG(D4) << "Entering MsedBaseDev::isOpal2()";
-	return disk_info.OPAL20;
+    LOG(D4) << "Entering MsedBaseDev::isOpal2()";
+    return disk_info.OPAL20;
 }
 
 uint8_t MsedBaseDev::isOpal1()
 {
-	LOG(D4) << "Entering MsedBaseDev::isOpal1()";
-	return disk_info.OPAL10;
+    LOG(D4) << "Entering MsedBaseDev::isOpal1()";
+    return disk_info.OPAL10;
 }
 
 uint8_t MsedBaseDev::isEprise()
 {
-	LOG(D4) << "Entering MsedBaseDev::isOpal1()";
-	return disk_info.Enterprise;
+    LOG(D4) << "Entering MsedBaseDev::isOpal1()";
+    return disk_info.Enterprise;
 }
 
 uint8_t MsedBaseDev::isPresent()
@@ -82,7 +82,7 @@ void MsedBaseDev::getModelNum(uint8_t bytes[40])
 
 void MsedBaseDev::getSerialNum(uint8_t bytes[20])
 {
-	memcpy(&bytes[0], &disk_info.serialNum[0], 20);
+    memcpy(&bytes[0], &disk_info.serialNum[0], 20);
 }
 
 uint16_t MsedBaseDev::comID()
@@ -90,40 +90,41 @@ uint16_t MsedBaseDev::comID()
     LOG(D4) << "Entering MsedBaseDev::comID()";
     if (disk_info.OPAL20)
         return disk_info.OPAL20_basecomID;
-	else if (disk_info.OPAL10)
-		return disk_info.OPAL10_basecomID;
-	else if (disk_info.Enterprise)
-		return disk_info.Enterprise_basecomID;
-	else
+    else if (disk_info.OPAL10)
+        return disk_info.OPAL10_basecomID;
+    else if (disk_info.Enterprise)
+        return disk_info.Enterprise_basecomID;
+    else
         return 0x0000;
 }
 
 uint8_t MsedBaseDev::exec(MsedCommand * cmd, MsedResponse &response, uint8_t protocol)
 {
     uint8_t rc = 0;
-	OPALHeader * hdr = (OPALHeader *)cmd->getCmdBuffer();
+    OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
     LOG(D3) << endl << "Dumping command buffer";
-    IFLOG(D3) MsedHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof(OPALComPacket));
+    IFLOG(D3) MsedHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
     rc = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH);
     if (0 != rc) {
         LOG(E) << "Command failed on send " << (uint16_t) rc;
         return rc;
     }
-	hdr = (OPALHeader *)cmd->getRespBuffer();
-	do {
-		//LOG(I) << "read loop";
-		osmsSleep(25);
-		memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
-		rc = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
-		
-	} while ((0 != hdr->cp.outstandingData) && (0 == hdr->cp.minTransfer));
+    hdr = (OPALHeader *) cmd->getRespBuffer();
+    do {
+        //LOG(I) << "read loop";
+        osmsSleep(25);
+        memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
+        rc = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
+
+    }
+    while ((0 != hdr->cp.outstandingData) && (0 == hdr->cp.minTransfer));
     LOG(D3) << std::endl << "Dumping reply buffer";
-	IFLOG(D3) MsedHexDump(cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof(OPALComPacket));
+    IFLOG(D3) MsedHexDump(cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
     if (0 != rc) {
         LOG(E) << "Command failed on recv" << (uint16_t) rc;
         return rc;
     }
-	response.init(cmd->getRespBuffer());
+    response.init(cmd->getRespBuffer());
     return 0;
 }
 
@@ -137,7 +138,7 @@ void MsedBaseDev::discovery0()
     d0Response = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     if (NULL == d0Response) return;
     memset(d0Response, 0, IO_BUFFER_LENGTH);
-	if (sendCmd(IF_RECV, 0x01, 0x0001, d0Response, IO_BUFFER_LENGTH)) {
+    if (sendCmd(IF_RECV, 0x01, 0x0001, d0Response, IO_BUFFER_LENGTH)) {
         ALIGNED_FREE(d0Response);
         return;
     }
@@ -183,11 +184,11 @@ void MsedBaseDev::discovery0()
             disk_info.Enterprise_basecomID = SWAP16(body->enterpriseSSC.baseComID);
             disk_info.Enterprise_numcomID = SWAP16(body->enterpriseSSC.numberComIDs);
             break;
-		case FC_OPALV100: /* Opal V1 */
-			disk_info.OPAL10 = 1;
-			disk_info.OPAL10_basecomID = SWAP16(body->opalv100.baseComID);
-			disk_info.OPAL10_numcomIDs = SWAP16(body->opalv100.numberComIDs);
-			break;
+        case FC_OPALV100: /* Opal V1 */
+            disk_info.OPAL10 = 1;
+            disk_info.OPAL10_basecomID = SWAP16(body->opalv100.baseComID);
+            disk_info.OPAL10_numcomIDs = SWAP16(body->opalv100.numberComIDs);
+            break;
         case FC_SINGLEUSER: /* Single User Mode */
             disk_info.SingleUser = 1;
             disk_info.SingleUser_all = body->singleUserMode.all;
@@ -237,11 +238,11 @@ void MsedBaseDev::puke()
         if (0x20 == disk_info.firmwareRev[i]) break;
         cout << disk_info.firmwareRev[i];
     }
-    //cout << " ";
-    //for (int i = 0; i < sizeof (disk_info.serialNum); i++) {
-    //    cout << disk_info.serialNum[i];
-    //}
-	cout << endl;
+    cout << " ";
+    for (int i = 0; i < sizeof (disk_info.serialNum); i++) {
+        cout << disk_info.serialNum[i];
+    }
+    cout << endl;
     /* TPer */
     if (disk_info.TPer) {
         cout << "TPer function (" << HEXON(4) << FC_TPER << HEXOFF << ")" << std::endl;
@@ -284,12 +285,12 @@ void MsedBaseDev::puke()
                 << ", comIDs = " << disk_info.Enterprise_numcomID
                 << std::endl;
     }
-	if (disk_info.OPAL10) {
-		cout << "Opal V1.0 function (" << HEXON(4) << FC_OPALV100 << HEXOFF << ")" << std::endl;
-		cout << "Base comID = " << disk_info.OPAL10_basecomID
-			<< ", comIDs = " << disk_info.OPAL10_numcomIDs
-			<< std::endl;
-	}
+    if (disk_info.OPAL10) {
+        cout << "Opal V1.0 function (" << HEXON(4) << FC_OPALV100 << HEXOFF << ")" << std::endl;
+        cout << "Base comID = " << disk_info.OPAL10_basecomID
+                << ", comIDs = " << disk_info.OPAL10_numcomIDs
+                << std::endl;
+    }
     if (disk_info.SingleUser) {
         cout << "SingleUser function (" << HEXON(4) << FC_SINGLEUSER << HEXOFF << ")" << std::endl;
         cout << "    ALL = " << (disk_info.SingleUser_all ? "Y, " : "N, ")

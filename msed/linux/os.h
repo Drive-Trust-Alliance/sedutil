@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 #pragma once
 #include <stdlib.h>
 #include <stdint.h>
@@ -32,5 +32,4 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #define SNPRINTF snprintf
 #define ALIGNED_ALLOC(alignment, length) aligned_alloc(alignment, length)
 #define ALIGNED_FREE free
-#define DEVICEMASK "/dev/sg%i"
-
+#define DEVICEMASK snprintf(devname,23,"/dev/sd%c",(char) 0x61+i)
