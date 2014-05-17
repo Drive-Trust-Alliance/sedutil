@@ -21,6 +21,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <iostream>
 #include <Ntddscsi.h>
+#include <vector>
 #include "MsedDev.h"
 #include "MsedEndianFixup.h"
 #include "MsedStructures.h"
@@ -55,8 +56,8 @@ MsedDev::MsedDev(const char * devref)
     }
     else {
         isOpen = TRUE;
-        discovery0();
         identify();
+		if (!disk_info.devType) discovery0();
     }
 }
 
@@ -122,6 +123,7 @@ void MsedDev::osmsSleep(uint32_t milliseconds)
 void MsedDev::identify()
 {
     LOG(D4) << "Entering MsedDev::identify()";
+	vector<uint8_t> nullz(512, 0x00);
     void * identifyResp = NULL;
     identifyResp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     if (NULL == identifyResp) return;
@@ -133,6 +135,10 @@ void MsedDev::identify()
         //ALIGNED_FREE(identifyResp);
         //return;
     }
+	if (!(memcmp(identifyResp, nullz.data(), 512))) {
+		disk_info.devType = 1;
+		return;
+	}
     IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) identifyResp;
     disk_info.devType = id->devType;
     for (int i = 0; i < sizeof (disk_info.serialNum); i += 2) {

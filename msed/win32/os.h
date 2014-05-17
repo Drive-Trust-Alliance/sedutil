@@ -30,7 +30,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #define ALIGNED_ALLOC(alignment, length) _aligned_malloc(length,alignment)
 #define SNPRINTF sprintf_s
 #define ALIGNED_FREE _aligned_free
-#define DEVICEMASK "\\\\.\\PhysicalDrive%i"
+#define DEVICEMASK sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i)
 typedef UINT8 uint8_t;
 typedef UINT16 uint16_t;
 typedef UINT32 uint32_t;

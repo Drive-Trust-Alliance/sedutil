@@ -61,7 +61,7 @@ void usage()
     printf("Examples \n");
     printf("msed --scan \n");
     printf("msed --initialize newSIDpassword \\\\.\\PhysicalDisk2 \n");
-    printf("msed --revert SIDPassword /dev/sg0 \n");
+    printf("msed --revert SIDPassword /dev/sda \n");
     return;
 }
 

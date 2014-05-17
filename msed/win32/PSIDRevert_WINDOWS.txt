@@ -1,11 +1,11 @@
 
-1. msed -s    <- SCAN to find Opal Drive (you should see Yes next the the drive
+1. msed --scan    <- SCAN to find Opal Drive (you should see Yes next the the drive
                      your working with.
-2. msed -q \\.\PhysicalDrive? <--this will show the Opal status look at the locking
+2. msed --query \\.\PhysicalDrive? <--this will show the Opal status look at the locking
                                                feature and see if it is Locked = Y
                                                or LockingEnabled = Y that's a good
                                                 sign that this should work
-3.msed --yesIreallywanttoERASE*ALL*mydatausingthePSID -p thePSID_ALLCAPSNODASHES \\.\PhysicalDrive?
+3.msed --yesIreallywanttoERASE*ALL*mydatausingthePSID PSID_ALLCAPSNODASHES \\.\PhysicalDrive?
 
 4.  You should see INFO: revertTper completed successfully.
     If you get a message that says NOT_AUTHORIZED you entered the PSID wrong.
@@ -13,14 +13,14 @@
 If it doesn't work please execute the command in step 3 with a -vvvvv (5 v's) as the first option and
 redirect the output to a file and send it back to me.
 example:
-msed -vvvvv --yesIreallywanttoERASE*ALL*mydatausingthePSID -p thePSID_ALLCAPSNODASHES \\.\PhysicalDrive? > revertlog.txt
+msed -vvvvv --yesIreallywanttoERASE*ALL*mydatausingthePSID PSID_ALLCAPSNODASHES \\.\PhysicalDrive? > revertlog.txt
 
 Hope this helps.
 ********************************************************************
 ********************************************************************
 The following is a sanitized log of the commands and expected responses.
 
-U:\msed\Release>msed -s
+U:\msed\Release>msed --scan
 Scanning for Opal 2.0 compliant disks
 \\.\PhysicalDrive0  No  KINGSTON SV100S264G                      120504
 \\.\PhysicalDrive1  No  Hitachi HDT725040VLA360                  V5COA7BA
@@ -32,7 +32,7 @@ Scanning for Opal 2.0 compliant disks
 \\.\PhysicalDrive7  No
 No more disks present ending scan
 
-U:\msed\Release>msed -q \\.\PhysicalDrive3
+U:\msed\Release>msed --query \\.\PhysicalDrive3
 \\.\PhysicalDrive3 ATA Crucial_CT120M500SSD3                    MU05         DRIVESERIALNO
 
 TPer function (0x0001)
