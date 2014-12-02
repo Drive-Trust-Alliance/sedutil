@@ -732,7 +732,7 @@ int dumpTable(char * password, char * devref)
             if ((uint8_t) OPAL_TOKEN::STARTNAME == (uint8_t) response.tokenIs(i)) {
                 LOG(I) << "col " << (uint32_t) response.getUint32(i + 1);
                 temp = response.getRawToken(i + 2);
-                MsedHexDump(temp.data(), temp.size());
+                MsedHexDump(temp.data(), (int) temp.size());
                 i += 2;
             }
             i++;

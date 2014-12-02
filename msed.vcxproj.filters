@@ -9,129 +9,117 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Documentation">
-      <UniqueIdentifier>{941a8b0f-2973-43de-ae97-a4fa9af85ed3}</UniqueIdentifier>
-      <Extensions>txt</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{5232c7c1-50a7-49ed-ac39-876acad15844}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt">
-      <Filter>Documentation</Filter>
-    </Text>
-    <Text Include="win32\ReadMe_Windows.txt">
-      <Filter>Documentation</Filter>
-    </Text>
-    <Text Include="Copyright.txt">
-      <Filter>Documentation</Filter>
-    </Text>
-    <Text Include="LICENSE.txt">
-      <Filter>Documentation</Filter>
-    </Text>
-    <Text Include="win32\PSIDRevert_WINDOWS.txt">
-      <Filter>Documentation</Filter>
-    </Text>
-    <Text Include="TODO.txt">
-      <Filter>Documentation</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Class_Skeleton.h">
+    <ClInclude Include="msed\MsedTasks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="log.h">
+    <ClInclude Include="msed\MsedStructures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="win32\os.h">
+    <ClInclude Include="msed\MsedSession.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MsedHashPwd.h">
+    <ClInclude Include="msed\MsedResponse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MsedBaseDev.h">
+    <ClInclude Include="msed\MsedOptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MsedCommand.h">
+    <ClInclude Include="msed\MsedLexicon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MsedEndianFixup.h">
+    <ClInclude Include="msed\MsedHexDump.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MsedHexDump.h">
+    <ClInclude Include="msed\MsedHashPwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MsedLexicon.h">
+    <ClInclude Include="msed\MsedEndianFixup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MsedOptions.h">
+    <ClInclude Include="msed\MsedConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MsedResponse.h">
+    <ClInclude Include="msed\MsedCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MsedSession.h">
+    <ClInclude Include="msed\MsedBaseDev.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MsedStructures.h">
+    <ClInclude Include="msed\log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MsedTasks.h">
+    <ClInclude Include="msed\Class_Skeleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="win32\MsedDev.h">
+    <ClInclude Include="msed\win32\MsedDev.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MsedConstants.h">
+    <ClInclude Include="msed\win32\os.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="msed.cpp">
+    <ClCompile Include="msed\win32\MsedDev.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Class_Skeleton.cpp">
+    <ClCompile Include="msed\MsedTasks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MsedHashPwd.cpp">
+    <ClCompile Include="msed\MsedSession.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MsedBaseDev.cpp">
+    <ClCompile Include="msed\MsedResponse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MsedCommand.cpp">
+    <ClCompile Include="msed\MsedOptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MsedHexDump.cpp">
+    <ClCompile Include="msed\MsedHexDump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MsedOptions.cpp">
+    <ClCompile Include="msed\MsedHashPwd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MsedResponse.cpp">
+    <ClCompile Include="msed\MsedCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MsedSession.cpp">
+    <ClCompile Include="msed\MsedBaseDev.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MsedTasks.cpp">
+    <ClCompile Include="msed\msed.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="win32\MsedDev.cpp">
+    <ClCompile Include="msed\Class_Skeleton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="win32\Package.cmd">
+    <Text Include="msed\TODO.txt">
       <Filter>Documentation</Filter>
-    </None>
-    <None Include="win32\TestSuite.cmd">
+    </Text>
+    <Text Include="msed\ReadMe.txt">
       <Filter>Documentation</Filter>
-    </None>
-    <None Include="win32\msed_test.baseline">
+    </Text>
+    <Text Include="msed\LICENSE.txt">
       <Filter>Documentation</Filter>
-    </None>
+    </Text>
+    <Text Include="msed\Copyright.txt">
+      <Filter>Documentation</Filter>
+    </Text>
+    <Text Include="msed\win32\PSIDRevert_WINDOWS.txt">
+      <Filter>Documentation</Filter>
+    </Text>
+    <Text Include="msed\win32\ReadMe_Windows.txt">
+      <Filter>Documentation</Filter>
+    </Text>
   </ItemGroup>
 </Project>

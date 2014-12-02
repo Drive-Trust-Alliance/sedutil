@@ -103,7 +103,7 @@ OPAL_TOKENID MsedResponse::tokenIs(uint32_t tokenNum)
 
 uint32_t MsedResponse::getLength(uint32_t tokenNum)
 {
-    return response[tokenNum].size();
+    return (uint32_t) response[tokenNum].size();
 }
 
 uint64_t MsedResponse::getUint64(uint32_t tokenNum)
@@ -128,7 +128,7 @@ uint64_t MsedResponse::getUint64(uint32_t tokenNum)
             if (response[tokenNum].size() > 9)
                 LOG(E) << "UINT64 with greater than 8 bytes";
             int b = 0;
-            for (uint32_t i = response[tokenNum].size() - 1; i > 0; i--) {
+            for (uint32_t i = (uint32_t) response[tokenNum].size() - 1; i > 0; i--) {
 				whatever |= ((uint64_t)response[tokenNum][i] << (8 * b));
                 b++;
             }
@@ -244,7 +244,7 @@ void MsedResponse::getBytes(uint32_t tokenNum, uint8_t bytearray[])
 uint32_t MsedResponse::getTokenCount()
 {
     LOG(D4) << "Entering  MsedResponse::getTokenCount()";
-    return response.size();
+    return (uint32_t) response.size();
 }
 
 MsedResponse::~MsedResponse()

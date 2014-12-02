@@ -69,7 +69,7 @@ void MsedHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> sa
     pbkdf2.DeriveKey(hash.data(), hash.size(), 0, (byte *) password, strnlen(password, 256),
                      salt.data(), salt.size(), iter);
     // add the token overhead
-    hash.insert(hash.begin(), hash.size());
+    hash.insert(hash.begin(), (uint8_t)hash.size());
     hash.insert(hash.begin(), 0xd0);
 }
 // weirdness with c4505 in misc won't allow a pop ?????
@@ -102,7 +102,7 @@ bool TestMsed(const PBKDF_TestTuple *testSet, unsigned int testSetSize)
             seaSalt.push_back(tuple.hexSalt[i]);
         }
         MsedHashPassword(hash, (char *) tuple.hexPassword, seaSalt,
-                         tuple.iterations, derivedKey.size());
+                         tuple.iterations, (uint8_t)derivedKey.size());
         bool fail = memcmp(hash.data() + 2, derivedKey.data(), derived.size()) != 0;
         pass = pass && !fail;
 
