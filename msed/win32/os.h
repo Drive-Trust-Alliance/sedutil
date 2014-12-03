@@ -31,6 +31,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #define SNPRINTF sprintf_s
 #define ALIGNED_FREE _aligned_free
 #define DEVICEMASK sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i)
+#define DEVICEEXAMPLE "\\\\.\\PhysicalDrive3"
 typedef UINT8 uint8_t;
 typedef UINT16 uint16_t;
 typedef UINT32 uint32_t;

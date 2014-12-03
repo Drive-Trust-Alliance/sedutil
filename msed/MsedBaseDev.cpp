@@ -60,10 +60,14 @@ uint8_t MsedBaseDev::isOpal1()
 
 uint8_t MsedBaseDev::isEprise()
 {
-    LOG(D4) << "Entering MsedBaseDev::isOpal1()";
+    LOG(D4) << "Entering MsedBaseDev::isEprise";
     return disk_info.Enterprise;
 }
-
+uint8_t MsedBaseDev::isANYSSC()
+{
+	LOG(D4) << "Entering MsedBaseDev::isANYSSC";
+	return disk_info.ANY_OPAL_SSC;
+}
 uint8_t MsedBaseDev::isPresent()
 {
     LOG(D4) << "Entering MsedBaseDev::isPresent()";
@@ -180,12 +184,14 @@ void MsedBaseDev::discovery0()
             break;
         case FC_ENTERPRISE: /* Enterprise SSC */
             disk_info.Enterprise = 1;
+			disk_info.ANY_OPAL_SSC = 1;
             disk_info.Enterprise_rangeCrossing = body->enterpriseSSC.rangeCrossing;
             disk_info.Enterprise_basecomID = SWAP16(body->enterpriseSSC.baseComID);
             disk_info.Enterprise_numcomID = SWAP16(body->enterpriseSSC.numberComIDs);
             break;
         case FC_OPALV100: /* Opal V1 */
             disk_info.OPAL10 = 1;
+			disk_info.ANY_OPAL_SSC = 1;
             disk_info.OPAL10_basecomID = SWAP16(body->opalv100.baseComID);
             disk_info.OPAL10_numcomIDs = SWAP16(body->opalv100.numberComIDs);
             break;
@@ -204,6 +210,7 @@ void MsedBaseDev::discovery0()
             break;
         case FC_OPALV200: /* OPAL V200 */
             disk_info.OPAL20 = 1;
+			disk_info.ANY_OPAL_SSC = 1;
             disk_info.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
             disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
             disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;

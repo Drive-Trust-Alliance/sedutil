@@ -279,6 +279,7 @@ typedef enum _ATACOMMAND {
 /** structure to store D0 information. */
 typedef struct _OPAL_DiskInfo {
     // parsed the Function block?
+	uint8_t Unknown;
     uint8_t TPer : 1;
     uint8_t Locking : 1;
     uint8_t Geometry : 1;
@@ -287,7 +288,7 @@ typedef struct _OPAL_DiskInfo {
     uint8_t DataStore : 1;
     uint8_t OPAL20 : 1;
 	uint8_t OPAL10 : 1;
-    uint8_t Unknown;
+	uint8_t ANY_OPAL_SSC : 1;
     // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
     uint8_t TPer_ACKNACK : 1;
     uint8_t TPer_async : 1;

@@ -60,8 +60,9 @@ void usage()
     printf("\n");
     printf("Examples \n");
     printf("msed --scan \n");
-    printf("msed --initialize newSIDpassword \\\\.\\PhysicalDisk2 \n");
-    printf("msed --revert SIDPassword /dev/sda \n");
+	printf("msed --query %s \n", DEVICEEXAMPLE);
+	printf("msed --yesIreallywanttoERASE*ALL*mydatausingthePSID <PSIDALLCAPSNODASHED> %s \n", DEVICEEXAMPLE);
+	printf("msed --initialsetup <newSIDpassword> %s \n", DEVICEEXAMPLE);
     return;
 }
 

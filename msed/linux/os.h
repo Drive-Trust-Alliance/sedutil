@@ -33,3 +33,4 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #define ALIGNED_ALLOC(alignment, length) aligned_alloc(alignment, length)
 #define ALIGNED_FREE free
 #define DEVICEMASK snprintf(devname,23,"/dev/sd%c",(char) 0x61+i)
+#define DEVICEEXAMPLE "/dev/sdc"

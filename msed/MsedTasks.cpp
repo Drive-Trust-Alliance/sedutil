@@ -42,8 +42,8 @@ int diskQuery(char * devref)
         delete dev;
         return 1;
     }
-    if (!dev->isOpal2()) {
-        LOG(E) << "Device not Opal2 " << devref;
+	if (!dev->isANYSSC()) {
+        LOG(E) << "Device not OPAL 1,2 or Enterprise " << devref;
         delete dev;
         return 1;
     }
@@ -63,12 +63,19 @@ int diskScan()
     printf("\nScanning for Opal 2.0 compliant disks\n");
     while (TRUE) {
         DEVICEMASK;
-        //snprintf(devname,23,"/dev/sd%c",(char) 0x61+i)
+        //snprintf(devname,23,"/dev/sd%c",(char) 0x61+i) Linux
+		//sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i)  Windows
         d = new MsedDev(devname);
-        if (d->isPresent()) {
-            d->getFirmwareRev(FirmwareRev);
-            d->getModelNum(ModelNum);
-            printf("%s %s", devname, (d->isOpal2() ? " Yes " : " No  "));
+		if (d->isPresent()) {
+			d->getFirmwareRev(FirmwareRev);
+			d->getModelNum(ModelNum);
+			printf("%s", devname);
+			if (d->isANYSSC()) 
+				printf(" %s%s%s ",(d->isOpal1() ? "1" : " "),
+				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
+			else
+				printf("%s", " No  ");
+		
             for (int x = 0; x < sizeof (ModelNum); x++) {
                 cout << ModelNum[x];
             }
@@ -352,7 +359,6 @@ int revertTPer(char * devref, char * password, uint8_t PSID)
     MsedResponse response;
     OPAL_UID uid = OPAL_UID::OPAL_SID_UID;
     if (PSID) {
-        session->expectAbort(); // seems to immed abort on PSID auth fail
         session->dontHashPwd(); // PSID pwd should be passed as entered
         uid = OPAL_UID::OPAL_PSID_UID;
     }
