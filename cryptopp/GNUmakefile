@@ -1,4 +1,4 @@
-CXXFLAGS = -m32 -DNDEBUG -g -O2 -U_FORTIFY_SOURCE
+CXXFLAGS += -DNDEBUG -g -O2 -U_FORTIFY_SOURCE
 # -O3 fails to link on Cygwin GCC version 4.5.3
 # -fPIC is supported. Please report any breakage of -fPIC as a bug.
 # CXXFLAGS += -fPIC
@@ -16,6 +16,7 @@ IS_SUN_CC = $(shell $(CXX) -V 2>&1 | $(EGREP) -c "CC: Sun")
 IS_LINUX = $(shell $(CXX) -dumpmachine 2>&1 | $(EGREP) -c "linux")
 IS_MINGW = $(shell $(CXX) -dumpmachine 2>&1 | $(EGREP) -c "mingw")
 CLANG_COMPILER = $(shell $(CXX) --version 2>&1 | $(EGREP) -i -c "clang version")
+ARCHDIR = ./
 
 # Default prefix for make install
 ifeq ($(PREFIX),)
@@ -39,7 +40,9 @@ ifneq ($(GCC42_OR_LATER),0)
 ifeq ($(UNAME),Darwin)
 CXXFLAGS += -arch x86_64 -arch i386
 else
+ifeq ($(IS_LINUX),0)
 CXXFLAGS += -march=i686
+endif
 endif
 endif
 
@@ -82,7 +85,13 @@ endif
 ifeq ($(IS_LINUX),1)
 LDFLAGS += -pthread
 ifneq ($(shell uname -i | $(EGREP) -c "(_64|d64)"),0)
-M32OR64 = -m64
+CXXFLAGS += -m64 -march=x86-64
+ARCHDIR = dist/x86_64/
+$(shell $(MKDIR) -p $(ARCHDIR))
+else
+CXXFLAGS += -m32 -march=i686
+ARCHDIR = dist/i686/
+$(shell $(MKDIR) -p $(ARCHDIR))
 endif
 endif
 
@@ -146,7 +155,9 @@ test: cryptest.exe
 
 clean:
 	-$(RM) cryptest.exe libcryptopp.a libcryptopp.so $(LIBOBJS) $(TESTOBJS) cryptopp.dll libcryptopp.dll.a libcryptopp.import.a cryptest.import.exe dlltest.exe $(DLLOBJS) $(LIBIMPORTOBJS) $(TESTI MPORTOBJS) $(DLLTESTOBJS)
-
+ifneq ($(ARCHDIR),./)
+	-$(RM) -r $(ARCHDIR)
+endif
 install:
 	$(MKDIR) -p $(PREFIX)/include/cryptopp $(PREFIX)/lib $(PREFIX)/bin
 	-$(CP) *.h $(PREFIX)/include/cryptopp
@@ -161,14 +172,14 @@ remove:
 	-$(RM) $(PREFIX)/bin/cryptest.exe
 
 libcryptopp.a: $(LIBOBJS)
-	$(AR) $(ARFLAGS) $@ $(LIBOBJS)
-	$(RANLIB) $@
+	$(AR) $(ARFLAGS) $(ARCHDIR)$@ $(LIBOBJS)
+	$(RANLIB) $(ARCHDIR)$@
 
 libcryptopp.so: $(LIBOBJS)
 	$(CXX) -shared -o $@ $(LIBOBJS)
 
 cryptest.exe: libcryptopp.a $(TESTOBJS)
-	$(CXX) -o $@ $(CXXFLAGS) $(TESTOBJS) ./libcryptopp.a $(LDFLAGS) $(LDLIBS)
+	$(CXX) -o $(ARCHDIR)$@ $(CXXFLAGS) $(TESTOBJS) $(ARCHDIR)libcryptopp.a $(LDFLAGS) $(LDLIBS)
 
 nolib: $(OBJS)		# makes it faster to test changes
 	$(CXX) -o ct $(CXXFLAGS) $(OBJS) $(LDFLAGS) $(LDLIBS)

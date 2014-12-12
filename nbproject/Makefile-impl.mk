@@ -27,11 +27,11 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 PROJECTNAME=msed
 
 # Active Configuration
-DEFAULTCONF=Debug
+DEFAULTCONF=Debug_i686
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=Debug Release 
+ALLCONFS=Debug_i686 Release_i686 Debug_x86_64 Release_x86_64 
 
 
 # build

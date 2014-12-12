@@ -3,5 +3,7 @@
 #
 # NOCDDL
 #
-# Debug configuration
-# Release configuration
+# Debug_i686 configuration
+# Release_i686 configuration
+# Debug_x86_64 configuration
+# Release_x86_64 configuration

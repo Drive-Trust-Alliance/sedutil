@@ -14,11 +14,19 @@
             </sourceRootList>
             <confList>
                 <confElem>
-                    <name>Debug</name>
+                    <name>Debug_i686</name>
                     <type>1</type>
                 </confElem>
                 <confElem>
-                    <name>Release</name>
+                    <name>Release_i686</name>
+                    <type>1</type>
+                </confElem>
+                <confElem>
+                    <name>Debug_x86_64</name>
+                    <type>1</type>
+                </confElem>
+                <confElem>
+                    <name>Release_x86_64</name>
                     <type>1</type>
                 </confElem>
             </confList>

@@ -6,22 +6,38 @@
 CND_BASEDIR=`pwd`
 CND_BUILDDIR=build
 CND_DISTDIR=dist
-# Debug configuration
-CND_PLATFORM_Debug=GNU-Linux-x86
-CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux-x86
-CND_ARTIFACT_NAME_Debug=msed
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux-x86/msed
-CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux-x86/package
-CND_PACKAGE_NAME_Debug=msed.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux-x86/package/msed.tar
-# Release configuration
-CND_PLATFORM_Release=GNU-Linux-x86
-CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux-x86
-CND_ARTIFACT_NAME_Release=msed
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux-x86/msed
-CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux-x86/package
-CND_PACKAGE_NAME_Release=msed.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux-x86/package/msed.tar
+# Debug_i686 configuration
+CND_PLATFORM_Debug_i686=GNU-Linux-x86
+CND_ARTIFACT_DIR_Debug_i686=dist/Debug_i686
+CND_ARTIFACT_NAME_Debug_i686=msed
+CND_ARTIFACT_PATH_Debug_i686=dist/Debug_i686/msed
+CND_PACKAGE_DIR_Debug_i686=dist/Debug_i686/GNU-Linux-x86/package
+CND_PACKAGE_NAME_Debug_i686=msed.tar
+CND_PACKAGE_PATH_Debug_i686=dist/Debug_i686/GNU-Linux-x86/package/msed.tar
+# Release_i686 configuration
+CND_PLATFORM_Release_i686=GNU-Linux-x86
+CND_ARTIFACT_DIR_Release_i686=dist/Release_i686
+CND_ARTIFACT_NAME_Release_i686=msed
+CND_ARTIFACT_PATH_Release_i686=dist/Release_i686/msed
+CND_PACKAGE_DIR_Release_i686=dist/Release_i686/GNU-Linux-x86/package
+CND_PACKAGE_NAME_Release_i686=msed.tar
+CND_PACKAGE_PATH_Release_i686=dist/Release_i686/GNU-Linux-x86/package/msed.tar
+# Debug_x86_64 configuration
+CND_PLATFORM_Debug_x86_64=GNU-Linux-x86
+CND_ARTIFACT_DIR_Debug_x86_64=dist/Debug_x86_64
+CND_ARTIFACT_NAME_Debug_x86_64=msed
+CND_ARTIFACT_PATH_Debug_x86_64=dist/Debug_x86_64/msed
+CND_PACKAGE_DIR_Debug_x86_64=dist/Debug_x86_64/GNU-Linux-x86/package
+CND_PACKAGE_NAME_Debug_x86_64=msed.tar
+CND_PACKAGE_PATH_Debug_x86_64=dist/Debug_x86_64/GNU-Linux-x86/package/msed.tar
+# Release_x86_64 configuration
+CND_PLATFORM_Release_x86_64=GNU-Linux-x86
+CND_ARTIFACT_DIR_Release_x86_64=dist/Release_x86_64
+CND_ARTIFACT_NAME_Release_x86_64=msed
+CND_ARTIFACT_PATH_Release_x86_64=dist/Release_x86_64/msed
+CND_PACKAGE_DIR_Release_x86_64=dist/Release_x86_64/GNU-Linux-x86/package
+CND_PACKAGE_NAME_Release_x86_64=msed.tar
+CND_PACKAGE_PATH_Release_x86_64=dist/Release_x86_64/GNU-Linux-x86/package/msed.tar
 #
 # include compiler specific variables
 #

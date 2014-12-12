@@ -159,3 +159,7 @@ $RECYCLE.BIN/
 /dist/
 *.zip
 *.tgz
+# cryptopp chaff
+cryptopp/*.a
+cryptopp/*.o
+cryptopp/dist/
