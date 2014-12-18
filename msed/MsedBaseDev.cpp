@@ -73,6 +73,11 @@ uint8_t MsedBaseDev::isPresent()
     LOG(D4) << "Entering MsedBaseDev::isPresent()";
     return isOpen;
 }
+uint8_t MsedBaseDev::MBREnabled()
+{
+    LOG(D4) << "Entering MsedBaseDev::MBREnabled()";
+    return disk_info.Locking_MBREnabled;
+}
 
 void MsedBaseDev::getFirmwareRev(uint8_t bytes[8])
 {

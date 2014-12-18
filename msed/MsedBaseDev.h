@@ -35,7 +35,8 @@ public:
     uint8_t isOpal2();
     uint8_t isOpal1();
     uint8_t isEprise();
-	uint8_t isANYSSC();
+    uint8_t isANYSSC();
+     uint8_t MBREnabled();
     uint8_t isPresent();
     uint16_t comID();
     void getFirmwareRev(uint8_t bytes[8]);

@@ -11,49 +11,49 @@ pause
 echo Last chance to hit Ctrl-c an keep the data on your drive
 pause
 :: test msed commands
-::set MSED=..\..\Debug\msed.exe
-::set MSED=..\..\Release\msed.exe
+::set MSED=..\..\Win32\Debug\msed.exe
+::set MSED=..\..\Win32\Release\msed.exe
 set MSED=msed.exe
-echo testing msed %date% @ %time% > msed_test.log
-%MSED% --ValidatePBKDF2 >> msed_test.log
-%MSED% --scan >> msed_test.log
-%MSED% --query %1 >> msed_test.log
+echo testing msed %date% @ %time% > msed_test.log 2>&1
+%MSED% --ValidatePBKDF2 >> msed_test.log 2>&1
+%MSED% --scan >> msed_test.log 2>&1
+%MSED% --query %1 >> msed_test.log 2>&1
 echo Perform the initial setup
-%MSED% --initialsetup passw0rd %1 >> msed_test.log
-%MSED% --query %1 >> msed_test.log
+%MSED% --initialsetup passw0rd %1 >> msed_test.log 2>&1
+%MSED% --query %1 >> msed_test.log 2>&1
 echo change the LSP Admin1 password
-%MSED% --setAdmin1Pwd passw0rd password %1 >> msed_test.log
+%MSED% --setAdmin1Pwd passw0rd password %1 >> msed_test.log 2>&1
 echo test readlocking
-%MSED%  --setLR 0 RO password %1 >> msed_test.log
-%MSED% --query %1 >> msed_test.log
-%MSED% --unsetWriteLockedGlobal --password password %1 >> msed_test.log
-%MSED% --query %1 >> msed_test.log
+%MSED%  --setLR 0 RO password %1 >> msed_test.log 2>&1
+%MSED% --query %1 >> msed_test.log 2>&1
+%MSED% --unsetWriteLockedGlobal --password password %1 >> msed_test.log 2>&1
+%MSED% --query %1 >> msed_test.log 2>&1
 echo test write locking
-%MSED% --setLR 0 RW password %1 >> msed_test.log
-%MSED% --query %1 >> msed_test.log
+%MSED% --setLR 0 RW password %1 >> msed_test.log 2>&1
+%MSED% --query %1 >> msed_test.log 2>&1
 echo disable locking on the global range
-%MSED% --disableReadLockingGlobal --password password %1 >> msed_test.log
-%MSED% --disableWriteLockingGlobal --password password %1 >> msed_test.log
+%MSED% --disableReadLockingGlobal --password password %1 >> msed_test.log 2>&1
+%MSED% --disableWriteLockingGlobal --password password %1 >> msed_test.log 2>&1
 echo enable mbr shadowing
-%MSED% --setMBREnable on password %1 >> msed_test.log
-%MSED% --query %1 >> msed_test.log
+%MSED% --setMBREnable on password %1 >> msed_test.log 2>&1
+%MSED% --query %1 >> msed_test.log 2>&1
 echo set MBRDone
-%MSED% --setMBRDone ON password %1 >> msed_test.log
-%MSED% --query %1 >> msed_test.log
+%MSED% --setMBRDone ON password %1 >> msed_test.log 2>&1
+%MSED% --query %1 >> msed_test.log 2>&1
 echo unset MBRDone
-%MSED% --setMBRDone off password %1 >> msed_test.log
-%MSED% --query %1 >> msed_test.log
+%MSED% --setMBRDone off password %1 >> msed_test.log 2>&1
+%MSED% --query %1 >> msed_test.log 2>&1
 echo disable mbr shadowing
-%MSED% --setMBREnable OFF password %1 >> msed_test.log
-%MSED% --query %1 >> msed_test.log
+%MSED% --setMBREnable OFF password %1 >> msed_test.log 2>&1
+%MSED% --query %1 >> msed_test.log 2>&1
 echo resetting device
-::%MSED% --revertnoerase passw0rd password %1 >> msed_test.log
-::%MSED% --query %1 >> msed_test.log
-::%MSED% --initialsetup passw0rd %1 >> msed_test.log
-%MSED% --revert passw0rd %1 >> msed_test.log
-%MSED% --query %1 >> msed_test.log
+::%MSED% --revertnoerase passw0rd password %1 >> msed_test.log 2>&1
+::%MSED% --query %1 >> msed_test.log 2>&1
+::%MSED% --initialsetup passw0rd %1 >> msed_test.log 2>&1
+%MSED% --revert passw0rd %1 >> msed_test.log 2>&1
+%MSED% --query %1 >> msed_test.log 2>&1
 echo Thanks for running the test suite 
-echo please e-mail msed_test.log to r0m30@r0m30.com
+echo please e-mail msed_test.log 2>&1 to r0m30@r0m30.com
 echo along with the OS, OS level and type of drive you have
 pause
 exit /b

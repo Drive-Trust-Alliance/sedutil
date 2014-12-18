@@ -120,7 +120,7 @@ public:
 };
 
 inline FILE*& Output2FILE::Stream() {
-    static FILE* pStream = stdout;
+    static FILE* pStream = stderr;
     return pStream;
 }
 

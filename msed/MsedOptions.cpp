@@ -48,7 +48,7 @@ void usage()
 	printf("                                Enable|Disable MBR shadowing \n");
 	printf("--setMBRDone <on|off> <Admin1password> <device> \n");
 	printf("                                set|unset MBRDone\n");
-	printf("--loadPBAimage <SIDpassword> <file> <device> \n");
+	printf("--loadPBAimage <Admin1password> <file> <device> \n");
 	printf("                                Write <file> to MBR Shadow area\n");
     printf("--revert <SIDpassword> <device>\n");
     printf("                                set the device back to factory defaults \n");

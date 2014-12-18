@@ -15,6 +15,7 @@
     </Filter>
     <Filter Include="Documentation">
       <UniqueIdentifier>{5232c7c1-50a7-49ed-ac39-876acad15844}</UniqueIdentifier>
+      <ParseFiles>false</ParseFiles>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -55,9 +56,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="msed\log.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="msed\Class_Skeleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="msed\win32\MsedDev.h">

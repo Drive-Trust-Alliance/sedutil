@@ -25,6 +25,7 @@ using namespace std;
 
 int initialsetup(char * password, char * devref);
 int revertnoerase(char * SIDPassword, char * Admin1Password, char * devref);
+int loadPBA(char * Admin1Password, char * filename, char * devref);
 int setSIDPassword(char * oldpassword, char * newpassword,
         char * devref, uint8_t hasholdpwd = 1, uint8_t hashnewpwd = 1);
 int setLockingRange(uint8_t lockingrange, uint8_t lockingstate, char * Admin1Password, char * devref);

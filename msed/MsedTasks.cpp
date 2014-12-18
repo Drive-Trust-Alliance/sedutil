@@ -20,6 +20,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include <stdio.h>
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include "MsedDev.h"
 #include "MsedHexDump.h"
@@ -136,6 +137,96 @@ int initialsetup(char * password, char * devref)
     return 0;
 }
 
+int loadPBA(char * password, char * filename, char * devref) {
+    LOG(D4) << "Entering  loadPBA " << filename << " " << devref;
+    uint64_t fivepercent = 0;
+    int complete = 4;
+    typedef struct {uint8_t  i:2 ;} spinnertik;
+    spinnertik spinnertick;
+    spinnertick.i =0;
+    char star[] =  "*";
+    char spinner[] =  "|/-\\" ;
+    char progress_bar[] = "   [                     ]";
+        
+    uint32_t filepos = 0;
+    ifstream pbafile;
+    vector <uint8_t> buffer, lengthtoken;
+	buffer.clear();
+	buffer.reserve(1024);
+	for (int i = 0; i < 1024; i++) {
+		buffer.push_back(0x00);
+	}
+	lengthtoken.clear();
+	lengthtoken.push_back(0xd4);
+	lengthtoken.push_back(0x00);
+    pbafile.open(filename, ios::in | ios::binary );
+    if (!pbafile) {
+         LOG(E) << "Unable to open PBA image file " << devref;
+        return 0xff;
+    }
+    pbafile.seekg (0, pbafile.end);
+    fivepercent = ((pbafile.tellg() / 20)/1024) * 1024 ;
+	if  (0 == fivepercent) fivepercent++;
+    pbafile.seekg (0, pbafile.beg);
+
+    MsedDev *device = new MsedDev(devref);
+    if (!(device->isOpal2())) {
+        LOG(E) << "Device not Opal2 " << devref;
+        delete device;
+         pbafile.close();
+        return 0xff;
+    }
+    MsedCommand *cmd = new MsedCommand();
+    MsedSession * session = new MsedSession(device);
+    if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) {
+        delete cmd;
+        delete session;
+        delete device;
+        pbafile.close();
+        return 0xff;
+    }
+
+    MsedResponse response;
+	LOG(I) << "Writing PBA to " << devref;
+	while (!pbafile.eof()) {
+		pbafile.read((char *)buffer.data(), 1024);
+		if (!(filepos % fivepercent)) progress_bar[complete++] = star[0];
+                if(!(filepos % (1024*5))) { 
+                    progress_bar[1] = spinner[spinnertick.i++];
+                    printf("\r%s",progress_bar);
+                    fflush(stdout);
+                }
+        //	session[TSN:HSN] -> MBR_UID.Set[Where = 0, Values = “<Master_Boot_Record_shadow>”]
+       cmd->reset(OPAL_UID::OPAL_MBR, OPAL_METHOD::SET);
+        cmd->addToken(OPAL_TOKEN::STARTLIST);
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken(OPAL_TOKEN::WHERE);
+        cmd->addToken(filepos);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken(OPAL_TOKEN::VALUES);
+        cmd->addToken(lengthtoken);
+        cmd->addToken(buffer);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+        cmd->addToken(OPAL_TOKEN::ENDLIST);
+        cmd->complete();
+        if (session->sendCommand(cmd, response)) {
+            delete cmd;
+            delete session;
+            delete device;
+            pbafile.close();
+            return 0xff;
+        }
+        filepos += 1024;
+    }
+	printf("\n");
+	delete cmd;
+	delete session;
+	delete device;
+    pbafile.close();
+    LOG(I) << "PBA image  " << filename << " written to " << devref;
+	return 0;
+}
 int revertnoerase(char * SIDPassword, char * Admin1Password, char * devref)
 {
     LOG(D4) << "Entering revertnoerase";
@@ -849,7 +940,7 @@ int MsedSetLSP(OPAL_UID table_uid, OPAL_TOKEN name, vector<uint8_t> value,
         table.push_back(OPALUID[table_uid][i]);
     }
     MsedDev *device = new MsedDev(devref);
-    if (!(device->isOpal2())) {
+    if (!(device->isANYSSC())) {
         LOG(E) << "Device not Opal2 " << devref;
         delete device;
         return 0xff;

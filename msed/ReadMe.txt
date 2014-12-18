@@ -43,4 +43,4 @@ Currently the only operation that a general user would want to use is the PSID r
 see linux/PSIDRevert_LINUX.txt or win32/PSIDRevert_WINDOWS.txt
 
 Source code is available on GitHub at
-Linux and Windows executables are available at //http:/r0m30.com/msed
+Linux and Windows executables are available at //http:/www.r0m30.com/msed

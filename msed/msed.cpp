@@ -59,8 +59,9 @@ int main(int argc, char * argv[])
         return setNewPassword(argv[opts.password], (char *) "Admin1",
                               argv[opts.newpassword], argv[argc - 1]);
     case 0x04:
-        LOG(E) << "PBA image code is not implemented";
-        return 1;
+        LOG(D) << "Loading PBA image " << argv[opts.pbafile] << " to " << argv[argc -1];
+        return (loadPBA(argv[opts.password], argv[opts.pbafile], argv[argc - 1]));
+
     case 0x05:
         if (0 == opts.password) {
             LOG(E) << "revertnoerase requires the SID password";

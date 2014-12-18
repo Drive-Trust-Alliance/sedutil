@@ -171,6 +171,7 @@ uint16_t MsedResponse::getUint16(uint32_t tokenNum)
 
 uint8_t MsedResponse::getUint8(uint32_t tokenNum)
 {
+	LOG(D4) << "Entering  MsedResponse::getUint8";
     uint64_t i = getUint64(tokenNum);
     if (i > 0xff)
         LOG(E) << "UINT8 truncated ";

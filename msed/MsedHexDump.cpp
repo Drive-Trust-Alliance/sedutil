@@ -27,28 +27,28 @@ void MsedHexDump(void * address, int length) {
 	LOG(D4) << "Entering hexDump";
 	int rpos = 0;
 	int dpos = 0;
-	printf("%04x ",rpos);
+	fprintf( stderr,"%04x ",rpos);
 	while (cpos < epos){
-		printf("%02x", cpos[0]);
-		if (!((++rpos) % 4)) printf(" ");
+		fprintf( stderr,"%02x", cpos[0]);
+		if (!((++rpos) % 4))fprintf( stderr," ");
 		display[dpos++] = (isprint(cpos[0]) ? cpos[0] : 0x2e );
 		cpos += 1;
 		if (16 == dpos) {
 			dpos = 0;
 			display[16] = 0x00;
-			printf(" %s \n", display);
-			if(cpos < epos) printf("%04x ", rpos);
+			fprintf( stderr," %s \n", display);
+			if(cpos < epos) fprintf( stderr,"%04x ", rpos);
 			memset(&display,0,sizeof(display));
 		}
 	}
 	if (dpos != 0) {
-		if (dpos % 4) printf(" ");
-			printf("  ");
+		if (dpos % 4) fprintf( stderr," ");
+			fprintf( stderr,"  ");
 		for (int i = dpos ; i < 15; i++) {
-			if (!(i % 4)) printf(" ");
-			printf("  ");
+			if (!(i % 4)) fprintf( stderr," ");
+			fprintf( stderr,"  ");
 		}
 		display[dpos] = 0x00;
-		printf(" %s\n", display);
+		fprintf( stderr," %s\n", display);
 	}
 }

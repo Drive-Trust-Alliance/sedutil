@@ -5,7 +5,7 @@
                                                feature and see if it is Locked = Y
                                                or LockingEnabled = Y that's a good
                                                 sign that this should work
-3.msed --yesIreallywanttoERASE*ALL*mydatausingthePSID PSID_ALLCAPSNODASHES \\.\PhysicalDrive?
+3.msed --yesIreallywanttoERASE*ALL*mydatausingthePSID <YOURPSID> \\.\PhysicalDrive?
 
 4.  You should see INFO: revertTper completed successfully.
     If you get a message that says NOT_AUTHORIZED you entered the PSID wrong.
@@ -13,7 +13,7 @@
 If it doesn't work please execute the command in step 3 with a -vvvvv (5 v's) as the first option and
 redirect the output to a file and send it back to me.
 example:
-msed -vvvvv --yesIreallywanttoERASE*ALL*mydatausingthePSID PSID_ALLCAPSNODASHES \\.\PhysicalDrive? > revertlog.txt
+msed -vvvvv --yesIreallywanttoERASE*ALL*mydatausingthePSID <YOURPSID> \\.\PhysicalDrive? > revertlog.txt 2>&1
 
 Hope this helps.
 ********************************************************************
@@ -25,7 +25,7 @@ Scanning for Opal 2.0 compliant disks
 \\.\PhysicalDrive0  No  KINGSTON SV100S264G                      120504
 \\.\PhysicalDrive1  No  Hitachi HDT725040VLA360                  V5COA7BA
 \\.\PhysicalDrive2  No  WDC WD5000AAKS-00TMA0                    12.01C01
-\\.\PhysicalDrive3  Yes Crucial_CT120M500SSD3                    MU05
+\\.\PhysicalDrive3   2  Crucial_CT120M500SSD3                    MU05
 \\.\PhysicalDrive4  No
 \\.\PhysicalDrive5  No
 \\.\PhysicalDrive6  No
