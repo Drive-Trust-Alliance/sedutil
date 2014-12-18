@@ -35,7 +35,6 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/msed/Class_Skeleton.o \
 	${OBJECTDIR}/msed/MsedBaseDev.o \
 	${OBJECTDIR}/msed/MsedCommand.o \
 	${OBJECTDIR}/msed/MsedHashPwd.o \
@@ -71,11 +70,6 @@ LDLIBSOPTIONS=-Lcryptopp/dist/x86_64 -lcryptopp
 ${CND_DISTDIR}/${CND_CONF}/msed: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/msed ${OBJECTFILES} ${LDLIBSOPTIONS}
-
-${OBJECTDIR}/msed/Class_Skeleton.o: msed/Class_Skeleton.cpp 
-	${MKDIR} -p ${OBJECTDIR}/msed
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/Class_Skeleton.o msed/Class_Skeleton.cpp
 
 ${OBJECTDIR}/msed/MsedBaseDev.o: msed/MsedBaseDev.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed

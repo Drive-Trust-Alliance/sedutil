@@ -163,3 +163,5 @@ $RECYCLE.BIN/
 cryptopp/*.a
 cryptopp/*.o
 cryptopp/dist/
+/LegacyPBA/dist/
+**/private/private.xml

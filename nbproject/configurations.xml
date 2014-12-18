@@ -4,7 +4,6 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>msed/Class_Skeleton.h</itemPath>
       <itemPath>msed/MsedBaseDev.h</itemPath>
       <itemPath>msed/MsedCommand.h</itemPath>
       <itemPath>msed/MsedConstants.h</itemPath>
@@ -36,19 +35,16 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <logicalFolder name="msed" displayName="msed" projectFiles="true">
-        <itemPath>msed/Class_Skeleton.cpp</itemPath>
-        <itemPath>msed/MsedBaseDev.cpp</itemPath>
-        <itemPath>msed/MsedCommand.cpp</itemPath>
-        <itemPath>msed/linux/MsedDev.cpp</itemPath>
-        <itemPath>msed/MsedHashPwd.cpp</itemPath>
-        <itemPath>msed/MsedHexDump.cpp</itemPath>
-        <itemPath>msed/MsedOptions.cpp</itemPath>
-        <itemPath>msed/MsedResponse.cpp</itemPath>
-        <itemPath>msed/MsedSession.cpp</itemPath>
-        <itemPath>msed/MsedTasks.cpp</itemPath>
-        <itemPath>msed/msed.cpp</itemPath>
-      </logicalFolder>
+      <itemPath>msed/MsedBaseDev.cpp</itemPath>
+      <itemPath>msed/MsedCommand.cpp</itemPath>
+      <itemPath>msed/linux/MsedDev.cpp</itemPath>
+      <itemPath>msed/MsedHashPwd.cpp</itemPath>
+      <itemPath>msed/MsedHexDump.cpp</itemPath>
+      <itemPath>msed/MsedOptions.cpp</itemPath>
+      <itemPath>msed/MsedResponse.cpp</itemPath>
+      <itemPath>msed/MsedSession.cpp</itemPath>
+      <itemPath>msed/MsedTasks.cpp</itemPath>
+      <itemPath>msed/msed.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -99,10 +95,6 @@
         </linkerTool>
       </compileType>
       <item path="README.md" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/Class_Skeleton.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/Class_Skeleton.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/Copyright.txt" ex="false" tool="3" flavor2="0">
       </item>
@@ -212,10 +204,6 @@
       </compileType>
       <item path="README.md" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/Class_Skeleton.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/Class_Skeleton.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="msed/Copyright.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/LICENSE.txt" ex="false" tool="3" flavor2="0">
@@ -314,10 +302,6 @@
         </linkerTool>
       </compileType>
       <item path="README.md" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/Class_Skeleton.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/Class_Skeleton.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/Copyright.txt" ex="false" tool="3" flavor2="0">
       </item>
@@ -426,10 +410,6 @@
         </linkerTool>
       </compileType>
       <item path="README.md" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/Class_Skeleton.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/Class_Skeleton.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/Copyright.txt" ex="false" tool="3" flavor2="0">
       </item>
