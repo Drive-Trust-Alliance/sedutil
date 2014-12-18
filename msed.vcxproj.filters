@@ -19,9 +19,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="msed\MsedTasks.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="msed\MsedStructures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -67,9 +64,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msed\win32\MsedDev.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="msed\MsedTasks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="msed\MsedSession.cpp">

@@ -269,7 +269,6 @@
     <ClInclude Include="msed\MsedResponse.h" />
     <ClInclude Include="msed\MsedSession.h" />
     <ClInclude Include="msed\MsedStructures.h" />
-    <ClInclude Include="msed\MsedTasks.h" />
     <ClInclude Include="msed\win32\MsedDev.h" />
     <ClInclude Include="msed\win32\os.h" />
   </ItemGroup>
@@ -282,7 +281,6 @@
     <ClCompile Include="msed\MsedOptions.cpp" />
     <ClCompile Include="msed\MsedResponse.cpp" />
     <ClCompile Include="msed\MsedSession.cpp" />
-    <ClCompile Include="msed\MsedTasks.cpp" />
     <ClCompile Include="msed\win32\MsedDev.cpp" />
   </ItemGroup>
   <ItemGroup>
