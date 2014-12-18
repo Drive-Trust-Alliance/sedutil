@@ -163,6 +163,7 @@ $RECYCLE.BIN/
 cryptopp/*.a
 cryptopp/*.o
 cryptopp/dist/
+cryptopp/adhoc.cpp.copied
 /LegacyPBA/dist/
 **/private/private.xml
 /images/*/*

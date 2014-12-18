@@ -64,23 +64,26 @@ public:
 	uint8_t revertLockingSP(char * password, uint8_t keep = 0);
 	uint8_t getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData);
 	uint8_t enableUser(char * password, char * userid);
+	uint8_t setMBRDone(uint8_t state, char * Admin1Password);
+	uint8_t setMBREnable(uint8_t state, char * Admin1Password);
 	uint8_t setNewPassword(char * password, char * userid, char * newpassword);
 	uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 			char * Admin1Password);
-	uint8_t SetLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, OPAL_TOKEN value,
-			char * password, char * msg = (char *) "New Value Set");
+	uint8_t configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enabled, char * password);
+	
 	uint8_t revertTPer(char * password, uint8_t PSID = 0);
 	uint8_t loadPBA(char * password, char * filename);
 	uint8_t initialsetup(char * password);
 	uint8_t dumpTable(char * password);
-	uint8_t nextTable(MsedSession * session, vector<uint8_t> table,
-		vector<uint8_t> startkey);
+	uint8_t nextTable(vector<uint8_t> table, vector<uint8_t> startkey);
 protected:
 	// not working, I have no idea why
 	 uint8_t revertnoerase(char * SIDPassword, char * Admin1Password);
 	//
 	void puke();
     virtual void osmsSleep(uint32_t milliseconds) = 0;
+	uint8_t setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, OPAL_TOKEN value,
+		char * password, char * msg = (char *) "New Value Set");
     /** Decode the Discovery 0 response. Scans the D0 response and creates structure
      * that can be queried later as required.This code also takes care of
      * the endianess conversions either via a bitswap in the structure or executing

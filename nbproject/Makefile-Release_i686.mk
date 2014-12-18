@@ -42,7 +42,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/msed/MsedOptions.o \
 	${OBJECTDIR}/msed/MsedResponse.o \
 	${OBJECTDIR}/msed/MsedSession.o \
-	${OBJECTDIR}/msed/MsedTasks.o \
 	${OBJECTDIR}/msed/linux/MsedDev.o \
 	${OBJECTDIR}/msed/msed.o
 
@@ -105,11 +104,6 @@ ${OBJECTDIR}/msed/MsedSession.o: msed/MsedSession.cpp
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedSession.o msed/MsedSession.cpp
-
-${OBJECTDIR}/msed/MsedTasks.o: msed/MsedTasks.cpp 
-	${MKDIR} -p ${OBJECTDIR}/msed
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedTasks.o msed/MsedTasks.cpp
 
 ${OBJECTDIR}/msed/linux/MsedDev.o: msed/linux/MsedDev.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed/linux

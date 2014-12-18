@@ -5,7 +5,7 @@
                                                feature and see if it is Locked = Y
                                                or LockingEnabled = Y that's a good
                                                 sign that this should work
-3.msed --yesIreallywanttoERASE*ALL*mydatausingthePSID <YOURPSID> \\.\PhysicalDrive?
+3.msed --yesIreallywanttoERASEALLmydatausingthePSID <YOURPSID> \\.\PhysicalDrive?
 
 4.  You should see INFO: revertTper completed successfully.
     If you get a message that says NOT_AUTHORIZED you entered the PSID wrong.
@@ -13,7 +13,7 @@
 If it doesn't work please execute the command in step 3 with a -vvvvv (5 v's) as the first option and
 redirect the output to a file and send it back to me.
 example:
-msed -vvvvv --yesIreallywanttoERASE*ALL*mydatausingthePSID <YOURPSID> \\.\PhysicalDrive? > revertlog.txt 2>&1
+msed -vvvvv --yesIreallywanttoERASEALLmydatausingthePSID <YOURPSID> \\.\PhysicalDrive? > revertlog.txt 2>&1
 
 Hope this helps.
 ********************************************************************

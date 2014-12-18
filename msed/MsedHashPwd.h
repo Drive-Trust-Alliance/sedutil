@@ -19,7 +19,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 #pragma once
 #include <vector>
-class MsedDev;
+class MsedBaseDev;
 
 using namespace std;
 /** Hash the password using the drive serialnumber as salt.
@@ -28,7 +28,7 @@ using namespace std;
  * This is far from ideal but it's better that a single salt as
  * it should prevent attacking the password with a prebuilt table
  */
-void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedDev * device);
+void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedBaseDev * device);
 void MsedHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
         unsigned int iter = 75000, uint8_t hashsize = 32);
 int MsedTestPBDKF2();

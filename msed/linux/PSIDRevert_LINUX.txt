@@ -13,7 +13,7 @@ optional steps 0.b & 0.c will do this:
                                                feature and see if it is Locked = Y
                                                or LockingEnabled = Y that's a good
                                                 sign that this should work
-3.msed --yesIreallywanttoERASE*ALL*mydatausingthePSID <PSIDALLCAPSNODASHES> /dev/sd?
+3.msed --yesIreallywanttoERASEALLmydatausingthePSID <PSIDALLCAPSNODASHES> /dev/sd?
 
 4.  You should see INFO: revertTper completed successfully.
     If you get a message that says NOT_AUTHORIZED you entered the PSID wrong.
@@ -21,7 +21,7 @@ optional steps 0.b & 0.c will do this:
 If it doesn't work please execute the command in step 3 with a -vvvvv (5 v's) as the first option
 redirecting the output to a file and send it back to me.
 example:
-msed -vvvvv --yesIreallywanttoERASE*ALL*mydatausingthePSID <PSIDALLCAPSNODASHES> /dev/sd? > revertlog.txt
+msed -vvvvv --yesIreallywanttoERASEALLmydatausingthePSID <PSIDALLCAPSNODASHES> /dev/sd? > revertlog.txt
 
 Hope this helps.
 ********************************************************************

@@ -16,7 +16,6 @@
       <itemPath>msed/MsedResponse.h</itemPath>
       <itemPath>msed/MsedSession.h</itemPath>
       <itemPath>msed/MsedStructures.h</itemPath>
-      <itemPath>msed/MsedTasks.h</itemPath>
       <itemPath>msed/log.h</itemPath>
       <itemPath>msed/linux/os.h</itemPath>
     </logicalFolder>
@@ -43,7 +42,6 @@
       <itemPath>msed/MsedOptions.cpp</itemPath>
       <itemPath>msed/MsedResponse.cpp</itemPath>
       <itemPath>msed/MsedSession.cpp</itemPath>
-      <itemPath>msed/MsedTasks.cpp</itemPath>
       <itemPath>msed/msed.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -135,10 +133,6 @@
       <item path="msed/MsedSession.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/MsedStructures.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/MsedTasks.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/MsedTasks.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
       </item>
@@ -244,10 +238,6 @@
       </item>
       <item path="msed/MsedStructures.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/MsedTasks.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/MsedTasks.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/linux/MsedDev.cpp" ex="false" tool="1" flavor2="0">
@@ -342,10 +332,6 @@
       <item path="msed/MsedSession.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/MsedStructures.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/MsedTasks.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/MsedTasks.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
       </item>
@@ -450,10 +436,6 @@
       <item path="msed/MsedSession.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/MsedStructures.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="msed/MsedTasks.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/MsedTasks.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
       </item>

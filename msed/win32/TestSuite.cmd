@@ -11,49 +11,59 @@ pause
 echo Last chance to hit Ctrl-c an keep the data on your drive
 pause
 :: test msed commands
-::set MSED=..\..\Win32\Debug\msed.exe
 ::set MSED=..\..\Win32\Release\msed.exe
+::set MSED=..\..\x64\Release\msed.exe
 set MSED=msed.exe
-echo testing msed %date% @ %time% > msed_test.log 2>&1
-%MSED% --ValidatePBKDF2 >> msed_test.log 2>&1
-%MSED% --scan >> msed_test.log 2>&1
-%MSED% --query %1 >> msed_test.log 2>&1
-echo Perform the initial setup
-%MSED% --initialsetup passw0rd %1 >> msed_test.log 2>&1
-%MSED% --query %1 >> msed_test.log 2>&1
-echo change the LSP Admin1 password
-%MSED% --setAdmin1Pwd passw0rd password %1 >> msed_test.log 2>&1
-echo test readlocking
-%MSED%  --setLR 0 RO password %1 >> msed_test.log 2>&1
-%MSED% --query %1 >> msed_test.log 2>&1
-%MSED% --unsetWriteLockedGlobal --password password %1 >> msed_test.log 2>&1
-%MSED% --query %1 >> msed_test.log 2>&1
-echo test write locking
-%MSED% --setLR 0 RW password %1 >> msed_test.log 2>&1
-%MSED% --query %1 >> msed_test.log 2>&1
-echo disable locking on the global range
-%MSED% --disableReadLockingGlobal --password password %1 >> msed_test.log 2>&1
-%MSED% --disableWriteLockingGlobal --password password %1 >> msed_test.log 2>&1
-echo enable mbr shadowing
-%MSED% --setMBREnable on password %1 >> msed_test.log 2>&1
-%MSED% --query %1 >> msed_test.log 2>&1
-echo set MBRDone
-%MSED% --setMBRDone ON password %1 >> msed_test.log 2>&1
-%MSED% --query %1 >> msed_test.log 2>&1
-echo unset MBRDone
-%MSED% --setMBRDone off password %1 >> msed_test.log 2>&1
-%MSED% --query %1 >> msed_test.log 2>&1
-echo disable mbr shadowing
-%MSED% --setMBREnable OFF password %1 >> msed_test.log 2>&1
-%MSED% --query %1 >> msed_test.log 2>&1
-echo resetting device
-::%MSED% --revertnoerase passw0rd password %1 >> msed_test.log 2>&1
-::%MSED% --query %1 >> msed_test.log 2>&1
-::%MSED% --initialsetup passw0rd %1 >> msed_test.log 2>&1
-%MSED% --revert passw0rd %1 >> msed_test.log 2>&1
-%MSED% --query %1 >> msed_test.log 2>&1
+set LOGFILE=msed_log.txt
+set OUTPUTSINK=^>^> %LOGFILE% 2^>^&1
+unset NIXGREP
+::set NIXGREP=^| ^"C:\Program Files (x86)\Git\bin\grep.exe^" ^-a MBREnable
+::
+echo Begin TestSuite.cmd > %LOGFILE%
+call :nottee "testing msed %date% @ %time%" 
+
+%MSED% --scan %OUTPUTSINK%
+call :nottee "Perform the initial setup"
+%MSED% --initialsetup passw0rd %1 %OUTPUTSINK%
+%MSED% --query %1 %NIXGREP% %OUTPUTSINK%
+call :nottee "change the LSP Admin1 password"
+%MSED% --setAdmin1Pwd passw0rd password %1 %OUTPUTSINK%
+call :nottee "test readlocking"
+%MSED%  --setLockingRange 0 RO password %1 %OUTPUTSINK%
+%MSED% --query %1 %NIXGREP% %OUTPUTSINK%
+%MSED% --disableLockingRange 0 password %1 %OUTPUTSINK%
+%MSED% --query %1 %NIXGREP% %OUTPUTSINK%
+%MSED% --enableLockingRange 0 password %1 %OUTPUTSINK%
+call :nottee "test write locking"
+%MSED% --setLockingRange 0 RW password %1 %OUTPUTSINK%
+%MSED% --query %1 %NIXGREP% %OUTPUTSINK%
+call :nottee "set LockingRange 0 LK"
+%MSED% --setLockingRange 0 lk password %1 %OUTPUTSINK%
+%MSED% --query %1 %NIXGREP% %OUTPUTSINK%
+call :nottee "disable locking on the global range"
+%MSED% --disableLockingRange 0 password %1 %OUTPUTSINK%
+%MSED% --query %1 %NIXGREP% %OUTPUTSINK%
+call :nottee "enable mbr shadowing"
+%MSED% --setMBREnable on password %1 %OUTPUTSINK%
+%MSED% --query %1 %NIXGREP% %OUTPUTSINK%
+call :nottee "set MBRDone"
+%MSED% --setMBRDone ON password %1 %OUTPUTSINK%
+%MSED% --query %1 %NIXGREP% %OUTPUTSINK%
+call :nottee "unset MBRDone"
+%MSED% --setMBRDone off password %1 %OUTPUTSINK%
+%MSED% --query %1 %NIXGREP% %OUTPUTSINK%
+call :nottee "disable mbr shadowing"
+%MSED% --setMBREnable OFF password %1 %OUTPUTSINK%
+%MSED% --query %1 %NIXGREP% %OUTPUTSINK%
+call :nottee "resetting device"
+%MSED% --reverttper passw0rd %1 %OUTPUTSINK%
+%MSED% --query %1 %NIXGREP% %OUTPUTSINK%
+%MSED% --validatePBKDF2 %OUTPUTSINK%
 echo Thanks for running the test suite 
-echo please e-mail msed_test.log 2>&1 to r0m30@r0m30.com
+echo please e-mail %LOGFILE% to r0m30@r0m30.com
 echo along with the OS, OS level and type of drive you have
 pause
 exit /b
+:nottee
+echo %1
+echo %1 %OUTPUTSINK%

@@ -22,11 +22,60 @@ typedef struct _MSED_OPTIONS {
 	uint8_t userid;
 	uint8_t newpassword;
 	uint8_t pbafile;
-    uint8_t deviceref;
+    uint8_t device;
     uint8_t action;
+	uint8_t mbrstate;
 	uint8_t lockingrange;
 	uint8_t lockingstate;
 } MSED_OPTIONS;
 void usage();
 uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts);
+typedef enum _msedoption {
+	deadbeef,    // 0 should indicate no action specified
+	initialsetup,
+	setSIDPwd,
+	setAdmin1Pwd,
+	setPassword,
+	loadPBAimage,
+	setLockingRange,
+	reverttper,
+	revertLockingSP,
+	PSIDrevert,
+	yesIreallywanttoERASEALLmydatausingthePSID,
+	enableLockingRange,
+	disableLockingRange,
+	setMBREnable,
+	setMBRDone,
+	enableuser,
+	activateLockingSP,
+	query,
+	scan,
+	takeownership,
+	validatePBKDF2,
+	dumptable,
 
+} msedoption;
+#define CHECKARGS(x) \
+if((x+1) > argc) { \
+	LOG(E) << "Incorrect number of paramaters for " << argv[i] << " command"; \
+	return 100; \
+	}
+#define BEGIN_OPTION(cmdstring,args) \
+				else if (!(strcmp(#cmdstring, &argv[i][2]))) { \
+				CHECKARGS(args) \
+				opts->action = msedoption::cmdstring; \
+
+#define END_OPTION }
+#define TESTARG(literal,structfield,value) \
+				if (!(strcmp(#literal, argv[i + 1]))) \
+					{opts->structfield = value;} else
+
+#define TESTFAIL(msg) \
+	{ \
+	LOG(E) << msg << argv[i]; \
+	return 1;\
+	} \
+i++;
+
+#define OPTION_IS(option_field) \
+				opts->option_field = ++i; 

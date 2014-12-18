@@ -26,7 +26,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <iomanip>
 #include "MsedHashPwd.h"
 #include "MsedLexicon.h"
-#include "MsedDev.h"
+#include "MsedBaseDev.h"
 #include "log.h"
 #include "../cryptopp/pch.h"
 #include "../cryptopp/stdcpp.h"
@@ -39,7 +39,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 using namespace std;
 using namespace CryptoPP;
 
-void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedDev * d)
+void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedBaseDev * d)
 {
     LOG(D4) << " Entered MsedHashPwd";
     uint8_t serNum[20];

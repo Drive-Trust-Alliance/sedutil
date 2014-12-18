@@ -58,4 +58,3 @@ private:
     uint8_t *respbuf;
     uint32_t bufferpos = 0;
 };
-

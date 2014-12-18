@@ -24,14 +24,14 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "MsedLexicon.h"
 #include <vector>
 class MsedCommand;
-class MsedDev;
+class MsedBaseDev;
 class MsedResponse;
 
 using namespace std;
 
 class MsedSession {
 public:
-    MsedSession(MsedDev * device);
+    MsedSession(MsedBaseDev * device);
     ~MsedSession();
 	uint8_t start(OPAL_UID SP);    // unauthenticated "Anybody" session
     uint8_t start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority);
@@ -42,7 +42,7 @@ public:
 private:
     MsedSession();
     char * methodStatus(uint8_t status);
-    MsedDev * d;
+    MsedBaseDev * d;
     uint32_t bufferpos = 0;
     uint32_t TSN = 0;
     uint32_t HSN = 0;

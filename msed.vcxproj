@@ -175,6 +175,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -219,6 +220,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -278,7 +280,10 @@
     <ClCompile Include="msed\MsedCommand.cpp" />
     <ClCompile Include="msed\MsedHashPwd.cpp" />
     <ClCompile Include="msed\MsedHexDump.cpp" />
-    <ClCompile Include="msed\MsedOptions.cpp" />
+    <ClCompile Include="msed\MsedOptions.cpp">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</PreprocessToFile>
+    </ClCompile>
     <ClCompile Include="msed\MsedResponse.cpp" />
     <ClCompile Include="msed\MsedSession.cpp" />
     <ClCompile Include="msed\win32\MsedDev.cpp" />

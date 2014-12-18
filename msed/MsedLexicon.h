@@ -126,8 +126,8 @@ typedef enum _OPAL_METHOD {
  */
 typedef enum _OPAL_TOKEN {
     //Boolean
-    OPAL_TRUE = 0x00,
-    OPAL_FALSE = 0x01,
+    OPAL_TRUE = 0x01,
+    OPAL_FALSE = 0x00,
     // cellblocks
     TABLE = 0x00,
     STARTROW = 0x01,

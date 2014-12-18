@@ -11,13 +11,13 @@ read INOUT
 echo  Last chance to hit Ctrl-c an keep the data on your drive
 read INPUT
 ## test msed commands
-MSED=../../dist/Release_i686/msed
-##MSED=../../dist/Release_x86_64/msed
-##MSED=./msed
+MSED=../../Win32/Release/msed.exe
+##MSED=../../x64/Release/msed.exe
+##MSED=./msed,exe
 ##MSED=echo 
 echo  testing msed `date` > ${LOGFILE}
 
-LOGFILE=msed_log.txt
+LOGFILE=msed_test.baseline
 OUTPUTSINK=">>  ${LOGFILE} 2>&1"
 NIXGREP="| grep -a MBREnable "
 ##
