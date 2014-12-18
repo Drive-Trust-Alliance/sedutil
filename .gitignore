@@ -165,3 +165,4 @@ cryptopp/*.o
 cryptopp/dist/
 /LegacyPBA/dist/
 **/private/private.xml
+/images/*/*

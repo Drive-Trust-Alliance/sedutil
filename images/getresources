@@ -1,0 +1,22 @@
+#!/bin/bash
+## Get version information
+. conf
+## Make a clean start
+rm -rf scratch
+mkdir scratch
+cd scratch
+##  Get tinycore and syslinux
+wget ${TCDISTRO}/release/${TINYCORE}
+wget ${TCDISTRO}/tcz/ncurses-common.tcz
+wget ${TCDISTRO}/tcz/ncurses.tcz
+wget ${TCDISTRO}/tcz/hdparm.tcz
+wget https://www.kernel.org/pub/linux/utils/boot/syslinux/${SYSLINUX}.tar.xz
+##   Unpack Syslinux
+tar xf ${SYSLINUX}.tar.xz 
+##  Get the initrd and kernel from the ISO
+mkdir cd
+sudo mount ${TINYCORE} cd
+cp cd/boot/vmlinuz ./
+cp cd/boot/core.gz ./
+sudo umount cd
+rmdir cd

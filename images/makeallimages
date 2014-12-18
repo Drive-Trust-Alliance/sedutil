@@ -1,0 +1,11 @@
+#!/bin/bash
+# Build all of the Images for distribution
+## define releases for tools
+. conf
+./build Release >release.log 2>&1
+./build Debug >debug.log 2>&1
+./build Rescue >rescue.log 2>&1
+less release.log
+less debug.log
+less rescue.log
+rm *.log
