@@ -37,7 +37,7 @@ void
 MsedResponse::init(void * buffer)
 {
     LOG(D4) << "Entering  MsedResponse::init";
-    std::vector<uint8_t> bytestring;
+    std::vector<uint8_t> bytestring, empty_atom(1, 0xff);
     uint8_t * reply = (uint8_t *) buffer;
     uint32_t cpos = 0;
     uint32_t tokenLength;
@@ -60,7 +60,8 @@ MsedResponse::init(void * buffer)
         for (uint32_t i = 0; i < tokenLength; i++) {
             bytestring.push_back(reply[cpos++]);
         }
-        response.push_back(bytestring);
+		if (bytestring != empty_atom)
+			response.push_back(bytestring);
     }
 }
 
