@@ -29,6 +29,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <linux/hdreg.h>
 #include <errno.h>
 #include <vector>
+#include <fstream>
 #include "MsedDev.h"
 #include "MsedHexDump.h"
 
@@ -42,6 +43,24 @@ MsedDev::MsedDev(const char * devref)
 {
     LOG(D4) << "Creating MsedDev::MsedDev() " << devref;
     dev = devref;
+    ifstream kopts;
+    
+    if(access("/dev/sda", R_OK | W_OK)) {
+        LOG(E) << "You do not have permission to access the raw disk in write mode";
+        LOG(E) << "Perhaps you might try sudo to run as root";
+    }
+    kopts.open("/sys/module/libata/parameters/allow_tpm", ios::in);
+    if (!kopts) {
+	LOG(W) << "Unable to verify Kernel flag libata.allow_tpm ";
+    } 
+    else {
+        if('1' !=  kopts.get()) {
+            LOG(E) << "The Kernel flag libata.allow_tpm is not set correctly";
+               LOG(E) << "Please see the readme note about setting the libata.allow_tpm ";
+        }
+        kopts.close();   
+    }
+    
     memset(&disk_info, 0, sizeof (OPAL_DiskInfo));
     if ((fd = open(dev, O_RDWR)) < 0) {
         isOpen = FALSE;
