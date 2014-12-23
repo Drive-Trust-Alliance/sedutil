@@ -142,6 +142,16 @@
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
+    <PreBuildEvent>
+      <Command>powershell -NonInteractive -NoProfile -File GitVersion.ps1 msed\Version.h</Command>
+      <Message>Use git describe to create the program version number</Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>del msed\Version.h</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>clean up the git version file</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='x64|Win32'">
     <ClCompile>
@@ -163,6 +173,16 @@
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
+    <PreBuildEvent>
+      <Command>powershell -NonInteractive -NoProfile -File GitVersion.ps1 msed\Version.h</Command>
+      <Message>Use git describe to create the program version number</Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>del msed\Version.h</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>clean up the git version file</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -185,6 +205,16 @@
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
+    <PreBuildEvent>
+      <Command>powershell -NonInteractive -NoProfile -File GitVersion.ps1 msed\Version.h</Command>
+      <Message>Use git describe to create the program version number</Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>del msed\Version.h</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>clean up the git version file</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='x64|x64'">
     <ClCompile>
@@ -206,6 +236,16 @@
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
+    <PreBuildEvent>
+      <Command>powershell -NonInteractive -NoProfile -File GitVersion.ps1 msed\Version.h</Command>
+      <Message>Use git describe to create the program version number</Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>del msed\Version.h</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>clean up the git version file</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -232,6 +272,16 @@
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
+    <PreBuildEvent>
+      <Command>powershell -NonInteractive -NoProfile -File GitVersion.ps1 msed\Version.h</Command>
+      <Message>Use git describe to create the program version number</Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>del msed\Version.h</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>clean up the git version file</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -257,6 +307,16 @@
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
+    <PreBuildEvent>
+      <Command>powershell -NonInteractive -NoProfile -File GitVersion.ps1 msed\Version.h</Command>
+      <Message>Use git describe to create the program version number</Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>del msed\Version.h</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>clean up the git version file</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="msed\log.h" />

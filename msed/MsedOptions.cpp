@@ -19,10 +19,10 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 #include "os.h"
 #include "MsedOptions.h"
-
+#include "Version.h"
 void usage()
 {
-    printf("msed v%s Copyright 2014 Michael Romeo <r0m30@r0m30.com>\n", MSED_VERSION);
+    printf("msed v%s Copyright 2014 Michael Romeo <r0m30@r0m30.com>\n", GIT_VERSION);
     printf("a utility to manage self encrypting drives that conform\n");
     printf("to the Trusted Computing Group OPAL 2.0 SSC specification\n");
     printf("General Usage:                     (see readme for extended commandset)\n");
