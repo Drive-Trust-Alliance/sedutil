@@ -33,7 +33,7 @@ int diskScan()
 	uint8_t FirmwareRev[8];
 	uint8_t ModelNum[40];
 	MsedDev * d;
-	LOG(D4) << "Creating diskList";
+	LOG(D1) << "Creating diskList";
 	printf("\nScanning for Opal compliant disks\n");
 	while (TRUE) {
 		DEVICEMASK;

@@ -35,7 +35,7 @@ using namespace std;
  */
 MsedSession::MsedSession(MsedBaseDev * device)
 {
-    LOG(D4) << "Creating MsedSsession()";
+    LOG(D1) << "Creating MsedSsession()";
     d = device;
 }
 
@@ -48,7 +48,7 @@ MsedSession::start(OPAL_UID SP)
 uint8_t
 MsedSession::start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority)
 {
-    LOG(D4) << "Entering MsedSession::startSession ";
+    LOG(D1) << "Entering MsedSession::startSession ";
 	vector<uint8_t> hash;
     MsedCommand *cmd = new MsedCommand();
     MsedResponse response;
@@ -93,7 +93,7 @@ MsedSession::start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority)
 uint8_t
 MsedSession::sendCommand(MsedCommand * cmd, MsedResponse & response)
 {
-    LOG(D4) << "Entering MsedSession::sendCommand()";
+    LOG(D1) << "Entering MsedSession::sendCommand()";
     cmd->setHSN(HSN);
     cmd->setTSN(TSN);
     cmd->setcomID(d->comID());
@@ -136,28 +136,28 @@ MsedSession::sendCommand(MsedCommand * cmd, MsedResponse & response)
 void
 MsedSession::setProtocol(uint8_t value)
 {
-    LOG(D4) << "Entering MsedSession::setProtocol";
+    LOG(D1) << "Entering MsedSession::setProtocol";
     SecurityProtocol = value;
 }
 
 void
 MsedSession::dontHashPwd()
 {
-	LOG(D4) << "Entering MsedSession::setProtocol";
+	LOG(D1) << "Entering MsedSession::setProtocol";
 	hashPwd = 0;
 }
 
 void
 MsedSession::expectAbort()
 {
-    LOG(D4) << "Entering MsedSession::methodStatus()";
+    LOG(D1) << "Entering MsedSession::methodStatus()";
     willAbort = 1;
 }
 
 char *
 MsedSession::methodStatus(uint8_t status)
 {
-    LOG(D4) << "Entering MsedSession::methodStatus()";
+    LOG(D1) << "Entering MsedSession::methodStatus()";
     switch (status) {
     case OPALSTATUSCODE::AUTHORITY_LOCKED_OUT:
         return (char *) "AUTHORITY_LOCKED_OUT";
@@ -198,7 +198,7 @@ MsedSession::methodStatus(uint8_t status)
 
 MsedSession::~MsedSession()
 {
-    LOG(D4) << "Destroying MsedSession";
+    LOG(D1) << "Destroying MsedSession";
 	MsedResponse response;
     if (!willAbort) {
         MsedCommand *cmd = new MsedCommand();

@@ -24,19 +24,19 @@ using namespace std;
 
 MsedResponse::MsedResponse()
 {
-    LOG(D4) << "Creating  MsedResponse()";
+    LOG(D1) << "Creating  MsedResponse()";
 }
 
 MsedResponse::MsedResponse(void * buffer)
 {
-    LOG(D4) << "Creating  MsedResponse(buffer)";
+    LOG(D1) << "Creating  MsedResponse(buffer)";
     init(buffer);
 }
 
 void
 MsedResponse::init(void * buffer)
 {
-    LOG(D4) << "Entering  MsedResponse::init";
+    LOG(D1) << "Entering  MsedResponse::init";
     std::vector<uint8_t> bytestring, empty_atom(1, 0xff);
     uint8_t * reply = (uint8_t *) buffer;
     uint32_t cpos = 0;
@@ -67,7 +67,7 @@ MsedResponse::init(void * buffer)
 
 OPAL_TOKENID MsedResponse::tokenIs(uint32_t tokenNum)
 {
-    LOG(D4) << "Entering  MsedResponse::tokenIs";
+    LOG(D1) << "Entering  MsedResponse::tokenIs";
     if (!(response[tokenNum][0] & 0x80)) { //tiny atom
         if ((response[tokenNum][0] & 0x40))
             return OPAL_TOKENID::OPAL_TOKENID_SINT;
@@ -109,7 +109,7 @@ uint32_t MsedResponse::getLength(uint32_t tokenNum)
 
 uint64_t MsedResponse::getUint64(uint32_t tokenNum)
 {
-    LOG(D4) << "Entering  MsedResponse::getUint64";
+    LOG(D1) << "Entering  MsedResponse::getUint64";
     if (!(response[tokenNum][0] & 0x80)) { //tiny atom
         if ((response[tokenNum][0] & 0x40)) {
             LOG(E) << "unsigned int requested for signed tiny atom";
@@ -153,7 +153,7 @@ uint64_t MsedResponse::getUint64(uint32_t tokenNum)
 
 uint32_t MsedResponse::getUint32(uint32_t tokenNum)
 {
-    LOG(D4) << "Entering  MsedResponse::getUint32";
+    LOG(D1) << "Entering  MsedResponse::getUint32";
     uint64_t i = getUint64(tokenNum);
     if (i > 0xffffffff)
         LOG(E) << "UINT32 truncated ";
@@ -163,7 +163,7 @@ uint32_t MsedResponse::getUint32(uint32_t tokenNum)
 
 uint16_t MsedResponse::getUint16(uint32_t tokenNum)
 {
-    LOG(D4) << "Entering  MsedResponse::getUint16";
+    LOG(D1) << "Entering  MsedResponse::getUint16";
     uint64_t i = getUint64(tokenNum);
     if (i > 0xffff)
         LOG(E) << "UINT16 truncated ";
@@ -172,7 +172,7 @@ uint16_t MsedResponse::getUint16(uint32_t tokenNum)
 
 uint8_t MsedResponse::getUint8(uint32_t tokenNum)
 {
-	LOG(D4) << "Entering  MsedResponse::getUint8";
+	LOG(D1) << "Entering  MsedResponse::getUint8";
     uint64_t i = getUint64(tokenNum);
     if (i > 0xff)
         LOG(E) << "UINT8 truncated ";
@@ -189,7 +189,7 @@ std::vector<uint8_t> MsedResponse::getRawToken(uint32_t tokenNum)
 
 std::string MsedResponse::getString(uint32_t tokenNum)
 {
-    LOG(D4) << "Entering  MsedResponse::getString";
+    LOG(D1) << "Entering  MsedResponse::getString";
     std::string s;
     s.erase();
     int overhead = 0;
@@ -218,7 +218,7 @@ std::string MsedResponse::getString(uint32_t tokenNum)
 
 void MsedResponse::getBytes(uint32_t tokenNum, uint8_t bytearray[])
 {
-    LOG(D4) << "Entering  MsedResponse::getBytes";
+    LOG(D1) << "Entering  MsedResponse::getBytes";
     int overhead = 0;
     if (!(response[tokenNum][0] & 0x80)) { //tiny atom
         LOG(E) << "Cannot get a bytestring from a tiny atom";
@@ -245,11 +245,11 @@ void MsedResponse::getBytes(uint32_t tokenNum, uint8_t bytearray[])
 
 uint32_t MsedResponse::getTokenCount()
 {
-    LOG(D4) << "Entering  MsedResponse::getTokenCount()";
+    LOG(D1) << "Entering  MsedResponse::getTokenCount()";
     return (uint32_t) response.size();
 }
 
 MsedResponse::~MsedResponse()
 {
-    LOG(D4) << "Destroying MsedResponse";
+    LOG(D1) << "Destroying MsedResponse";
 }

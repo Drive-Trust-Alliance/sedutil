@@ -50,7 +50,7 @@ MsedBaseDev::~MsedBaseDev()
 }
 uint8_t MsedBaseDev::initialsetup(char * password)
 {
-	LOG(D4) << "Entering initialSetup()";
+	LOG(D1) << "Entering initialSetup()";
 	if (takeOwnership(password)) {
 		LOG(E) << "Initial setup failed - unable to take ownership";
 		return 0xff;
@@ -80,12 +80,12 @@ uint8_t MsedBaseDev::initialsetup(char * password)
 		return 0xff;
 	}
 	LOG(I) << "Initial setup of TPer complete on " << dev;
-	LOG(D4) << "Exiting initialSetup()";
+	LOG(D1) << "Exiting initialSetup()";
 	return 0;
 }
 uint8_t MsedBaseDev::configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enabled, char * password)
 {
-	LOG(D4) << "Entering MsedBaseDev::configureLockingRange()";
+	LOG(D1) << "Entering MsedBaseDev::configureLockingRange()";
 	if (lockingrange) {
 		LOG(E) << "Only global locking range is currently supported";
 		return 0xff;
@@ -101,12 +101,12 @@ uint8_t MsedBaseDev::configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enab
 		return 0xff;
 	}
 	LOG(I) << "Locking range configured " << (uint16_t) enabled;
-	LOG(D4) << "Exiting MsedBaseDev::configureLockingRange()";
+	LOG(D1) << "Exiting MsedBaseDev::configureLockingRange()";
 	return 0;
 }
 uint8_t MsedBaseDev::revertLockingSP(char * password, uint8_t keep)
 {
-	LOG(D4) << "Entering revert MsedBaseDev::LockingSP() keep = " << keep;
+	LOG(D1) << "Entering revert MsedBaseDev::LockingSP() keep = " << keep;
 	vector<uint8_t> keepgloballockingrange;
 	keepgloballockingrange.push_back(0xa3);
 	keepgloballockingrange.push_back(0x06);
@@ -146,12 +146,12 @@ uint8_t MsedBaseDev::revertLockingSP(char * password, uint8_t keep)
 	LOG(I) << "Revert LockingSP complete";
 	session->expectAbort();
 	delete session;
-	LOG(D4) << "Exiting revert MsedBaseDev:LockingSP()";
+	LOG(D1) << "Exiting revert MsedBaseDev:LockingSP()";
 	return 0;
 }
 uint8_t MsedBaseDev::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<uint8_t> &userData)
 {
-	LOG(D4) << "Entering MsedBaseDev::getAuth4User()";
+	LOG(D1) << "Entering MsedBaseDev::getAuth4User()";
 	uint8_t uidnum;
 	userData.clear();
 	userData.push_back(0xa8);
@@ -207,13 +207,13 @@ uint8_t MsedBaseDev::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<
 		userData.clear();
 		return 0xff;
 	}
-	LOG(D4) << "Exiting MsedBaseDev::getAuth4User()";
+	LOG(D1) << "Exiting MsedBaseDev::getAuth4User()";
 	return 0;
 }
 // Samsung EVO 840 will not return userids from authority table (bug??)
 //int getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData)
 //{
-//    LOG(D4) << "Entering getAuth4User()";
+//    LOG(D1) << "Entering getAuth4User()";
 //    std::vector<uint8_t> table, key, nextkey;
 //    // build a token for the authority table
 //    table.push_back(0xa8);
@@ -248,7 +248,7 @@ uint8_t MsedBaseDev::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<
 //}
 uint8_t MsedBaseDev::setNewPassword(char * password, char * userid, char * newpassword)
 {
-	LOG(D4) << "Entering MsedBaseDev::setNewPassword" ;
+	LOG(D1) << "Entering MsedBaseDev::setNewPassword" ;
 	std::vector<uint8_t> userCPIN, hash;
 	if (!isOpal2()) {
 		LOG(E) << "Device not Opal2 " << dev;
@@ -277,12 +277,12 @@ uint8_t MsedBaseDev::setNewPassword(char * password, char * userid, char * newpa
 	LOG(I) << userid << " password changed";
 	// session[TSN:HSN] <- EOS
 	delete session;
-	LOG(D4) << "Exiting MsedBaseDev::setNewPassword()";
+	LOG(D1) << "Exiting MsedBaseDev::setNewPassword()";
 	return 0;
 }
 uint8_t MsedBaseDev::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 {
-	LOG(D4) << "Entering MsedBaseDev::setMBREnable";
+	LOG(D1) << "Entering MsedBaseDev::setMBREnable";
 
 	if (mbrstate) {
 		if (setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRENABLE,
@@ -297,12 +297,12 @@ uint8_t MsedBaseDev::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 				return 0xff;
 			}
 	}
-	LOG(D4) << "Exiting MsedBaseDev::setMBREnable";
+	LOG(D1) << "Exiting MsedBaseDev::setMBREnable";
 	return 0;
 }
 uint8_t MsedBaseDev::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 {
-	LOG(D4) << "Entering MsedBaseDev::setMBRDone";
+	LOG(D1) << "Entering MsedBaseDev::setMBRDone";
 
 	if (mbrstate) {
 		if (setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRDONE,
@@ -318,13 +318,13 @@ uint8_t MsedBaseDev::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 			return 0xff;
 		}
 	}
-	LOG(D4) << "Exiting MsedBaseDev::setMBRDone";
+	LOG(D1) << "Exiting MsedBaseDev::setMBRDone";
 	return 0;
 }
 uint8_t MsedBaseDev::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 	char * Admin1Password)
 {
-	LOG(D4) << "Entering MsedBaseDev::setLockingRange";
+	LOG(D1) << "Entering MsedBaseDev::setLockingRange";
 	
 	if (lockingrange) {
 		LOG(E) << "Only global locking range is currently supported";
@@ -412,7 +412,7 @@ uint8_t MsedBaseDev::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
 
 uint8_t MsedBaseDev::enableUser(char * password, char * userid)
 {
-	LOG(D4) << "Entering MsedBaseDev::enableUser";
+	LOG(D1) << "Entering MsedBaseDev::enableUser";
 	vector<uint8_t> userUID;
 	
 	if (!isOpal2()) {
@@ -441,12 +441,12 @@ uint8_t MsedBaseDev::enableUser(char * password, char * userid)
 	LOG(I) << userid << " has been enabled ";
 	// session[TSN:HSN] <- EOS
 	delete session;
-	LOG(D4) << "Exiting MsedBaseDev::enableUser()";
+	LOG(D1) << "Exiting MsedBaseDev::enableUser()";
 	return 0;
 }
 uint8_t MsedBaseDev::revertTPer(char * password, uint8_t PSID)
 {
-	LOG(D4) << "Entering MsedBaseDev::revertTPer()";
+	LOG(D1) << "Entering MsedBaseDev::revertTPer()";
 	if (!isOpal2()) {
 		if (PSID) {
 			if ((!isOpal1()) && (!isEprise())) {
@@ -485,11 +485,11 @@ uint8_t MsedBaseDev::revertTPer(char * password, uint8_t PSID)
 	LOG(I) << "revertTper completed successfully";
 	delete cmd;
 	delete session;
-	LOG(D4) << "Exiting MsedBaseDev::RevertTperevertTPer()";
+	LOG(D1) << "Exiting MsedBaseDev::RevertTperevertTPer()";
 	return 0;
 }
 uint8_t MsedBaseDev::loadPBA(char * password, char * filename) {
-	LOG(D4) << "Exiting MsedBaseDev::loadPBAimage()" << filename << " " << dev;
+	LOG(D1) << "Exiting MsedBaseDev::loadPBAimage()" << filename << " " << dev;
 	uint64_t fivepercent = 0;
 	int complete = 4;
 	typedef struct { uint8_t  i : 2; } spinnertik;
@@ -568,13 +568,13 @@ uint8_t MsedBaseDev::loadPBA(char * password, char * filename) {
 	delete session;
 	pbafile.close();
 	LOG(I) << "PBA image  " << filename << " written to " << dev;
-	LOG(D4) << "Exiting MsedBaseDev::loadPBAimage()";
+	LOG(D1) << "Exiting MsedBaseDev::loadPBAimage()";
 	return 0;
 }
 
 uint8_t MsedBaseDev::activateLockingSP(char * password)
 {
-	LOG(D4) << "Entering MsedBaseDev::activateLockingSP()";
+	LOG(D1) << "Entering MsedBaseDev::activateLockingSP()";
 	vector<uint8_t> table;
 	table.push_back(0xa8);
 	for (int i = 0; i < 8; i++) {
@@ -625,40 +625,40 @@ uint8_t MsedBaseDev::activateLockingSP(char * password)
 
 	delete cmd;
 	delete session;
-	LOG(D4) << "Exiting MsedBaseDev::activatLockingSP()";
+	LOG(D1) << "Exiting MsedBaseDev::activatLockingSP()";
 	return 0;
 }
 uint8_t MsedBaseDev::diskQuery()
 {
-	LOG(D4) << "Entering MsedBaseDev::diskQuery()" << dev;
+	LOG(D1) << "Entering MsedBaseDev::diskQuery()" << dev;
 	if (!isANYSSC()) {
 		LOG(E) << "Device not OPAL 1,2 or Enterprise " << dev;
 		return 1;
 	}
 	puke();
-	LOG(D4) << "Exiting MsedBaseDev::diskQuery()" << dev;
+	LOG(D1) << "Exiting MsedBaseDev::diskQuery()" << dev;
 	return 0;
 }
 uint8_t MsedBaseDev::takeOwnership(char * newpassword)
 {
-	LOG(D4) << "Entering MsedBaseDev::takeOwnership()";
+	LOG(D1) << "Entering MsedBaseDev::takeOwnership()";
 	if (getDefaultPassword()) return 0xff;
 	if (setSIDPassword((char *)response.getString(4).c_str(), newpassword, 0)) {
 		LOG(I) << "takeownership failed";
 		return 0xff;
 	}
 	LOG(I) << "takeownership complete";
-	LOG(D4) << "Exiting takeOwnership()";
+	LOG(D1) << "Exiting takeOwnership()";
 	return 0;
 }
 uint8_t MsedBaseDev::isOpal2()
 {
-    LOG(D4) << "Entering MsedBaseDev::isOpal2()";
+    LOG(D1) << "Entering MsedBaseDev::isOpal2()";
     return disk_info.OPAL20;
 }
 uint8_t MsedBaseDev::getDefaultPassword()
 {
-	LOG(D4) << "Entering MsedBaseDev::getDefaultPassword()";
+	LOG(D1) << "Entering MsedBaseDev::getDefaultPassword()";
 	vector<uint8_t> hash;
 	if (!isOpal2()) {
 		LOG(E) << "Device not Opal2 " << dev;
@@ -683,14 +683,14 @@ uint8_t MsedBaseDev::getDefaultPassword()
 	}
 	// session[TSN:HSN] <- EOS
 	delete session;
-	LOG(D4) << "Exiting getDefaultPassword()";
+	LOG(D1) << "Exiting getDefaultPassword()";
 	return 0;
 }
 uint8_t MsedBaseDev::setSIDPassword(char * oldpassword, char * newpassword,
 	uint8_t hasholdpwd, uint8_t hashnewpwd)
 {
 	vector<uint8_t> hash, table;
-	LOG(D4) << "Entering MsedBaseDev::setSIDPassword()";
+	LOG(D1) << "Entering MsedBaseDev::setSIDPassword()";
 		if (!(isOpal2())) {
 		LOG(E) << "Device not Opal2 " << dev;
 		return 0xff;
@@ -726,13 +726,13 @@ uint8_t MsedBaseDev::setSIDPassword(char * oldpassword, char * newpassword,
 	}
 	// session[TSN:HSN] <- EOS
 	delete session;
-	LOG(D4) << "Exiting MsedBaseDev::setSIDPassword()";
+	LOG(D1) << "Exiting MsedBaseDev::setSIDPassword()";
 	return 0;
 }
 
 uint8_t MsedBaseDev::isOpal1()
 {
-    LOG(D4) << "Entering MsedBaseDev::isOpal1()";
+    LOG(D1) << "Entering MsedBaseDev::isOpal1()";
     return disk_info.OPAL10;
 }
 uint8_t MsedBaseDev::setTable(vector<uint8_t> table, OPAL_TOKEN name,
@@ -746,7 +746,7 @@ uint8_t MsedBaseDev::setTable(vector<uint8_t> table, OPAL_TOKEN name,
 uint8_t MsedBaseDev::setTable(vector<uint8_t> table, OPAL_TOKEN name, 
 	vector<uint8_t> value)
 {
-	LOG(D4) << "Entering MsedBaseDev::setTable";
+	LOG(D1) << "Entering MsedBaseDev::setTable";
 	MsedCommand *set = new MsedCommand();
 	set->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::SET);
 	set->changeInvokingUid(table);
@@ -768,13 +768,13 @@ uint8_t MsedBaseDev::setTable(vector<uint8_t> table, OPAL_TOKEN name,
 		return 0xff;
 	}
 	delete set;
-	LOG(D4) << "Leaving MsedBaseDev::setTable";
+	LOG(D1) << "Leaving MsedBaseDev::setTable";
 	return 0;
 }
 uint8_t MsedBaseDev::getTable(vector<uint8_t> table, uint16_t startcol, 
 	uint16_t endcol)
 {
-	LOG(D4) << "Entering MsedBaseDev::getTable";
+	LOG(D1) << "Entering MsedBaseDev::getTable";
 	MsedCommand *get = new MsedCommand();
 	get->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::GET);
 	get->changeInvokingUid(table);
@@ -800,22 +800,22 @@ uint8_t MsedBaseDev::getTable(vector<uint8_t> table, uint16_t startcol,
 }
 uint8_t MsedBaseDev::isEprise()
 {
-    LOG(D4) << "Entering MsedBaseDev::isEprise";
+    LOG(D1) << "Entering MsedBaseDev::isEprise";
     return disk_info.Enterprise;
 }
 uint8_t MsedBaseDev::isANYSSC()
 {
-	LOG(D4) << "Entering MsedBaseDev::isANYSSC";
+	LOG(D1) << "Entering MsedBaseDev::isANYSSC";
 	return disk_info.ANY_OPAL_SSC;
 }
 uint8_t MsedBaseDev::isPresent()
 {
-    LOG(D4) << "Entering MsedBaseDev::isPresent()";
+    LOG(D1) << "Entering MsedBaseDev::isPresent()";
     return isOpen;
 }
 uint8_t MsedBaseDev::MBREnabled()
 {
-    LOG(D4) << "Entering MsedBaseDev::MBREnabled()";
+    LOG(D1) << "Entering MsedBaseDev::MBREnabled()";
     return disk_info.Locking_MBREnabled;
 }
 
@@ -836,7 +836,7 @@ void MsedBaseDev::getSerialNum(uint8_t bytes[20])
 
 uint16_t MsedBaseDev::comID()
 {
-    LOG(D4) << "Entering MsedBaseDev::comID()";
+    LOG(D1) << "Entering MsedBaseDev::comID()";
     if (disk_info.OPAL20)
         return disk_info.OPAL20_basecomID;
     else if (disk_info.OPAL10)
@@ -879,7 +879,7 @@ uint8_t MsedBaseDev::exec(MsedCommand * cmd, MsedResponse &response, uint8_t pro
 
 void MsedBaseDev::discovery0()
 {
-    LOG(D4) << "Entering MsedBaseDev::discovery0()";
+    LOG(D1) << "Entering MsedBaseDev::discovery0()";
     void * d0Response = NULL;
     uint8_t * epos, *cpos;
     Discovery0Header * hdr;
@@ -979,7 +979,7 @@ void MsedBaseDev::discovery0()
 /** Print out the Discovery 0 results */
 void MsedBaseDev::puke()
 {
-    LOG(D4) << "Entering MsedBaseDev::puke()";
+    LOG(D1) << "Entering MsedBaseDev::puke()";
     /* IDENTIFY */
     cout << endl << dev << (disk_info.devType ? " OTHER " : " ATA ");
     for (int i = 0; i < sizeof (disk_info.modelNum); i++) {
@@ -1077,7 +1077,7 @@ void MsedBaseDev::puke()
 uint8_t MsedBaseDev::dumpTable(char * password)
 {
 	CLog::Level() = CLog::FromInt(4);
-	LOG(D4) << "Entering dumpTable()";
+	LOG(D1) << "Entering dumpTable()";
 	vector<uint8_t> table, key, nextkey, temp;
 	table.push_back(0xa8);
 	for (int i = 0; i < 8; i++) {
@@ -1132,7 +1132,7 @@ uint8_t MsedBaseDev::dumpTable(char * password)
 uint8_t MsedBaseDev::nextTable(std::vector<uint8_t> table,
 	std::vector<uint8_t> startkey)
 {
-	LOG(D4) << "Entering nextTable";
+	LOG(D1) << "Entering nextTable";
 	MsedCommand *next = new MsedCommand();
 	next->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::NEXT);
 	next->changeInvokingUid(table);
@@ -1159,7 +1159,7 @@ uint8_t MsedBaseDev::nextTable(std::vector<uint8_t> table,
 }
 //uint8_t MsedBaseDev::revertnoerase(char * SIDPassword, char * Admin1Password)
 //{
-//    LOG(D4) << "Entering MsedBaseDev::revertnoerase";
+//    LOG(D1) << "Entering MsedBaseDev::revertnoerase";
 //    if (setLockingSPvalue(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
 //		OPAL_TOKEN::READLOCKED, OPAL_TOKEN::OPAL_FALSE,
 //                   Admin1Password)) {

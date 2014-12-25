@@ -32,7 +32,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
  */
 MsedCommand::MsedCommand()
 {
-    LOG(D4) << "Creating MsedCommand()";
+    LOG(D1) << "Creating MsedCommand()";
     cmdbuf = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     respbuf = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
 }
@@ -40,7 +40,7 @@ MsedCommand::MsedCommand()
 /* Fill in the header information and format the call */
 MsedCommand::MsedCommand(OPAL_UID InvokingUid, OPAL_METHOD method)
 {
-    LOG(D4) << "Creating MsedCommand(ID, InvokingUid, method)";
+    LOG(D1) << "Creating MsedCommand(ID, InvokingUid, method)";
     /* allocate the cmdbuf */
     cmdbuf = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     reset(InvokingUid, method);
@@ -50,7 +50,7 @@ MsedCommand::MsedCommand(OPAL_UID InvokingUid, OPAL_METHOD method)
 void
 MsedCommand::reset()
 {
-    LOG(D4) << "Entering MsedCommand::reset()";
+    LOG(D1) << "Entering MsedCommand::reset()";
     memset(cmdbuf, 0, IO_BUFFER_LENGTH);
     OPALHeader * hdr;
     hdr = (OPALHeader *) cmdbuf;
@@ -61,7 +61,7 @@ MsedCommand::reset()
 void
 MsedCommand::reset(OPAL_UID InvokingUid, OPAL_METHOD method)
 {
-    LOG(D4) << "Entering MsedCommand::reset(InvokingUid, method)";
+    LOG(D1) << "Entering MsedCommand::reset(InvokingUid, method)";
     reset(); // build the headers
     cmdbuf[bufferpos++] = OPAL_TOKEN::CALL;
     cmdbuf[bufferpos++] = OPAL_SHORT_ATOM::BYTESTRING8;
@@ -76,7 +76,7 @@ void
 MsedCommand::addToken(uint64_t number)
 {
     int startat = 0;
-    LOG(D4) << "Entering MsedCommand::addToken(uint64_t number)";
+    LOG(D1) << "Entering MsedCommand::addToken(uint64_t number)";
     if (number < 64) {
         cmdbuf[bufferpos++] = (uint8_t) number & 0x000000000000003f;
     }
@@ -106,7 +106,7 @@ MsedCommand::addToken(uint64_t number)
 void
 MsedCommand::addToken(std::vector<uint8_t> token)
 {
-    LOG(D4) << "Entering addToken(std::vector<uint8_t>)";
+    LOG(D1) << "Entering addToken(std::vector<uint8_t>)";
     for (uint32_t i = 0; i < token.size(); i++) {
         cmdbuf[bufferpos++] = token[i];
     }
@@ -115,7 +115,7 @@ MsedCommand::addToken(std::vector<uint8_t> token)
 void
 MsedCommand::addToken(const char * bytestring)
 {
-    LOG(D4) << "Entering MsedCommand::addToken(const char * bytestring)";
+    LOG(D1) << "Entering MsedCommand::addToken(const char * bytestring)";
     uint16_t length = (uint16_t) strlen(bytestring);
     if (length < 16) {
         /* use tiny atom */
@@ -138,21 +138,21 @@ MsedCommand::addToken(const char * bytestring)
 void
 MsedCommand::addToken(OPAL_TOKEN token)
 {
-    LOG(D4) << "Entering MsedCommand::addToken(OPAL_TOKEN token)";
+    LOG(D1) << "Entering MsedCommand::addToken(OPAL_TOKEN token)";
     cmdbuf[bufferpos++] = (uint8_t) token;
 }
 
 void
 MsedCommand::addToken(OPAL_TINY_ATOM token)
 {
-    LOG(D4) << "Entering MsedCommand::addToken(OPAL_TINY_ATOM token)";
+    LOG(D1) << "Entering MsedCommand::addToken(OPAL_TINY_ATOM token)";
     cmdbuf[bufferpos++] = (uint8_t) token;
 }
 
 void
 MsedCommand::addToken(OPAL_UID token)
 {
-    LOG(D4) << "Entering MsedCommand::addToken(OPAL_UID token)";
+    LOG(D1) << "Entering MsedCommand::addToken(OPAL_UID token)";
     cmdbuf[bufferpos++] = OPAL_SHORT_ATOM::BYTESTRING8;
     memcpy(&cmdbuf[bufferpos], &OPALUID[token][0], 8);
     bufferpos += 8;
@@ -161,7 +161,7 @@ MsedCommand::addToken(OPAL_UID token)
 void
 MsedCommand::complete(uint8_t EOD)
 {
-    LOG(D4) << "Entering MsedCommand::complete(uint8_t EOD)";
+    LOG(D1) << "Entering MsedCommand::complete(uint8_t EOD)";
     if (EOD) {
         cmdbuf[bufferpos++] = OPAL_TOKEN::ENDOFDATA;
         cmdbuf[bufferpos++] = OPAL_TOKEN::STARTLIST;
@@ -185,7 +185,7 @@ MsedCommand::complete(uint8_t EOD)
 void
 MsedCommand::changeInvokingUid(std::vector<uint8_t> Invoker)
 {
-    LOG(D4) << "Entering MsedCommand::changeInvokingUid()";
+    LOG(D1) << "Entering MsedCommand::changeInvokingUid()";
     int offset = sizeof (OPALHeader) + 1; /* bytes 2-9 */
     for (uint32_t i = 0; i < Invoker.size(); i++) {
         cmdbuf[offset + i] = Invoker[i];
@@ -210,7 +210,7 @@ MsedCommand::setcomID(uint16_t comID)
 {
     OPALHeader * hdr;
     hdr = (OPALHeader *) cmdbuf;
-    LOG(D4) << "Entering MsedCommand::setcomID()";
+    LOG(D1) << "Entering MsedCommand::setcomID()";
     hdr->cp.extendedComID[0] = ((comID & 0xff00) >> 8);
     hdr->cp.extendedComID[1] = (comID & 0x00ff);
     hdr->cp.extendedComID[2] = 0x00;
@@ -220,7 +220,7 @@ MsedCommand::setcomID(uint16_t comID)
 void
 MsedCommand::setTSN(uint32_t TSN)
 {
-	LOG(D4) << "Entering MsedCommand::setTSN()";
+	LOG(D1) << "Entering MsedCommand::setTSN()";
     OPALHeader * hdr;
     hdr = (OPALHeader *) cmdbuf;
     hdr->pkt.TSN = TSN;
@@ -229,7 +229,7 @@ MsedCommand::setTSN(uint32_t TSN)
 void
 MsedCommand::setHSN(uint32_t HSN)
 {
-	LOG(D4) << "Entering MsedCommand::setHSN()";
+	LOG(D1) << "Entering MsedCommand::setHSN()";
     OPALHeader * hdr;
     hdr = (OPALHeader *) cmdbuf;
     hdr->pkt.HSN = HSN;
@@ -237,7 +237,7 @@ MsedCommand::setHSN(uint32_t HSN)
 
 MsedCommand::~MsedCommand()
 {
-    LOG(D4) << "Destroying MsedCommand";
+    LOG(D1) << "Destroying MsedCommand";
     ALIGNED_FREE(cmdbuf);
     ALIGNED_FREE(respbuf);
 }

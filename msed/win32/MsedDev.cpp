@@ -31,7 +31,7 @@ using namespace std;
 
 MsedDev::MsedDev(const char * devref)
 {
-    LOG(D4) << "Creating MsedDev::Mseddev() " << devref;
+    LOG(D1) << "Creating MsedDev::Mseddev() " << devref;
     ATA_PASS_THROUGH_DIRECT * ata =
             (ATA_PASS_THROUGH_DIRECT *) _aligned_malloc(sizeof (ATA_PASS_THROUGH_DIRECT), 8);
     ataPointer = (void *) ata;
@@ -64,7 +64,7 @@ MsedDev::MsedDev(const char * devref)
 uint8_t MsedDev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                         void * buffer, uint16_t bufferlen)
 {
-    LOG(D4) << "Entering MsedDev::sendCmd";
+    LOG(D1) << "Entering MsedDev::sendCmd";
     DWORD bytesReturned = 0; // data returned
     if (!isOpen) {
         LOG(D1) << "Device open failed";
@@ -122,7 +122,7 @@ void MsedDev::osmsSleep(uint32_t milliseconds)
 
 void MsedDev::identify()
 {
-    LOG(D4) << "Entering MsedDev::identify()";
+    LOG(D1) << "Entering MsedDev::identify()";
 	vector<uint8_t> nullz(512, 0x00);
     void * identifyResp = NULL;
     identifyResp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
@@ -160,7 +160,7 @@ void MsedDev::identify()
 /** Close the filehandle so this object can be delete. */
 MsedDev::~MsedDev()
 {
-    LOG(D4) << "Destroying TCGdev";
+    LOG(D1) << "Destroying TCGdev";
     CloseHandle(hDev);
     _aligned_free(ataPointer);
 }

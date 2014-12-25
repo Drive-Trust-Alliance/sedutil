@@ -41,20 +41,20 @@ using namespace CryptoPP;
 
 void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedBaseDev * d)
 {
-    LOG(D4) << " Entered MsedHashPwd";
+    LOG(D1) << " Entered MsedHashPwd";
     uint8_t serNum[20];
     d->getSerialNum(serNum);
     vector<uint8_t> salt(serNum, serNum + 20);
     //	vector<uint8_t> salt(DEFAULTSALT);
     MsedHashPassword(hash, password, salt);
-    LOG(D4) << " Exit MsedHashPwd"; // log for hash timing
+    LOG(D1) << " Exit MsedHashPwd"; // log for hash timing
 
 }
 
 void MsedHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
                       unsigned int iter, uint8_t hashsize)
 {
-    LOG(D4) << " Entered MsedHashPassword";
+    LOG(D1) << " Entered MsedHashPassword";
     // if the hashsize can be > 255 the token overhead logic needs to be fixed
     assert(1 == sizeof (hashsize));
     if (253 < hashsize) LOG(E) << "Hashsize > 253 incorrect token generated";

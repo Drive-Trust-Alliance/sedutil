@@ -24,7 +24,7 @@ void MsedHexDump(void * address, int length) {
 	uint8_t display[17];
 	uint8_t * cpos = (uint8_t *)address;
 	uint8_t * epos = cpos + length;
-	LOG(D4) << "Entering hexDump";
+	LOG(D1) << "Entering hexDump";
 	int rpos = 0;
 	int dpos = 0;
 	fprintf( stderr,"%04x ",rpos);

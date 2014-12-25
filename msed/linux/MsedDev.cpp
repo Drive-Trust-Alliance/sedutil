@@ -41,7 +41,7 @@ using namespace std;
  */
 MsedDev::MsedDev(const char * devref)
 {
-    LOG(D4) << "Creating MsedDev::MsedDev() " << devref;
+    LOG(D1) << "Creating MsedDev::MsedDev() " << devref;
     dev = devref;
     ifstream kopts;
     
@@ -87,7 +87,7 @@ uint8_t MsedDev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     uint8_t sense[32]; // how big should this be??
     uint8_t cdb[12];
 
-    LOG(D4) << "Entering MsedDev::sendCmd";
+    LOG(D1) << "Entering MsedDev::sendCmd";
     if (!isOpen) return 0xfe; //disk open failed so this will too
     memset(&cdb, 0, sizeof (cdb));
     memset(&sense, 0, sizeof (sense));
@@ -220,6 +220,6 @@ void MsedDev::osmsSleep(uint32_t ms)
 /** Close the device reference so this object can be delete. */
 MsedDev::~MsedDev()
 {
-    LOG(D4) << "Destroying MsedDev";
+    LOG(D1) << "Destroying MsedDev";
     close(fd);
 }
