@@ -112,8 +112,8 @@ uint8_t MsedBaseDev::revertLockingSP(char * password, uint8_t keep)
 	keepgloballockingrange.push_back(0x06);
 	keepgloballockingrange.push_back(0x00);
 	keepgloballockingrange.push_back(0x00);
-	if (!isOpal2()) {
-		LOG(E) << "Device not Opal2 " << dev;
+	if (!isAnySSC()) {
+		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
 	}
 	MsedCommand *cmd = new MsedCommand();
@@ -250,8 +250,8 @@ uint8_t MsedBaseDev::setNewPassword(char * password, char * userid, char * newpa
 {
 	LOG(D1) << "Entering MsedBaseDev::setNewPassword" ;
 	std::vector<uint8_t> userCPIN, hash;
-	if (!isOpal2()) {
-		LOG(E) << "Device not Opal2 " << dev;
+	if (!isAnySSC()) {
+		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
 	}
 	session = new MsedSession(this);
@@ -384,7 +384,7 @@ uint8_t MsedBaseDev::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
 	for (int i = 0; i < 8; i++) {
 		table.push_back(OPALUID[table_uid][i]);
 	}
-	if (!isANYSSC()) {
+	if (!isAnySSC()) {
 		LOG(E) << "Device not Opal compliant " << dev;
 		return 0xff;
 	}
@@ -415,8 +415,8 @@ uint8_t MsedBaseDev::enableUser(char * password, char * userid)
 	LOG(D1) << "Entering MsedBaseDev::enableUser";
 	vector<uint8_t> userUID;
 	
-	if (!isOpal2()) {
-		LOG(E) << "Device not Opal2 " << dev;
+	if (!isAnySSC()) {
+		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
 	}
 	session = new MsedSession(this);
@@ -447,7 +447,7 @@ uint8_t MsedBaseDev::enableUser(char * password, char * userid)
 uint8_t MsedBaseDev::revertTPer(char * password, uint8_t PSID)
 {
 	LOG(D1) << "Entering MsedBaseDev::revertTPer()";
-	if (!isOpal2()) {
+	if (!isAnySSC()) {
 		if (PSID) {
 			if ((!isOpal1()) && (!isEprise())) {
 				LOG(E) << "Device not supported for PSID Revert " << dev;
@@ -519,8 +519,8 @@ uint8_t MsedBaseDev::loadPBA(char * password, char * filename) {
 	fivepercent = ((pbafile.tellg() / 20) / 1024) * 1024;
 	if (0 == fivepercent) fivepercent++;
 	pbafile.seekg(0, pbafile.beg);
-	if (!isOpal2()) {
-		LOG(E) << "Device not Opal2 " << dev;
+	if (!isAnySSC()) {
+		LOG(E) << "Device not Opal " << dev;
 		pbafile.close();
 		return 0xff;
 	}
@@ -580,8 +580,8 @@ uint8_t MsedBaseDev::activateLockingSP(char * password)
 	for (int i = 0; i < 8; i++) {
 		table.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGSP_UID][i]);
 	}
-	if (!isOpal2()) {
-		LOG(E) << "Device not Opal2 " << dev;
+	if (!isAnySSC()) {
+		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
 	}
 	MsedCommand *cmd = new MsedCommand();
@@ -631,7 +631,7 @@ uint8_t MsedBaseDev::activateLockingSP(char * password)
 uint8_t MsedBaseDev::diskQuery()
 {
 	LOG(D1) << "Entering MsedBaseDev::diskQuery()" << dev;
-	if (!isANYSSC()) {
+	if (!isAnySSC()) {
 		LOG(E) << "Device not OPAL 1,2 or Enterprise " << dev;
 		return 1;
 	}
@@ -653,15 +653,15 @@ uint8_t MsedBaseDev::takeOwnership(char * newpassword)
 }
 uint8_t MsedBaseDev::isOpal2()
 {
-    LOG(D1) << "Entering MsedBaseDev::isOpal2()";
-    return disk_info.OPAL20;
+    LOG(D1) << "Entering MsedBaseDev::isAnySSC()";
+	return disk_info.OPAL20;
 }
 uint8_t MsedBaseDev::getDefaultPassword()
 {
 	LOG(D1) << "Entering MsedBaseDev::getDefaultPassword()";
 	vector<uint8_t> hash;
-	if (!isOpal2()) {
-		LOG(E) << "Device not Opal2 " << dev;
+	if (!isAnySSC()) {
+		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
 	}
 	//	Start Session
@@ -691,8 +691,8 @@ uint8_t MsedBaseDev::setSIDPassword(char * oldpassword, char * newpassword,
 {
 	vector<uint8_t> hash, table;
 	LOG(D1) << "Entering MsedBaseDev::setSIDPassword()";
-		if (!(isOpal2())) {
-		LOG(E) << "Device not Opal2 " << dev;
+		if (!(isAnySSC())) {
+		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
 	}
 		session = new MsedSession(this);
@@ -803,9 +803,9 @@ uint8_t MsedBaseDev::isEprise()
     LOG(D1) << "Entering MsedBaseDev::isEprise";
     return disk_info.Enterprise;
 }
-uint8_t MsedBaseDev::isANYSSC()
+uint8_t MsedBaseDev::isAnySSC()
 {
-	LOG(D1) << "Entering MsedBaseDev::isANYSSC";
+	LOG(D1) << "Entering MsedBaseDev::isAnySSC";
 	return disk_info.ANY_OPAL_SSC;
 }
 uint8_t MsedBaseDev::isPresent()
@@ -1033,13 +1033,13 @@ void MsedBaseDev::puke()
     if (disk_info.Enterprise) {
         cout << "Enterprise function (" << HEXON(4) << FC_ENTERPRISE << HEXOFF << ")" << std::endl;
         cout << "    Range crossing = " << (disk_info.Enterprise_rangeCrossing ? "Y, " : "N, ")
-                << "Base comID = " << disk_info.Enterprise_basecomID
-                << ", comIDs = " << disk_info.Enterprise_numcomID
+			<< "Base comID = " << HEXON(4) << disk_info.Enterprise_basecomID
+			<< ", comIDs = " << disk_info.Enterprise_numcomID << HEXOFF
                 << std::endl;
     }
     if (disk_info.OPAL10) {
         cout << "Opal V1.0 function (" << HEXON(4) << FC_OPALV100 << HEXOFF << ")" << std::endl;
-        cout << "Base comID = " << disk_info.OPAL10_basecomID
+		cout << "Base comID = " << HEXON(4) << disk_info.OPAL10_basecomID << HEXOFF
                 << ", comIDs = " << disk_info.OPAL10_numcomIDs
                 << std::endl;
     }
@@ -1083,8 +1083,8 @@ uint8_t MsedBaseDev::dumpTable(char * password)
 	for (int i = 0; i < 8; i++) {
 		table.push_back(OPALUID[OPAL_UID::OPAL_AUTHORITY_TABLE][i]);
 	}
-	if (!isOpal2()) {
-		LOG(E) << "Device not Opal2 " << dev;
+	if (!isAnySSC()) {
+		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
 	}
 	session = new MsedSession(this);

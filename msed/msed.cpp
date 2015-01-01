@@ -44,7 +44,7 @@ int diskScan()
 			d->getFirmwareRev(FirmwareRev);
 			d->getModelNum(ModelNum);
 			printf("%s", devname);
-			if (d->isANYSSC())
+			if (d->isAnySSC())
 				printf(" %s%s%s ", (d->isOpal1() ? "1" : " "),
 				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
 			else
@@ -87,7 +87,7 @@ int main(int argc, char * argv[])
 	if ((opts.action != msedoption::scan) && (opts.action != msedoption::validatePBKDF2)) {
 		if (opts.device > (argc - 1)) opts.device = 0;
 		d = new MsedDev(argv[opts.device]);
-		if ((!d->isPresent()) || (!d->isANYSSC())) {
+		if ((!d->isPresent()) || (!d->isAnySSC())) {
 			LOG(E) << "Invalid or unsupported disk " << argv[opts.device];
 			return 2;
 		}
