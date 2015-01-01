@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright 2014,2015 Michael Romeo <r0m30@r0m30.com>
 
     This file is part of msed.
 

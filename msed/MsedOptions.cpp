@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright 2014,2015 Michael Romeo <r0m30@r0m30.com>
 
 This file is part of msed.
 
@@ -22,7 +22,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "Version.h"
 void usage()
 {
-    printf("msed v%s Copyright 2014 Michael Romeo <r0m30@r0m30.com>\n", GIT_VERSION);
+    printf("msed v%s Copyright 2014,2015 Michael Romeo <r0m30@r0m30.com>\n", GIT_VERSION);
     printf("a utility to manage self encrypting drives that conform\n");
     printf("to the Trusted Computing Group OPAL 2.0 SSC specification\n");
     printf("General Usage:                     (see readme for extended commandset)\n");
