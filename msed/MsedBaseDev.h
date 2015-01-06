@@ -65,6 +65,10 @@ public:
 	uint8_t getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData);
 	uint8_t enableUser(char * password, char * userid);
 	uint8_t setMBRDone(uint8_t state, char * Admin1Password);
+	uint8_t setReadLocked(OPAL_UID lockingrange, OPAL_TOKEN state, char * Admin1Password);
+	uint8_t setWriteLocked(OPAL_UID lockingrange, OPAL_TOKEN state, char * Admin1Password);
+	uint8_t setReadLockEnabled(OPAL_UID lockingrange, OPAL_TOKEN state, char * Admin1Password);
+	uint8_t setWriteLockEnabled(OPAL_UID lockingrange, OPAL_TOKEN state, char * Admin1Password);
 	uint8_t setMBREnable(uint8_t state, char * Admin1Password);
 	uint8_t setNewPassword(char * password, char * userid, char * newpassword);
 	uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
@@ -90,6 +94,7 @@ protected:
      * a macro when the input buffer is read.
      */
     void discovery0();
+	uint8_t properties();
     virtual void identify() = 0;
     const char * dev;
     uint8_t isOpen = FALSE;

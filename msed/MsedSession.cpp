@@ -167,6 +167,8 @@ MsedSession::methodStatus(uint8_t status)
         return (char *) "INSUFFICIENT_ROWS";
     case OPALSTATUSCODE::INSUFFICIENT_SPACE:
         return (char *) "INSUFFICIENT_SPACE";
+	case OPALSTATUSCODE::INVALID_FUNCTION:
+		return (char *) "INVALID_FUNCTION";
     case OPALSTATUSCODE::INVALID_PARAMETER:
         return (char *) "INVALID_PARAMETER";
     case OPALSTATUSCODE::NOT_AUTHORIZED:

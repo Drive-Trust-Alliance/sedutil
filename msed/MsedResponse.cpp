@@ -138,15 +138,15 @@ uint64_t MsedResponse::getUint64(uint32_t tokenNum)
 
     }
     else if (!(response[tokenNum][0] & 0x20)) { // medium atom
-        LOG(E) << "unsigned int requested for medium atom is unsuported";
+        LOG(E) << "unsigned int requested for medium atom is unsupported";
         return 0;
     }
     else if (!(response[tokenNum][0] & 0x10)) { // long atom
-        LOG(E) << "unsigned int requested for long atom is unsuported";
+        LOG(E) << "unsigned int requested for long atom is unsupported";
         return 0;
     }
     else { // TOKEN
-        LOG(E) << "unsigned int requested for token is unsuported";
+        LOG(E) << "unsigned int requested for token is unsupported";
         return 0;
     }
 }

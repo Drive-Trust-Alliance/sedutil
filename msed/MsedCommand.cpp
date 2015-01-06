@@ -43,6 +43,7 @@ MsedCommand::MsedCommand(OPAL_UID InvokingUid, OPAL_METHOD method)
     LOG(D1) << "Creating MsedCommand(ID, InvokingUid, method)";
     /* allocate the cmdbuf */
     cmdbuf = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
+	respbuf = (uint8_t *)ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
     reset(InvokingUid, method);
 }
 

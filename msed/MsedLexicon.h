@@ -145,6 +145,8 @@ typedef enum _OPAL_TOKEN {
     // mbr control
     MBRENABLE = 0x01,
     MBRDONE = 0x02,
+	// properties
+	HOSTPROPERTIES =0x00,
     // atoms
     STARTLIST = 0xf0,
     ENDLIST = 0xf1,
@@ -205,6 +207,7 @@ typedef enum _OPALSTATUSCODE {
     UNIQUENESS_CONFLICT = 0x08,
     INSUFFICIENT_SPACE = 0x09,
     INSUFFICIENT_ROWS = 0x0A,
+	INVALID_FUNCTION = 0x0B, // defined in early specs, still used in some firmware
     INVALID_PARAMETER = 0x0C,
     //	OBSOLETE = 0x0D,
     //	OBSOLETE = 0x0E,

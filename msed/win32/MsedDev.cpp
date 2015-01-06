@@ -160,7 +160,7 @@ void MsedDev::identify()
 /** Close the filehandle so this object can be delete. */
 MsedDev::~MsedDev()
 {
-    LOG(D1) << "Destroying TCGdev";
+    LOG(D1) << "Destroying MsedDev";
     CloseHandle(hDev);
     _aligned_free(ataPointer);
 }

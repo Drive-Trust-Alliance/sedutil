@@ -59,29 +59,45 @@ uint8_t MsedBaseDev::initialsetup(char * password)
 		LOG(E) << "Initial setup failed - unable to activate LockingSP";
 		return 0xff;
 	}
-	if (setLockingSPvalue(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::READLOCKED, OPAL_TOKEN::OPAL_FALSE, password, NULL)) {
+	if (setReadLocked(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+		OPAL_TOKEN::OPAL_FALSE, password)) {
 		LOG(E) << "Initial setup failed - unable to unlock for read";
 		return 0xff;
 	}
-	if (setLockingSPvalue(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::WRITELOCKED, OPAL_TOKEN::OPAL_FALSE, password, NULL)) {
+	if (setWriteLocked(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+		OPAL_TOKEN::OPAL_FALSE, password)) {
 		LOG(E) << "Initial setup failed - unable to unlock for write";
 		return 0xff;
 	}
-	if (setLockingSPvalue(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::READLOCKENABLED, OPAL_TOKEN::OPAL_TRUE, password, NULL)) {
+	if (setReadLockEnabled(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+		OPAL_TOKEN::OPAL_TRUE, password)) {
 		LOG(E) << "Initial setup failed - unable to enable readlocking";
 		return 0xff;
 	}
-	if (setLockingSPvalue(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::WRITELOCKENABLED, OPAL_TOKEN::OPAL_TRUE, password, NULL)) {
+	if (setWriteLockEnabled(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+		OPAL_TOKEN::OPAL_TRUE, password)) {
 		LOG(E) << "Initial setup failed - unable to enable writelocking";
 		return 0xff;
 	}
 	LOG(I) << "Initial setup of TPer complete on " << dev;
 	LOG(D1) << "Exiting initialSetup()";
 	return 0;
+}
+uint8_t MsedBaseDev::setReadLocked(OPAL_UID lockingrange, OPAL_TOKEN state,
+	char * password){
+	return setLockingSPvalue(lockingrange, OPAL_TOKEN::READLOCKED, state, password, NULL);
+}
+uint8_t MsedBaseDev::setWriteLocked(OPAL_UID lockingrange, OPAL_TOKEN state,
+	char * password) {
+	return setLockingSPvalue(lockingrange, OPAL_TOKEN::WRITELOCKED, state, password, NULL);
+}
+uint8_t MsedBaseDev::setReadLockEnabled(OPAL_UID lockingrange, OPAL_TOKEN state,
+	char * password) {
+	return setLockingSPvalue(lockingrange, OPAL_TOKEN::READLOCKENABLED, state, password, NULL);
+}
+uint8_t MsedBaseDev::setWriteLockEnabled(OPAL_UID lockingrange, OPAL_TOKEN state,
+	char * password) {
+	return setLockingSPvalue(lockingrange, OPAL_TOKEN::WRITELOCKENABLED, state, password, NULL);
 }
 uint8_t MsedBaseDev::configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enabled, char * password)
 {
@@ -974,8 +990,68 @@ void MsedBaseDev::discovery0()
     }
     while (cpos < epos);
     ALIGNED_FREE(d0Response);
+	if(isAnySSC()) 
+		if (properties()) LOG(E) << "Properties exchange failed";
+// TODO: check to see that the TPer supports 2k buffers
+//
+// Change some table entries so that they reflect the differences in
+// the OPAL Enterprise spec
+//
+	if (isEprise()) {
+		OPALMETHOD[OPAL_METHOD::SET][7] &= 0x0f;
+		OPALMETHOD[OPAL_METHOD::GET][7] &= 0x0f;
+// Change the Admin1 user to be BandMaster0
+		OPALUID[OPAL_UID::OPAL_ADMIN1_UID][5] = 0x00;
+		OPALUID[OPAL_UID::OPAL_ADMIN1_UID][6] = 0x80;
+		OPALUID[OPAL_UID::OPAL_ADMIN1_UID][7] = 0x01;
+	}
 }
-
+uint8_t MsedBaseDev::properties()
+{
+	LOG(D1) << "Entering MsedBaseDev::properties()";
+	session = new MsedSession(this);  // use the session IO without starting a session
+	MsedCommand *props = new MsedCommand(OPAL_UID::OPAL_SMUID_UID, OPAL_METHOD::PROPERTIES);
+	props->addToken(OPAL_TOKEN::STARTLIST);
+	props->addToken(OPAL_TOKEN::STARTNAME);
+	props->addToken(OPAL_TOKEN::HOSTPROPERTIES);
+	props->addToken(OPAL_TOKEN::STARTLIST);
+	props->addToken(OPAL_TOKEN::STARTNAME);
+	props->addToken("MaxResponseComPacketSize");
+	props->addToken(2048);
+	props->addToken(OPAL_TOKEN::ENDNAME);
+	props->addToken(OPAL_TOKEN::STARTNAME);
+	props->addToken("MaxPacketSize");
+	props->addToken(2028);
+	props->addToken(OPAL_TOKEN::ENDNAME);
+	props->addToken(OPAL_TOKEN::STARTNAME);
+	props->addToken("MaxIndTokenSize");
+	props->addToken(1992);
+	props->addToken(OPAL_TOKEN::ENDNAME);
+	props->addToken(OPAL_TOKEN::STARTNAME);
+	props->addToken("MaxPackets");
+	props->addToken(1);
+	props->addToken(OPAL_TOKEN::ENDNAME);
+	props->addToken(OPAL_TOKEN::STARTNAME);
+	props->addToken("MaxSubpackets");
+	props->addToken(1);
+	props->addToken(OPAL_TOKEN::ENDNAME);
+	props->addToken(OPAL_TOKEN::STARTNAME);
+	props->addToken("MaxMethods");
+	props->addToken(1);
+	props->addToken(OPAL_TOKEN::ENDNAME);
+	props->addToken(OPAL_TOKEN::ENDLIST);
+	props->addToken(OPAL_TOKEN::ENDNAME);
+	props->addToken(OPAL_TOKEN::ENDLIST);
+	props->complete();
+	if (session->sendCommand(props, response)) {
+		LOG(E) << "Properties Failed ";
+		delete props;
+		return 0xff;
+	}
+	delete props;
+	LOG(D1) << "Leaving MsedBaseDev::properties()";
+	return 0;
+}
 /** Print out the Discovery 0 results */
 void MsedBaseDev::puke()
 {
