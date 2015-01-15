@@ -61,6 +61,24 @@
     <ClInclude Include="msed\win32\os.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="msed\pbdkf2\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msed\pbdkf2\gc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msed\pbdkf2\hmac.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msed\pbdkf2\memxor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msed\pbdkf2\sha1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msed\pbdkf2\stdalign.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msed\win32\MsedDev.cpp">
@@ -88,6 +106,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="msed\msed.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msed\pbdkf2\gc-gnulib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msed\pbdkf2\gc-pbkdf2-sha1.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msed\pbdkf2\hmac-sha1.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msed\pbdkf2\memxor.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msed\pbdkf2\sha1.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -17,27 +17,40 @@ You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
-// set diagnostics to /W3 for /W4 messages not handled in CryptoPP
-#ifdef _MSC_VER
-#pragma warning(push,3)
-#endif
 #include "os.h"
 #include <iostream>
 #include <iomanip>
+#include <assert.h>
 #include "MsedHashPwd.h"
 #include "MsedLexicon.h"
 #include "MsedBaseDev.h"
 #include "log.h"
-#include "../cryptopp/pch.h"
-#include "../cryptopp/stdcpp.h"
-#include "../cryptopp/hmac.h"
-#include "../cryptopp/pwdbased.h"
-#include "../cryptopp/sha.h"
-#include "../cryptopp/hex.h"
-#include "../cryptopp/files.h"
+
+extern "C"
+int gc_pbkdf2_sha1(const char *P, size_t Plen,const char *S, size_t Slen,
+					unsigned int c,char *DK, size_t dkLen);
 
 using namespace std;
-using namespace CryptoPP;
+
+void MsedHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
+	unsigned int iter, uint8_t hashsize)
+{
+	LOG(D1) << " Entered MsedHashPassword";
+	// if the hashsize can be > 255 the token overhead logic needs to be fixed
+	assert(1 == sizeof(hashsize));
+	if (253 < hashsize) LOG(E) << "Hashsize > 253 incorrect token generated";
+
+	hash.clear();
+	hash.reserve(hashsize + 2); // hope this will prevent reallocation
+	for (uint16_t i = 0; i < hashsize; i++) {
+		hash.push_back(' ');
+	}
+	gc_pbkdf2_sha1(password, strnlen(password, 256), (const char *)salt.data(), salt.size(), iter,
+		(char *)hash.data(), hash.size());
+	// add the token overhead
+	hash.insert(hash.begin(), (uint8_t)hash.size());
+	hash.insert(hash.begin(), 0xd0);
+}
 
 void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedBaseDev * d)
 {
@@ -48,167 +61,79 @@ void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedBaseDev * d)
     //	vector<uint8_t> salt(DEFAULTSALT);
     MsedHashPassword(hash, password, salt);
     LOG(D1) << " Exit MsedHashPwd"; // log for hash timing
-
 }
-
-void MsedHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
-                      unsigned int iter, uint8_t hashsize)
-{
-    LOG(D1) << " Entered MsedHashPassword";
-    // if the hashsize can be > 255 the token overhead logic needs to be fixed
-    assert(1 == sizeof (hashsize));
-    if (253 < hashsize) LOG(E) << "Hashsize > 253 incorrect token generated";
-
-    hash.clear();
-    hash.reserve(hashsize + 2); // hope this will prevent reallocation
-    for (uint16_t i = 0; i < hashsize; i++) {
-        hash.push_back(' ');
-    }
-
-    PKCS5_PBKDF2_HMAC<SHA1> pbkdf2;
-    pbkdf2.DeriveKey(hash.data(), hash.size(), 0, (byte *) password, strnlen(password, 256),
-                     salt.data(), salt.size(), iter);
-    // add the token overhead
-    hash.insert(hash.begin(), (uint8_t)hash.size());
-    hash.insert(hash.begin(), 0xd0);
-}
-// weirdness with c4505 in misc won't allow a pop ?????
-//#ifdef _MSC_VER
-//#pragma warning(pop)
-//#endif
 
 struct PBKDF_TestTuple
 {
-    uint8_t purpose;
+    uint8_t hashlen;
     unsigned int iterations;
-    const char *hexPassword, *hexSalt, *hexDerivedKey;
+    const char *Password, *Salt, *hexDerivedKey;
 };
 
-bool TestMsed(const PBKDF_TestTuple *testSet, unsigned int testSetSize)
+int testresult(std::vector<uint8_t> &result, const char * expected, size_t len) {
+	char work[50];
+	if (len > 50) return 1;
+	int p = 0;
+	printf("Expected Result: %s\nActual Result  : ", expected);
+	for (uint32_t i = 0; i < len; i++) { printf("%02x", result[i + 2]); }; printf("\n");
+	for (uint32_t i = 0; i < len * 2; i += 2) {
+		work[p] = expected[i] & 0x40 ? 16 * ((expected[i] & 0xf) + 9) : 16 * (expected[i] & 0xf);
+		work[p] += expected[i + 1] & 0x40 ? (expected[i + 1] & 0xf) + 9 : expected[i + 1] & 0xf;
+		p++;
+	}
+	return memcmp(result.data()+2, work, len);
+}
+
+int TestMsed(const PBKDF_TestTuple *testSet, unsigned int testSetSize)
 {
-    bool pass = true;
+    int pass = 1;
     std::vector<uint8_t> hash, seaSalt;
 
     for (unsigned int i = 0; i < testSetSize; i++) {
         const PBKDF_TestTuple &tuple = testSet[i];
-
-        string derivedKey;
-        StringSource(tuple.hexDerivedKey, true, new HexDecoder(new StringSink(derivedKey)));
-
-        SecByteBlock derived(derivedKey.size());
         hash.clear();
         seaSalt.clear();
-        for (uint16_t i = 0; i < strnlen(tuple.hexSalt, 255); i++) {
-            seaSalt.push_back(tuple.hexSalt[i]);
+        for (uint16_t i = 0; i < strnlen(tuple.Salt, 255); i++) {
+            seaSalt.push_back(tuple.Salt[i]);
         }
-        MsedHashPassword(hash, (char *) tuple.hexPassword, seaSalt,
-                         tuple.iterations, (uint8_t)derivedKey.size());
-        bool fail = memcmp(hash.data() + 2, derivedKey.data(), derived.size()) != 0;
-        pass = pass && !fail;
-
-        HexEncoder enc(new FileSink(cout));
-        cout << (fail ? "FAILED   " : "passed   ");
-        enc.Put(tuple.purpose);
-        cout << " " << tuple.iterations;
-        cout << " " << tuple.hexPassword << " " << tuple.hexSalt << " ";
-        enc.Put(hash.data() + 2, hash.size() - 2, true);
-        cout << endl;
+		printf("Password %s Salt %s Iterations %i Length %i\n", (char *)tuple.Password,
+			(char *) tuple.Salt, tuple.iterations, tuple.hashlen);
+		MsedHashPassword(hash, (char *) tuple.Password, seaSalt, tuple.iterations, tuple.hashlen);
+		int fail = (testresult(hash, tuple.hexDerivedKey, tuple.hashlen) == 0);
+        pass = pass & fail;
     }
 
     return pass;
 }
-
-bool TestPBKDF(PasswordBasedKeyDerivationFunction &pbkdf, const PBKDF_TestTuple *testSet, unsigned int testSetSize)
-{
-    bool pass = true;
-
-    for (unsigned int i = 0; i < testSetSize; i++) {
-        const PBKDF_TestTuple &tuple = testSet[i];
-
-        string password, salt, derivedKey;
-        StringSource(tuple.hexPassword, true, new HexDecoder(new StringSink(password)));
-        StringSource(tuple.hexSalt, true, new HexDecoder(new StringSink(salt)));
-        StringSource(tuple.hexDerivedKey, true, new HexDecoder(new StringSink(derivedKey)));
-
-        SecByteBlock derived(derivedKey.size());
-        pbkdf.DeriveKey(derived, derived.size(), tuple.purpose, (byte *) password.data(), password.size(), (byte *) salt.data(), salt.size(), tuple.iterations);
-        bool fail = memcmp(derived, derivedKey.data(), derived.size()) != 0;
-        pass = pass && !fail;
-
-        HexEncoder enc(new FileSink(cout));
-        cout << (fail ? "FAILED   " : "passed   ");
-        enc.Put(tuple.purpose);
-        cout << " " << tuple.iterations;
-        cout << " " << tuple.hexPassword << " " << tuple.hexSalt << " ";
-        enc.Put(derived, derived.size());
-        cout << endl;
-    }
-
-    return pass;
-}
-
 int MsedTestPBDKF2()
 {
-    bool pass = true;
+    int pass = 1;
     // from draft-ietf-smime-password-03.txt, at http://www.imc.org/draft-ietf-smime-password
-    {
-        PBKDF_TestTuple testSet[] = {
-            { 0, 5, "70617373776f7264", "1234567878563412", "D1DAA78615F287E6"},
-            { 0, 500, "416C6C206E2D656E746974696573206D75737420636F6D6D756E69636174652077697468206F74686572206E2d656E74697469657320766961206E2D3120656E746974656568656568656573", "1234567878563412", "6A8970BF68C92CAEA84A8DF28510858607126380CC47AB2D"},
-            // Draft PKCS #5 PBKDF2 Test Vectors http://tools.ietf.org/html/draft-josefsson-pbkdf2-test-vectors-06
-            // "password" (8 octets) S = "salt" (4 octets)	c = 1 DK = 0c60c80f961f0e71f3a9b524af6012062fe037a6
-            { 0, 1, "70617373776F7264", "73616C74", "0c60c80f961f0e71f3a9b524af6012062fe037a6"},
-            // "password" (8 octets) S = "salt" (4 octets)	c = 2 DK = ea6c014dc72d6f8ccd1ed92ace1d41f0d8de8957
-            { 0, 2, "70617373776F7264", "73616C74", "ea6c014dc72d6f8ccd1ed92ace1d41f0d8de8957"},
-            // "password" (8 octets) S = "salt" (4 octets)	c = 4096 DK = 4b007901b765489abead49d926f721d065a429c1
-            { 0, 4096, "70617373776F7264", "73616C74", "4b007901b765489abead49d926f721d065a429c1"},
-            // "password" (8 octets) S = "salt" (4 octets)	c = 16777216 DK = eefe3d61cd4da4e4e9945b3d6ba2158c2634e984
-            // { 0, 16777216, "70617373776F7264", "73616C74", "eefe3d61cd4da4e4e9945b3d6ba2158c2634e984" },
-            // "passwordPASSWORDpassword" (24 octets) S = "saltSALTsaltSALTsaltSALTsaltSALTsalt" (36 octets) c = 4096 DK = 3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038
-            { 0, 4096, "70617373776F726450415353574F524470617373776F7264", "73616C7453414C5473616C7453414C5473616C7453414C5473616C7453414C5473616C74",
-                "3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038"},
-            // "pass\0word" (9 octets) S = "sa\0lt" (5 octets)	c = 4096 DK = 56fa6aa75548099dcc37d7f03425e0c3
-            { 0, 4096, "7061737300776F7264", "7361006C74", "56fa6aa75548099dcc37d7f03425e0c3"},
-        };
+    PBKDF_TestTuple testSet[] = {
+        // Draft PKCS #5 PBKDF2 Test Vectors http://tools.ietf.org/html/draft-josefsson-pbkdf2-test-vectors-06
+        // "password" (8 octets) S = "salt" (4 octets)	c = 1 DK = 0c60c80f961f0e71f3a9b524af6012062fe037a6
+        { 20, 1, "password", "salt", "0c60c80f961f0e71f3a9b524af6012062fe037a6"},
+        // "password" (8 octets) S = "salt" (4 octets)	c = 2 DK = ea6c014dc72d6f8ccd1ed92ace1d41f0d8de8957
+        { 20, 2, "password", "salt", "ea6c014dc72d6f8ccd1ed92ace1d41f0d8de8957"},
+        // "password" (8 octets) S = "salt" (4 octets)	c = 4096 DK = 4b007901b765489abead49d926f721d065a429c1
+        { 20, 4096, "password", "salt", "4b007901b765489abead49d926f721d065a429c1"},
+        // "password" (8 octets) S = "salt" (4 octets)	c = 16777216 DK = eefe3d61cd4da4e4e9945b3d6ba2158c2634e984
+        //{ 20, 16777216, "password", "salt", "eefe3d61cd4da4e4e9945b3d6ba2158c2634e984" },
+        // "passwordPASSWORDpassword" (24 octets) S = "saltSALTsaltSALTsaltSALTsaltSALTsalt" (36 octets) c = 4096 DK = 3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038
+        { 25, 4096, "passwordPASSWORDpassword", "saltSALTsaltSALTsaltSALTsaltSALTsalt",
+            "3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038"},
+        // "pass\0word" (9 octets) S = "sa\0lt" (5 octets)	c = 4096 DK = 56fa6aa75548099dcc37d7f03425e0c3
+        //{ 16, 4096, "pass\0word", "sa\0lt", "56fa6aa75548099dcc37d7f03425e0c3" },
+        // program receives char * from OS so this test would fail but is not possible IRL
+    };
 
-        PKCS5_PBKDF2_HMAC<SHA1> pbkdf;
-
-        cout << "\nPKCS #5 PBKDF2 validation suite running on Template ... \n\n";
-        pass = TestPBKDF(pbkdf, testSet, sizeof (testSet) / sizeof (testSet[0])) && pass;
-        cout << "\nPKCS #5 PBKDF2 validation suite on Template ... ";
-        if (pass)
-            cout << "passed\n";
-        else
-            cout << "**FAILED**\n";
-
-    }
-    {
-        PBKDF_TestTuple testSet[] = {
-            // Draft PKCS #5 PBKDF2 Test Vectors http://tools.ietf.org/html/draft-josefsson-pbkdf2-test-vectors-06
-            // "password" (8 octets) S = "salt" (4 octets)	c = 1 DK = 0c60c80f961f0e71f3a9b524af6012062fe037a6
-            { 20, 1, "password", "salt", "0c60c80f961f0e71f3a9b524af6012062fe037a6"},
-            // "password" (8 octets) S = "salt" (4 octets)	c = 2 DK = ea6c014dc72d6f8ccd1ed92ace1d41f0d8de8957
-            { 20, 2, "password", "salt", "ea6c014dc72d6f8ccd1ed92ace1d41f0d8de8957"},
-            // "password" (8 octets) S = "salt" (4 octets)	c = 4096 DK = 4b007901b765489abead49d926f721d065a429c1
-            { 20, 4096, "password", "salt", "4b007901b765489abead49d926f721d065a429c1"},
-            // "password" (8 octets) S = "salt" (4 octets)	c = 16777216 DK = eefe3d61cd4da4e4e9945b3d6ba2158c2634e984
-            //{ 20, 16777216, "password", "salt", "eefe3d61cd4da4e4e9945b3d6ba2158c2634e984" },
-            // "passwordPASSWORDpassword" (24 octets) S = "saltSALTsaltSALTsaltSALTsaltSALTsalt" (36 octets) c = 4096 DK = 3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038
-            { 25, 4096, "passwordPASSWORDpassword", "saltSALTsaltSALTsaltSALTsaltSALTsalt",
-                "3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038"},
-            // "pass\0word" (9 octets) S = "sa\0lt" (5 octets)	c = 4096 DK = 56fa6aa75548099dcc37d7f03425e0c3
-            //{ 16, 4096, "pass\0word", "sa\0lt", "56fa6aa75548099dcc37d7f03425e0c3" },
-            // program receives char * from OS so this test would fail but is not possible IRL
-        };
-
-        cout << "\nPKCS #5 PBKDF2 validation suite running on Msed ... \n\n";
-        pass = TestMsed(testSet, sizeof (testSet) / sizeof (testSet[0])) && pass;
-        cout << "\nPKCS #5 PBKDF2 validation suite on Msed ... ";
-        if (pass)
-            cout << "passed\n";
-        else
-            cout << "**FAILED**\n";
-    }
+    cout << "\nPKCS #5 PBKDF2 validation suite running on Msed ... \n\n";
+    pass = TestMsed(testSet, sizeof (testSet) / sizeof (testSet[0])) && pass;
+    cout << "\nPKCS #5 PBKDF2 validation suite on Msed ... ";
+    if (pass)
+        cout << "passed\n";
+    else
+        cout << "**FAILED**\n";
     return 0;
 }
 

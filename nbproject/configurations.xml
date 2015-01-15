@@ -16,8 +16,19 @@
       <itemPath>msed/MsedResponse.h</itemPath>
       <itemPath>msed/MsedSession.h</itemPath>
       <itemPath>msed/MsedStructures.h</itemPath>
+      <itemPath>msed/pbdkf2/config.h</itemPath>
+      <itemPath>msed/pbdkf2/gc-gnulib.c</itemPath>
+      <itemPath>msed/pbdkf2/gc-pbkdf2-sha1.c</itemPath>
+      <itemPath>msed/pbdkf2/gc.h</itemPath>
+      <itemPath>msed/pbdkf2/hmac-sha1.c</itemPath>
+      <itemPath>msed/pbdkf2/hmac.h</itemPath>
       <itemPath>msed/log.h</itemPath>
+      <itemPath>msed/pbdkf2/memxor.c</itemPath>
+      <itemPath>msed/pbdkf2/memxor.h</itemPath>
       <itemPath>msed/linux/os.h</itemPath>
+      <itemPath>msed/pbdkf2/sha1.c</itemPath>
+      <itemPath>msed/pbdkf2/sha1.h</itemPath>
+      <itemPath>msed/pbdkf2/stdalign.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -70,6 +81,7 @@
       </toolsSet>
       <compileType>
         <cTool>
+          <architecture>1</architecture>
           <standard>10</standard>
           <warningLevel>3</warningLevel>
         </cTool>
@@ -84,12 +96,6 @@
         </ccTool>
         <linkerTool>
           <output>${CND_DISTDIR}/${CND_CONF}/msed</output>
-          <linkerAddLib>
-            <pElem>cryptopp/dist/i686</pElem>
-          </linkerAddLib>
-          <linkerLibItems>
-            <linkerLibLibItem>cryptopp</linkerLibLibItem>
-          </linkerLibItems>
         </linkerTool>
       </compileType>
       <item path="README.md" ex="false" tool="3" flavor2="0">
@@ -155,6 +161,28 @@
       <item path="msed/log.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/msed.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/gc-pbkdf2-sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/gc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/hmac.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/memxor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/sha1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release_i686" type="1">
@@ -166,6 +194,7 @@
       <compileType>
         <cTool>
           <developmentMode>5</developmentMode>
+          <architecture>1</architecture>
           <standard>10</standard>
           <warningLevel>3</warningLevel>
         </cTool>
@@ -188,12 +217,6 @@
         </asmTool>
         <linkerTool>
           <output>${CND_DISTDIR}/${CND_CONF}/msed</output>
-          <linkerAddLib>
-            <pElem>cryptopp/dist/i686</pElem>
-          </linkerAddLib>
-          <linkerLibItems>
-            <linkerLibLibItem>cryptopp</linkerLibLibItem>
-          </linkerLibItems>
         </linkerTool>
       </compileType>
       <item path="README.md" ex="false" tool="3" flavor2="0">
@@ -260,6 +283,28 @@
       </item>
       <item path="msed/msed.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="msed/pbdkf2/config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/gc-pbkdf2-sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/gc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/hmac.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/memxor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/sha1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
+      </item>
     </conf>
     <conf name="Debug_x86_64" type="1">
       <toolsSet>
@@ -269,6 +314,7 @@
       </toolsSet>
       <compileType>
         <cTool>
+          <architecture>2</architecture>
           <standard>10</standard>
           <warningLevel>3</warningLevel>
         </cTool>
@@ -283,12 +329,6 @@
         </ccTool>
         <linkerTool>
           <output>${CND_DISTDIR}/${CND_CONF}/msed</output>
-          <linkerAddLib>
-            <pElem>cryptopp/dist/x86_64</pElem>
-          </linkerAddLib>
-          <linkerLibItems>
-            <linkerLibLibItem>cryptopp</linkerLibLibItem>
-          </linkerLibItems>
         </linkerTool>
       </compileType>
       <item path="README.md" ex="false" tool="3" flavor2="0">
@@ -355,6 +395,28 @@
       </item>
       <item path="msed/msed.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="msed/pbdkf2/config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/gc-pbkdf2-sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/gc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/hmac.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/memxor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/sha1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
+      </item>
     </conf>
     <conf name="Release_x86_64" type="1">
       <toolsSet>
@@ -365,6 +427,7 @@
       <compileType>
         <cTool>
           <developmentMode>5</developmentMode>
+          <architecture>2</architecture>
           <standard>10</standard>
           <warningLevel>3</warningLevel>
         </cTool>
@@ -387,12 +450,6 @@
         </asmTool>
         <linkerTool>
           <output>${CND_DISTDIR}/${CND_CONF}/msed</output>
-          <linkerAddLib>
-            <pElem>cryptopp/dist/x86_64</pElem>
-          </linkerAddLib>
-          <linkerLibItems>
-            <linkerLibLibItem>cryptopp</linkerLibLibItem>
-          </linkerLibItems>
         </linkerTool>
       </compileType>
       <item path="README.md" ex="false" tool="3" flavor2="0">
@@ -458,6 +515,28 @@
       <item path="msed/log.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/msed.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/gc-pbkdf2-sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/gc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/hmac.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/memxor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/sha1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

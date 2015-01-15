@@ -137,8 +137,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)cryptopp\$(Platform)\Output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
@@ -168,8 +168,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)cryptopp\$(Platform)\Output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
@@ -200,8 +200,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)cryptopp\$(Platform)\Output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
@@ -231,8 +231,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)cryptopp\$(Platform)\Output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
@@ -267,8 +267,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)cryptopp\$(Platform)\Output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
@@ -302,8 +302,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)cryptopp\$(Platform)\Output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <OutputFile>$(SolutionDir)$(Platform)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
@@ -331,6 +331,12 @@
     <ClInclude Include="msed\MsedResponse.h" />
     <ClInclude Include="msed\MsedSession.h" />
     <ClInclude Include="msed\MsedStructures.h" />
+    <ClInclude Include="msed\pbdkf2\config.h" />
+    <ClInclude Include="msed\pbdkf2\gc.h" />
+    <ClInclude Include="msed\pbdkf2\hmac.h" />
+    <ClInclude Include="msed\pbdkf2\memxor.h" />
+    <ClInclude Include="msed\pbdkf2\sha1.h" />
+    <ClInclude Include="msed\pbdkf2\stdalign.h" />
     <ClInclude Include="msed\win32\MsedDev.h" />
     <ClInclude Include="msed\win32\os.h" />
   </ItemGroup>
@@ -346,6 +352,11 @@
     </ClCompile>
     <ClCompile Include="msed\MsedResponse.cpp" />
     <ClCompile Include="msed\MsedSession.cpp" />
+    <ClCompile Include="msed\pbdkf2\gc-gnulib.c" />
+    <ClCompile Include="msed\pbdkf2\gc-pbkdf2-sha1.c" />
+    <ClCompile Include="msed\pbdkf2\hmac-sha1.c" />
+    <ClCompile Include="msed\pbdkf2\memxor.c" />
+    <ClCompile Include="msed\pbdkf2\sha1.c" />
     <ClCompile Include="msed\win32\MsedDev.cpp" />
   </ItemGroup>
   <ItemGroup>

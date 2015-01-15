@@ -43,11 +43,16 @@ OBJECTFILES= \
 	${OBJECTDIR}/msed/MsedResponse.o \
 	${OBJECTDIR}/msed/MsedSession.o \
 	${OBJECTDIR}/msed/linux/MsedDev.o \
-	${OBJECTDIR}/msed/msed.o
+	${OBJECTDIR}/msed/msed.o \
+	${OBJECTDIR}/msed/pbdkf2/gc-gnulib.o \
+	${OBJECTDIR}/msed/pbdkf2/gc-pbkdf2-sha1.o \
+	${OBJECTDIR}/msed/pbdkf2/hmac-sha1.o \
+	${OBJECTDIR}/msed/pbdkf2/memxor.o \
+	${OBJECTDIR}/msed/pbdkf2/sha1.o
 
 
 # C Compiler Flags
-CFLAGS=
+CFLAGS=-m32
 
 # CC Compiler Flags
 CCFLAGS=-m32
@@ -60,7 +65,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-Lcryptopp/dist/i686 -lcryptopp
+LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -114,6 +119,31 @@ ${OBJECTDIR}/msed/msed.o: msed/msed.cpp
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Werror -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/msed.o msed/msed.cpp
+
+${OBJECTDIR}/msed/pbdkf2/gc-gnulib.o: msed/pbdkf2/gc-gnulib.c 
+	${MKDIR} -p ${OBJECTDIR}/msed/pbdkf2
+	${RM} "$@.d"
+	$(COMPILE.c) -g -Werror -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/pbdkf2/gc-gnulib.o msed/pbdkf2/gc-gnulib.c
+
+${OBJECTDIR}/msed/pbdkf2/gc-pbkdf2-sha1.o: msed/pbdkf2/gc-pbkdf2-sha1.c 
+	${MKDIR} -p ${OBJECTDIR}/msed/pbdkf2
+	${RM} "$@.d"
+	$(COMPILE.c) -g -Werror -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/pbdkf2/gc-pbkdf2-sha1.o msed/pbdkf2/gc-pbkdf2-sha1.c
+
+${OBJECTDIR}/msed/pbdkf2/hmac-sha1.o: msed/pbdkf2/hmac-sha1.c 
+	${MKDIR} -p ${OBJECTDIR}/msed/pbdkf2
+	${RM} "$@.d"
+	$(COMPILE.c) -g -Werror -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/pbdkf2/hmac-sha1.o msed/pbdkf2/hmac-sha1.c
+
+${OBJECTDIR}/msed/pbdkf2/memxor.o: msed/pbdkf2/memxor.c 
+	${MKDIR} -p ${OBJECTDIR}/msed/pbdkf2
+	${RM} "$@.d"
+	$(COMPILE.c) -g -Werror -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/pbdkf2/memxor.o msed/pbdkf2/memxor.c
+
+${OBJECTDIR}/msed/pbdkf2/sha1.o: msed/pbdkf2/sha1.c 
+	${MKDIR} -p ${OBJECTDIR}/msed/pbdkf2
+	${RM} "$@.d"
+	$(COMPILE.c) -g -Werror -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/pbdkf2/sha1.o msed/pbdkf2/sha1.c
 
 # Subprojects
 .build-subprojects:

@@ -164,7 +164,7 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 			OPTION_IS(device) 
 		END_OPTION
 
-		else if (i != argc - 1) {
+		else {
             LOG(E) << "Invalid command line argument " << argv[i];
             return 1;
         }
