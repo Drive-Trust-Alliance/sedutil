@@ -42,8 +42,8 @@ using namespace CryptoPP;
 void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedBaseDev * d)
 {
     LOG(D1) << " Entered MsedHashPwd";
-    uint8_t serNum[20];
-    d->getSerialNum(serNum);
+    char *serNum;
+    serNum = d->getSerialNum();
     vector<uint8_t> salt(serNum, serNum + 20);
     //	vector<uint8_t> salt(DEFAULTSALT);
     MsedHashPassword(hash, password, salt);

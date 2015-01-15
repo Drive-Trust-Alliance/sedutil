@@ -56,7 +56,7 @@ typedef enum _msedoption {
 
 } msedoption;
 #define CHECKARGS(x) \
-if((x+1) > argc) { \
+if((x+baseOptions) != argc) { \
 	LOG(E) << "Incorrect number of paramaters for " << argv[i] << " command"; \
 	return 100; \
 	}
@@ -72,7 +72,7 @@ if((x+1) > argc) { \
 
 #define TESTFAIL(msg) \
 	{ \
-	LOG(E) << msg << argv[i]; \
+	LOG(E) << msg << " " << argv[i+1]; \
 	return 1;\
 	} \
 i++;

@@ -128,7 +128,7 @@ uint8_t MsedBaseDev::revertLockingSP(char * password, uint8_t keep)
 	keepgloballockingrange.push_back(0x06);
 	keepgloballockingrange.push_back(0x00);
 	keepgloballockingrange.push_back(0x00);
-	if (!isAnySSC()) {
+	if (!isSupportedSSC()) {
 		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
 	}
@@ -266,7 +266,7 @@ uint8_t MsedBaseDev::setNewPassword(char * password, char * userid, char * newpa
 {
 	LOG(D1) << "Entering MsedBaseDev::setNewPassword" ;
 	std::vector<uint8_t> userCPIN, hash;
-	if (!isAnySSC()) {
+	if (!isSupportedSSC()) {
 		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
 	}
@@ -394,13 +394,13 @@ uint8_t MsedBaseDev::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 uint8_t MsedBaseDev::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, 
 	OPAL_TOKEN value,char * password, char * msg)
 {
-	LOG(D) << "MsedBaseDev::setLockingSPvalue";
+	LOG(D1) << "Entering MsedBaseDev::setLockingSPvalue";
 	vector<uint8_t> table;
 	table.push_back(0xa8);
 	for (int i = 0; i < 8; i++) {
 		table.push_back(OPALUID[table_uid][i]);
 	}
-	if (!isAnySSC()) {
+	if (!isSupportedSSC()) {
 		LOG(E) << "Device not Opal compliant " << dev;
 		return 0xff;
 	}
@@ -422,7 +422,7 @@ uint8_t MsedBaseDev::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
 	}
 	// session[TSN:HSN] <- EOS
 	delete session;
-	LOG(D) << "Exiting MsedBaseDev::setLockingSPvalue()";
+	LOG(D1) << "Exiting MsedBaseDev::setLockingSPvalue()";
 	return 0;
 }
 
@@ -431,7 +431,7 @@ uint8_t MsedBaseDev::enableUser(char * password, char * userid)
 	LOG(D1) << "Entering MsedBaseDev::enableUser";
 	vector<uint8_t> userUID;
 	
-	if (!isAnySSC()) {
+	if (!isSupportedSSC()) {
 		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
 	}
@@ -463,17 +463,9 @@ uint8_t MsedBaseDev::enableUser(char * password, char * userid)
 uint8_t MsedBaseDev::revertTPer(char * password, uint8_t PSID)
 {
 	LOG(D1) << "Entering MsedBaseDev::revertTPer()";
-	if (!isAnySSC()) {
-		if (PSID) {
-			if ((!isOpal1()) && (!isEprise())) {
-				LOG(E) << "Device not supported for PSID Revert " << dev;
-				return 0xff;
-			}
-		}
-		else {
-			LOG(E) << "Device not Opal compliant " << dev;
-			return 0xff;
-		}
+	if (!isSupportedSSC()) {
+		LOG(E) << "Device not supported for PSID Revert " << dev;
+		return 0xff;
 	}
 	MsedCommand *cmd = new MsedCommand();
 	session = new MsedSession(this);
@@ -505,7 +497,11 @@ uint8_t MsedBaseDev::revertTPer(char * password, uint8_t PSID)
 	return 0;
 }
 uint8_t MsedBaseDev::loadPBA(char * password, char * filename) {
-	LOG(D1) << "Exiting MsedBaseDev::loadPBAimage()" << filename << " " << dev;
+	LOG(D1) << "Entering MsedBaseDev::loadPBAimage()" << filename << " " << dev;
+	if (!isSupportedSSC()) {
+		LOG(E) << "Device not Opal " << dev;
+		return 0xff;
+	}
 	uint64_t fivepercent = 0;
 	int complete = 4;
 	typedef struct { uint8_t  i : 2; } spinnertik;
@@ -535,11 +531,7 @@ uint8_t MsedBaseDev::loadPBA(char * password, char * filename) {
 	fivepercent = ((pbafile.tellg() / 20) / 1024) * 1024;
 	if (0 == fivepercent) fivepercent++;
 	pbafile.seekg(0, pbafile.beg);
-	if (!isAnySSC()) {
-		LOG(E) << "Device not Opal " << dev;
-		pbafile.close();
-		return 0xff;
-	}
+
 	MsedCommand *cmd = new MsedCommand();
 	session = new MsedSession(this);
 	if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) {
@@ -557,7 +549,7 @@ uint8_t MsedBaseDev::loadPBA(char * password, char * filename) {
 			printf("\r%s", progress_bar);
 			fflush(stdout);
 		}
-		//	session[TSN:HSN] -> MBR_UID.Set[Where = 0, Values = “<Master_Boot_Record_shadow>”]
+		//	session[TSN:HSN] -> MBR_UID.Set[Where = 0, Values = <Master_Boot_Record_shadow>]
 		cmd->reset(OPAL_UID::OPAL_MBR, OPAL_METHOD::SET);
 		cmd->addToken(OPAL_TOKEN::STARTLIST);
 		cmd->addToken(OPAL_TOKEN::STARTNAME);
@@ -596,7 +588,7 @@ uint8_t MsedBaseDev::activateLockingSP(char * password)
 	for (int i = 0; i < 8; i++) {
 		table.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGSP_UID][i]);
 	}
-	if (!isAnySSC()) {
+	if (!isSupportedSSC()) {
 		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
 	}
@@ -669,14 +661,14 @@ uint8_t MsedBaseDev::takeOwnership(char * newpassword)
 }
 uint8_t MsedBaseDev::isOpal2()
 {
-    LOG(D1) << "Entering MsedBaseDev::isAnySSC()";
+    LOG(D1) << "Entering MsedBaseDev::isSupportedSSC()";
 	return disk_info.OPAL20;
 }
 uint8_t MsedBaseDev::getDefaultPassword()
 {
 	LOG(D1) << "Entering MsedBaseDev::getDefaultPassword()";
 	vector<uint8_t> hash;
-	if (!isAnySSC()) {
+	if (!isSupportedSSC()) {
 		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
 	}
@@ -707,7 +699,7 @@ uint8_t MsedBaseDev::setSIDPassword(char * oldpassword, char * newpassword,
 {
 	vector<uint8_t> hash, table;
 	LOG(D1) << "Entering MsedBaseDev::setSIDPassword()";
-		if (!(isAnySSC())) {
+		if (!(isSupportedSSC())) {
 		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
 	}
@@ -819,6 +811,11 @@ uint8_t MsedBaseDev::isEprise()
     LOG(D1) << "Entering MsedBaseDev::isEprise";
     return disk_info.Enterprise;
 }
+uint8_t MsedBaseDev::isSupportedSSC()
+{
+	LOG(D1) << "Entering MsedBaseDev::isSupportedSSC";
+	return disk_info.SupportedSSC;
+}
 uint8_t MsedBaseDev::isAnySSC()
 {
 	LOG(D1) << "Entering MsedBaseDev::isAnySSC";
@@ -835,19 +832,19 @@ uint8_t MsedBaseDev::MBREnabled()
     return disk_info.Locking_MBREnabled;
 }
 
-void MsedBaseDev::getFirmwareRev(uint8_t bytes[8])
+char *MsedBaseDev::getFirmwareRev()
 {
-    memcpy(&bytes[0], &disk_info.firmwareRev[0], 8);
+    return (char *) &disk_info.firmwareRev;
 }
 
-void MsedBaseDev::getModelNum(uint8_t bytes[40])
+char *MsedBaseDev::getModelNum()
 {
-    memcpy(&bytes[0], &disk_info.modelNum[0], 40);
+    return (char *) &disk_info.modelNum;
 }
 
-void MsedBaseDev::getSerialNum(uint8_t bytes[20])
+char *MsedBaseDev::getSerialNum()
 {
-    memcpy(&bytes[0], &disk_info.serialNum[0], 20);
+    return (char *) &disk_info.serialNum;
 }
 
 uint16_t MsedBaseDev::comID()
@@ -953,6 +950,7 @@ void MsedBaseDev::discovery0()
         case FC_OPALV100: /* Opal V1 */
             disk_info.OPAL10 = 1;
 			disk_info.ANY_OPAL_SSC = 1;
+			disk_info.SupportedSSC = 1;
             disk_info.OPAL10_basecomID = SWAP16(body->opalv100.baseComID);
             disk_info.OPAL10_numcomIDs = SWAP16(body->opalv100.numberComIDs);
             break;
@@ -972,6 +970,7 @@ void MsedBaseDev::discovery0()
         case FC_OPALV200: /* OPAL V200 */
             disk_info.OPAL20 = 1;
 			disk_info.ANY_OPAL_SSC = 1;
+			disk_info.SupportedSSC = 1;
             disk_info.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
             disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
             disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
@@ -981,30 +980,36 @@ void MsedBaseDev::discovery0()
             disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
             break;
         default:
-            disk_info.Unknown += 1;
-            LOG(D) << "Unknown Feature in Discovery 0 response " << std::hex << SWAP16(body->TPer.featureCode) << std::dec;
-            /* should do something here */
+			if (0xbfff < (SWAP16(body->TPer.featureCode))) {
+				// silently ignore vendor specific segments as there is no public doc on them
+				disk_info.VendorSpecific += 1;
+			}
+			else {
+				disk_info.Unknown += 1;
+				LOG(D) << "Unknown Feature in Discovery 0 response " << std::hex << SWAP16(body->TPer.featureCode) << std::dec;
+				/* should do something here */
+			}
             break;
         }
         cpos = cpos + (body->TPer.length + 4);
     }
     while (cpos < epos);
     ALIGNED_FREE(d0Response);
-	if(isAnySSC()) 
+	if(isSupportedSSC()) 
 		if (properties()) LOG(E) << "Properties exchange failed";
 // TODO: check to see that the TPer supports 2k buffers
 //
 // Change some table entries so that they reflect the differences in
 // the OPAL Enterprise spec
 //
-	if (isEprise()) {
-		OPALMETHOD[OPAL_METHOD::SET][7] &= 0x0f;
-		OPALMETHOD[OPAL_METHOD::GET][7] &= 0x0f;
-// Change the Admin1 user to be BandMaster0
-		OPALUID[OPAL_UID::OPAL_ADMIN1_UID][5] = 0x00;
-		OPALUID[OPAL_UID::OPAL_ADMIN1_UID][6] = 0x80;
-		OPALUID[OPAL_UID::OPAL_ADMIN1_UID][7] = 0x01;
-	}
+//	if (isEprise()) {
+//		OPALMETHOD[OPAL_METHOD::SET][7] &= 0x0f;
+//		OPALMETHOD[OPAL_METHOD::GET][7] &= 0x0f;
+//// Change the Admin1 user to be BandMaster0
+//		OPALUID[OPAL_UID::OPAL_ADMIN1_UID][5] = 0x00;
+//		OPALUID[OPAL_UID::OPAL_ADMIN1_UID][6] = 0x80;
+//		OPALUID[OPAL_UID::OPAL_ADMIN1_UID][7] = 0x01;
+//	}
 }
 uint8_t MsedBaseDev::properties()
 {
@@ -1043,11 +1048,12 @@ uint8_t MsedBaseDev::properties()
 	props->addToken(OPAL_TOKEN::ENDNAME);
 	props->addToken(OPAL_TOKEN::ENDLIST);
 	props->complete();
-	if (session->sendCommand(props, response)) {
+	if (session->sendCommand(props, propertiesResponse)) {
 		LOG(E) << "Properties Failed ";
 		delete props;
 		return 0xff;
 	}
+	disk_info.Properties = 1;
 	delete props;
 	LOG(D1) << "Leaving MsedBaseDev::properties()";
 	return 0;
@@ -1055,100 +1061,101 @@ uint8_t MsedBaseDev::properties()
 /** Print out the Discovery 0 results */
 void MsedBaseDev::puke()
 {
-    LOG(D1) << "Entering MsedBaseDev::puke()";
-    /* IDENTIFY */
-    cout << endl << dev << (disk_info.devType ? " OTHER " : " ATA ");
-    for (int i = 0; i < sizeof (disk_info.modelNum); i++) {
-        cout << disk_info.modelNum[i];
-    }
-    cout << " ";
-    for (int i = 0; i < sizeof (disk_info.firmwareRev); i++) {
-        if (0x20 == disk_info.firmwareRev[i]) break;
-        cout << disk_info.firmwareRev[i];
-    }
-    cout << " ";
-    for (int i = 0; i < sizeof (disk_info.serialNum); i++) {
-        cout << disk_info.serialNum[i];
-    }
-    cout << endl;
-    /* TPer */
-    if (disk_info.TPer) {
-        cout << "TPer function (" << HEXON(4) << FC_TPER << HEXOFF << ")" << std::endl;
-        cout << "    ACKNAK = " << (disk_info.TPer_ACKNACK ? "Y, " : "N, ")
-                << "ASYNC = " << (disk_info.TPer_async ? "Y, " : "N. ")
-                << "BufferManagement = " << (disk_info.TPer_bufferMgt ? "Y, " : "N, ")
-                << "comIDManagement  = " << (disk_info.TPer_comIDMgt ? "Y, " : "N, ")
-                << "Streaming = " << (disk_info.TPer_streaming ? "Y, " : "N, ")
-                << "SYNC = " << (disk_info.TPer_sync ? "Y" : "N")
-                << std::endl;
-    }
-    if (disk_info.Locking) {
+	LOG(D1) << "Entering MsedBaseDev::puke()";
+	/* IDENTIFY */
+	cout << endl << dev << (disk_info.devType ? " OTHER " : " ATA ");
+	cout << disk_info.modelNum << " " << disk_info.firmwareRev << " " << disk_info.serialNum << endl;
+	/* TPer */
+	if (disk_info.TPer) {
+		cout << "TPer function (" << HEXON(4) << FC_TPER << HEXOFF << ")" << std::endl;
+		cout << "    ACKNAK = " << (disk_info.TPer_ACKNACK ? "Y, " : "N, ")
+			<< "ASYNC = " << (disk_info.TPer_async ? "Y, " : "N. ")
+			<< "BufferManagement = " << (disk_info.TPer_bufferMgt ? "Y, " : "N, ")
+			<< "comIDManagement  = " << (disk_info.TPer_comIDMgt ? "Y, " : "N, ")
+			<< "Streaming = " << (disk_info.TPer_streaming ? "Y, " : "N, ")
+			<< "SYNC = " << (disk_info.TPer_sync ? "Y" : "N")
+			<< std::endl;
+	}
+	if (disk_info.Locking) {
 
-        cout << "Locking function (" << HEXON(4) << FC_LOCKING << HEXOFF << ")" << std::endl;
-        cout << "    Locked = " << (disk_info.Locking_locked ? "Y, " : "N, ")
-                << "LockingEnabled = " << (disk_info.Locking_lockingEnabled ? "Y, " : "N, ")
-                << "LockingSupported = " << (disk_info.Locking_lockingSupported ? "Y, " : "N, ");
-        cout << "MBRDone = " << (disk_info.Locking_MBRDone ? "Y, " : "N, ")
-                << "MBREnabled = " << (disk_info.Locking_MBREnabled ? "Y, " : "N, ")
-                << "MediaEncrypt = " << (disk_info.Locking_mediaEncrypt ? "Y" : "N")
-                << std::endl;
-    }
-    if (disk_info.Geometry) {
+		cout << "Locking function (" << HEXON(4) << FC_LOCKING << HEXOFF << ")" << std::endl;
+		cout << "    Locked = " << (disk_info.Locking_locked ? "Y, " : "N, ")
+			<< "LockingEnabled = " << (disk_info.Locking_lockingEnabled ? "Y, " : "N, ")
+			<< "LockingSupported = " << (disk_info.Locking_lockingSupported ? "Y, " : "N, ");
+		cout << "MBRDone = " << (disk_info.Locking_MBRDone ? "Y, " : "N, ")
+			<< "MBREnabled = " << (disk_info.Locking_MBREnabled ? "Y, " : "N, ")
+			<< "MediaEncrypt = " << (disk_info.Locking_mediaEncrypt ? "Y" : "N")
+			<< std::endl;
+	}
+	if (disk_info.Geometry) {
 
-        cout << "Geometry function (" << HEXON(4) << FC_GEOMETRY << HEXOFF << ")" << std::endl;
-        cout << "    Align = " << (disk_info.Geometry_align ? "Y, " : "N, ")
-                << "Alignment Granularity = " << disk_info.Geometry_alignmentGranularity
-                << " (" << // display bytes
-                (disk_info.Geometry_alignmentGranularity *
-                disk_info.Geometry_logicalBlockSize)
-                << ")"
-                << ", Logical Block size = " << disk_info.Geometry_logicalBlockSize
-                << ", Lowest Aligned LBA = " << disk_info.Geometry_lowestAlignedLBA
-                << std::endl;
-    }
-    if (disk_info.Enterprise) {
-        cout << "Enterprise function (" << HEXON(4) << FC_ENTERPRISE << HEXOFF << ")" << std::endl;
-        cout << "    Range crossing = " << (disk_info.Enterprise_rangeCrossing ? "Y, " : "N, ")
+		cout << "Geometry function (" << HEXON(4) << FC_GEOMETRY << HEXOFF << ")" << std::endl;
+		cout << "    Align = " << (disk_info.Geometry_align ? "Y, " : "N, ")
+			<< "Alignment Granularity = " << disk_info.Geometry_alignmentGranularity
+			<< " (" << // display bytes
+			(disk_info.Geometry_alignmentGranularity *
+			disk_info.Geometry_logicalBlockSize)
+			<< ")"
+			<< ", Logical Block size = " << disk_info.Geometry_logicalBlockSize
+			<< ", Lowest Aligned LBA = " << disk_info.Geometry_lowestAlignedLBA
+			<< std::endl;
+	}
+	if (disk_info.Enterprise) {
+		cout << "Enterprise function (" << HEXON(4) << FC_ENTERPRISE << HEXOFF << ")" << std::endl;
+		cout << "    Range crossing = " << (disk_info.Enterprise_rangeCrossing ? "Y, " : "N, ")
 			<< "Base comID = " << HEXON(4) << disk_info.Enterprise_basecomID
 			<< ", comIDs = " << disk_info.Enterprise_numcomID << HEXOFF
-                << std::endl;
-    }
-    if (disk_info.OPAL10) {
-        cout << "Opal V1.0 function (" << HEXON(4) << FC_OPALV100 << HEXOFF << ")" << std::endl;
+			<< std::endl;
+	}
+	if (disk_info.OPAL10) {
+		cout << "Opal V1.0 function (" << HEXON(4) << FC_OPALV100 << HEXOFF << ")" << std::endl;
 		cout << "Base comID = " << HEXON(4) << disk_info.OPAL10_basecomID << HEXOFF
-                << ", comIDs = " << disk_info.OPAL10_numcomIDs
-                << std::endl;
-    }
-    if (disk_info.SingleUser) {
-        cout << "SingleUser function (" << HEXON(4) << FC_SINGLEUSER << HEXOFF << ")" << std::endl;
-        cout << "    ALL = " << (disk_info.SingleUser_all ? "Y, " : "N, ")
-                << "ANY = " << (disk_info.SingleUser_any ? "Y, " : "N, ")
-                << "Policy = " << (disk_info.SingleUser_policy ? "Y, " : "N, ")
-                << "Locking Objects = " << (disk_info.SingleUser_lockingObjects)
-                << std::endl;
-    }
-    if (disk_info.DataStore) {
-        cout << "DataStore function (" << HEXON(4) << FC_DATASTORE << HEXOFF << ")" << std::endl;
-        cout << "    Max Tables = " << disk_info.DataStore_maxTables
-                << ", Max Size Tables = " << disk_info.DataStore_maxTableSize
-                << ", Table size alignment = " << disk_info.DataStore_alignment
-                << std::endl;
-    }
+			<< ", comIDs = " << disk_info.OPAL10_numcomIDs
+			<< std::endl;
+	}
+	if (disk_info.SingleUser) {
+		cout << "SingleUser function (" << HEXON(4) << FC_SINGLEUSER << HEXOFF << ")" << std::endl;
+		cout << "    ALL = " << (disk_info.SingleUser_all ? "Y, " : "N, ")
+			<< "ANY = " << (disk_info.SingleUser_any ? "Y, " : "N, ")
+			<< "Policy = " << (disk_info.SingleUser_policy ? "Y, " : "N, ")
+			<< "Locking Objects = " << (disk_info.SingleUser_lockingObjects)
+			<< std::endl;
+	}
+	if (disk_info.DataStore) {
+		cout << "DataStore function (" << HEXON(4) << FC_DATASTORE << HEXOFF << ")" << std::endl;
+		cout << "    Max Tables = " << disk_info.DataStore_maxTables
+			<< ", Max Size Tables = " << disk_info.DataStore_maxTableSize
+			<< ", Table size alignment = " << disk_info.DataStore_alignment
+			<< std::endl;
+	}
 
-    if (disk_info.OPAL20) {
-        cout << "OPAL 2.0 function (" << HEXON(4) << FC_OPALV200 << ")" << HEXOFF << std::endl;
-        cout << "    Base comID = " << HEXON(4) << disk_info.OPAL20_basecomID << HEXOFF;
-        cout << ", Initial PIN = " << HEXON(2) << disk_info.OPAL20_initialPIN << HEXOFF;
-        cout << ", Reverted PIN = " << HEXON(2) << disk_info.OPAL20_revertedPIN << HEXOFF;
-        cout << ", comIDs = " << disk_info.OPAL20_numcomIDs;
-        cout << std::endl;
-        cout << "    Locking Admins = " << disk_info.OPAL20_numAdmins;
-        cout << ", Locking Users = " << disk_info.OPAL20_numUsers;
-        cout << ", Range Crossing = " << (disk_info.OPAL20_rangeCrossing ? "Y" : "N");
-        cout << std::endl;
-    }
-    if (disk_info.Unknown)
-        cout << "**** " << (uint16_t) disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
+	if (disk_info.OPAL20) {
+		cout << "OPAL 2.0 function (" << HEXON(4) << FC_OPALV200 << ")" << HEXOFF << std::endl;
+		cout << "    Base comID = " << HEXON(4) << disk_info.OPAL20_basecomID << HEXOFF;
+		cout << ", Initial PIN = " << HEXON(2) << disk_info.OPAL20_initialPIN << HEXOFF;
+		cout << ", Reverted PIN = " << HEXON(2) << disk_info.OPAL20_revertedPIN << HEXOFF;
+		cout << ", comIDs = " << disk_info.OPAL20_numcomIDs;
+		cout << std::endl;
+		cout << "    Locking Admins = " << disk_info.OPAL20_numAdmins;
+		cout << ", Locking Users = " << disk_info.OPAL20_numUsers;
+		cout << ", Range Crossing = " << (disk_info.OPAL20_rangeCrossing ? "Y" : "N");
+		cout << std::endl;
+	}
+	if (disk_info.Unknown)
+		cout << "**** " << (uint16_t)disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
+	if (disk_info.Properties) {
+		cout << std::endl << "TPer Properties: ";
+		for (uint32_t i = 0; i < propertiesResponse.getTokenCount(); i++) {
+			if (OPAL_TOKEN::STARTNAME == (OPAL_TOKEN) propertiesResponse.tokenIs(i)) {
+				if (OPAL_TOKENID::OPAL_TOKENID_BYTESTRING != propertiesResponse.tokenIs(i + 1))
+					cout << std::endl << "Host Properties: " << std::endl;
+				else
+					cout << "  " << propertiesResponse.getString(i + 1) << " = " << propertiesResponse.getUint64(i + 2);
+				i += 2;
+			}
+			if (!(i % 6)) cout << std::endl;
+		}
+	}
 }
 uint8_t MsedBaseDev::dumpTable(char * password)
 {
@@ -1159,7 +1166,7 @@ uint8_t MsedBaseDev::dumpTable(char * password)
 	for (int i = 0; i < 8; i++) {
 		table.push_back(OPALUID[OPAL_UID::OPAL_AUTHORITY_TABLE][i]);
 	}
-	if (!isAnySSC()) {
+	if (!isSupportedSSC()) {
 		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
 	}

@@ -30,8 +30,6 @@ int diskScan()
 {
 	char devname[25];
 	int i = 0;
-	uint8_t FirmwareRev[8];
-	uint8_t ModelNum[40];
 	MsedDev * d;
 	LOG(D1) << "Creating diskList";
 	printf("\nScanning for Opal compliant disks\n");
@@ -41,24 +39,13 @@ int diskScan()
 		//sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i)  Windows
 		d = new MsedDev(devname);
 		if (d->isPresent()) {
-			d->getFirmwareRev(FirmwareRev);
-			d->getModelNum(ModelNum);
 			printf("%s", devname);
 			if (d->isAnySSC())
 				printf(" %s%s%s ", (d->isOpal1() ? "1" : " "),
 				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
 			else
 				printf("%s", " No  ");
-
-			for (int x = 0; x < sizeof(ModelNum); x++) {
-				cout << ModelNum[x];
-			}
-			cout << " ";
-			for (int x = 0; x < sizeof(FirmwareRev); x++) {
-				//if (0x20 == FirmwareRev[x]) break;
-				cout << FirmwareRev[x];
-			}
-			cout << std::endl;
+			cout << d->getModelNum() << " " << d->getFirmwareRev() << std::endl;
 			if (MAX_DISKS == i) {
 				LOG(I) << MAX_DISKS << " disks, really?";
 				delete d;

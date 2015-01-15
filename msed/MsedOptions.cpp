@@ -74,6 +74,7 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 {
     memset(opts, 0, sizeof (MSED_OPTIONS));
     uint16_t loggingLevel = 2;
+	uint8_t baseOptions = 2; // program and option
     CLog::Level() = CLog::FromInt(loggingLevel);
     if (2 > argc) {
         usage();
@@ -86,10 +87,12 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 		}
 		else if ('v' == argv[i][1])
 		{
+			baseOptions += 1;
 			loggingLevel += (uint16_t)(strlen(argv[i]) - 1);
 			if (loggingLevel > 7) loggingLevel = 7;
 			CLog::Level() = CLog::FromInt(loggingLevel);
 			LOG(D) << "Log level set to " << CLog::ToString(CLog::FromInt(loggingLevel));
+			LOG(D) << "msed version : " << GIT_VERSION;
 		}
 		else if (!(('-' == argv[i][0]) && ('-' == argv[i][1])) && 
 			(0 == opts->action))

@@ -23,10 +23,11 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "MsedStructures.h"
 
 typedef enum _OPAL_TOKENID {
-	OPAL_TOKENID_BYTESTRING,
-	OPAL_TOKENID_SINT,
-	OPAL_TOKENID_UINT,
-	OPAL_TOKENID_TOKEN, // actual token is returned
+	// 0xen to avoid collisions with real tokens 
+	OPAL_TOKENID_BYTESTRING = 0xe0,
+	OPAL_TOKENID_SINT = 0xe1,
+	OPAL_TOKENID_UINT = 0xe2,
+	OPAL_TOKENID_TOKEN =0xe3, // actual token is returned
 } OPAL_TOKENID;
 
 class MsedResponse {

@@ -44,10 +44,11 @@ public:
     uint8_t isAnySSC();
      uint8_t MBREnabled();
     uint8_t isPresent();
+	uint8_t isSupportedSSC();
     uint16_t comID();
-    void getFirmwareRev(uint8_t bytes[8]);
-    void getModelNum(uint8_t bytes[40]);
-    void getSerialNum(uint8_t bytes[20]);
+    char *getFirmwareRev();
+    char *getModelNum();
+    char *getSerialNum();
     
 	uint8_t takeOwnership(char * newpassword);
 	uint8_t getDefaultPassword();
@@ -100,6 +101,7 @@ protected:
     uint8_t isOpen = FALSE;
     OPAL_DiskInfo disk_info;
 	MsedResponse response;
+	MsedResponse propertiesResponse;
 	MsedSession *session;
 
 };

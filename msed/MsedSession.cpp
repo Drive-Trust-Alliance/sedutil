@@ -103,11 +103,6 @@ MsedSession::sendCommand(MsedCommand * cmd, MsedResponse & response)
      * Check out the basics that so that we know we
      * have a sane reply to work with
      */
-    // if outstanding data is <> 0 then the drive has more data but we dont support it
-	if (0 != response.h.cp.outstandingData) {
-		LOG(E) << "Outstanding data <> 0 -- no program support";
-		//return 0xff;
-	}
     // zero lengths -- these are big endian but it doesn't matter for uint = 0
     if ((0 == response.h.cp.length) ||
         (0 == response.h.pkt.length) ||
@@ -116,7 +111,7 @@ MsedSession::sendCommand(MsedCommand * cmd, MsedResponse & response)
         return 0xff;
     }
     // if we get an endsession response return 0
-    if ((1 == SWAP32(response.h.subpkt.length)) && (0xfa == response.tokenIs(0))) {
+    if (0xfa == response.tokenIs(0)) {
         return 0;
     }
     // IF we received a method status return it

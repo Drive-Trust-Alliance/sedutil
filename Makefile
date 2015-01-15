@@ -55,7 +55,7 @@ build: .build-post
 
 .build-pre:
 # Add your pre 'build' code here...
-	./GitVersion.sh >> msed/Version.h
+	./GitVersion.sh > msed/Version.h
 
 .build-post: .build-impl
 # Add your post 'build' code here...

@@ -280,6 +280,7 @@ typedef enum _ATACOMMAND {
 typedef struct _OPAL_DiskInfo {
     // parsed the Function block?
 	uint8_t Unknown;
+	uint8_t VendorSpecific;
     uint8_t TPer : 1;
     uint8_t Locking : 1;
     uint8_t Geometry : 1;
@@ -288,7 +289,9 @@ typedef struct _OPAL_DiskInfo {
     uint8_t DataStore : 1;
     uint8_t OPAL20 : 1;
 	uint8_t OPAL10 : 1;
+	uint8_t Properties : 1;
 	uint8_t ANY_OPAL_SSC : 1;
+	uint8_t SupportedSSC : 1;
     // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
     uint8_t TPer_ACKNACK : 1;
     uint8_t TPer_async : 1;
@@ -328,8 +331,11 @@ typedef struct _OPAL_DiskInfo {
     // IDENTIFY information
     uint8_t devType : 1; // 0 = ata device
     uint8_t serialNum[20];
+	uint8_t null0;  // make sn a cstring
     uint8_t firmwareRev[8];
+	uint8_t null1;  // make firmware rev a cstring
     uint8_t modelNum[40];
+	uint8_t null2;  // make model number a cstring
 } OPAL_DiskInfo;
 
 typedef struct _IDENTIFY_RESPONSE {
