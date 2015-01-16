@@ -661,7 +661,7 @@ uint8_t MsedBaseDev::takeOwnership(char * newpassword)
 }
 uint8_t MsedBaseDev::isOpal2()
 {
-    LOG(D1) << "Entering MsedBaseDev::isSupportedSSC()";
+	LOG(D1) << "Entering MsedBaseDev::isOpal2 " << (uint16_t) disk_info.OPAL20;
 	return disk_info.OPAL20;
 }
 uint8_t MsedBaseDev::getDefaultPassword()
@@ -740,7 +740,7 @@ uint8_t MsedBaseDev::setSIDPassword(char * oldpassword, char * newpassword,
 
 uint8_t MsedBaseDev::isOpal1()
 {
-    LOG(D1) << "Entering MsedBaseDev::isOpal1()";
+	LOG(D1) << "Entering MsedBaseDev::isOpal1() " << (uint16_t)disk_info.OPAL10;
     return disk_info.OPAL10;
 }
 uint8_t MsedBaseDev::setTable(vector<uint8_t> table, OPAL_TOKEN name,
@@ -808,22 +808,22 @@ uint8_t MsedBaseDev::getTable(vector<uint8_t> table, uint16_t startcol,
 }
 uint8_t MsedBaseDev::isEprise()
 {
-    LOG(D1) << "Entering MsedBaseDev::isEprise";
+    LOG(D1) << "Entering MsedBaseDev::isEprise " << (uint16_t) disk_info.Enterprise;
     return disk_info.Enterprise;
 }
 uint8_t MsedBaseDev::isSupportedSSC()
 {
-	LOG(D1) << "Entering MsedBaseDev::isSupportedSSC";
+	LOG(D1) << "Entering MsedBaseDev::isSupportedSSC " << (uint16_t)disk_info.SupportedSSC;
 	return disk_info.SupportedSSC;
 }
 uint8_t MsedBaseDev::isAnySSC()
 {
-	LOG(D1) << "Entering MsedBaseDev::isAnySSC";
+	LOG(D1) << "Entering MsedBaseDev::isAnySSC " << (uint16_t)disk_info.ANY_OPAL_SSC;
 	return disk_info.ANY_OPAL_SSC;
 }
 uint8_t MsedBaseDev::isPresent()
 {
-    LOG(D1) << "Entering MsedBaseDev::isPresent()";
+	LOG(D1) << "Entering MsedBaseDev::isPresent() " << (uint16_t) isOpen;
     return isOpen;
 }
 uint8_t MsedBaseDev::MBREnabled()
@@ -943,6 +943,7 @@ void MsedBaseDev::discovery0()
         case FC_ENTERPRISE: /* Enterprise SSC */
             disk_info.Enterprise = 1;
 			disk_info.ANY_OPAL_SSC = 1;
+			disk_info.SupportedSSC = 1;
             disk_info.Enterprise_rangeCrossing = body->enterpriseSSC.rangeCrossing;
             disk_info.Enterprise_basecomID = SWAP16(body->enterpriseSSC.baseComID);
             disk_info.Enterprise_numcomID = SWAP16(body->enterpriseSSC.numberComIDs);
@@ -1019,9 +1020,10 @@ uint8_t MsedBaseDev::properties()
 	props->addToken(OPAL_TOKEN::STARTLIST);
 	props->addToken(OPAL_TOKEN::STARTNAME);
 	props->addToken(OPAL_TOKEN::HOSTPROPERTIES);
+	//props->addToken("HostProperties");	
 	props->addToken(OPAL_TOKEN::STARTLIST);
 	props->addToken(OPAL_TOKEN::STARTNAME);
-	props->addToken("MaxResponseComPacketSize");
+	props->addToken("MaxComPacketSize");
 	props->addToken(2048);
 	props->addToken(OPAL_TOKEN::ENDNAME);
 	props->addToken(OPAL_TOKEN::STARTNAME);
@@ -1049,7 +1051,6 @@ uint8_t MsedBaseDev::properties()
 	props->addToken(OPAL_TOKEN::ENDLIST);
 	props->complete();
 	if (session->sendCommand(props, propertiesResponse)) {
-		LOG(E) << "Properties Failed ";
 		delete props;
 		return 0xff;
 	}
