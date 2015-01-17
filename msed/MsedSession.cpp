@@ -20,7 +20,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include <stdio.h>
 #include "MsedSession.h"
-#include "MsedBaseDev.h"
+#include "MsedDev.h"
 #include "MsedCommand.h"
 #include "MsedResponse.h"
 #include "MsedEndianFixup.h"
@@ -33,7 +33,7 @@ using namespace std;
 /*
  * Start a session
  */
-MsedSession::MsedSession(MsedBaseDev * device)
+MsedSession::MsedSession(MsedDev * device)
 {
     LOG(D1) << "Creating MsedSsession()";
     d = device;

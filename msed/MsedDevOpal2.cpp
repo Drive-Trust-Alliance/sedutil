@@ -17,18 +17,17 @@ You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
-#pragma once
-#include <vector>
-class MsedDev;
+
+#include "MsedDevOpal2.h"
 
 using namespace std;
-/** Hash the password using the drive serialnumber as salt.
- * This is an intermediary pass through so that the real hash
- * function (MsedHashPassword) can be tested and verified.
- * This is far from ideal but it's better that a single salt as
- * it should prevent attacking the password with a prebuilt table
- */
-void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedDev * device);
-void MsedHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
-        unsigned int iter = 75000, uint8_t hashsize = 32);
-int MsedTestPBDKF2();
+
+
+MsedDevOpal2::MsedDevOpal2 (const char * devref)
+{
+	MsedDevOpal::init(devref);
+}
+
+MsedDevOpal2::~MsedDevOpal2()
+{
+}

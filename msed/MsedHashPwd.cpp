@@ -23,7 +23,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <assert.h>
 #include "MsedHashPwd.h"
 #include "MsedLexicon.h"
-#include "MsedBaseDev.h"
+#include "MsedDev.h"
 #include "log.h"
 
 extern "C"
@@ -52,7 +52,7 @@ void MsedHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> sa
 	hash.insert(hash.begin(), 0xd0);
 }
 
-void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedBaseDev * d)
+void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedDev * d)
 {
     LOG(D1) << " Entered MsedHashPwd";
     char *serNum;

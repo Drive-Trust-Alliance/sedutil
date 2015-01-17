@@ -20,7 +20,6 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include <stdio.h>
 #include "MsedCommand.h"
-#include "MsedDev.h"
 #include "MsedEndianFixup.h"
 #include "MsedHexDump.h"
 #include "MsedStructures.h"

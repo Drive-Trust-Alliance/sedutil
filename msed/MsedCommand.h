@@ -18,22 +18,25 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
-/** A class to build & send Opal Command streams to a TPer.
- * This class attempts to closely mimic the command
- * pseudo code used in the TCG documents, the syntactic
- * sugar is not represented.  See TCG document Storage Architecture
- * Core Specification R2.00 V2.00 Section 3.2.1.2 for all
- * the gory details.
- *
- * See also OpalLexicon for structs, typedefs and enums used to encode
- * the bytestream.
- */
+
 #include <vector>
 #include "MsedLexicon.h"
-class MsedBaseDev;
+class MsedDevOpal;
+class MsedDevEnterprise;
 
+/** A class to build & send Opal Command streams to a TPer.
+* This class attempts to closely mimic the command
+* pseudo code used in the TCG documents, the syntactic
+* sugar is not represented.  See TCG document Storage Architecture
+* Core Specification R2.00 V2.00 Section 3.2.1.2 for all
+* the gory details.
+*
+* See also OpalLexicon for structs, typedefs and enums used to encode
+* the bytestream.
+*/
 class MsedCommand {
-	friend class MsedBaseDev;
+	friend class MsedDevOpal;
+	friend class MsedDevEnterprise;
 public:
     MsedCommand();
     MsedCommand(OPAL_UID InvokingUid, OPAL_METHOD method);

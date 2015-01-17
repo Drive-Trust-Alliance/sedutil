@@ -320,9 +320,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="msed\log.h" />
-    <ClInclude Include="msed\MsedBaseDev.h" />
+    <ClInclude Include="msed\MsedDev.h" />
     <ClInclude Include="msed\MsedCommand.h" />
     <ClInclude Include="msed\MsedConstants.h" />
+    <ClInclude Include="msed\MsedDevEnterprise.h" />
+    <ClInclude Include="msed\MsedDevGeneric.h" />
+    <ClInclude Include="msed\MsedDevOpal.h" />
+    <ClInclude Include="msed\MsedDevOpal1.h" />
+    <ClInclude Include="msed\MsedDevOpal2.h" />
     <ClInclude Include="msed\MsedEndianFixup.h" />
     <ClInclude Include="msed\MsedHashPwd.h" />
     <ClInclude Include="msed\MsedHexDump.h" />
@@ -337,13 +342,18 @@
     <ClInclude Include="msed\pbdkf2\memxor.h" />
     <ClInclude Include="msed\pbdkf2\sha1.h" />
     <ClInclude Include="msed\pbdkf2\stdalign.h" />
-    <ClInclude Include="msed\win32\MsedDev.h" />
+    <ClInclude Include="msed\win32\MsedDevOS.h" />
     <ClInclude Include="msed\win32\os.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msed\msed.cpp" />
-    <ClCompile Include="msed\MsedBaseDev.cpp" />
+    <ClCompile Include="msed\MsedDev.cpp" />
     <ClCompile Include="msed\MsedCommand.cpp" />
+    <ClCompile Include="msed\MsedDevEnterprise.cpp" />
+    <ClCompile Include="msed\MsedDevGeneric.cpp" />
+    <ClCompile Include="msed\MsedDevOpal.cpp" />
+    <ClCompile Include="msed\MsedDevOpal1.cpp" />
+    <ClCompile Include="msed\MsedDevOpal2.cpp" />
     <ClCompile Include="msed\MsedHashPwd.cpp" />
     <ClCompile Include="msed\MsedHexDump.cpp" />
     <ClCompile Include="msed\MsedOptions.cpp">
@@ -357,7 +367,7 @@
     <ClCompile Include="msed\pbdkf2\hmac-sha1.c" />
     <ClCompile Include="msed\pbdkf2\memxor.c" />
     <ClCompile Include="msed\pbdkf2\sha1.c" />
-    <ClCompile Include="msed\win32\MsedDev.cpp" />
+    <ClCompile Include="msed\win32\MsedDevOS.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="msed\Copyright.txt" />

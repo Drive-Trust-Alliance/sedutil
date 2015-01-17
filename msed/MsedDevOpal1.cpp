@@ -16,24 +16,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
-* C:E********************************************************************** */
-#pragma once
-#include "MsedBaseDev.h"
-/** Device Class (win32) represents a single disk device.
-*  This class is stored in a vector so to avoid writing a
-*  copy operator and an assignment operator no custom destructor
-*  is used leading to this unfortunate class method structure
-*/
-class MsedDev : public MsedBaseDev {
-public:
-	MsedDev(const char * devref);
-	~MsedDev();
-	/** Send an ioctl to the device using pass through. */
-	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-		void * buffer, uint16_t bufferlen);
-private:
-	void osmsSleep(uint32_t milliseconds);
-	void identify();
-	HANDLE hDev;
-	void *ataPointer; 
-};
+ * C:E********************************************************************** */
+
+#include "MsedDevOpal1.h"
+
+using namespace std;
+
+
+MsedDevOpal1::MsedDevOpal1 (const char * devref)
+{
+	MsedDevOpal::init(devref);
+}
+
+MsedDevOpal1::~MsedDevOpal1()
+{
+}

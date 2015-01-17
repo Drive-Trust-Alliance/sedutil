@@ -17,17 +17,15 @@ You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
-/** Base device class.
- * An OS port must create a subclass of this class
- * and implement the sendcmd class specific to the
- * IO requirements of that OS
+/** Device class for Opal 2.0 SSC
+ * also supports the Opal 1.0 SSC
  */
 #include "os.h"
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include<iomanip>
-#include "MsedBaseDev.h"
+#include "MsedDevEnterprise.h"
 #include "MsedHashPwd.h"
 #include "MsedEndianFixup.h"
 #include "MsedStructures.h"
@@ -38,17 +36,19 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-/** Device Class (Base) represents a single disk device.
- *  This is the functionality that is common to all OS's
- */
-MsedBaseDev::MsedBaseDev()
+
+MsedDevEnterprise::MsedDevEnterprise(const char * devref)
+{
+	MsedDevOS::init(devref);
+	if (properties())
+		LOG(E) << "Properties exchange failed";
+}
+
+MsedDevEnterprise::~MsedDevEnterprise()
 {
 }
 
-MsedBaseDev::~MsedBaseDev()
-{
-}
-uint8_t MsedBaseDev::initialsetup(char * password)
+uint8_t MsedDevEnterprise::initialsetup(char * password)
 {
 	LOG(D1) << "Entering initialSetup()";
 	if (takeOwnership(password)) {
@@ -83,25 +83,25 @@ uint8_t MsedBaseDev::initialsetup(char * password)
 	LOG(D1) << "Exiting initialSetup()";
 	return 0;
 }
-uint8_t MsedBaseDev::setReadLocked(OPAL_UID lockingrange, OPAL_TOKEN state,
+uint8_t MsedDevEnterprise::setReadLocked(OPAL_UID lockingrange, OPAL_TOKEN state,
 	char * password){
 	return setLockingSPvalue(lockingrange, OPAL_TOKEN::READLOCKED, state, password, NULL);
 }
-uint8_t MsedBaseDev::setWriteLocked(OPAL_UID lockingrange, OPAL_TOKEN state,
+uint8_t MsedDevEnterprise::setWriteLocked(OPAL_UID lockingrange, OPAL_TOKEN state,
 	char * password) {
 	return setLockingSPvalue(lockingrange, OPAL_TOKEN::WRITELOCKED, state, password, NULL);
 }
-uint8_t MsedBaseDev::setReadLockEnabled(OPAL_UID lockingrange, OPAL_TOKEN state,
+uint8_t MsedDevEnterprise::setReadLockEnabled(OPAL_UID lockingrange, OPAL_TOKEN state,
 	char * password) {
 	return setLockingSPvalue(lockingrange, OPAL_TOKEN::READLOCKENABLED, state, password, NULL);
 }
-uint8_t MsedBaseDev::setWriteLockEnabled(OPAL_UID lockingrange, OPAL_TOKEN state,
+uint8_t MsedDevEnterprise::setWriteLockEnabled(OPAL_UID lockingrange, OPAL_TOKEN state,
 	char * password) {
 	return setLockingSPvalue(lockingrange, OPAL_TOKEN::WRITELOCKENABLED, state, password, NULL);
 }
-uint8_t MsedBaseDev::configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enabled, char * password)
+uint8_t MsedDevEnterprise::configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enabled, char * password)
 {
-	LOG(D1) << "Entering MsedBaseDev::configureLockingRange()";
+	LOG(D1) << "Entering MsedDevEnterprise::configureLockingRange()";
 	if (lockingrange) {
 		LOG(E) << "Only global locking range is currently supported";
 		return 0xff;
@@ -117,12 +117,12 @@ uint8_t MsedBaseDev::configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enab
 		return 0xff;
 	}
 	LOG(I) << "Locking range configured " << (uint16_t) enabled;
-	LOG(D1) << "Exiting MsedBaseDev::configureLockingRange()";
+	LOG(D1) << "Exiting MsedDevEnterprise::configureLockingRange()";
 	return 0;
 }
-uint8_t MsedBaseDev::revertLockingSP(char * password, uint8_t keep)
+uint8_t MsedDevEnterprise::revertLockingSP(char * password, uint8_t keep)
 {
-	LOG(D1) << "Entering revert MsedBaseDev::LockingSP() keep = " << keep;
+	LOG(D1) << "Entering revert MsedDevEnterprise::LockingSP() keep = " << keep;
 	vector<uint8_t> keepgloballockingrange;
 	keepgloballockingrange.push_back(0xa3);
 	keepgloballockingrange.push_back(0x06);
@@ -162,12 +162,12 @@ uint8_t MsedBaseDev::revertLockingSP(char * password, uint8_t keep)
 	LOG(I) << "Revert LockingSP complete";
 	session->expectAbort();
 	delete session;
-	LOG(D1) << "Exiting revert MsedBaseDev:LockingSP()";
+	LOG(D1) << "Exiting revert MsedDev:LockingSP()";
 	return 0;
 }
-uint8_t MsedBaseDev::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<uint8_t> &userData)
+uint8_t MsedDevEnterprise::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<uint8_t> &userData)
 {
-	LOG(D1) << "Entering MsedBaseDev::getAuth4User()";
+	LOG(D1) << "Entering MsedDevEnterprise::getAuth4User()";
 	uint8_t uidnum;
 	userData.clear();
 	userData.push_back(0xa8);
@@ -223,7 +223,7 @@ uint8_t MsedBaseDev::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<
 		userData.clear();
 		return 0xff;
 	}
-	LOG(D1) << "Exiting MsedBaseDev::getAuth4User()";
+	LOG(D1) << "Exiting MsedDevEnterprise::getAuth4User()";
 	return 0;
 }
 // Samsung EVO 840 will not return userids from authority table (bug??)
@@ -262,9 +262,9 @@ uint8_t MsedBaseDev::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<
 //    }
 //    return 0xff;
 //}
-uint8_t MsedBaseDev::setNewPassword(char * password, char * userid, char * newpassword)
+uint8_t MsedDevEnterprise::setNewPassword(char * password, char * userid, char * newpassword)
 {
-	LOG(D1) << "Entering MsedBaseDev::setNewPassword" ;
+	LOG(D1) << "Entering MsedDevEnterprise::setNewPassword" ;
 	std::vector<uint8_t> userCPIN, hash;
 	if (!isSupportedSSC()) {
 		LOG(E) << "Device not Opal " << dev;
@@ -293,12 +293,12 @@ uint8_t MsedBaseDev::setNewPassword(char * password, char * userid, char * newpa
 	LOG(I) << userid << " password changed";
 	// session[TSN:HSN] <- EOS
 	delete session;
-	LOG(D1) << "Exiting MsedBaseDev::setNewPassword()";
+	LOG(D1) << "Exiting MsedDevEnterprise::setNewPassword()";
 	return 0;
 }
-uint8_t MsedBaseDev::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
+uint8_t MsedDevEnterprise::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 {
-	LOG(D1) << "Entering MsedBaseDev::setMBREnable";
+	LOG(D1) << "Entering MsedDevEnterprise::setMBREnable";
 
 	if (mbrstate) {
 		if (setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRENABLE,
@@ -313,12 +313,12 @@ uint8_t MsedBaseDev::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 				return 0xff;
 			}
 	}
-	LOG(D1) << "Exiting MsedBaseDev::setMBREnable";
+	LOG(D1) << "Exiting MsedDevEnterprise::setMBREnable";
 	return 0;
 }
-uint8_t MsedBaseDev::setMBRDone(uint8_t mbrstate, char * Admin1Password)
+uint8_t MsedDevEnterprise::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 {
-	LOG(D1) << "Entering MsedBaseDev::setMBRDone";
+	LOG(D1) << "Entering MsedDevEnterprise::setMBRDone";
 
 	if (mbrstate) {
 		if (setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRDONE,
@@ -334,13 +334,13 @@ uint8_t MsedBaseDev::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 			return 0xff;
 		}
 	}
-	LOG(D1) << "Exiting MsedBaseDev::setMBRDone";
+	LOG(D1) << "Exiting MsedDevEnterprise::setMBRDone";
 	return 0;
 }
-uint8_t MsedBaseDev::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
+uint8_t MsedDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 	char * Admin1Password)
 {
-	LOG(D1) << "Entering MsedBaseDev::setLockingRange";
+	LOG(D1) << "Entering MsedDevEnterprise::setLockingRange";
 	
 	if (lockingrange) {
 		LOG(E) << "Only global locking range is currently supported";
@@ -391,10 +391,10 @@ uint8_t MsedBaseDev::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 		return 0xff;
 	}
 }
-uint8_t MsedBaseDev::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, 
+uint8_t MsedDevEnterprise::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, 
 	OPAL_TOKEN value,char * password, char * msg)
 {
-	LOG(D1) << "Entering MsedBaseDev::setLockingSPvalue";
+	LOG(D1) << "Entering MsedDevEnterprise::setLockingSPvalue";
 	vector<uint8_t> table;
 	table.push_back(0xa8);
 	for (int i = 0; i < 8; i++) {
@@ -422,13 +422,13 @@ uint8_t MsedBaseDev::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
 	}
 	// session[TSN:HSN] <- EOS
 	delete session;
-	LOG(D1) << "Exiting MsedBaseDev::setLockingSPvalue()";
+	LOG(D1) << "Exiting MsedDevEnterprise::setLockingSPvalue()";
 	return 0;
 }
 
-uint8_t MsedBaseDev::enableUser(char * password, char * userid)
+uint8_t MsedDevEnterprise::enableUser(char * password, char * userid)
 {
-	LOG(D1) << "Entering MsedBaseDev::enableUser";
+	LOG(D1) << "Entering MsedDevEnterprise::enableUser";
 	vector<uint8_t> userUID;
 	
 	if (!isSupportedSSC()) {
@@ -457,12 +457,12 @@ uint8_t MsedBaseDev::enableUser(char * password, char * userid)
 	LOG(I) << userid << " has been enabled ";
 	// session[TSN:HSN] <- EOS
 	delete session;
-	LOG(D1) << "Exiting MsedBaseDev::enableUser()";
+	LOG(D1) << "Exiting MsedDevEnterprise::enableUser()";
 	return 0;
 }
-uint8_t MsedBaseDev::revertTPer(char * password, uint8_t PSID)
+uint8_t MsedDevEnterprise::revertTPer(char * password, uint8_t PSID)
 {
-	LOG(D1) << "Entering MsedBaseDev::revertTPer()";
+	LOG(D1) << "Entering MsedDevEnterprise::revertTPer()";
 	if (!isSupportedSSC()) {
 		LOG(E) << "Device not supported for PSID Revert " << dev;
 		return 0xff;
@@ -493,11 +493,11 @@ uint8_t MsedBaseDev::revertTPer(char * password, uint8_t PSID)
 	LOG(I) << "revertTper completed successfully";
 	delete cmd;
 	delete session;
-	LOG(D1) << "Exiting MsedBaseDev::RevertTperevertTPer()";
+	LOG(D1) << "Exiting MsedDevEnterprise::RevertTperevertTPer()";
 	return 0;
 }
-uint8_t MsedBaseDev::loadPBA(char * password, char * filename) {
-	LOG(D1) << "Entering MsedBaseDev::loadPBAimage()" << filename << " " << dev;
+uint8_t MsedDevEnterprise::loadPBA(char * password, char * filename) {
+	LOG(D1) << "Entering MsedDevEnterprise::loadPBAimage()" << filename << " " << dev;
 	if (!isSupportedSSC()) {
 		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
@@ -576,13 +576,13 @@ uint8_t MsedBaseDev::loadPBA(char * password, char * filename) {
 	delete session;
 	pbafile.close();
 	LOG(I) << "PBA image  " << filename << " written to " << dev;
-	LOG(D1) << "Exiting MsedBaseDev::loadPBAimage()";
+	LOG(D1) << "Exiting MsedDevEnterprise::loadPBAimage()";
 	return 0;
 }
 
-uint8_t MsedBaseDev::activateLockingSP(char * password)
+uint8_t MsedDevEnterprise::activateLockingSP(char * password)
 {
-	LOG(D1) << "Entering MsedBaseDev::activateLockingSP()";
+	LOG(D1) << "Entering MsedDevEnterprise::activateLockingSP()";
 	vector<uint8_t> table;
 	table.push_back(0xa8);
 	for (int i = 0; i < 8; i++) {
@@ -633,23 +633,23 @@ uint8_t MsedBaseDev::activateLockingSP(char * password)
 
 	delete cmd;
 	delete session;
-	LOG(D1) << "Exiting MsedBaseDev::activatLockingSP()";
+	LOG(D1) << "Exiting MsedDevEnterprise::activatLockingSP()";
 	return 0;
 }
-uint8_t MsedBaseDev::diskQuery()
+uint8_t MsedDevEnterprise::diskQuery()
 {
-	LOG(D1) << "Entering MsedBaseDev::diskQuery()" << dev;
+	LOG(D1) << "Entering MsedDevEnterprise::diskQuery()" << dev;
 	if (!isAnySSC()) {
 		LOG(E) << "Device not OPAL 1,2 or Enterprise " << dev;
 		return 1;
 	}
 	puke();
-	LOG(D1) << "Exiting MsedBaseDev::diskQuery()" << dev;
+	LOG(D1) << "Exiting MsedDevEnterprise::diskQuery()" << dev;
 	return 0;
 }
-uint8_t MsedBaseDev::takeOwnership(char * newpassword)
+uint8_t MsedDevEnterprise::takeOwnership(char * newpassword)
 {
-	LOG(D1) << "Entering MsedBaseDev::takeOwnership()";
+	LOG(D1) << "Entering MsedDevEnterprise::takeOwnership()";
 	if (getDefaultPassword()) return 0xff;
 	if (setSIDPassword((char *)response.getString(4).c_str(), newpassword, 0)) {
 		LOG(I) << "takeownership failed";
@@ -659,14 +659,9 @@ uint8_t MsedBaseDev::takeOwnership(char * newpassword)
 	LOG(D1) << "Exiting takeOwnership()";
 	return 0;
 }
-uint8_t MsedBaseDev::isOpal2()
+uint8_t MsedDevEnterprise::getDefaultPassword()
 {
-	LOG(D1) << "Entering MsedBaseDev::isOpal2 " << (uint16_t) disk_info.OPAL20;
-	return disk_info.OPAL20;
-}
-uint8_t MsedBaseDev::getDefaultPassword()
-{
-	LOG(D1) << "Entering MsedBaseDev::getDefaultPassword()";
+	LOG(D1) << "Entering MsedDevEnterprise::getDefaultPassword()";
 	vector<uint8_t> hash;
 	if (!isSupportedSSC()) {
 		LOG(E) << "Device not Opal " << dev;
@@ -694,11 +689,11 @@ uint8_t MsedBaseDev::getDefaultPassword()
 	LOG(D1) << "Exiting getDefaultPassword()";
 	return 0;
 }
-uint8_t MsedBaseDev::setSIDPassword(char * oldpassword, char * newpassword,
+uint8_t MsedDevEnterprise::setSIDPassword(char * oldpassword, char * newpassword,
 	uint8_t hasholdpwd, uint8_t hashnewpwd)
 {
 	vector<uint8_t> hash, table;
-	LOG(D1) << "Entering MsedBaseDev::setSIDPassword()";
+	LOG(D1) << "Entering MsedDevEnterprise::setSIDPassword()";
 		if (!(isSupportedSSC())) {
 		LOG(E) << "Device not Opal " << dev;
 		return 0xff;
@@ -734,16 +729,11 @@ uint8_t MsedBaseDev::setSIDPassword(char * oldpassword, char * newpassword,
 	}
 	// session[TSN:HSN] <- EOS
 	delete session;
-	LOG(D1) << "Exiting MsedBaseDev::setSIDPassword()";
+	LOG(D1) << "Exiting MsedDevEnterprise::setSIDPassword()";
 	return 0;
 }
 
-uint8_t MsedBaseDev::isOpal1()
-{
-	LOG(D1) << "Entering MsedBaseDev::isOpal1() " << (uint16_t)disk_info.OPAL10;
-    return disk_info.OPAL10;
-}
-uint8_t MsedBaseDev::setTable(vector<uint8_t> table, OPAL_TOKEN name,
+uint8_t MsedDevEnterprise::setTable(vector<uint8_t> table, OPAL_TOKEN name,
 	OPAL_TOKEN value)
 {
 	vector <uint8_t> token;
@@ -751,10 +741,10 @@ uint8_t MsedBaseDev::setTable(vector<uint8_t> table, OPAL_TOKEN name,
 	return(setTable(table, name, token));
 }
 
-uint8_t MsedBaseDev::setTable(vector<uint8_t> table, OPAL_TOKEN name, 
+uint8_t MsedDevEnterprise::setTable(vector<uint8_t> table, OPAL_TOKEN name, 
 	vector<uint8_t> value)
 {
-	LOG(D1) << "Entering MsedBaseDev::setTable";
+	LOG(D1) << "Entering MsedDevEnterprise::setTable";
 	MsedCommand *set = new MsedCommand();
 	set->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::SET);
 	set->changeInvokingUid(table);
@@ -776,13 +766,13 @@ uint8_t MsedBaseDev::setTable(vector<uint8_t> table, OPAL_TOKEN name,
 		return 0xff;
 	}
 	delete set;
-	LOG(D1) << "Leaving MsedBaseDev::setTable";
+	LOG(D1) << "Leaving MsedDevEnterprise::setTable";
 	return 0;
 }
-uint8_t MsedBaseDev::getTable(vector<uint8_t> table, uint16_t startcol, 
+uint8_t MsedDevEnterprise::getTable(vector<uint8_t> table, uint16_t startcol, 
 	uint16_t endcol)
 {
-	LOG(D1) << "Entering MsedBaseDev::getTable";
+	LOG(D1) << "Entering MsedDevEnterprise::getTable";
 	MsedCommand *get = new MsedCommand();
 	get->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::GET);
 	get->changeInvokingUid(table);
@@ -806,50 +796,9 @@ uint8_t MsedBaseDev::getTable(vector<uint8_t> table, uint16_t startcol,
 	delete get;
 	return 0;
 }
-uint8_t MsedBaseDev::isEprise()
+uint16_t MsedDevEnterprise::comID()
 {
-    LOG(D1) << "Entering MsedBaseDev::isEprise " << (uint16_t) disk_info.Enterprise;
-    return disk_info.Enterprise;
-}
-uint8_t MsedBaseDev::isSupportedSSC()
-{
-	LOG(D1) << "Entering MsedBaseDev::isSupportedSSC " << (uint16_t)disk_info.SupportedSSC;
-	return disk_info.SupportedSSC;
-}
-uint8_t MsedBaseDev::isAnySSC()
-{
-	LOG(D1) << "Entering MsedBaseDev::isAnySSC " << (uint16_t)disk_info.ANY_OPAL_SSC;
-	return disk_info.ANY_OPAL_SSC;
-}
-uint8_t MsedBaseDev::isPresent()
-{
-	LOG(D1) << "Entering MsedBaseDev::isPresent() " << (uint16_t) isOpen;
-    return isOpen;
-}
-uint8_t MsedBaseDev::MBREnabled()
-{
-    LOG(D1) << "Entering MsedBaseDev::MBREnabled()";
-    return disk_info.Locking_MBREnabled;
-}
-
-char *MsedBaseDev::getFirmwareRev()
-{
-    return (char *) &disk_info.firmwareRev;
-}
-
-char *MsedBaseDev::getModelNum()
-{
-    return (char *) &disk_info.modelNum;
-}
-
-char *MsedBaseDev::getSerialNum()
-{
-    return (char *) &disk_info.serialNum;
-}
-
-uint16_t MsedBaseDev::comID()
-{
-    LOG(D1) << "Entering MsedBaseDev::comID()";
+    LOG(D1) << "Entering MsedDevEnterprise::comID()";
     if (disk_info.OPAL20)
         return disk_info.OPAL20_basecomID;
     else if (disk_info.OPAL10)
@@ -860,7 +809,7 @@ uint16_t MsedBaseDev::comID()
         return 0x0000;
 }
 
-uint8_t MsedBaseDev::exec(MsedCommand * cmd, MsedResponse &response, uint8_t protocol)
+uint8_t MsedDevEnterprise::exec(MsedCommand * cmd, MsedResponse &response, uint8_t protocol)
 {
     uint8_t rc = 0;
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
@@ -890,131 +839,10 @@ uint8_t MsedBaseDev::exec(MsedCommand * cmd, MsedResponse &response, uint8_t pro
     return 0;
 }
 
-void MsedBaseDev::discovery0()
-{
-    LOG(D1) << "Entering MsedBaseDev::discovery0()";
-    void * d0Response = NULL;
-    uint8_t * epos, *cpos;
-    Discovery0Header * hdr;
-    Discovery0Features * body;
-    d0Response = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
-    if (NULL == d0Response) return;
-    memset(d0Response, 0, IO_BUFFER_LENGTH);
-    if (sendCmd(IF_RECV, 0x01, 0x0001, d0Response, IO_BUFFER_LENGTH)) {
-        ALIGNED_FREE(d0Response);
-        return;
-    }
 
-    epos = cpos = (uint8_t *) d0Response;
-    hdr = (Discovery0Header *) d0Response;
-    LOG(D3) << "Dumping D0Response";
-    IFLOG(D3) MsedHexDump(hdr, SWAP32(hdr->length));
-    epos = epos + SWAP32(hdr->length);
-    cpos = cpos + 48; // TODO: check header version
-
-    do {
-        body = (Discovery0Features *) cpos;
-        switch (SWAP16(body->TPer.featureCode)) { /* could use of the structures here is a common field */
-        case FC_TPER: /* TPer */
-            disk_info.TPer = 1;
-            disk_info.TPer_ACKNACK = body->TPer.acknack;
-            disk_info.TPer_async = body->TPer.async;
-            disk_info.TPer_bufferMgt = body->TPer.bufferManagement;
-            disk_info.TPer_comIDMgt = body->TPer.comIDManagement;
-            disk_info.TPer_streaming = body->TPer.streaming;
-            disk_info.TPer_sync = body->TPer.sync;
-            break;
-        case FC_LOCKING: /* Locking*/
-            disk_info.Locking = 1;
-            disk_info.Locking_locked = body->locking.locked;
-            disk_info.Locking_lockingEnabled = body->locking.lockingEnabled;
-            disk_info.Locking_lockingSupported = body->locking.lockingSupported;
-            disk_info.Locking_MBRDone = body->locking.MBRDone;
-            disk_info.Locking_MBREnabled = body->locking.MBREnabled;
-            disk_info.Locking_mediaEncrypt = body->locking.mediaEncryption;
-            break;
-        case FC_GEOMETRY: /* Geometry Features */
-            disk_info.Geometry = 1;
-            disk_info.Geometry_align = body->geometry.align;
-            disk_info.Geometry_alignmentGranularity = SWAP64(body->geometry.alignmentGranularity);
-            disk_info.Geometry_logicalBlockSize = SWAP32(body->geometry.logicalBlockSize);
-            disk_info.Geometry_lowestAlignedLBA = SWAP64(body->geometry.lowestAlighedLBA);
-            break;
-        case FC_ENTERPRISE: /* Enterprise SSC */
-            disk_info.Enterprise = 1;
-			disk_info.ANY_OPAL_SSC = 1;
-			disk_info.SupportedSSC = 1;
-            disk_info.Enterprise_rangeCrossing = body->enterpriseSSC.rangeCrossing;
-            disk_info.Enterprise_basecomID = SWAP16(body->enterpriseSSC.baseComID);
-            disk_info.Enterprise_numcomID = SWAP16(body->enterpriseSSC.numberComIDs);
-            break;
-        case FC_OPALV100: /* Opal V1 */
-            disk_info.OPAL10 = 1;
-			disk_info.ANY_OPAL_SSC = 1;
-			disk_info.SupportedSSC = 1;
-            disk_info.OPAL10_basecomID = SWAP16(body->opalv100.baseComID);
-            disk_info.OPAL10_numcomIDs = SWAP16(body->opalv100.numberComIDs);
-            break;
-        case FC_SINGLEUSER: /* Single User Mode */
-            disk_info.SingleUser = 1;
-            disk_info.SingleUser_all = body->singleUserMode.all;
-            disk_info.SingleUser_any = body->singleUserMode.any;
-            disk_info.SingleUser_policy = body->singleUserMode.policy;
-            disk_info.SingleUser_lockingObjects = SWAP32(body->singleUserMode.numberLockingObjects);
-            break;
-        case FC_DATASTORE: /* Datastore Tables */
-            disk_info.DataStore = 1;
-            disk_info.DataStore_maxTables = SWAP16(body->datastore.maxTables);
-            disk_info.DataStore_maxTableSize = SWAP32(body->datastore.maxSizeTables);
-            disk_info.DataStore_alignment = SWAP32(body->datastore.tableSizeAlignment);
-            break;
-        case FC_OPALV200: /* OPAL V200 */
-            disk_info.OPAL20 = 1;
-			disk_info.ANY_OPAL_SSC = 1;
-			disk_info.SupportedSSC = 1;
-            disk_info.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
-            disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
-            disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
-            disk_info.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-            disk_info.OPAL20_numAdmins = SWAP16(body->opalv200.numlockingAdminAuth);
-            disk_info.OPAL20_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
-            disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
-            break;
-        default:
-			if (0xbfff < (SWAP16(body->TPer.featureCode))) {
-				// silently ignore vendor specific segments as there is no public doc on them
-				disk_info.VendorSpecific += 1;
-			}
-			else {
-				disk_info.Unknown += 1;
-				LOG(D) << "Unknown Feature in Discovery 0 response " << std::hex << SWAP16(body->TPer.featureCode) << std::dec;
-				/* should do something here */
-			}
-            break;
-        }
-        cpos = cpos + (body->TPer.length + 4);
-    }
-    while (cpos < epos);
-    ALIGNED_FREE(d0Response);
-	if(isSupportedSSC()) 
-		if (properties()) LOG(E) << "Properties exchange failed";
-// TODO: check to see that the TPer supports 2k buffers
-//
-// Change some table entries so that they reflect the differences in
-// the OPAL Enterprise spec
-//
-//	if (isEprise()) {
-//		OPALMETHOD[OPAL_METHOD::SET][7] &= 0x0f;
-//		OPALMETHOD[OPAL_METHOD::GET][7] &= 0x0f;
-//// Change the Admin1 user to be BandMaster0
-//		OPALUID[OPAL_UID::OPAL_ADMIN1_UID][5] = 0x00;
-//		OPALUID[OPAL_UID::OPAL_ADMIN1_UID][6] = 0x80;
-//		OPALUID[OPAL_UID::OPAL_ADMIN1_UID][7] = 0x01;
-//	}
-}
-uint8_t MsedBaseDev::properties()
+uint8_t MsedDevEnterprise::properties()
 {
-	LOG(D1) << "Entering MsedBaseDev::properties()";
+	LOG(D1) << "Entering MsedDevEnterprise::properties()";
 	session = new MsedSession(this);  // use the session IO without starting a session
 	MsedCommand *props = new MsedCommand(OPAL_UID::OPAL_SMUID_UID, OPAL_METHOD::PROPERTIES);
 	props->addToken(OPAL_TOKEN::STARTLIST);
@@ -1056,13 +884,13 @@ uint8_t MsedBaseDev::properties()
 	}
 	disk_info.Properties = 1;
 	delete props;
-	LOG(D1) << "Leaving MsedBaseDev::properties()";
+	LOG(D1) << "Leaving MsedDevEnterprise::properties()";
 	return 0;
 }
 /** Print out the Discovery 0 results */
-void MsedBaseDev::puke()
+void MsedDevEnterprise::puke()
 {
-	LOG(D1) << "Entering MsedBaseDev::puke()";
+	LOG(D1) << "Entering MsedDevEnterprise::puke()";
 	/* IDENTIFY */
 	cout << endl << dev << (disk_info.devType ? " OTHER " : " ATA ");
 	cout << disk_info.modelNum << " " << disk_info.firmwareRev << " " << disk_info.serialNum << endl;
@@ -1158,7 +986,7 @@ void MsedBaseDev::puke()
 		}
 	}
 }
-uint8_t MsedBaseDev::dumpTable(char * password)
+uint8_t MsedDevEnterprise::dumpTable(char * password)
 {
 	CLog::Level() = CLog::FromInt(4);
 	LOG(D1) << "Entering dumpTable()";
@@ -1213,7 +1041,7 @@ uint8_t MsedBaseDev::dumpTable(char * password)
 	return 0;
 }
 
-uint8_t MsedBaseDev::nextTable(std::vector<uint8_t> table,
+uint8_t MsedDevEnterprise::nextTable(std::vector<uint8_t> table,
 	std::vector<uint8_t> startkey)
 {
 	LOG(D1) << "Entering nextTable";
@@ -1241,9 +1069,9 @@ uint8_t MsedBaseDev::nextTable(std::vector<uint8_t> table,
 	delete next;
 	return 0;
 }
-//uint8_t MsedBaseDev::revertnoerase(char * SIDPassword, char * Admin1Password)
+//uint8_t MsedDevEnterprise::revertnoerase(char * SIDPassword, char * Admin1Password)
 //{
-//    LOG(D1) << "Entering MsedBaseDev::revertnoerase";
+//    LOG(D1) << "Entering MsedDevEnterprise::revertnoerase";
 //    if (setLockingSPvalue(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
 //		OPAL_TOKEN::READLOCKED, OPAL_TOKEN::OPAL_FALSE,
 //                   Admin1Password)) {

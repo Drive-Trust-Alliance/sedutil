@@ -22,7 +22,10 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "MsedHashPwd.h"
 #include "MsedOptions.h"
 #include "MsedLexicon.h"
-#include "MsedDev.h"
+#include "MsedDevGeneric.h"
+#include "MsedDevOpal1.h"
+#include "MsedDevOpal2.h"
+#include "MsedDevEnterprise.h"
 
 using namespace std;
 
@@ -37,7 +40,7 @@ int diskScan()
 		DEVICEMASK;
 		//snprintf(devname,23,"/dev/sd%c",(char) 0x61+i) Linux
 		//sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i)  Windows
-		d = new MsedDev(devname);
+		d = new MsedDevGeneric(devname);
 		if (d->isPresent()) {
 			printf("%s", devname);
 			if (d->isAnySSC())
@@ -63,25 +66,36 @@ int diskScan()
 int main(int argc, char * argv[])
 {
 	MSED_OPTIONS opts;
-	MsedDev * d =NULL;
-//	vector<uint8_t> opalTRUE(1, 0x01), opalFALSE(1, 0x00);
-
+	MsedDev *tempDev = NULL, *d = NULL;
 	if (MsedOptions(argc, argv, &opts)) {
-		//LOG(E) << "Invalid command line options ";
 		return 1;
 	}
 	
 	if ((opts.action != msedoption::scan) && (opts.action != msedoption::validatePBKDF2)) {
 		if (opts.device > (argc - 1)) opts.device = 0;
-		d = new MsedDev(argv[opts.device]);
-		if ((!d->isPresent()) || (!d->isAnySSC())) {
+		tempDev = new MsedDevGeneric(argv[opts.device]);
+		if ((!tempDev->isPresent()) || (!tempDev->isAnySSC())) {
 			LOG(E) << "Invalid or unsupported disk " << argv[opts.device];
+			delete tempDev;
 			return 2;
 		}
+		if (tempDev->isOpal1())
+			d = new MsedDevOpal1(argv[opts.device]);
+		else
+			if (tempDev->isOpal2())
+				d = new MsedDevOpal2(argv[opts.device]);
+			else
+				if (tempDev->isEprise())
+					d = new MsedDevEnterprise(argv[opts.device]);
+				else
+				{
+					LOG(E) << "Unknown OPAL SSC ";
+					return 0xff;
+				}
+		delete tempDev;
 	}
     switch (opts.action) {
- 
-	case msedoption::initialsetup:
+ 	case msedoption::initialsetup:
         if (0 == opts.password) {
             LOG(E) << "Initial setup requires a new SID password";
             return 1;

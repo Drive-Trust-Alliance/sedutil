@@ -22,16 +22,16 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <Ntddscsi.h>
 #include <vector>
-#include "MsedDev.h"
+#include "MsedDevOS.h"
 #include "MsedEndianFixup.h"
 #include "MsedStructures.h"
 #include "MsedHexDump.h"
 
 using namespace std;
-
-MsedDev::MsedDev(const char * devref)
+MsedDevOS::MsedDevOS() {};
+void MsedDevOS::init(const char * devref)
 {
-    LOG(D1) << "Creating MsedDev::Mseddev() " << devref;
+    LOG(D1) << "Creating MsedDevOS::MsedDevOS() " << devref;
     ATA_PASS_THROUGH_DIRECT * ata =
             (ATA_PASS_THROUGH_DIRECT *) _aligned_malloc(sizeof (ATA_PASS_THROUGH_DIRECT), 8);
     ataPointer = (void *) ata;
@@ -61,10 +61,10 @@ MsedDev::MsedDev(const char * devref)
     }
 }
 
-uint8_t MsedDev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+uint8_t MsedDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                         void * buffer, uint16_t bufferlen)
 {
-    LOG(D1) << "Entering MsedDev::sendCmd";
+    LOG(D1) << "Entering MsedDevOS::sendCmd";
     DWORD bytesReturned = 0; // data returned
     if (!isOpen) {
         LOG(D1) << "Device open failed";
@@ -113,16 +113,16 @@ uint8_t MsedDev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     return (ata->CurrentTaskFile[0]);
 }
 
-void MsedDev::osmsSleep(uint32_t milliseconds)
+void MsedDevOS::osmsSleep(uint32_t milliseconds)
 {
     Sleep(milliseconds);
 }
 
 /** adds the IDENTIFY information to the disk_info structure */
 
-void MsedDev::identify()
+void MsedDevOS::identify()
 {
-    LOG(D1) << "Entering MsedDev::identify()";
+    LOG(D1) << "Entering MsedDevOS::identify()";
 	vector<uint8_t> nullz(512, 0x00);
     void * identifyResp = NULL;
     identifyResp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
@@ -158,9 +158,9 @@ void MsedDev::identify()
 }
 
 /** Close the filehandle so this object can be delete. */
-MsedDev::~MsedDev()
+MsedDevOS::~MsedDevOS()
 {
-    LOG(D1) << "Destroying MsedDev";
+    LOG(D1) << "Destroying MsedDevOS";
     CloseHandle(hDev);
     _aligned_free(ataPointer);
 }

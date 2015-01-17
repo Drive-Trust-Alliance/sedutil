@@ -16,19 +16,23 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
- * C:E********************************************************************** */
+* C:E********************************************************************** */
 #pragma once
-#include <vector>
-class MsedDev;
-
-using namespace std;
-/** Hash the password using the drive serialnumber as salt.
- * This is an intermediary pass through so that the real hash
- * function (MsedHashPassword) can be tested and verified.
- * This is far from ideal but it's better that a single salt as
- * it should prevent attacking the password with a prebuilt table
- */
-void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedDev * device);
-void MsedHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
-        unsigned int iter = 75000, uint8_t hashsize = 32);
-int MsedTestPBDKF2();
+#include "MsedDev.h"
+/** Device Class for Windows representing a single disk device.
+ *  OS specific method implementations
+*/
+class MsedDevOS : public MsedDev {
+public:
+	MsedDevOS();
+	~MsedDevOS();
+	void init(const char * devref);
+	/** Send an ioctl to the device using pass through. */
+	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+		void * buffer, uint16_t bufferlen);
+protected:
+	void osmsSleep(uint32_t milliseconds);
+	void identify();
+	HANDLE hDev;
+	void *ataPointer; 
+};

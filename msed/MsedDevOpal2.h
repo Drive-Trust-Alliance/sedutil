@@ -18,17 +18,19 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
-#include <vector>
-class MsedDev;
+#include "os.h"
+#include "MsedDevOpal.h"
 
 using namespace std;
-/** Hash the password using the drive serialnumber as salt.
- * This is an intermediary pass through so that the real hash
- * function (MsedHashPassword) can be tested and verified.
- * This is far from ideal but it's better that a single salt as
- * it should prevent attacking the password with a prebuilt table
- */
-void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedDev * device);
-void MsedHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
-        unsigned int iter = 75000, uint8_t hashsize = 32);
-int MsedTestPBDKF2();
+/** Class representing a disk device, this class is represents a disk that conforms
+* to the OPAL 2.0 SSC
+*
+* testing so far indicates that the functions implemented in this program are
+* the implemented the same in OPAL 1.0 and Opal 2.0
+*/
+class MsedDevOpal2 : public MsedDevOpal {
+public:
+	MsedDevOpal2(const char * devref);
+	~MsedDevOpal2();
+	
+};

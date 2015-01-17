@@ -49,13 +49,7 @@
     <ClInclude Include="msed\MsedCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="msed\MsedBaseDev.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="msed\log.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="msed\win32\MsedDev.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="msed\win32\os.h">
@@ -79,11 +73,29 @@
     <ClInclude Include="msed\pbdkf2\stdalign.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="msed\MsedDev.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msed\win32\MsedDevOS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msed\MsedDevOpal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msed\MsedDevGeneric.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msed\MsedDevOpal1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msed\MsedDevOpal2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="msed\MsedDevEnterprise.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="msed\win32\MsedDev.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="msed\MsedSession.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -102,9 +114,6 @@
     <ClCompile Include="msed\MsedCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="msed\MsedBaseDev.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="msed\msed.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -121,6 +130,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="msed\pbdkf2\sha1.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msed\MsedDev.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msed\win32\MsedDevOS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msed\MsedDevOpal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msed\MsedDevGeneric.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msed\MsedDevOpal1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msed\MsedDevOpal2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msed\MsedDevEnterprise.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
