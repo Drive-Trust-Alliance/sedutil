@@ -19,6 +19,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 #include "os.h"
 #include "MsedOptions.h"
+#include "MsedLexicon.h"
 #include "Version.h"
 void usage()
 {
@@ -105,64 +106,67 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 		 * typical end user
 		 *******************************************************************/
 		BEGIN_OPTION(initialsetup, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(setSIDPwd, 3) OPTION_IS(password) OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(setAdmin1Pwd, 3) OPTION_IS(password) OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(loadPBAimage, 3) OPTION_IS(password) OPTION_IS(pbafile) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(reverttper, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(PSIDrevert, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(enableuser, 2) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(activateLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(query, 1) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(scan,0)  END_OPTION
-		BEGIN_OPTION(takeownership, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(revertLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(setPassword, 4) OPTION_IS(password) OPTION_IS(userid) 
-						OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(validatePBKDF2,0) END_OPTION
-		BEGIN_OPTION(setMBREnable, 3) 
+			BEGIN_OPTION(setSIDPwd, 3) OPTION_IS(password) OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
+			BEGIN_OPTION(setAdmin1Pwd, 3) OPTION_IS(password) OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
+			BEGIN_OPTION(loadPBAimage, 3) OPTION_IS(password) OPTION_IS(pbafile) OPTION_IS(device) END_OPTION
+			BEGIN_OPTION(reverttper, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+			BEGIN_OPTION(PSIDrevert, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+			BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+			BEGIN_OPTION(enableuser, 2) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
+			BEGIN_OPTION(activateLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+			BEGIN_OPTION(query, 1) OPTION_IS(device) END_OPTION
+			BEGIN_OPTION(scan, 0)  END_OPTION
+			BEGIN_OPTION(takeownership, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+			BEGIN_OPTION(revertLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+			BEGIN_OPTION(setPassword, 4) OPTION_IS(password) OPTION_IS(userid)
+			OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
+			BEGIN_OPTION(validatePBKDF2, 0) END_OPTION
+			BEGIN_OPTION(setMBREnable, 3)
 			TESTARG(ON, mbrstate, 1)
 			TESTARG(on, mbrstate, 1)
 			TESTARG(off, mbrstate, 0)
 			TESTARG(OFF, mbrstate, 0)
 			TESTFAIL("Invalid setMBREnable argument not <on|off>")
 			OPTION_IS(password)
-			OPTION_IS(device) 
-		END_OPTION
-		BEGIN_OPTION(setMBRDone, 3)
+			OPTION_IS(device)
+			END_OPTION
+			BEGIN_OPTION(setMBRDone, 3)
 			TESTARG(ON, mbrstate, 1)
 			TESTARG(on, mbrstate, 1)
 			TESTARG(off, mbrstate, 0)
 			TESTARG(OFF, mbrstate, 0)
 			TESTFAIL("Invalid setMBRDone argument not <on|off>")
 			OPTION_IS(password)
-			OPTION_IS(device) 
-		END_OPTION
-		BEGIN_OPTION(setLockingRange, 4)
+			OPTION_IS(device)
+			END_OPTION
+			BEGIN_OPTION(setLockingRange, 4)
 			TESTARG(0, lockingrange, 0)
 			TESTFAIL("Only the Global Locking Range (0) is currently supported")
-			TESTARG(RW, lockingstate, 1)
-			TESTARG(rw, lockingstate, 1)
-			TESTARG(RO, lockingstate, 2)
-			TESTARG(ro, lockingstate, 2)
-			TESTARG(LK, lockingstate, 3)
-			TESTARG(lk, lockingstate, 3)
+			TESTARG(RW, lockingstate, OPAL_LOCKINGSTATE::READWRITE)
+			TESTARG(rw, lockingstate, OPAL_LOCKINGSTATE::READWRITE)
+			TESTARG(RO, lockingstate, OPAL_LOCKINGSTATE::READONLY)
+			TESTARG(ro, lockingstate, OPAL_LOCKINGSTATE::READONLY)
+			TESTARG(LK, lockingstate, OPAL_LOCKINGSTATE::LOCKED)
+			TESTARG(lk, lockingstate, OPAL_LOCKINGSTATE::LOCKED)
 			TESTFAIL("Invalid locking state <ro|rw|lk>")
 			OPTION_IS(password)
-			OPTION_IS(device) 
-		END_OPTION
-		BEGIN_OPTION(enableLockingRange, 3)
+			OPTION_IS(device)
+			END_OPTION
+			BEGIN_OPTION(enableLockingRange, 3)
 			TESTARG(0, lockingrange, 0)
 			TESTFAIL("Only the Global Locking Range (0) is currently supported")
 			OPTION_IS(password)
-			OPTION_IS(device) 
-		END_OPTION
-		BEGIN_OPTION(disableLockingRange, 3)
+			OPTION_IS(device)
+			END_OPTION
+			BEGIN_OPTION(disableLockingRange, 3)
 			TESTARG(0, lockingrange, 0)
 			TESTFAIL("Only the Global Locking Range (0) is currently supported")
 			OPTION_IS(password)
-			OPTION_IS(device) 
-		END_OPTION
+			OPTION_IS(device)
+			END_OPTION
+			BEGIN_OPTION(objDump, 5) i += 4; OPTION_IS(device) END_OPTION
+			BEGIN_OPTION(rawCmd, 7) i += 6; OPTION_IS(device) END_OPTION
+			
 
 		else {
             LOG(E) << "Invalid command line argument " << argv[i];

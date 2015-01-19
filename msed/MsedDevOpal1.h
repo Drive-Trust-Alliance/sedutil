@@ -32,5 +32,6 @@ class MsedDevOpal1 : public MsedDevOpal {
 public:
 	MsedDevOpal1(const char * devref);
 	~MsedDevOpal1();
+	uint16_t comID();
 	
 };

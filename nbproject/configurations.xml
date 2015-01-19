@@ -4,10 +4,16 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>msed/MsedBaseDev.h</itemPath>
       <itemPath>msed/MsedCommand.h</itemPath>
       <itemPath>msed/MsedConstants.h</itemPath>
-      <itemPath>msed/linux/MsedDev.h</itemPath>
+      <itemPath>msed/MsedDev.h</itemPath>
+      <itemPath>msed/MsedDevEnterprise.h</itemPath>
+      <itemPath>msed/MsedDevGeneric.h</itemPath>
+      <itemPath>msed/linux/MsedDevOS.h</itemPath>
+      <itemPath>msed/MsedDevOpal.h</itemPath>
+      <itemPath>msed/MsedDevOpal1.h</itemPath>
+      <itemPath>msed/MsedDevOpal2.cpp</itemPath>
+      <itemPath>msed/MsedDevOpal2.h</itemPath>
       <itemPath>msed/MsedEndianFixup.h</itemPath>
       <itemPath>msed/MsedHashPwd.h</itemPath>
       <itemPath>msed/MsedHexDump.h</itemPath>
@@ -45,9 +51,13 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>msed/MsedBaseDev.cpp</itemPath>
       <itemPath>msed/MsedCommand.cpp</itemPath>
-      <itemPath>msed/linux/MsedDev.cpp</itemPath>
+      <itemPath>msed/MsedDev.cpp</itemPath>
+      <itemPath>msed/MsedDevEnterprise.cpp</itemPath>
+      <itemPath>msed/MsedDevGeneric.cpp</itemPath>
+      <itemPath>msed/linux/MsedDevOS.cpp</itemPath>
+      <itemPath>msed/MsedDevOpal.cpp</itemPath>
+      <itemPath>msed/MsedDevOpal1.cpp</itemPath>
       <itemPath>msed/MsedHashPwd.cpp</itemPath>
       <itemPath>msed/MsedHexDump.cpp</itemPath>
       <itemPath>msed/MsedOptions.cpp</itemPath>
@@ -104,15 +114,35 @@
       </item>
       <item path="msed/LICENSE.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/MsedBaseDev.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/MsedBaseDev.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="msed/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/MsedCommand.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/MsedConstants.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDev.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevEnterprise.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevEnterprise.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevGeneric.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal2.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/MsedEndianFixup.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -142,9 +172,9 @@
       </item>
       <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/linux/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      <item path="msed/linux/MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="msed/linux/MsedDev.h" ex="false" tool="3" flavor2="0">
+      <item path="msed/linux/MsedDevOS.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/linux/PSIDRevert_LINUX.txt" ex="false" tool="3" flavor2="0">
       </item>
@@ -225,15 +255,35 @@
       </item>
       <item path="msed/LICENSE.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/MsedBaseDev.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/MsedBaseDev.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="msed/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/MsedCommand.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/MsedConstants.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDev.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevEnterprise.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevEnterprise.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevGeneric.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal2.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/MsedEndianFixup.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -263,9 +313,9 @@
       </item>
       <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/linux/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      <item path="msed/linux/MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="msed/linux/MsedDev.h" ex="false" tool="3" flavor2="0">
+      <item path="msed/linux/MsedDevOS.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/linux/PSIDRevert_LINUX.txt" ex="false" tool="3" flavor2="0">
       </item>
@@ -337,15 +387,35 @@
       </item>
       <item path="msed/LICENSE.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/MsedBaseDev.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/MsedBaseDev.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="msed/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/MsedCommand.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/MsedConstants.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDev.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevEnterprise.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevEnterprise.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevGeneric.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal2.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/MsedEndianFixup.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -375,9 +445,9 @@
       </item>
       <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/linux/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      <item path="msed/linux/MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="msed/linux/MsedDev.h" ex="false" tool="3" flavor2="0">
+      <item path="msed/linux/MsedDevOS.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/linux/PSIDRevert_LINUX.txt" ex="false" tool="3" flavor2="0">
       </item>
@@ -458,15 +528,35 @@
       </item>
       <item path="msed/LICENSE.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/MsedBaseDev.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="msed/MsedBaseDev.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="msed/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/MsedCommand.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/MsedConstants.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDev.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevEnterprise.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevEnterprise.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevGeneric.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedDevOpal2.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/MsedEndianFixup.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -496,9 +586,9 @@
       </item>
       <item path="msed/ReadMe.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="msed/linux/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      <item path="msed/linux/MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="msed/linux/MsedDev.h" ex="false" tool="3" flavor2="0">
+      <item path="msed/linux/MsedDevOS.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/linux/PSIDRevert_LINUX.txt" ex="false" tool="3" flavor2="0">
       </item>

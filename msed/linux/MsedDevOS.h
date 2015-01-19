@@ -18,15 +18,16 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
-#include "MsedBaseDev.h"
+#include "MsedDev.h"
 
-class MsedDev : public MsedBaseDev {
+class MsedDevOS : public MsedDev {
 public:
-    MsedDev(const char * devref);
-    ~MsedDev();
+    MsedDevOS();
+    ~MsedDevOS();
+    void init(const char * devref);
     uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
             void * buffer, uint16_t bufferlen);
-private:
+protected:
     void osmsSleep(uint32_t ms);
     void identify();
     int fd;

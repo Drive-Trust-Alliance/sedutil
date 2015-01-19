@@ -31,7 +31,11 @@ class MsedDev {
 public:
     MsedDev();
     ~MsedDev();
- 
+	/* 
+	functions implemented in this base class
+	 * returns basic disk information from IDENTIFY and
+	 * discovery 0 
+	 */
     uint8_t isOpal2();
     uint8_t isOpal1();
     uint8_t isEprise();
@@ -42,6 +46,7 @@ public:
 	char *getFirmwareRev();
 	char *getModelNum();
 	char *getSerialNum();
+	void puke();
 
 	/** Decode the Discovery 0 response. Scans the D0 response and creates a structure
 	* that can be queried later as required.This code also takes care of
@@ -50,52 +55,48 @@ public:
 	*/
 	void discovery0();
 
-	/* virtual functions to be implemented for specific SSC */
-
-	virtual uint8_t properties() = 0;
-	virtual void identify() = 0;
+	/* 
+	 * virtual functions required in the OS specific 
+	 * device class 
+	 */
+	virtual void init(const char * devref) = 0;
 	virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 		void * buffer, uint16_t bufferlen) = 0;
-	virtual uint8_t exec(MsedCommand * cmd, MsedResponse &response, uint8_t protocol = 0x01) = 0;
-	virtual uint16_t comID() = 0;
-
-	virtual uint8_t takeOwnership(char * newpassword) = 0;
-	virtual uint8_t getDefaultPassword() = 0;
-	virtual uint8_t getTable(vector<uint8_t> table, uint16_t startcol,
-		uint16_t endcol) = 0;
+	virtual void osmsSleep(uint32_t milliseconds) = 0;
+	virtual void identify() = 0;
+	/*
+	 * virtual functions required to be implemented 
+	 * because they are called by msed.cpp
+	 */
+	virtual uint8_t initialsetup(char * password) = 0;
 	virtual uint8_t setSIDPassword(char * oldpassword, char * newpassword,
 		uint8_t hasholdpwd = 1, uint8_t hashnewpwd = 1) = 0;
-	virtual uint8_t setTable(vector<uint8_t> table, OPAL_TOKEN name,
-		vector<uint8_t> value) = 0;
-	virtual uint8_t setTable(vector<uint8_t> table, OPAL_TOKEN name,
-		OPAL_TOKEN value) = 0;
-	virtual uint8_t diskQuery() = 0;
-	virtual uint8_t activateLockingSP(char * password) = 0;
-	virtual uint8_t revertLockingSP(char * password, uint8_t keep = 0) = 0;
-	virtual uint8_t getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData) = 0;
-	virtual uint8_t enableUser(char * password, char * userid) = 0;
-	virtual uint8_t setMBRDone(uint8_t state, char * Admin1Password) = 0;
-	virtual uint8_t setReadLocked(OPAL_UID lockingrange, OPAL_TOKEN state, char * Admin1Password) = 0;
-	virtual uint8_t setWriteLocked(OPAL_UID lockingrange, OPAL_TOKEN state, char * Admin1Password) = 0;
-	virtual uint8_t setReadLockEnabled(OPAL_UID lockingrange, OPAL_TOKEN state, char * Admin1Password) = 0;
-	virtual uint8_t setWriteLockEnabled(OPAL_UID lockingrange, OPAL_TOKEN state, char * Admin1Password) = 0;
-	virtual uint8_t setMBREnable(uint8_t state, char * Admin1Password) = 0;
 	virtual uint8_t setNewPassword(char * password, char * userid, char * newpassword) = 0;
+	virtual uint8_t loadPBA(char * password, char * filename) = 0;
 	virtual uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 		char * Admin1Password) = 0;
-	virtual uint8_t configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enabled, char * password) = 0;
-	
+	virtual uint8_t configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enabled, 
+		char * password) = 0;
+	virtual uint8_t setMBRDone(uint8_t state, char * Admin1Password) = 0;
+	virtual uint8_t setMBREnable(uint8_t state, char * Admin1Password) = 0;
+	virtual uint8_t enableUser(char * password, char * userid) = 0;
+	virtual uint8_t activateLockingSP(char * password) = 0;
+	virtual uint8_t diskQuery() = 0;
+	virtual uint8_t takeOwnership(char * newpassword) = 0;
+	virtual uint8_t revertLockingSP(char * password, uint8_t keep = 0) = 0;	
 	virtual uint8_t revertTPer(char * password, uint8_t PSID = 0) = 0;
-	virtual uint8_t loadPBA(char * password, char * filename) = 0;
-	virtual uint8_t initialsetup(char * password) = 0;
-	virtual uint8_t dumpTable(char * password) = 0;
-	virtual uint8_t nextTable(vector<uint8_t> table, vector<uint8_t> startkey) = 0;
-	virtual void puke() = 0;
-	virtual void osmsSleep(uint32_t milliseconds) = 0;
+	virtual uint8_t objDump(char *sp, char * auth, char *pass,
+		char * objID) = 0;
+	virtual uint8_t rawCmd(char *sp, char * auth, char *pass,
+		char *invoker, char *method, char *plist) = 0;
+	/*
+	* virtual functions required to be implemented
+	* because they are called by MsedSession.cpp
+	*/
+	virtual uint8_t exec(MsedCommand * cmd, MsedResponse &response, 
+		uint8_t protocol = 0x01) = 0;
+	virtual uint16_t comID() = 0;
 protected:
-	virtual uint8_t setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, OPAL_TOKEN value,
-		char * password, char * msg = (char *) "New Value Set") = 0;
-  
     const char * dev;
     uint8_t isOpen = FALSE;
     OPAL_DiskInfo disk_info;

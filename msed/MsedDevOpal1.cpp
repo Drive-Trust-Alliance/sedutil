@@ -26,8 +26,10 @@ using namespace std;
 MsedDevOpal1::MsedDevOpal1 (const char * devref)
 {
 	MsedDevOpal::init(devref);
+	assert(isOpal1());
 }
 
 MsedDevOpal1::~MsedDevOpal1()
 {
 }
+uint16_t MsedDevOpal1::comID() { return disk_info.OPAL10_basecomID; }

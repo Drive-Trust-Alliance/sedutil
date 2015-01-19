@@ -23,6 +23,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #define _WIN32_WINNT _WIN32_WINNT_WINXP
 #include <SDKDDKVer.h>
 #include <Windows.h>
+#include <assert.h>
 
 #include "MsedConstants.h"
 #pragma warning(disable: 4127) //C4127: conditional expression is constant

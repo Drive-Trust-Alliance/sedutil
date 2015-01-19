@@ -45,7 +45,7 @@ using namespace std;
 #define voidNOCODE(name, ...) void MsedDevGeneric::name(##__VA_ARGS__) { \
 LOG(E) << "Generic Device class does not support function " << #name << std::endl; \
 }
-#define uint8NOCODE(name, ...) uint8_t MsedDevGeneric::name(##__VA_ARGS__) { \
+#define uint8NOCODE(name, ...) uint8_t MsedDevGeneric::name(__VA_ARGS__) { \
 LOG(E) << "Generic Device class does not support function " << #name << std::endl; \
 return 0xff; \
 }
@@ -58,41 +58,26 @@ MsedDevGeneric::MsedDevGeneric(const char * devref)
 MsedDevGeneric::~MsedDevGeneric()
 {
 }
+void MsedDevGeneric::init(const char * devref)
+{
+}
 uint8NOCODE(initialsetup, char *password)
-uint8NOCODE(setReadLocked,OPAL_UID lockingrange, OPAL_TOKEN state,
-	char * password)
-uint8NOCODE(setWriteLocked,OPAL_UID lockingrange, OPAL_TOKEN state,
-	char * password) 
-uint8NOCODE(setReadLockEnabled,OPAL_UID lockingrange, OPAL_TOKEN state,
-	char * password) 
-uint8NOCODE(setWriteLockEnabled,OPAL_UID lockingrange, OPAL_TOKEN state,
-	char * password)
 uint8NOCODE(configureLockingRange,uint8_t lockingrange, 
 	OPAL_TOKEN enabled, char * password)
 uint8NOCODE(revertLockingSP,char * password, uint8_t keep)
-uint8NOCODE(getAuth4User,char * userid, uint8_t uidorcpin, std::vector<uint8_t> &userData)
 uint8NOCODE(setNewPassword,char * password, char * userid, char * newpassword)
 uint8NOCODE(setMBREnable,uint8_t mbrstate, char * Admin1Password)
 uint8NOCODE(setMBRDone,uint8_t mbrstate, char * Admin1Password)
 uint8NOCODE(setLockingRange,uint8_t lockingrange, uint8_t lockingstate,
 	char * Admin1Password)
-uint8NOCODE(setLockingSPvalue,OPAL_UID table_uid, OPAL_TOKEN name,
-	OPAL_TOKEN value,char * password, char * msg)
 uint8NOCODE(enableUser,char * password, char * userid)
 uint8NOCODE(revertTPer,char * password, uint8_t PSID)
 uint8NOCODE(loadPBA,char * password, char * filename)
 uint8NOCODE(activateLockingSP,char * password)
 uint8NOCODE(diskQuery)
 uint8NOCODE(takeOwnership, char * newpassword)
-uint8NOCODE(getDefaultPassword)
 uint8NOCODE(setSIDPassword,char * oldpassword, char * newpassword,
 	uint8_t hasholdpwd, uint8_t hashnewpwd)
-uint8NOCODE(setTable,vector<uint8_t> table, OPAL_TOKEN name,
-	OPAL_TOKEN value)
-uint8NOCODE(setTable,vector<uint8_t> table, OPAL_TOKEN name,
-	vector<uint8_t> value)
-uint8NOCODE(getTable,vector<uint8_t> table, uint16_t startcol,
-	uint16_t endcol)
 uint16_t MsedDevGeneric::comID()
 {
 	LOG(E) << "Generic Device class does not support function " << "comID" << std::endl; 
@@ -100,11 +85,8 @@ uint16_t MsedDevGeneric::comID()
 }
 
 uint8NOCODE(exec,MsedCommand * cmd, MsedResponse &response, uint8_t protocol)
-uint8NOCODE(properties)
-voidNOCODE(puke)
-uint8NOCODE(dumpTable,char * password)
-uint8NOCODE(nextTable,std::vector<uint8_t> table,
-	std::vector<uint8_t> startkey)
+uint8NOCODE(objDump,char *sp, char * auth, char *pass,char * objID)
+uint8NOCODE(rawCmd,char *sp, char * auth, char *pass,char *invoker, char *method, char *plist)
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif

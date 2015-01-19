@@ -35,6 +35,8 @@ public:
     ~MsedSession();
 	uint8_t start(OPAL_UID SP);    // unauthenticated "Anybody" session
     uint8_t start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority);
+	uint8_t start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority);
+	uint8_t authenticate(vector<uint8_t> Authority, char * Challenge);
     void setProtocol(uint8_t value);
 	void dontHashPwd();
     void expectAbort();

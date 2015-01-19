@@ -25,12 +25,11 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include <stdio.h>
 #include <iostream>
+#include <iomanip>
 #include "MsedDev.h"
-#include "MsedEndianFixup.h"
 #include "MsedStructures.h"
-#include "MsedCommand.h"
-#include "MsedResponse.h"
-#include "MsedSession.h"
+#include "MsedConstants.h"
+#include "MsedEndianFixup.h"
 #include "MsedHexDump.h"
 
 using namespace std;
@@ -192,4 +191,89 @@ void MsedDev::discovery0()
     }
     while (cpos < epos);
     ALIGNED_FREE(d0Response);
+}
+void MsedDev::puke()
+{
+	LOG(D1) << "Entering MsedDev::puke()";
+	/* IDENTIFY */
+	cout << endl << dev << (disk_info.devType ? " OTHER " : " ATA ");
+	cout << disk_info.modelNum << " " << disk_info.firmwareRev << " " << disk_info.serialNum << endl;
+	/* TPer */
+	if (disk_info.TPer) {
+		cout << "TPer function (" << HEXON(4) << FC_TPER << HEXOFF << ")" << std::endl;
+		cout << "    ACKNAK = " << (disk_info.TPer_ACKNACK ? "Y, " : "N, ")
+			<< "ASYNC = " << (disk_info.TPer_async ? "Y, " : "N. ")
+			<< "BufferManagement = " << (disk_info.TPer_bufferMgt ? "Y, " : "N, ")
+			<< "comIDManagement  = " << (disk_info.TPer_comIDMgt ? "Y, " : "N, ")
+			<< "Streaming = " << (disk_info.TPer_streaming ? "Y, " : "N, ")
+			<< "SYNC = " << (disk_info.TPer_sync ? "Y" : "N")
+			<< std::endl;
+	}
+	if (disk_info.Locking) {
+
+		cout << "Locking function (" << HEXON(4) << FC_LOCKING << HEXOFF << ")" << std::endl;
+		cout << "    Locked = " << (disk_info.Locking_locked ? "Y, " : "N, ")
+			<< "LockingEnabled = " << (disk_info.Locking_lockingEnabled ? "Y, " : "N, ")
+			<< "LockingSupported = " << (disk_info.Locking_lockingSupported ? "Y, " : "N, ");
+		cout << "MBRDone = " << (disk_info.Locking_MBRDone ? "Y, " : "N, ")
+			<< "MBREnabled = " << (disk_info.Locking_MBREnabled ? "Y, " : "N, ")
+			<< "MediaEncrypt = " << (disk_info.Locking_mediaEncrypt ? "Y" : "N")
+			<< std::endl;
+	}
+	if (disk_info.Geometry) {
+
+		cout << "Geometry function (" << HEXON(4) << FC_GEOMETRY << HEXOFF << ")" << std::endl;
+		cout << "    Align = " << (disk_info.Geometry_align ? "Y, " : "N, ")
+			<< "Alignment Granularity = " << disk_info.Geometry_alignmentGranularity
+			<< " (" << // display bytes
+			(disk_info.Geometry_alignmentGranularity *
+			disk_info.Geometry_logicalBlockSize)
+			<< ")"
+			<< ", Logical Block size = " << disk_info.Geometry_logicalBlockSize
+			<< ", Lowest Aligned LBA = " << disk_info.Geometry_lowestAlignedLBA
+			<< std::endl;
+	}
+	if (disk_info.Enterprise) {
+		cout << "Enterprise function (" << HEXON(4) << FC_ENTERPRISE << HEXOFF << ")" << std::endl;
+		cout << "    Range crossing = " << (disk_info.Enterprise_rangeCrossing ? "Y, " : "N, ")
+			<< "Base comID = " << HEXON(4) << disk_info.Enterprise_basecomID
+			<< ", comIDs = " << disk_info.Enterprise_numcomID << HEXOFF
+			<< std::endl;
+	}
+	if (disk_info.OPAL10) {
+		cout << "Opal V1.0 function (" << HEXON(4) << FC_OPALV100 << HEXOFF << ")" << std::endl;
+		cout << "Base comID = " << HEXON(4) << disk_info.OPAL10_basecomID << HEXOFF
+			<< ", comIDs = " << disk_info.OPAL10_numcomIDs
+			<< std::endl;
+	}
+	if (disk_info.SingleUser) {
+		cout << "SingleUser function (" << HEXON(4) << FC_SINGLEUSER << HEXOFF << ")" << std::endl;
+		cout << "    ALL = " << (disk_info.SingleUser_all ? "Y, " : "N, ")
+			<< "ANY = " << (disk_info.SingleUser_any ? "Y, " : "N, ")
+			<< "Policy = " << (disk_info.SingleUser_policy ? "Y, " : "N, ")
+			<< "Locking Objects = " << (disk_info.SingleUser_lockingObjects)
+			<< std::endl;
+	}
+	if (disk_info.DataStore) {
+		cout << "DataStore function (" << HEXON(4) << FC_DATASTORE << HEXOFF << ")" << std::endl;
+		cout << "    Max Tables = " << disk_info.DataStore_maxTables
+			<< ", Max Size Tables = " << disk_info.DataStore_maxTableSize
+			<< ", Table size alignment = " << disk_info.DataStore_alignment
+			<< std::endl;
+	}
+
+	if (disk_info.OPAL20) {
+		cout << "OPAL 2.0 function (" << HEXON(4) << FC_OPALV200 << ")" << HEXOFF << std::endl;
+		cout << "    Base comID = " << HEXON(4) << disk_info.OPAL20_basecomID << HEXOFF;
+		cout << ", Initial PIN = " << HEXON(2) << disk_info.OPAL20_initialPIN << HEXOFF;
+		cout << ", Reverted PIN = " << HEXON(2) << disk_info.OPAL20_revertedPIN << HEXOFF;
+		cout << ", comIDs = " << disk_info.OPAL20_numcomIDs;
+		cout << std::endl;
+		cout << "    Locking Admins = " << disk_info.OPAL20_numAdmins;
+		cout << ", Locking Users = " << disk_info.OPAL20_numUsers;
+		cout << ", Range Crossing = " << (disk_info.OPAL20_rangeCrossing ? "Y" : "N");
+		cout << std::endl;
+	}
+	if (disk_info.Unknown)
+		cout << "**** " << (uint16_t)disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
 }

@@ -23,6 +23,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
 #include "MsedConstants.h"
 #include "log.h"
 // Why can't I find these??

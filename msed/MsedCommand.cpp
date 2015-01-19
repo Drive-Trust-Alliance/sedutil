@@ -24,6 +24,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "MsedHexDump.h"
 #include "MsedStructures.h"
 
+using namespace std;
 /*
  * Initialize: allocate the buffers *ONLY*
  * reset needs to be called to
@@ -52,10 +53,17 @@ MsedCommand::reset()
 {
     LOG(D1) << "Entering MsedCommand::reset()";
     memset(cmdbuf, 0, IO_BUFFER_LENGTH);
-    OPALHeader * hdr;
-    hdr = (OPALHeader *) cmdbuf;
-
     bufferpos = sizeof (OPALHeader);
+}
+void 
+MsedCommand::reset(OPAL_UID InvokingUid, vector<uint8_t> method){
+	LOG(D1) << "Entering MsedCommand::reset";
+	reset(); // build the headers
+	cmdbuf[bufferpos++] = OPAL_TOKEN::CALL;
+	cmdbuf[bufferpos++] = OPAL_SHORT_ATOM::BYTESTRING8;
+	memcpy(&cmdbuf[bufferpos], &OPALUID[InvokingUid][0], 8); /* bytes 2-9 */
+	bufferpos += 8;
+	addToken(method);
 }
 
 void
@@ -203,6 +211,18 @@ void *
 MsedCommand::getRespBuffer()
 {
     return respbuf;
+}
+void
+MsedCommand::dumpCommand()
+{
+	OPALHeader * hdr = (OPALHeader *)cmdbuf;
+	MsedHexDump(cmdbuf, SWAP32(hdr->cp.length) + sizeof(OPALComPacket));
+}
+void
+MsedCommand::dumpResponse()
+{
+	OPALHeader *hdr = (OPALHeader *)respbuf;
+	MsedHexDump(respbuf, SWAP32(hdr->cp.length) + sizeof(OPALComPacket));
 }
 
 void

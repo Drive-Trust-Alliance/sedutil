@@ -37,7 +37,7 @@ public:
 	void init(const char * devref);
 	uint8_t properties();
 	uint8_t exec(MsedCommand * cmd, MsedResponse &response, uint8_t protocol = 0x01);
-	uint16_t comID();
+	virtual uint16_t comID() = 0;
 	uint8_t takeOwnership(char * newpassword);
 	uint8_t getDefaultPassword();
 	uint8_t getTable(vector<uint8_t> table, uint16_t startcol,
@@ -70,6 +70,10 @@ public:
 	uint8_t dumpTable(char * password);
 	uint8_t nextTable(vector<uint8_t> table, vector<uint8_t> startkey);
 	void puke();
+	uint8_t objDump(char *sp, char * auth, char *pass,
+		char * objID);
+	uint8_t rawCmd(char *sp, char * auth, char *pass,
+		char *invoker, char *method, char *plist);
 protected:
 	uint8_t setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, OPAL_TOKEN value,
 		char * password, char * msg = (char *) "New Value Set");

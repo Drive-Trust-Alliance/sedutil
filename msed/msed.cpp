@@ -79,11 +79,11 @@ int main(int argc, char * argv[])
 			delete tempDev;
 			return 2;
 		}
-		if (tempDev->isOpal1())
-			d = new MsedDevOpal1(argv[opts.device]);
+		if (tempDev->isOpal2())
+			d = new MsedDevOpal2(argv[opts.device]);
 		else
-			if (tempDev->isOpal2())
-				d = new MsedDevOpal2(argv[opts.device]);
+			if (tempDev->isOpal1())
+				d = new MsedDevOpal1(argv[opts.device]);
 			else
 				if (tempDev->isEprise())
 					d = new MsedDevEnterprise(argv[opts.device]);
@@ -194,15 +194,7 @@ int main(int argc, char * argv[])
 		LOG(D) << "Taking Ownership of the drive at" << argv[opts.device];
         return d->takeOwnership(argv[opts.password]);
         break;
- //  case msedoption::dumptable:
- //       if (0 == opts.password) {
- //           LOG(E) << "tableDump requires a password";
- //           return 1;
- //       }
- //       LOG(D) << "Performing dumpTable() ";
- //       return dumpTable(argv[opts.password], argv[opts.device]);
- //       break;
-	case msedoption::revertLockingSP:
+ 	case msedoption::revertLockingSP:
         if (0 == opts.password) {
             LOG(E) << "Reverting the Locking SP requires a password ";
             return 1;
@@ -236,6 +228,14 @@ int main(int argc, char * argv[])
 		LOG(D) << "Performing a PSID Revert on " << argv[opts.device] << " with password " << argv[opts.password];
         return d->revertTPer(argv[opts.password], 1);
         break;
+	case msedoption::objDump:
+		LOG(D) << "Performing objDump " ;
+		return d->objDump(argv[argc - 5], argv[argc - 4], argv[argc - 3], argv[argc - 2]);
+		break;
+	case msedoption::rawCmd:
+		LOG(D) << "Performing cmdDump ";
+		return d->rawCmd(argv[argc - 7], argv[argc - 6], argv[argc - 5], argv[argc - 4], argv[argc - 3], argv[argc - 2]);
+		break;
     default:
         LOG(E) << "Unable to determine what you want to do ";
         usage();

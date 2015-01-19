@@ -30,7 +30,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <errno.h>
 #include <vector>
 #include <fstream>
-#include "MsedDev.h"
+#include "MsedDevOS.h"
 #include "MsedHexDump.h"
 
 using namespace std;
@@ -39,9 +39,11 @@ using namespace std;
  *  Linux specific implementation using the SCSI generic interface and
  *  SCSI ATA Pass Through (12) command
  */
-MsedDev::MsedDev(const char * devref)
+MsedDevOS::MsedDevOS() {}
+
+void MsedDevOS::init(const char * devref)
 {
-    LOG(D1) << "Creating MsedDev::MsedDev() " << devref;
+    LOG(D1) << "Creating MsedDevOS::MsedDev() " << devref;
     dev = devref;
     ifstream kopts;
     
@@ -80,14 +82,14 @@ MsedDev::MsedDev(const char * devref)
 }
 
 /** Send an ioctl to the device using pass through. */
-uint8_t MsedDev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+uint8_t MsedDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                          void * buffer, uint16_t bufferlen)
 {
     sg_io_hdr_t sg;
     uint8_t sense[32]; // how big should this be??
     uint8_t cdb[12];
 
-    LOG(D1) << "Entering MsedDev::sendCmd";
+    LOG(D1) << "Entering MsedDevOS::sendCmd";
     if (!isOpen) return 0xfe; //disk open failed so this will too
     memset(&cdb, 0, sizeof (cdb));
     memset(&sense, 0, sizeof (sense));
@@ -170,9 +172,9 @@ uint8_t MsedDev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     return (sense[11]);
 }
 
-void MsedDev::identify()
+void MsedDevOS::identify()
 {
-    LOG(D4) << "Entering MsedDev::identify()";
+    LOG(D4) << "Entering MsedDevOS::identify()";
     vector<uint8_t> nullz(512, 0x00);
     if (!isOpen) return; //disk open failed so this will too
     uint8_t * buffer = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
@@ -210,7 +212,7 @@ void MsedDev::identify()
     return;
 }
 
-void MsedDev::osmsSleep(uint32_t ms)
+void MsedDevOS::osmsSleep(uint32_t ms)
 {
 
     usleep(ms * 1000); //convert to microseconds
@@ -218,7 +220,7 @@ void MsedDev::osmsSleep(uint32_t ms)
 }
 
 /** Close the device reference so this object can be delete. */
-MsedDev::~MsedDev()
+MsedDevOS::~MsedDevOS()
 {
     LOG(D1) << "Destroying MsedDev";
     close(fd);

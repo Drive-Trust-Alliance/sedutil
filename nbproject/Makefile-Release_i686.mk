@@ -35,14 +35,19 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/msed/MsedBaseDev.o \
 	${OBJECTDIR}/msed/MsedCommand.o \
+	${OBJECTDIR}/msed/MsedDev.o \
+	${OBJECTDIR}/msed/MsedDevEnterprise.o \
+	${OBJECTDIR}/msed/MsedDevGeneric.o \
+	${OBJECTDIR}/msed/MsedDevOpal.o \
+	${OBJECTDIR}/msed/MsedDevOpal1.o \
+	${OBJECTDIR}/msed/MsedDevOpal2.o \
 	${OBJECTDIR}/msed/MsedHashPwd.o \
 	${OBJECTDIR}/msed/MsedHexDump.o \
 	${OBJECTDIR}/msed/MsedOptions.o \
 	${OBJECTDIR}/msed/MsedResponse.o \
 	${OBJECTDIR}/msed/MsedSession.o \
-	${OBJECTDIR}/msed/linux/MsedDev.o \
+	${OBJECTDIR}/msed/linux/MsedDevOS.o \
 	${OBJECTDIR}/msed/msed.o \
 	${OBJECTDIR}/msed/pbdkf2/gc-gnulib.o \
 	${OBJECTDIR}/msed/pbdkf2/gc-pbkdf2-sha1.o \
@@ -75,15 +80,40 @@ ${CND_DISTDIR}/${CND_CONF}/msed: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/msed ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/msed/MsedBaseDev.o: msed/MsedBaseDev.cpp 
-	${MKDIR} -p ${OBJECTDIR}/msed
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedBaseDev.o msed/MsedBaseDev.cpp
-
 ${OBJECTDIR}/msed/MsedCommand.o: msed/MsedCommand.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedCommand.o msed/MsedCommand.cpp
+
+${OBJECTDIR}/msed/MsedDev.o: msed/MsedDev.cpp 
+	${MKDIR} -p ${OBJECTDIR}/msed
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedDev.o msed/MsedDev.cpp
+
+${OBJECTDIR}/msed/MsedDevEnterprise.o: msed/MsedDevEnterprise.cpp 
+	${MKDIR} -p ${OBJECTDIR}/msed
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedDevEnterprise.o msed/MsedDevEnterprise.cpp
+
+${OBJECTDIR}/msed/MsedDevGeneric.o: msed/MsedDevGeneric.cpp 
+	${MKDIR} -p ${OBJECTDIR}/msed
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedDevGeneric.o msed/MsedDevGeneric.cpp
+
+${OBJECTDIR}/msed/MsedDevOpal.o: msed/MsedDevOpal.cpp 
+	${MKDIR} -p ${OBJECTDIR}/msed
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedDevOpal.o msed/MsedDevOpal.cpp
+
+${OBJECTDIR}/msed/MsedDevOpal1.o: msed/MsedDevOpal1.cpp 
+	${MKDIR} -p ${OBJECTDIR}/msed
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedDevOpal1.o msed/MsedDevOpal1.cpp
+
+${OBJECTDIR}/msed/MsedDevOpal2.o: msed/MsedDevOpal2.cpp 
+	${MKDIR} -p ${OBJECTDIR}/msed
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedDevOpal2.o msed/MsedDevOpal2.cpp
 
 ${OBJECTDIR}/msed/MsedHashPwd.o: msed/MsedHashPwd.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed
@@ -110,10 +140,10 @@ ${OBJECTDIR}/msed/MsedSession.o: msed/MsedSession.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedSession.o msed/MsedSession.cpp
 
-${OBJECTDIR}/msed/linux/MsedDev.o: msed/linux/MsedDev.cpp 
+${OBJECTDIR}/msed/linux/MsedDevOS.o: msed/linux/MsedDevOS.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed/linux
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/linux/MsedDev.o msed/linux/MsedDev.cpp
+	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/linux/MsedDevOS.o msed/linux/MsedDevOS.cpp
 
 ${OBJECTDIR}/msed/msed.o: msed/msed.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed

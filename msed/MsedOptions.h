@@ -52,7 +52,8 @@ typedef enum _msedoption {
 	scan,
 	takeownership,
 	validatePBKDF2,
-	dumptable,
+	objDump,
+	rawCmd,
 
 } msedoption;
 #define CHECKARGS(x) \

@@ -20,7 +20,6 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include <iostream>
 #include <iomanip>
-#include <assert.h>
 #include "MsedHashPwd.h"
 #include "MsedLexicon.h"
 #include "MsedDev.h"

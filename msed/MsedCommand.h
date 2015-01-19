@@ -24,6 +24,8 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 class MsedDevOpal;
 class MsedDevEnterprise;
 
+using namespace std;
+
 /** A class to build & send Opal Command streams to a TPer.
 * This class attempts to closely mimic the command
 * pseudo code used in the TCG documents, the syntactic
@@ -53,7 +55,10 @@ public:
     void complete(uint8_t EOD = 1);
     void reset();
     void reset(OPAL_UID InvokingUid, OPAL_METHOD method);
-    void changeInvokingUid(std::vector<uint8_t> Invoker);
+	void reset(OPAL_UID InvokingUid, vector<uint8_t> method);
+    void changeInvokingUid(vector<uint8_t> Invoker);
+	void dumpResponse();
+	void dumpCommand();
 private:
 	void * getCmdBuffer();
 	void * getRespBuffer();
