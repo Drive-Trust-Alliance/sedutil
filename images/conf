@@ -2,5 +2,5 @@
 #  Setup versions for image components
 #  This script should be sourced by the other scripts
 TINYCORE=Core-5.4.iso
-SYSLINUX=syslinux-6.03
+SYSLINUX=../../../syslinux
 TCDISTRO=http://distro.ibiblio.org/tinycorelinux/5.x/x86/

@@ -1,0 +1,35 @@
+#!/bin/bash
+set -x
+# Build the bios PBA
+## define releases for tools
+. conf
+VERSIONINFO=`git describe --dirty`
+BUILDTYPE=biospba
+BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
+# Start fresh
+sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE}
+#
+dd if=/dev/zero of=${BUILDIMG} bs=1M count=1
+(echo o;echo n;echo p;echo 1;echo 63;echo "";echo a;echo 1;echo t;echo b;echo w) | fdisk -C 10 ${BUILDIMG}
+dd if=${SYSLINUX}/bios/mbr/mbr.bin of=${BUILDIMG} count=1 conv=notrunc bs=512
+LOOPDEV=`sudo losetup --show -f -o 32256 ${BUILDIMG}`
+sudo mkfs.vfat $LOOPDEV -n MSEDPBA
+sudo mkdir image
+sudo mount $LOOPDEV image
+
+sudo mkdir -p image/boot/syslinux
+sudo ${SYSLINUX}/bios/linux/syslinux -i -d /boot/syslinux $LOOPDEV
+sudo cp ${SYSLINUX}/bios/com32/msedpba/msedpba.c32 image/boot/syslinux
+sudo cp ${SYSLINUX}/bios/com32/libutil/libutil.c32 image/boot/syslinux
+sudo cp ${SYSLINUX}/bios/com32/lib/libcom32.c32 image/boot/syslinux
+sudo echo "default msed" >syslinux.cfg
+sudo echo "prompt 0" >>syslinux.cfg
+sudo echo "noescape 1" >>syslinux.cfg
+sudo echo "label msed" >>syslinux.cfg
+sudo echo "    kernel msedpba.c32" >>syslinux.cfg
+sudo echo "    append NOTRACE" >>syslinux.cfg
+sudo cp syslinux.cfg image/boot/syslinux/
+sudo rm syslinux.cfg
+sudo umount image
+sudo losetup -d $LOOPDEV
+gzip -9 ${BUILDIMG}
