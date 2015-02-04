@@ -106,7 +106,7 @@ typedef struct _Discovery0LockingFeatures {
     uint32_t reserved05;
 } Discovery0LockingFeatures;
 
-/** Locking Feature Descriptor. Contains flags indicating support for the
+/** Geometry Feature Descriptor. Contains flags indicating support for the
  * geometry features described in the OPAL specification. The names match the
  * OPAL terminology
  */
@@ -127,9 +127,7 @@ typedef struct _Discovery0GeometryFeatures {
     uint64_t lowestAlighedLBA;
 } Discovery0GeometryFeatures;
 
-/** Support for the Enterprise SSC Spec.
- * I doubt I'll ever care, if you do you can read all
- * about it in the spec.
+/** Enterprise SSC Feature 
  */
 typedef struct _Discovery0EnterpriseSSC {
     uint16_t featureCode; /* 0x0100 */
@@ -151,7 +149,7 @@ typedef struct _Discovery0EnterpriseSSC {
     uint32_t reserved05;
 } Discovery0EnterpriseSSC;
 
-/** Support for the Opal V1 Spec.
+/** Opal V1 feature 
  */
 typedef struct _Discovery0OpalV100 {
 	uint16_t featureCode; /* 0x0200 */
@@ -161,8 +159,7 @@ typedef struct _Discovery0OpalV100 {
 	uint16_t baseComID;
 	uint16_t numberComIDs;
 } Discovery0OpalV100;
-/** Support for Single User Mode.
- * This might be interesting but who has the time?
+/** Single User Mode feature 
  */
 typedef struct _Discovery0SingleUserMode {
     uint16_t featureCode; /* 0x0201 */
@@ -186,9 +183,7 @@ typedef struct _Discovery0SingleUserMode {
     uint32_t reserved04;
 } Discovery0SingleUserMode;
 
-/** Support for Additonal Datastores.
- * This is probably usefull for enterprises but I doubt
- * it will be necessary for individuals
+/** Additonal Datastores feature .
  */
 typedef struct _Discovery0DatastoreTable {
     uint16_t featureCode; /* 0x0203 */
@@ -201,7 +196,7 @@ typedef struct _Discovery0DatastoreTable {
     uint32_t tableSizeAlignment;
 } Discovery0DatastoreTable;
 
-/** Support for OPALV2.
+/** OPAL 2.0 feature 
  */
 typedef struct _Discovery0OPALV200 {
     uint16_t featureCode; /* 0x0203 */
@@ -224,7 +219,7 @@ typedef struct _Discovery0OPALV200 {
     uint8_t reserved02;
     uint32_t reserved03;
 } Discovery0OPALV200;
-
+/** Union of features used to parse the discovery 0 response */
 union Discovery0Features {
     Discovery0TPerFeatures TPer;
     Discovery0LockingFeatures locking;
@@ -236,7 +231,7 @@ union Discovery0Features {
     Discovery0DatastoreTable datastore;
 };
 
-/** Defines the ComPacket (header) for transmissions. */
+/** ComPacket (header) for transmissions. */
 
 typedef struct _OPALComPacket {
     uint32_t reserved0;
@@ -246,7 +241,7 @@ typedef struct _OPALComPacket {
     uint32_t length;
 } OPALComPacket;
 
-/** Defines the Packet structure. */
+/** Packet structure. */
 typedef struct _OPALPacket {
     uint32_t TSN;
     uint32_t HSN;
@@ -257,26 +252,26 @@ typedef struct _OPALPacket {
     uint32_t length;
 } OPALPacket;
 
-/** Define the Data sub header. */
+/** Data sub packet header */
 typedef struct _OPALDataSubPacket {
     uint8_t reserved0[6];
     uint16_t kind;
     uint32_t length;
 } OPALDataSubPacket;
-
+/** header of a response */
 typedef struct _OPALHeader {
     OPALComPacket cp;
     OPALPacket pkt;
     OPALDataSubPacket subpkt;
 } OPALHeader;
-
+/** ATA commands needed for TCG storage communication */
 typedef enum _ATACOMMAND {
     IF_RECV = 0x5c,
     IF_SEND = 0x5e,
     IDENTIFY = 0xec,
 } ATACOMMAND;
 
-/** structure to store D0 information. */
+/** structure to store Disk information. */
 typedef struct _OPAL_DiskInfo {
     // parsed the Function block?
 	uint8_t Unknown;
@@ -337,7 +332,7 @@ typedef struct _OPAL_DiskInfo {
     uint8_t modelNum[40];
 	uint8_t null2;  // make model number a cstring
 } OPAL_DiskInfo;
-
+/** Response returned by ATA Identify */
 typedef struct _IDENTIFY_RESPONSE {
     uint8_t reserved0;
     uint8_t reserved1 : 7;

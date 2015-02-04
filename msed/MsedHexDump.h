@@ -15,4 +15,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
 #pragma once 
+/** Print a hexdump of an area of memory
+ * @param address Starting address for the dump
+ * @param length  Length of the area to be dumped
+ */
 void MsedHexDump(void * address, int length);

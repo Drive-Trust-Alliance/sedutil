@@ -28,11 +28,17 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "MsedConstants.h"
 #pragma warning(disable: 4127) //C4127: conditional expression is constant
 #include "log.h"
+/** OS specific implementation of aligned alloc*/
 #define ALIGNED_ALLOC(alignment, length) _aligned_malloc(length,alignment)
+/** OS specific implementation of the "safe" snprintf function */
 #define SNPRINTF sprintf_s
+/** OS specific function to free aligned memory allocations*/
 #define ALIGNED_FREE _aligned_free
+/** OS specific device iterator */
 #define DEVICEMASK sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i)
+/** OS specific example device to be used in help output*/
 #define DEVICEEXAMPLE "\\\\.\\PhysicalDrive3"
+// match types
 typedef UINT8 uint8_t;
 typedef UINT16 uint16_t;
 typedef UINT32 uint32_t;

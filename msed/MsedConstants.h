@@ -17,7 +17,11 @@ You should have received a copy of the GNU General Public License
 along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
+/** Length of the IO buffers used */
 #define IO_BUFFER_LENGTH 2048
+/** maximum number of disks to be scanned */
 #define MAX_DISKS 20
+/** iomanip commands to hexdump a field */
 #define HEXON(x) "0x" << std::hex << std::setw(x) << std::setfill('0')
+/** iomanoio cimmande to return to standaed ascii output */
 #define HEXOFF std::dec << std::setw(0) << std::setfill(' ')

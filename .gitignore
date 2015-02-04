@@ -159,11 +159,6 @@ $RECYCLE.BIN/
 /dist/
 *.zip
 *.tgz
-# cryptopp chaff
-cryptopp/*.a
-cryptopp/*.o
-cryptopp/dist/
-cryptopp/adhoc.cpp.copied
-/LegacyPBA/dist/
+Doxygen/
 **/private/private.xml
 /images/*/*

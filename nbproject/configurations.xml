@@ -12,7 +12,6 @@
       <itemPath>msed/linux/MsedDevOS.h</itemPath>
       <itemPath>msed/MsedDevOpal.h</itemPath>
       <itemPath>msed/MsedDevOpal1.h</itemPath>
-      <itemPath>msed/MsedDevOpal2.cpp</itemPath>
       <itemPath>msed/MsedDevOpal2.h</itemPath>
       <itemPath>msed/MsedEndianFixup.h</itemPath>
       <itemPath>msed/MsedHashPwd.h</itemPath>
@@ -58,6 +57,7 @@
       <itemPath>msed/linux/MsedDevOS.cpp</itemPath>
       <itemPath>msed/MsedDevOpal.cpp</itemPath>
       <itemPath>msed/MsedDevOpal1.cpp</itemPath>
+      <itemPath>msed/MsedDevOpal2.cpp</itemPath>
       <itemPath>msed/MsedHashPwd.cpp</itemPath>
       <itemPath>msed/MsedHexDump.cpp</itemPath>
       <itemPath>msed/MsedOptions.cpp</itemPath>

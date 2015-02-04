@@ -25,13 +25,14 @@ using namespace std;
 /** Class representing a disk device, this class is represents a disk that conforms
 * to the OPAL 1.0 SSC
 *
-* testing so far indicates that the functions implemented in this program are
-* the implemented the same in OPAL 1.0 and Opal 2.0
+* testing so far indicates that the functions implemented in this program
+ * operate the same in OPAL 1.0 and Opal 2.0
 */
 class MsedDevOpal1 : public MsedDevOpal {
 public:
 	MsedDevOpal1(const char * devref);
 	~MsedDevOpal1();
+        /** return the communication ID to be used with this device */
 	uint16_t comID();
 	
 };
