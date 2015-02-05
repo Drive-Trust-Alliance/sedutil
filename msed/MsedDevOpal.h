@@ -29,9 +29,9 @@ class MsedSession;
 #include <vector>
 
 using namespace std;
-/** Common code for OPAL SSS.
- * most of the code that works for OPAL 2.0 also works for OPAL 2.0
- * that common code is imlemented in this class
+/** Common code for OPAL SSCs.
+ * most of the code that works for OPAL 2.0 also works for OPAL 1.0
+ * that common code is implemented in this class
  */
 class MsedDevOpal : public MsedDevOS {
 public:

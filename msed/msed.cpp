@@ -215,6 +215,14 @@ int main(int argc, char * argv[])
 		LOG(D) << "Performing revertTPer on " << argv[opts.device];
         return d->revertTPer(argv[opts.password]);
         break;
+	case msedoption::revertnoerase:
+		if (0 == opts.password) {
+			LOG(E) << "Reverting the TPer requires a the SID password ";
+			return 1;
+		}
+		LOG(D) << "Performing revertLockingSP  keep global locking range on " << argv[opts.device];
+		return d->revertLockingSP(argv[opts.password], 1);
+		break;
 	case msedoption::validatePBKDF2:
         LOG(D) << "Performing PBKDF2 validation ";
         MsedTestPBDKF2();
@@ -226,7 +234,7 @@ int main(int argc, char * argv[])
             return 1;
         }
 		LOG(D) << "Performing a PSID Revert on " << argv[opts.device] << " with password " << argv[opts.password];
-        return d->revertTPer(argv[opts.password], 1);
+        return d->revertTPer(argv[opts.password],1);
         break;
 	case msedoption::objDump:
 		LOG(D) << "Performing objDump " ;

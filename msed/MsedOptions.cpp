@@ -60,6 +60,9 @@ void usage()
     printf("--reverttper <SIDpassword> <device>\n");
     printf("                                set the device back to factory defaults \n");
 	printf("                                This **ERASES ALL DATA** \n");
+	printf("--revertnoerase <Admin1password> <device>\n");
+	printf("                                deactivate the Locking SP \n");
+	printf("                                without erasing the data \n");
     printf("--yesIreallywanttoERASEALLmydatausingthePSID <PSID> <device>\n");
     printf("                                revert the device using the PSID *ERASING* *ALL* the data \n");
     printf("\n");
@@ -101,27 +104,29 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 			LOG(E) << "Argument " << (uint16_t) i << " (" << argv[i] << ") should be a command";
 			return 1;
 		}
-		/* ****************************************************************
-		 * General Usage commands should be the only ones used by a
-		 * typical end user
-		 *******************************************************************/
 		BEGIN_OPTION(initialsetup, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-			BEGIN_OPTION(setSIDPwd, 3) OPTION_IS(password) OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
-			BEGIN_OPTION(setAdmin1Pwd, 3) OPTION_IS(password) OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
-			BEGIN_OPTION(loadPBAimage, 3) OPTION_IS(password) OPTION_IS(pbafile) OPTION_IS(device) END_OPTION
-			BEGIN_OPTION(reverttper, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-			BEGIN_OPTION(PSIDrevert, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-			BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-			BEGIN_OPTION(enableuser, 2) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
-			BEGIN_OPTION(activateLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-			BEGIN_OPTION(query, 1) OPTION_IS(device) END_OPTION
-			BEGIN_OPTION(scan, 0)  END_OPTION
-			BEGIN_OPTION(takeownership, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-			BEGIN_OPTION(revertLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-			BEGIN_OPTION(setPassword, 4) OPTION_IS(password) OPTION_IS(userid)
+		BEGIN_OPTION(setSIDPwd, 3) OPTION_IS(password) OPTION_IS(newpassword) 
+			OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(setAdmin1Pwd, 3) OPTION_IS(password) OPTION_IS(newpassword) 
+			OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(loadPBAimage, 3) OPTION_IS(password) OPTION_IS(pbafile) 
+			OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(reverttper, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(revertnoerase, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(PSIDrevert, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2) OPTION_IS(password) 
+			OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(enableuser, 2) OPTION_IS(password) OPTION_IS(userid) 
+			OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(activateLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(query, 1) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(scan, 0)  END_OPTION
+		BEGIN_OPTION(takeownership, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(revertLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(setPassword, 4) OPTION_IS(password) OPTION_IS(userid)
 			OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
-			BEGIN_OPTION(validatePBKDF2, 0) END_OPTION
-			BEGIN_OPTION(setMBREnable, 3)
+		BEGIN_OPTION(validatePBKDF2, 0) END_OPTION
+		BEGIN_OPTION(setMBREnable, 3)
 			TESTARG(ON, mbrstate, 1)
 			TESTARG(on, mbrstate, 1)
 			TESTARG(off, mbrstate, 0)
@@ -130,7 +135,7 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-			BEGIN_OPTION(setMBRDone, 3)
+		BEGIN_OPTION(setMBRDone, 3)
 			TESTARG(ON, mbrstate, 1)
 			TESTARG(on, mbrstate, 1)
 			TESTARG(off, mbrstate, 0)
@@ -139,7 +144,7 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-			BEGIN_OPTION(setLockingRange, 4)
+		BEGIN_OPTION(setLockingRange, 4)
 			TESTARG(0, lockingrange, 0)
 			TESTFAIL("Only the Global Locking Range (0) is currently supported")
 			TESTARG(RW, lockingstate, OPAL_LOCKINGSTATE::READWRITE)
@@ -152,22 +157,20 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-			BEGIN_OPTION(enableLockingRange, 3)
+		BEGIN_OPTION(enableLockingRange, 3)
 			TESTARG(0, lockingrange, 0)
 			TESTFAIL("Only the Global Locking Range (0) is currently supported")
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-			BEGIN_OPTION(disableLockingRange, 3)
+		BEGIN_OPTION(disableLockingRange, 3)
 			TESTARG(0, lockingrange, 0)
 			TESTFAIL("Only the Global Locking Range (0) is currently supported")
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-			BEGIN_OPTION(objDump, 5) i += 4; OPTION_IS(device) END_OPTION
-			BEGIN_OPTION(rawCmd, 7) i += 6; OPTION_IS(device) END_OPTION
-			
-
+		BEGIN_OPTION(objDump, 5) i += 4; OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(rawCmd, 7) i += 6; OPTION_IS(device) END_OPTION
 		else {
             LOG(E) << "Invalid command line argument " << argv[i];
             return 1;

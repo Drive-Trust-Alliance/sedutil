@@ -47,6 +47,7 @@ typedef enum _msedoption {
 	loadPBAimage,
 	setLockingRange,
 	reverttper,
+	revertnoerase,
 	revertLockingSP,
 	PSIDrevert,
 	yesIreallywanttoERASEALLmydatausingthePSID,

@@ -65,26 +65,23 @@ uint8_t MsedDevOpal::initialsetup(char * password)
 		LOG(E) << "Initial setup failed - unable to activate LockingSP";
 		return 0xff;
 	}
-	if (setReadLocked(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::OPAL_FALSE, password)) {
-		LOG(E) << "Initial setup failed - unable to unlock for read";
+	if (configureLockingRange(0, OPAL_TOKEN::OPAL_FALSE, password)) {
+		LOG(E) << "Initial setup failed - unable to configure global locking range";
 		return 0xff;
 	}
-	if (setWriteLocked(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::OPAL_FALSE, password)) {
-		LOG(E) << "Initial setup failed - unable to unlock for write";
+	if (setLockingRange(0, OPAL_LOCKINGSTATE::READWRITE, password)) {
+		LOG(E) << "Initial setup failed - unable to set global locking range RW";
 		return 0xff;
 	}
-	if (setReadLockEnabled(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::OPAL_TRUE, password)) {
-		LOG(E) << "Initial setup failed - unable to enable readlocking";
+	if (setMBRDone(1, password)) {
+		LOG(E) << "Initial setup failed - unable to Enable MBR shadow";
 		return 0xff;
 	}
-	if (setWriteLockEnabled(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::OPAL_TRUE, password)) {
-		LOG(E) << "Initial setup failed - unable to enable writelocking";
+	if (setMBREnable(1, password)) {
+		LOG(E) << "Initial setup failed - unable to Enable MBR shadow";
 		return 0xff;
 	}
+	
 	LOG(I) << "Initial setup of TPer complete on " << dev;
 	LOG(D1) << "Exiting initialSetup()";
 	return 0;
@@ -128,33 +125,25 @@ uint8_t MsedDevOpal::configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enab
 }
 uint8_t MsedDevOpal::revertLockingSP(char * password, uint8_t keep)
 {
-	LOG(D1) << "Entering revert MsedDevOpal::LockingSP() keep = " << keep;
-	vector<uint8_t> keepgloballockingrange;
-	keepgloballockingrange.push_back(0xa3);
-	keepgloballockingrange.push_back(0x06);
-	keepgloballockingrange.push_back(0x00);
-	keepgloballockingrange.push_back(0x00);
-	if (!isSupportedSSC()) {
-		LOG(E) << "Device not Opal " << dev;
-		return 0xff;
-	}
+	LOG(D1) << "Entering revert MsedDevOpal::revertLockingSP() keep = " << (uint16_t) keep;
+	vector<uint8_t> keepGlobalLocking;
+	keepGlobalLocking.push_back(0x83);
+	keepGlobalLocking.push_back(0x06);
+	keepGlobalLocking.push_back(0x00);
+	keepGlobalLocking.push_back(0x00);
 	MsedCommand *cmd = new MsedCommand();
 	session = new MsedSession(this);
-	// session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
-	//                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
-
 	if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) {
 		delete cmd;
 		delete session;
 		return 0xff;
 	}
-	// session[TSN:HSN]->ThisSP.RevertSP[]
 	cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
 	cmd->addToken(OPAL_TOKEN::STARTLIST);
 	if (keep) {
 		cmd->addToken(OPAL_TOKEN::STARTNAME);
-		cmd->addToken(keepgloballockingrange);
-		cmd->addToken(OPAL_TINY_ATOM::UINT_01); // KeepGlobalRangeKey = TRUE
+		cmd->addToken(keepGlobalLocking);
+		cmd->addToken(OPAL_TOKEN::OPAL_TRUE);
 		cmd->addToken(OPAL_TOKEN::ENDNAME);
 	}
 	cmd->addToken(OPAL_TOKEN::ENDLIST);
@@ -272,10 +261,6 @@ uint8_t MsedDevOpal::setNewPassword(char * password, char * userid, char * newpa
 {
 	LOG(D1) << "Entering MsedDevOpal::setNewPassword" ;
 	std::vector<uint8_t> userCPIN, hash;
-	if (!isSupportedSSC()) {
-		LOG(E) << "Device not Opal " << dev;
-		return 0xff;
-	}
 	session = new MsedSession(this);
 	if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) {
 		delete session;
@@ -314,6 +299,7 @@ uint8_t MsedDevOpal::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 				return 0xff;
 			}
 	}
+	LOG(I) << "MBREnable set to " << (uint16_t) mbrstate;
 	LOG(D1) << "Exiting MsedDevOpal::setMBREnable";
 	return 0;
 }
@@ -335,6 +321,7 @@ uint8_t MsedDevOpal::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 			return 0xff;
 		}
 	}
+	LOG(I) << "MBRDone set to " << (uint16_t)mbrstate;
 	LOG(D1) << "Exiting MsedDevOpal::setMBRDone";
 	return 0;
 }
@@ -401,10 +388,6 @@ uint8_t MsedDevOpal::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
 	for (int i = 0; i < 8; i++) {
 		table.push_back(OPALUID[table_uid][i]);
 	}
-	if (!isSupportedSSC()) {
-		LOG(E) << "Device not Opal compliant " << dev;
-		return 0xff;
-	}
 	session = new MsedSession(this);
 	if (session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) {
 		delete session;
@@ -458,7 +441,7 @@ uint8_t MsedDevOpal::revertTPer(char * password, uint8_t PSID)
 	if (PSID) {
 		session->dontHashPwd(); // PSID pwd should be passed as entered
 		uid = OPAL_UID::OPAL_PSID_UID;
-	}
+		}
 	if (session->start(OPAL_UID::OPAL_ADMINSP_UID, password, uid)) {
 		delete cmd;
 		delete session;
@@ -851,13 +834,7 @@ uint8_t MsedDevOpal::dumpTable(char * password)
 	for (int i = 0; i < 8; i++) {
 		table.push_back(OPALUID[OPAL_UID::OPAL_AUTHORITY_TABLE][i]);
 	}
-	if (!isSupportedSSC()) {
-		LOG(E) << "Device not Opal " << dev;
-		return 0xff;
-	}
 	session = new MsedSession(this);
-	// session[0:0]->SMUID.StartSession[HostSessionID:HSN, SPID : LockingSP_UID, Write : TRUE,
-	//                   HostChallenge = <Admin1_password>, HostSigningAuthority = Admin1_UID]
 	if (session->start(OPAL_UID::OPAL_ADMINSP_UID, password, OPAL_UID::OPAL_SID_UID)) {
 		delete session;
 		return 0xff;
