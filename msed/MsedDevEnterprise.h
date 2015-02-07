@@ -95,9 +95,7 @@ public:
          */
 	uint8_t setTable(vector<uint8_t> table, const char *name,
 		OPAL_TOKEN value);
-        /** display the results of the identify and discovery 0 responses */
-	uint8_t diskQuery();
-        /** dummy code not implemented the the enterprise SSC */
+    /** dummy code not implemented the the enterprise SSC */
 	uint8_t activateLockingSP(char * password);
         /** dummy code not implemented in teh enterprise SSC*/
 	uint8_t revertLockingSP(char * password, uint8_t keep = 0);

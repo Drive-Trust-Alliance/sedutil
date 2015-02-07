@@ -25,56 +25,51 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "MsedStructures.h"
 
 using namespace std;
-/*
- * Initialize: allocate the buffers *ONLY*
- * reset needs to be called to
- * initialize the headers etc
- */
+
 MsedCommand::MsedCommand()
 {
     LOG(D1) << "Creating MsedCommand()";
-    cmdbuf = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
-    respbuf = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
+	cmdbuf = commandbuffer + IO_BUFFER_ALIGNMENT;
+	cmdbuf = (uint8_t*)((uintptr_t)cmdbuf & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+	respbuf = responsebuffer + IO_BUFFER_ALIGNMENT;
+	respbuf = (uint8_t*)((uintptr_t)respbuf & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
 }
 
 /* Fill in the header information and format the call */
 MsedCommand::MsedCommand(OPAL_UID InvokingUid, OPAL_METHOD method)
 {
     LOG(D1) << "Creating MsedCommand(ID, InvokingUid, method)";
-    /* allocate the cmdbuf */
-    cmdbuf = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
-	respbuf = (uint8_t *)ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
-    reset(InvokingUid, method);
+	cmdbuf = commandbuffer + IO_BUFFER_ALIGNMENT;
+	cmdbuf = (uint8_t*)((uintptr_t)cmdbuf & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+	respbuf = responsebuffer + IO_BUFFER_ALIGNMENT;
+	respbuf = (uint8_t*)((uintptr_t)respbuf & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+	reset(InvokingUid, method);
 }
 
-/* Fill in the header information ONLY (no call) */
 void
 MsedCommand::reset()
 {
     LOG(D1) << "Entering MsedCommand::reset()";
     memset(cmdbuf, 0, IO_BUFFER_LENGTH);
+	memset(respbuf, 0, IO_BUFFER_LENGTH);
     bufferpos = sizeof (OPALHeader);
 }
 void 
 MsedCommand::reset(OPAL_UID InvokingUid, vector<uint8_t> method){
-	LOG(D1) << "Entering MsedCommand::reset";
-	reset(); // build the headers
+	LOG(D1) << "Entering MsedCommand::reset(OPAL_UID,uint8_t)";
+	reset();
 	cmdbuf[bufferpos++] = OPAL_TOKEN::CALL;
-	cmdbuf[bufferpos++] = OPAL_SHORT_ATOM::BYTESTRING8;
-	memcpy(&cmdbuf[bufferpos], &OPALUID[InvokingUid][0], 8); /* bytes 2-9 */
-	bufferpos += 8;
+	addToken(InvokingUid);
 	addToken(method);
 }
 
 void
 MsedCommand::reset(OPAL_UID InvokingUid, OPAL_METHOD method)
 {
-    LOG(D1) << "Entering MsedCommand::reset(InvokingUid, method)";
-    reset(); // build the headers
+    LOG(D1) << "Entering MsedCommand::reset(OPAL_UID, OPAL_METHOD)";
+    reset(); 
     cmdbuf[bufferpos++] = OPAL_TOKEN::CALL;
-    cmdbuf[bufferpos++] = OPAL_SHORT_ATOM::BYTESTRING8;
-    memcpy(&cmdbuf[bufferpos], &OPALUID[InvokingUid][0], 8); /* bytes 2-9 */
-    bufferpos += 8;
+	addToken(InvokingUid);
     cmdbuf[bufferpos++] = OPAL_SHORT_ATOM::BYTESTRING8;
     memcpy(&cmdbuf[bufferpos], &OPALMETHOD[method][0], 8); /* bytes 11-18 */
     bufferpos += 8;
@@ -84,7 +79,7 @@ void
 MsedCommand::addToken(uint64_t number)
 {
     int startat = 0;
-    LOG(D1) << "Entering MsedCommand::addToken(uint64_t number)";
+    LOG(D1) << "Entering MsedCommand::addToken(uint64_t)";
     if (number < 64) {
         cmdbuf[bufferpos++] = (uint8_t) number & 0x000000000000003f;
     }
@@ -112,9 +107,9 @@ MsedCommand::addToken(uint64_t number)
 }
 
 void
-MsedCommand::addToken(std::vector<uint8_t> token)
+MsedCommand::addToken(vector<uint8_t> token)
 {
-    LOG(D1) << "Entering addToken(std::vector<uint8_t>)";
+    LOG(D1) << "Entering addToken(vector<uint8_t>)";
     for (uint32_t i = 0; i < token.size(); i++) {
         cmdbuf[bufferpos++] = token[i];
     }
@@ -123,7 +118,7 @@ MsedCommand::addToken(std::vector<uint8_t> token)
 void
 MsedCommand::addToken(const char * bytestring)
 {
-    LOG(D1) << "Entering MsedCommand::addToken(const char * bytestring)";
+    LOG(D1) << "Entering MsedCommand::addToken(const char * )";
     uint16_t length = (uint16_t) strlen(bytestring);
     if (length < 16) {
         /* use tiny atom */
@@ -137,6 +132,7 @@ MsedCommand::addToken(const char * bytestring)
     else {
         /* Use Large Atom */
         LOG(E) << "FAIL -- can't send LARGE ATOM size bytestring in 2048 Packet";
+		exit(EXIT_FAILURE);
     }
     memcpy(&cmdbuf[bufferpos], bytestring, length);
     bufferpos += length;
@@ -146,21 +142,21 @@ MsedCommand::addToken(const char * bytestring)
 void
 MsedCommand::addToken(OPAL_TOKEN token)
 {
-    LOG(D1) << "Entering MsedCommand::addToken(OPAL_TOKEN token)";
+    LOG(D1) << "Entering MsedCommand::addToken(OPAL_TOKEN)";
     cmdbuf[bufferpos++] = (uint8_t) token;
 }
 
 void
 MsedCommand::addToken(OPAL_TINY_ATOM token)
 {
-    LOG(D1) << "Entering MsedCommand::addToken(OPAL_TINY_ATOM token)";
+    LOG(D1) << "Entering MsedCommand::addToken(OPAL_TINY_ATOM)";
     cmdbuf[bufferpos++] = (uint8_t) token;
 }
 
 void
 MsedCommand::addToken(OPAL_UID token)
 {
-    LOG(D1) << "Entering MsedCommand::addToken(OPAL_UID token)";
+    LOG(D1) << "Entering MsedCommand::addToken(OPAL_UID)";
     cmdbuf[bufferpos++] = OPAL_SHORT_ATOM::BYTESTRING8;
     memcpy(&cmdbuf[bufferpos], &OPALUID[token][0], 8);
     bufferpos += 8;
@@ -188,6 +184,10 @@ MsedCommand::complete(uint8_t EOD)
     hdr->pkt.length = SWAP32((bufferpos - sizeof (OPALComPacket))
                              - sizeof (OPALPacket));
     hdr->cp.length = SWAP32(bufferpos - sizeof (OPALComPacket));
+	if (bufferpos > 2048) {
+		LOG(E) << " Buffer Overrun ";
+		exit(EXIT_FAILURE);
+	}
 }
 
 void
@@ -258,6 +258,4 @@ MsedCommand::setHSN(uint32_t HSN)
 MsedCommand::~MsedCommand()
 {
     LOG(D1) << "Destroying MsedCommand";
-    ALIGNED_FREE(cmdbuf);
-    ALIGNED_FREE(respbuf);
 }

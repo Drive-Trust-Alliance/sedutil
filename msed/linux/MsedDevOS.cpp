@@ -177,7 +177,7 @@ void MsedDevOS::identify()
     LOG(D4) << "Entering MsedDevOS::identify()";
     vector<uint8_t> nullz(512, 0x00);
     if (!isOpen) return; //disk open failed so this will too
-    uint8_t * buffer = (uint8_t *) ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
+    uint8_t * buffer = (uint8_t *) aligned_alloc(IO_BUFFER_ALIGNMENT, IO_BUFFER_LENGTH);
     memset(buffer, 0, IO_BUFFER_LENGTH);
     if (ioctl(fd, HDIO_GET_IDENTITY, buffer) < 0) {
         LOG(E) << "Identify failed " << strerror(errno);
@@ -208,7 +208,7 @@ void MsedDevOS::identify()
     //        disk_info.modelNum[i + 1] = id->modelNum[i];
     //    }
 
-    ALIGNED_FREE(buffer);
+    free(buffer);
     return;
 }
 

@@ -58,11 +58,7 @@ uint8_t MsedDev::isEprise()
     LOG(D1) << "Entering MsedDev::isEprise " << (uint16_t) disk_info.Enterprise;
     return disk_info.Enterprise;
 }
-uint8_t MsedDev::isSupportedSSC()
-{
-	LOG(D1) << "Entering MsedDev::isSupportedSSC " << (uint16_t)disk_info.SupportedSSC;
-	return disk_info.SupportedSSC;
-}
+
 uint8_t MsedDev::isAnySSC()
 {
 	LOG(D1) << "Entering MsedDev::isAnySSC " << (uint16_t)disk_info.ANY_OPAL_SSC;
@@ -92,11 +88,11 @@ void MsedDev::discovery0()
     uint8_t * epos, *cpos;
     Discovery0Header * hdr;
     Discovery0Features * body;
-    d0Response = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
-    if (NULL == d0Response) return;
-    memset(d0Response, 0, IO_BUFFER_LENGTH);
-    if (sendCmd(IF_RECV, 0x01, 0x0001, d0Response, IO_BUFFER_LENGTH)) {
-        ALIGNED_FREE(d0Response);
+	d0Response = discovery0buffer + IO_BUFFER_ALIGNMENT;
+	d0Response = (void *)((uintptr_t)d0Response & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+	memset(d0Response, 0, IO_BUFFER_LENGTH);
+    if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, IO_BUFFER_LENGTH)) != 0) {
+        LOG(D) << "Send D0 request to device failed " << (uint16_t)lastRC;
         return;
     }
 
@@ -138,16 +134,14 @@ void MsedDev::discovery0()
         case FC_ENTERPRISE: /* Enterprise SSC */
             disk_info.Enterprise = 1;
 			disk_info.ANY_OPAL_SSC = 1;
-			disk_info.SupportedSSC = 1;
-            disk_info.Enterprise_rangeCrossing = body->enterpriseSSC.rangeCrossing;
+	        disk_info.Enterprise_rangeCrossing = body->enterpriseSSC.rangeCrossing;
             disk_info.Enterprise_basecomID = SWAP16(body->enterpriseSSC.baseComID);
             disk_info.Enterprise_numcomID = SWAP16(body->enterpriseSSC.numberComIDs);
             break;
         case FC_OPALV100: /* Opal V1 */
             disk_info.OPAL10 = 1;
 			disk_info.ANY_OPAL_SSC = 1;
-			disk_info.SupportedSSC = 1;
-            disk_info.OPAL10_basecomID = SWAP16(body->opalv100.baseComID);
+	        disk_info.OPAL10_basecomID = SWAP16(body->opalv100.baseComID);
             disk_info.OPAL10_numcomIDs = SWAP16(body->opalv100.numberComIDs);
             break;
         case FC_SINGLEUSER: /* Single User Mode */
@@ -166,8 +160,7 @@ void MsedDev::discovery0()
         case FC_OPALV200: /* OPAL V200 */
             disk_info.OPAL20 = 1;
 			disk_info.ANY_OPAL_SSC = 1;
-			disk_info.SupportedSSC = 1;
-            disk_info.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
+		    disk_info.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
             disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
             disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
             disk_info.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
@@ -190,7 +183,7 @@ void MsedDev::discovery0()
         cpos = cpos + (body->TPer.length + 4);
     }
     while (cpos < epos);
-    ALIGNED_FREE(d0Response);
+
 }
 void MsedDev::puke()
 {

@@ -1,45 +1,51 @@
 Begin TestSuite.cmd
 MINGW32_NT-6.1 R0M30-PC 1.0.12(0.46/3/2) 2012-07-05 14:56 i686 unknown
-testing msed Thu Jan 15 00:06:55 PST 2015
+testing msed Sun Feb 8 06:06:03 PST 2015
+msed v0.20beta-3-gcd25ca1-dirty Copyright 2014,2015 Michael Romeo <r0m30@r0m30.com>
 
 Scanning for Opal compliant disks
 \\.\PhysicalDrive0  2  Crucial_CT120M500SSD3                    MU05    
 \\.\PhysicalDrive1  2  ST500LT025-1DH142                        0001SDM7
 \\.\PhysicalDrive2 No  Hitachi HDT725040VLA360                  V5COA7BA
-\\.\PhysicalDrive3 No  ST3000NC000                              CE02    
+\\.\PhysicalDrive3 12  Samsung SSD 850 EVO 500GB                EMT01B6Q
+\\.\PhysicalDrive4 No  ST3500630AS                              3.AAK   
+\\.\PhysicalDrive5 No  KINGSTON SV100S264G                      120504  
 No more disks present ending scan
 Perform the initial setup
-- 00:06:56.000 INFO: takeownership complete
-- 00:06:58.043 INFO: Locking SP Activate Complete
-- 00:07:00.009 INFO: Initial setup of TPer complete on \\.\PhysicalDrive1
-    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
+- 06:06:03.000 INFO: takeownership complete
+- 06:06:05.981 INFO: Locking SP Activate Complete
+- 06:06:07.088 INFO: LockingRange0 disabled 
+- 06:06:07.900 INFO: LockingRange0 set to RW
+- 06:06:08.368 INFO: MBRDone set on 
+- 06:06:08.773 INFO: MBREnable set on 
+- 06:06:08.773 INFO: Initial setup of TPer complete on \\.\PhysicalDrive1
+    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = Y, MBREnabled = Y, MediaEncrypt = Y
 change the LSP Admin1 password
-- 00:07:01.000 INFO: Admin1 password changed
+- 06:06:09.000 INFO: Admin1 password changed
+- 06:06:10.000 INFO: LockingRange0 enabled 
+    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = Y, MBREnabled = Y, MediaEncrypt = Y
 test readlocking
-- 00:07:02.000 INFO: LockingRange0 set to RO
-    Locked = Y, LockingEnabled = Y, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
-- 00:07:03.000 INFO: Locking range configured 0
-    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
-- 00:07:04.000 INFO: Locking range configured 1
+- 06:06:11.000 INFO: LockingRange0 set to RO
+    Locked = Y, LockingEnabled = Y, LockingSupported = Y, MBRDone = Y, MBREnabled = Y, MediaEncrypt = Y
 test write locking
-- 00:07:05.000 INFO: LockingRange0 set to RW
-    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
+- 06:06:12.000 INFO: LockingRange0 set to RW
+    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = Y, MBREnabled = Y, MediaEncrypt = Y
 set LockingRange 0 LK
-- 00:07:06.000 INFO: LockingRange0 set to LK
-    Locked = Y, LockingEnabled = Y, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
+- 06:06:13.000 INFO: LockingRange0 set to LK
+    Locked = Y, LockingEnabled = Y, LockingSupported = Y, MBRDone = Y, MBREnabled = Y, MediaEncrypt = Y
 disable locking on the global range
-- 00:07:07.000 INFO: Locking range configured 0
-    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
-enable mbr shadowing
-    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = N, MBREnabled = Y, MediaEncrypt = Y
-set MBRDone
+- 06:06:14.000 INFO: LockingRange0 disabled 
     Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = Y, MBREnabled = Y, MediaEncrypt = Y
 unset MBRDone
+- 06:06:15.000 INFO: MBRDone set off 
     Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = N, MBREnabled = Y, MediaEncrypt = Y
 disable mbr shadowing
+- 06:06:15.000 INFO: MBREnable set off 
     Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
 resetting device
-- 00:07:12.000 INFO: revertTper completed successfully
+- 06:06:18.000 INFO: Revert LockingSP complete
+    Locked = N, LockingEnabled = N, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
+- 06:06:20.000 INFO: revertTper completed successfully
     Locked = N, LockingEnabled = N, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
 
 PKCS #5 PBKDF2 validation suite running on Msed ... 

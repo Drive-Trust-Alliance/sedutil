@@ -65,41 +65,41 @@ MsedResponse::init(void * buffer)
     }
 }
 
-OPAL_TOKENID MsedResponse::tokenIs(uint32_t tokenNum)
+OPAL_TOKEN MsedResponse::tokenIs(uint32_t tokenNum)
 {
     LOG(D1) << "Entering  MsedResponse::tokenIs";
     if (!(response[tokenNum][0] & 0x80)) { //tiny atom
         if ((response[tokenNum][0] & 0x40))
-            return OPAL_TOKENID::OPAL_TOKENID_SINT;
+            return OPAL_TOKEN::MSED_TOKENID_SINT;
         else
-            return OPAL_TOKENID::OPAL_TOKENID_UINT;
+            return OPAL_TOKEN::MSED_TOKENID_UINT;
     }
     else if (!(response[tokenNum][0] & 0x40)) { // short atom
         if ((response[tokenNum][0] & 0x20))
-            return OPAL_TOKENID::OPAL_TOKENID_BYTESTRING;
+            return OPAL_TOKEN::MSED_TOKENID_BYTESTRING;
         else if ((response[tokenNum][0] & 0x10))
-            return OPAL_TOKENID::OPAL_TOKENID_SINT;
+            return OPAL_TOKEN::MSED_TOKENID_SINT;
         else
-            return OPAL_TOKENID::OPAL_TOKENID_UINT;
+            return OPAL_TOKEN::MSED_TOKENID_UINT;
     }
     else if (!(response[tokenNum][0] & 0x20)) { // medium atom
         if ((response[tokenNum][0] & 0x10))
-            return OPAL_TOKENID::OPAL_TOKENID_BYTESTRING;
+            return OPAL_TOKEN::MSED_TOKENID_BYTESTRING;
         else if ((response[tokenNum][0] & 0x08))
-            return OPAL_TOKENID::OPAL_TOKENID_SINT;
+            return OPAL_TOKEN::MSED_TOKENID_SINT;
         else
-            return OPAL_TOKENID::OPAL_TOKENID_UINT;
+            return OPAL_TOKEN::MSED_TOKENID_UINT;
     }
     else if (!(response[tokenNum][0] & 0x10)) { // long atom
         if ((response[tokenNum][0] & 0x02))
-            return OPAL_TOKENID::OPAL_TOKENID_BYTESTRING;
+            return OPAL_TOKEN::MSED_TOKENID_BYTESTRING;
         else if ((response[tokenNum][0] & 0x01))
-            return OPAL_TOKENID::OPAL_TOKENID_SINT;
+            return OPAL_TOKEN::MSED_TOKENID_SINT;
         else
-            return OPAL_TOKENID::OPAL_TOKENID_UINT;
+            return OPAL_TOKEN::MSED_TOKENID_UINT;
     }
     else // TOKEN
-        return (OPAL_TOKENID) response[tokenNum][0];
+        return (OPAL_TOKEN) response[tokenNum][0];
 }
 
 uint32_t MsedResponse::getLength(uint32_t tokenNum)
@@ -113,7 +113,7 @@ uint64_t MsedResponse::getUint64(uint32_t tokenNum)
     if (!(response[tokenNum][0] & 0x80)) { //tiny atom
         if ((response[tokenNum][0] & 0x40)) {
             LOG(E) << "unsigned int requested for signed tiny atom";
-            return 0;
+			exit(EXIT_FAILURE);
         }
         else {
             return (uint64_t) (response[tokenNum][0] & 0x3f);
@@ -122,11 +122,11 @@ uint64_t MsedResponse::getUint64(uint32_t tokenNum)
     else if (!(response[tokenNum][0] & 0x40)) { // short atom
         if ((response[tokenNum][0] & 0x10)) {
             LOG(E) << "unsigned int requested for signed short atom";
-            return 0;
+			exit(EXIT_FAILURE);
         }
         else {
             uint64_t whatever = 0;
-            if (response[tokenNum].size() > 9)
+            if (response[tokenNum].size() > 9) 
                 LOG(E) << "UINT64 with greater than 8 bytes";
             int b = 0;
             for (uint32_t i = (uint32_t) response[tokenNum].size() - 1; i > 0; i--) {
@@ -139,15 +139,15 @@ uint64_t MsedResponse::getUint64(uint32_t tokenNum)
     }
     else if (!(response[tokenNum][0] & 0x20)) { // medium atom
         LOG(E) << "unsigned int requested for medium atom is unsupported";
-        return 0;
+		exit(EXIT_FAILURE);
     }
     else if (!(response[tokenNum][0] & 0x10)) { // long atom
         LOG(E) << "unsigned int requested for long atom is unsupported";
-        return 0;
+		exit(EXIT_FAILURE);
     }
     else { // TOKEN
         LOG(E) << "unsigned int requested for token is unsupported";
-        return 0;
+		exit(EXIT_FAILURE);
     }
 }
 
@@ -195,7 +195,7 @@ std::string MsedResponse::getString(uint32_t tokenNum)
     int overhead = 0;
     if (!(response[tokenNum][0] & 0x80)) { //tiny atom
         LOG(E) << "Cannot get a string from a tiny atom";
-        s;
+		exit(EXIT_FAILURE);
     }
     else if (!(response[tokenNum][0] & 0x40)) { // short atom
         overhead = 1;
@@ -222,7 +222,7 @@ void MsedResponse::getBytes(uint32_t tokenNum, uint8_t bytearray[])
     int overhead = 0;
     if (!(response[tokenNum][0] & 0x80)) { //tiny atom
         LOG(E) << "Cannot get a bytestring from a tiny atom";
-        return;
+		exit(EXIT_FAILURE);
     }
     else if (!(response[tokenNum][0] & 0x40)) { // short atom
         overhead = 1;
@@ -235,7 +235,7 @@ void MsedResponse::getBytes(uint32_t tokenNum, uint8_t bytearray[])
     }
     else {
         LOG(E) << "Cannot get a bytestring from a TOKEN";
-        return;
+		exit(EXIT_FAILURE);
     }
 
     for (uint32_t i = overhead; i < response[tokenNum].size(); i++) {

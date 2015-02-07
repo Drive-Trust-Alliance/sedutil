@@ -292,13 +292,6 @@ uint8_t MsedDevEnterprise::activateLockingSP(char * password)
 	LOG(D1) << "Exiting MsedDevEnterprise::activatLockingSP()";
 	return 0;
 }
-uint8_t MsedDevEnterprise::diskQuery()
-{
-	LOG(D1) << "Entering MsedDevEnterprise::diskQuery()" << dev;
-	puke();
-	LOG(D1) << "Exiting MsedDevEnterprise::diskQuery()" << dev;
-	return 0;
-}
 uint8_t MsedDevEnterprise::takeOwnership(char * newpassword)
 {
 	string defaultPassword;
@@ -631,8 +624,8 @@ void MsedDevEnterprise::puke()
 	if (disk_info.Properties) {
 		cout << std::endl << "TPer Properties: " << std::endl;
 		for (uint32_t i = 0, j = 1; i < propertiesResponse.getTokenCount(); i++) {
-			if (OPAL_TOKEN::ENDLIST == (OPAL_TOKEN)propertiesResponse.tokenIs(i)) {
-				if (OPAL_TOKEN::STARTNAME == (OPAL_TOKEN)propertiesResponse.tokenIs(i + 1)) {
+			if (OPAL_TOKEN::ENDLIST == propertiesResponse.tokenIs(i)) {
+				if (OPAL_TOKEN::STARTNAME == propertiesResponse.tokenIs(i + 1)) {
 					cout << std::endl << "Host Properties: " << std::endl;
 					i += 2;
 					j = 1;
@@ -642,8 +635,8 @@ void MsedDevEnterprise::puke()
 					break;
 				}
 			}
-			if (OPAL_TOKEN::STARTNAME == (OPAL_TOKEN)propertiesResponse.tokenIs(i)) {
-				if (OPAL_TOKENID::OPAL_TOKENID_BYTESTRING == propertiesResponse.tokenIs(i + 1)) {
+			if (OPAL_TOKEN::STARTNAME == propertiesResponse.tokenIs(i)) {
+				if (OPAL_TOKEN::MSED_TOKENID_BYTESTRING == propertiesResponse.tokenIs(i + 1)) {
 					cout << "  " << propertiesResponse.getString(i + 1) << " = " << propertiesResponse.getUint64(i + 2);
 					i += 2;
 					j++;

@@ -111,9 +111,7 @@ public:
          * @param password password of the admin sp SID authority
          */
 	 uint8_t activateLockingSP(char * password) ;
-          /** Display the OPAL information from the Discovery0 and properties exchange. */
-	 uint8_t diskQuery() ;
-         /** Change the SID password from it's MSID default 
+        /** Change the SID password from it's MSID default 
          * @param newpassword  new password for SID and locking SP admins
          */ 
 	 uint8_t takeOwnership(char * newpassword) ;

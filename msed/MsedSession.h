@@ -90,5 +90,6 @@ private:
     uint8_t willAbort = 0;   /**< Command is expected to abort */
 	uint8_t hashPwd = 1;  /**< hash the password when authenticating */
     uint8_t SecurityProtocol = 0x01;  /**< The seurity protocol to be used */
+	uint8_t lastRC;  /**< last return code */
 };
 

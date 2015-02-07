@@ -30,9 +30,6 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-/*
- * Start a session
- */
 MsedSession::MsedSession(MsedDev * device)
 {
     LOG(D1) << "Creating MsedSsession()";
@@ -62,6 +59,10 @@ MsedSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthor
     LOG(D1) << "Entering MsedSession::startSession ";
 	vector<uint8_t> hash;
     MsedCommand *cmd = new MsedCommand();
+	if (NULL == cmd) {
+		LOG(E) << "Unable to create session object ";
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
     MsedResponse response;
     cmd->reset(OPAL_UID::OPAL_SMUID_UID, OPAL_METHOD::STARTSESSION);
     cmd->addToken(OPAL_TOKEN::STARTLIST); // [  (Open Bracket)
@@ -86,10 +87,10 @@ MsedSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthor
 	}
     cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
-	if (sendCommand(cmd, response)) {
+	if ((lastRC = sendCommand(cmd, response)) != 0) {
 		LOG(E) << "Session start failed";
 		delete cmd;
-		return 0xff;
+		return lastRC;
 	}  
     // call user method SL HSN TSN EL EOD SL 00 00 00 EL
     //   0   1     2     3  4   5   6  7   8
@@ -107,6 +108,10 @@ MsedSession::authenticate(vector<uint8_t> Authority, char * Challenge)
 	LOG(D1) << "Entering MsedSession::authenticate ";
 	vector<uint8_t> hash;
 	MsedCommand *cmd = new MsedCommand();
+	if (NULL == cmd) {
+		LOG(E) << "Unable to create session object ";
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
 	MsedResponse response;
 	cmd->reset(OPAL_UID::OPAL_THISSP_UID, d->isEprise() ? OPAL_METHOD::EAUTHENTICATE : OPAL_METHOD::AUTHENTICATE);
 	cmd->addToken(OPAL_TOKEN::STARTLIST); // [  (Open Bracket)
@@ -126,20 +131,20 @@ MsedSession::authenticate(vector<uint8_t> Authority, char * Challenge)
 	cmd->addToken(OPAL_TOKEN::ENDNAME);
 	cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
 	cmd->complete();
-	if (sendCommand(cmd, response)) {
+	if ((lastRC = sendCommand(cmd, response)) != 0) {
 		LOG(E) << "Session Authenticate failed";
 		delete cmd;
-		return 0xff;
+		return lastRC;
 	}
 	if (0 == response.getUint8(1)) {
 		LOG(E) << "Session Authenticate failed (response = false)";
 		delete cmd;
-		return 0xff;
+		return MSEDERROR_AUTH_FAILED;
 	}
 
 	LOG(D1) << "Exiting MsedSession::authenticate "; 
 	delete cmd;
-	return 0x00;
+	return 0;
 }
 uint8_t
 MsedSession::sendCommand(MsedCommand * cmd, MsedResponse & response)
@@ -159,18 +164,18 @@ MsedSession::sendCommand(MsedCommand * cmd, MsedResponse & response)
         (0 == response.h.pkt.length) ||
         (0 == response.h.subpkt.length)) {
         LOG(E) << "One or more header fields have 0 length";
-        return 0xff;
+		return MSEDERROR_COMMAND_ERROR;
     }
     // if we get an endsession response return 0
-    if (0xfa == response.tokenIs(0)) {
+    if (OPAL_TOKEN::ENDOFSESSION == response.tokenIs(0)) {
         return 0;
     }
     // IF we received a method status return it
-    if (!(((uint8_t) OPAL_TOKEN::ENDLIST == (uint8_t) response.tokenIs(response.getTokenCount() - 1)) &&
-        ((uint8_t) OPAL_TOKEN::STARTLIST == (uint8_t) response.tokenIs(response.getTokenCount() - 5)))) {
+    if (!((OPAL_TOKEN::ENDLIST == response.tokenIs(response.getTokenCount() - 1)) &&
+        (OPAL_TOKEN::STARTLIST == response.tokenIs(response.getTokenCount() - 5)))) {
         // no method status so we hope we reported the error someplace else
         LOG(E) << "Method Status missing";
-        return 0xff;
+		return MSEDERROR_NO_METHOD_STATUS;
     }
     if (OPALSTATUSCODE::SUCCESS != response.getUint8(response.getTokenCount() - 4)) {
         LOG(E) << "method status code " <<
@@ -252,12 +257,17 @@ MsedSession::~MsedSession()
 	MsedResponse response;
     if (!willAbort) {
         MsedCommand *cmd = new MsedCommand();
-        cmd->reset();
-        cmd->addToken(OPAL_TOKEN::ENDOFSESSION);
-        cmd->complete(0);
-        if (sendCommand(cmd, response)) {
-            LOG(E) << "EndSession Failed";
-        }
-        delete cmd;
+		if (NULL == cmd) {
+			LOG(E) << "Unable to create command object ";
+		} 
+		else {
+			cmd->reset();
+			cmd->addToken(OPAL_TOKEN::ENDOFSESSION);
+			cmd->complete(0);
+			if (sendCommand(cmd, response)) {
+				LOG(E) << "EndSession Failed";
+			}
+			delete cmd;
+		}
     }
 }

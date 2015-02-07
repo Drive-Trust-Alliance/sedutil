@@ -21,17 +21,10 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <string>
 #include "MsedStructures.h"
+#include "MsedLexicon.h"
 
-/** Type of token contained in the response field. */
-typedef enum _OPAL_TOKENID {
-    // 0xen to avoid collisions with real tokens 
-    OPAL_TOKENID_BYTESTRING = 0xe0,
-    OPAL_TOKENID_SINT = 0xe1,
-    OPAL_TOKENID_UINT = 0xe2,
-    OPAL_TOKENID_TOKEN = 0xe3, // actual token is returned
-} OPAL_TOKENID;
 
-/** Object containing the paparsed tokens.
+/** Object containing the parsed tokens.
  * a vector of vector<uint8_T> that contains each token
  * returned in the TCG response
  */
@@ -47,7 +40,7 @@ public:
     void init(void * buffer);
     /** return the type of token 
      * @param tokenNum the 0 based number of the token*/
-    OPAL_TOKENID tokenIs(uint32_t tokenNum);
+    OPAL_TOKEN tokenIs(uint32_t tokenNum);
     /** return the length of a token
     * @param tokenNum the 0 based number of the token*/
     uint32_t getLength(uint32_t tokenNum);

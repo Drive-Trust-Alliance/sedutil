@@ -286,7 +286,6 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t OPAL10 : 1;
 	uint8_t Properties : 1;
 	uint8_t ANY_OPAL_SSC : 1;
-	uint8_t SupportedSSC : 1;
     // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
     uint8_t TPer_ACKNACK : 1;
     uint8_t TPer_async : 1;

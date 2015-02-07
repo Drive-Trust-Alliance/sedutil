@@ -63,6 +63,7 @@ void usage()
 	printf("--revertnoerase <Admin1password> <device>\n");
 	printf("                                deactivate the Locking SP \n");
 	printf("                                without erasing the data \n");
+	printf("                                on GLOBAL RANGE *ONLY* \n");
     printf("--yesIreallywanttoERASEALLmydatausingthePSID <PSID> <device>\n");
     printf("                                revert the device using the PSID *ERASING* *ALL* the data \n");
     printf("\n");
@@ -82,12 +83,12 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
     CLog::Level() = CLog::FromInt(loggingLevel);
     if (2 > argc) {
         usage();
-        return 1;
+		return MSEDERROR_INVALID_COMMAND;
     }
 	for (uint8_t i = 1; i < argc; i++) {
 		if (!(strcmp("-h", argv[i])) || !(strcmp("--help", argv[i]))) {
 			usage();
-			return 1;
+			return MSEDERROR_INVALID_COMMAND;
 		}
 		else if ('v' == argv[i][1])
 		{
@@ -102,7 +103,7 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 			(0 == opts->action))
 		{
 			LOG(E) << "Argument " << (uint16_t) i << " (" << argv[i] << ") should be a command";
-			return 1;
+			return MSEDERROR_INVALID_COMMAND;
 		}
 		BEGIN_OPTION(initialsetup, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(setSIDPwd, 3) OPTION_IS(password) OPTION_IS(newpassword) 
@@ -173,7 +174,7 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 		BEGIN_OPTION(rawCmd, 7) i += 6; OPTION_IS(device) END_OPTION
 		else {
             LOG(E) << "Invalid command line argument " << argv[i];
-            return 1;
+			return MSEDERROR_INVALID_COMMAND;
         }
     }
     return 0;

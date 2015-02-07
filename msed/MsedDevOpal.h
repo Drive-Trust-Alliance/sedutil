@@ -95,8 +95,6 @@ public:
          */
 	uint8_t setTable(vector<uint8_t> table, OPAL_TOKEN name,
 		OPAL_TOKEN value);
-         /** display the results of the identify and discovery 0 responses */
-	uint8_t diskQuery();
         /** Change state of the Locking SP to active.
          * Enables locking 
          * @param password  current SID password
@@ -190,16 +188,7 @@ public:
          * @param password the password that is to be assigned to the SSC master entities 
          */
 	uint8_t initialsetup(char * password);
-        /** diagnostic routine hardcoded table dump
-         * @param password whatever password is needed by the code
-         */
-	uint8_t dumpTable(char * password);
-        /* Get the UID of the next object in a table
-         * @param table  The UID of the table 
-         * @param startkey The UID of the starting key
-         */
-	uint8_t nextTable(vector<uint8_t> table, vector<uint8_t> startkey);
-         /** Displays the identify and discovery 0 information */
+          /** Displays the identify and discovery 0 information */
 	void puke();
          /** Dumps an object for diagnostic purposes
          * @param sp index into the OPALUID table for the SP the object is in

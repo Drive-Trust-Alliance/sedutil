@@ -152,6 +152,11 @@ typedef enum _OPAL_TOKEN {
     MBRDONE = 0x02,
 	// properties
 	HOSTPROPERTIES =0x00,
+    // response tokenis() returned values
+    MSED_TOKENID_BYTESTRING = 0xe0,
+    MSED_TOKENID_SINT = 0xe1,
+    MSED_TOKENID_UINT = 0xe2,
+    MSED_TOKENID_TOKEN = 0xe3, // actual token is returned
     // atoms
     STARTLIST = 0xf0,
     ENDLIST = 0xf1,

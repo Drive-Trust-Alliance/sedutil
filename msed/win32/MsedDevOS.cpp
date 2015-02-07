@@ -68,7 +68,7 @@ uint8_t MsedDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     DWORD bytesReturned = 0; // data returned
     if (!isOpen) {
         LOG(D1) << "Device open failed";
-        return 0xff; //disk open failed so this will too
+		return MSEDERROR_OPEN_ERR; //disk open failed so this will too
     }
     /*
      * Initialize the ATA_PASS_THROUGH_DIRECT structures
@@ -125,7 +125,7 @@ void MsedDevOS::identify()
     LOG(D1) << "Entering MsedDevOS::identify()";
 	vector<uint8_t> nullz(512, 0x00);
     void * identifyResp = NULL;
-    identifyResp = ALIGNED_ALLOC(4096, IO_BUFFER_LENGTH);
+	identifyResp = _aligned_malloc(IO_BUFFER_LENGTH, IO_BUFFER_ALIGNMENT);
     if (NULL == identifyResp) return;
     memset(identifyResp, 0, IO_BUFFER_LENGTH);
     uint8_t iorc = sendCmd(IDENTIFY, 0x00, 0x0000, identifyResp, IO_BUFFER_LENGTH);
@@ -153,7 +153,7 @@ void MsedDevOS::identify()
         disk_info.modelNum[i] = id->modelNum[i + 1];
         disk_info.modelNum[i + 1] = id->modelNum[i];
     }
-    ALIGNED_FREE(identifyResp);
+	_aligned_free(identifyResp);
     return;
 }
 

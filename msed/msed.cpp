@@ -68,16 +68,20 @@ int main(int argc, char * argv[])
 	MSED_OPTIONS opts;
 	MsedDev *tempDev = NULL, *d = NULL;
 	if (MsedOptions(argc, argv, &opts)) {
-		return 1;
+		return MSEDERROR_COMMAND_ERROR;
 	}
 	
 	if ((opts.action != msedoption::scan) && (opts.action != msedoption::validatePBKDF2)) {
 		if (opts.device > (argc - 1)) opts.device = 0;
 		tempDev = new MsedDevGeneric(argv[opts.device]);
+		if (NULL == tempDev) {
+			LOG(E) << "Create device object failed";
+			return MSEDERROR_OBJECT_CREATE_FAILED;
+		}
 		if ((!tempDev->isPresent()) || (!tempDev->isAnySSC())) {
 			LOG(E) << "Invalid or unsupported disk " << argv[opts.device];
 			delete tempDev;
-			return 2;
+			return MSEDERROR_COMMAND_ERROR;
 		}
 		if (tempDev->isOpal2())
 			d = new MsedDevOpal2(argv[opts.device]);
@@ -90,23 +94,19 @@ int main(int argc, char * argv[])
 				else
 				{
 					LOG(E) << "Unknown OPAL SSC ";
-					return 0xff;
+					return MSEDERROR_INVALID_COMMAND;
 				}
 		delete tempDev;
+		if (NULL == d) {
+			LOG(E) << "Create device object failed";
+			return MSEDERROR_OBJECT_CREATE_FAILED;
+		}
 	}
     switch (opts.action) {
  	case msedoption::initialsetup:
-        if (0 == opts.password) {
-            LOG(E) << "Initial setup requires a new SID password";
-            return 1;
-        }
 		LOG(D) << "Performing initial setup to use msed on drive " << argv[opts.device];
         return (d->initialsetup(argv[opts.password]));
 	case msedoption::setSIDPwd:
-        if ((0 == opts.password) || (0 == opts.newpassword)) {
-            LOG(E) << "setSIDPwd requires both the old SID password and a new SID password";
-            return 1;
-        }
         LOG(D) << "Performing setSIDPwd ";
         return d->setSIDPassword(argv[opts.password], argv[opts.newpassword]);
 		break;
@@ -120,48 +120,24 @@ int main(int argc, char * argv[])
         return d->loadPBA(argv[opts.password], argv[opts.pbafile]);
 		break;
 	case msedoption::setLockingRange:
-        if (0 == opts.password) {
-            LOG(E) << "setLockingRange requires the Admin1 password";
-            return 1;
-        }
         LOG(D) << "Setting Locking Range " << (uint16_t) opts.lockingrange << " " << (uint16_t) opts.lockingstate;
         return d->setLockingRange(opts.lockingrange, opts.lockingstate, argv[opts.password]);
 		break;
 	case msedoption::enableLockingRange:
-        if (0 == opts.password) {
-            LOG(E) << "Enabling a Locking range " <<
-                    "requires the Admin1 password";
-            return 1;
-        }
         LOG(D) << "Enabling Locking Range " << (uint16_t) opts.lockingrange;
         return (d->configureLockingRange(opts.lockingrange,OPAL_TOKEN::OPAL_TRUE,
                            argv[opts.password]));
         break;
 	case msedoption::disableLockingRange:
-		if (0 == opts.password) {
-			LOG(E) << "Disabling a Locking range " <<
-				"requires the Admin1 password ";
-			return 1;
-		}
 		LOG(D) << "Disabling Locking Range " << (uint16_t) opts.lockingrange;
 		return (d->configureLockingRange(opts.lockingrange, OPAL_TOKEN::OPAL_FALSE,
 			argv[opts.password]));
 		break;
 	case msedoption::setMBRDone:
-		if (0 == opts.password) {
-			LOG(E) << "Setting MBRDone " <<
-				"requires the Admin1 password ";
-			return 1;
-		}
 		LOG(D) << "Setting MBRDone " << (uint16_t)opts.mbrstate;
 		return (d->setMBRDone(opts.mbrstate, argv[opts.password]));
 		break;
 	case msedoption::setMBREnable:
-		if (0 == opts.password) {
-			LOG(E) << "Setting MBREnable " <<
-				"requires the Admin1 password ";
-			return 1;
-		}
 		LOG(D) << "Setting MBREnable " << (uint16_t)opts.mbrstate;
 		return (d->setMBREnable(opts.mbrstate, argv[opts.password]));
 		break;
@@ -170,16 +146,12 @@ int main(int argc, char * argv[])
         return d->enableUser(argv[opts.password], argv[opts.userid]);
         break;
 	case msedoption::activateLockingSP:
-        if (0 == opts.password) {
-            LOG(E) << "Activating the Locking SP required the SID password ";
-            return 1;
-        }
 		LOG(D) << "Activating the LockingSP on" << argv[opts.device];
         return d->activateLockingSP(argv[opts.password]);
         break;
     case msedoption::query:
 		LOG(D) << "Performing diskquery() on " << argv[opts.device];
-        d->diskQuery();
+        d->puke();
         return 0;
         break;
 	case msedoption::scan:
@@ -187,18 +159,10 @@ int main(int argc, char * argv[])
         diskScan();
         break;
 	case msedoption::takeownership:
-        if (0 == opts.password) {
-            LOG(E) << "Taking ownership requires a *NEW* SID password ";
-            return 1;
-        }
 		LOG(D) << "Taking Ownership of the drive at" << argv[opts.device];
         return d->takeOwnership(argv[opts.password]);
         break;
  	case msedoption::revertLockingSP:
-        if (0 == opts.password) {
-            LOG(E) << "Reverting the Locking SP requires a password ";
-            return 1;
-        }
 		LOG(D) << "Performing revertLockingSP on " << argv[opts.device];
         return d->revertLockingSP(argv[opts.password]);
         break;
@@ -208,18 +172,10 @@ int main(int argc, char * argv[])
                               argv[opts.newpassword]);
         break;
 	case msedoption::reverttper:
-        if (0 == opts.password) {
-            LOG(E) << "Reverting the TPer requires a the SID password ";
-            return 1;
-        }
 		LOG(D) << "Performing revertTPer on " << argv[opts.device];
         return d->revertTPer(argv[opts.password]);
         break;
 	case msedoption::revertnoerase:
-		if (0 == opts.password) {
-			LOG(E) << "Reverting the TPer requires a the SID password ";
-			return 1;
-		}
 		LOG(D) << "Performing revertLockingSP  keep global locking range on " << argv[opts.device];
 		return d->revertLockingSP(argv[opts.password], 1);
 		break;
@@ -229,10 +185,6 @@ int main(int argc, char * argv[])
         break;
 	case msedoption::yesIreallywanttoERASEALLmydatausingthePSID:
 	case msedoption::PSIDrevert:
-        if (0 == opts.password) {
-            LOG(E) << "PSID Revert requires a password ";
-            return 1;
-        }
 		LOG(D) << "Performing a PSID Revert on " << argv[opts.device] << " with password " << argv[opts.password];
         return d->revertTPer(argv[opts.password],1);
         break;
@@ -248,5 +200,5 @@ int main(int argc, char * argv[])
         LOG(E) << "Unable to determine what you want to do ";
         usage();
     }
-    return 1;
+	return MSEDERROR_INVALID_COMMAND;
 }
