@@ -9,6 +9,13 @@ BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 echo "Building " $BUILDTYPE "image"
 # Start fresh
 sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE}
+[ -f ${SYSLINUX}/bios/mbr/mbr.bin -a \
+     -x ${SYSLINUX}/bios/extlinux/extlinux -a \
+     -f ../scratch/core.gz -a \
+     -f ../scratch/vmlinuz -a \
+     -f ../scratch/hdparm.tcz -a \
+     -f ../../dist/Release_i686/msed \
+  ] || { echo " prereqs are not available "; exit 1; }
 #
 dd if=/dev/zero of=${BUILDIMG} bs=1M count=15
 (echo o;echo n;echo p;echo 1;echo "";echo "";echo a;echo 1;echo w) | fdisk -C 100 ${BUILDIMG}

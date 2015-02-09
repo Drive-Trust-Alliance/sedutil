@@ -3,11 +3,19 @@ set -x
 # Build the bios PBA
 ## define releases for tools
 . conf
+
 VERSIONINFO=`git describe --dirty`
 BUILDTYPE=biospba
 BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 # Start fresh
 sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE}
+## check that everything is available
+[ -f ${SYSLINUX}/bios/mbr/mbr.bin -a \
+     -x ${SYSLINUX}/bios/linux/syslinux -a \
+     -f ${SYSLINUX}/bios/com32/msedpba/msedpba.c32 -a \
+     -f ${SYSLINUX}/bios/com32/libutil/libutil.c32 -a \
+     -f ${SYSLINUX}/bios/com32/lib/libcom32.c32 \
+  ] || { echo " prereqs are not available "; exit 1; }
 #
 dd if=/dev/zero of=${BUILDIMG} bs=1M count=1
 (echo o;echo n;echo p;echo 1;echo 63;echo "";echo a;echo 1;echo t;echo b;echo w) | fdisk -C 10 ${BUILDIMG}
