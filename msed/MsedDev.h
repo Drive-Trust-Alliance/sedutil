@@ -132,10 +132,19 @@ public:
 	/** Change the active state of a locking range
 	 * @param lockingrange The number of the locking range (0 = global)
 	 * @param enabled  enable (true) or disable (false) the lockingrange
-	 * @param password password of administrative authority for locking range
+	 * @param password Password of administrative authority for locking range
 	 */
 	virtual uint8_t configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enabled,
 		char * password) = 0;
+	/** Setup a locking range.  Initialize a locking range, set it's start
+	 *  LBA and length, initialize it as unlocked with locking disabled.
+	 *  @paran lockingrange The Locking Range to be setup
+	 *  @param start  Starting LBA
+	 *  @param length Number of blocks
+	 *  @paran password Password of administrator
+	 */
+	virtual uint8_t setupLockingRange(uint8_t lockingrange, uint64_t start,
+		uint64_t length, char * password) = 0;
 	/** Primitive to set the MBRDone flag.
 	 * @param state 0 or 1
 	 * @param Admin1Password Locking SP authority with access to flag

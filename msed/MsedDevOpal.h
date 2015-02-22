@@ -165,6 +165,15 @@ public:
          */
 	uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 		char * Admin1Password);
+	/** Setup a locking range.  Initialize a locking range, set it's start
+	*  LBA and length, initialize it as unlocked with locking disabled.
+	*  @paran lockingrange The Locking Range to be setup
+	*  @param start  Starting LBA
+	*  @param length Number of blocks
+	*  @paran password Password of administrator
+	*/
+	uint8_t setupLockingRange(uint8_t lockingrange, uint64_t start,
+		uint64_t length, char * password);
         /** User command to enable/disable a locking range.
          * RW|RO|LK are the supported states @see OPAL_LOCKINGSTATE
          * @param lockingrange locking range number

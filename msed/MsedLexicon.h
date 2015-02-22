@@ -131,18 +131,20 @@ typedef enum _OPAL_METHOD {
  */
 typedef enum _OPAL_TOKEN {
     //Boolean
-    OPAL_TRUE = 0x01,
-    OPAL_FALSE = 0x00,
-    // cellblocks
-    TABLE = 0x00,
-    STARTROW = 0x01,
-    ENDROW = 0x02,
-    STARTCOLUMN = 0x03,
-    ENDCOLUMN = 0x04,
-    VALUES = 0x01,
-    // authority table
-    PIN = 0x03,
-    // locking tokens
+	OPAL_TRUE = 0x01,
+	OPAL_FALSE = 0x00,
+	// cellblocks
+	TABLE = 0x00,
+	STARTROW = 0x01,
+	ENDROW = 0x02,
+	STARTCOLUMN = 0x03,
+	ENDCOLUMN = 0x04,
+	VALUES = 0x01,
+	// authority table
+	PIN = 0x03,
+	// locking tokens
+	RANGESTART = 0x03,
+	RANGELENGTH = 0x04,
     READLOCKENABLED = 0x05,
     WRITELOCKENABLED = 0x06,
     READLOCKED = 0x07,

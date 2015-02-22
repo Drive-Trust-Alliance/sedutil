@@ -198,6 +198,14 @@ uint8_t MsedDevEnterprise::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 	LOG(D1) << "Exiting MsedDevEnterprise::setMBRDone";
 	return 0;
 }
+
+uint8_t MsedDevEnterprise::setupLockingRange(uint8_t lockingrange, uint64_t start,
+	uint64_t length, char * password) {
+	LOG(D1) << "Entering MsedDevEnterprise::setupLockingRange";
+	if (0 == lockingrange) LOG(E) << start << length << password;
+	LOG(D1) << "Exiting MsedDevEnterprise::setupLockingRange";
+	return 0;
+}
 uint8_t MsedDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 	char * password)
 {

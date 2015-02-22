@@ -127,6 +127,15 @@ public:
          * @param enabled  enable (true) or disable (false) the lockingrange
          * @param password password of administrative authority for locking range 
          */
+	/** Setup a locking range.  Initialize a locking range, set it's start
+	*  LBA and length, initialize it as unlocked with locking disabled.
+	*  @paran lockingrange The Locking Range to be setup
+	*  @param start  Starting LBA
+	*  @param length Number of blocks
+	*  @paran password Password of administrator
+	*/
+	uint8_t setupLockingRange(uint8_t lockingrange, uint64_t start,
+		uint64_t length, char * password);
 	uint8_t configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enabled, char * password);
         /** Reset the TPER to its factory condition   
          * ERASES ALL DATA!
