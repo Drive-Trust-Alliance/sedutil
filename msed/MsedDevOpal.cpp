@@ -98,6 +98,57 @@ uint8_t MsedDevOpal::setWriteLockEnabled(OPAL_UID lockingrange, OPAL_TOKEN state
 	char * password) {
 	return setLockingSPvalue(lockingrange, OPAL_TOKEN::WRITELOCKENABLED, state, password, NULL);
 }
+uint8_t MsedDevOpal::listLockingRanges(char * password)
+{
+	LOG(D1) << "Entering MsedDevOpal:listLockingRanges()";
+	vector<uint8_t> LR;
+	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+	for (int i = 0; i < 8; i++) {
+		LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
+	}
+	session = new MsedSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+		delete session;
+		return lastRC;
+	}
+	vector<uint8_t> table;
+	table.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+	for (int i = 0; i < 8; i++) {
+		table.push_back(OPALUID[OPAL_UID::OPAL_LOCKING_INFO_TABLE][i]);
+	}
+	if ((lastRC = getTable(table, _OPAL_TOKEN::MAXRANGES, _OPAL_TOKEN::MAXRANGES)) != 0) {
+		delete session;
+		return lastRC;
+	}
+	if (response.tokenIs(3) != _OPAL_TOKEN::MSED_TOKENID_UINT) {
+		LOG(E) << "Unable to determine number of ranges ";
+		delete session;
+		return MSEDERROR_NO_LOCKING_INFO;
+	}
+	LOG(I) << "Locking Range Configuration for " << dev;
+	uint32_t numRanges = response.getUint32(3) + 1;
+	for (uint32_t i = 0; i < numRanges; i++){
+		LR[7] = (i >> 8) & 0xff;
+		LR[8] = i & 0xff;
+		if ((lastRC = getTable(LR, _OPAL_TOKEN::RANGESTART, _OPAL_TOKEN::WRITELOCKED)) != 0) {
+			delete session;
+			return lastRC;
+		}
+		LOG(I) << "LR" << i << " Begin " << response.getUint64(3) <<
+			" for " << response.getUint64(6) <<
+			" READLOCKENABLED =" << (response.getUint8(9) ? " Y " : " N ") <<
+			" WRITELOCKENABLED =" << (response.getUint8(12) ? " Y " : " N ") <<
+			" READLOCKED =" << (response.getUint8(15) ? " Y " : " N ") <<
+			" WRITELOCKED =" << (response.getUint8(18) ? " Y " : " N ");
+	}
+
+	LOG(D1) << "Exiting MsedDevOpal:listLockingRanges()";
+	return 0;
+}
 uint8_t MsedDevOpal::setupLockingRange(uint8_t lockingrange, uint64_t start,
 	uint64_t length, char * password)
 {

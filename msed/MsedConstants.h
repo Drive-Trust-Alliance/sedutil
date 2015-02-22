@@ -41,3 +41,4 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #define MSEDERROR_AUTH_FAILED 				0x87
 #define MSEDERROR_COMMAND_ERROR				0x88
 #define MSEDERROR_NO_METHOD_STATUS			0x89
+#define MSEDERROR_NO_LOCKING_INFO			0x8a

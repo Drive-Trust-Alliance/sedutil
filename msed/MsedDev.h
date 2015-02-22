@@ -141,10 +141,14 @@ public:
 	 *  @paran lockingrange The Locking Range to be setup
 	 *  @param start  Starting LBA
 	 *  @param length Number of blocks
-	 *  @paran password Password of administrator
+	 *  @param password Password of administrator
 	 */
 	virtual uint8_t setupLockingRange(uint8_t lockingrange, uint64_t start,
 		uint64_t length, char * password) = 0;
+	/** List status of locking ranges.  
+	*  @param password Password of administrator
+	*/
+	virtual uint8_t listLockingRanges(char * password) = 0;
 	/** Primitive to set the MBRDone flag.
 	 * @param state 0 or 1
 	 * @param Admin1Password Locking SP authority with access to flag

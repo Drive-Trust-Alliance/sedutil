@@ -122,20 +122,24 @@ public:
 	uint8_t setNewPassword(char * password, char * userid, char * newpassword);
 	uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 		char * password);
-        /** Change the active state of a locking range 
-         * @param lockingrange The number of the locking range (0 = global)
-         * @param enabled  enable (true) or disable (false) the lockingrange
-         * @param password password of administrative authority for locking range 
-         */
 	/** Setup a locking range.  Initialize a locking range, set it's start
 	*  LBA and length, initialize it as unlocked with locking disabled.
-	*  @paran lockingrange The Locking Range to be setup
+	*  @param lockingrange The Locking Range to be setup
 	*  @param start  Starting LBA
 	*  @param length Number of blocks
-	*  @paran password Password of administrator
+	*  @param password Password of administrator
 	*/
 	uint8_t setupLockingRange(uint8_t lockingrange, uint64_t start,
 		uint64_t length, char * password);
+	/** List status of locking ranges.
+	*  @param password Password of administrator
+	*/
+	uint8_t listLockingRanges(char * password);
+	/** Change the active state of a locking range
+	* @param lockingrange The number of the locking range (0 = global)
+	* @param enabled  enable (true) or disable (false) the lockingrange
+	* @param password password of administrative authority for locking range
+	*/
 	uint8_t configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enabled, char * password);
         /** Reset the TPER to its factory condition   
          * ERASES ALL DATA!
