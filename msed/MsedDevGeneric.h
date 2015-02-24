@@ -90,7 +90,7 @@ public:
          * @param enabled  enable (true) or disable (false) the lockingrange
          * @param password password of administrative authority for locking range 
          */
-	 uint8_t configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enabled,
+	 uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled,
 		char * password) ;
 	 /** Setup a locking range.  Initialize a locking range, set it's start
 	 *  LBA and length, initialize it as unlocked with locking disabled.

@@ -63,7 +63,7 @@ void MsedDevGeneric::init(const char * devref)
 }
 uint8NOCODE(initialsetup, char *password)
 uint8NOCODE(configureLockingRange,uint8_t lockingrange, 
-	OPAL_TOKEN enabled, char * password)
+	uint8_t enabled, char * password)
 uint8NOCODE(revertLockingSP,char * password, uint8_t keep)
 uint8NOCODE(setNewPassword,char * password, char * userid, char * newpassword)
 uint8NOCODE(setMBREnable,uint8_t mbrstate, char * Admin1Password)

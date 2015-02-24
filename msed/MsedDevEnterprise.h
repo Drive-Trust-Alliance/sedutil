@@ -140,7 +140,7 @@ public:
 	* @param enabled  enable (true) or disable (false) the lockingrange
 	* @param password password of administrative authority for locking range
 	*/
-	uint8_t configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enabled, char * password);
+	uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled, char * password);
         /** Reset the TPER to its factory condition   
          * ERASES ALL DATA!
          * @param password password of authority (SID or PSID)

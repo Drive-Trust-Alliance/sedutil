@@ -28,6 +28,8 @@ typedef struct _MSED_OPTIONS {
 	uint8_t mbrstate;   /**< mbrstate for set mbr commands */
 	uint8_t lockingrange;  /**< locking range to be manipulated */
 	uint8_t lockingstate;  /**< locking state to set a lockingrange to */
+	uint8_t lrstart;		/** the starting block of a lockingrange */
+	uint8_t lrlength;		/** the length in blocks of a lockingrange */
 } MSED_OPTIONS;
 /** Print a usage message */
 void usage();
@@ -53,6 +55,9 @@ typedef enum _msedoption {
 	yesIreallywanttoERASEALLmydatausingthePSID,
 	enableLockingRange,
 	disableLockingRange,
+	readonlyLockingRange,
+	setupLockingRange,
+	listLockingRanges,
 	setMBREnable,
 	setMBRDone,
 	enableuser,

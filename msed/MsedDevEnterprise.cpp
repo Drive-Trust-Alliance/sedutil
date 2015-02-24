@@ -58,7 +58,7 @@ uint8_t MsedDevEnterprise::initialsetup(char * password)
 	}
 	
 	if (configureLockingRange(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::OPAL_TRUE, password)) {
+		(MSED_READLOCKINGENABLED | MSED_WRITELOCKINGENABLED), password)) {
 		LOG(E) << "Initial setup failed - unable to enable read/write locking";
 		return 0xff;
 	}
@@ -67,7 +67,7 @@ uint8_t MsedDevEnterprise::initialsetup(char * password)
 	LOG(D1) << "Exiting initialSetup()";
 	return 0;
 }
-uint8_t MsedDevEnterprise::configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enabled, char * password)
+uint8_t MsedDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t enabled, char * password)
 {
 	LOG(D1) << "Entering MsedDevEnterprise::configureLockingRange()";
 	if (lockingrange) {
@@ -87,11 +87,11 @@ uint8_t MsedDevEnterprise::configureLockingRange(uint8_t lockingrange, OPAL_TOKE
 	set->addToken(OPAL_TOKEN::STARTLIST);
 	set->addToken(OPAL_TOKEN::STARTNAME);
 	set->addToken("WriteLockEnabled");
-	set->addToken(enabled);
+	set->addToken((enabled & MSED_WRITELOCKINGENABLED) ? OPAL_TRUE : OPAL_FALSE);
 	set->addToken(OPAL_TOKEN::ENDNAME);
 	set->addToken(OPAL_TOKEN::STARTNAME);
 	set->addToken("ReadLockEnabled");
-	set->addToken(enabled);
+	set->addToken((enabled & MSED_READLOCKINGENABLED) ? OPAL_TRUE : OPAL_FALSE);
 	set->addToken(OPAL_TOKEN::ENDNAME);
 	set->addToken(OPAL_TOKEN::ENDLIST);
 	set->addToken(OPAL_TOKEN::ENDLIST);

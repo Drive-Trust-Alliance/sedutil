@@ -125,13 +125,27 @@ int main(int argc, char * argv[])
 		break;
 	case msedoption::enableLockingRange:
         LOG(D) << "Enabling Locking Range " << (uint16_t) opts.lockingrange;
-        return (d->configureLockingRange(opts.lockingrange,OPAL_TOKEN::OPAL_TRUE,
-                           argv[opts.password]));
+        return (d->configureLockingRange(opts.lockingrange,
+			(MSED_READLOCKINGENABLED | MSED_WRITELOCKINGENABLED), argv[opts.password]));
         break;
 	case msedoption::disableLockingRange:
 		LOG(D) << "Disabling Locking Range " << (uint16_t) opts.lockingrange;
-		return (d->configureLockingRange(opts.lockingrange, OPAL_TOKEN::OPAL_FALSE,
+		return (d->configureLockingRange(opts.lockingrange, MSED_DISABLELOCKING,
 			argv[opts.password]));
+		break;
+	case msedoption::readonlyLockingRange:
+		LOG(D) << "Enabling Locking Range " << (uint16_t)opts.lockingrange;
+		return (d->configureLockingRange(opts.lockingrange,
+			MSED_WRITELOCKINGENABLED, argv[opts.password]));
+		break;
+	case msedoption::setupLockingRange:
+		LOG(D) << "Setup Locking Range " << (uint16_t)opts.lockingrange;
+		return (d->setupLockingRange(opts.lockingrange, atoll(argv[opts.lrstart]),
+			atoll(argv[opts.lrlength]), argv[opts.password]));
+		break;
+	case msedoption::listLockingRanges:
+		LOG(D) << "List Locking Ranges ";
+		return (d->listLockingRanges(argv[opts.password]));
 		break;
 	case msedoption::setMBRDone:
 		LOG(D) << "Setting MBRDone " << (uint16_t)opts.mbrstate;

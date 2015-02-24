@@ -122,31 +122,7 @@ public:
          * @param Admin1Password Locking SP authority with access to flag
          */
 	uint8_t setMBRDone(uint8_t state, char * Admin1Password);
-        /** Primitive to manipulate the ReadLocked state of a locking range.
-         * @param lockingrange  the locking range to be changed
-         * @param state boolean true = locked, false = unlocked
-         * @param Admin1Password Password of the administrative authority used 
-         */
-	uint8_t setReadLocked(OPAL_UID lockingrange, OPAL_TOKEN state, char * Admin1Password);
-        /** Primitive to manipulate the WriteLocked state of a locking range.
-         * @param lockingrange  the locking range to be changed
-         * @param state boolean true = locked, false = unlocked
-         * @param Admin1Password Password of the administrative authority used 
-         */
-	uint8_t setWriteLocked(OPAL_UID lockingrange, OPAL_TOKEN state, char * Admin1Password);
-        /** Primitive to manipulate the ReadLocking state of a locking range.
-         * @param lockingrange  the locking range to be changed
-         * @param state boolean true = locked, false = unlocked
-         * @param Admin1Password Password of the administrative authority used 
-         */
-	uint8_t setReadLockEnabled(OPAL_UID lockingrange, OPAL_TOKEN state, char * Admin1Password);
-        /** Primitive to manipulate the WriteLocking state of a locking range.
-         * @param lockingrange  the locking range to be changed
-         * @param state boolean true = locked, false = unlocked
-         * @param Admin1Password Password of the administrative authority used 
-         */
-	uint8_t setWriteLockEnabled(OPAL_UID lockingrange, OPAL_TOKEN state, char * Admin1Password);
-        /** Primitive to set the MBREnable flag.
+          /** Primitive to set the MBREnable flag.
          * @param state 0 or 1  
          * @param Admin1Password Locking SP authority with access to flag
          */
@@ -184,8 +160,13 @@ public:
          * @param enabled boolean true = enabled, false = disabled
          * @param password password of the locking administrative authority 
          */
-	uint8_t configureLockingRange(uint8_t lockingrange, OPAL_TOKEN enabled, char * password);
-        /** Reset the TPER to its factory condition   
+	uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled, char * password);
+	/** Generate a new encryption key for a locking range.
+	* @param lockingrange locking range number
+	* @param password password of the locking administrative authority
+	*/
+	uint8_t rekeyLockingRange(uint8_t lockingrange, char * password);
+	/** Reset the TPER to its factory condition   
          * ERASES ALL DATA!
          * @param password password of authority (SID or PSID)
          * @param PSID true or false is the authority the PSID

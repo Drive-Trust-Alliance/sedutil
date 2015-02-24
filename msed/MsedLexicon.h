@@ -151,6 +151,7 @@ typedef enum _OPAL_TOKEN {
 	WRITELOCKENABLED = 0x06,
 	READLOCKED = 0x07,
 	WRITELOCKED = 0x08,
+	ACTIVEKEY = 0x0A,
 	//locking info table
 	MAXRANGES = 0x04,
     // mbr control
