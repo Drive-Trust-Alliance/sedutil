@@ -32,19 +32,40 @@ ${MSED} --query $1 | grep -a MediaEncrypt >>  ${LOGFILE} 2>&1
 echo change the LSP Admin1 password | tee -a ${LOGFILE}
 ${MSED} --setAdmin1Pwd passw0rd password $1 >>  ${LOGFILE} 2>&1
 ${MSED} --enableLockingRange 0 password $1 >>  ${LOGFILE} 2>&1
-${MSED} --query $1 | grep -a MediaEncrypt >>  ${LOGFILE} 2>&1
+${MSED} --listLockingRanges password $1 2>&1| head -5 >>  ${LOGFILE} 2>&1
 echo test readlocking | tee -a ${LOGFILE}
 ${MSED}  --setLockingRange 0 RO password $1 >>  ${LOGFILE} 2>&1
-${MSED} --query $1 | grep -a MediaEncrypt >>  ${LOGFILE} 2>&1
+${MSED} --listLockingRanges password $1 2>&1| head -5 >>  ${LOGFILE} 2>&1
 echo test write locking | tee -a ${LOGFILE}
 ${MSED} --setLockingRange 0 RW password $1 >>  ${LOGFILE} 2>&1
-${MSED} --query $1 | grep -a MediaEncrypt >>  ${LOGFILE} 2>&1
+${MSED} --listLockingRanges password $1 2>&1| head -5 >>  ${LOGFILE} 2>&1
 echo set LockingRange 0 LK | tee -a ${LOGFILE}
 ${MSED} --setLockingRange 0 lk password $1 >>  ${LOGFILE} 2>&1
-${MSED} --query $1 | grep -a MediaEncrypt >>  ${LOGFILE} 2>&1
+${MSED} --listLockingRanges password $1 2>&1| head -5 >>  ${LOGFILE} 2>&1
 echo disable locking on the global range | tee -a ${LOGFILE}
 ${MSED} --disableLockingRange 0 password $1 >>  ${LOGFILE} 2>&1
-${MSED} --query $1 | grep -a MediaEncrypt >>  ${LOGFILE} 2>&1
+${MSED} --listLockingRanges password $1 2>&1| head -5 >>  ${LOGFILE} 2>&1
+echo test locking on lockingrange1 | tee -a ${LOGFILE}
+${MSED} --setupLockingRange 1 0 2048 password $1 >>  ${LOGFILE} 2>&1
+${MSED} --listLockingRanges password $1 2>&1| head -5 >>  ${LOGFILE} 2>&1
+echo Readonly locking on lockingrange1 | tee -a ${LOGFILE}
+${MSED} --readonlyLockingRange 1 password $1 >>  ${LOGFILE} 2>&1
+${MSED} --listLockingRanges password $1 2>&1| head -5 >>  ${LOGFILE} 2>&1
+echo enable locking on lockingrange 1 | tee -a ${LOGFILE}
+${MSED} --enableLockingRange 1 password $1 >>  ${LOGFILE} 2>&1
+${MSED} --listLockingRanges password $1 2>&1| head -5 >>  ${LOGFILE} 2>&1
+echo RO locking on lockingrange 1 | tee -a ${LOGFILE}
+${MSED} --setLockingRange 1 RO password $1 >>  ${LOGFILE} 2>&1
+${MSED} --listLockingRanges password $1 2>&1| head -5 >>  ${LOGFILE} 2>&1
+echo RW locking on lockingrange 1 | tee -a ${LOGFILE}
+${MSED} --setLockingRange 1 RW password $1 >>  ${LOGFILE} 2>&1
+${MSED} --listLockingRanges password $1 2>&1| head -5 >>  ${LOGFILE} 2>&1
+echo LK locking on lockingrange 1 | tee -a ${LOGFILE}
+${MSED} --setLockingRange 1 LK password $1 >>  ${LOGFILE} 2>&1
+${MSED} --listLockingRanges password $1 2>&1| head -5 >>  ${LOGFILE} 2>&1
+echo test locking on lockingrange15 | tee -a ${LOGFILE}
+${MSED} --setupLockingRange 15 2048 204800 password $1 >>  ${LOGFILE} 2>&1
+${MSED} --listLockingRanges password $1 2>&1| tail -4 >>  ${LOGFILE} 2>&1
 echo unset MBRDone | tee -a ${LOGFILE}
 ${MSED} --setMBRDone OFF password $1 >>  ${LOGFILE} 2>&1
 ${MSED} --query $1 | grep -a MediaEncrypt >>  ${LOGFILE} 2>&1
