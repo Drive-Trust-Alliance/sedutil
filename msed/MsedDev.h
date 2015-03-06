@@ -217,7 +217,6 @@ public:
 	/** return the communications ID to be used for sessions to this device */
 	virtual uint16_t comID() = 0;
 protected:
-	uint8_t lastRC;
 	const char * dev;   /**< character string representing the device in the OS lexicon */
 	uint8_t isOpen = FALSE;  /**< The device has been opened */
 	OPAL_DiskInfo disk_info;  /**< Structure containing info from identify and discovery 0 */

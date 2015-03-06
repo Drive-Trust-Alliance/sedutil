@@ -45,6 +45,7 @@ MsedDevOpal::~MsedDevOpal()
 }
 void MsedDevOpal::init(const char * devref)
 {
+	uint8_t lastRC;
 	MsedDevOS::init(devref);
 	if((lastRC = properties()) != 0) 
 		LOG(E) << "Properties exchange failed";
@@ -53,6 +54,7 @@ void MsedDevOpal::init(const char * devref)
 uint8_t MsedDevOpal::initialsetup(char * password)
 {
 	LOG(D1) << "Entering initialSetup()";
+	uint8_t lastRC;
 	if ((lastRC = takeOwnership(password)) != 0) {
 		LOG(E) << "Initial setup failed - unable to take ownership";
 		return lastRC;
@@ -84,6 +86,7 @@ uint8_t MsedDevOpal::initialsetup(char * password)
 }
 uint8_t MsedDevOpal::listLockingRanges(char * password)
 {
+	uint8_t lastRC;
 	LOG(D1) << "Entering MsedDevOpal:listLockingRanges()";
 	vector<uint8_t> LR;
 	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
@@ -137,6 +140,7 @@ uint8_t MsedDevOpal::listLockingRanges(char * password)
 uint8_t MsedDevOpal::setupLockingRange(uint8_t lockingrange, uint64_t start,
 	uint64_t length, char * password)
 {
+	uint8_t lastRC;
 	LOG(D1) << "Entering MsedDevOpal:setupLockingRange()";
 	if (lockingrange < 1) {
 		LOG(E) << "global locking range cannot be changed";
@@ -217,6 +221,7 @@ uint8_t MsedDevOpal::setupLockingRange(uint8_t lockingrange, uint64_t start,
 }
 uint8_t MsedDevOpal::configureLockingRange(uint8_t lockingrange, uint8_t enabled, char * password)
 {
+	uint8_t lastRC;
 	LOG(D1) << "Entering MsedDevOpal::configureLockingRange()";
 	vector<uint8_t> LR;
 	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
@@ -279,6 +284,7 @@ uint8_t MsedDevOpal::configureLockingRange(uint8_t lockingrange, uint8_t enabled
 uint8_t MsedDevOpal::rekeyLockingRange(uint8_t lockingrange, char * password)
 {
 	LOG(D1) << "Entering MsedDevOpal::rekeyLockingRange()";
+	uint8_t lastRC;
 	vector<uint8_t> LR;
 	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
 	for (int i = 0; i < 8; i++) {
@@ -327,6 +333,7 @@ uint8_t MsedDevOpal::rekeyLockingRange(uint8_t lockingrange, char * password)
 uint8_t MsedDevOpal::revertLockingSP(char * password, uint8_t keep)
 {
 	LOG(D1) << "Entering revert MsedDevOpal::revertLockingSP() keep = " << (uint16_t) keep;
+	uint8_t lastRC;
 	vector<uint8_t> keepGlobalLocking;
 	keepGlobalLocking.push_back(0x83);
 	keepGlobalLocking.push_back(0x06);
@@ -411,6 +418,7 @@ uint8_t MsedDevOpal::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<
 uint8_t MsedDevOpal::setNewPassword(char * password, char * userid, char * newpassword)
 {
 	LOG(D1) << "Entering MsedDevOpal::setNewPassword" ;
+	uint8_t lastRC;
 	std::vector<uint8_t> userCPIN, hash;
 	session = new MsedSession(this);
 	if (NULL == session) {
@@ -440,7 +448,7 @@ uint8_t MsedDevOpal::setNewPassword(char * password, char * userid, char * newpa
 uint8_t MsedDevOpal::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 {
 	LOG(D1) << "Entering MsedDevOpal::setMBREnable";
-
+	uint8_t lastRC;
 	if (mbrstate) {
 		if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRENABLE,
 			OPAL_TOKEN::OPAL_TRUE, Admin1Password, NULL)) != 0) {
@@ -467,7 +475,7 @@ uint8_t MsedDevOpal::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 uint8_t MsedDevOpal::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 {
 	LOG(D1) << "Entering MsedDevOpal::setMBRDone";
-
+	uint8_t lastRC;
 	if (mbrstate) {
 		if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRDONE,
 			OPAL_TOKEN::OPAL_TRUE, Admin1Password, NULL)) != 0) {
@@ -494,6 +502,7 @@ uint8_t MsedDevOpal::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 uint8_t MsedDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 	char * Admin1Password)
 {
+	uint8_t lastRC;
 	OPAL_TOKEN readlocked, writelocked;
 	const char *msg;
 
@@ -574,6 +583,7 @@ uint8_t MsedDevOpal::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
 	OPAL_TOKEN value,char * password, char * msg)
 {
 	LOG(D1) << "Entering MsedDevOpal::setLockingSPvalue";
+	uint8_t lastRC;
 	vector<uint8_t> table;
 	table. push_back(OPAL_SHORT_ATOM::BYTESTRING8);
 	for (int i = 0; i < 8; i++) {
@@ -605,6 +615,7 @@ uint8_t MsedDevOpal::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
 uint8_t MsedDevOpal::enableUser(char * password, char * userid)
 {
 	LOG(D1) << "Entering MsedDevOpal::enableUser";
+	uint8_t lastRC;
 	vector<uint8_t> userUID;
 	
 	session = new MsedSession(this);
@@ -634,6 +645,7 @@ uint8_t MsedDevOpal::enableUser(char * password, char * userid)
 uint8_t MsedDevOpal::revertTPer(char * password, uint8_t PSID)
 {
 	LOG(D1) << "Entering MsedDevOpal::revertTPer()";
+	uint8_t lastRC;
 	MsedCommand *cmd = new MsedCommand();
 	if (NULL == cmd) {
 		LOG(E) << "Unable to create command object ";
@@ -673,6 +685,7 @@ uint8_t MsedDevOpal::revertTPer(char * password, uint8_t PSID)
 }
 uint8_t MsedDevOpal::loadPBA(char * password, char * filename) {
 	LOG(D1) << "Entering MsedDevOpal::loadPBAimage()" << filename << " " << dev;
+	uint8_t lastRC;
 	uint64_t fivepercent = 0;
 	int complete = 4;
 	typedef struct { uint8_t  i : 2; } spinnertik;
@@ -761,6 +774,7 @@ uint8_t MsedDevOpal::loadPBA(char * password, char * filename) {
 uint8_t MsedDevOpal::activateLockingSP(char * password)
 {
 	LOG(D1) << "Entering MsedDevOpal::activateLockingSP()";
+	uint8_t lastRC;
 	vector<uint8_t> table;
 	table. push_back(OPAL_SHORT_ATOM::BYTESTRING8);
 	for (int i = 0; i < 8; i++) {
@@ -814,6 +828,7 @@ uint8_t MsedDevOpal::activateLockingSP(char * password)
 uint8_t MsedDevOpal::takeOwnership(char * newpassword)
 {
 	LOG(D1) << "Entering MsedDevOpal::takeOwnership()";
+	uint8_t lastRC;
 	if ((lastRC = getDefaultPassword()) != 0) {
 		LOG(E) << "Unable to read MSID password ";
 		return lastRC;
@@ -829,6 +844,7 @@ uint8_t MsedDevOpal::takeOwnership(char * newpassword)
 uint8_t MsedDevOpal::getDefaultPassword()
 {
 	LOG(D1) << "Entering MsedDevOpal::getDefaultPassword()";
+	uint8_t lastRC;
 	vector<uint8_t> hash;
 	session = new MsedSession(this);
 	if (NULL == session) {
@@ -858,6 +874,7 @@ uint8_t MsedDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
 {
 	vector<uint8_t> hash, table;
 	LOG(D1) << "Entering MsedDevOpal::setSIDPassword()";
+	uint8_t lastRC;
 	session = new MsedSession(this);
 	if (NULL == session) {
 		LOG(E) << "Unable to create session object ";
@@ -907,6 +924,7 @@ uint8_t MsedDevOpal::setTable(vector<uint8_t> table, OPAL_TOKEN name,
 	vector<uint8_t> value)
 {
 	LOG(D1) << "Entering MsedDevOpal::setTable";
+	uint8_t lastRC;
 	MsedCommand *set = new MsedCommand();
 	if (NULL == set) {
 		LOG(E) << "Unable to create command object ";
@@ -939,6 +957,7 @@ uint8_t MsedDevOpal::getTable(vector<uint8_t> table, uint16_t startcol,
 	uint16_t endcol)
 {
 	LOG(D1) << "Entering MsedDevOpal::getTable";
+	uint8_t lastRC;
 	MsedCommand *get = new MsedCommand();
 	if (NULL == get) {
 		LOG(E) << "Unable to create command object ";
@@ -968,6 +987,7 @@ uint8_t MsedDevOpal::getTable(vector<uint8_t> table, uint16_t startcol,
 }
 uint8_t MsedDevOpal::exec(MsedCommand * cmd, MsedResponse &response, uint8_t protocol)
 {
+	uint8_t lastRC;
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
     LOG(D3) << endl << "Dumping command buffer";
     IFLOG(D3) MsedHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
@@ -997,6 +1017,7 @@ uint8_t MsedDevOpal::exec(MsedCommand * cmd, MsedResponse &response, uint8_t pro
 uint8_t MsedDevOpal::properties()
 {
 	LOG(D1) << "Entering MsedDevOpal::properties()";
+	uint8_t lastRC;
 	session = new MsedSession(this);  // use the session IO without starting a session
 	if (NULL == session) {
 		LOG(E) << "Unable to create session object ";
@@ -1074,6 +1095,7 @@ uint8_t MsedDevOpal::objDump(char *sp, char * auth, char *pass,
 
 	LOG(D1) << "Entering MsedDevEnterprise::objDump";
 	LOG(D1) << sp << " " << auth << " " << pass << " " << objID;
+	uint8_t lastRC;
 	MsedCommand *get = new MsedCommand();
 	if (NULL == get) {
 		LOG(E) << "Unable to create command object ";
@@ -1138,7 +1160,7 @@ uint8_t MsedDevOpal::rawCmd(char *sp, char * hexauth, char *pass,
 	LOG(D1) << "Entering MsedDevEnterprise::rawCmd";
 	LOG(D1) << sp << " " << hexauth << " " << pass << " ";
 	LOG(D1) << hexinvokingUID << " " << hexmethod << " " << hexparms;
-
+	uint8_t lastRC;
 	vector<uint8_t> authority, object, invokingUID, method, parms;
 	uint8_t work;
 	if (16 != strnlen(hexauth, 32)) {

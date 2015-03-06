@@ -84,6 +84,7 @@ char *MsedDev::getSerialNum()
 void MsedDev::discovery0()
 {
     LOG(D1) << "Entering MsedDev::discovery0()";
+	uint8_t lastRC;
     void * d0Response = NULL;
     uint8_t * epos, *cpos;
     Discovery0Header * hdr;
