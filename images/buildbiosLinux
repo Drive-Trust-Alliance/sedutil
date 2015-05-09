@@ -1,0 +1,66 @@
+#!/bin/bash
+set -x
+# Build a custom tinycore bootable image
+## define releases for tools
+. conf
+VERSIONINFO=`git describe --dirty`
+BUILDTYPE=$1
+BUILDIMG=LINUXPBA${1}-${VERSIONINFO}.img
+if [ "$BUILDTYPE" == "Debug" ] || [ "$BUILDTYPE" == "Release" ] ; then
+            echo "Building " $BUILDTYPE "image"
+	else
+	    echo "You must select Debug|Release"
+	    exit		
+fi
+
+# Start fresh
+sudo rm -rf LINUXPBA${BUILDTYPE} ; mkdir LINUXPBA${BUILDTYPE} ; cd LINUXPBA${BUILDTYPE}
+## check that everything is available
+[ -f ${SYSLINUX}/bios/mbr/mbr.bin -a \
+     -x ${SYSLINUX}/bios/linux/syslinux -a \
+     -f ../../LinuxPBA/dist/${BUILDTYPE}/GNU-Linux-x86/linuxpba -a \
+     -f ../scratch/ncurses-common.tcz -a \
+      -f ../scratch/ncurses.tcz -a \
+      -f ../scratch/core.gz  \
+  ] || { echo " prereqs are not available "; exit 1; }
+#
+dd if=/dev/zero of=${BUILDIMG} bs=1M count=20
+(echo o;echo n;echo p;echo 1;echo"";echo "";echo "";echo a;echo 1;echo w) | fdisk ${BUILDIMG}
+dd if=../scratch/${SYSLINUX}/bios/mbr/mbr.bin of=${BUILDIMG} count=1 conv=notrunc bs=512
+LOOPDEV=`sudo losetup --show -f -o 1048576 ${BUILDIMG}`
+sudo mkfs.ext4 $LOOPDEV -L ${BUILDTYPE}-${VERSIONINFO}
+mkdir image
+sudo mount $LOOPDEV image
+sudo chmod 777 image
+mkdir -p image/boot/extlinux
+sudo ../scratch/${SYSLINUX}/bios/extlinux/extlinux --install image/boot/extlinux
+cp ../scratch/vmlinuz image/boot/
+echo "default msed" >>image/boot/extlinux/extlinux.conf
+echo "prompt 0" >>image/boot/extlinux/extlinux.conf
+echo "noescape 1" >>image/boot/extlinux/extlinux.conf
+echo "label msed" >>image/boot/extlinux/extlinux.conf
+echo "    kernel /boot/vmlinuz" >>image/boot/extlinux/extlinux.conf
+echo "    initrd /boot/core.gz" >>image/boot/extlinux/extlinux.conf
+echo "    append loglevel=0 libata.allow_tpm=1 tinycore base norestore noswap superuser" >>image/boot/extlinux/extlinux.conf
+## Remaster the initrd 
+mkdir core
+cd core
+zcat ../../scratch/core.gz | sudo cpio -i -H newc -d
+cd ..
+sudo mkdir -p core/usr/local/sbin/
+sudo unsquashfs -f -li -d core ../scratch/ncurses-common.tcz
+sudo unsquashfs -f -li -d core ../scratch/ncurses.tcz
+sudo ldconfig -r core
+## simple echo cause Permission Denied so whe have this $h1t
+               sudo echo "linuxpba 2>log.txt " > temp_profile
+		sudo rm core/root/.profile
+		sudo cp temp_profile core/root/.profile
+		sudo rm temp_profile
+		sudo cp ../../LinuxPBA/dist/${BUILDTYPE}/GNU-Linux-x86/linuxpba core/usr/local/sbin/
+## now repackage it
+cd core
+sudo find | sudo cpio -o -H newc | gzip -11 > ../image/boot/core.gz
+cd ..
+sudo umount image
+sudo losetup -d $LOOPDEV
+gzip ${BUILDIMG}

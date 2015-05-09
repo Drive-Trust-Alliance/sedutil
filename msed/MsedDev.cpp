@@ -69,6 +69,11 @@ uint8_t MsedDev::isPresent()
 	LOG(D1) << "Entering MsedDev::isPresent() " << (uint16_t) isOpen;
     return isOpen;
 }
+uint8_t MsedDev::MBREnabled()
+{
+	LOG(D1) << "Entering MsedDev::MBRENabled" << (uint16_t) disk_info.OPAL20;
+	return disk_info.Locking_MBREnabled;
+}
 char *MsedDev::getFirmwareRev()
 {
 	return (char *)&disk_info.firmwareRev;

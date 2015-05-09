@@ -162,3 +162,4 @@ $RECYCLE.BIN/
 Doxygen/
 **/private/private.xml
 /images/*/*
+/LinuxPBA/dist/
