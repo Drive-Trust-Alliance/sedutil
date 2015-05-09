@@ -19,7 +19,6 @@ sudo rm -rf LINUXPBA${BUILDTYPE} ; mkdir LINUXPBA${BUILDTYPE} ; cd LINUXPBA${BUI
 [ -f ${SYSLINUX}/bios/mbr/mbr.bin -a \
      -x ${SYSLINUX}/bios/linux/syslinux -a \
      -f ../../LinuxPBA/dist/${BUILDTYPE}/GNU-Linux-x86/linuxpba -a \
-     -f ../scratch/ncurses-common.tcz -a \
       -f ../scratch/ncurses.tcz -a \
       -f ../scratch/core.gz  \
   ] || { echo " prereqs are not available "; exit 1; }
@@ -48,7 +47,7 @@ cd core
 zcat ../../scratch/core.gz | sudo cpio -i -H newc -d
 cd ..
 sudo mkdir -p core/usr/local/sbin/
-sudo unsquashfs -f -li -d core ../scratch/ncurses-common.tcz
+##sudo unsquashfs -f -li -d core ../scratch/ncurses-common.tcz
 sudo unsquashfs -f -li -d core ../scratch/ncurses.tcz
 sudo ldconfig -r core
 ## simple echo cause Permission Denied so whe have this $h1t
