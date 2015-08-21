@@ -92,8 +92,8 @@ int TestMsed(const PBKDF_TestTuple *testSet, unsigned int testSetSize)
         const PBKDF_TestTuple &tuple = testSet[i];
         hash.clear();
         seaSalt.clear();
-        for (uint16_t i = 0; i < strnlen(tuple.Salt, 255); i++) {
-            seaSalt.push_back(tuple.Salt[i]);
+        for (uint16_t j = 0; j < strnlen(tuple.Salt, 255); j++) {
+            seaSalt.push_back(tuple.Salt[j]);
         }
 		printf("Password %s Salt %s Iterations %i Length %i\n", (char *)tuple.Password,
 			(char *) tuple.Salt, tuple.iterations, tuple.hashlen);

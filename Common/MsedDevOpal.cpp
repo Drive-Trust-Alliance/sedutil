@@ -985,7 +985,7 @@ uint8_t MsedDevOpal::getTable(vector<uint8_t> table, uint16_t startcol,
 	delete get;
 	return 0;
 }
-uint8_t MsedDevOpal::exec(MsedCommand * cmd, MsedResponse &response, uint8_t protocol)
+uint8_t MsedDevOpal::exec(MsedCommand * cmd, uint8_t protocol)
 {
 	uint8_t lastRC;
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();

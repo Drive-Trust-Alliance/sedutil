@@ -154,7 +154,7 @@ MsedSession::sendCommand(MsedCommand * cmd, MsedResponse & response)
     cmd->setTSN(TSN);
     cmd->setcomID(d->comID());
 
-    d->exec(cmd, response, SecurityProtocol);
+    d->exec(cmd, SecurityProtocol);
     /*
      * Check out the basics that so that we know we
      * have a sane reply to work with

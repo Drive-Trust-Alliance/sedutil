@@ -556,7 +556,7 @@ uint16_t MsedDevEnterprise::comID()
     LOG(D1) << "Entering MsedDevEnterprise::comID()";
     return disk_info.Enterprise_basecomID;
 }
-uint8_t MsedDevEnterprise::exec(MsedCommand * cmd, MsedResponse &response, uint8_t protocol)
+uint8_t MsedDevEnterprise::exec(MsedCommand * cmd, uint8_t protocol)
 {
     uint8_t rc = 0;
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();

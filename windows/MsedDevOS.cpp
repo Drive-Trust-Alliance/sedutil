@@ -20,7 +20,10 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include <stdio.h>
 #include <iostream>
+#pragma warning(push)
+#pragma warning(disable : 4091)
 #include <Ntddscsi.h>
+#pragma warning(pop)
 #include <vector>
 #include "MsedDevOS.h"
 #include "MsedEndianFixup.h"

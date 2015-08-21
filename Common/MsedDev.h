@@ -212,8 +212,7 @@ public:
 	 * @param response the MsedResonse object containing the response
 	 * @param protocol The security protocol number to use for the command
 	 */
-	virtual uint8_t exec(MsedCommand * cmd, MsedResponse &response,
-		uint8_t protocol = 0x01) = 0;
+	virtual uint8_t exec(MsedCommand * cmd, uint8_t protocol = 0x01) = 0;
 	/** return the communications ID to be used for sessions to this device */
 	virtual uint16_t comID() = 0;
 protected:
