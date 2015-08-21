@@ -1,3 +1,8 @@
+![alt tag](https://avatars0.githubusercontent.com/u/13870012?v=3&s=200)I am joining forces with the Drive Trust Alliance (Drive-Trust-Alliance on GitHub) to bring the best possible open source SED tools to the community.  Information on the Drive Trust Allinace can be found at https://drivetrust.com.
+
+New releases of SED software should be arriving soon from the DTA
+
+
 This software is Copyright 2014,2015 Michael Romeo <r0m30@r0m30.com>
 
     This file is part of msed.
