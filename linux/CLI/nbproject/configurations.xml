@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="95">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <logicalFolder name="pbdkf2" displayName="pbdkf2" projectFiles="true">
+        <itemPath>../../Common/pbdkf2/config.h</itemPath>
+        <itemPath>../../Common/pbdkf2/gc.h</itemPath>
+        <itemPath>../../Common/pbdkf2/hmac.h</itemPath>
+        <itemPath>../../Common/pbdkf2/memxor.h</itemPath>
+        <itemPath>../../Common/pbdkf2/sha1.h</itemPath>
+        <itemPath>../../Common/pbdkf2/stdalign.h</itemPath>
+      </logicalFolder>
+      <itemPath>../../Common/MsedCommand.h</itemPath>
+      <itemPath>../../Common/MsedConstants.h</itemPath>
+      <itemPath>../../Common/MsedDev.h</itemPath>
+      <itemPath>../../Common/MsedDevEnterprise.h</itemPath>
+      <itemPath>../../Common/MsedDevGeneric.h</itemPath>
+      <itemPath>../MsedDevOS.h</itemPath>
+      <itemPath>../../Common/MsedDevOpal.h</itemPath>
+      <itemPath>../../Common/MsedDevOpal1.h</itemPath>
+      <itemPath>../../Common/MsedDevOpal2.h</itemPath>
+      <itemPath>../../Common/MsedEndianFixup.h</itemPath>
+      <itemPath>../../Common/MsedHashPwd.h</itemPath>
+      <itemPath>../../Common/MsedHexDump.h</itemPath>
+      <itemPath>../../Common/MsedLexicon.h</itemPath>
+      <itemPath>../../Common/MsedOptions.h</itemPath>
+      <itemPath>../../Common/MsedResponse.h</itemPath>
+      <itemPath>../../Common/MsedSession.h</itemPath>
+      <itemPath>../../Common/MsedStructures.h</itemPath>
+      <itemPath>../../Common/log.h</itemPath>
+      <itemPath>../os.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <logicalFolder name="pbdkf2" displayName="pbdkf2" projectFiles="true">
+        <itemPath>../../Common/pbdkf2/gc-gnulib.c</itemPath>
+        <itemPath>../../Common/pbdkf2/gc-pbkdf2-sha1.c</itemPath>
+        <itemPath>../../Common/pbdkf2/hmac-sha1.c</itemPath>
+        <itemPath>../../Common/pbdkf2/memxor.c</itemPath>
+        <itemPath>../../Common/pbdkf2/sha1.c</itemPath>
+      </logicalFolder>
+      <itemPath>../../Common/MsedCommand.cpp</itemPath>
+      <itemPath>../../Common/MsedDev.cpp</itemPath>
+      <itemPath>../../Common/MsedDevEnterprise.cpp</itemPath>
+      <itemPath>../../Common/MsedDevGeneric.cpp</itemPath>
+      <itemPath>../MsedDevOS.cpp</itemPath>
+      <itemPath>../../Common/MsedDevOpal.cpp</itemPath>
+      <itemPath>../../Common/MsedDevOpal1.cpp</itemPath>
+      <itemPath>../../Common/MsedDevOpal2.cpp</itemPath>
+      <itemPath>../../Common/MsedHashPwd.cpp</itemPath>
+      <itemPath>../../Common/MsedHexDump.cpp</itemPath>
+      <itemPath>../../Common/MsedOptions.cpp</itemPath>
+      <itemPath>../../Common/MsedResponse.cpp</itemPath>
+      <itemPath>../../Common/MsedSession.cpp</itemPath>
+      <itemPath>../../Common/msed.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../Common/pbdkf2</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug_i686" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <architecture>1</architecture>
+          <standard>10</standard>
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../../Common</pElem>
+            <pElem>../../Common/pbdkf2</pElem>
+          </incDir>
+          <warningLevel>3</warningLevel>
+        </cTool>
+        <ccTool>
+          <developmentMode>0</developmentMode>
+          <architecture>1</architecture>
+          <standard>8</standard>
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../../Common</pElem>
+            <pElem>../../Common/pbdkf2</pElem>
+          </incDir>
+          <warningLevel>3</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <commandLine>-Wall</commandLine>
+        </fortranCompilerTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/sedutil-cli</output>
+        </linkerTool>
+      </compileType>
+      <item path="../../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedCommand.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedConstants.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDev.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevEnterprise.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevEnterprise.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevGeneric.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal2.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedEndianFixup.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedHashPwd.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedHashPwd.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedHexDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedHexDump.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedLexicon.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedOptions.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedOptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedResponse.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedResponse.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedSession.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedSession.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedStructures.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/log.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/msed.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/gc-pbkdf2-sha1.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/gc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/hmac.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/memxor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/sha1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../MsedDevOS.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../os.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release_i686" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+          <architecture>1</architecture>
+          <standard>10</standard>
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../../Common</pElem>
+            <pElem>../../Common/pbdkf2</pElem>
+          </incDir>
+          <warningLevel>3</warningLevel>
+        </cTool>
+        <ccTool>
+          <developmentMode>0</developmentMode>
+          <architecture>1</architecture>
+          <standard>8</standard>
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../../Common</pElem>
+            <pElem>../../Common/pbdkf2</pElem>
+          </incDir>
+          <warningLevel>3</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+          <commandLine>-Wall</commandLine>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/sedutil-cli</output>
+        </linkerTool>
+      </compileType>
+      <item path="../../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedCommand.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedConstants.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDev.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevEnterprise.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevEnterprise.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevGeneric.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal2.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedEndianFixup.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedHashPwd.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedHashPwd.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedHexDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedHexDump.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedLexicon.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedOptions.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedOptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedResponse.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedResponse.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedSession.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedSession.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedStructures.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/log.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/msed.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/gc-pbkdf2-sha1.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/gc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/hmac.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/memxor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/sha1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../MsedDevOS.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../os.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Debug_x86_64" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <architecture>2</architecture>
+          <standard>10</standard>
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../../Common</pElem>
+            <pElem>../../Common/pbdkf2</pElem>
+          </incDir>
+          <warningLevel>3</warningLevel>
+        </cTool>
+        <ccTool>
+          <developmentMode>0</developmentMode>
+          <architecture>2</architecture>
+          <standard>8</standard>
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../../Common</pElem>
+            <pElem>../../Common/pbdkf2</pElem>
+          </incDir>
+          <warningLevel>3</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <commandLine>-Wall</commandLine>
+        </fortranCompilerTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/sedutil-cli</output>
+        </linkerTool>
+      </compileType>
+      <item path="../../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedCommand.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedConstants.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDev.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedDev.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevEnterprise.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedDevEnterprise.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedDevGeneric.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedDevOpal.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedDevOpal1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedDevOpal2.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedEndianFixup.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedHashPwd.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedHashPwd.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedHexDump.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedHexDump.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedLexicon.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedOptions.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedOptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedResponse.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedResponse.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedSession.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedSession.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedStructures.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/log.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/msed.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/pbdkf2/config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="10">
+      </item>
+      <item path="../../Common/pbdkf2/gc-pbkdf2-sha1.c"
+            ex="false"
+            tool="0"
+            flavor2="10">
+      </item>
+      <item path="../../Common/pbdkf2/gc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="10">
+      </item>
+      <item path="../../Common/pbdkf2/hmac.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/memxor.c" ex="false" tool="0" flavor2="10">
+      </item>
+      <item path="../../Common/pbdkf2/memxor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="10">
+      </item>
+      <item path="../../Common/pbdkf2/sha1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../MsedDevOS.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../os.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release_x86_64" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+          <architecture>2</architecture>
+          <standard>10</standard>
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../../Common</pElem>
+            <pElem>../../Common/pbdkf2</pElem>
+          </incDir>
+          <warningLevel>3</warningLevel>
+        </cTool>
+        <ccTool>
+          <developmentMode>0</developmentMode>
+          <architecture>2</architecture>
+          <standard>8</standard>
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../../Common</pElem>
+            <pElem>../../Common/pbdkf2</pElem>
+          </incDir>
+          <warningLevel>3</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+          <commandLine>-Wall</commandLine>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/sedutil-cli</output>
+        </linkerTool>
+      </compileType>
+      <item path="../../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedCommand.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedConstants.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDev.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedDev.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevEnterprise.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedDevEnterprise.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedDevGeneric.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedDevOpal.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedDevOpal1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedDevOpal2.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedEndianFixup.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedHashPwd.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedHashPwd.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedHexDump.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedHexDump.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedLexicon.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedOptions.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedOptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedResponse.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedResponse.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedSession.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/MsedSession.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/MsedStructures.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/log.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/msed.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/pbdkf2/config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="10">
+      </item>
+      <item path="../../Common/pbdkf2/gc-pbkdf2-sha1.c"
+            ex="false"
+            tool="0"
+            flavor2="10">
+      </item>
+      <item path="../../Common/pbdkf2/gc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="10">
+      </item>
+      <item path="../../Common/pbdkf2/hmac.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/memxor.c" ex="false" tool="0" flavor2="10">
+      </item>
+      <item path="../../Common/pbdkf2/memxor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="10">
+      </item>
+      <item path="../../Common/pbdkf2/sha1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../MsedDevOS.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../os.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
