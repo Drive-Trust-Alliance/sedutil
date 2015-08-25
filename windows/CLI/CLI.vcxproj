@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\common\Class_Skeleton.h" />
     <ClInclude Include="..\..\common\log.h" />
     <ClInclude Include="..\..\common\MsedCommand.h" />
     <ClInclude Include="..\..\common\MsedConstants.h" />
@@ -48,7 +47,6 @@
     <ClInclude Include="..\os.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\common\Class_Skeleton.cpp" />
     <ClCompile Include="..\..\common\msed.cpp" />
     <ClCompile Include="..\..\common\MsedCommand.cpp" />
     <ClCompile Include="..\..\common\MsedDev.cpp" />

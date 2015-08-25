@@ -11,9 +11,9 @@ read INOUT
 echo  Last chance to hit Ctrl-c an keep the data on your drive
 read INPUT
 ## test msed commands
-MSED=../../Win32/Release/msed.exe
-##MSED=../../x64/Release/msed.exe
-##MSED=./msed.exe
+MSED=CLI/Win32/Release/sedutil-cli.exe
+##MSED=CLI/x64/Release/sedutil-cli.exe
+##MSED=./sedutil-cli.exe
 ##MSED=echo 
 LOGFILE=msed_test.baseline
 OUTPUTSINK=">>  ${LOGFILE} 2>&1"
