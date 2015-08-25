@@ -11,8 +11,8 @@ read INOUT
 echo  Last chance to hit Ctrl-c an keep the data on your drive
 read INPUT
 ## test msed commands
-MSED=../../dist/Release_i686/msed
-##MSED=../../dist/Release_x86_64/msed
+MSED=./CLI/dist/Release_i686/GNU-Linux-x86/sedutil-cli
+##MSED=./CLI/dist/Release_x86_64/GNU-Linux-x86/sedutil-cli
 ##MSED=./msed
 ##MSED=echo 
 LOGFILE=msed_test.baseline
