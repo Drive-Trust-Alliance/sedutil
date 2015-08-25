@@ -86,7 +86,7 @@ uint16_t MsedDevGeneric::comID()
 		return 0xff; 
 }
 
-uint8NOCODE(exec,MsedCommand * cmd, uint8_t protocol)
+uint8NOCODE(exec,MsedCommand * cmd, MsedResponse & resp, uint8_t protocol)
 uint8NOCODE(objDump,char *sp, char * auth, char *pass,char * objID)
 uint8NOCODE(rawCmd,char *sp, char * auth, char *pass,char *invoker, char *method, char *plist)
 #ifdef _MSC_VER

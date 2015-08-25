@@ -556,7 +556,7 @@ uint16_t MsedDevEnterprise::comID()
     LOG(D1) << "Entering MsedDevEnterprise::comID()";
     return disk_info.Enterprise_basecomID;
 }
-uint8_t MsedDevEnterprise::exec(MsedCommand * cmd, uint8_t protocol)
+uint8_t MsedDevEnterprise::exec(MsedCommand * cmd, MsedResponse & resp, uint8_t protocol)
 {
     uint8_t rc = 0;
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
@@ -582,7 +582,7 @@ uint8_t MsedDevEnterprise::exec(MsedCommand * cmd, uint8_t protocol)
         LOG(E) << "Command failed on recv" << (uint16_t) rc;
         return rc;
     }
-    response.init(cmd->getRespBuffer());
+    resp.init(cmd->getRespBuffer());
     return 0;
 }
 uint8_t MsedDevEnterprise::properties()

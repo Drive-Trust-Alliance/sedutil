@@ -985,7 +985,7 @@ uint8_t MsedDevOpal::getTable(vector<uint8_t> table, uint16_t startcol,
 	delete get;
 	return 0;
 }
-uint8_t MsedDevOpal::exec(MsedCommand * cmd, uint8_t protocol)
+uint8_t MsedDevOpal::exec(MsedCommand * cmd, MsedResponse & resp, uint8_t protocol)
 {
 	uint8_t lastRC;
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
@@ -1009,7 +1009,7 @@ uint8_t MsedDevOpal::exec(MsedCommand * cmd, uint8_t protocol)
         LOG(E) << "Command failed on recv" << (uint16_t) lastRC;
         return lastRC;
     }
-    response.init(cmd->getRespBuffer());
+    resp.init(cmd->getRespBuffer());
     return 0;
 }
 
