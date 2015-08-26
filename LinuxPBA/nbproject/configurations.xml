@@ -63,6 +63,9 @@
             <pElem>../Common</pElem>
             <pElem>../Common/pbdkf2</pElem>
           </incDir>
+          <preprocessorList>
+            <Elem>MSEDDEBUG</Elem>
+          </preprocessorList>
           <warningLevel>3</warningLevel>
         </cTool>
         <ccTool>
@@ -73,6 +76,9 @@
             <pElem>../Common</pElem>
             <pElem>../Common/pbdkf2</pElem>
           </incDir>
+          <preprocessorList>
+            <Elem>MSEDDEBUG</Elem>
+          </preprocessorList>
           <warningLevel>3</warningLevel>
         </ccTool>
         <linkerTool>

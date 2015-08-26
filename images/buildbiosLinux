@@ -16,8 +16,8 @@ fi
 # Start fresh
 sudo rm -rf LINUXPBA${BUILDTYPE} ; mkdir LINUXPBA${BUILDTYPE} ; cd LINUXPBA${BUILDTYPE}
 ## check that everything is available
-[ -f ${SYSLINUX}/bios/mbr/mbr.bin -a \
-     -x ${SYSLINUX}/bios/linux/syslinux -a \
+[ -f ../scratch/${SYSLINUX}/bios/mbr/mbr.bin -a \
+     -x ../scratch/${SYSLINUX}/bios/linux/syslinux -a \
      -f ../../LinuxPBA/dist/${BUILDTYPE}/GNU-Linux-x86/linuxpba -a \
       -f ../scratch/ncurses.tcz -a \
       -f ../scratch/core.gz  \
