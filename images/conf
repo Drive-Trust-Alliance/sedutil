@@ -4,3 +4,5 @@
 TINYCORE=Core-6.3.iso
 SYSLINUX=syslinux-6.03
 TCDISTRO=http://distro.ibiblio.org/tinycorelinux/6.x/x86/
+BUILDROOT=git://git.buildroot.net/buildroot
+BUILDROOT_TAG=2015.08
