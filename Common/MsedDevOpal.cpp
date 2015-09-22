@@ -721,6 +721,7 @@ uint8_t MsedDevOpal::loadPBA(char * password, char * filename) {
 		LOG(E) << "Unable to create command object ";
 		return MSEDERROR_OBJECT_CREATE_FAILED;
 	}
+
 	session = new MsedSession(this);
 	if (NULL == session) {
 		LOG(E) << "Unable to create session object ";
@@ -735,10 +736,24 @@ uint8_t MsedDevOpal::loadPBA(char * password, char * filename) {
 	LOG(I) << "Writing PBA to " << dev;
 	while (!pbafile.eof()) {
 		pbafile.read((char *)buffer.data(), 1024);
-		if (!(filepos % fivepercent)) progress_bar[complete++] = star[0];
+		if (!(filepos % fivepercent)) {
+			progress_bar[complete++] = star[0];
+			delete session;
+			session = new MsedSession(this);
+			if (NULL == session) {
+				LOG(E) << "Unable to create session object ";
+				return MSEDERROR_OBJECT_CREATE_FAILED;
+			}
+			if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+				delete cmd;
+				delete session;
+				pbafile.close();
+				return lastRC;
+			}
+		}
 		if (!(filepos % (1024 * 5))) {
 			progress_bar[1] = spinner[spinnertick.i++];
-			printf("\r%s", progress_bar);
+			printf("\r%s %i", progress_bar,filepos);
 			fflush(stdout);
 		}
 		cmd->reset(OPAL_UID::OPAL_MBR, OPAL_METHOD::SET);
@@ -762,7 +777,7 @@ uint8_t MsedDevOpal::loadPBA(char * password, char * filename) {
 		}
 		filepos += 1024;
 	}
-	printf("\n");
+	printf("\r%s %i bytes written \n", progress_bar, filepos);
 	delete cmd;
 	delete session;
 	pbafile.close();
