@@ -126,8 +126,7 @@ uint64_t MsedResponse::getUint64(uint32_t tokenNum)
         }
         else {
             uint64_t whatever = 0;
-            if (response[tokenNum].size() > 9) 
-                LOG(E) << "UINT64 with greater than 8 bytes";
+            if (response[tokenNum].size() > 9) { LOG(E) << "UINT64 with greater than 8 bytes"; }
             int b = 0;
             for (uint32_t i = (uint32_t) response[tokenNum].size() - 1; i > 0; i--) {
 				whatever |= ((uint64_t)response[tokenNum][i] << (8 * b));
@@ -155,8 +154,7 @@ uint32_t MsedResponse::getUint32(uint32_t tokenNum)
 {
     LOG(D1) << "Entering  MsedResponse::getUint32";
     uint64_t i = getUint64(tokenNum);
-    if (i > 0xffffffff)
-        LOG(E) << "UINT32 truncated ";
+    if (i > 0xffffffff) { LOG(E) << "UINT32 truncated "; }
     return (uint32_t) i;
 
 }
@@ -165,8 +163,7 @@ uint16_t MsedResponse::getUint16(uint32_t tokenNum)
 {
     LOG(D1) << "Entering  MsedResponse::getUint16";
     uint64_t i = getUint64(tokenNum);
-    if (i > 0xffff)
-        LOG(E) << "UINT16 truncated ";
+    if (i > 0xffff) { LOG(E) << "UINT16 truncated "; }
     return (uint16_t) i;
 }
 
@@ -174,8 +171,7 @@ uint8_t MsedResponse::getUint8(uint32_t tokenNum)
 {
 	LOG(D1) << "Entering  MsedResponse::getUint8";
     uint64_t i = getUint64(tokenNum);
-    if (i > 0xff)
-        LOG(E) << "UINT8 truncated ";
+    if (i > 0xff) { LOG(E) << "UINT8 truncated "; }
     return (uint8_t) i;
 }
 //int64_t MsedResponse::getSint(uint32_t tokenNum) {

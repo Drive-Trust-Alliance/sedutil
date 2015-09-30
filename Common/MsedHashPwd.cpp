@@ -37,7 +37,7 @@ void MsedHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> sa
 	LOG(D1) << " Entered MsedHashPassword";
 	// if the hashsize can be > 255 the token overhead logic needs to be fixed
 	assert(1 == sizeof(hashsize));
-	if (253 < hashsize) LOG(E) << "Hashsize > 253 incorrect token generated";
+	if (253 < hashsize) { LOG(E) << "Hashsize > 253 incorrect token generated"; }
 
 	hash.clear();
 	hash.reserve(hashsize + 2); // hope this will prevent reallocation

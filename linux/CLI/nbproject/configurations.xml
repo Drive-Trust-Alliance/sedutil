@@ -93,6 +93,7 @@
             <pElem>../../Common</pElem>
             <pElem>../../Common/pbdkf2</pElem>
           </incDir>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </cTool>
         <ccTool>
@@ -104,6 +105,7 @@
             <pElem>../../Common</pElem>
             <pElem>../../Common/pbdkf2</pElem>
           </incDir>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </ccTool>
         <fortranCompilerTool>
@@ -221,6 +223,7 @@
             <pElem>../../Common</pElem>
             <pElem>../../Common/pbdkf2</pElem>
           </incDir>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </cTool>
         <ccTool>
@@ -232,6 +235,7 @@
             <pElem>../../Common</pElem>
             <pElem>../../Common/pbdkf2</pElem>
           </incDir>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </ccTool>
         <fortranCompilerTool>
@@ -352,6 +356,7 @@
             <pElem>../../Common</pElem>
             <pElem>../../Common/pbdkf2</pElem>
           </incDir>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </cTool>
         <ccTool>
@@ -363,6 +368,7 @@
             <pElem>../../Common</pElem>
             <pElem>../../Common/pbdkf2</pElem>
           </incDir>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </ccTool>
         <fortranCompilerTool>
@@ -480,6 +486,7 @@
             <pElem>../../Common</pElem>
             <pElem>../../Common/pbdkf2</pElem>
           </incDir>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </cTool>
         <ccTool>
@@ -491,6 +498,7 @@
             <pElem>../../Common</pElem>
             <pElem>../../Common/pbdkf2</pElem>
           </incDir>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </ccTool>
         <fortranCompilerTool>

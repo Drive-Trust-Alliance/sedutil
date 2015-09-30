@@ -36,7 +36,7 @@ public:
 	/** Default constructor, does nothing */
 	MsedDev();
 	/** Default destructor, does nothing*/
-	~MsedDev();
+	virtual ~MsedDev();
 	/** Does the device conform to the OPAL 2.0 SSC */
 	uint8_t isOpal2();
 	/** Does the device conform to the OPAL 1.0 SSC */
