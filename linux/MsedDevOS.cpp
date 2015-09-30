@@ -18,6 +18,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #include "os.h"
+#include <malloc.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
@@ -177,7 +178,7 @@ void MsedDevOS::identify()
     LOG(D4) << "Entering MsedDevOS::identify()";
     vector<uint8_t> nullz(512, 0x00);
     if (!isOpen) return; //disk open failed so this will too
-    uint8_t * buffer = (uint8_t *) aligned_alloc(IO_BUFFER_ALIGNMENT, IO_BUFFER_LENGTH);
+    uint8_t * buffer = (uint8_t *) memalign(IO_BUFFER_ALIGNMENT, IO_BUFFER_LENGTH);
     memset(buffer, 0, IO_BUFFER_LENGTH);
     if (ioctl(fd, HDIO_GET_IDENTITY, buffer) < 0) {
         LOG(E) << "Identify failed " << strerror(errno);
