@@ -38,8 +38,7 @@ MsedDevEnterprise::MsedDevEnterprise(const char * devref)
 {
 	MsedDevOS::init(devref);
 	assert(isEprise());
-	if (properties())
-		LOG(E) << "Properties exchange failed";
+	if (properties()) { LOG(E) << "Properties exchange failed"; }
 }
 MsedDevEnterprise::~MsedDevEnterprise()
 {
@@ -118,7 +117,7 @@ uint8_t MsedDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t e
 uint8_t MsedDevEnterprise::revertLockingSP(char * password, uint8_t keep)
 {
 	LOG(D1) << "Entering revert MsedEnterpriseDev::LockingSP()";
-	if(password == NULL) LOG(D4) << "Referencing formal parameters " << keep;
+	if(password == NULL) { LOG(D4) << "Referencing formal parameters " << keep; }
 	LOG(E) << "Revert is not implemented at this time ";
 	LOG(E) << "I can find no documentation and numerous web searched haven't helped ";
 	LOG(D1) << "Exiting revert MsedEnterpriseDev::LockingSP()";
@@ -185,7 +184,7 @@ uint8_t MsedDevEnterprise::setNewPassword(char * password, char * userid, char *
 uint8_t MsedDevEnterprise::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 {
 	LOG(D1) << "Entering MsedDevEnterprise::setMBREnable";
-	if (NULL == Admin1Password) LOG(E) << "This shouldn't happen " << mbrstate;
+	if (NULL == Admin1Password) { LOG(E) << "This shouldn't happen " << mbrstate; }
 	LOG(I) << "MBR shadowing is optional in the Enterprise SSC and not supported";
 	LOG(D1) << "Exiting MsedDevEnterprise::setMBREnable";
 	return 0;
@@ -193,7 +192,7 @@ uint8_t MsedDevEnterprise::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 uint8_t MsedDevEnterprise::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 {
 	LOG(D1) << "Entering MsedDevEnterprise::setMBRDone";
-	if (NULL == Admin1Password) LOG(E) << "This shouldn't happen " << mbrstate;
+	if (NULL == Admin1Password) { LOG(E) << "This shouldn't happen " << mbrstate; }
 	LOG(I) << "MBR shadowing is optional in the Enterprise SSC and not supported";
 	LOG(D1) << "Exiting MsedDevEnterprise::setMBRDone";
 	return 0;
@@ -202,13 +201,13 @@ uint8_t MsedDevEnterprise::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 uint8_t MsedDevEnterprise::setupLockingRange(uint8_t lockingrange, uint64_t start,
 	uint64_t length, char * password) {
 	LOG(D1) << "Entering MsedDevEnterprise::setupLockingRange";
-	if (0 == lockingrange) LOG(E) << start << length << password;
+	if (0 == lockingrange) { LOG(E) << start << length << password; }
 	LOG(D1) << "Exiting MsedDevEnterprise::setupLockingRange";
 	return 0;
 }
 uint8_t MsedDevEnterprise::listLockingRanges(char * password) {
 	LOG(D1) << "Entering MsedDevEnterprise::listLockingRanges";
-	if (NULL == password) LOG(E) << "password NULL";
+	if (NULL == password) { LOG(E) << "password NULL"; }
 	LOG(D1) << "Exiting MsedDevEnterprise::listLockingRanges";
 	return 0;
 }
@@ -277,14 +276,14 @@ uint8_t MsedDevEnterprise::enableUser(char * password, char * userid)
 {
 	LOG(D1) << "Entering MsedDevEnterprise::enableUser";
 	LOG(E) << "enableUser not implemented";
-	if (!password && !userid) LOG(E) << "Formal Parameters";
+	if (!password && !userid) { LOG(E) << "Formal Parameters"; }
 	LOG(D1) << "Exiting MsedDevEnterprise::enableUser()";
 	return 0xff;
 }
 uint8_t MsedDevEnterprise::revertTPer(char * password, uint8_t PSID)
 {
 	LOG(D1) << "Entering MsedDevEnterprise::revertTPer()";
-	if (password == NULL) LOG(D4) << "Referencing formal parameters " << PSID;
+	if (password == NULL) { LOG(D4) << "Referencing formal parameters " << PSID; }
 	LOG(E) << "Revert is not implemented at this time ";
 	LOG(E) << "I can find no documentation and numerous web searched haven't helped ";
 	LOG(D1) << "Exiting MsedDevEnterprise::RevertTperevertTPer()";
@@ -292,7 +291,7 @@ uint8_t MsedDevEnterprise::revertTPer(char * password, uint8_t PSID)
 }
 uint8_t MsedDevEnterprise::loadPBA(char * password, char * filename) {
 	LOG(D1) << "Entering MsedDevEnterprise::loadPBAimage()" << filename << " " << dev;
-	if (password == NULL) LOG(D4) << "Referencing formal parameters " << filename;
+	if (password == NULL) { LOG(D4) << "Referencing formal parameters " << filename; }
 	LOG(I) << "loadPBA is not implemented.  It is not a mandatory part of  ";
 	LOG(I) << "the enterprise SSC ";
 	LOG(D1) << "Exiting MsedDevEnterprise::loadPBAimage()";
@@ -301,7 +300,7 @@ uint8_t MsedDevEnterprise::loadPBA(char * password, char * filename) {
 uint8_t MsedDevEnterprise::activateLockingSP(char * password)
 {
 	LOG(D1) << "Entering MsedDevEnterprise::activateLockingSP()";
-	if (password == NULL) LOG(D4) << "Referencing formal parameters ";
+	if (password == NULL) { LOG(D4) << "Referencing formal parameters "; }
 	LOG(E) << "activate Locking SP is not a part of the Enterprise SSC ";
 	LOG(D1) << "Exiting MsedDevEnterprise::activatLockingSP()";
 	return 0;

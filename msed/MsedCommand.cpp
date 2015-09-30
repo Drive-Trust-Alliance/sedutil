@@ -177,7 +177,7 @@ MsedCommand::complete(uint8_t EOD)
     /* fill in the lengths and add the modulo 4 padding */
     OPALHeader * hdr;
     hdr = (OPALHeader *) cmdbuf;
-    hdr->subpkt.length = SWAP32(bufferpos - sizeof (OPALHeader));
+    hdr->subpkt.length = SWAP32(bufferpos - (sizeof (OPALHeader)));
     while (bufferpos % 4 != 0) {
         cmdbuf[bufferpos++] = 0x00;
     }
