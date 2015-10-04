@@ -64,7 +64,7 @@ public:
          */
 	uint8_t takeOwnership(char * newpassword);
         /** retrieve the MSID password */
-	uint8_t getDefaultPassword();
+	uint8_t printDefaultPassword();
         /** retrieve a single row from a table 
          * @param table the UID of the table
          * @param startcol the starting column of data requested
@@ -132,7 +132,7 @@ public:
          * @param userid the userid whose password is to be changed 
          * @param newpassword  value password is to be changed to
          */
-	uint8_t setNewPassword(char * password, char * userid, char * newpassword);
+	uint8_t setPassword(char * password, char * userid, char * newpassword);
         /** User command to manipulate the state of a locking range.
          * RW|RO|LK are the supported states @see OPAL_LOCKINGSTATE
          * @param lockingrange locking range number
@@ -153,7 +153,7 @@ public:
 	/** List status of locking ranges.
 	*  @param password Password of administrator
 	*/
-	uint8_t listLockingRanges(char * password);
+	uint8_t listLockingRanges(char * password, int rangeid);
         /** User command to enable/disable a locking range.
          * RW|RO|LK are the supported states @see OPAL_LOCKINGSTATE
          * @param lockingrange locking range number
@@ -172,6 +172,11 @@ public:
          * @param PSID true or false is the authority the PSID
          *   */
 	uint8_t revertTPer(char * password, uint8_t PSID = 0);
+	    /** Erase a locking range
+	    * @param lockingrange The number of the locking range (0 = global)
+	    * @param password Password of administrative authority for locking range
+	    */
+	uint8_t eraseLockingRange(uint8_t lockingrange, char * password);
         /** Loads a disk image file to the shadow MBR table.
          * @param password the password for the administrative authority with access to the table
          * @param filename the filename of the disk image
@@ -181,7 +186,7 @@ public:
          * Specific to the SSC that the device supports
          * @param password the password that is to be assigned to the SSC master entities 
          */
-	uint8_t initialsetup(char * password);
+	uint8_t initialSetup(char * password);
           /** Displays the identify and discovery 0 information */
 	void puke();
          /** Dumps an object for diagnostic purposes
@@ -214,4 +219,5 @@ protected:
 	uint8_t setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, OPAL_TOKEN value,
 		char * password, char * msg = (char *) "New Value Set");
 
+	uint8_t getDefaultPassword();
 };

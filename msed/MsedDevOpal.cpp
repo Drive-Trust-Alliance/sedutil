@@ -51,7 +51,7 @@ void MsedDevOpal::init(const char * devref)
 		LOG(E) << "Properties exchange failed";
 }
 
-uint8_t MsedDevOpal::initialsetup(char * password)
+uint8_t MsedDevOpal::initialSetup(char * password)
 {
 	LOG(D1) << "Entering initialSetup()";
 	uint8_t lastRC;
@@ -84,7 +84,7 @@ uint8_t MsedDevOpal::initialsetup(char * password)
 	LOG(D1) << "Exiting initialSetup()";
 	return 0;
 }
-uint8_t MsedDevOpal::listLockingRanges(char * password)
+uint8_t MsedDevOpal::listLockingRanges(char * password, int rangeid)
 {
 	uint8_t lastRC;
 	LOG(D1) << "Entering MsedDevOpal:listLockingRanges()";
@@ -377,6 +377,14 @@ uint8_t MsedDevOpal::revertLockingSP(char * password, uint8_t keep)
 	LOG(D1) << "Exiting revert MsedDev:LockingSP()";
 	return 0;
 }
+uint8_t MsedDevOpal::eraseLockingRange(uint8_t lockingrange, char * password)
+{
+	LOG(D1) << "Entering MsedDevOpal::eraseLockingRange()" << lockingrange << " " << dev;
+	if (password == NULL) LOG(D4) << "Referencing formal parameters " << lockingrange;
+	LOG(I) << "eraseLockingRange is not implemented.  It is not part of the Opal SSC ";
+	LOG(D1) << "Exiting MsedDevOpal::eraseLockingRange()";
+	return 0;
+}
 uint8_t MsedDevOpal::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<uint8_t> &userData)
 {
 	LOG(D1) << "Entering MsedDevOpal::getAuth4User()";
@@ -415,9 +423,9 @@ uint8_t MsedDevOpal::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<
 	LOG(D1) << "Exiting MsedDevOpal::getAuth4User()";
 	return 0;
 }
-uint8_t MsedDevOpal::setNewPassword(char * password, char * userid, char * newpassword)
+uint8_t MsedDevOpal::setPassword(char * password, char * userid, char * newpassword)
 {
-	LOG(D1) << "Entering MsedDevOpal::setNewPassword" ;
+	LOG(D1) << "Entering MsedDevOpal::setPassword" ;
 	uint8_t lastRC;
 	std::vector<uint8_t> userCPIN, hash;
 	session = new MsedSession(this);
@@ -442,7 +450,7 @@ uint8_t MsedDevOpal::setNewPassword(char * password, char * userid, char * newpa
 	}
 	LOG(I) << userid << " password changed";
 	delete session;
-	LOG(D1) << "Exiting MsedDevOpal::setNewPassword()";
+	LOG(D1) << "Exiting MsedDevOpal::setPassword()";
 	return 0;
 }
 uint8_t MsedDevOpal::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
@@ -834,10 +842,10 @@ uint8_t MsedDevOpal::takeOwnership(char * newpassword)
 		return lastRC;
 	}
 	if ((lastRC = setSIDPassword((char *)response.getString(4).c_str(), newpassword, 0)) != 0) {
-		LOG(E) << "takeownership failed";
+		LOG(E) << "takeOwnership failed";
 		return lastRC;
 	}
-	LOG(I) << "takeownership complete";
+	LOG(I) << "takeOwnership complete";
 	LOG(D1) << "Exiting takeOwnership()";
 	return 0;
 }
@@ -868,6 +876,17 @@ uint8_t MsedDevOpal::getDefaultPassword()
 	delete session;
 	LOG(D1) << "Exiting getDefaultPassword()";
 	return 0;
+}
+uint8_t MsedDevOpal::printDefaultPassword()
+{
+    const uint8_t rc = getDefaultPassword();
+	if (rc) {
+		LOG(E) << "unable to read MSID password";
+		return rc;
+	}
+	string defaultPassword = response.getString(4);
+    fprintf(stdout, "MSID: %s\n", (char *)defaultPassword.c_str());
+    return 0;
 }
 uint8_t MsedDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
 	uint8_t hasholdpwd, uint8_t hashnewpwd)

@@ -61,20 +61,22 @@ MsedDevGeneric::~MsedDevGeneric()
 void MsedDevGeneric::init(const char * devref)
 {
 }
-uint8NOCODE(initialsetup, char *password)
+uint8NOCODE(initialSetup, char *password)
 uint8NOCODE(configureLockingRange,uint8_t lockingrange, 
 	uint8_t enabled, char * password)
 uint8NOCODE(revertLockingSP,char * password, uint8_t keep)
-uint8NOCODE(setNewPassword,char * password, char * userid, char * newpassword)
+uint8NOCODE(setPassword,char * password, char * userid, char * newpassword)
 uint8NOCODE(setMBREnable,uint8_t mbrstate, char * Admin1Password)
 uint8NOCODE(setMBRDone,uint8_t mbrstate, char * Admin1Password)
 uint8NOCODE(setLockingRange,uint8_t lockingrange, uint8_t lockingstate,
 	char * Admin1Password)
 uint8NOCODE(setupLockingRange,uint8_t lockingrange, uint64_t start,
 	uint64_t length, char * password)
-uint8NOCODE(listLockingRanges, char * password)
+uint8NOCODE(listLockingRanges, char * password, int rangeid)
 uint8NOCODE(enableUser,char * password, char * userid)
 uint8NOCODE(revertTPer,char * password, uint8_t PSID)
+uint8NOCODE(eraseLockingRange,uint8_t lockingrange, char * password)
+uint8NOCODE(printDefaultPassword);
 uint8NOCODE(loadPBA,char * password, char * filename)
 uint8NOCODE(activateLockingSP,char * password)
 uint8NOCODE(takeOwnership, char * newpassword)

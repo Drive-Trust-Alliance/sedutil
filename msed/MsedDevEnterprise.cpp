@@ -30,9 +30,118 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "MsedResponse.h"
 #include "MsedSession.h"
 #include "MsedHexDump.h"
+#include "MsedAnnotatedDump.h"
 
 using namespace std;
 
+
+////////////////////////////////////////////////////////////////////////////////
+static const bool is_NULL_UID(std::vector<uint8_t> & v)
+////////////////////////////////////////////////////////////////////////////////
+{
+    return
+        v.size() == 9
+        && v[0] == 0xa8
+        && v[1] == 0x00
+        && v[2] == 0x00
+        && v[3] == 0x00
+        && v[4] == 0x00
+        && v[5] == 0x00
+        && v[6] == 0x00
+        && v[7] == 0x00
+        && v[8] == 0x00
+        ;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+static void set8(vector<uint8_t> & v, uint8_t value[8])
+////////////////////////////////////////////////////////////////////////////////
+{
+	v.clear();
+	v.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+	for (int i = 0; i < 8; i++)
+    {
+		v.push_back(value[i]);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+static void setband(vector<uint8_t> & v, uint16_t i)
+////////////////////////////////////////////////////////////////////////////////
+{
+    const uint16_t j = i+1;
+    v[1+6] = uint8_t(j >> 8) | v[1+6] & 0xF0;
+    v[1+7] = uint8_t(j);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+static void user2cpin(vector<uint8_t> & dst, vector<uint8_t> & src)
+////////////////////////////////////////////////////////////////////////////////
+{
+    // this works for BandMasterN and EraseMaster
+    // Table 29 Locking C_PIN table, p. 72 of Enterprise SSC rev 3.00
+    dst = src;
+    dst[1+3] = 0x0B;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+uint16_t MsedDevEnterprise::getMaxRanges(char * password)
+////////////////////////////////////////////////////////////////////////////////
+{
+    // create session
+	session = new MsedSession(this);
+	if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID))
+    {
+		delete session;
+		return 0xffff;
+	}
+
+    //** Table 36 "LockingInfo table", p. 72 of Enterprise SSC rev 3.00
+	vector<uint8_t> table;
+    set8(table, OPALUID[ENTERPRISE_LOCKING_INFO_TABLE]);
+
+    // query row 1 of LockingInfo table
+	if (getTable(table, "MaxRanges", "MaxRanges"))
+    {
+		delete session;
+		return getMaxRangesOpal(password);
+	}
+	delete session;
+
+    // "MaxRanges" is token 5 of response
+	const uint16_t MaxRanges = response.getUint16(5);
+    return MaxRanges;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+uint16_t MsedDevEnterprise::getMaxRangesOpal(char * password)
+////////////////////////////////////////////////////////////////////////////////
+{
+    // create session
+	session = new MsedSession(this);
+	if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID))
+    {
+		delete session;
+		return 0xffff;
+	}
+
+    //** Table 36 "LockingInfo table", p. 72 of Enterprise SSC rev 3.00
+	vector<uint8_t> table;
+    set8(table, OPALUID[OPAL_LOCKING_INFO_TABLE]);
+
+    // query row 1 of LockingInfo table
+	if (getTable(table, "MaxRanges", "MaxRanges"))
+    {
+		LOG(E) << "Unable to get MaxRanges from LockingInfo table";
+		delete session;
+		return 0xffff;
+	}
+	delete session;
+
+    // "MaxRanges" is token 5 of response
+	const uint16_t MaxRanges = response.getUint16(5);
+    return MaxRanges;
+}
 
 MsedDevEnterprise::MsedDevEnterprise(const char * devref)
 {
@@ -44,20 +153,20 @@ MsedDevEnterprise::MsedDevEnterprise(const char * devref)
 MsedDevEnterprise::~MsedDevEnterprise()
 {
 }
-uint8_t MsedDevEnterprise::initialsetup(char * password)
+uint8_t MsedDevEnterprise::initialSetup(char * password)
 {
 	LOG(D1) << "Entering initialSetup()";
 	if (takeOwnership(password)) {
 		LOG(E) << "Initial setup failed - unable to take ownership";
 		return 0xff;
 	}
-	if (setLockingRange(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
-		OPAL_TOKEN::OPAL_FALSE, password)) {
+	if (setLockingRange(0,
+        OPAL_LOCKINGSTATE::READWRITE, password)) {
 		LOG(E) << "Initial setup failed - unable to unlock for read/write";
 		return 0xff;
 	}
 	
-	if (configureLockingRange(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL,
+	if (configureLockingRange(0,
 		(MSED_READLOCKINGENABLED | MSED_WRITELOCKINGENABLED), password)) {
 		LOG(E) << "Initial setup failed - unable to enable read/write locking";
 		return 0xff;
@@ -70,39 +179,56 @@ uint8_t MsedDevEnterprise::initialsetup(char * password)
 uint8_t MsedDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t enabled, char * password)
 {
 	LOG(D1) << "Entering MsedDevEnterprise::configureLockingRange()";
-	if (lockingrange) {
-		LOG(E) << "Only global locking range is currently supported";
+
+    //** BandMaster0 UID of Table 28 Locking SP Authority table, p. 70 of Enterprise SSC rev 3.00
+	std::vector<uint8_t> user;
+	set8(user, OPALUID[OPAL_UID::ENTERPRISE_BANDMASTER0_UID]);
+	setband(user, lockingrange);
+
+    //** Global_Range UID of Table 33 Locking SP Locking table, p. 84 of Enterprise SSC rev 3.00
+	vector<uint8_t> object;
+    set8(object, OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL]);
+    setband(object, lockingrange);
+
+	session = new MsedSession(this);
+	if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, password, user)) {
+		delete session;
 		return 0xff;
 	}
+
 	/* can't use settable because the segate drives require that both the 
 	 * read & write lockenabled be changed at the same time.  I can find no
 	 * written doc on such a restriction but .....
 	 */
+    vector<uint8_t> method;
+    set8(method, OPALMETHOD[OPAL_METHOD::ESET]);
+
 	MsedCommand *set = new MsedCommand();
-	set->reset(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_METHOD::ESET);
+	set->reset(object, method);
 	set->addToken(OPAL_TOKEN::STARTLIST);
 	set->addToken(OPAL_TOKEN::STARTLIST);
 	set->addToken(OPAL_TOKEN::ENDLIST);
 	set->addToken(OPAL_TOKEN::STARTLIST);
 	set->addToken(OPAL_TOKEN::STARTLIST);
+	set->addToken(OPAL_TOKEN::STARTNAME);
+	set->addToken("ReadLockEnabled");
+	set->addToken((enabled & MSED_READLOCKINGENABLED) ? OPAL_TRUE : OPAL_FALSE);
+	set->addToken(OPAL_TOKEN::ENDNAME);
 	set->addToken(OPAL_TOKEN::STARTNAME);
 	set->addToken("WriteLockEnabled");
 	set->addToken((enabled & MSED_WRITELOCKINGENABLED) ? OPAL_TRUE : OPAL_FALSE);
 	set->addToken(OPAL_TOKEN::ENDNAME);
 	set->addToken(OPAL_TOKEN::STARTNAME);
-	set->addToken("ReadLockEnabled");
-	set->addToken((enabled & MSED_READLOCKINGENABLED) ? OPAL_TRUE : OPAL_FALSE);
+	set->addToken("LockOnReset");
+	set->addToken(OPAL_TOKEN::STARTLIST);
+    set->addToken(UINT_00);
+	set->addToken(OPAL_TOKEN::ENDLIST);
 	set->addToken(OPAL_TOKEN::ENDNAME);
 	set->addToken(OPAL_TOKEN::ENDLIST);
 	set->addToken(OPAL_TOKEN::ENDLIST);
 	set->addToken(OPAL_TOKEN::ENDLIST);
 	set->complete();
-	session = new MsedSession(this);
-	if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, password,
-		OPAL_UID::ENTERPRISE_BANDMASTER0_UID)) {
-		delete session;
-		return 0xff;
-	}
+
 	if (session->sendCommand(set, response)) {
 		LOG(E) << "Set Failed ";
 		delete session;
@@ -115,62 +241,160 @@ uint8_t MsedDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t e
 	LOG(D1) << "Exiting MsedDevEnterprise::configureLockingRange()";
 	return 0;
 }
-uint8_t MsedDevEnterprise::revertLockingSP(char * password, uint8_t keep)
+uint8_t MsedDevEnterprise::rekeyLockingRange(uint8_t lockingrange, char * password)
 {
-	LOG(D1) << "Entering revert MsedEnterpriseDev::LockingSP()";
-	if(password == NULL) LOG(D4) << "Referencing formal parameters " << keep;
-	LOG(E) << "Revert is not implemented at this time ";
-	LOG(E) << "I can find no documentation and numerous web searched haven't helped ";
-	LOG(D1) << "Exiting revert MsedEnterpriseDev::LockingSP()";
+	LOG(D1) << "Entering MsedDevEnterprise::rekeyLockingRange()";
+	uint8_t lastRC;
+
+    //** BandMaster0 UID of Table 28 Locking SP Authority table, p. 70 of Enterprise SSC rev 3.00
+	vector<uint8_t> user;
+    set8(user, OPALUID[ENTERPRISE_BANDMASTER0_UID]);
+    setband(user, lockingrange);
+
+    //** Global_Range UID of Table 33 Locking SP Locking table, p. 84 of Enterprise SSC rev 3.00
+	vector<uint8_t> table;
+    set8(table, OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL]);
+    setband(table, lockingrange);
+
+	session = new MsedSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
+	if ((lastRC = session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, password, user)) != 0) {
+		delete session;
+		return lastRC;
+	}
+	if ((lastRC = getTable(table, "ActiveKey", "ActiveKey")) != 0) {
+		delete session;
+		return lastRC;
+	}
+	std::vector<uint8_t> ActiveKey = response.getRawToken(5);
+    if (is_NULL_UID(ActiveKey))
+    {
+	    LOG(I) << "LockingRange" << (uint16_t)lockingrange << " remains in plaintext ";
+		delete session;
+        return 0;
+    }
+	MsedCommand *rekey = new MsedCommand();
+	if (NULL == rekey) {
+		LOG(E) << "Unable to create command object ";
+		delete session;
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
+	rekey->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::GENKEY);
+	rekey->changeInvokingUid(ActiveKey);
+	rekey->addToken(OPAL_TOKEN::STARTLIST);
+	rekey->addToken(OPAL_TOKEN::ENDLIST);
+	rekey->complete();
+	if ((lastRC = session->sendCommand(rekey, response)) != 0) {
+		LOG(E) << "rekeyLockingRange Failed ";
+		delete rekey;
+		delete session;
+		return lastRC;
+	}
+	delete rekey;
+	delete session;
+	LOG(I) << "LockingRange" << (uint16_t)lockingrange << " reKeyed ";
+	LOG(D1) << "Exiting MsedDevEnterprise::rekeyLockingRange()";
 	return 0;
 }
-uint8_t MsedDevEnterprise::setNewPassword(char * password, char * userid, char * newpassword)
+uint8_t MsedDevEnterprise::revertLockingSP(char * password, uint8_t keep)
 {
-	LOG(D1) << "Entering MsedDevEnterprise::setNewPassword" ;
-	std::vector<uint8_t> user, usercpin, hash;
+	LOG(D1) << "Entering MsedDevEnterprise::revertLockingSP()";
+	if (password == NULL) LOG(D4) << "Referencing formal parameters " << keep;
+	uint8_t lastRC;
+	MsedCommand *cmd = new MsedCommand();
+	if (NULL == cmd) {
+		LOG(E) << "Unable to create command object ";
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
+	session = new MsedSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		delete cmd;
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
+	OPAL_UID uid = OPAL_UID::OPAL_SID_UID;
+	if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, uid)) != 0) {
+		delete cmd;
+		delete session;
+		return lastRC;
+	}
+	cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
+	cmd->addToken(OPAL_TOKEN::STARTLIST);
+	cmd->addToken(OPAL_TOKEN::STARTNAME);
+	cmd->addToken("KeepGlobalRangeKey");
+	cmd->addToken(keep);
+	cmd->addToken(OPAL_TOKEN::ENDNAME);
+	cmd->addToken(OPAL_TOKEN::ENDLIST);
+	cmd->complete();
+	session->expectAbort();
+	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+		delete cmd;
+		delete session;
+		return lastRC;
+	}
+	LOG(I) << "revertLockingSP completed successfully";
+	delete cmd;
+	delete session;
+	LOG(D1) << "Exiting MsedDevEnterprise::revertLockingSP()";
+	return 0;
+}
+uint8_t MsedDevEnterprise::setPassword(char * password, char * userid, char * newpassword)
+{
+	LOG(D1) << "Entering MsedDevEnterprise::setPassword" ;
 	if (11 > strnlen(userid, 15)) {
 		LOG(E) << "Invalid Userid " << userid;
 		return 0xff;
 	}
-	user.clear();
-	user.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	user.push_back(0x00);
-	user.push_back(0x00);
-	user.push_back(0x00);
-	user.push_back(0x09);
-	user.push_back(0x00);
-	user.push_back(0x00);
-//	user.push_back(0x80);
-//	user.push_back(0x01);
 
+	std::vector<uint8_t> user;
 	if (!memcmp("BandMaster", userid, 10)) {
-		int band = atoi(&userid[11]);
-		band += 1;
+		int band = atoi(&userid[10]);
 		if (1023 < band) {
 			LOG(E) << "Invalid Userid " << userid;
 			return 0xff;
 		}
-		user.push_back((((band >> 8) & 0xff) | 0x80));
-		user.push_back(band & 0xff);
+		set8(user, OPALUID[OPAL_UID::ENTERPRISE_BANDMASTER0_UID]);
+		setband(user, band);
+	}
+	else if (!memcmp("EraseMaster", userid, 11)) {
+		set8(user, OPALUID[OPAL_UID::ENTERPRISE_ERASEMASTER_UID]);
 	}
 	else {
-		if (!memcmp("EraseMaster", userid, 11)) {
-			user.push_back(0x84);
-			user.push_back(0x01);
+		LOG(E) << "Invalid Userid " << userid;
+		return 0xff;
+	}
+	std::vector<uint8_t> usercpin;
+	user2cpin(usercpin, user);
+	if (*password == '\0')
+	{
+		if (getDefaultPassword())
+		{
+			LOG(E) << "setPassword failed to retrieve MSID";
+			return 0xff;
 		}
-		else {
-			LOG(E) << "Invalid Userid " << userid;
+		string defaultPassword = response.getString(5);
+		session = new MsedSession(this);
+		session->dontHashPwd();
+		if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, (char *)defaultPassword.c_str(), user))
+		{
+			delete session;
 			return 0xff;
 		}
 	}
-	usercpin = user;
-	usercpin[4] = 0x0b;
-	session = new MsedSession(this);
-	if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, password, user)) {
-		delete session;
-		return 0xff;
+	else
+	{
+		session = new MsedSession(this);
+		if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, password, user))
+		{
+			delete session;
+			return 0xff;
+		}
 	}
 
+	std::vector<uint8_t> hash;
 	MsedHashPwd(hash, newpassword, this);
 	if (setTable(usercpin, "PIN", hash)) {
 		LOG(E) << "Unable to set user " << userid << " new password ";
@@ -179,7 +403,7 @@ uint8_t MsedDevEnterprise::setNewPassword(char * password, char * userid, char *
 	}
 	LOG(I) << userid << " password changed";
 	delete session;
-	LOG(D1) << "Exiting MsedDevEnterprise::setNewPassword()";
+	LOG(D1) << "Exiting MsedDevEnterprise::setPassword()";
 	return 0;
 }
 uint8_t MsedDevEnterprise::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
@@ -199,45 +423,266 @@ uint8_t MsedDevEnterprise::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 	return 0;
 }
 
-uint8_t MsedDevEnterprise::setupLockingRange(uint8_t lockingrange, uint64_t start,
-	uint64_t length, char * password) {
+uint8_t MsedDevEnterprise::setupLockingRange(uint8_t lockingrange, uint64_t start, uint64_t length, char * password)
+{
+	uint8_t lastRC;
 	LOG(D1) << "Entering MsedDevEnterprise::setupLockingRange";
-	if (0 == lockingrange) LOG(E) << start << length << password;
+
+    // look up MaxRanges
+	const uint16_t MaxRanges = getMaxRanges(password);
+    if (MaxRanges == 0 || MaxRanges >= 1024) return 0xff;
+
+    // make sure lockingrange is in bounds
+    if (lockingrange > MaxRanges)
+    {
+        LOG(E) << "Requested locking range " << lockingrange << " greater than MaxRanges " << MaxRanges;
+        return 0xff;
+    }
+
+    //** BandMaster0 UID of Table 28 Locking SP Authority table, p. 70 of Enterprise SSC rev 3.00
+    vector<uint8_t> user;
+    set8(user, OPALUID[OPAL_UID::ENTERPRISE_BANDMASTER0_UID]);
+    setband(user, lockingrange);
+
+    //** Global_Range UID of Table 33 Locking SP Locking table, p. 84 of Enterprise SSC rev 3.00
+    vector<uint8_t> object;
+    set8(object, OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL]);
+    setband(object, lockingrange);
+
+    vector<uint8_t> method;
+    set8(method, OPALMETHOD[OPAL_METHOD::ESET]);
+
+	MsedCommand *set = new MsedCommand();
+	set->reset(object, method);
+	set->addToken(OPAL_TOKEN::STARTLIST);
+	set->addToken(OPAL_TOKEN::STARTLIST);
+	set->addToken(OPAL_TOKEN::ENDLIST);
+	set->addToken(OPAL_TOKEN::STARTLIST);
+	set->addToken(OPAL_TOKEN::STARTLIST);
+	set->addToken(OPAL_TOKEN::STARTNAME);
+	set->addToken("RangeStart");
+	set->addToken(start);
+	set->addToken(OPAL_TOKEN::ENDNAME);
+	set->addToken(OPAL_TOKEN::STARTNAME);
+	set->addToken("RangeLength");
+	set->addToken(length);
+	set->addToken(OPAL_TOKEN::ENDNAME);
+	set->addToken(OPAL_TOKEN::STARTNAME);
+	set->addToken("ReadLockEnabled");
+	set->addToken(OPAL_TOKEN::OPAL_FALSE);
+	set->addToken(OPAL_TOKEN::ENDNAME);
+	set->addToken(OPAL_TOKEN::STARTNAME);
+	set->addToken("WriteLockEnabled");
+	set->addToken(OPAL_TOKEN::OPAL_FALSE);
+	set->addToken(OPAL_TOKEN::ENDNAME);
+	set->addToken(OPAL_TOKEN::STARTNAME);
+	set->addToken("ReadLocked");
+	set->addToken(OPAL_TOKEN::OPAL_FALSE);
+	set->addToken(OPAL_TOKEN::ENDNAME);
+	set->addToken(OPAL_TOKEN::STARTNAME);
+	set->addToken("WriteLocked");
+	set->addToken(OPAL_TOKEN::OPAL_FALSE);
+	set->addToken(OPAL_TOKEN::ENDNAME);
+	set->addToken(OPAL_TOKEN::STARTNAME);
+	set->addToken("LockOnReset");
+	set->addToken(OPAL_TOKEN::STARTLIST);
+	set->addToken(OPAL_TOKEN::ENDLIST);
+	set->addToken(OPAL_TOKEN::ENDNAME);
+	set->addToken(OPAL_TOKEN::ENDLIST);
+	set->addToken(OPAL_TOKEN::ENDLIST);
+	set->addToken(OPAL_TOKEN::ENDLIST);
+	set->complete();
+
+	session = new MsedSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
+	if ((lastRC = session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, password, user)) != 0) {
+		delete session;
+		return lastRC;
+	}
+	if ((lastRC = session->sendCommand(set, response)) != 0) {
+		LOG(E) << "setupLockingRange Failed ";
+		delete set;
+		delete session;
+		return lastRC;
+	}
+	delete set;
+	delete session;
+	if ((lastRC = rekeyLockingRange(lockingrange, password)) != 0) {
+		LOG(E) << "setupLockingRange Unable to reKey Locking range -- Possible security issue ";
+		return lastRC;
+	}
+	LOG(I) << "LockingRange" << (uint16_t)lockingrange << " starting block " << start <<
+		" for " << length << " blocks configured as unlocked range";
 	LOG(D1) << "Exiting MsedDevEnterprise::setupLockingRange";
 	return 0;
 }
-uint8_t MsedDevEnterprise::listLockingRanges(char * password) {
-	LOG(D1) << "Entering MsedDevEnterprise::listLockingRanges";
+
+////////////////////////////////////////////////////////////////////////////////
+uint8_t MsedDevEnterprise::listLockingRanges(char * password, int rangeid)
+////////////////////////////////////////////////////////////////////////////////
+{
+	LOG(D) << "Entering MsedDevEnterprise::listLockingRanges";
 	if (NULL == password) LOG(E) << "password NULL";
+
+    // look up MaxRanges
+	const uint16_t MaxRanges = (rangeid == -1) ? getMaxRanges(password): (rangeid + 1);
+
+    if (MaxRanges == 0 || MaxRanges >= 1024) return 0xff;
+
+    if(rangeid == -1)
+        LOG(I) << "Maximum ranges supported " << MaxRanges;
+
+    //** BandMaster0 UID of Table 28 Locking SP Authority table, p. 70 of Enterprise SSC rev 3.00
+    vector<uint8_t> user;
+    user.clear();
+    set8(user, OPALUID[ENTERPRISE_BANDMASTER0_UID]);
+
+    //** Global_Range UID of Table 33 Locking SP Locking table, p. 84 of Enterprise SSC rev 3.00
+    vector<uint8_t> table;
+    table.clear();
+    set8(table, OPALUID[OPAL_LOCKINGRANGE_GLOBAL]);
+
+    int start = (rangeid == -1)? 0: rangeid;
+	for (int i = start; i < MaxRanges; i++)
+    {
+        setband(user, i);
+        setband(table, i);
+
+        LOG(I) << "Band[" << i << "]";
+
+		session = new MsedSession(this);
+		if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, password, user))
+        {
+			LOG(I) << "    could not establish session for row[" << i << "]";
+			delete session;
+			continue;
+		}
+		if (getTable(table, "Name", "LockOnReset"))
+        {
+			LOG(I) << "    row[" << i << "] not found in LOCKING table";
+			delete session;
+			continue;
+		}
+		// 00	1   ( F0 ) Start_List
+		// 01	1   ( F0 ) Start_List
+		// 02	1   ( F0 ) Start_List
+		// 03	1   ( F2 ) Start_Name
+		// 04	5   ( A4 ) 4E 61 6D 65 ("Name")
+		// 05*	6   ( A5 ) 42 61 6E 64 31 ("Band1")
+		// 06	1   ( F3 ) End_Name
+		// 07	1   ( F2 ) Start_Name
+		// 08	11  ( AA ) 43 6F 6D 6D 6F 6E 4E 61 6D 65 ("CommonName")
+		// 09*	8   ( A7 ) 4C 6F 63 6B 69 6E 67 ("Locking")
+		// 10	1   ( F3 ) End_Name
+		// 11	1   ( F2 ) Start_Name
+		// 12	11  ( AA ) 52 61 6E 67 65 53 74 61 72 74 ("RangeStart")
+		// 13*	1   ( 00 ) 0 (0h)
+		// 14	1   ( F3 ) End_Name
+		// 15	1   ( F2 ) Start_Name
+		// 16	12  ( AB ) 52 61 6E 67 65 4C 65 6E 67 74 68 ("RangeLength")
+		// 17*	1   ( 00 ) 0 (0h)
+		// 18	1   ( F3 ) End_Name
+		// 19	1   ( F2 ) Start_Name
+		// 20	16  ( AF ) 52 65 61 64 4C 6F 63 6B 45 6E 61 62 6C 65 64 ("ReadLockEnabled")
+		// 21*	1   ( 00 ) 0 (0h)
+		// 22	1   ( F3 ) End_Name
+		// 23	1   ( F2 ) Start_Name
+		// 24	18  ( D0 10 ) 57 72 69 74 65 4C 6F 63 6B 45 6E 61 62 6C 65 64 ("WriteLockEnabled")
+		// 25*	1   ( 00 ) 0 (0h)
+		// 26	1   ( F3 ) End_Name
+		// 27	1   ( F2 ) Start_Name
+		// 28	11  ( AA ) 52 65 61 64 4C 6F 63 6B 65 64 ("ReadLocked")
+		// 29*	1   ( 01 ) 1 (1h)
+		// 30	1   ( F3 ) End_Name
+		// 31	1   ( F2 ) Start_Name
+		// 32	12  ( AB ) 57 72 69 74 65 4C 6F 63 6B 65 64 ("WriteLocked")
+		// 33*	1   ( 01 ) 1 (1h)
+		// 34	1   ( F3 ) End_Name
+		// 35	1   ( F2 ) Start_Name
+		// 36	12  ( AB ) 4C 6F 63 6B 4F 6E 52 65 73 65 74 ("LockOnReset")
+		// 37	1   ( F0 ) Start_List
+		// 38	1   ( 00 ) 0 (0h)
+		// 39	1   ( F1 ) End_List
+		// 40	1   ( F3 ) End_Name
+        const std::string Name          = response.getString(5+4*0);
+        const std::string CommonName    = response.getString(5+4*1);
+        const uint64_t RangeStart       = response.getUint64(5+4*2);
+        const uint64_t RangeLength      = response.getUint64(5+4*3);
+        const bool ReadLockEnabled      = response.getUint8(5+4*4) != 0;
+        const bool WriteLockEnabled     = response.getUint8(5+4*5) != 0;
+        const bool ReadLocked           = response.getUint8(5+4*6) != 0;
+        const bool WriteLocked          = response.getUint8(5+4*7) != 0;
+        // LockOnReset list has at least one element
+        const bool LockOnReset          = response.tokenIs(5+4*8) == STARTLIST
+                                        && response.tokenIs(5+4*8+1) == MSED_TOKENID_UINT;
+        delete session;
+
+        LOG(I) << "    Name             " << Name;
+        LOG(I) << "    CommonName       " << CommonName;
+        LOG(I) << "    RangeStart       " << RangeStart;
+        LOG(I) << "    RangeLength      " << RangeLength;
+        LOG(I) << "    ReadLockEnabled  " << ReadLockEnabled;
+        LOG(I) << "    WriteLockEnabled " << WriteLockEnabled;
+        LOG(I) << "    ReadLocked       " << ReadLocked;
+        LOG(I) << "    WriteLocked      " << WriteLocked;
+        LOG(I) << "    LockOnReset      " << LockOnReset;
+	}
+
 	LOG(D1) << "Exiting MsedDevEnterprise::listLockingRanges";
 	return 0;
 }
+
 uint8_t MsedDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 	char * password)
 {
 	LOG(D1) << "Entering MsedDevEnterprise::setLockingRange";
-	OPAL_TOKEN locked;
-	
-	if (lockingrange) {
-		LOG(E) << "Only global locking range is currently supported";
-		return 0xff;
-	}
-	switch (lockingstate) {
+
+    // convert Opal lockingstate to boolean	
+    OPAL_TOKEN locked;
+    switch (lockingstate) {
 	case OPAL_LOCKINGSTATE::READWRITE:
-		locked = OPAL_TOKEN::OPAL_FALSE;
-		break;
+    	locked = OPAL_TOKEN::OPAL_FALSE;
+    	break;
 	case OPAL_LOCKINGSTATE::READONLY:
-		LOG(E) << "Read Only locking state is unsupported in Enterprise SSC";
-		return 0xff;
+    	LOG(E) << "Read Only locking state is unsupported in Enterprise SSC";
+    	return 0xff;
 	case OPAL_LOCKINGSTATE::LOCKED:
-		locked = OPAL_TOKEN::OPAL_TRUE;
-		break;
+    	locked = OPAL_TOKEN::OPAL_TRUE;
+    	break;
 	default:
-		LOG(E) << "Invalid locking state for setLockingRange";
-		return 0xff;
+    	LOG(E) << "Invalid locking state for setLockingRange (RW=1, LOCKED=3)";
+    	return 0xff;
 	}
+	
+    // look up MaxRanges
+	const uint16_t MaxRanges = getMaxRanges(password);
+    if (MaxRanges == 0 || MaxRanges >= 1024) return 0xff;
+
+    // make sure lockingrange is in bounds
+    if (lockingrange > MaxRanges)
+    {
+        LOG(E) << "Requested locking range " << lockingrange << " greater than MaxRanges " << MaxRanges;
+        return 0xff;
+    }
+
+    //** BandMaster0 UID of Table 28 Locking SP Authority table, p. 70 of Enterprise SSC rev 3.00
+    vector<uint8_t> user;
+    set8(user, OPALUID[OPAL_UID::ENTERPRISE_BANDMASTER0_UID]);
+    setband(user, lockingrange);
+
+    //** Band0 UID of Table 33 Locking SP Locking table, p. 84 of Enterprise SSC rev 3.00
+    vector<uint8_t> object;
+    set8(object, OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL]);
+    setband(object, lockingrange);
+
+    vector<uint8_t> method;
+    set8(method, OPALMETHOD[OPAL_METHOD::ESET]);
+
 	MsedCommand *set = new MsedCommand();
-	set->reset(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_METHOD::ESET);
+	set->reset(object, method);
 	set->addToken(OPAL_TOKEN::STARTLIST);
 	set->addToken(OPAL_TOKEN::STARTLIST);
 	set->addToken(OPAL_TOKEN::ENDLIST);
@@ -256,12 +701,13 @@ uint8_t MsedDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t locking
 	set->addToken(OPAL_TOKEN::ENDLIST);
 	set->complete();
 	session = new MsedSession(this);
-	if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, password,
-		OPAL_UID::ENTERPRISE_BANDMASTER0_UID)) {
+	if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, password, user))
+    {
 		delete session;
 		return 0xff;
 	}
-	if (session->sendCommand(set, response)) {
+	if (session->sendCommand(set, response))
+    {
 		LOG(E) << "Set Failed ";
 		delete session;
 		delete set;
@@ -285,9 +731,97 @@ uint8_t MsedDevEnterprise::revertTPer(char * password, uint8_t PSID)
 {
 	LOG(D1) << "Entering MsedDevEnterprise::revertTPer()";
 	if (password == NULL) LOG(D4) << "Referencing formal parameters " << PSID;
-	LOG(E) << "Revert is not implemented at this time ";
-	LOG(E) << "I can find no documentation and numerous web searched haven't helped ";
-	LOG(D1) << "Exiting MsedDevEnterprise::RevertTperevertTPer()";
+	uint8_t lastRC;
+	MsedCommand *cmd = new MsedCommand();
+	if (NULL == cmd) {
+		LOG(E) << "Unable to create command object ";
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
+	session = new MsedSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		delete cmd;
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
+	OPAL_UID uid = OPAL_UID::OPAL_SID_UID;
+	if (PSID) {
+		session->dontHashPwd(); // PSID pwd should be passed as entered
+		uid = OPAL_UID::OPAL_PSID_UID;
+		}
+	if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, uid)) != 0) {
+		delete cmd;
+		delete session;
+		return lastRC;
+	}
+	cmd->reset(OPAL_UID::OPAL_ADMINSP_UID, OPAL_METHOD::REVERT);
+	cmd->addToken(OPAL_TOKEN::STARTLIST);
+	cmd->addToken(OPAL_TOKEN::ENDLIST);
+	cmd->complete();
+	session->expectAbort();
+	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+		delete cmd;
+		delete session;
+		return lastRC;
+	}
+	LOG(I) << "revertTper completed successfully";
+	delete cmd;
+	delete session;
+	LOG(D1) << "Exiting MsedDevEnterprise::revertTPer()";
+	return 0;
+}
+uint8_t MsedDevEnterprise::eraseLockingRange(uint8_t lockingrange, char * password)
+{
+	uint8_t lastRC;
+	LOG(D1) << "Entering MsedDevEnterprise::eraseLockingRange";
+
+    // look up MaxRanges
+	const uint16_t MaxRanges = getMaxRanges(password);
+    if (MaxRanges == 0 || MaxRanges >= 1024) return 0xff;
+
+    // make sure lockingrange is in bounds
+    if (lockingrange > MaxRanges)
+    {
+        LOG(E) << "Requested locking range " << lockingrange << " greater than MaxRanges " << MaxRanges;
+        return 0xff;
+    }
+
+    //** EraseMaster UID of Table 28 Locking SP Authority table, p. 70 of Enterprise SSC rev 3.00
+    vector<uint8_t> user;
+    set8(user, OPALUID[OPAL_UID::ENTERPRISE_ERASEMASTER_UID]);
+
+    //** Band0 UID of Table 33 Locking SP Locking table, p. 84 of Enterprise SSC rev 3.00
+    vector<uint8_t> object;
+    set8(object, OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL]);
+    setband(object, lockingrange);
+
+    vector<uint8_t> method;
+    set8(method, OPALMETHOD[OPAL_METHOD::ERASE]);
+
+	MsedCommand *erase = new MsedCommand();
+	erase->reset(object, method);
+	erase->addToken(OPAL_TOKEN::STARTLIST);
+	erase->addToken(OPAL_TOKEN::ENDLIST);
+	erase->complete();
+
+	session = new MsedSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
+	if ((lastRC = session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, password, user)) != 0) {
+		delete session;
+		return lastRC;
+	}
+	if ((lastRC = session->sendCommand(erase, response)) != 0) {
+		LOG(E) << "eraseLockingRange Failed ";
+		delete erase;
+		delete session;
+		return lastRC;
+	}
+	delete erase;
+	delete session;
+	LOG(I) << "LockingRange" << (uint16_t)lockingrange << " erased";
+	LOG(D1) << "Exiting MsedDevEnterprise::eraseLockingRange";
 	return 0;
 }
 uint8_t MsedDevEnterprise::loadPBA(char * password, char * filename) {
@@ -311,49 +845,37 @@ uint8_t MsedDevEnterprise::takeOwnership(char * newpassword)
 	string defaultPassword;
 	LOG(D1) << "Entering MsedDevEnterprise::takeOwnership()";
 	if (getDefaultPassword()) {
-		LOG(E) << "takeownership failed unable to retrieve MSID";
+		LOG(E) << "takeOwnership failed unable to retrieve MSID";
 		return 0xff;
 	}
 	defaultPassword = response.getString(5);
 	if (setSIDPassword((char *)defaultPassword.c_str(), newpassword, 0)) {
-		LOG(E) << "takeownership failed unable to set new SID password";
+		LOG(E) << "takeOwnership failed unable to set new SID password";
 		return 0xff;
 	}
 	if (initLSPUsers((char *)defaultPassword.c_str(), newpassword)) {
-		LOG(E) << "takeownership failed unable to set Locking SP user passwords";
+		LOG(E) << "takeOwnership failed unable to set Locking SP user passwords";
 		return 0xff;
 	}
-	LOG(I) << "takeownership complete";
+	LOG(I) << "takeOwnership complete";
 	LOG(D1) << "Exiting takeOwnership()";
 	return 0;
 }
 uint8_t MsedDevEnterprise::initLSPUsers(char * defaultPassword, char * newPassword)
 {
-	vector<uint8_t> user, usercpin, hash, erasemaster, table;
-	int maxRanges;
-
+    vector<uint8_t> user, usercpin, hash, erasemaster, table;
 	LOG(D1) << "Entering MsedDevEnterprise::initLSPUsers()";
-	user.clear();
-	user.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	user.push_back(0x00);
-	user.push_back(0x00);
-	user.push_back(0x00);
-	user.push_back(0x09);
-	user.push_back(0x00);
-	user.push_back(0x00);
-	user.push_back(0x84);
-	user.push_back(0x01);
 
 // do erasemaster
-	usercpin = erasemaster = user;
-	usercpin[4] = 0x0b;
 	session = new MsedSession(this);
 	session->dontHashPwd();
-	if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, defaultPassword, user)) {
+    set8(erasemaster, OPALUID[OPAL_UID::ENTERPRISE_ERASEMASTER_UID]);
+	if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, defaultPassword, erasemaster)) {
 		delete session;
 		return 0xff;
 	}
 	MsedHashPwd(hash, newPassword, this);
+    user2cpin(usercpin, erasemaster);
 	if (setTable(usercpin, "PIN", hash)) {
 		LOG(E) << "Unable to set new EraseMaster password ";
 		delete session;
@@ -361,54 +883,15 @@ uint8_t MsedDevEnterprise::initLSPUsers(char * defaultPassword, char * newPasswo
 	}
 	LOG(I) << "EraseMaster  password set";
 	delete session;
-// use erasemaster to determine number of ranges
-	session = new MsedSession(this);
-	if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, newPassword, erasemaster)) {
-		delete session;
-		return 0xff;
-	}
-	table.clear();
-	table.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	for (int i = 0; i < 8; i++) {
-		table.push_back(OPALUID[ENTERPRISE_LOCKING_INFO_TABLE][i]);
-	}
-	if (getTable(table, "MaxRanges", "MaxRanges")) {
-		LOG(E) << "Unable to get max Ranges from Locking Info table ";
-		delete session;
-		return 0xff;
-	}
-	delete session;
-	maxRanges = (int) response.getUint16(5);
-	LOG(I) << "Maximum ranges supported " << maxRanges;
+    // look up MaxRanges
+	const uint16_t MaxRanges = getMaxRanges((char *)NULL);
+    if (MaxRanges == 0 || MaxRanges >= 1024) return 0xff;
+	LOG(I) << "Maximum ranges supported " << MaxRanges;
 // do bandmasters
-	table.clear();
-	table.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	for (int i = 0; i < 8; i++) {
-		table.push_back(OPALUID[ENTERPRISE_BANDMASTER0_UID][i]);
-	}
-	for (int i = 0; i < maxRanges+1; i++) {
+    set8(user, OPALUID[ENTERPRISE_BANDMASTER0_UID]);
+	for (int i = 0; i < MaxRanges; i++) {
+        setband(user, i);
 		LOG(D3) << "initializing BandMaster" << (uint16_t) i;
-		user[7] = table[7] = (((((i + 1) >> 8) & 0xff) | 0x80));
-		user[8] = table[8] = ((i + 1) & 0xff);
-
-		session = new MsedSession(this);
-		if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, newPassword, erasemaster)) {
-			delete session;
-			return 0xff;
-		}
-		if (getTable(table, "Enabled", "Enabled")) {
-			LOG(E) << "Unable determine if band" << i << " is enabled";
-			delete session;
-			return 0xff;
-		}
-		delete session;
-
-		if (!response.getUint8(5)) {
-			LOG(I) << "Bandmaster" << i << " is disabled ... skipping";
-			continue;
-		}
-		usercpin = user;
-		usercpin[4] = 0x0b;
 		session = new MsedSession(this);
 		session->dontHashPwd();
 		if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, defaultPassword, user)) {
@@ -416,6 +899,7 @@ uint8_t MsedDevEnterprise::initLSPUsers(char * defaultPassword, char * newPasswo
 			return 0xff;
 		}
 		MsedHashPwd(hash, newPassword, this);
+        user2cpin(usercpin, user);
 		if (setTable(usercpin, "PIN", hash)) {
 			LOG(E) << "Unable to set BandMaster" << (uint16_t) i << " new password ";
 			delete session;
@@ -451,35 +935,70 @@ uint8_t MsedDevEnterprise::getDefaultPassword()
 	LOG(D1) << "Exiting getDefaultPassword()";
 	return 0;
 }
+uint8_t MsedDevEnterprise::printDefaultPassword()
+{
+    const uint8_t rc = getDefaultPassword();
+	if (rc) {
+		LOG(E) << "unable to retrieve MSID";
+		return rc;
+	}
+	string defaultPassword = response.getString(5);
+    fprintf(stdout, "MSID: %s\n", (char *)defaultPassword.c_str());
+    return 0;
+}
 uint8_t MsedDevEnterprise::setSIDPassword(char * oldpassword, char * newpassword,
 	uint8_t hasholdpwd, uint8_t hashnewpwd)
 {
-	vector<uint8_t> hash, table;
 	LOG(D1) << "Entering MsedDevEnterprise::setSIDPassword()";
-	session = new MsedSession(this);
-	if (!hasholdpwd) session->dontHashPwd();
-	if (session->start(OPAL_UID::OPAL_ADMINSP_UID,
-		oldpassword, OPAL_UID::OPAL_SID_UID)) {
-		delete session;
-		return 0xff;
+
+	vector<uint8_t> user;
+    set8(user, OPALUID[OPAL_SID_UID]);
+
+    vector<uint8_t> usercpin;
+    set8(usercpin, OPALUID[OPAL_C_PIN_SID]);
+
+	if (*oldpassword == '\0')
+	{
+		if (getDefaultPassword())
+		{
+			LOG(E) << "setPassword failed to retrieve MSID";
+			return 0xff;
+		}
+		string defaultPassword = response.getString(5);
+		session = new MsedSession(this);
+		session->dontHashPwd();
+		if (session->start(OPAL_UID::OPAL_ADMINSP_UID, (char *)defaultPassword.c_str(), user))
+		{
+			delete session;
+			return 0xff;
+		}
 	}
-	table.clear();
-	table. push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	for (int i = 0; i < 8; i++) {
-		table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_SID][i]);
+	else
+	{
+		session = new MsedSession(this);
+		if (!hasholdpwd) session->dontHashPwd();
+		if (session->start(OPAL_UID::OPAL_ADMINSP_UID, oldpassword, user))
+        {
+			delete session;
+			return 0xff;
+		}
 	}
-	hash.clear();
-	if (hashnewpwd) {
+	vector<uint8_t> hash;
+	if (hashnewpwd)
+    {
 		MsedHashPwd(hash, newpassword, this);
 	}
-	else {
+	else
+    {
 		hash.push_back(0xd0);
 		hash.push_back((uint8_t)strnlen(newpassword, 255));
-		for (uint16_t i = 0; i < strnlen(newpassword, 255); i++) {
+		for (uint16_t i = 0; i < strnlen(newpassword, 255); i++)
+        {
 			hash.push_back(newpassword[i]);
 		}
 	}
-	if (setTable(table, "PIN", hash)) {
+	if (setTable(usercpin, "PIN", hash))
+    {
 		LOG(E) << "Unable to set new SID password ";
 		delete session;
 		return 0xff;
@@ -561,6 +1080,7 @@ uint8_t MsedDevEnterprise::exec(MsedCommand * cmd, MsedResponse &response, uint8
     uint8_t rc = 0;
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
     LOG(D3) << endl << "Dumping command buffer";
+    IFLOG(D) MsedAnnotatedDump(IF_SEND, cmd->getCmdBuffer(), IO_BUFFER_LENGTH);
     IFLOG(D3) MsedHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
     rc = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH);
     if (0 != rc) {
@@ -577,6 +1097,7 @@ uint8_t MsedDevEnterprise::exec(MsedCommand * cmd, MsedResponse &response, uint8
     }
     while ((0 != hdr->cp.outstandingData) && (0 == hdr->cp.minTransfer));
     LOG(D3) << std::endl << "Dumping reply buffer";
+    IFLOG(D) MsedAnnotatedDump(IF_RECV, cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
     IFLOG(D3) MsedHexDump(cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
     if (0 != rc) {
         LOG(E) << "Command failed on recv" << (uint16_t) rc;

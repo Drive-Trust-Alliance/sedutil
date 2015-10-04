@@ -44,6 +44,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/msed/MsedDevOpal2.o \
 	${OBJECTDIR}/msed/MsedHashPwd.o \
 	${OBJECTDIR}/msed/MsedHexDump.o \
+	${OBJECTDIR}/msed/MsedAnnotatedDump.o \
 	${OBJECTDIR}/msed/MsedOptions.o \
 	${OBJECTDIR}/msed/MsedResponse.o \
 	${OBJECTDIR}/msed/MsedSession.o \
@@ -124,6 +125,11 @@ ${OBJECTDIR}/msed/MsedHexDump.o: msed/MsedHexDump.cpp
 	${MKDIR} -p ${OBJECTDIR}/msed
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedHexDump.o msed/MsedHexDump.cpp
+
+${OBJECTDIR}/msed/MsedAnnotatedDump.o: msed/MsedAnnotatedDump.cpp 
+	${MKDIR} -p ${OBJECTDIR}/msed
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedAnnotatedDump.o msed/MsedAnnotatedDump.cpp
 
 ${OBJECTDIR}/msed/MsedOptions.o: msed/MsedOptions.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed

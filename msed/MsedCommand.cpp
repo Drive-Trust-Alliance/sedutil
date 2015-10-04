@@ -62,6 +62,14 @@ MsedCommand::reset(OPAL_UID InvokingUid, vector<uint8_t> method){
 	addToken(InvokingUid);
 	addToken(method);
 }
+void 
+MsedCommand::reset(vector<uint8_t> InvokingUid, vector<uint8_t> method){
+	LOG(D1) << "Entering MsedCommand::reset(uint8_t,uint8_t)";
+	reset();
+	cmdbuf[bufferpos++] = OPAL_TOKEN::CALL;
+	addToken(InvokingUid);
+	addToken(method);
+}
 
 void
 MsedCommand::reset(OPAL_UID InvokingUid, OPAL_METHOD method)
