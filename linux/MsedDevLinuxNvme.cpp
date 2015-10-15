@@ -68,7 +68,7 @@ uint8_t MsedDevLinuxNvme::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t com
     struct nvme_admin_cmd nvme_cmd;
 	int err;
 
-    LOG(D1) << "Entering MsedDevOS::sendCmd";
+    LOG(D1) << "Entering MsedDevLinuxNvme::sendCmd";
 
 	memset(&nvme_cmd, 0, sizeof(nvme_cmd));
 

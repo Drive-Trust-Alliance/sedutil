@@ -47,7 +47,7 @@ bool MsedDevLinuxSata::init(const char * devref)
     LOG(D1) << "Creating MsedDevLinuxSata::MsedDev() " << devref;
     ifstream kopts;
 	bool isOpen = FALSE;
-    
+
     if(access("/dev/sda", R_OK | W_OK)) {
         LOG(E) << "You do not have permission to access the raw disk in write mode";
         LOG(E) << "Perhaps you might try sudo to run as root";
@@ -61,9 +61,9 @@ bool MsedDevLinuxSata::init(const char * devref)
             LOG(E) << "The Kernel flag libata.allow_tpm is not set correctly";
                LOG(E) << "Please see the readme note about setting the libata.allow_tpm ";
         }
-        kopts.close();   
+        kopts.close();
     }
-    
+
     if ((fd = open(devref, O_RDWR)) < 0) {
         isOpen = FALSE;
         // This is a D1 because diskscan looks for open fail to end scan
@@ -87,7 +87,7 @@ uint8_t MsedDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t com
     uint8_t sense[32]; // how big should this be??
     uint8_t cdb[12];
 
-    LOG(D1) << "Entering MsedDevOS::sendCmd";
+    LOG(D1) << "Entering MsedDevLinuxSata::sendCmd";
     memset(&cdb, 0, sizeof (cdb));
     memset(&sense, 0, sizeof (sense));
     memset(&sg, 0, sizeof (sg));

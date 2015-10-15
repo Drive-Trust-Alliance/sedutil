@@ -86,10 +86,10 @@ uint8_t MsedDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 
 	if (NULL == drive)
 	{
-		LOG(E) << "MsedDevOS::init ERROR - unknown drive type";
+		LOG(E) << "MsedDevOS::sendCmd ERROR - unknown drive type";
 		return 0xff;
 	}
-	
+
 	return drive->sendCmd(cmd, protocol, comID, buffer, bufferlen);
 }
 
@@ -101,7 +101,7 @@ void MsedDevOS::identify()
 		LOG(E) << "MsedDevOS::identify ERROR - unknown disk type";
 		return;
 	}
-	
+
 	drive->identify(&disk_info);
 }
 
@@ -114,7 +114,7 @@ void MsedDevOS::osmsSleep(uint32_t ms)
 /** Close the device reference so this object can be delete. */
 MsedDevOS::~MsedDevOS()
 {
-    LOG(D1) << "Destroying MsedDev";
+    LOG(D1) << "Destroying MsedDevOS";
 	if (NULL != drive)
 		delete drive;
 }
