@@ -30,6 +30,14 @@ CND_ARTIFACT_PATH_Release_x86_64=dist/Release_x86_64/GNU-Linux-x86/linuxpba
 CND_PACKAGE_DIR_Release_x86_64=dist/Release_x86_64/GNU-Linux-x86/package
 CND_PACKAGE_NAME_Release_x86_64=linuxpba.tar
 CND_PACKAGE_PATH_Release_x86_64=dist/Release_x86_64/GNU-Linux-x86/package/linuxpba.tar
+# Debug_x86_64 configuration
+CND_PLATFORM_Debug_x86_64=GNU-Linux-x86
+CND_ARTIFACT_DIR_Debug_x86_64=dist/Debug_x86_64/GNU-Linux-x86
+CND_ARTIFACT_NAME_Debug_x86_64=linuxpba
+CND_ARTIFACT_PATH_Debug_x86_64=dist/Debug_x86_64/GNU-Linux-x86/linuxpba
+CND_PACKAGE_DIR_Debug_x86_64=dist/Debug_x86_64/GNU-Linux-x86/package
+CND_PACKAGE_NAME_Debug_x86_64=linuxpba.tar
+CND_PACKAGE_PATH_Debug_x86_64=dist/Debug_x86_64/GNU-Linux-x86/package/linuxpba.tar
 #
 # include compiler specific variables
 #

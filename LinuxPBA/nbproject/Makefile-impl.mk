@@ -31,7 +31,7 @@ DEFAULTCONF=Debug
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=Debug Release Release_x86_64 
+ALLCONFS=Debug Release Release_x86_64 Debug_x86_64 
 
 
 # build

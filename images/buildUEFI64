@@ -45,4 +45,4 @@ sudo cp ../scratch/buildroot/PBA64/images/rootfs.cpio.xz image/EFI/boot/
 sudo cp ../buildroot/syslinux.cfg image/EFI/boot/
 sudo umount image
 sudo losetup -d $LOOPDEV
-#gzip ${BUILDIMG}
+gzip ${BUILDIMG}
