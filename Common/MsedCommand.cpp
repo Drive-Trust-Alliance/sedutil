@@ -120,7 +120,12 @@ MsedCommand::addToken(const char * bytestring)
 {
     LOG(D1) << "Entering MsedCommand::addToken(const char * )";
     uint16_t length = (uint16_t) strlen(bytestring);
-    if (length < 16) {
+    if (length == 0) {
+        /* null token e.g. default password */
+        cmdbuf[bufferpos++] = (uint8_t)0xa1;
+        cmdbuf[bufferpos++] = (uint8_t)0x00;
+    }
+    else if (length < 16) {
         /* use tiny atom */
         cmdbuf[bufferpos++] = (uint8_t) length | 0xa0;
     }
@@ -144,6 +149,13 @@ MsedCommand::addToken(OPAL_TOKEN token)
 {
     LOG(D1) << "Entering MsedCommand::addToken(OPAL_TOKEN)";
     cmdbuf[bufferpos++] = (uint8_t) token;
+}
+
+void
+MsedCommand::addToken(OPAL_SHORT_ATOM token)
+{
+    LOG(D1) << "Entering MsedCommand::addToken(OPAL_SHORT_ATOM)";
+    cmdbuf[bufferpos++] = (uint8_t)token;
 }
 
 void

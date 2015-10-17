@@ -40,13 +40,17 @@ void MsedHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> sa
 	if (253 < hashsize) { LOG(E) << "Hashsize > 253 incorrect token generated"; }
 
 	hash.clear();
+	// don't hash the devault OPAL password ''
+	if (0 == strnlen(password, 32)) {
+		goto exit;
+	}
 	hash.reserve(hashsize + 2); // hope this will prevent reallocation
 	for (uint16_t i = 0; i < hashsize; i++) {
 		hash.push_back(' ');
 	}
 	gc_pbkdf2_sha1(password, strnlen(password, 256), (const char *)salt.data(), salt.size(), iter,
 		(char *)hash.data(), hash.size());
-	// add the token overhead
+exit:	// add the token overhead
 	hash.insert(hash.begin(), (uint8_t)hash.size());
 	hash.insert(hash.begin(), 0xd0);
 }
