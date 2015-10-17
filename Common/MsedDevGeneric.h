@@ -124,6 +124,11 @@ public:
          * @param password password of the admin sp SID authority
          */
 	 uint8_t activateLockingSP(char * password) ;
+	/** Enable locking on the device in Single User Mode
+	 * @param lockingrange locking range to activate in SUM
+	 * @param password password of the admin sp SID authority
+	 */
+	 uint8_t activateLockingSP_SUM(uint8_t lockingrange, char * password);
         /** Change the SID password from it's MSID default 
          * @param newpassword  new password for SID and locking SP admins
          */ 

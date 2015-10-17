@@ -839,6 +839,91 @@ uint8_t MsedDevOpal::activateLockingSP(char * password)
 	LOG(D1) << "Exiting MsedDevOpal::activatLockingSP()";
 	return 0;
 }
+
+uint8_t MsedDevOpal::activateLockingSP_SUM(uint8_t lockingrange, char * password)
+{
+	LOG(D1) << "Entering MsedDevOpal::activateLockingSP_SUM()";
+	uint8_t lastRC;
+	vector<uint8_t> table;
+	table.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+	for (int i = 0; i < 8; i++) {
+		table.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGSP_UID][i]);
+	}
+	vector<uint8_t> LR;
+	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+	for (int i = 0; i < 8; i++) {
+		LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
+	}
+	if (lockingrange > 0) {
+		LR[6] = 0x03;
+		LR[8] = lockingrange;
+	}
+	MsedCommand *cmd = new MsedCommand();
+	if (NULL == cmd) {
+		LOG(E) << "Unable to create command object ";
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
+	session = new MsedSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
+	if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, OPAL_UID::OPAL_SID_UID)) != 0) {
+		LOG(E) << "session->start failed with code " << lastRC;
+		delete cmd;
+		delete session;
+		return lastRC;
+	}
+	if ((lastRC = getTable(table, 0x06, 0x06)) != 0) {
+		LOG(E) << "Unable to determine LockingSP Lifecycle state";
+		delete cmd;
+		delete session;
+		return lastRC;
+	}
+	if ((0x06 != response.getUint8(3)) || // getlifecycle
+		(0x08 != response.getUint8(4))) // Manufactured-Inactive
+	{
+		LOG(E) << "Locking SP lifecycle is not Manufactured-Inactive";
+		delete cmd;
+		delete session;
+		return MSEDERROR_INVALID_LIFECYCLE;
+	}
+	/*if (!disk_info.SingleUser)
+	{
+		LOG(E) << "This Locking SP does not support Single User Mode";
+		delete cmd;
+		delete session;
+		return MSEDERROR_INVALID_COMMAND;
+	}*/
+	cmd->reset(OPAL_UID::OPAL_LOCKINGSP_UID, OPAL_METHOD::ACTIVATE);
+	cmd->addToken(OPAL_TOKEN::STARTLIST);
+		cmd->addToken(OPAL_TOKEN::STARTNAME);
+			//SingleUserModeSelectionList parameter
+			cmd->addToken(OPAL_SHORT_ATOM::UINT_3);
+			cmd->addToken(OPAL_TINY_ATOM::UINT_06);
+			cmd->addToken(OPAL_TINY_ATOM::UINT_00);
+			cmd->addToken(OPAL_TINY_ATOM::UINT_00);
+			cmd->addToken(OPAL_TOKEN::STARTLIST);
+				cmd->addToken(LR);
+			cmd->addToken(OPAL_TOKEN::ENDLIST);
+		cmd->addToken(OPAL_TOKEN::ENDNAME);
+	cmd->addToken(OPAL_TOKEN::ENDLIST);
+	cmd->complete();
+	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+		LOG(E) << "session->sendCommand failed with code " << lastRC;
+		delete cmd;
+		delete session;
+		return lastRC;
+	}
+	disk_info.Locking_lockingEnabled = 1;
+	LOG(I) << "Locking SP Activate Complete for single User" << (lockingrange+1) << " on locking range " << (int)lockingrange;
+
+	delete cmd;
+	delete session;
+	LOG(D1) << "Exiting MsedDevOpal::activateLockingSP_SUM()";
+	return 0;
+}
+
 uint8_t MsedDevOpal::takeOwnership(char * newpassword)
 {
 	LOG(D1) << "Entering MsedDevOpal::takeOwnership()";

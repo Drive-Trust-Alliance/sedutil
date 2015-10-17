@@ -120,6 +120,25 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 		BEGIN_OPTION(enableuser, 2) OPTION_IS(password) OPTION_IS(userid) 
 			OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(activateLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(activateLockingSP_SUM, 3)
+			TESTARG(0, lockingrange, 0)
+			TESTARG(1, lockingrange, 1)
+			TESTARG(2, lockingrange, 2)
+			TESTARG(3, lockingrange, 3)
+			TESTARG(4, lockingrange, 4)
+			TESTARG(5, lockingrange, 5)
+			TESTARG(6, lockingrange, 6)
+			TESTARG(7, lockingrange, 7)
+			TESTARG(8, lockingrange, 8)
+			TESTARG(9, lockingrange, 9)
+			TESTARG(10, lockingrange, 10)
+			TESTARG(11, lockingrange, 11)
+			TESTARG(12, lockingrange, 12)
+			TESTARG(13, lockingrange, 13)
+			TESTARG(14, lockingrange, 14)
+			TESTARG(15, lockingrange, 15)
+			TESTFAIL("Invalid Locking Range (0-15)")
+			OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(query, 1) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(scan, 0)  END_OPTION
 		BEGIN_OPTION(takeownership, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
