@@ -100,6 +100,12 @@ public:
          * @param password  current SID password
          */
 	uint8_t activateLockingSP(char * password);
+        /** Change state of the Locking SP to active in Single User Mode.
+         * Enables locking in Single User Mode
+         * @param lockingrange  the locking range number to activate in SUM
+         * @param password  current SID password
+         */
+	uint8_t activateLockingSP_SUM(uint8_t lockingrange, char * password);
         /** Restore the state of the Locking SP to factory defaults.
          * Enables locking 
          * @param password  current SID password

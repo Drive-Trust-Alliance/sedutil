@@ -62,6 +62,7 @@ typedef enum _msedoption {
 	setMBRDone,
 	enableuser,
 	activateLockingSP,
+	activateLockingSP_SUM,
 	query,
 	scan,
 	takeownership,

@@ -77,6 +77,7 @@ uint8NOCODE(enableUser,char * password, char * userid)
 uint8NOCODE(revertTPer,char * password, uint8_t PSID)
 uint8NOCODE(loadPBA,char * password, char * filename)
 uint8NOCODE(activateLockingSP,char * password)
+uint8NOCODE(activateLockingSP_SUM,uint8_t lockingrange, char * password)
 uint8NOCODE(takeOwnership, char * newpassword)
 uint8NOCODE(setSIDPassword,char * oldpassword, char * newpassword,
 	uint8_t hasholdpwd, uint8_t hashnewpwd)

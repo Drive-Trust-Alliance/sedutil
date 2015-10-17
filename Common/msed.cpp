@@ -163,6 +163,10 @@ int main(int argc, char * argv[])
 		LOG(D) << "Activating the LockingSP on" << argv[opts.device];
         return d->activateLockingSP(argv[opts.password]);
         break;
+	case msedoption::activateLockingSP_SUM:
+		LOG(D) << "Activating the LockingSP on" << argv[opts.device];
+		return d->activateLockingSP_SUM(opts.lockingrange, argv[opts.password]);
+		break;
     case msedoption::query:
 		LOG(D) << "Performing diskquery() on " << argv[opts.device];
         d->puke();
