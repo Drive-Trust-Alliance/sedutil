@@ -27,8 +27,9 @@ void usage()
     printf("a utility to manage self encrypting drives that conform\n");
     printf("to the Trusted Computing Group OPAL 2.0 SSC specification\n");
     printf("General Usage:                     (see readme for extended commandset)\n");
-    printf("msed <-v> <action> <options> <device>\n");
-	printf("-v (optional)	                increase verbosity, one to five v's\n");
+    printf("msed <-v> <-n> <action> <options> <device>\n");
+    printf("-v (optional)                       increase verbosity, one to five v's\n");
+    printf("-n (optional)                       no password hashing. Passwords will be sent in clear text!\n");
     printf("actions \n");
     printf("--scan \n");
     printf("                                Scans the devices on the system \n");
@@ -99,6 +100,11 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 			LOG(D) << "Log level set to " << CLog::ToString(CLog::FromInt(loggingLevel));
 			LOG(D) << "msed version : " << GIT_VERSION;
 		}
+		else if (!(strcmp("-n", argv[i]))) {
+                        baseOptions += 1;
+			opts->no_hash_passwords = true;
+			LOG(D) << "Password hashing is disabled";
+                }
 		else if (!(('-' == argv[i][0]) && ('-' == argv[i][1])) && 
 			(0 == opts->action))
 		{

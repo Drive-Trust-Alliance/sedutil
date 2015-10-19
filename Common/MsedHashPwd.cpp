@@ -59,6 +59,17 @@ void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedDev * d)
 {
     LOG(D1) << " Entered MsedHashPwd";
     char *serNum;
+
+    if (d->no_hash_passwords) {
+        hash.clear();
+	for (uint16_t i = 0; i < strnlen(password, 32); i++)
+		hash.push_back(password[i]);
+	// add the token overhead
+	hash.insert(hash.begin(), (uint8_t)hash.size());
+	hash.insert(hash.begin(), 0xd0);
+	LOG(D1) << " Exit MsedHashPwd";
+	return;
+    }
     serNum = d->getSerialNum();
     vector<uint8_t> salt(serNum, serNum + 20);
     //	vector<uint8_t> salt(DEFAULTSALT);

@@ -255,6 +255,7 @@ public:
 	virtual uint8_t exec(MsedCommand * cmd, MsedResponse & resp, uint8_t protocol = 0x01) = 0;
 	/** return the communications ID to be used for sessions to this device */
 	virtual uint16_t comID() = 0;
+	bool no_hash_passwords; /** disables hashing of passwords */
 protected:
 	const char * dev;   /**< character string representing the device in the OS lexicon */
 	uint8_t isOpen = FALSE;  /**< The device has been opened */
@@ -263,5 +264,4 @@ protected:
 	MsedResponse propertiesResponse;  /**< response fron properties exchange */
 	MsedSession *session;  /**< shared session object pointer */
 	uint8_t discovery0buffer[IO_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT];
-
 };
