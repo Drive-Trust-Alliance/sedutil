@@ -144,6 +144,12 @@ public:
          * @param newpassword  value password is to be changed to
          */
 	uint8_t setNewPassword(char * password, char * userid, char * newpassword);
+	/** Set the password of a locking SP user in Single User Mode.
+         * @param password  current user password
+         * @param userid the userid whose password is to be changed
+         * @param newpassword  value password is to be changed to
+         */
+	uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword);
         /** User command to manipulate the state of a locking range.
          * RW|RO|LK are the supported states @see OPAL_LOCKINGSTATE
          * @param lockingrange locking range number

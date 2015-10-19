@@ -117,6 +117,12 @@ public:
 	 * @param newpassword  value password is to be changed to
 	 */
 	virtual uint8_t setNewPassword(char * password, char * userid, char * newpassword) = 0;
+	/** Set the password of a locking SP user in Single User Mode.
+         * @param password  current user password
+         * @param userid the userid whose password is to be changed
+         * @param newpassword  value password is to be changed to
+         */
+	virtual uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword) = 0;
 	/** Loads a disk image file to the shadow MBR table.
 	 * @param password the password for the administrative authority with access to the table
 	 * @param filename the filename of the disk image

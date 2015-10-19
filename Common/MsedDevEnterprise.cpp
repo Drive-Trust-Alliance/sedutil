@@ -181,6 +181,13 @@ uint8_t MsedDevEnterprise::setNewPassword(char * password, char * userid, char *
 	LOG(D1) << "Exiting MsedDevEnterprise::setNewPassword()";
 	return 0;
 }
+uint8_t MsedDevEnterprise::setNewPassword_SUM(char * password, char * userid, char * newpassword)
+{
+	LOG(D1) << "Entering MsedDevEnterprise::setNewPassword_SUM()";
+	LOG(I) << "setNewPassword_SUM is not in the Enterprise SSC and not supported";
+	LOG(D1) << "Exiting MsedDevEnterprise::setNewPassword_SUM()";
+	return 0;
+}
 uint8_t MsedDevEnterprise::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 {
 	LOG(D1) << "Entering MsedDevEnterprise::setMBREnable";
