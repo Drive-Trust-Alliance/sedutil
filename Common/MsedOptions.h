@@ -48,6 +48,7 @@ typedef enum _msedoption {
 	setPassword,
 	loadPBAimage,
 	setLockingRange,
+	setLockingRange_SUM,
 	reverttper,
 	revertnoerase,
 	revertLockingSP,

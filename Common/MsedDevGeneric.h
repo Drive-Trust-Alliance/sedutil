@@ -85,6 +85,13 @@ public:
          */
 	 uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 		char * Admin1Password) ;
+	 /** Change the locking state of a locking range in Single User Mode
+         * @param lockingrange The number of the locking range (0 = global)
+         * @param lockingstate  the locking state to set
+         * @param password password of user authority for the locking range
+         */
+	 uint8_t setLockingRange_SUM(uint8_t lockingrange, uint8_t lockingstate,
+		 char * password);
          /** Change the active state of a locking range 
          * @param lockingrange The number of the locking range (0 = global)
          * @param enabled  enable (true) or disable (false) the lockingrange

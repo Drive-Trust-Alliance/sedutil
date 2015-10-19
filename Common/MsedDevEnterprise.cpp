@@ -279,6 +279,13 @@ uint8_t MsedDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t locking
 	LOG(D1) << "Exiting MsedDevEnterprise::setLockingRange";
 	return 0;
 }
+uint8_t MsedDevEnterprise::setLockingRange_SUM(uint8_t lockingrange, uint8_t lockingstate,
+	char * password) {
+	LOG(D1) << "Entering MsedDevEnterprise::setLockingRange_SUM()";
+        LOG(E) << "setLockingRange_SUM not implemented";
+        LOG(D1) << "Exiting MsedDevEnterprise::setLockingRange_SUM()";
+	return 0;
+}
 uint8_t MsedDevEnterprise::enableUser(char * password, char * userid)
 {
 	LOG(D1) << "Entering MsedDevEnterprise::enableUser";

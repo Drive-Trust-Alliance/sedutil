@@ -708,6 +708,106 @@ uint8_t MsedDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 	LOG(D1) << "Exiting MsedDevOpal::setLockingRange";
 	return 0;
 }
+uint8_t MsedDevOpal::setLockingRange_SUM(uint8_t lockingrange, uint8_t lockingstate,
+	char * password)
+{
+	uint8_t lastRC;
+	OPAL_TOKEN readlocked, writelocked;
+	const char *msg;
+
+	LOG(D1) << "Entering MsedDevOpal::setLockingRange_SUM";
+	switch (lockingstate) {
+	case OPAL_LOCKINGSTATE::READWRITE:
+		readlocked = writelocked = OPAL_TOKEN::OPAL_FALSE;
+		msg = "RW";
+		break;
+	case OPAL_LOCKINGSTATE::READONLY:
+		readlocked = OPAL_TOKEN::OPAL_FALSE;
+		writelocked = OPAL_TOKEN::OPAL_TRUE;
+		msg = "RO";
+		break;
+	case OPAL_LOCKINGSTATE::LOCKED:
+		readlocked = writelocked = OPAL_TOKEN::OPAL_TRUE;
+		msg = "LK";
+		break;
+	default:
+		LOG(E) << "Invalid locking state for setLockingRange";
+		return MSEDERROR_INVALID_PARAMETER;
+	}
+	vector<uint8_t> LR;
+	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+	for (int i = 0; i < 8; i++) {
+		LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
+	}
+	if (lockingrange != 0) {
+		LR[6] = 0x03;
+		LR[8] = lockingrange;
+	}
+	session = new MsedSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
+	vector<uint8_t> auth;
+	auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+	for (int i = 0; i < 7; i++) {
+		auth.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
+	}
+	auth.push_back(lockingrange+1);
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth)) != 0) {
+		LOG(E) << "Error starting session. Did you provide the correct user password? (GlobalRange = User1; Range1 = User2, etc.)";
+		delete session;
+		return lastRC;
+	}
+
+	MsedCommand *set = new MsedCommand();
+	if (NULL == set) {
+		LOG(E) << "Unable to create command object ";
+		delete session;
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
+	set->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::SET);
+	set->changeInvokingUid(LR);
+	set->addToken(OPAL_TOKEN::STARTLIST);
+	set->addToken(OPAL_TOKEN::STARTNAME);
+	set->addToken(OPAL_TOKEN::VALUES);
+	set->addToken(OPAL_TOKEN::STARTLIST);
+
+	//enable locking on the range to enforce lock state
+	set->addToken(OPAL_TOKEN::STARTNAME);
+	set->addToken(OPAL_TOKEN::READLOCKENABLED);
+	set->addToken(OPAL_TOKEN::OPAL_TRUE);
+	set->addToken(OPAL_TOKEN::ENDNAME);
+	set->addToken(OPAL_TOKEN::STARTNAME);
+	set->addToken(OPAL_TOKEN::WRITELOCKENABLED);
+	set->addToken(OPAL_TOKEN::OPAL_TRUE);
+	set->addToken(OPAL_TOKEN::ENDNAME);
+	//set read/write locked
+	set->addToken(OPAL_TOKEN::STARTNAME);
+	set->addToken(OPAL_TOKEN::READLOCKED);
+	set->addToken(readlocked);
+	set->addToken(OPAL_TOKEN::ENDNAME);
+	set->addToken(OPAL_TOKEN::STARTNAME);
+	set->addToken(OPAL_TOKEN::WRITELOCKED);
+	set->addToken(writelocked);
+	set->addToken(OPAL_TOKEN::ENDNAME);
+
+	set->addToken(OPAL_TOKEN::ENDLIST);
+	set->addToken(OPAL_TOKEN::ENDNAME);
+	set->addToken(OPAL_TOKEN::ENDLIST);
+	set->complete();
+	if ((lastRC = session->sendCommand(set, response)) != 0) {
+		LOG(E) << "setLockingRange Failed ";
+		delete set;
+		delete session;
+		return lastRC;
+	}
+	delete set;
+	delete session;
+	LOG(I) << "LockingRange" << (uint16_t)lockingrange << " set to " << msg;
+	LOG(D1) << "Exiting MsedDevOpal::setLockingRange_SUM";
+	return 0;
+}
 uint8_t MsedDevOpal::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, 
 	OPAL_TOKEN value,char * password, char * msg)
 {

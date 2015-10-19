@@ -124,6 +124,9 @@ public:
 	uint8_t setNewPassword(char * password, char * userid, char * newpassword);
 	uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 		char * password);
+	/** dummy code not implemented in the enterprise SSC*/
+	uint8_t setLockingRange_SUM(uint8_t lockingrange, uint8_t lockingstate,
+		char * password);
 	/** Setup a locking range.  Initialize a locking range, set it's start
 	*  LBA and length, initialize it as unlocked with locking disabled.
 	*  @param lockingrange The Locking Range to be setup

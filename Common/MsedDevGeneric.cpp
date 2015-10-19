@@ -70,6 +70,8 @@ uint8NOCODE(setMBREnable,uint8_t mbrstate, char * Admin1Password)
 uint8NOCODE(setMBRDone,uint8_t mbrstate, char * Admin1Password)
 uint8NOCODE(setLockingRange,uint8_t lockingrange, uint8_t lockingstate,
 	char * Admin1Password)
+uint8NOCODE(setLockingRange_SUM, uint8_t lockingrange, uint8_t lockingstate,
+	char * password)
 uint8NOCODE(setupLockingRange,uint8_t lockingrange, uint64_t start,
 	uint64_t length, char * password)
 uint8NOCODE(setupLockingRange_SUM, uint8_t lockingrange, uint64_t start,
