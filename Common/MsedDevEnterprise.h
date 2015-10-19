@@ -169,6 +169,8 @@ public:
          * @param password the password that is to be assigned to the SSC master entities 
          */
 	uint8_t initialsetup(char * password);
+	/** dummy code not implemented in teh enterprise SSC*/
+	uint8_t setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password);
         /** Displays the identify and discovery 0 information */
 	void puke();
          /** Dumps an object for diagnostic purposes

@@ -106,6 +106,11 @@ int main(int argc, char * argv[])
  	case msedoption::initialsetup:
 		LOG(D) << "Performing initial setup to use msed on drive " << argv[opts.device];
         return (d->initialsetup(argv[opts.password]));
+	case msedoption::setup_SUM:
+		LOG(D) << "Performing SUM setup on drive " << argv[opts.device];
+		return (d->setup_SUM(opts.lockingrange, atoll(argv[opts.lrstart]),
+			atoll(argv[opts.lrlength]), argv[opts.password], argv[opts.newpassword]));
+		break;
 	case msedoption::setSIDPwd:
         LOG(D) << "Performing setSIDPwd ";
         return d->setSIDPassword(argv[opts.password], argv[opts.newpassword]);
