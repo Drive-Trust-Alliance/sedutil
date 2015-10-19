@@ -102,6 +102,14 @@ public:
 	 * @param password the password that is to be assigned to the SSC master entities
 	 */
 	virtual uint8_t initialsetup(char * password) = 0;
+	/** User command to prepare the drive for Single User Mode and rekey a SUM locking range.
+	 * @param lockingrange locking range number to enable
+	 * @param start LBA to start locking range
+	 * @param length length (in blocks) for locking range
+	 * @param Admin1Password admin1 password for TPer
+	 * @param password User password to set for locking range
+	 */
+	virtual uint8_t setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password) = 0;
 	/** Set the SID password.
 	 * Requires special handling because password is not always hashed.
 	 * @param oldpassword  current SID password
@@ -117,6 +125,12 @@ public:
 	 * @param newpassword  value password is to be changed to
 	 */
 	virtual uint8_t setNewPassword(char * password, char * userid, char * newpassword) = 0;
+	/** Set the password of a locking SP user in Single User Mode.
+         * @param password  current user password
+         * @param userid the userid whose password is to be changed
+         * @param newpassword  value password is to be changed to
+         */
+	virtual uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword) = 0;
 	/** Loads a disk image file to the shadow MBR table.
 	 * @param password the password for the administrative authority with access to the table
 	 * @param filename the filename of the disk image
@@ -129,6 +143,13 @@ public:
 	 */
 	virtual uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 		char * Admin1Password) = 0;
+	/** Change the locking state of a locking range in Single User Mode
+         * @param lockingrange The number of the locking range (0 = global)
+         * @param lockingstate  the locking state to set
+         * @param password password of user authority for the locking range
+         */
+	virtual uint8_t setLockingRange_SUM(uint8_t lockingrange, uint8_t lockingstate,
+		char * password) = 0;
 	/** Change the active state of a locking range
 	 * @param lockingrange The number of the locking range (0 = global)
 	 * @param enabled  enable (true) or disable (false) the lockingrange
@@ -144,6 +165,15 @@ public:
 	 *  @param password Password of administrator
 	 */
 	virtual uint8_t setupLockingRange(uint8_t lockingrange, uint64_t start,
+		uint64_t length, char * password) = 0;
+	/** Setup a locking range in Single User Mode.  Initialize a locking range,
+	 *  set it's start LBA and length, initialize it as unlocked with locking enabled.
+         *  @paran lockingrange The Locking Range to be setup
+         *  @param start  Starting LBA
+         *  @param length Number of blocks
+         *  @param password Password of administrator
+         */
+	virtual uint8_t setupLockingRange_SUM(uint8_t lockingrange, uint64_t start,
 		uint64_t length, char * password) = 0;
 	/** List status of locking ranges.  
 	*  @param password Password of administrator
@@ -168,6 +198,16 @@ public:
 	 * @param password password of the admin sp SID authority
 	 */
 	virtual uint8_t activateLockingSP(char * password) = 0;
+	/** Enable locking on the device in Single User Mode
+	* @param lockingrange the locking range number to activate in SUM
+	* @param password password of the admin sp SID authority
+	*/
+	virtual uint8_t activateLockingSP_SUM(uint8_t lockingrange, char * password) = 0;
+	/** Erase a Single User Mode locking range by calling the drive's erase method
+	 * @param lockingrange The Locking Range to erase
+	 * @param password The administrator password for the drive
+	 */
+	virtual uint8_t eraseLockingRange_SUM(uint8_t lockingrange, char * password) = 0;
 	/** Change the SID password from it's MSID default
 	 * @param newpassword  new password for SID and locking SP admins
 	 */
@@ -215,6 +255,7 @@ public:
 	virtual uint8_t exec(MsedCommand * cmd, MsedResponse & resp, uint8_t protocol = 0x01) = 0;
 	/** return the communications ID to be used for sessions to this device */
 	virtual uint16_t comID() = 0;
+	bool no_hash_passwords; /** disables hashing of passwords */
 protected:
 	const char * dev;   /**< character string representing the device in the OS lexicon */
 	uint8_t isOpen = FALSE;  /**< The device has been opened */
@@ -223,5 +264,4 @@ protected:
 	MsedResponse propertiesResponse;  /**< response fron properties exchange */
 	MsedSession *session;  /**< shared session object pointer */
 	uint8_t discovery0buffer[IO_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT];
-
 };

@@ -100,6 +100,17 @@ public:
          * @param password  current SID password
          */
 	uint8_t activateLockingSP(char * password);
+        /** Change state of the Locking SP to active in Single User Mode.
+         * Enables locking in Single User Mode
+         * @param lockingrange  the locking range number to activate in SUM
+         * @param password  current SID password
+         */
+	uint8_t activateLockingSP_SUM(uint8_t lockingrange, char * password);
+	/** Erase a Single User Mode locking range by calling the drive's erase method
+         * @param lockingrange The Locking Range to erase
+         * @param password The administrator password for the drive
+         */
+        uint8_t eraseLockingRange_SUM(uint8_t lockingrange, char * password);
         /** Restore the state of the Locking SP to factory defaults.
          * Enables locking 
          * @param password  current SID password
@@ -133,6 +144,12 @@ public:
          * @param newpassword  value password is to be changed to
          */
 	uint8_t setNewPassword(char * password, char * userid, char * newpassword);
+	/** Set the password of a locking SP user in Single User Mode.
+         * @param password  current user password
+         * @param userid the userid whose password is to be changed
+         * @param newpassword  value password is to be changed to
+         */
+	uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword);
         /** User command to manipulate the state of a locking range.
          * RW|RO|LK are the supported states @see OPAL_LOCKINGSTATE
          * @param lockingrange locking range number
@@ -141,6 +158,13 @@ public:
          */
 	uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 		char * Admin1Password);
+	/** Change the locking state of a locking range in Single User Mode
+         * @param lockingrange The number of the locking range (0 = global)
+         * @param lockingstate  the locking state to set
+         * @param password password of user authority for the locking range
+         */
+	uint8_t setLockingRange_SUM(uint8_t lockingrange, uint8_t lockingstate,
+		char * password);
 	/** Setup a locking range.  Initialize a locking range, set it's start
 	*  LBA and length, initialize it as unlocked with locking disabled.
 	*  @paran lockingrange The Locking Range to be setup
@@ -149,6 +173,15 @@ public:
 	*  @param password Password of administrator
 	*/
 	uint8_t setupLockingRange(uint8_t lockingrange, uint64_t start,
+		uint64_t length, char * password);
+	/** Setup a locking range in Single User Mode.  Initialize a locking range,
+	*  set it's start LBA and length, initialize it as unlocked with locking enabled.
+        *  @paran lockingrange The Locking Range to be setup
+        *  @param start  Starting LBA
+        *  @param length Number of blocks
+        *  @paran password Password of administrator
+        */
+	uint8_t setupLockingRange_SUM(uint8_t lockingrange, uint64_t start,
 		uint64_t length, char * password);
 	/** List status of locking ranges.
 	*  @param password Password of administrator
@@ -166,6 +199,12 @@ public:
 	* @param password password of the locking administrative authority
 	*/
 	uint8_t rekeyLockingRange(uint8_t lockingrange, char * password);
+	/** Generate a new encryption key for a Single User Mode locking range.
+        * @param LR locking range UID in vector format
+	* @param UID user UID in vector format
+        * @param password password of the UID authority
+        */
+	uint8_t rekeyLockingRange_SUM(vector<uint8_t> LR, vector<uint8_t>  UID, char * password);
 	/** Reset the TPER to its factory condition   
          * ERASES ALL DATA!
          * @param password password of authority (SID or PSID)
@@ -182,6 +221,14 @@ public:
          * @param password the password that is to be assigned to the SSC master entities 
          */
 	uint8_t initialsetup(char * password);
+	/** User command to prepare the drive for Single User Mode and rekey a SUM locking range.
+         * @param lockingrange locking range number to enable
+         * @param start LBA to start locking range
+         * @param length length (in blocks) for locking range
+         * @param Admin1Password admin1 password for TPer
+         * @param password User password to set for locking range
+         */
+        uint8_t setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password);
           /** Displays the identify and discovery 0 information */
 	void puke();
          /** Dumps an object for diagnostic purposes
@@ -213,5 +260,22 @@ protected:
          */
 	uint8_t setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, OPAL_TOKEN value,
 		char * password, char * msg = (char *) "New Value Set");
+
+	typedef struct lrStatus
+	{
+		uint8_t command_status; //return code of locking range query command
+		uint8_t lockingrange_num; //which locking range is this
+		uint64_t start;
+		uint64_t size;
+		bool RLKEna;
+		bool WLKEna;
+		bool RLocked;
+		bool WLocked;
+	}lrStatus_t;
+	/** Get info programatically for single locking range
+	 *  @param lockingrange locking range number to check
+	 *  @param password Admin1 Password for TPer
+	 */
+	lrStatus_t getLockingRange_status(uint8_t lockingrange, char * password);
 
 };

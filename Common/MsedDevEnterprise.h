@@ -97,6 +97,10 @@ public:
 		OPAL_TOKEN value);
     /** dummy code not implemented the the enterprise SSC */
 	uint8_t activateLockingSP(char * password);
+	/** dummy code not implemented in teh enterprise SSC*/
+	uint8_t activateLockingSP_SUM(uint8_t lockingrange, char * password);
+	/** dummy code not implemented in teh enterprise SSC*/
+	uint8_t eraseLockingRange_SUM(uint8_t lockingrange, char * password);
         /** dummy code not implemented in teh enterprise SSC*/
 	uint8_t revertLockingSP(char * password, uint8_t keep = 0);
         /** get the UID or CPIN ID of a user from their character name*/
@@ -120,7 +124,12 @@ public:
          * @param newpassword  value password is to be changed to
          */
 	uint8_t setNewPassword(char * password, char * userid, char * newpassword);
+	/** dummy code not implemented in the enterprise SSC*/
+	uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword);
 	uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
+		char * password);
+	/** dummy code not implemented in the enterprise SSC*/
+	uint8_t setLockingRange_SUM(uint8_t lockingrange, uint8_t lockingstate,
 		char * password);
 	/** Setup a locking range.  Initialize a locking range, set it's start
 	*  LBA and length, initialize it as unlocked with locking disabled.
@@ -130,6 +139,9 @@ public:
 	*  @param password Password of administrator
 	*/
 	uint8_t setupLockingRange(uint8_t lockingrange, uint64_t start,
+		uint64_t length, char * password);
+	/** dummy code not implemented in the enterprise SSC*/
+	uint8_t setupLockingRange_SUM(uint8_t lockingrange, uint64_t start,
 		uint64_t length, char * password);
 	/** List status of locking ranges.
 	*  @param password Password of administrator
@@ -157,6 +169,8 @@ public:
          * @param password the password that is to be assigned to the SSC master entities 
          */
 	uint8_t initialsetup(char * password);
+	/** dummy code not implemented in teh enterprise SSC*/
+	uint8_t setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password);
         /** Displays the identify and discovery 0 information */
 	void puke();
          /** Dumps an object for diagnostic purposes
