@@ -66,6 +66,12 @@ uint8_t MsedDevEnterprise::initialsetup(char * password)
 	LOG(D1) << "Exiting initialSetup()";
 	return 0;
 }
+uint8_t MsedDevEnterprise::setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password)
+{
+	LOG(D1) << "Entering MsedDevEnterprise::setup_SUM";
+	LOG(I) << "setup_SUM not supported on MsedDevEnterprise";
+	return 1;
+}
 uint8_t MsedDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t enabled, char * password)
 {
 	LOG(D1) << "Entering MsedDevEnterprise::configureLockingRange()";

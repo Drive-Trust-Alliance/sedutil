@@ -221,6 +221,14 @@ public:
          * @param password the password that is to be assigned to the SSC master entities 
          */
 	uint8_t initialsetup(char * password);
+	/** User command to prepare the drive for Single User Mode and rekey a SUM locking range.
+         * @param lockingrange locking range number to enable
+         * @param start LBA to start locking range
+         * @param length length (in blocks) for locking range
+         * @param Admin1Password admin1 password for TPer
+         * @param password User password to set for locking range
+         */
+        uint8_t setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password);
           /** Displays the identify and discovery 0 information */
 	void puke();
          /** Dumps an object for diagnostic purposes
@@ -252,5 +260,22 @@ protected:
          */
 	uint8_t setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, OPAL_TOKEN value,
 		char * password, char * msg = (char *) "New Value Set");
+
+	typedef struct lrStatus
+	{
+		uint8_t command_status; //return code of locking range query command
+		uint8_t lockingrange_num; //which locking range is this
+		uint64_t start;
+		uint64_t size;
+		bool RLKEna;
+		bool WLKEna;
+		bool RLocked;
+		bool WLocked;
+	}lrStatus_t;
+	/** Get info programatically for single locking range
+	 *  @param lockingrange locking range number to check
+	 *  @param password Admin1 Password for TPer
+	 */
+	lrStatus_t getLockingRange_status(uint8_t lockingrange, char * password);
 
 };

@@ -43,6 +43,7 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts);
 typedef enum _msedoption {
 	deadbeef,    // 0 should indicate no action specified
 	initialsetup,
+	setup_SUM,
 	setSIDPwd,
 	setAdmin1Pwd,
 	setPassword,

@@ -62,6 +62,7 @@ void MsedDevGeneric::init(const char * devref)
 {
 }
 uint8NOCODE(initialsetup, char *password)
+uint8NOCODE(setup_SUM, uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password)
 uint8NOCODE(configureLockingRange,uint8_t lockingrange, 
 	uint8_t enabled, char * password)
 uint8NOCODE(revertLockingSP,char * password, uint8_t keep)

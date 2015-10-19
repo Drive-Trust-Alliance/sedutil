@@ -83,6 +83,131 @@ uint8_t MsedDevOpal::initialsetup(char * password)
 	LOG(D1) << "Exiting initialSetup()";
 	return 0;
 }
+uint8_t MsedDevOpal::setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password)
+{
+	LOG(D1) << "Entering setup_SUM()";
+	uint8_t lastRC;
+	char defaultPW[] = ""; //OPAL defines the default initial User password as 0x00
+	std::string userId;
+	userId.append("User");
+	userId.append(std::to_string(lockingrange + 1)); //OPAL defines LR0 to User1, LR1 to User2, etc.
+
+	//verify opal SUM support and status
+	if (!disk_info.Locking || !disk_info.SingleUser)
+	{
+		LOG(E) << "Setup_SUM failed - this drive does not support LockingSP / SUM";
+		return MSEDERROR_INVALID_COMMAND;
+	}
+	if (disk_info.Locking_lockingEnabled && !disk_info.SingleUser_any)
+	{
+		LOG(E) << "Setup_SUM failed - LockingSP has already been configured in standard mode.";
+		return MSEDERROR_INVALID_COMMAND;
+	}
+	//If locking not enabled, run initial setup flow
+	if (!disk_info.Locking_lockingEnabled)
+	{
+		LOG(D1) << "LockingSP not enabled. Beginning initial setup flow.";
+		if ((lastRC = takeOwnership(Admin1Password)) != 0) {
+			LOG(E) << "Setup_SUM failed - unable to take ownership";
+			return lastRC;
+		}
+		if ((lastRC = activateLockingSP_SUM(lockingrange, Admin1Password)) != 0) {
+			LOG(E) << "Setup_SUM failed - unable to activate LockingSP in SUM";
+			return lastRC;
+		}
+		if ((lastRC = setupLockingRange_SUM(lockingrange, start, length, defaultPW)) != 0) {
+			LOG(E) << "Setup_SUM failed - unable to setup locking range " << lockingrange << "(" << start << "," << length << ")";
+			return lastRC;
+		}
+	}
+	if ((lastRC = eraseLockingRange_SUM(lockingrange, Admin1Password)) != 0) {
+		LOG(E) << "Setup_SUM failed - unable to erase locking range";
+		return lastRC;
+	}
+
+	//verify that locking range covers correct LBAs
+	lrStatus_t lrStatus;
+	if ((lrStatus = getLockingRange_status(lockingrange, Admin1Password)).command_status != 0) {
+		LOG(E) << "Setup_SUM failed - unable to query locking range start/size";
+		return lrStatus.command_status;
+	}
+	if (start != lrStatus.start || length != lrStatus.size)
+	{
+		LOG(D1) << "Incorrect Locking Range " << lockingrange << " start/size. Attempting to correct...";
+		if ((lastRC = setupLockingRange_SUM(lockingrange, start, length, defaultPW)) != 0) {
+			LOG(E) << "Setup_SUM failed - unable to setup locking range " << lockingrange << "(" << start << "," << length << ")";
+			return lastRC;
+		}
+		LOG(D1) << "Locking Range " << lockingrange << " start/size corrected.";
+	}
+
+	//enable and set new password for locking range
+	if ((lastRC = setLockingRange_SUM(lockingrange, OPAL_LOCKINGSTATE::READWRITE, defaultPW)) != 0) {
+		LOG(E) << "Setup_SUM failed - unable to enable locking range";
+		return lastRC;
+	}
+	if ((lastRC = setNewPassword_SUM(defaultPW, (char *)userId.c_str(), password)) != 0) {
+		LOG(E) << "Setup_SUM failed - unable to set new locking range password";
+		return lastRC;
+	}
+
+	LOG(I) << "Setup of SUM complete on " << dev;
+	LOG(D1) << "Exiting setup_SUM()";
+	return 0;
+}
+MsedDevOpal::lrStatus_t MsedDevOpal::getLockingRange_status(uint8_t lockingrange, char * password)
+{
+	uint8_t lastRC;
+	lrStatus_t lrStatus;
+	LOG(D1) << "Entering MsedDevOpal:getLockingRange_status()";
+	vector<uint8_t> LR;
+	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+	for (int i = 0; i < 8; i++) {
+		LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
+	}
+
+	session = new MsedSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		lrStatus.command_status = MSEDERROR_OBJECT_CREATE_FAILED;
+		return lrStatus;
+	}
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+		delete session;
+		lrStatus.command_status = lastRC;
+		return lrStatus;
+	}
+	if (0 != lockingrange) {
+		LR[8] = lockingrange & 0xff;
+		LR[6] = 0x03;  // non global ranges are 00000802000300nn 
+	}
+	if ((lastRC = getTable(LR, _OPAL_TOKEN::RANGESTART, _OPAL_TOKEN::WRITELOCKED)) != 0) {
+		delete session;
+		lrStatus.command_status = lastRC;
+		return lrStatus;
+	}
+	if (response.getTokenCount() < 24)
+	{
+		LOG(E) << "locking range getTable command did not return enough data";
+		delete session;
+		lrStatus.command_status = MSEDERROR_NO_LOCKING_INFO;
+		return lrStatus;
+	}
+	lrStatus.command_status = 0;
+	lrStatus.lockingrange_num = lockingrange;
+	lrStatus.start = response.getUint64(4);
+	lrStatus.size = response.getUint64(8);
+	lrStatus.RLKEna = (bool)response.getUint8(12);
+	lrStatus.WLKEna = (bool)response.getUint8(16);
+	lrStatus.RLocked = (bool)response.getUint8(20);
+	lrStatus.WLocked = (bool)response.getUint8(24);
+	LOG(D1) << "Locking Range " << lockingrange << " Begin: " << lrStatus.start << " Length: "
+		<< lrStatus.size << " RLKEna: " << lrStatus.RLKEna << " WLKEna: " << lrStatus.WLKEna
+		<< " RLocked: " << lrStatus.RLocked << " WLocked: " << lrStatus.WLocked;
+	delete session;
+	LOG(D1) << "Exiting MsedDevOpal:getLockingRange_status()";
+	return lrStatus;
+}
 uint8_t MsedDevOpal::listLockingRanges(char * password)
 {
 	uint8_t lastRC;

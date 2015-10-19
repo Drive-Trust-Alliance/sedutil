@@ -58,6 +58,14 @@ public:
          * @param password the password that is to be assigned to the SSC master entities 
          */
 	 uint8_t initialsetup(char * password) ;
+	/** User command to prepare the drive for Single User Mode and rekey a SUM locking range.
+         * @param lockingrange locking range number to enable
+         * @param start LBA to start locking range
+         * @param length length (in blocks) for locking range
+         * @param Admin1Password admin1 password for TPer
+         * @param password User password to set for locking range
+         */
+         uint8_t setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password);
           /** Set the SID password.
          * Requires special handling because password is not always hashed.
          * @param oldpassword  current SID password
