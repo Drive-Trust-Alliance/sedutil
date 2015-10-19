@@ -133,6 +133,9 @@ public:
 	*/
 	uint8_t setupLockingRange(uint8_t lockingrange, uint64_t start,
 		uint64_t length, char * password);
+	/** dummy code not implemented in the enterprise SSC*/
+	uint8_t setupLockingRange_SUM(uint8_t lockingrange, uint64_t start,
+		uint64_t length, char * password);
 	/** List status of locking ranges.
 	*  @param password Password of administrator
 	*/

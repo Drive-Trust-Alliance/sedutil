@@ -72,6 +72,8 @@ uint8NOCODE(setLockingRange,uint8_t lockingrange, uint8_t lockingstate,
 	char * Admin1Password)
 uint8NOCODE(setupLockingRange,uint8_t lockingrange, uint64_t start,
 	uint64_t length, char * password)
+uint8NOCODE(setupLockingRange_SUM, uint8_t lockingrange, uint64_t start,
+	uint64_t length, char * password)
 uint8NOCODE(listLockingRanges, char * password)
 uint8NOCODE(enableUser,char * password, char * userid)
 uint8NOCODE(revertTPer,char * password, uint8_t PSID)

@@ -57,6 +57,7 @@ typedef enum _msedoption {
 	disableLockingRange,
 	readonlyLockingRange,
 	setupLockingRange,
+	setupLockingRange_SUM,
 	listLockingRanges,
 	setMBREnable,
 	setMBRDone,

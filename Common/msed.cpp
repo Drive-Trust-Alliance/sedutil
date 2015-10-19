@@ -143,6 +143,11 @@ int main(int argc, char * argv[])
 		return (d->setupLockingRange(opts.lockingrange, atoll(argv[opts.lrstart]),
 			atoll(argv[opts.lrlength]), argv[opts.password]));
 		break;
+	case msedoption::setupLockingRange_SUM:
+		LOG(D) << "Setup Locking Range " << (uint16_t)opts.lockingrange << " in Single User Mode";
+		return (d->setupLockingRange_SUM(opts.lockingrange, atoll(argv[opts.lrstart]),
+			atoll(argv[opts.lrlength]), argv[opts.password]));
+		break;
 	case msedoption::listLockingRanges:
 		LOG(D) << "List Locking Ranges ";
 		return (d->listLockingRanges(argv[opts.password]));

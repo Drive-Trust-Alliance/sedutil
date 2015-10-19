@@ -205,6 +205,13 @@ uint8_t MsedDevEnterprise::setupLockingRange(uint8_t lockingrange, uint64_t star
 	LOG(D1) << "Exiting MsedDevEnterprise::setupLockingRange";
 	return 0;
 }
+uint8_t MsedDevEnterprise::setupLockingRange_SUM(uint8_t lockingrange, uint64_t start,
+	uint64_t length, char * password) {
+	LOG(D1) << "Entering MsedDevEnterprise::setupLockingRange_SUM";
+	if (0 == lockingrange) { LOG(E) << start << length << password; }
+	LOG(D1) << "Exiting MsedDevEnterprise::setupLockingRange_SUM";
+	return 0;
+}
 uint8_t MsedDevEnterprise::listLockingRanges(char * password) {
 	LOG(D1) << "Entering MsedDevEnterprise::listLockingRanges";
 	if (NULL == password) { LOG(E) << "password NULL"; }

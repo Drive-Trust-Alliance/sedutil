@@ -156,6 +156,15 @@ public:
 	*/
 	uint8_t setupLockingRange(uint8_t lockingrange, uint64_t start,
 		uint64_t length, char * password);
+	/** Setup a locking range in Single User Mode.  Initialize a locking range,
+	*  set it's start LBA and length, initialize it as unlocked with locking enabled.
+        *  @paran lockingrange The Locking Range to be setup
+        *  @param start  Starting LBA
+        *  @param length Number of blocks
+        *  @paran password Password of administrator
+        */
+	uint8_t setupLockingRange_SUM(uint8_t lockingrange, uint64_t start,
+		uint64_t length, char * password);
 	/** List status of locking ranges.
 	*  @param password Password of administrator
 	*/
@@ -172,6 +181,12 @@ public:
 	* @param password password of the locking administrative authority
 	*/
 	uint8_t rekeyLockingRange(uint8_t lockingrange, char * password);
+	/** Generate a new encryption key for a Single User Mode locking range.
+        * @param LR locking range UID in vector format
+	* @param UID user UID in vector format
+        * @param password password of the UID authority
+        */
+	uint8_t rekeyLockingRange_SUM(vector<uint8_t> LR, vector<uint8_t>  UID, char * password);
 	/** Reset the TPER to its factory condition   
          * ERASES ALL DATA!
          * @param password password of authority (SID or PSID)

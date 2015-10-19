@@ -145,6 +145,15 @@ public:
 	 */
 	virtual uint8_t setupLockingRange(uint8_t lockingrange, uint64_t start,
 		uint64_t length, char * password) = 0;
+	/** Setup a locking range in Single User Mode.  Initialize a locking range,
+	 *  set it's start LBA and length, initialize it as unlocked with locking enabled.
+         *  @paran lockingrange The Locking Range to be setup
+         *  @param start  Starting LBA
+         *  @param length Number of blocks
+         *  @param password Password of administrator
+         */
+	virtual uint8_t setupLockingRange_SUM(uint8_t lockingrange, uint64_t start,
+		uint64_t length, char * password) = 0;
 	/** List status of locking ranges.  
 	*  @param password Password of administrator
 	*/
