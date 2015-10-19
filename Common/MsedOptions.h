@@ -65,6 +65,7 @@ typedef enum _msedoption {
 	enableuser,
 	activateLockingSP,
 	activateLockingSP_SUM,
+	eraseLockingRange_SUM,
 	query,
 	scan,
 	takeownership,

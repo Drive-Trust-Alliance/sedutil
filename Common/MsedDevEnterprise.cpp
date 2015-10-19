@@ -327,6 +327,14 @@ uint8_t MsedDevEnterprise::activateLockingSP_SUM(uint8_t lockingrange, char * pa
 	LOG(D1) << "Exiting MsedDevEnterprise::activateLockingSP_SUM()";
 	return 0;
 }
+uint8_t MsedDevEnterprise::eraseLockingRange_SUM(uint8_t lockingrange, char * password)
+{
+	LOG(D1) << "Entering MsedDevEnterprise::eraseLockingRange_SUM()";
+	if (password == NULL) { LOG(D4) << "Referencing formal parameters "; }
+	LOG(E) << "Erase Locking Range SUM is not a part of the Enterprise SSC ";
+	LOG(D1) << "Exiting MsedDevEnterprise::eraseLockingRange_SUM()";
+	return 0;
+}
 uint8_t MsedDevEnterprise::takeOwnership(char * newpassword)
 {
 	string defaultPassword;

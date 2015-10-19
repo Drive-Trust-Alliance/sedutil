@@ -99,6 +99,8 @@ public:
 	uint8_t activateLockingSP(char * password);
 	/** dummy code not implemented in teh enterprise SSC*/
 	uint8_t activateLockingSP_SUM(uint8_t lockingrange, char * password);
+	/** dummy code not implemented in teh enterprise SSC*/
+	uint8_t eraseLockingRange_SUM(uint8_t lockingrange, char * password);
         /** dummy code not implemented in teh enterprise SSC*/
 	uint8_t revertLockingSP(char * password, uint8_t keep = 0);
         /** get the UID or CPIN ID of a user from their character name*/
