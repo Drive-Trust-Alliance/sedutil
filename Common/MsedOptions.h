@@ -30,6 +30,8 @@ typedef struct _MSED_OPTIONS {
 	uint8_t lockingstate;  /**< locking state to set a lockingrange to */
 	uint8_t lrstart;		/** the starting block of a lockingrange */
 	uint8_t lrlength;		/** the length in blocks of a lockingrange */
+
+	bool no_hash_passwords; /** global parameter, disables hashing of passwords */
 } MSED_OPTIONS;
 /** Print a usage message */
 void usage();

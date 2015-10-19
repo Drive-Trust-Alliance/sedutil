@@ -70,7 +70,7 @@ int main(int argc, char * argv[])
 	if (MsedOptions(argc, argv, &opts)) {
 		return MSEDERROR_COMMAND_ERROR;
 	}
-	
+
 	if ((opts.action != msedoption::scan) && (opts.action != msedoption::validatePBKDF2)) {
 		if (opts.device > (argc - 1)) opts.device = 0;
 		tempDev = new MsedDevGeneric(argv[opts.device]);
@@ -101,6 +101,9 @@ int main(int argc, char * argv[])
 			LOG(E) << "Create device object failed";
 			return MSEDERROR_OBJECT_CREATE_FAILED;
 		}
+	}
+	if (opts.no_hash_passwords) {
+		d->no_hash_passwords = true;
 	}
     switch (opts.action) {
  	case msedoption::initialsetup:
