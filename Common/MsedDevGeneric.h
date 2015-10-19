@@ -145,6 +145,11 @@ public:
 	 * @param password password of the admin sp SID authority
 	 */
 	 uint8_t activateLockingSP_SUM(uint8_t lockingrange, char * password);
+	/** Erase a Single User Mode locking range by calling the drive's erase method
+         * @param lockingrange The Locking Range to erase
+         * @param password The administrator password for the drive
+         */
+        uint8_t eraseLockingRange_SUM(uint8_t lockingrange, char * password);
         /** Change the SID password from it's MSID default 
          * @param newpassword  new password for SID and locking SP admins
          */ 
