@@ -46,6 +46,7 @@ typedef enum _msedoption {
 	setSIDPwd,
 	setAdmin1Pwd,
 	setPassword,
+	setPassword_SUM,
 	loadPBAimage,
 	setLockingRange,
 	setLockingRange_SUM,

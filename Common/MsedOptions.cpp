@@ -164,6 +164,8 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 		BEGIN_OPTION(revertLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(setPassword, 4) OPTION_IS(password) OPTION_IS(userid)
 			OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(setPassword_SUM, 4) OPTION_IS(password) OPTION_IS(userid)
+			OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(validatePBKDF2, 0) END_OPTION
 		BEGIN_OPTION(setMBREnable, 3)
 			TESTARG(ON, mbrstate, 1)

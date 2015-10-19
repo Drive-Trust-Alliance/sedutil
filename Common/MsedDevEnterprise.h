@@ -124,6 +124,8 @@ public:
          * @param newpassword  value password is to be changed to
          */
 	uint8_t setNewPassword(char * password, char * userid, char * newpassword);
+	/** dummy code not implemented in the enterprise SSC*/
+	uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword);
 	uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 		char * password);
 	/** dummy code not implemented in the enterprise SSC*/

@@ -574,6 +574,60 @@ uint8_t MsedDevOpal::setNewPassword(char * password, char * userid, char * newpa
 	LOG(D1) << "Exiting MsedDevOpal::setNewPassword()";
 	return 0;
 }
+uint8_t MsedDevOpal::setNewPassword_SUM(char * password, char * userid, char * newpassword)
+{
+	LOG(D1) << "Entering MsedDevOpal::setNewPassword_SUM";
+	uint8_t lastRC;
+	std::vector<uint8_t> userCPIN, hash;
+	session = new MsedSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return MSEDERROR_OBJECT_CREATE_FAILED;
+	}
+	vector<uint8_t> auth;
+	if (!memcmp("Admin", userid, 5))
+	{
+
+		auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+		for (int i = 0; i < 7; i++) {
+			auth.push_back(OPALUID[OPAL_UID::OPAL_ADMIN1_UID][i]);
+		}
+		auth.push_back(atoi(&userid[5]));
+	}
+	else if (!memcmp("User", userid, 4))
+	{
+		auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+		for (int i = 0; i < 7; i++) {
+			auth.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
+		}
+		auth.push_back(atoi(&userid[4]));
+	}
+	else
+	{
+		LOG(E) << "Invalid userid \"" << userid << "\"specified for setNewPassword_SUM";
+		delete session;
+		return MSEDERROR_INVALID_PARAMETER;
+	}
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth)) != 0) {
+		delete session;
+		return lastRC;
+	}
+	if ((lastRC = getAuth4User(userid, 10, userCPIN)) != 0) {
+		LOG(E) << "Unable to find user " << userid << " in Authority Table";
+		delete session;
+		return lastRC;
+	}
+	MsedHashPwd(hash, newpassword, this);
+	if ((lastRC = setTable(userCPIN, OPAL_TOKEN::PIN, hash)) != 0) {
+		LOG(E) << "Unable to set user " << userid << " new password ";
+		delete session;
+		return lastRC;
+	}
+	LOG(I) << userid << " password changed";
+	delete session;
+	LOG(D1) << "Exiting MsedDevOpal::setNewPassword_SUM()";
+	return 0;
+}
 uint8_t MsedDevOpal::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 {
 	LOG(D1) << "Entering MsedDevOpal::setMBREnable";

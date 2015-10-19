@@ -202,6 +202,11 @@ int main(int argc, char * argv[])
         return d->setNewPassword(argv[opts.password], argv[opts.userid],
                               argv[opts.newpassword]);
         break;
+	case msedoption::setPassword_SUM:
+		LOG(D) << "Performing setPassword in SUM mode for user " << argv[opts.userid];
+		return d->setNewPassword_SUM(argv[opts.password], argv[opts.userid],
+			argv[opts.newpassword]);
+		break;
 	case msedoption::reverttper:
 		LOG(D) << "Performing revertTPer on " << argv[opts.device];
         return d->revertTPer(argv[opts.password]);
