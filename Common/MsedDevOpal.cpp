@@ -197,10 +197,10 @@ MsedDevOpal::lrStatus_t MsedDevOpal::getLockingRange_status(uint8_t lockingrange
 	lrStatus.lockingrange_num = lockingrange;
 	lrStatus.start = response.getUint64(4);
 	lrStatus.size = response.getUint64(8);
-	lrStatus.RLKEna = (bool)response.getUint8(12);
-	lrStatus.WLKEna = (bool)response.getUint8(16);
-	lrStatus.RLocked = (bool)response.getUint8(20);
-	lrStatus.WLocked = (bool)response.getUint8(24);
+	lrStatus.RLKEna = (response.getUint8(12) != 0);
+	lrStatus.WLKEna = (response.getUint8(16) != 0);
+	lrStatus.RLocked = (response.getUint8(20) != 0);
+	lrStatus.WLocked = (response.getUint8(24) != 0);
 	LOG(D1) << "Locking Range " << lockingrange << " Begin: " << lrStatus.start << " Length: "
 		<< lrStatus.size << " RLKEna: " << lrStatus.RLKEna << " WLKEna: " << lrStatus.WLKEna
 		<< " RLocked: " << lrStatus.RLocked << " WLocked: " << lrStatus.WLocked;
@@ -717,7 +717,7 @@ uint8_t MsedDevOpal::setNewPassword_SUM(char * password, char * userid, char * n
 		for (int i = 0; i < 7; i++) {
 			auth.push_back(OPALUID[OPAL_UID::OPAL_ADMIN1_UID][i]);
 		}
-		auth.push_back(atoi(&userid[5]));
+		auth.push_back((uint8_t)atoi(&userid[5]));
 	}
 	else if (!memcmp("User", userid, 4))
 	{
@@ -725,7 +725,7 @@ uint8_t MsedDevOpal::setNewPassword_SUM(char * password, char * userid, char * n
 		for (int i = 0; i < 7; i++) {
 			auth.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
 		}
-		auth.push_back(atoi(&userid[4]));
+		auth.push_back((uint8_t)atoi(&userid[4]));
 	}
 	else
 	{

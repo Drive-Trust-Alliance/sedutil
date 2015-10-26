@@ -30,7 +30,10 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "MsedResponse.h"
 #include "MsedSession.h"
 #include "MsedHexDump.h"
-
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable:4100)
+#endif
 using namespace std;
 
 
@@ -294,7 +297,7 @@ uint8_t MsedDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t locking
 }
 uint8_t MsedDevEnterprise::setLockingRange_SUM(uint8_t lockingrange, uint8_t lockingstate,
 	char * password) {
-	LOG(D1) << "Entering MsedDevEnterprise::setLockingRange_SUM()";
+		LOG(D1) << "Entering MsedDevEnterprise::setLockingRange_SUM()";
         LOG(E) << "setLockingRange_SUM not implemented";
         LOG(D1) << "Exiting MsedDevEnterprise::setLockingRange_SUM()";
 	return 0;
@@ -835,4 +838,7 @@ uint8_t MsedDevEnterprise::objDump(char *sp, char * auth, char *pass,
 	LOG(D1) << "Exiting MsedDevEnterprise::objDump";
 	return 0;
 }
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
