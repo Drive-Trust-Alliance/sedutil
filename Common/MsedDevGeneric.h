@@ -58,6 +58,14 @@ public:
          * @param password the password that is to be assigned to the SSC master entities 
          */
 	 uint8_t initialsetup(char * password) ;
+	/** User command to prepare the drive for Single User Mode and rekey a SUM locking range.
+         * @param lockingrange locking range number to enable
+         * @param start LBA to start locking range
+         * @param length length (in blocks) for locking range
+         * @param Admin1Password admin1 password for TPer
+         * @param password User password to set for locking range
+         */
+         uint8_t setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password);
           /** Set the SID password.
          * Requires special handling because password is not always hashed.
          * @param oldpassword  current SID password
@@ -73,6 +81,12 @@ public:
          * @param newpassword  value password is to be changed to
          */
 	 uint8_t setNewPassword(char * password, char * userid, char * newpassword) ;
+	 /** Set the password of a locking SP user in Single User Mode.
+         * @param password  current user password
+         * @param userid the userid whose password is to be changed
+         * @param newpassword  value password is to be changed to
+         */
+	 uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword) ;
           /** Loads a disk image file to the shadow MBR table.
          * @param password the password for the administrative authority with access to the table
          * @param filename the filename of the disk image
@@ -85,6 +99,13 @@ public:
          */
 	 uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 		char * Admin1Password) ;
+	 /** Change the locking state of a locking range in Single User Mode
+         * @param lockingrange The number of the locking range (0 = global)
+         * @param lockingstate  the locking state to set
+         * @param password password of user authority for the locking range
+         */
+	 uint8_t setLockingRange_SUM(uint8_t lockingrange, uint8_t lockingstate,
+		 char * password);
          /** Change the active state of a locking range 
          * @param lockingrange The number of the locking range (0 = global)
          * @param enabled  enable (true) or disable (false) the lockingrange
@@ -100,6 +121,15 @@ public:
 	 *  @paran password Password of administrator
 	 */
 	 uint8_t setupLockingRange(uint8_t lockingrange, uint64_t start,
+		 uint64_t length, char * password);
+	 /** Setup a locking range in Single User Mode.  Initialize a locking range,
+	 *  set it's start LBA and length, initialize it as unlocked with locking enabled.
+         *  @paran lockingrange The Locking Range to be setup
+         *  @param start  Starting LBA
+         *  @param length Number of blocks
+         *  @paran password Password of administrator
+         */
+	 uint8_t setupLockingRange_SUM(uint8_t lockingrange, uint64_t start,
 		 uint64_t length, char * password);
          /** Primitive to set the MBRDone flag.
          * @param state 0 or 1  
@@ -124,6 +154,16 @@ public:
          * @param password password of the admin sp SID authority
          */
 	 uint8_t activateLockingSP(char * password) ;
+	/** Enable locking on the device in Single User Mode
+	 * @param lockingrange locking range to activate in SUM
+	 * @param password password of the admin sp SID authority
+	 */
+	 uint8_t activateLockingSP_SUM(uint8_t lockingrange, char * password);
+	/** Erase a Single User Mode locking range by calling the drive's erase method
+         * @param lockingrange The Locking Range to erase
+         * @param password The administrator password for the drive
+         */
+        uint8_t eraseLockingRange_SUM(uint8_t lockingrange, char * password);
         /** Change the SID password from it's MSID default 
          * @param newpassword  new password for SID and locking SP admins
          */ 

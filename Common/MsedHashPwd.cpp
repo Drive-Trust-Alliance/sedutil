@@ -40,13 +40,17 @@ void MsedHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> sa
 	if (253 < hashsize) { LOG(E) << "Hashsize > 253 incorrect token generated"; }
 
 	hash.clear();
+	// don't hash the devault OPAL password ''
+	if (0 == strnlen(password, 32)) {
+		goto exit;
+	}
 	hash.reserve(hashsize + 2); // hope this will prevent reallocation
 	for (uint16_t i = 0; i < hashsize; i++) {
 		hash.push_back(' ');
 	}
 	gc_pbkdf2_sha1(password, strnlen(password, 256), (const char *)salt.data(), salt.size(), iter,
 		(char *)hash.data(), hash.size());
-	// add the token overhead
+exit:	// add the token overhead
 	hash.insert(hash.begin(), (uint8_t)hash.size());
 	hash.insert(hash.begin(), 0xd0);
 }
@@ -55,6 +59,17 @@ void MsedHashPwd(vector<uint8_t> &hash, char * password, MsedDev * d)
 {
     LOG(D1) << " Entered MsedHashPwd";
     char *serNum;
+
+    if (d->no_hash_passwords) {
+        hash.clear();
+	for (uint16_t i = 0; i < strnlen(password, 32); i++)
+		hash.push_back(password[i]);
+	// add the token overhead
+	hash.insert(hash.begin(), (uint8_t)hash.size());
+	hash.insert(hash.begin(), 0xd0);
+	LOG(D1) << " Exit MsedHashPwd";
+	return;
+    }
     serNum = d->getSerialNum();
     vector<uint8_t> salt(serNum, serNum + 20);
     //	vector<uint8_t> salt(DEFAULTSALT);

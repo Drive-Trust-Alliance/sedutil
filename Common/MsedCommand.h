@@ -51,6 +51,8 @@ public:
     ~MsedCommand();
     /** Add a Token to the bytstream of type OPAL_TOKEN. */ 
     void addToken(OPAL_TOKEN token);
+    /** Add a Token to the bytstream of type OPL_SHORT ATOM. */
+    void addToken(OPAL_SHORT_ATOM token);
     /** Add a Token to the bytstream of type OPL_TINY ATOM. */
     void addToken(OPAL_TINY_ATOM token);
     /** Add a Token to the bytstream of from the OPALUID array. */

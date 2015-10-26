@@ -70,7 +70,7 @@ int main(int argc, char * argv[])
 	if (MsedOptions(argc, argv, &opts)) {
 		return MSEDERROR_COMMAND_ERROR;
 	}
-	
+
 	if ((opts.action != msedoption::scan) && (opts.action != msedoption::validatePBKDF2)) {
 		if (opts.device > (argc - 1)) opts.device = 0;
 		tempDev = new MsedDevGeneric(argv[opts.device]);
@@ -102,10 +102,18 @@ int main(int argc, char * argv[])
 			return MSEDERROR_OBJECT_CREATE_FAILED;
 		}
 	}
+	if (opts.no_hash_passwords) {
+		d->no_hash_passwords = true;
+	}
     switch (opts.action) {
  	case msedoption::initialsetup:
 		LOG(D) << "Performing initial setup to use msed on drive " << argv[opts.device];
         return (d->initialsetup(argv[opts.password]));
+	case msedoption::setup_SUM:
+		LOG(D) << "Performing SUM setup on drive " << argv[opts.device];
+		return (d->setup_SUM(opts.lockingrange, atoll(argv[opts.lrstart]),
+			atoll(argv[opts.lrlength]), argv[opts.password], argv[opts.newpassword]));
+		break;
 	case msedoption::setSIDPwd:
         LOG(D) << "Performing setSIDPwd ";
         return d->setSIDPassword(argv[opts.password], argv[opts.newpassword]);
@@ -122,6 +130,10 @@ int main(int argc, char * argv[])
 	case msedoption::setLockingRange:
         LOG(D) << "Setting Locking Range " << (uint16_t) opts.lockingrange << " " << (uint16_t) opts.lockingstate;
         return d->setLockingRange(opts.lockingrange, opts.lockingstate, argv[opts.password]);
+		break;
+	case msedoption::setLockingRange_SUM:
+		LOG(D) << "Setting Locking Range " << (uint16_t)opts.lockingrange << " " << (uint16_t)opts.lockingstate << " in Single User Mode";
+		return d->setLockingRange_SUM(opts.lockingrange, opts.lockingstate, argv[opts.password]);
 		break;
 	case msedoption::enableLockingRange:
         LOG(D) << "Enabling Locking Range " << (uint16_t) opts.lockingrange;
@@ -141,6 +153,11 @@ int main(int argc, char * argv[])
 	case msedoption::setupLockingRange:
 		LOG(D) << "Setup Locking Range " << (uint16_t)opts.lockingrange;
 		return (d->setupLockingRange(opts.lockingrange, atoll(argv[opts.lrstart]),
+			atoll(argv[opts.lrlength]), argv[opts.password]));
+		break;
+	case msedoption::setupLockingRange_SUM:
+		LOG(D) << "Setup Locking Range " << (uint16_t)opts.lockingrange << " in Single User Mode";
+		return (d->setupLockingRange_SUM(opts.lockingrange, atoll(argv[opts.lrstart]),
 			atoll(argv[opts.lrlength]), argv[opts.password]));
 		break;
 	case msedoption::listLockingRanges:
@@ -163,6 +180,14 @@ int main(int argc, char * argv[])
 		LOG(D) << "Activating the LockingSP on" << argv[opts.device];
         return d->activateLockingSP(argv[opts.password]);
         break;
+	case msedoption::activateLockingSP_SUM:
+		LOG(D) << "Activating the LockingSP on" << argv[opts.device];
+		return d->activateLockingSP_SUM(opts.lockingrange, argv[opts.password]);
+		break;
+	case msedoption::eraseLockingRange_SUM:
+		LOG(D) << "Erasing LockingRange " << opts.lockingrange << " on" << argv[opts.device];
+		return d->eraseLockingRange_SUM(opts.lockingrange, argv[opts.password]);
+		break;
     case msedoption::query:
 		LOG(D) << "Performing diskquery() on " << argv[opts.device];
         d->puke();
@@ -185,6 +210,11 @@ int main(int argc, char * argv[])
         return d->setNewPassword(argv[opts.password], argv[opts.userid],
                               argv[opts.newpassword]);
         break;
+	case msedoption::setPassword_SUM:
+		LOG(D) << "Performing setPassword in SUM mode for user " << argv[opts.userid];
+		return d->setNewPassword_SUM(argv[opts.password], argv[opts.userid],
+			argv[opts.newpassword]);
+		break;
 	case msedoption::reverttper:
 		LOG(D) << "Performing revertTPer on " << argv[opts.device];
         return d->revertTPer(argv[opts.password]);

@@ -30,7 +30,10 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "MsedResponse.h"
 #include "MsedSession.h"
 #include "MsedHexDump.h"
-
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable:4100)
+#endif
 using namespace std;
 
 
@@ -65,6 +68,12 @@ uint8_t MsedDevEnterprise::initialsetup(char * password)
 	LOG(I) << "Initial setup of TPer complete on " << dev;
 	LOG(D1) << "Exiting initialSetup()";
 	return 0;
+}
+uint8_t MsedDevEnterprise::setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password)
+{
+	LOG(D1) << "Entering MsedDevEnterprise::setup_SUM";
+	LOG(I) << "setup_SUM not supported on MsedDevEnterprise";
+	return 1;
 }
 uint8_t MsedDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t enabled, char * password)
 {
@@ -181,6 +190,13 @@ uint8_t MsedDevEnterprise::setNewPassword(char * password, char * userid, char *
 	LOG(D1) << "Exiting MsedDevEnterprise::setNewPassword()";
 	return 0;
 }
+uint8_t MsedDevEnterprise::setNewPassword_SUM(char * password, char * userid, char * newpassword)
+{
+	LOG(D1) << "Entering MsedDevEnterprise::setNewPassword_SUM()";
+	LOG(I) << "setNewPassword_SUM is not in the Enterprise SSC and not supported";
+	LOG(D1) << "Exiting MsedDevEnterprise::setNewPassword_SUM()";
+	return 0;
+}
 uint8_t MsedDevEnterprise::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 {
 	LOG(D1) << "Entering MsedDevEnterprise::setMBREnable";
@@ -203,6 +219,13 @@ uint8_t MsedDevEnterprise::setupLockingRange(uint8_t lockingrange, uint64_t star
 	LOG(D1) << "Entering MsedDevEnterprise::setupLockingRange";
 	if (0 == lockingrange) { LOG(E) << start << length << password; }
 	LOG(D1) << "Exiting MsedDevEnterprise::setupLockingRange";
+	return 0;
+}
+uint8_t MsedDevEnterprise::setupLockingRange_SUM(uint8_t lockingrange, uint64_t start,
+	uint64_t length, char * password) {
+	LOG(D1) << "Entering MsedDevEnterprise::setupLockingRange_SUM";
+	if (0 == lockingrange) { LOG(E) << start << length << password; }
+	LOG(D1) << "Exiting MsedDevEnterprise::setupLockingRange_SUM";
 	return 0;
 }
 uint8_t MsedDevEnterprise::listLockingRanges(char * password) {
@@ -272,6 +295,13 @@ uint8_t MsedDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t locking
 	LOG(D1) << "Exiting MsedDevEnterprise::setLockingRange";
 	return 0;
 }
+uint8_t MsedDevEnterprise::setLockingRange_SUM(uint8_t lockingrange, uint8_t lockingstate,
+	char * password) {
+		LOG(D1) << "Entering MsedDevEnterprise::setLockingRange_SUM()";
+        LOG(E) << "setLockingRange_SUM not implemented";
+        LOG(D1) << "Exiting MsedDevEnterprise::setLockingRange_SUM()";
+	return 0;
+}
 uint8_t MsedDevEnterprise::enableUser(char * password, char * userid)
 {
 	LOG(D1) << "Entering MsedDevEnterprise::enableUser";
@@ -303,6 +333,22 @@ uint8_t MsedDevEnterprise::activateLockingSP(char * password)
 	if (password == NULL) { LOG(D4) << "Referencing formal parameters "; }
 	LOG(E) << "activate Locking SP is not a part of the Enterprise SSC ";
 	LOG(D1) << "Exiting MsedDevEnterprise::activatLockingSP()";
+	return 0;
+}
+uint8_t MsedDevEnterprise::activateLockingSP_SUM(uint8_t lockingrange, char * password)
+{
+	LOG(D1) << "Entering MsedDevEnterprise::activateLockingSP_SUM()";
+	if (password == NULL) { LOG(D4) << "Referencing formal parameters "; }
+	LOG(E) << "activate Locking SP SUM is not a part of the Enterprise SSC ";
+	LOG(D1) << "Exiting MsedDevEnterprise::activateLockingSP_SUM()";
+	return 0;
+}
+uint8_t MsedDevEnterprise::eraseLockingRange_SUM(uint8_t lockingrange, char * password)
+{
+	LOG(D1) << "Entering MsedDevEnterprise::eraseLockingRange_SUM()";
+	if (password == NULL) { LOG(D4) << "Referencing formal parameters "; }
+	LOG(E) << "Erase Locking Range SUM is not a part of the Enterprise SSC ";
+	LOG(D1) << "Exiting MsedDevEnterprise::eraseLockingRange_SUM()";
 	return 0;
 }
 uint8_t MsedDevEnterprise::takeOwnership(char * newpassword)
@@ -792,4 +838,7 @@ uint8_t MsedDevEnterprise::objDump(char *sp, char * auth, char *pass,
 	LOG(D1) << "Exiting MsedDevEnterprise::objDump";
 	return 0;
 }
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 

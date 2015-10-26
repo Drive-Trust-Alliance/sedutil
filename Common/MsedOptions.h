@@ -30,6 +30,8 @@ typedef struct _MSED_OPTIONS {
 	uint8_t lockingstate;  /**< locking state to set a lockingrange to */
 	uint8_t lrstart;		/** the starting block of a lockingrange */
 	uint8_t lrlength;		/** the length in blocks of a lockingrange */
+
+	bool no_hash_passwords; /** global parameter, disables hashing of passwords */
 } MSED_OPTIONS;
 /** Print a usage message */
 void usage();
@@ -43,11 +45,14 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts);
 typedef enum _msedoption {
 	deadbeef,    // 0 should indicate no action specified
 	initialsetup,
+	setup_SUM,
 	setSIDPwd,
 	setAdmin1Pwd,
 	setPassword,
+	setPassword_SUM,
 	loadPBAimage,
 	setLockingRange,
+	setLockingRange_SUM,
 	reverttper,
 	revertnoerase,
 	revertLockingSP,
@@ -57,11 +62,14 @@ typedef enum _msedoption {
 	disableLockingRange,
 	readonlyLockingRange,
 	setupLockingRange,
+	setupLockingRange_SUM,
 	listLockingRanges,
 	setMBREnable,
 	setMBRDone,
 	enableuser,
 	activateLockingSP,
+	activateLockingSP_SUM,
+	eraseLockingRange_SUM,
 	query,
 	scan,
 	takeownership,
