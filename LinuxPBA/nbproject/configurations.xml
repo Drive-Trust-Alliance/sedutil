@@ -19,6 +19,8 @@
       <itemPath>../Common/MsedCommand.cpp</itemPath>
       <itemPath>../Common/MsedDev.cpp</itemPath>
       <itemPath>../Common/MsedDevGeneric.cpp</itemPath>
+      <itemPath>../linux/MsedDevLinuxNvme.cpp</itemPath>
+      <itemPath>../linux/MsedDevLinuxSata.cpp</itemPath>
       <itemPath>../linux/MsedDevOS.cpp</itemPath>
       <itemPath>../Common/MsedDevOpal.cpp</itemPath>
       <itemPath>../Common/MsedDevOpal1.cpp</itemPath>
@@ -117,6 +119,10 @@
       </item>
       <item path="../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="../linux/MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="../linux/MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GetPassPhrase.cpp" ex="false" tool="1" flavor2="0">
@@ -200,6 +206,10 @@
       <item path="../Common/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../linux/MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -286,6 +296,10 @@
       </item>
       <item path="../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="../linux/MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="../linux/MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GetPassPhrase.cpp" ex="false" tool="1" flavor2="0">
@@ -367,6 +381,10 @@
       <item path="../Common/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../linux/MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
       </item>

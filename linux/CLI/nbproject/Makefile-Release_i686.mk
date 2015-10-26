@@ -53,6 +53,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/843399383/hmac-sha1.o \
 	${OBJECTDIR}/_ext/843399383/memxor.o \
 	${OBJECTDIR}/_ext/843399383/sha1.o \
+	${OBJECTDIR}/_ext/1472/MsedDevLinuxNvme.o \
+	${OBJECTDIR}/_ext/1472/MsedDevLinuxSata.o \
 	${OBJECTDIR}/_ext/1472/MsedDevOS.o
 
 
@@ -169,6 +171,16 @@ ${OBJECTDIR}/_ext/843399383/sha1.o: ../../Common/pbdkf2/sha1.c
 	${MKDIR} -p ${OBJECTDIR}/_ext/843399383
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -Werror -I.. -I../../Common -I../../Common/pbdkf2 -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/843399383/sha1.o ../../Common/pbdkf2/sha1.c
+
+${OBJECTDIR}/_ext/1472/MsedDevLinuxNvme.o: ../MsedDevLinuxNvme.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1472
+	${RM} "$@.d"
+	$(COMPILE.cc) -Werror -I.. -I../../Common -I../../Common/pbdkf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1472/MsedDevLinuxNvme.o ../MsedDevLinuxNvme.cpp
+
+${OBJECTDIR}/_ext/1472/MsedDevLinuxSata.o: ../MsedDevLinuxSata.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1472
+	${RM} "$@.d"
+	$(COMPILE.cc) -Werror -I.. -I../../Common -I../../Common/pbdkf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1472/MsedDevLinuxSata.o ../MsedDevLinuxSata.cpp
 
 ${OBJECTDIR}/_ext/1472/MsedDevOS.o: ../MsedDevOS.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1472

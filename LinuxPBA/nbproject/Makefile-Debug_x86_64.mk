@@ -50,6 +50,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1212757318/hmac-sha1.o \
 	${OBJECTDIR}/_ext/1212757318/memxor.o \
 	${OBJECTDIR}/_ext/1212757318/sha1.o \
+	${OBJECTDIR}/_ext/2111058971/MsedDevLinuxNvme.o \
+	${OBJECTDIR}/_ext/2111058971/MsedDevLinuxSata.o \
 	${OBJECTDIR}/_ext/2111058971/MsedDevOS.o \
 	${OBJECTDIR}/GetPassPhrase.o \
 	${OBJECTDIR}/LinuxPBA.o \
@@ -154,6 +156,16 @@ ${OBJECTDIR}/_ext/1212757318/sha1.o: ../Common/pbdkf2/sha1.c
 	${MKDIR} -p ${OBJECTDIR}/_ext/1212757318
 	${RM} "$@.d"
 	$(COMPILE.c) -g -Werror -DMSEDDEBUG -I../linux -I../Common -I../Common/pbdkf2 -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1212757318/sha1.o ../Common/pbdkf2/sha1.c
+
+${OBJECTDIR}/_ext/2111058971/MsedDevLinuxNvme.o: ../linux/MsedDevLinuxNvme.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/2111058971
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Werror -DMSEDDEBUG -I../linux -I../Common -I../Common/pbdkf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/2111058971/MsedDevLinuxNvme.o ../linux/MsedDevLinuxNvme.cpp
+
+${OBJECTDIR}/_ext/2111058971/MsedDevLinuxSata.o: ../linux/MsedDevLinuxSata.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/2111058971
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Werror -DMSEDDEBUG -I../linux -I../Common -I../Common/pbdkf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/2111058971/MsedDevLinuxSata.o ../linux/MsedDevLinuxSata.cpp
 
 ${OBJECTDIR}/_ext/2111058971/MsedDevOS.o: ../linux/MsedDevOS.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/2111058971

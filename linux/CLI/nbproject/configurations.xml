@@ -50,6 +50,8 @@
       <itemPath>../../Common/MsedDev.cpp</itemPath>
       <itemPath>../../Common/MsedDevEnterprise.cpp</itemPath>
       <itemPath>../../Common/MsedDevGeneric.cpp</itemPath>
+      <itemPath>../MsedDevLinuxNvme.cpp</itemPath>
+      <itemPath>../MsedDevLinuxSata.cpp</itemPath>
       <itemPath>../MsedDevOS.cpp</itemPath>
       <itemPath>../../Common/MsedDevOpal.cpp</itemPath>
       <itemPath>../../Common/MsedDevOpal1.cpp</itemPath>
@@ -200,6 +202,10 @@
       </item>
       <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="../MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../MsedDevOS.h" ex="false" tool="3" flavor2="0">
@@ -334,6 +340,10 @@
       </item>
       <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="../MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../MsedDevOS.h" ex="false" tool="3" flavor2="0">
@@ -462,6 +472,10 @@
       <item path="../../Common/pbdkf2/sha1.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="8">
       </item>
@@ -596,6 +610,10 @@
       <item path="../../Common/pbdkf2/sha1.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="8">
       </item>
