@@ -757,6 +757,11 @@ uint8_t MsedDevOpal::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 {
 	LOG(D1) << "Entering MsedDevOpal::setMBREnable";
 	uint8_t lastRC;
+        // set MBRDone before changing MBREnable so the PBA isn't presented
+        if ((lastRC = setMBRDone(1, Admin1Password)) != 0){
+		LOG(E) << "unable to set MBRDone";
+                return lastRC;
+        }
 	if (mbrstate) {
 		if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRENABLE,
 			OPAL_TOKEN::OPAL_TRUE, Admin1Password, NULL)) != 0) {
