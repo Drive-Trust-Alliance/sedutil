@@ -21,7 +21,7 @@ FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=GNU-Linux-x86
+CND_PLATFORM=GNU-Linux
 CND_DLIB_EXT=so
 CND_CONF=Release_i686
 CND_DISTDIR=dist
@@ -60,8 +60,8 @@ OBJECTFILES= \
 CFLAGS=-m32
 
 # CC Compiler Flags
-CCFLAGS=-m32
-CXXFLAGS=-m32
+CCFLAGS=-m32 -Wall
+CXXFLAGS=-m32 -Wall
 
 # Fortran Compiler Flags
 FFLAGS=

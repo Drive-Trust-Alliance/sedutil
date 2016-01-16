@@ -43,6 +43,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/760796236/MsedDevOpal2.o \
 	${OBJECTDIR}/_ext/760796236/MsedHashPwd.o \
 	${OBJECTDIR}/_ext/760796236/MsedHexDump.o \
+	${OBJECTDIR}/_ext/760796236/MsedAnnotatedDump.o \
 	${OBJECTDIR}/_ext/760796236/MsedResponse.o \
 	${OBJECTDIR}/_ext/760796236/MsedSession.o \
 	${OBJECTDIR}/_ext/764652249/MsedDevOS.o \
@@ -57,11 +58,11 @@ OBJECTFILES= \
 
 
 # C Compiler Flags
-CFLAGS=-m32
+CFLAGS=-m64
 
 # CC Compiler Flags
-CCFLAGS=-m32 -DMSEDDEBUG
-CXXFLAGS=-m32 -DMSEDDEBUG
+CCFLAGS=-m64 -DMSEDDEBUG
+CXXFLAGS=-m64 -DMSEDDEBUG
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -119,6 +120,11 @@ ${OBJECTDIR}/_ext/760796236/MsedHexDump.o: ../msed/MsedHexDump.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/760796236
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Werror -I../msed/linux -I../msed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/760796236/MsedHexDump.o ../msed/MsedHexDump.cpp
+
+${OBJECTDIR}/_ext/760796236/MsedAnnotatedDump.o: ../msed/MsedAnnotatedDump.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/760796236
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Werror -I../msed/linux -I../msed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/760796236/MsedAnnotatedDump.o ../msed/MsedAnnotatedDump.cpp
 
 ${OBJECTDIR}/_ext/760796236/MsedResponse.o: ../msed/MsedResponse.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/760796236

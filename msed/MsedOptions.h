@@ -42,14 +42,14 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts);
 /** Command line options implemented in msed */
 typedef enum _msedoption {
 	deadbeef,    // 0 should indicate no action specified
-	initialsetup,
-	setSIDPwd,
+	initialSetup,
+	setSIDPassword,
 	setAdmin1Pwd,
 	setPassword,
 	loadPBAimage,
 	setLockingRange,
-	reverttper,
-	revertnoerase,
+	revertTPer,
+	revertNoErase,
 	revertLockingSP,
 	PSIDrevert,
 	yesIreallywanttoERASEALLmydatausingthePSID,
@@ -58,15 +58,19 @@ typedef enum _msedoption {
 	readonlyLockingRange,
 	setupLockingRange,
 	listLockingRanges,
+	listLockingRange,
 	setMBREnable,
 	setMBRDone,
 	enableuser,
 	activateLockingSP,
 	query,
 	scan,
-	takeownership,
+	isValidSED,
+    eraseLockingRange,
+	takeOwnership,
 	validatePBKDF2,
 	objDump,
+    printDefaultPassword,
 	rawCmd,
 
 } msedoption;
@@ -78,7 +82,7 @@ if((x+baseOptions) != argc) { \
 	}
 /** Test the command input for a recognized argument */
 #define BEGIN_OPTION(cmdstring,args) \
-				else if (!(strcmp(#cmdstring, &argv[i][2]))) { \
+				else if (!(strcasecmp(#cmdstring, &argv[i][2]))) { \
 				CHECKARGS(args) \
 				opts->action = msedoption::cmdstring; \
 
@@ -86,7 +90,7 @@ if((x+baseOptions) != argc) { \
 #define END_OPTION }
 /** test an argument for a value */
 #define TESTARG(literal,structfield,value) \
-				if (!(strcmp(#literal, argv[i + 1]))) \
+				if (!(strcasecmp(#literal, argv[i + 1]))) \
 					{opts->structfield = value;} else
 /** if all testargs fail then do this */
 #define TESTFAIL(msg) \

@@ -56,4 +56,7 @@ protected:
     /** OS specific routine to send an ATA identify to the device */
     void identify();
     int fd; /**< Linux handle for the device  */
+private:
+    /** OS specific routine to send a SCSI INQUIRY to the device */
+    void identify_SAS();
 };

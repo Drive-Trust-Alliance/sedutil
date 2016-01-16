@@ -101,7 +101,7 @@ public:
 	 * Specific to the SSC that the device supports
 	 * @param password the password that is to be assigned to the SSC master entities
 	 */
-	virtual uint8_t initialsetup(char * password) = 0;
+	virtual uint8_t initialSetup(char * password) = 0;
 	/** Set the SID password.
 	 * Requires special handling because password is not always hashed.
 	 * @param oldpassword  current SID password
@@ -116,7 +116,7 @@ public:
 	 * @param userid the userid whose password is to be changed
 	 * @param newpassword  value password is to be changed to
 	 */
-	virtual uint8_t setNewPassword(char * password, char * userid, char * newpassword) = 0;
+	virtual uint8_t setPassword(char * password, char * userid, char * newpassword) = 0;
 	/** Loads a disk image file to the shadow MBR table.
 	 * @param password the password for the administrative authority with access to the table
 	 * @param filename the filename of the disk image
@@ -148,7 +148,7 @@ public:
 	/** List status of locking ranges.  
 	*  @param password Password of administrator
 	*/
-	virtual uint8_t listLockingRanges(char * password) = 0;
+	virtual uint8_t listLockingRanges(char * password, int rangeid) = 0;
 	/** Primitive to set the MBRDone flag.
 	 * @param state 0 or 1
 	 * @param Admin1Password Locking SP authority with access to flag
@@ -184,6 +184,11 @@ public:
 	 * @param PSID true or false is the authority the PSID
 	 *   */
 	virtual uint8_t revertTPer(char * password, uint8_t PSID = 0) = 0;
+	/** Erase a locking range
+	 * @param lockingrange The number of the locking range (0 = global)
+	 * @param password Password of administrative authority for locking range
+	 */
+	virtual uint8_t eraseLockingRange(uint8_t lockingrange, char * password) = 0;
 	/** Dumps an object for diagnostic purposes
 	 * @param sp index into the OPALUID table for the SP the object is in
 	 * @param auth the authority ti use for the dump
@@ -203,6 +208,9 @@ public:
 	 */
 	virtual uint8_t rawCmd(char *sp, char * auth, char *pass,
 		char *invoker, char *method, char *plist) = 0;
+	/** Read MSID
+	 */
+	virtual uint8_t printDefaultPassword() = 0;
 	/*
 	* virtual functions required to be implemented
 	* because they are called by MsedSession.cpp

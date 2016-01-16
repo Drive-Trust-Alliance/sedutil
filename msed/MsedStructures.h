@@ -248,7 +248,7 @@ typedef struct _OPALPacket {
     uint32_t seqNumber;
     uint16_t reserved0;
     uint16_t ackType;
-    uint32_t aknowledgement;
+    uint32_t acknowledgement;
     uint32_t length;
 } OPALPacket;
 
@@ -270,6 +270,12 @@ typedef enum _ATACOMMAND {
     IF_SEND = 0x5e,
     IDENTIFY = 0xec,
 } ATACOMMAND;
+
+typedef enum _DEVICE_TYPE {
+    DEVICE_TYPE_ATA,
+    DEVICE_TYPE_SAS,
+    DEVICE_TYPE_OTHER,
+} DEVICE_TYPE;
 
 /** structure to store Disk information. */
 typedef struct _OPAL_DiskInfo {
@@ -323,7 +329,7 @@ typedef struct _OPAL_DiskInfo {
     uint16_t OPAL20_numUsers;
     uint8_t OPAL20_rangeCrossing;
     // IDENTIFY information
-    uint8_t devType : 1; // 0 = ata device
+    DEVICE_TYPE devType;
     uint8_t serialNum[20];
 	uint8_t null0;  // make sn a cstring
     uint8_t firmwareRev[8];
@@ -344,3 +350,104 @@ typedef struct _IDENTIFY_RESPONSE {
 } IDENTIFY_RESPONSE;
 
 #pragma pack(pop)
+
+////////////////////////////////////////////////////////////////////////////////
+class CScsiCmdInquiry
+////////////////////////////////////////////////////////////////////////////////
+{
+public:
+    enum
+    {
+        OPCODE  = 0x12,
+    };
+    uint8_t         m_Opcode;                               //  0
+    unsigned        m_EVPD                  : 1;            //  1
+    unsigned        m_Reserved_1            : 7;
+    uint8_t         m_PageCode;                             //  2
+    uint16_t        m_AllocationLength;                     //  3
+    uint8_t         m_Control;                              //  5
+} __attribute__((packed));                                  //  6
+
+////////////////////////////////////////////////////////////////////////////////
+class CScsiCmdInquiry_StandardData
+////////////////////////////////////////////////////////////////////////////////
+{
+public:
+    unsigned        m_PeripheralDeviceType      : 5;        //  0
+    unsigned        m_PeripheralQualifier       : 3;
+    unsigned        m_Reserved_1                : 6;        //  1
+    unsigned        m_LUCong                    : 1;
+    unsigned        m_RMB                       : 1;
+    uint8_t         m_Version;                              //  2
+    unsigned        m_ResponseDataFormat        : 4;        //  3
+    unsigned        m_HiSup                     : 1;
+    unsigned        m_NormACA                   : 1;
+    unsigned        m_Reserved_2                : 1;
+    unsigned        m_Reserved_3                : 1;
+    uint8_t         m_AdditionalLength;                     //  4
+    unsigned        m_Protect                   : 1;        //  5
+    unsigned        m_Reserved_4                : 2;
+    unsigned        m_3PC                       : 1;
+    unsigned        m_TPGS                      : 2;
+    unsigned        m_ACC                       : 1;
+    unsigned        m_SCCS                      : 1;
+    unsigned        m_ADDR16                    : 1;        //  6
+    unsigned        m_Reserved_5                : 2;
+    unsigned        m_Obsolete_1                : 1;
+    unsigned        m_MultiP                    : 1;
+    unsigned        m_VS1                       : 1;
+    unsigned        m_EncServ                   : 1;
+    unsigned        m_Obsolete_2                : 1;
+    unsigned        m_VS2                       : 1;        //  7
+    unsigned        m_CmdQue                    : 1;
+    unsigned        m_Reserved_6                : 1;
+    unsigned        m_Obsolete_3                : 1;
+    unsigned        m_Sync                      : 1;
+    unsigned        m_WBus16                    : 1;
+    unsigned        m_Reserved_7                : 1;
+    unsigned        m_Obsolete_4                : 1;
+    uint8_t         m_T10VendorId[8];                       //  8
+    uint8_t         m_ProductId[16];                        // 16
+    uint8_t         m_ProductRevisionLevel[4];              // 32
+} __attribute__((packed));                                  // 36
+
+////////////////////////////////////////////////////////////////////////////////
+class CScsiCmdSecurityProtocolIn
+////////////////////////////////////////////////////////////////////////////////
+{
+public:
+    enum
+    {
+        OPCODE  = 0XA2,
+    };
+    uint8_t         m_Opcode;                   //  0
+    uint8_t         m_SecurityProtocol;         //  1
+    uint16_t        m_SecurityProtocolSpecific; //  2
+    unsigned        m_Reserved_1    : 7;        //  4
+    unsigned        m_INC_512       : 1;
+    uint8_t         m_Reserved_2;               //  5
+    uint32_t        m_AllocationLength;         //  6
+    uint8_t         m_Reserved_3[1];            // 10
+    uint8_t         m_Control;                  // 11
+} __attribute__((packed));                      // 12
+
+////////////////////////////////////////////////////////////////////////////////
+class CScsiCmdSecurityProtocolOut
+////////////////////////////////////////////////////////////////////////////////
+{
+public:
+    enum
+    {
+        OPCODE  = 0XB5,
+    };
+    uint8_t         m_Opcode;                   //  0
+    uint8_t         m_SecurityProtocol;         //  1
+    uint16_t        m_SecurityProtocolSpecific; //  2
+    unsigned        m_Reserved_1    : 7;        //  4
+    unsigned        m_INC_512       : 1;
+    uint8_t         m_Reserved_2;               //  5
+    uint32_t        m_TransferLength;           //  6
+    uint8_t         m_Reserved_3[1];            // 10
+    uint8_t         m_Control;                  // 11
+} __attribute__((packed));                      // 12
+
