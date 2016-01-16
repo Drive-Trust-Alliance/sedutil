@@ -379,7 +379,7 @@ uint8_t MsedDevOpal::revertLockingSP(char * password, uint8_t keep)
 uint8_t MsedDevOpal::eraseLockingRange(uint8_t lockingrange, char * password)
 {
 	LOG(D1) << "Entering MsedDevOpal::eraseLockingRange()" << lockingrange << " " << dev;
-	if (password == NULL) LOG(D4) << "Referencing formal parameters " << lockingrange;
+	if (password == NULL) { LOG(D4) << "Referencing formal parameters " << lockingrange; }
 	LOG(I) << "eraseLockingRange is not implemented.  It is not part of the Opal SSC ";
 	LOG(D1) << "Exiting MsedDevOpal::eraseLockingRange()";
 	return 0;

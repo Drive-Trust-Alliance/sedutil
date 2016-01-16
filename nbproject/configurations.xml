@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>msed/MsedAnnotatedDump.h</itemPath>
       <itemPath>msed/MsedCommand.h</itemPath>
       <itemPath>msed/MsedConstants.h</itemPath>
       <itemPath>msed/MsedDev.h</itemPath>
@@ -50,6 +51,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>msed/MsedAnnotatedDump.cpp</itemPath>
       <itemPath>msed/MsedCommand.cpp</itemPath>
       <itemPath>msed/MsedDev.cpp</itemPath>
       <itemPath>msed/MsedDevEnterprise.cpp</itemPath>
@@ -114,6 +116,10 @@
       <item path="msed/Copyright.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/LICENSE.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedAnnotatedDump.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -257,6 +263,10 @@
       </item>
       <item path="msed/LICENSE.txt" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="msed/MsedAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedAnnotatedDump.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="msed/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="msed/MsedCommand.h" ex="false" tool="3" flavor2="0">
@@ -389,6 +399,10 @@
       <item path="msed/Copyright.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/LICENSE.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedAnnotatedDump.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -532,6 +546,10 @@
       <item path="msed/Copyright.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/LICENSE.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="msed/MsedAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="msed/MsedAnnotatedDump.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="msed/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>

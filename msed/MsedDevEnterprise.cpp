@@ -54,7 +54,7 @@ static const bool is_NULL_UID(std::vector<uint8_t> & v)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void set8(vector<uint8_t> & v, uint8_t value[8])
+static void set8(vector<uint8_t> & v, const uint8_t value[8])
 ////////////////////////////////////////////////////////////////////////////////
 {
 	v.clear();
@@ -70,7 +70,7 @@ static void setband(vector<uint8_t> & v, uint16_t i)
 ////////////////////////////////////////////////////////////////////////////////
 {
     const uint16_t j = i+1;
-    v[1+6] = uint8_t(j >> 8) | v[1+6] & 0xF0;
+    v[1+6] = (uint8_t(j >> 8) | v[1+6]) & 0xF0;
     v[1+7] = uint8_t(j);
 }
 
@@ -523,15 +523,16 @@ uint8_t MsedDevEnterprise::listLockingRanges(char * password, int rangeid)
 ////////////////////////////////////////////////////////////////////////////////
 {
 	LOG(D) << "Entering MsedDevEnterprise::listLockingRanges";
-	if (NULL == password) LOG(E) << "password NULL";
+	if (NULL == password) { LOG(E) << "password NULL"; }
 
     // look up MaxRanges
 	const uint16_t MaxRanges = (rangeid == -1) ? getMaxRanges(password): (rangeid + 1);
 
     if (MaxRanges == 0 || MaxRanges >= 1024) return 0xff;
 
-    if(rangeid == -1)
+    if(rangeid == -1) {
         LOG(I) << "Maximum ranges supported " << MaxRanges;
+    }
 
     //** BandMaster0 UID of Table 28 Locking SP Authority table, p. 70 of Enterprise SSC rev 3.00
     vector<uint8_t> user;

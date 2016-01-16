@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/msed/MsedAnnotatedDump.o \
 	${OBJECTDIR}/msed/MsedCommand.o \
 	${OBJECTDIR}/msed/MsedDev.o \
 	${OBJECTDIR}/msed/MsedDevEnterprise.o \
@@ -79,6 +80,11 @@ LDLIBSOPTIONS=
 ${CND_DISTDIR}/${CND_CONF}/msed: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/msed ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/msed/MsedAnnotatedDump.o: msed/MsedAnnotatedDump.cpp 
+	${MKDIR} -p ${OBJECTDIR}/msed
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -Werror -s -Imsed/linux -Imsed -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/msed/MsedAnnotatedDump.o msed/MsedAnnotatedDump.cpp
 
 ${OBJECTDIR}/msed/MsedCommand.o: msed/MsedCommand.cpp 
 	${MKDIR} -p ${OBJECTDIR}/msed

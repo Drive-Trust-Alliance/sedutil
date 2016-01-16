@@ -88,8 +88,8 @@ void CMsedToken::str2int(uint8_t * buf, bool byte)
     {
         const int shift = 8 * (sizeof(V) - m_DataLength);
         int64_t v = V;
-        v << shift;
-        v >> shift;
+        v = v << shift;
+        v = v >> shift;
         V = v;
     }
 
@@ -99,7 +99,7 @@ void CMsedToken::str2int(uint8_t * buf, bool byte)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int CMsedToken::parse(uint8_t * buf, uint32_t buflen)
+void CMsedToken::parse(uint8_t * buf, uint32_t buflen)
 ////////////////////////////////////////////////////////////////////////////////
 {
     m_token = buf;
@@ -196,8 +196,9 @@ int CMsedToken::print(FILE *stream, uint32_t buflen)
     else
     {
         // not byte string
-        ret += fprintf(stream, " %llu (%llXh)\n", m_value, m_value);
+        ret += fprintf(stream, " %llu (%llXh)\n", (long long unsigned int)m_value, (long long unsigned int)m_value);
     }
+    return ret;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -286,7 +287,7 @@ int CMsedToken::printUID(FILE *stream, uint8_t buf[8])
     }
 
     // band-specific UID ?
-    const uint32_t band = uint32_t(buf[6] & 0x7F | buf[7]) - 1;
+    const uint32_t band = uint32_t((buf[6] & 0x7F) | buf[7]) - 1;
     if (band == uint32_t(-1)) return 0;
 
     uint8_t buf2[8];
@@ -332,6 +333,7 @@ int CMsedToken::printAscii(FILE *stream, uint8_t * buf, uint32_t buflen)
         ret += fprintf(stream, "%c", c);
     }
     ret += fprintf(stream, "\")");
+    return ret;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

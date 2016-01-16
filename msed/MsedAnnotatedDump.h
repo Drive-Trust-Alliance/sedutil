@@ -106,7 +106,7 @@ public:
     CMsedToken(void);
     ~CMsedToken(void);
 
-    int parse(uint8_t * buf, uint32_t buflen);
+    void parse(uint8_t * buf, uint32_t buflen);
 
     int print(FILE *stream, uint32_t buflen);
 
