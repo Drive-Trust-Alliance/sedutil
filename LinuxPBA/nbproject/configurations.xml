@@ -16,23 +16,25 @@
                    projectFiles="true">
       <itemPath>GetPassPhrase.cpp</itemPath>
       <itemPath>LinuxPBA.cpp</itemPath>
-      <itemPath>../msed/MsedCommand.cpp</itemPath>
-      <itemPath>../msed/MsedDev.cpp</itemPath>
-      <itemPath>../msed/MsedDevGeneric.cpp</itemPath>
-      <itemPath>../msed/linux/MsedDevOS.cpp</itemPath>
-      <itemPath>../msed/MsedDevOpal.cpp</itemPath>
-      <itemPath>../msed/MsedDevOpal1.cpp</itemPath>
-      <itemPath>../msed/MsedDevOpal2.cpp</itemPath>
-      <itemPath>../msed/MsedHashPwd.cpp</itemPath>
-      <itemPath>../msed/MsedHexDump.cpp</itemPath>
-      <itemPath>../msed/MsedResponse.cpp</itemPath>
-      <itemPath>../msed/MsedSession.cpp</itemPath>
+      <itemPath>../Common/MsedCommand.cpp</itemPath>
+      <itemPath>../Common/MsedDev.cpp</itemPath>
+      <itemPath>../Common/MsedDevGeneric.cpp</itemPath>
+      <itemPath>../linux/MsedDevLinuxNvme.cpp</itemPath>
+      <itemPath>../linux/MsedDevLinuxSata.cpp</itemPath>
+      <itemPath>../linux/MsedDevOS.cpp</itemPath>
+      <itemPath>../Common/MsedDevOpal.cpp</itemPath>
+      <itemPath>../Common/MsedDevOpal1.cpp</itemPath>
+      <itemPath>../Common/MsedDevOpal2.cpp</itemPath>
+      <itemPath>../Common/MsedHashPwd.cpp</itemPath>
+      <itemPath>../Common/MsedHexDump.cpp</itemPath>
+      <itemPath>../Common/MsedResponse.cpp</itemPath>
+      <itemPath>../Common/MsedSession.cpp</itemPath>
       <itemPath>UnlockSEDs.cpp</itemPath>
-      <itemPath>../msed/pbdkf2/gc-gnulib.c</itemPath>
-      <itemPath>../msed/pbdkf2/gc-pbkdf2-sha1.c</itemPath>
-      <itemPath>../msed/pbdkf2/hmac-sha1.c</itemPath>
-      <itemPath>../msed/pbdkf2/memxor.c</itemPath>
-      <itemPath>../msed/pbdkf2/sha1.c</itemPath>
+      <itemPath>../Common/pbdkf2/gc-gnulib.c</itemPath>
+      <itemPath>../Common/pbdkf2/gc-pbkdf2-sha1.c</itemPath>
+      <itemPath>../Common/pbdkf2/hmac-sha1.c</itemPath>
+      <itemPath>../Common/pbdkf2/memxor.c</itemPath>
+      <itemPath>../Common/pbdkf2/sha1.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -43,10 +45,10 @@
                    displayName="Important Files"
                    projectFiles="false"
                    kind="IMPORTANT_FILES_FOLDER">
-      <itemPath>LinuxPBA-Makefile.mk</itemPath>
+      <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
-  <projectmakefile>LinuxPBA-Makefile.mk</projectmakefile>
+  <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">
       <toolsSet>
@@ -56,17 +58,29 @@
       </toolsSet>
       <compileType>
         <cTool>
-          <stripSymbols>true</stripSymbols>
           <architecture>1</architecture>
+          <standard>10</standard>
+          <incDir>
+            <pElem>../linux</pElem>
+            <pElem>../Common</pElem>
+            <pElem>../Common/pbdkf2</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>MSEDDEBUG</Elem>
+          </preprocessorList>
+          <warningLevel>3</warningLevel>
         </cTool>
         <ccTool>
           <architecture>1</architecture>
           <standard>8</standard>
           <incDir>
-            <pElem>../msed/linux</pElem>
-            <pElem>../msed</pElem>
+            <pElem>../linux</pElem>
+            <pElem>../Common</pElem>
+            <pElem>../Common/pbdkf2</pElem>
           </incDir>
-          <commandLine>-DMSEDDEBUG</commandLine>
+          <preprocessorList>
+            <Elem>MSEDDEBUG</Elem>
+          </preprocessorList>
           <warningLevel>3</warningLevel>
         </ccTool>
         <linkerTool>
@@ -75,37 +89,41 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="../msed/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedDev.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedDevOpal.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedDevOpal.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedHashPwd.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedHashPwd.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedHexDump.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedHexDump.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedResponse.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedResponse.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedSession.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedSession.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/linux/MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../msed/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbdkf2/gc-pbkdf2-sha1.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../msed/pbdkf2/gc-pbkdf2-sha1.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../msed/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../msed/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../msed/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
+      <item path="../linux/MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GetPassPhrase.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -127,16 +145,23 @@
       <compileType>
         <cTool>
           <developmentMode>5</developmentMode>
-          <stripSymbols>true</stripSymbols>
           <architecture>1</architecture>
+          <standard>10</standard>
+          <incDir>
+            <pElem>../linux</pElem>
+            <pElem>../Common</pElem>
+            <pElem>../Common/pbdkf2</pElem>
+          </incDir>
+          <warningLevel>3</warningLevel>
         </cTool>
         <ccTool>
           <developmentMode>5</developmentMode>
           <architecture>1</architecture>
           <standard>8</standard>
           <incDir>
-            <pElem>../msed/linux</pElem>
-            <pElem>../msed</pElem>
+            <pElem>../linux</pElem>
+            <pElem>../Common</pElem>
+            <pElem>../Common/pbdkf2</pElem>
           </incDir>
           <warningLevel>3</warningLevel>
         </ccTool>
@@ -152,37 +177,216 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="../msed/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedDev.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedDevOpal.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedDevOpal.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedHashPwd.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedHashPwd.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedHexDump.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedHexDump.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedResponse.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedResponse.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/MsedSession.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/MsedSession.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../msed/linux/MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../Common/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../msed/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbdkf2/gc-pbkdf2-sha1.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../msed/pbdkf2/gc-pbkdf2-sha1.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../msed/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../msed/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../msed/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
+      <item path="../linux/MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GetPassPhrase.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GetPassPhrase.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="LinuxPBA.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="UnlockSEDs.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="UnlockSEDs.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release_x86_64" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+          <architecture>2</architecture>
+          <standard>10</standard>
+          <incDir>
+            <pElem>../linux</pElem>
+            <pElem>../Common</pElem>
+            <pElem>../Common/pbdkf2</pElem>
+          </incDir>
+          <warningLevel>3</warningLevel>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <architecture>2</architecture>
+          <standard>8</standard>
+          <incDir>
+            <pElem>../linux</pElem>
+            <pElem>../Common</pElem>
+            <pElem>../Common/pbdkf2</pElem>
+          </incDir>
+          <warningLevel>3</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <stripSymbols>true</stripSymbols>
+          <linkerLibItems>
+            <linkerLibStdlibItem>Curses</linkerLibStdlibItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedDevOpal.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedHashPwd.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedHexDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedResponse.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedSession.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../Common/pbdkf2/gc-pbkdf2-sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../Common/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../Common/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GetPassPhrase.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GetPassPhrase.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="LinuxPBA.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="UnlockSEDs.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="UnlockSEDs.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Debug_x86_64" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <architecture>2</architecture>
+          <standard>10</standard>
+          <incDir>
+            <pElem>../linux</pElem>
+            <pElem>../Common</pElem>
+            <pElem>../Common/pbdkf2</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>MSEDDEBUG</Elem>
+          </preprocessorList>
+          <warningLevel>3</warningLevel>
+        </cTool>
+        <ccTool>
+          <architecture>2</architecture>
+          <standard>8</standard>
+          <incDir>
+            <pElem>../linux</pElem>
+            <pElem>../Common</pElem>
+            <pElem>../Common/pbdkf2</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>MSEDDEBUG</Elem>
+          </preprocessorList>
+          <warningLevel>3</warningLevel>
+        </ccTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibStdlibItem>Curses</linkerLibStdlibItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedDevOpal.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedHashPwd.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedHexDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedResponse.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/MsedSession.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../Common/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../Common/pbdkf2/gc-pbkdf2-sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../Common/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../Common/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../linux/MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GetPassPhrase.cpp" ex="false" tool="1" flavor2="0">
       </item>

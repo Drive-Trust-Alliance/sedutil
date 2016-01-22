@@ -1,0 +1,260 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\common\log.h" />
+    <ClInclude Include="..\..\common\MsedCommand.h" />
+    <ClInclude Include="..\..\common\MsedConstants.h" />
+    <ClInclude Include="..\..\common\MsedDev.h" />
+    <ClInclude Include="..\..\common\MsedDevEnterprise.h" />
+    <ClInclude Include="..\..\common\MsedDevGeneric.h" />
+    <ClInclude Include="..\..\common\MsedDevOpal.h" />
+    <ClInclude Include="..\..\common\MsedDevOpal1.h" />
+    <ClInclude Include="..\..\common\MsedDevOpal2.h" />
+    <ClInclude Include="..\..\common\MsedEndianFixup.h" />
+    <ClInclude Include="..\..\common\MsedHashPwd.h" />
+    <ClInclude Include="..\..\common\MsedHexDump.h" />
+    <ClInclude Include="..\..\common\MsedLexicon.h" />
+    <ClInclude Include="..\..\common\MsedOptions.h" />
+    <ClInclude Include="..\..\common\MsedResponse.h" />
+    <ClInclude Include="..\..\common\MsedSession.h" />
+    <ClInclude Include="..\..\common\MsedStructures.h" />
+    <ClInclude Include="..\..\common\pbdkf2\config.h" />
+    <ClInclude Include="..\..\common\pbdkf2\gc.h" />
+    <ClInclude Include="..\..\common\pbdkf2\hmac.h" />
+    <ClInclude Include="..\..\common\pbdkf2\memxor.h" />
+    <ClInclude Include="..\..\common\pbdkf2\sha1.h" />
+    <ClInclude Include="..\..\common\pbdkf2\stdalign.h" />
+    <ClInclude Include="..\..\common\Version.h" />
+    <ClInclude Include="..\MsedDevOS.h" />
+    <ClInclude Include="..\os.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\common\msed.cpp" />
+    <ClCompile Include="..\..\common\MsedCommand.cpp" />
+    <ClCompile Include="..\..\common\MsedDev.cpp" />
+    <ClCompile Include="..\..\common\MsedDevEnterprise.cpp" />
+    <ClCompile Include="..\..\common\MsedDevGeneric.cpp" />
+    <ClCompile Include="..\..\common\MsedDevOpal.cpp" />
+    <ClCompile Include="..\..\common\MsedDevOpal1.cpp" />
+    <ClCompile Include="..\..\common\MsedDevOpal2.cpp" />
+    <ClCompile Include="..\..\common\MsedHashPwd.cpp" />
+    <ClCompile Include="..\..\common\MsedHexDump.cpp" />
+    <ClCompile Include="..\..\common\MsedOptions.cpp" />
+    <ClCompile Include="..\..\common\MsedResponse.cpp" />
+    <ClCompile Include="..\..\common\MsedSession.cpp" />
+    <ClCompile Include="..\..\common\pbdkf2\gc-gnulib.c" />
+    <ClCompile Include="..\..\common\pbdkf2\gc-pbkdf2-sha1.c" />
+    <ClCompile Include="..\..\common\pbdkf2\hmac-sha1.c" />
+    <ClCompile Include="..\..\common\pbdkf2\memxor.c" />
+    <ClCompile Include="..\..\common\pbdkf2\sha1.c" />
+    <ClCompile Include="..\MsedDevOS.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{267E9D28-7245-4182-9740-F386F4299E83}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>CLI</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName>sedutil-cli</TargetName>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName>sedutil-cli</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>sedutil-cli</TargetName>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>sedutil-cli</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PreBuildEvent>
+      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Create version header from git --version dirty</Message>
+    </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>del ..\Version.h</Command>
+    </PreLinkEvent>
+    <PreLinkEvent>
+      <Message>Remove version header file</Message>
+    </PreLinkEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PreBuildEvent>
+      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Create version header from git --version dirty</Message>
+    </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>del ..\Version.h</Command>
+    </PreLinkEvent>
+    <PreLinkEvent>
+      <Message>Remove version header file</Message>
+    </PreLinkEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PreBuildEvent>
+      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Create version header from git --version dirty</Message>
+    </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>del ..\Version.h</Command>
+    </PreLinkEvent>
+    <PreLinkEvent>
+      <Message>Remove version header file</Message>
+    </PreLinkEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PreBuildEvent>
+      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Create version header from git --version dirty</Message>
+    </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>del ..\Version.h</Command>
+    </PreLinkEvent>
+    <PreLinkEvent>
+      <Message>Remove version header file</Message>
+    </PreLinkEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,44 @@
+#!/bin/bash
+set +x
+function die {
+echo An error has occured please fix this and start over
+exit 99
+}
+. conf
+cd scratch
+# clean up and start over
+rm -rf buildroot
+git clone ${BUILDROOT} || die
+cd buildroot
+git checkout -b PBABUILD ${BUILDROOT_TAG}  || die
+git reset --hard
+git clean -df
+#fix ncurses build to include libtinfo for compat
+cp ../../buildroot/ncurses.mk package/ncurses/
+# add out of tree build directoried and files
+
+# 64 bit system
+mkdir PBA64
+cp ../../buildroot/PBA64/.config PBA64/
+cp ../../buildroot/PBA64/* PBA64/
+cp -r ../../buildroot/PBA64/overlay PBA64/
+
+# 32 bit system
+mkdir PBA32
+cp ../../buildroot/PBA32/.config PBA32/
+cp ../../buildroot/PBA32/* PBA32/
+cp -r ../../buildroot/PBA32/overlay PBA32/
+
+echo This is going to take a while ..... Press enter to continue
+read INOUT
+echo Making the 64bit PBA Linux system
+make O=PBA64 2>&1 | tee PBA64/build_output.txt
+echo Making the 32bit PBA Linux system
+make O=PBA32 2>&1 | tee PBA32/build_output.txt
+# List the stuff we need to check
+echo Checking for customizations...... 
+grep -i pba PBA*/target/etc/inittab
+grep -i libtinfo PBA*/target/etc/ld.so.cache
+# back to where we started
+cd ../..
+exit 0

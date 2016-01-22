@@ -19,6 +19,14 @@
                     <name>Release</name>
                     <type>1</type>
                 </confElem>
+                <confElem>
+                    <name>Release_x86_64</name>
+                    <type>1</type>
+                </confElem>
+                <confElem>
+                    <name>Debug_x86_64</name>
+                    <type>1</type>
+                </confElem>
             </confList>
             <formatting>
                 <project-formatting-style>false</project-formatting-style>

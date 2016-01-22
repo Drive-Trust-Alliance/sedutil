@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 ## Get version information
 . conf
 ## Make a clean start
@@ -10,9 +11,9 @@ wget ${TCDISTRO}/release/${TINYCORE}
 ##wget ${TCDISTRO}/tcz/ncurses-common.tcz
 wget ${TCDISTRO}/tcz/ncurses.tcz
 wget ${TCDISTRO}/tcz/hdparm.tcz
-##wget https://www.kernel.org/pub/linux/utils/boot/syslinux/${SYSLINUX}.tar.xz
+wget https://www.kernel.org/pub/linux/utils/boot/syslinux/${SYSLINUX}.tar.xz
 ##   Unpack Syslinux
-##tar xf ${SYSLINUX}.tar.xz 
+tar xf ${SYSLINUX}.tar.xz 
 ##  Get the initrd and kernel from the ISO
 mkdir cd
 sudo mount ${TINYCORE} cd

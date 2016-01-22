@@ -49,6 +49,7 @@ uint8_t UnlockSEDs(char * password) {
         else
             d = new MsedDevOpal1(devref);
         delete tempDev;
+        d->no_hash_passwords = false;
         failed = 0;
 	mvprintw(7+i,2,"Unlocking %s                          ",devref);
         move(7+i,22);
@@ -64,10 +65,12 @@ uint8_t UnlockSEDs(char * password) {
         }
         printw("%s",(failed ? "Failed" : "Success"));
     delete d;             
+    doupdate();
     if (MAX_DISKS == i) {
         LOG(I) << MAX_DISKS << " disks, really?";
     }
 
 }
+    doupdate();
     return 0x00;
 };

@@ -3,30 +3,31 @@ set -x
 # Build a custom tinycore bootable image
 ## define releases for tools
 . conf
+PROGRAM=../../linux/CLI/dist/Release_i686/GNU-Linux-x86/sedutil-cli
 VERSIONINFO=`git describe --dirty`
 BUILDTYPE=Rescue
 BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 echo "Building " $BUILDTYPE "image"
 # Start fresh
 sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE}
-[ -f ${SYSLINUX}/bios/mbr/mbr.bin -a \
-     -x ${SYSLINUX}/bios/extlinux/extlinux -a \
+[ -f ../scratch/${SYSLINUX}/bios/mbr/mbr.bin -a \
+     -x ../scratch/${SYSLINUX}/bios/extlinux/extlinux -a \
      -f ../scratch/core.gz -a \
      -f ../scratch/vmlinuz -a \
      -f ../scratch/hdparm.tcz -a \
-     -f ../../dist/Release_i686/msed \
+     -f ${PROGRAM} \
   ] || { echo " prereqs are not available "; exit 1; }
 #
 dd if=/dev/zero of=${BUILDIMG} bs=1M count=15
 (echo o;echo n;echo p;echo 1;echo "";echo "";echo a;echo 1;echo w) | fdisk -C 100 ${BUILDIMG}
-dd if=${SYSLINUX}/bios/mbr/mbr.bin of=${BUILDIMG} count=1 conv=notrunc bs=512
+dd if=../scratch/${SYSLINUX}/bios/mbr/mbr.bin of=${BUILDIMG} count=1 conv=notrunc bs=512
 LOOPDEV=`sudo losetup --show -f -o 1048576 ${BUILDIMG}`
 sudo mkfs.ext4 $LOOPDEV -L ${BUILDTYPE}-${VERSIONINFO}
 mkdir image
 sudo mount $LOOPDEV image
 sudo chmod 777 image
 mkdir -p image/boot/extlinux
-sudo ${SYSLINUX}/bios/extlinux/extlinux --install image/boot/extlinux
+sudo ../scratch/${SYSLINUX}/bios/extlinux/extlinux --install image/boot/extlinux
 cp ../scratch/vmlinuz image/boot/
 echo "default msed" >>image/boot/extlinux/extlinux.conf
 echo "prompt 0" >>image/boot/extlinux/extlinux.conf
@@ -42,7 +43,7 @@ zcat ../../scratch/core.gz | sudo cpio -i -H newc -d
 cd ..
 sudo mkdir -p core/usr/local/sbin/
 sudo unsquashfs -f -li -d core ../scratch/hdparm.tcz
-sudo cp ../../dist/Release_i686/msed core/usr/local/sbin/
+sudo cp ${PROGRAM} core/usr/local/sbin/
 ## now repackage it
 cd core
 sudo find | sudo cpio -o -H newc | gzip -9 > ../image/boot/core.gz

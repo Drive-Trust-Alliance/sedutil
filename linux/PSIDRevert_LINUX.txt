@@ -1,0 +1,66 @@
+You need to be root to run this program.
+0.a sudo -s
+
+If the libata.allow_tpm flag was not set at boot time you need to change it,
+optional steps 0.b & 0.c will do this:
+
+0.b chmod 0744 /sys/module/libata/parameters/allow_tpm
+0.b echo "1" > /sys/module/libata/parameters/allow_tpm
+
+1. setutil-cli --scan    <- SCAN to find Opal Drive (you should see Yes next the the drive
+                     your working with.
+2. setutil-cli --query /dev/sd? <--this will show the Opal status look at the locking
+                                               feature and see if it is Locked = Y
+                                               or LockingEnabled = Y that's a good
+                                                sign that this should work
+3.setutil-cli --yesIreallywanttoERASEALLmydatausingthePSID <PSIDALLCAPSNODASHES> /dev/sd?
+
+4.  You should see INFO: revertTper completed successfully.
+    If you get a message that says NOT_AUTHORIZED you entered the PSID wrong.
+
+If it doesn't work please execute the command in step 3 with a -vvvvv (5 v's) as the first option
+redirecting the output to a file and send it back to me.
+example:
+setutil-cli -vvvvv --yesIreallywanttoERASEALLmydatausingthePSID <PSIDALLCAPSNODASHES> /dev/sd? > revertlog.txt
+
+Hope this helps.
+********************************************************************
+********************************************************************
+The following is a sanitized log of the commands and expected responses.
+
+r0m30@r0m30-PC:~$ sudo -s
+root@r0m30-PC:~# chmod 0744 /sys/module/libata/parameters/allow_tpm
+root@r0m30-PC:~# echo "1" > /sys/module/libata/parameters/allow_tpm
+root@r0m30-PC:~# ./setutil-cli --scan
+
+Scanning for Opal 2.0 compliant disks
+/dev/sd0  No  ATA     KINGSTON SV100S21205 
+/dev/sd1  No  ATA     Hitachi HDT72504V5CO 
+/dev/sd2  No  ATA     KINGSTON SV100S21205 
+/dev/sd3  No  ATA     WDC WD5000AAKS-012.0 
+/dev/sd4  No  Generic-Compact Flash   1.00 
+/dev/sd5  No  Generic-SM/xD-Picture   1.00 
+/dev/sd6  No  Generic-SD/MMC          1.00 
+/dev/sd7  No  Generic-MS/MS-Pro       1.00 
+/dev/sd8  Yes ATA     Crucial_CT120M50MU05 
+No more disks present ending scan
+root@r0m30-PC:~# ./setutil-cli --query /dev/sd8
+/dev/sd8 ATA ATA     Crucial_CT120M50MU05 
+
+TPer function (0x0001)
+    ACKNAK = N, ASYNC = N. BufferManagement = N, comIDManagement  = N, Streaming = Y, SYNC = Y
+Locking function (0x0002)
+    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
+Geometry function (0x0003)
+    Align = Y, Alignment Granularity = 8 (4096), Logical Block size = 512, Lowest Aligned LBA = 0
+SingleUser function (0x0201)
+    ALL = N, ANY = N, Policy = Y, Locking Objects = 9
+DataStore function (0x0202)
+    Max Tables = 9, Max Size Tables = 94371840, Table size alignment = 1
+OPAL 2.0 function (0x0203)
+    Base comID = 0x1000, Initial PIN = 0x0, Reverted PIN = 0x0, comIDs = 1
+    Locking Admins = 4, Locking Users = 9, Range Crossing = N
+root@r0m30-PC:~# ./setutil-cli --yesIreallywanttoERASE*ALL*mydatausingthePSID <PSIDALLCAPSNODASHES> /dev/sd8
+- 01:14:10.996 INFO: Performing a PSID Revert on /dev/sd8 with password <PSIDALLCAPSNODASHES>
+- 01:14:11.165 INFO: revertTper completed successfully
+root@r0m30-PC:~# 
