@@ -85,6 +85,12 @@ MsedSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthor
 		cmd->addToken(SignAuthority);
 		cmd->addToken(OPAL_TOKEN::ENDNAME);
 	}
+ 
+//	cmd->addToken(OPAL_TOKEN::STARTNAME);
+//	cmd->addToken("SessionTimeout");
+//	cmd->addToken(5000);
+//	cmd->addToken(OPAL_TOKEN::ENDNAME);
+
     cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
 	if ((lastRC = sendCommand(cmd, response)) != 0) {
@@ -115,20 +121,23 @@ MsedSession::authenticate(vector<uint8_t> Authority, char * Challenge)
 	MsedResponse response;
 	cmd->reset(OPAL_UID::OPAL_THISSP_UID, d->isEprise() ? OPAL_METHOD::EAUTHENTICATE : OPAL_METHOD::AUTHENTICATE);
 	cmd->addToken(OPAL_TOKEN::STARTLIST); // [  (Open Bracket)
-	cmd->addToken(Authority); 
-	cmd->addToken(OPAL_TOKEN::STARTNAME);
-	if (d->isEprise())
-		cmd->addToken("Challenge");
-	else
-		cmd->addToken(OPAL_TINY_ATOM::UINT_00);
-	if (hashPwd) {
-		hash.clear();
-		MsedHashPwd(hash, Challenge, d);
-		cmd->addToken(hash);
-	}
-	else
-		cmd->addToken(Challenge);
-	cmd->addToken(OPAL_TOKEN::ENDNAME);
+	cmd->addToken(Authority);
+    if (Challenge && *Challenge)
+    {
+		cmd->addToken(OPAL_TOKEN::STARTNAME);
+		if (d->isEprise())
+			cmd->addToken("Challenge");
+		else
+			cmd->addToken(OPAL_TINY_ATOM::UINT_00);
+		if (hashPwd) {
+			hash.clear();
+			MsedHashPwd(hash, Challenge, d);
+			cmd->addToken(hash);
+		}
+		else
+			cmd->addToken(Challenge);
+		cmd->addToken(OPAL_TOKEN::ENDNAME);
+    }
 	cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
 	cmd->complete();
 	if ((lastRC = sendCommand(cmd, response)) != 0) {
@@ -154,7 +163,12 @@ MsedSession::sendCommand(MsedCommand * cmd, MsedResponse & response)
     cmd->setTSN(TSN);
     cmd->setcomID(d->comID());
 
-    d->exec(cmd, response, SecurityProtocol);
+    uint8_t exec_rc = d->exec(cmd, response, SecurityProtocol);
+    if (0 != exec_rc)
+    {
+        LOG(E) << "Command failed on exec " << (uint16_t) exec_rc;
+        return exec_rc;
+    }
     /*
      * Check out the basics that so that we know we
      * have a sane reply to work with

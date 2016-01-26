@@ -99,6 +99,14 @@ public:
      *   @param method The SSC method to be called  
      */
     void reset(OPAL_UID InvokingUid, vector<uint8_t> method);
+    /** Clears the command buffer and resets the the end of buffer pointer
+     * also initializes the invoker and method fields.
+     * Both the invoker and method are passed as a vector<uint8_t>
+     * 
+     *   @param InvokingUid  The UID used to call the SSC method 
+     *   @param method The SSC method to be called  
+     */
+    void reset(vector<uint8_t> InvokingUid, vector<uint8_t> method);
     /** Changes the invoker field.
      * The invoker is passed as a vector<uint8_t> this is used for the case
      * where the invoker is not an OPAL user, typically a table. 

@@ -52,7 +52,11 @@ protected:
      * @param ms  number of milliseconds to wait
      */
     void osmsSleep(uint32_t ms);
-	void identify();
-
-	MsedDevLinuxDrive *drive;
+    /** OS specific routine to send an ATA identify to the device */
+    void identify();
+    int fd; /**< Linux handle for the device  */
+private:
+    /** OS specific routine to send a SCSI INQUIRY to the device */
+    void identify_SAS();
+    MsedDevLinuxDrive *drive;
 };

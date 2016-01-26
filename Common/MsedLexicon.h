@@ -120,7 +120,7 @@ static const uint8_t OPALMETHOD[][8]{
     { 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x06, 0x01}, /**< Random */
 	{ 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x08, 0x03 }, /**< Erase */
 };
-/** Enum for indexing the OPAMMETHOD array */
+/** Enum for indexing the OPALMETHOD array */
 typedef enum _OPAL_METHOD {
     PROPERTIES,
     STARTSESSION,
@@ -187,6 +187,7 @@ typedef enum _OPAL_TOKEN {
     ENDOFSESSION = 0xfa,
     STARTTRANSACTON = 0xfb,
     ENDTRANSACTON = 0xfC,
+    EMPTYATOM = 0xff,
     WHERE = 0x00,
 } OPAL_TOKEN;
 

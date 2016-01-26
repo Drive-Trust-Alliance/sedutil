@@ -23,6 +23,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/types.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <arpa/inet.h>
 #include <scsi/sg.h>
 #include <stdio.h>
 #include <string.h>
@@ -33,6 +34,23 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include "MsedDevLinuxSata.h"
 #include "MsedHexDump.h"
+//
+// taken from <scsi/scsi.h> to avoid SCSI/ATA name collision
+// 
+
+/*
+ *  Status codes
+ */
+
+#define GOOD                 0x00
+#define CHECK_CONDITION      0x01
+#define CONDITION_GOOD       0x02
+#define BUSY                 0x04
+#define INTERMEDIATE_GOOD    0x08
+#define INTERMEDIATE_C_GOOD  0x0a
+#define RESERVATION_CONFLICT 0x0c
+#define COMMAND_TERMINATED   0x11
+#define QUEUE_FULL  
 
 using namespace std;
 
@@ -40,7 +58,9 @@ using namespace std;
  *  Linux specific implementation using the SCSI generic interface and
  *  SCSI ATA Pass Through (12) command
  */
-MsedDevLinuxSata::MsedDevLinuxSata() {}
+MsedDevLinuxSata::MsedDevLinuxSata() {
+isSAS = 0;
+}
 
 bool MsedDevLinuxSata::init(const char * devref)
 {
@@ -83,6 +103,9 @@ bool MsedDevLinuxSata::init(const char * devref)
 uint8_t MsedDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                          void * buffer, uint16_t bufferlen)
 {
+    if(isSAS) {
+        return(sendCmd_SAS(cmd, protocol, comID, buffer, bufferlen));
+    }
     sg_io_hdr_t sg;
     uint8_t sense[32]; // how big should this be??
     uint8_t cdb[12];
@@ -176,17 +199,19 @@ void MsedDevLinuxSata::identify(OPAL_DiskInfo *disk_info)
     uint8_t * buffer = (uint8_t *) memalign(IO_BUFFER_ALIGNMENT, IO_BUFFER_LENGTH);
     memset(buffer, 0, IO_BUFFER_LENGTH);
     if (ioctl(fd, HDIO_GET_IDENTITY, buffer) < 0) {
-        LOG(E) << "Identify failed " << strerror(errno);
-        disk_info->devType = 1;
+        LOG(D1) << "Identify failed " << strerror(errno);
+        disk_info->devType = DEVICE_TYPE_OTHER;
+        identify_SAS(disk_info);
         return;
     }
 
     if (!(memcmp(nullz.data(), buffer, 512))) {
-        disk_info->devType = 1;
+        disk_info->devType = DEVICE_TYPE_OTHER;
         return;
     }
     IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) buffer;
-    disk_info->devType = id->devType;
+//    disk_info->devType = id->devType;
+    disk_info->devType = DEVICE_TYPE_ATA;
     memcpy(disk_info->serialNum, id->serialNum, sizeof (disk_info->serialNum));
     memcpy(disk_info->firmwareRev, id->firmwareRev, sizeof (disk_info->firmwareRev));
     memcpy(disk_info->modelNum, id->modelNum, sizeof (disk_info->modelNum));
@@ -207,7 +232,179 @@ void MsedDevLinuxSata::identify(OPAL_DiskInfo *disk_info)
     free(buffer);
     return;
 }
+/** Send an ioctl to the device using pass through. */
+uint8_t MsedDevLinuxSata::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+                         void * buffer, uint16_t bufferlen)
+{
+    sg_io_hdr_t sg;
+    uint8_t sense[32]; // how big should this be??
+    uint8_t cdb[12];
 
+    LOG(D1) << "Entering MsedDevLinuxSara::sendCmd_SAS";
+    memset(&cdb, 0, sizeof (cdb));
+    memset(&sense, 0, sizeof (sense));
+    memset(&sg, 0, sizeof (sg));
+
+  
+        // initialize SCSI CDB
+        switch(cmd)
+        {
+        default:
+        {
+            return 0xff;
+        }
+        case IF_RECV:
+        {
+            auto * p = (CScsiCmdSecurityProtocolIn *) cdb;
+            p->m_Opcode = p->OPCODE;
+            p->m_SecurityProtocol = protocol;
+            p->m_SecurityProtocolSpecific = htons(comID);
+            p->m_INC_512 = 1;
+            p->m_AllocationLength = htonl(bufferlen/512);
+            break;
+        }
+        case IF_SEND:
+        {
+            auto * p = (CScsiCmdSecurityProtocolOut *) cdb;
+            p->m_Opcode = p->OPCODE;
+            p->m_SecurityProtocol = protocol;
+            p->m_SecurityProtocolSpecific = htons(comID);
+            p->m_INC_512 = 1;
+            p->m_TransferLength = htonl(bufferlen/512);
+            break;
+        }
+        }
+
+        // fill out SCSI Generic structure
+        sg.interface_id = 'S';
+        sg.dxfer_direction = cmd == IF_RECV ? SG_DXFER_FROM_DEV : SG_DXFER_TO_DEV;
+        sg.cmd_len = sizeof (cdb);
+        sg.mx_sb_len = sizeof (sense);
+        sg.iovec_count = 0;
+        sg.dxfer_len = IO_BUFFER_LENGTH;
+        sg.dxferp = buffer;
+        sg.cmdp = cdb;
+        sg.sbp = sense;
+        sg.timeout = 5000;
+        sg.flags = 0;
+        sg.pack_id = 0;
+        sg.usr_ptr = NULL;
+
+        // execute I/O
+        if (ioctl(fd, SG_IO, &sg) < 0) {
+            LOG(D4) << "cdb after ";
+            IFLOG(D4) MsedHexDump(cdb, sizeof (cdb));
+            LOG(D4) << "sense after ";
+            IFLOG(D4) MsedHexDump(sense, sizeof (sense));
+            return 0xff;
+        }
+    
+        // check for successful target completion
+        if (sg.masked_status != GOOD)
+        {
+            LOG(D4) << "cdb after ";
+            IFLOG(D4) MsedHexDump(cdb, sizeof (cdb));
+            LOG(D4) << "sense after ";
+            IFLOG(D4) MsedHexDump(sense, sizeof (sense));
+            return 0xff;
+        }
+
+        // success
+        return 0x00;
+    }
+    
+static void safecopy(uint8_t * dst, size_t dstsize, uint8_t * src, size_t srcsize)
+{
+    const size_t size = min(dstsize, srcsize);
+    if (size > 0) memcpy(dst, src, size);
+    if (size < dstsize) memset(dst+size, '\0', dstsize-size);
+}
+
+void MsedDevLinuxSata::identify_SAS(OPAL_DiskInfo *disk_info)
+{
+    sg_io_hdr_t sg;
+    uint8_t sense[18];
+    uint8_t cdb[sizeof(CScsiCmdInquiry)];
+
+    LOG(D4) << "Entering MsedDevLinuxSata::identify_SAS()";
+    uint8_t * buffer = (uint8_t *) aligned_alloc(IO_BUFFER_ALIGNMENT, IO_BUFFER_LENGTH);
+
+    memset(&cdb, 0, sizeof (cdb));
+    memset(&sense, 0, sizeof (sense));
+    memset(&sg, 0, sizeof (sg));
+
+    // fill out SCSI command
+    auto p = (CScsiCmdInquiry *) cdb;
+    p->m_Opcode = p->OPCODE;
+    p->m_AllocationLength = htons(sizeof(CScsiCmdInquiry_StandardData));
+
+    // fill out SCSI Generic structure
+    sg.interface_id = 'S';
+    sg.dxfer_direction = SG_DXFER_FROM_DEV;
+    sg.cmd_len = sizeof (cdb);
+    sg.mx_sb_len = sizeof (sense);
+    sg.iovec_count = 0;
+    sg.dxfer_len = IO_BUFFER_LENGTH;
+    sg.dxferp = buffer;
+    sg.cmdp = cdb;
+    sg.sbp = sense;
+    sg.timeout = 5000;
+    sg.flags = 0;
+    sg.pack_id = 0;
+    sg.usr_ptr = NULL;
+
+    // execute I/O
+    if (ioctl(fd, SG_IO, &sg) < 0) {
+        LOG(D4) << "cdb after ";
+        IFLOG(D4) MsedHexDump(cdb, sizeof (cdb));
+        LOG(D4) << "sense after ";
+        IFLOG(D4) MsedHexDump(sense, sizeof (sense));
+        disk_info->devType = DEVICE_TYPE_OTHER;
+        free(buffer);
+        return;
+    }
+
+    // check for successful target completion
+    if (sg.masked_status != GOOD)
+    {
+        LOG(D4) << "cdb after ";
+        IFLOG(D4) MsedHexDump(cdb, sizeof (cdb));
+        LOG(D4) << "sense after ";
+        IFLOG(D4) MsedHexDump(sense, sizeof (sense));
+        disk_info->devType = DEVICE_TYPE_OTHER;
+        free(buffer);
+        return;
+    }
+
+    // response is a standard INQUIRY (at least 36 bytes)
+    auto resp = (CScsiCmdInquiry_StandardData *) buffer;
+ 
+    // make sure SCSI target is disk
+    if (sg.dxfer_len - sg.resid != sizeof(CScsiCmdInquiry_StandardData)
+        || resp->m_PeripheralDeviceType != 0x0)
+    {
+        LOG(D4) << "cdb after ";
+        IFLOG(D4) MsedHexDump(cdb, sizeof (cdb));
+        LOG(D4) << "sense after ";
+        IFLOG(D4) MsedHexDump(sense, sizeof (sense));
+        disk_info->devType = DEVICE_TYPE_OTHER;
+        free(buffer);
+        return;
+    }
+
+    // fill out disk info fields
+    safecopy(disk_info->serialNum, sizeof(disk_info->serialNum), resp->m_T10VendorId, sizeof(resp->m_T10VendorId));
+    safecopy(disk_info->firmwareRev, sizeof(disk_info->firmwareRev), resp->m_ProductRevisionLevel, sizeof(resp->m_ProductRevisionLevel));
+    safecopy(disk_info->modelNum, sizeof(disk_info->modelNum), resp->m_ProductId, sizeof(resp->m_ProductId));
+
+    // device is apparently a SCSI disk
+    disk_info->devType = DEVICE_TYPE_SAS;
+    isSAS = 1;
+
+    // free buffer and return
+    free(buffer);
+    return;
+}
 /** Close the device reference so this object can be delete. */
 MsedDevLinuxSata::~MsedDevLinuxSata()
 {

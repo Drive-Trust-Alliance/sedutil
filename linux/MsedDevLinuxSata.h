@@ -51,5 +51,10 @@ public:
             void * buffer, uint16_t bufferlen);
     /** Linux specific routine to send an ATA identify to the device */
     void identify(OPAL_DiskInfo *disk_info);
-	int fd; /**< Linux handle for the device  */
+    uint8_t sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+            void * buffer, uint16_t bufferlen);
+    /** Linux specific routine to send an ATA identify to the device */
+    void identify_SAS(OPAL_DiskInfo *disk_info);
+    int fd; /**< Linux handle for the device  */
+    int isSAS; /* The device is sas */
 };

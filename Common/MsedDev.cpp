@@ -195,7 +195,7 @@ void MsedDev::puke()
 {
 	LOG(D1) << "Entering MsedDev::puke()";
 	/* IDENTIFY */
-	cout << endl << dev << (disk_info.devType ? " OTHER " : " ATA ");
+	cout << endl << dev << (disk_info.devType == DEVICE_TYPE_ATA ? " ATA" : disk_info.devType == DEVICE_TYPE_SAS ? " SAS" : " OTHER ");
 	cout << disk_info.modelNum << " " << disk_info.firmwareRev << " " << disk_info.serialNum << endl;
 	/* TPer */
 	if (disk_info.TPer) {

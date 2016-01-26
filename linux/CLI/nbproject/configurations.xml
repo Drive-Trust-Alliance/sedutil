@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="95">
+<configurationDescriptor version="97">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
@@ -12,11 +12,15 @@
         <itemPath>../../Common/pbdkf2/sha1.h</itemPath>
         <itemPath>../../Common/pbdkf2/stdalign.h</itemPath>
       </logicalFolder>
+      <itemPath>../../Common/MsedAnnotatedDump.h</itemPath>
       <itemPath>../../Common/MsedCommand.h</itemPath>
       <itemPath>../../Common/MsedConstants.h</itemPath>
       <itemPath>../../Common/MsedDev.h</itemPath>
       <itemPath>../../Common/MsedDevEnterprise.h</itemPath>
       <itemPath>../../Common/MsedDevGeneric.h</itemPath>
+      <itemPath>../MsedDevLinuxDrive.h</itemPath>
+      <itemPath>../MsedDevLinuxNvme.h</itemPath>
+      <itemPath>../MsedDevLinuxSata.h</itemPath>
       <itemPath>../MsedDevOS.h</itemPath>
       <itemPath>../../Common/MsedDevOpal.h</itemPath>
       <itemPath>../../Common/MsedDevOpal1.h</itemPath>
@@ -46,6 +50,7 @@
         <itemPath>../../Common/pbdkf2/memxor.c</itemPath>
         <itemPath>../../Common/pbdkf2/sha1.c</itemPath>
       </logicalFolder>
+      <itemPath>../../Common/MsedAnnotatedDump.cpp</itemPath>
       <itemPath>../../Common/MsedCommand.cpp</itemPath>
       <itemPath>../../Common/MsedDev.cpp</itemPath>
       <itemPath>../../Common/MsedDevEnterprise.cpp</itemPath>
@@ -99,7 +104,6 @@
           <warningLevel>3</warningLevel>
         </cTool>
         <ccTool>
-          <developmentMode>0</developmentMode>
           <architecture>1</architecture>
           <standard>8</standard>
           <incDir>
@@ -117,6 +121,10 @@
           <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/sedutil-cli</output>
         </linkerTool>
       </compileType>
+      <item path="../../Common/MsedAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedAnnotatedDump.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../Common/MsedCommand.h" ex="false" tool="3" flavor2="0">
@@ -202,9 +210,15 @@
       </item>
       <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="../MsedDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="../MsedDevLinuxNvme.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../MsedDevLinuxSata.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -255,6 +269,10 @@
           <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/sedutil-cli</output>
         </linkerTool>
       </compileType>
+      <item path="../../Common/MsedAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedAnnotatedDump.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../Common/MsedCommand.h" ex="false" tool="3" flavor2="0">
@@ -340,9 +358,15 @@
       </item>
       <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="../MsedDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="../MsedDevLinuxNvme.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../MsedDevLinuxSata.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -370,7 +394,6 @@
           <warningLevel>3</warningLevel>
         </cTool>
         <ccTool>
-          <developmentMode>0</developmentMode>
           <architecture>2</architecture>
           <standard>8</standard>
           <incDir>
@@ -388,6 +411,10 @@
           <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/sedutil-cli</output>
         </linkerTool>
       </compileType>
+      <item path="../../Common/MsedAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedAnnotatedDump.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="../../Common/MsedCommand.h" ex="false" tool="3" flavor2="0">
@@ -473,9 +500,15 @@
       </item>
       <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="../MsedDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="../MsedDevLinuxNvme.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../MsedDevLinuxSata.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="8">
       </item>
@@ -526,6 +559,10 @@
           <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/sedutil-cli</output>
         </linkerTool>
       </compileType>
+      <item path="../../Common/MsedAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/MsedAnnotatedDump.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="../../Common/MsedCommand.h" ex="false" tool="3" flavor2="0">
@@ -611,9 +648,15 @@
       </item>
       <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="../MsedDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="../MsedDevLinuxNvme.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../MsedDevLinuxSata.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="8">
       </item>

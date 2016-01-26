@@ -57,7 +57,7 @@ public:
          * Specific to the SSC that the device supports
          * @param password the password that is to be assigned to the SSC master entities 
          */
-	 uint8_t initialsetup(char * password) ;
+	 uint8_t initialSetup(char * password) ;
 	/** User command to prepare the drive for Single User Mode and rekey a SUM locking range.
          * @param lockingrange locking range number to enable
          * @param start LBA to start locking range
@@ -80,7 +80,7 @@ public:
          * @param userid the userid whose password is to be changed 
          * @param newpassword  value password is to be changed to
          */
-	 uint8_t setNewPassword(char * password, char * userid, char * newpassword) ;
+	 uint8_t setPassword(char * password, char * userid, char * newpassword) ;
 	 /** Set the password of a locking SP user in Single User Mode.
          * @param password  current user password
          * @param userid the userid whose password is to be changed
@@ -138,7 +138,7 @@ public:
 	 /** List status of locking ranges.
 	 *  @param password Password of administrator
 	 */
-	 uint8_t listLockingRanges(char * password);
+	 uint8_t listLockingRanges(char * password, int rangeid);
 	 uint8_t setMBRDone(uint8_t state, char * Admin1Password) ;
          /** Primitive to set the MBREnable flag.
          * @param state 0 or 1  
@@ -180,6 +180,11 @@ public:
          * @param PSID true or false is the authority the PSID
          *   */
 	 uint8_t revertTPer(char * password, uint8_t PSID ) ;
+	    /** Erase a locking range
+	    * @param lockingrange The number of the locking range (0 = global)
+	    * @param password Password of administrative authority for locking range
+	    */
+	virtual uint8_t eraseLockingRange(uint8_t lockingrange, char * password);
          /** Dumps an object for diagnostic purposes
          * @param sp index into the OPALUID table for the SP the object is in
          * @param auth the authority ti use for the dump
@@ -199,6 +204,9 @@ public:
          */
 	 uint8_t rawCmd(char *sp, char * auth, char *pass,
 		char *invoker, char *method, char *plist) ;
+	/** Read MSID
+	 */
+	uint8_t printDefaultPassword();
 	/* MsedSession.cpp 	*/
         /** Send a command to the device and wait for the response
          * @param cmd the MswdCommand object containg the command

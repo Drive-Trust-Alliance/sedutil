@@ -55,13 +55,13 @@ void MsedDevOS::init(const char * devref)
 
 	if (!strncmp(devref, "/dev/nvme", 9))
 	{
-		MsedDevLinuxNvme *NvmeDrive = new MsedDevLinuxNvme();
-		drive = NvmeDrive;
+//		MsedDevLinuxNvme *NvmeDrive = new MsedDevLinuxNvme();
+		drive = new MsedDevLinuxNvme();
 	}
 	else if (!strncmp(devref, "/dev/s", 6))
 	{
-		MsedDevLinuxSata *SataDrive = new MsedDevLinuxSata();
-		drive = SataDrive;
+//		MsedDevLinuxSata *SataDrive = new MsedDevLinuxSata();
+		drive = new MsedDevLinuxSata();
 	}
 	else
 		LOG(E) << "MsedDevOS::init ERROR - unknown drive type";
@@ -70,7 +70,7 @@ void MsedDevOS::init(const char * devref)
 	{
 		isOpen = TRUE;
 		drive->identify(&disk_info);
-		if (!disk_info.devType)
+		if (disk_info.devType != DEVICE_TYPE_OTHER)
 			discovery0();
 	}
 	else

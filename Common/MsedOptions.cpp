@@ -36,13 +36,29 @@ void usage()
     printf("                                identifying Opal compliant devices \n");
     printf("--query <device>\n");
     printf("                                Display the Discovery 0 response of a device\n");
-	printf("--initialsetup <SIDpassword> <device>\n");
+    printf("--isValidSED <device>\n");
+    printf("                                Verify whether the given device is SED or not\n");
+    printf("--listLockingRanges <password> <device>\n");
+	printf("                                List all Locking Ranges\n");
+    printf("--listLockingRange <0...n> <password> <device>\n");
+	printf("                                List all Locking Ranges\n");
+	printf("                                0 = GLobal 1..n  = LRn \n");
+    printf("--eraseLockingRange <0...n> <password> <device>\n");
+	printf("                                Erase a Locking Range\n");
+	printf("                                0 = GLobal 1..n  = LRn \n");
+    printf("--setupLockingRange <0...n> <RangeStart> <RangeLength> <password> <device>\n");
+	printf("                                Setup a new Locking Range\n");
+	printf("                                0 = GLobal 1..n  = LRn \n");
+	printf("--initialSetup <SIDpassword> <device>\n");
 	printf("                                Setup the device for use with msed\n");
 	printf("                                <SIDpassword> is new SID and Admin1 password\n");
-	printf("--setSIDPwd <SIDpassword> <newSIDpassword> <device> \n");
+	printf("--setSIDPassword <SIDpassword> <newSIDpassword> <device> \n");
 	printf("                                Change the SID password\n");
 	printf("--setAdmin1Pwd <Admin1password> <newAdmin1password> <device> \n");
 	printf("                                Change the Admin1 password\n");
+	printf("--setPassword <oldpassword, \"\" for MSID> <userid> <newpassword> <device> \n");
+	printf("                                Change the Enterprise password for userid\n");
+	printf("                                \"EraseMaster\" or \"BandMaster<n>\", 0 <= n <= 1023\n");
 	printf("--setLockingRange <0...n> <RW|RO|LK> <Admin1password> <device> \n");
 	printf("                                Set the status of a Locking Range\n");
 	printf("                                0 = GLobal 1..n  = LRn \n");
@@ -58,21 +74,23 @@ void usage()
 	printf("                                set|unset MBRDone\n");
 	printf("--loadPBAimage <Admin1password> <file> <device> \n");
 	printf("                                Write <file> to MBR Shadow area\n");
-    printf("--reverttper <SIDpassword> <device>\n");
+    printf("--revertTPer <SIDpassword> <device>\n");
     printf("                                set the device back to factory defaults \n");
 	printf("                                This **ERASES ALL DATA** \n");
-	printf("--revertnoerase <Admin1password> <device>\n");
+	printf("--revertNoErase <Admin1password> <device>\n");
 	printf("                                deactivate the Locking SP \n");
 	printf("                                without erasing the data \n");
 	printf("                                on GLOBAL RANGE *ONLY* \n");
     printf("--yesIreallywanttoERASEALLmydatausingthePSID <PSID> <device>\n");
     printf("                                revert the device using the PSID *ERASING* *ALL* the data \n");
+    printf("--printDefaultPassword <device>\n");
+    printf("                                print MSID \n");
     printf("\n");
     printf("Examples \n");
     printf("msed --scan \n");
 	printf("msed --query %s \n", DEVICEEXAMPLE);
 	printf("msed --yesIreallywanttoERASEALLmydatausingthePSID <PSIDALLCAPSNODASHED> %s \n", DEVICEEXAMPLE);
-	printf("msed --initialsetup <newSIDpassword> %s \n", DEVICEEXAMPLE);
+	printf("msed --initialSetup <newSIDpassword> %s \n", DEVICEEXAMPLE);
     return;
 }
 
@@ -111,7 +129,9 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 			LOG(E) << "Argument " << (uint16_t) i << " (" << argv[i] << ") should be a command";
 			return MSEDERROR_INVALID_COMMAND;
 		}
-		BEGIN_OPTION(initialsetup, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(initialSetup, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(setSIDPassword, 3) OPTION_IS(password) OPTION_IS(newpassword) 
+		         OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(setup_SUM, 6)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)
@@ -136,14 +156,12 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 			OPTION_IS(newpassword)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(setSIDPwd, 3) OPTION_IS(password) OPTION_IS(newpassword) 
-			OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(setAdmin1Pwd, 3) OPTION_IS(password) OPTION_IS(newpassword) 
 			OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(loadPBAimage, 3) OPTION_IS(password) OPTION_IS(pbafile) 
 			OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(reverttper, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(revertnoerase, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(revertTPer, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(revertNoErase, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(PSIDrevert, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2) OPTION_IS(password) 
 			OPTION_IS(device) END_OPTION
@@ -190,7 +208,29 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 			OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(query, 1) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(scan, 0)  END_OPTION
-		BEGIN_OPTION(takeownership, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(isValidSED, 1) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(eraseLockingRange, 3)
+			TESTARG(0, lockingrange, 0)
+			TESTARG(1, lockingrange, 1)
+			TESTARG(2, lockingrange, 2)
+			TESTARG(3, lockingrange, 3)
+			TESTARG(4, lockingrange, 4)
+			TESTARG(5, lockingrange, 5)
+			TESTARG(6, lockingrange, 6)
+			TESTARG(7, lockingrange, 7)
+			TESTARG(8, lockingrange, 8)
+			TESTARG(9, lockingrange, 9)
+			TESTARG(10, lockingrange, 10)
+			TESTARG(11, lockingrange, 11)
+			TESTARG(12, lockingrange, 12)
+			TESTARG(13, lockingrange, 13)
+			TESTARG(14, lockingrange, 14)
+			TESTARG(15, lockingrange, 15)
+			TESTFAIL("Invalid Locking Range (0-15)")
+			OPTION_IS(password)
+			OPTION_IS(device)
+			END_OPTION
+		BEGIN_OPTION(takeOwnership, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(revertLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(setPassword, 4) OPTION_IS(password) OPTION_IS(userid)
 			OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
@@ -384,7 +424,29 @@ uint8_t MsedOptions(int argc, char * argv[], MSED_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
+		BEGIN_OPTION(listLockingRange, 3)
+			TESTARG(0, lockingrange, 0)
+			TESTARG(1, lockingrange, 1)
+			TESTARG(2, lockingrange, 2)
+			TESTARG(3, lockingrange, 3)
+			TESTARG(4, lockingrange, 4)
+			TESTARG(5, lockingrange, 5)
+			TESTARG(6, lockingrange, 6)
+			TESTARG(7, lockingrange, 7)
+			TESTARG(8, lockingrange, 8)
+			TESTARG(9, lockingrange, 9)
+			TESTARG(10, lockingrange, 10)
+			TESTARG(11, lockingrange, 11)
+			TESTARG(12, lockingrange, 12)
+			TESTARG(13, lockingrange, 13)
+			TESTARG(14, lockingrange, 14)
+			TESTARG(15, lockingrange, 15)
+			TESTFAIL("Invalid Locking Range (0-15)")
+			OPTION_IS(password)
+			OPTION_IS(device)
+			END_OPTION
 		BEGIN_OPTION(objDump, 5) i += 4; OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(printDefaultPassword, 1) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(rawCmd, 7) i += 6; OPTION_IS(device) END_OPTION
 		else {
             LOG(E) << "Invalid command line argument " << argv[i];

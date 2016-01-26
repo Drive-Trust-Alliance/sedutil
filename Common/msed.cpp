@@ -63,6 +63,25 @@ int diskScan()
 	printf("No more disks present ending scan\n");
 	return 0;
 }
+
+int isValidSEDDisk(char *devname)
+{
+	MsedDev * d;
+	d = new MsedDevGeneric(devname);
+	if (d->isPresent()) {
+		printf("%s", devname);
+		if (d->isAnySSC())
+			printf(" SED %s%s%s ", (d->isOpal1() ? "1" : "-"),
+			(d->isOpal2() ? "2" : "-"), (d->isEprise() ? "E" : "-"));
+		else
+			printf("%s", " NO --- ");
+		cout << d->getModelNum() << " " << d->getFirmwareRev();
+		cout << std::endl;
+	}
+	delete d;
+	return 0;
+}
+
 int main(int argc, char * argv[])
 {
 	MSED_OPTIONS opts;
@@ -70,8 +89,10 @@ int main(int argc, char * argv[])
 	if (MsedOptions(argc, argv, &opts)) {
 		return MSEDERROR_COMMAND_ERROR;
 	}
-
-	if ((opts.action != msedoption::scan) && (opts.action != msedoption::validatePBKDF2)) {
+	
+	if ((opts.action != msedoption::scan) && 
+		(opts.action != msedoption::validatePBKDF2) &&
+		(opts.action != msedoption::isValidSED)) {
 		if (opts.device > (argc - 1)) opts.device = 0;
 		tempDev = new MsedDevGeneric(argv[opts.device]);
 		if (NULL == tempDev) {
@@ -106,21 +127,21 @@ int main(int argc, char * argv[])
 		d->no_hash_passwords = true;
 	}
     switch (opts.action) {
- 	case msedoption::initialsetup:
+ 	case msedoption::initialSetup:
 		LOG(D) << "Performing initial setup to use msed on drive " << argv[opts.device];
-        return (d->initialsetup(argv[opts.password]));
+        return (d->initialSetup(argv[opts.password]));
 	case msedoption::setup_SUM:
 		LOG(D) << "Performing SUM setup on drive " << argv[opts.device];
 		return (d->setup_SUM(opts.lockingrange, atoll(argv[opts.lrstart]),
 			atoll(argv[opts.lrlength]), argv[opts.password], argv[opts.newpassword]));
 		break;
-	case msedoption::setSIDPwd:
-        LOG(D) << "Performing setSIDPwd ";
+	case msedoption::setSIDPassword:
+        LOG(D) << "Performing setSIDPassword ";
         return d->setSIDPassword(argv[opts.password], argv[opts.newpassword]);
 		break;
 	case msedoption::setAdmin1Pwd:
         LOG(D) << "Performing setPAdmin1Pwd ";
-        return d->setNewPassword(argv[opts.password], (char *) "Admin1",
+        return d->setPassword(argv[opts.password], (char *) "Admin1",
                             argv[opts.newpassword]);
 		break;
 	case msedoption::loadPBAimage:
@@ -162,7 +183,11 @@ int main(int argc, char * argv[])
 		break;
 	case msedoption::listLockingRanges:
 		LOG(D) << "List Locking Ranges ";
-		return (d->listLockingRanges(argv[opts.password]));
+		return (d->listLockingRanges(argv[opts.password], -1));
+		break;
+	case msedoption::listLockingRange:
+		LOG(D) << "List Locking Range of device" << argv[opts.device];
+		return (d->listLockingRanges(argv[opts.password], opts.lockingrange));
 		break;
 	case msedoption::setMBRDone:
 		LOG(D) << "Setting MBRDone " << (uint16_t)opts.mbrstate;
@@ -197,7 +222,11 @@ int main(int argc, char * argv[])
         LOG(D) << "Performing diskScan() ";
         diskScan();
         break;
-	case msedoption::takeownership:
+	case msedoption::isValidSED:
+		LOG(D) << "Verify whether " << argv[opts.device] << "is valid SED or not";
+        return isValidSEDDisk(argv[opts.device]);
+        break;
+	case msedoption::takeOwnership:
 		LOG(D) << "Taking Ownership of the drive at" << argv[opts.device];
         return d->takeOwnership(argv[opts.password]);
         break;
@@ -207,7 +236,7 @@ int main(int argc, char * argv[])
         break;
 	case msedoption::setPassword:
         LOG(D) << "Performing setPassword for user " << argv[opts.userid];
-        return d->setNewPassword(argv[opts.password], argv[opts.userid],
+        return d->setPassword(argv[opts.password], argv[opts.userid],
                               argv[opts.newpassword]);
         break;
 	case msedoption::setPassword_SUM:
@@ -215,11 +244,11 @@ int main(int argc, char * argv[])
 		return d->setNewPassword_SUM(argv[opts.password], argv[opts.userid],
 			argv[opts.newpassword]);
 		break;
-	case msedoption::reverttper:
+	case msedoption::revertTPer:
 		LOG(D) << "Performing revertTPer on " << argv[opts.device];
         return d->revertTPer(argv[opts.password]);
         break;
-	case msedoption::revertnoerase:
+	case msedoption::revertNoErase:
 		LOG(D) << "Performing revertLockingSP  keep global locking range on " << argv[opts.device];
 		return d->revertLockingSP(argv[opts.password], 1);
 		break;
@@ -232,10 +261,19 @@ int main(int argc, char * argv[])
 		LOG(D) << "Performing a PSID Revert on " << argv[opts.device] << " with password " << argv[opts.password];
         return d->revertTPer(argv[opts.password],1);
         break;
+	case msedoption::eraseLockingRange:
+		LOG(D) << "Erase Locking Range " << (uint16_t)opts.lockingrange;
+		return (d->eraseLockingRange(opts.lockingrange, argv[opts.password]));
+		break;
 	case msedoption::objDump:
 		LOG(D) << "Performing objDump " ;
 		return d->objDump(argv[argc - 5], argv[argc - 4], argv[argc - 3], argv[argc - 2]);
 		break;
+    case msedoption::printDefaultPassword:
+		LOG(D) << "print default password";
+        d->printDefaultPassword();
+        return 0;
+        break;
 	case msedoption::rawCmd:
 		LOG(D) << "Performing cmdDump ";
 		return d->rawCmd(argv[argc - 7], argv[argc - 6], argv[argc - 5], argv[argc - 4], argv[argc - 3], argv[argc - 2]);

@@ -123,13 +123,13 @@ void MsedDevLinuxNvme::identify(OPAL_DiskInfo *disk_info)
 
 	if (err) {
 		LOG(E) << "Identify error. NVMe status " << err;
-		disk_info->devType = 1;
+		disk_info->devType = DEVICE_TYPE_OTHER;
 		IFLOG(D4) MsedHexDump(&cmd, sizeof(cmd));
 		IFLOG(D4) MsedHexDump(&ctrl, sizeof(ctrl));
 		return;
 	}
 
-	disk_info->devType = 0;
+	disk_info->devType = DEVICE_TYPE_NVME;
 	memcpy(disk_info->serialNum, ctrl.sn, sizeof (disk_info->serialNum));
 	memcpy(disk_info->firmwareRev, ctrl.fr, sizeof(disk_info->firmwareRev));
 	memcpy(disk_info->modelNum, ctrl.mn, sizeof(disk_info->modelNum));

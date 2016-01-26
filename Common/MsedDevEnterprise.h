@@ -64,7 +64,7 @@ public:
          *  */
 	uint8_t initLSPUsers(char * defaultPassword, char * newPassword);
         /** retrieve the MSID password */
-	uint8_t getDefaultPassword();
+	uint8_t printDefaultPassword();
         /** retrieve a single row from a table 
          * @param table the UID of the table
          * @param startcol the starting column of data requested
@@ -123,7 +123,7 @@ public:
          * @param userid the userid whose password is to be changed 
          * @param newpassword  value password is to be changed to
          */
-	uint8_t setNewPassword(char * password, char * userid, char * newpassword);
+	uint8_t setPassword(char * password, char * userid, char * newpassword);
 	/** dummy code not implemented in the enterprise SSC*/
 	uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword);
 	uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
@@ -146,19 +146,29 @@ public:
 	/** List status of locking ranges.
 	*  @param password Password of administrator
 	*/
-	uint8_t listLockingRanges(char * password);
+	uint8_t listLockingRanges(char * password, int rangeid);
 	/** Change the active state of a locking range
 	* @param lockingrange The number of the locking range (0 = global)
 	* @param enabled  enable (true) or disable (false) the lockingrange
 	* @param password password of administrative authority for locking range
 	*/
 	uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled, char * password);
+	/** Generate a new encryption key for a locking range.
+	* @param lockingrange locking range number
+	* @param password password of the locking administrative authority
+	*/
+	uint8_t rekeyLockingRange(uint8_t lockingrange, char * password);
         /** Reset the TPER to its factory condition   
          * ERASES ALL DATA!
          * @param password password of authority (SID or PSID)
          * @param PSID true or false is the authority the PSID
          *   */
 	uint8_t revertTPer(char * password, uint8_t PSID = 0);
+	    /** Erase a locking range
+	    * @param lockingrange The number of the locking range (0 = global)
+	    * @param password Password of administrative authority for locking range
+	    */
+	uint8_t eraseLockingRange(uint8_t lockingrange, char * password);
        /** Loads a disk image file to the shadow MBR table.
          * @param password the password for the administrative authority with access to the table
          * @param filename the filename of the disk image
@@ -168,8 +178,8 @@ public:
          * Specific to the SSC that the device supports
          * @param password the password that is to be assigned to the SSC master entities 
          */
-	uint8_t initialsetup(char * password);
-	/** dummy code not implemented in teh enterprise SSC*/
+	uint8_t initialSetup(char * password);
+	/** dummy code not implemented in the enterprise SSC*/
 	uint8_t setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password);
         /** Displays the identify and discovery 0 information */
 	void puke();
@@ -193,5 +203,8 @@ public:
 		char *hexinvokingUID, char *hexmethod, char *hexparms);
 
 protected:
-	
+	uint8_t getDefaultPassword();
+private:
+    uint16_t getMaxRanges(char * password);
+    uint16_t getMaxRangesOpal(char * password);
 };
