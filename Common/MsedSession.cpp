@@ -86,10 +86,10 @@ MsedSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthor
 		cmd->addToken(OPAL_TOKEN::ENDNAME);
 	}
  
-	cmd->addToken(OPAL_TOKEN::STARTNAME);
-	cmd->addToken("SessionTimeout");
-	cmd->addToken(5000);
-	cmd->addToken(OPAL_TOKEN::ENDNAME);
+//	cmd->addToken(OPAL_TOKEN::STARTNAME);
+//	cmd->addToken("SessionTimeout");
+//	cmd->addToken(5000);
+//	cmd->addToken(OPAL_TOKEN::ENDNAME);
 
     cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
