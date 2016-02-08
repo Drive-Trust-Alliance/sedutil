@@ -385,8 +385,8 @@ uint8_t MsedAnnotatedDump(ATACOMMAND cmd, void * buffer, uint32_t bufferlen)
     while(p < q)
     {
         CMsedToken token;
-        token.parse(p, q-p);
-        token.print(stream, q-p);
+        token.parse(p, (uint32_t)(q-p));
+        token.print(stream, (uint32_t)(q-p));
 
         if (p + token.m_TokenLength > q) fprintf(stream, "(token truncated)");
 
