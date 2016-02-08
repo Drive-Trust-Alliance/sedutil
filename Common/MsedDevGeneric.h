@@ -138,7 +138,7 @@ public:
 	 /** List status of locking ranges.
 	 *  @param password Password of administrator
 	 */
-	 uint8_t listLockingRanges(char * password, int rangeid);
+	 uint8_t listLockingRanges(char * password, int16_t rangeid);
 	 uint8_t setMBRDone(uint8_t state, char * Admin1Password) ;
          /** Primitive to set the MBREnable flag.
          * @param state 0 or 1  

@@ -76,7 +76,7 @@ uint8NOCODE(setLockingRange_SUM, uint8_t lockingrange, uint8_t lockingstate,
 	char * password)
 uint8NOCODE(setupLockingRange,uint8_t lockingrange, uint64_t start,
 	uint64_t length, char * password)
-uint8NOCODE(listLockingRanges, char * password, int rangeid)
+uint8NOCODE(listLockingRanges, char * password, int16_t rangeid)
 uint8NOCODE(setupLockingRange_SUM, uint8_t lockingrange, uint64_t start,
 	uint64_t length, char * password)
 uint8NOCODE(enableUser,char * password, char * userid)

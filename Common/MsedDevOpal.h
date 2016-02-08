@@ -186,7 +186,7 @@ public:
 	/** List status of locking ranges.
 	*  @param password Password of administrator
 	*/
-	uint8_t listLockingRanges(char * password, int rangeid);
+	uint8_t listLockingRanges(char * password, int16_t rangeid);
         /** User command to enable/disable a locking range.
          * RW|RO|LK are the supported states @see OPAL_LOCKINGSTATE
          * @param lockingrange locking range number

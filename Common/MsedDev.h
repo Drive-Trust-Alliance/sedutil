@@ -178,7 +178,7 @@ public:
 	/** List status of locking ranges.  
 	*  @param password Password of administrator
 	*/
-	virtual uint8_t listLockingRanges(char * password, int rangeid) = 0;
+	virtual uint8_t listLockingRanges(char * password, int16_t rangeid) = 0;
 	/** Primitive to set the MBRDone flag.
 	 * @param state 0 or 1
 	 * @param Admin1Password Locking SP authority with access to flag

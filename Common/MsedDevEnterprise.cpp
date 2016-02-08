@@ -548,7 +548,7 @@ uint8_t MsedDevEnterprise::setupLockingRange_SUM(uint8_t lockingrange, uint64_t 
 	return 0;
 }
 ////////////////////////////////////////////////////////////////////////////////
-uint8_t MsedDevEnterprise::listLockingRanges(char * password, uint16_t rangeid)
+uint8_t MsedDevEnterprise::listLockingRanges(char * password, int16_t rangeid)
 ////////////////////////////////////////////////////////////////////////////////
 {
 	LOG(D) << "Entering MsedDevEnterprise::listLockingRanges";

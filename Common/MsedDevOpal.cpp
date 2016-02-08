@@ -209,7 +209,7 @@ MsedDevOpal::lrStatus_t MsedDevOpal::getLockingRange_status(uint8_t lockingrange
 	LOG(D1) << "Exiting MsedDevOpal:getLockingRange_status()";
 	return lrStatus;
 }
-uint8_t MsedDevOpal::listLockingRanges(char * password, int rangeid)
+uint8_t MsedDevOpal::listLockingRanges(char * password, int16_t rangeid)
 {
 	uint8_t lastRC;
 	LOG(D1) << "Entering MsedDevOpal:listLockingRanges()" << rangeid;
