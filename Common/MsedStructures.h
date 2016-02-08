@@ -330,7 +330,7 @@ typedef struct _OPAL_DiskInfo {
     uint16_t OPAL20_numUsers;
     uint8_t OPAL20_rangeCrossing;
     // IDENTIFY information
-    DEVICE_TYPE devType;
+    MSED_DEVICE_TYPE devType;
     uint8_t serialNum[20];
 	uint8_t null0;  // make sn a cstring
     uint8_t firmwareRev[8];
