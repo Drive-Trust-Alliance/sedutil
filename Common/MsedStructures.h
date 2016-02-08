@@ -271,12 +271,12 @@ typedef enum _ATACOMMAND {
     IDENTIFY = 0xec,
 } ATACOMMAND;
 
-typedef enum _DEVICE_TYPE {
+typedef enum _MSED_DEVICE_TYPE {
     DEVICE_TYPE_ATA,
     DEVICE_TYPE_SAS,
     DEVICE_TYPE_NVME,
     DEVICE_TYPE_OTHER,
-} DEVICE_TYPE;
+} MSED_DEVICE_TYPE;
 
 /** structure to store Disk information. */
 typedef struct _OPAL_DiskInfo {
