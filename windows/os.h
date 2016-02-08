@@ -30,6 +30,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include "log.h"
 /** OS specific implementation of the "safe" snprintf function */
 #define SNPRINTF sprintf_s
+#define strcasecmp _stricmp 
 /** OS specific device iterator */
 #define DEVICEMASK sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i)
 /** OS specific example device to be used in help output*/
