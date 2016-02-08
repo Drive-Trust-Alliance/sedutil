@@ -212,7 +212,7 @@ MsedDevOpal::lrStatus_t MsedDevOpal::getLockingRange_status(uint8_t lockingrange
 uint8_t MsedDevOpal::listLockingRanges(char * password, int rangeid)
 {
 	uint8_t lastRC;
-	LOG(D1) << "Entering MsedDevOpal:listLockingRanges()";
+	LOG(D1) << "Entering MsedDevOpal:listLockingRanges()" << rangeid;
 	vector<uint8_t> LR;
 	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
 	for (int i = 0; i < 8; i++) {
