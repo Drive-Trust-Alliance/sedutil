@@ -102,6 +102,7 @@ void CMsedToken::str2int(uint8_t * buf, bool byte)
 void CMsedToken::parse(uint8_t * buf, uint32_t buflen)
 ////////////////////////////////////////////////////////////////////////////////
 {
+	LOG(D1) << "Entering CMsedToken::parse " << buflen;
     m_token = buf;
 
     const CAtomHeader & atom = * (CAtomHeader *) buf;
