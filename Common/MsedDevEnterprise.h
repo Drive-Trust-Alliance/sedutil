@@ -146,7 +146,7 @@ public:
 	/** List status of locking ranges.
 	*  @param password Password of administrator
 	*/
-	uint8_t listLockingRanges(char * password, int rangeid);
+	uint8_t listLockingRanges(char * password, uint16_t rangeid);
 	/** Change the active state of a locking range
 	* @param lockingrange The number of the locking range (0 = global)
 	* @param enabled  enable (true) or disable (false) the lockingrange

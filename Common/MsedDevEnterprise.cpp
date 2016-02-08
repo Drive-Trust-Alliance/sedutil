@@ -366,7 +366,7 @@ uint8_t MsedDevEnterprise::setPassword(char * password, char * userid, char * ne
 
 	std::vector<uint8_t> user;
 	if (!memcmp("BandMaster", userid, 10)) {
-		int band = atoi(&userid[10]);
+		uint16_t band = (uint16_t)atoi(&userid[10]);
 		if (1023 < band) {
 			LOG(E) << "Invalid Userid " << userid;
 			return 0xff;
@@ -548,7 +548,7 @@ uint8_t MsedDevEnterprise::setupLockingRange_SUM(uint8_t lockingrange, uint64_t 
 	return 0;
 }
 ////////////////////////////////////////////////////////////////////////////////
-uint8_t MsedDevEnterprise::listLockingRanges(char * password, int rangeid)
+uint8_t MsedDevEnterprise::listLockingRanges(char * password, uint16_t rangeid)
 ////////////////////////////////////////////////////////////////////////////////
 {
 	LOG(D) << "Entering MsedDevEnterprise::listLockingRanges";
@@ -573,8 +573,8 @@ uint8_t MsedDevEnterprise::listLockingRanges(char * password, int rangeid)
     table.clear();
     set8(table, OPALUID[OPAL_LOCKINGRANGE_GLOBAL]);
 
-    int start = (rangeid == -1)? 0: rangeid;
-	for (int i = start; i <= MaxRanges; i++)
+    uint16_t start = (rangeid == -1)? 0: rangeid;
+	for (uint16_t i = start; i <= MaxRanges; i++)
     {
         setband(user, i);
         setband(table, i);
@@ -939,7 +939,7 @@ uint8_t MsedDevEnterprise::initLSPUsers(char * defaultPassword, char * newPasswo
 	LOG(I) << "Maximum ranges supported " << MaxRanges;
 // do bandmasters
     set8(user, OPALUID[ENTERPRISE_BANDMASTER0_UID]);
-	for (int i = 0; i <= MaxRanges; i++) {
+	for (uint16_t i = 0; i <= MaxRanges; i++) {
         setband(user, i);
 		LOG(D3) << "initializing BandMaster" << (uint16_t) i;
 		session = new MsedSession(this);
