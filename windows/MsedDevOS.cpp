@@ -60,7 +60,7 @@ void MsedDevOS::init(const char * devref)
     else {
         isOpen = TRUE;
         identify();
-		if (!disk_info.devType) discovery0();
+		if (DEVICE_TYPE_ATA == disk_info.devType) discovery0();
     }
 }
 
@@ -139,11 +139,11 @@ void MsedDevOS::identify()
         //return;
     }
 	if (!(memcmp(identifyResp, nullz.data(), 512))) {
-		disk_info.devType = 1;
+		disk_info.devType = DEVICE_TYPE_OTHER;
 		return;
 	}
     IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) identifyResp;
-    disk_info.devType = id->devType;
+    disk_info.devType = DEVICE_TYPE_ATA;
     for (int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
         disk_info.serialNum[i] = id->serialNum[i + 1];
         disk_info.serialNum[i + 1] = id->serialNum[i];
