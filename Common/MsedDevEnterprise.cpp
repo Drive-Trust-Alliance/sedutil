@@ -91,6 +91,13 @@ static void user2cpin(vector<uint8_t> & dst, vector<uint8_t> & src)
 uint16_t MsedDevEnterprise::getMaxRanges(char * password)
 ////////////////////////////////////////////////////////////////////////////////
 {
+    // 5.7.2.1.5 MaxRanges
+    // This value defines the maximum number of supportable LBA ranges in addition
+    // to the Global Range.  If this value is 0, then the only range available is
+    // the entire Global Range of the Storage Device.
+    //
+    // Therefore: 0 <= supported range <= MaxRanges
+
     // create session
 	session = new MsedSession(this);
 	if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID))
@@ -567,7 +574,7 @@ uint8_t MsedDevEnterprise::listLockingRanges(char * password, int rangeid)
     set8(table, OPALUID[OPAL_LOCKINGRANGE_GLOBAL]);
 
     int start = (rangeid == -1)? 0: rangeid;
-	for (int i = start; i < MaxRanges; i++)
+	for (int i = start; i <= MaxRanges; i++)
     {
         setband(user, i);
         setband(table, i);
@@ -932,7 +939,7 @@ uint8_t MsedDevEnterprise::initLSPUsers(char * defaultPassword, char * newPasswo
 	LOG(I) << "Maximum ranges supported " << MaxRanges;
 // do bandmasters
     set8(user, OPALUID[ENTERPRISE_BANDMASTER0_UID]);
-	for (int i = 0; i < MaxRanges; i++) {
+	for (int i = 0; i <= MaxRanges; i++) {
         setband(user, i);
 		LOG(D3) << "initializing BandMaster" << (uint16_t) i;
 		session = new MsedSession(this);

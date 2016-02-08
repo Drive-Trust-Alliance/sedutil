@@ -123,9 +123,8 @@ int main(int argc, char * argv[])
 			return MSEDERROR_OBJECT_CREATE_FAILED;
 		}
 	}
-	if (opts.no_hash_passwords) {
-		d->no_hash_passwords = true;
-	}
+    // make sure MsedDev::no_hash_passwords is initialized
+	d->no_hash_passwords = opts.no_hash_passwords;
     switch (opts.action) {
  	case msedoption::initialSetup:
 		LOG(D) << "Performing initial setup to use msed on drive " << argv[opts.device];
