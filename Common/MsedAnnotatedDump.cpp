@@ -17,7 +17,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "os.h"
 #include <stdio.h>
-#include <arpa/inet.h>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -81,7 +80,7 @@ void CMsedToken::str2int(uint8_t * buf, bool byte)
     memcpy(n+(sizeof(V)-m_DataLength), buf, m_DataLength);
 
     // convert integer to host byte order
-    V = be64toh(V);
+    V = SWAP64(V);
 
     // sign-extend if appropriate
     if (m_sign && (m_DataLength < sizeof(V)))
@@ -358,20 +357,20 @@ uint8_t MsedAnnotatedDump(ATACOMMAND cmd, void * buffer, uint32_t bufferlen)
     {
         fprintf(stream, "ComPacket.extendedComID    %2.2X%2.2X%2.2X%2.2X\n",
             h.cp.extendedComID[0], h.cp.extendedComID[1], h.cp.extendedComID[2], h.cp.extendedComID[3]);
-        fprintf(stream, "ComPacket.outstandingData  %8.8X\n", ntohl(h.cp.outstandingData));
-        fprintf(stream, "ComPacket.minTransfer      %8.8X\n", ntohl(h.cp.minTransfer));
-        fprintf(stream, "ComPacket.length           %8.8X\n", ntohl(h.cp.length));
-        fprintf(stream, "Packet.TSN                 %8.8X\n", ntohl(h.pkt.TSN));
-        fprintf(stream, "Packet.HSN                 %8.8X\n", ntohl(h.pkt.HSN));
-        fprintf(stream, "Packet.seqNumber           %8.8X\n", ntohl(h.pkt.seqNumber));
-        fprintf(stream, "Packet.ackType             %8.8X\n", ntohs(h.pkt.ackType));
-        fprintf(stream, "Packet.acknowledgement     %8.8X\n", ntohl(h.pkt.acknowledgement));
-        fprintf(stream, "Packet.length              %8.8X\n", ntohl(h.pkt.length));
-        fprintf(stream, "DataSubPacket.kind         %8.8X\n", ntohs(h.subpkt.kind));
-        fprintf(stream, "DataSubPacket.length       %8.8X\n", ntohl(h.subpkt.length));
+        fprintf(stream, "ComPacket.outstandingData  %8.8X\n", SWAP32(h.cp.outstandingData));
+        fprintf(stream, "ComPacket.minTransfer      %8.8X\n", SWAP32(h.cp.minTransfer));
+        fprintf(stream, "ComPacket.length           %8.8X\n", SWAP32(h.cp.length));
+        fprintf(stream, "Packet.TSN                 %8.8X\n", SWAP32(h.pkt.TSN));
+        fprintf(stream, "Packet.HSN                 %8.8X\n", SWAP32(h.pkt.HSN));
+        fprintf(stream, "Packet.seqNumber           %8.8X\n", SWAP32(h.pkt.seqNumber));
+        fprintf(stream, "Packet.ackType             %8.8X\n", SWAP16(h.pkt.ackType));
+        fprintf(stream, "Packet.acknowledgement     %8.8X\n", SWAP32(h.pkt.acknowledgement));
+        fprintf(stream, "Packet.length              %8.8X\n", SWAP32(h.pkt.length));
+        fprintf(stream, "DataSubPacket.kind         %8.8X\n", SWAP16(h.subpkt.kind));
+        fprintf(stream, "DataSubPacket.length       %8.8X\n", SWAP32(h.subpkt.length));
     }
     
-    const uint32_t buflen = ntohl(h.subpkt.length);
+    const uint32_t buflen = SWAP32(h.subpkt.length);
     if (buflen > bufferlen)
     {
         fprintf(stream, "Overflow: h.subpkt.length = %u, bufferlen = %u\n", buflen, bufferlen);
