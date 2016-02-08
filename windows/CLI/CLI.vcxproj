@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\log.h" />
+    <ClInclude Include="..\..\Common\msedannotateddump.h" />
     <ClInclude Include="..\..\common\MsedCommand.h" />
     <ClInclude Include="..\..\common\MsedConstants.h" />
     <ClInclude Include="..\..\common\MsedDev.h" />
@@ -48,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\common\msed.cpp" />
+    <ClCompile Include="..\..\Common\MsedAnnotatedDump.cpp" />
     <ClCompile Include="..\..\common\MsedCommand.cpp" />
     <ClCompile Include="..\..\common\MsedDev.cpp" />
     <ClCompile Include="..\..\common\MsedDevEnterprise.cpp" />

@@ -93,6 +93,9 @@
     <ClInclude Include="..\..\common\pbdkf2\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Common\msedannotateddump.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\MsedDevOS.cpp">
@@ -150,6 +153,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\common\pbdkf2\gc-gnulib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\MsedAnnotatedDump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
