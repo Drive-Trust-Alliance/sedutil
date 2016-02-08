@@ -15,6 +15,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 * C:E********************************************************************** */
 #pragma once 
+#pragma pack(push,1)
 
 typedef union
 {
@@ -33,7 +34,7 @@ typedef union
         unsigned    value           : 6;
         unsigned    sign            : 1;
         unsigned    indicator       : 1;
-    } __attribute__((packed)) TinyAtom;
+    } TinyAtom;
 
     // TINY ATOM (sign)
     class CTinyAtom_sign
@@ -47,7 +48,7 @@ typedef union
         signed      value           : 6;
         unsigned    sign            : 1;
         unsigned    indicator       : 1;
-    } __attribute__((packed)) TinyAtom_sign;
+    } TinyAtom_sign;
 
     // SHORT ATOM
     class CShortAtom
@@ -62,7 +63,7 @@ typedef union
         unsigned    sign            : 1;
         unsigned    byte            : 1;
         unsigned    indicator       : 2;
-    } __attribute__((packed)) ShortAtom;
+    } ShortAtom;
 
     // MEDIUM ATOM
     class CMediumAtom
@@ -78,7 +79,7 @@ typedef union
         unsigned    byte            : 1;
         unsigned    indicator       : 3;
         uint8_t     length_lsb;
-    } __attribute__((packed)) MediumAtom;
+    } MediumAtom;
 
     // LONG ATOM
     class CLongAtom
@@ -94,10 +95,10 @@ typedef union
         unsigned    reserved        : 2;
         unsigned    indicator       : 4;
         uint8_t     length[3];
-    } __attribute__((packed)) LongAtom;
+    } LongAtom;
 
 } CAtomHeader;
-
+#pragma pack(pop)
 ////////////////////////////////////////////////////////////////////////////////
 class CMsedToken
 ////////////////////////////////////////////////////////////////////////////////

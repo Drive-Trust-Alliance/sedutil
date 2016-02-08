@@ -350,7 +350,7 @@ typedef struct _IDENTIFY_RESPONSE {
     uint8_t modelNum[40];
 } IDENTIFY_RESPONSE;
 
-#pragma pack(pop)
+
 
 ////////////////////////////////////////////////////////////////////////////////
 class CScsiCmdInquiry
@@ -367,7 +367,7 @@ public:
     uint8_t         m_PageCode;                             //  2
     uint16_t        m_AllocationLength;                     //  3
     uint8_t         m_Control;                              //  5
-} __attribute__((packed));                                  //  6
+} ;                                  //  6
 
 ////////////////////////////////////////////////////////////////////////////////
 class CScsiCmdInquiry_StandardData
@@ -410,7 +410,7 @@ public:
     uint8_t         m_T10VendorId[8];                       //  8
     uint8_t         m_ProductId[16];                        // 16
     uint8_t         m_ProductRevisionLevel[4];              // 32
-} __attribute__((packed));                                  // 36
+};                                  // 36
 
 ////////////////////////////////////////////////////////////////////////////////
 class CScsiCmdSecurityProtocolIn
@@ -430,7 +430,7 @@ public:
     uint32_t        m_AllocationLength;         //  6
     uint8_t         m_Reserved_3[1];            // 10
     uint8_t         m_Control;                  // 11
-} __attribute__((packed));                      // 12
+};                      // 12
 
 ////////////////////////////////////////////////////////////////////////////////
 class CScsiCmdSecurityProtocolOut
@@ -450,5 +450,6 @@ public:
     uint32_t        m_TransferLength;           //  6
     uint8_t         m_Reserved_3[1];            // 10
     uint8_t         m_Control;                  // 11
-} __attribute__((packed));                      // 12
+};                      // 12
 
+#pragma pack(pop)
