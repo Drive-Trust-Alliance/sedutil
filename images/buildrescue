@@ -3,7 +3,7 @@ set -x
 # Build a custom tinycore bootable image
 ## define releases for tools
 . conf
-PROGRAM=../../linux/CLI/dist/Release_i686/GNU-Linux-x86/sedutil-cli
+PROGRAM=../../linux/CLI/dist/Release_i686/GNU-Linux/sedutil-cli
 VERSIONINFO=`git describe --dirty`
 BUILDTYPE=Rescue
 BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
