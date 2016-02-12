@@ -1,8 +1,0 @@
-#!/bin/bash
-# Build all of the Images for distribution
-## define releases for tools
-. conf
-./buildbiospba >biospba.log 2>&1
-./buildrescue >rescue.log 2>&1
-less biospba.log
-less rescue.log

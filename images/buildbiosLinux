@@ -18,12 +18,15 @@ sudo rm -rf LINUXPBA${BUILDTYPE} ; mkdir LINUXPBA${BUILDTYPE} ; cd LINUXPBA${BUI
 ## check that everything is available
 [ -f ../scratch/${SYSLINUX}/bios/mbr/mbr.bin -a \
      -x ../scratch/${SYSLINUX}/bios/extlinux/extlinux -a \
-     -f ../../LinuxPBA/dist/${BUILDTYPE}/GNU-Linux-x86/linuxpba -a \
+     -f ../../LinuxPBA/dist/${BUILDTYPE}/GNU-Linux/linuxpba -a \
+     -f ../../linux/CLI/dist/${BUILDTYPE}_i686/GNU-Linux/sedutil-cli -a \
      -f ../scratch/buildroot/PBA32/images/bzImage  \
   ] || { echo " prereqs are not available "; exit 1; }
 #
 # recreate the initrd file with the latest PBA
-cp ../../LinuxPBA/dist/${BUILDTYPE}/GNU-Linux-x86/linuxpba  ../scratch/buildroot/PBA32/overlay/sbin/linuxpba
+mkdir  ../scratch/buildroot/PBA32/overlay/sbin
+cp ../../LinuxPBA/dist/${BUILDTYPE}/GNU-Linux/linuxpba  ../scratch/buildroot/PBA32/overlay/sbin/linuxpba
+cp ../../linux/CLI/dist/${BUILDTYPE}_i686/GNU-Linux/sedutil-cli  ../scratch/buildroot/PBA32/overlay/sbin/sedutil-cli
 cd ../scratch/buildroot
 make all O=PBA32 2>&1 >PBA32.log
 cd ../../LINUXPBA${BUILDTYPE}

@@ -1,0 +1,58 @@
+Building the PBA images for sedutil
+These instructions are based on a Xubuntu 14.x system, YMMV.
+
+Prereqs:
+You need a multiarch system so that you can build both 32 & 64 bit systems.
+build essential
+ncurses
+
+Get/Build the pieces:
+
+Building the PBA program.
+	cd ../LinuxPBA
+	rm -rf dist
+	make CONF=Release 
+	make CONF=Release_x86_64
+	make CONF=Debug 
+	make CONF=Debug_x86_64
+	cd ../images
+
+Building sedutil-cli
+	cd ../linux/CLI
+	rm -rf dist
+	make CONF=Release_i686 
+	make CONF=Release_x86_64
+	make CONF=Debug_i686
+	make CONF=Debug_x86_64
+	cd ../../images
+
+Getting TinyCore and syslinux.
+
+./getresources
+
+Build the PBA kernels and root filesystems
+./buildpbaroot
+
+Build the image files.
+Rescue -> ./buildrescue
+biosLinux -> ./buildbiosLinux Release
+uefi64 -> ./buildUEFI64 Release
+
+Build the Debug images
+biosLinux -> ./buildbiosLinux Debug
+uefi64 -> ./buildUEFI64 Debug
+
+Building the syslinux based system:
+The scripts assume that the syslinux repo is at the same level in the filesystem as sedutil
+
+cd ../../syslinux
+make
+cd ../sedutil/images
+./buildbiospba Release
+./buildbiospba Debug
+
+
+
+
+
+	
