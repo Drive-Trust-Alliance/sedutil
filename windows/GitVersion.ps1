@@ -1,5 +1,6 @@
 Param ([String]$filename = "gitversion.h")
 # Build a version header using the git describe command
+set-alias git "C:\Program Files\Git\cmd\git.exe"
 $filename = Join-Path $pwd $filename
 $define = "#define GIT_VERSION "
 $gitdesc = git describe --dirty
@@ -7,8 +8,8 @@ echo $define`"$gitdesc`" | Out-File -FilePath $filename
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUJUm1B8ROl4RqZmwTjsd8D/lB
-# BGCgggNCMIIDPjCCAiqgAwIBAgIQ+/i1WksVkphGndMf8YuIaDAJBgUrDgMCHQUA
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUwaZMMecnwsldfF5BlGNXzbP7
+# WxigggNCMIIDPjCCAiqgAwIBAgIQ+/i1WksVkphGndMf8YuIaDAJBgUrDgMCHQUA
 # MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
 # Fw0xNjAxMjgxMzQ5NTNaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
 # U2hlbGwgVXNlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAOxnNFe4
@@ -29,11 +30,11 @@ echo $define`"$gitdesc`" | Out-File -FilePath $filename
 # EyFQb3dlclNoZWxsIExvY2FsIENlcnRpZmljYXRlIFJvb3QCEPv4tVpLFZKYRp3T
 # H/GLiGgwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJ
 # KoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQB
-# gjcCARUwIwYJKoZIhvcNAQkEMRYEFOMPhqIOAqwoybumkNxhHh+z9ENRMA0GCSqG
-# SIb3DQEBAQUABIIBACy2ICzkGvDxg6ayUcAERQAw167um7IQpKLDXjIBFDsMaP6Y
-# jOmMbZNNxRJycuDPi6CCeJW90LdM4HckGeWLZCRtBkYSa+hhDQlAk8NBp1JuDsCU
-# YJXMTOg8to0Q9kFNC2YO5BX1v/0JOWrNfoaRsaeHsg9/t3npWZVAgtQ7uQI9JiJB
-# EZbnd4Je6KO/iwlud24ZcAx2CL6yLzj6LtpmPE2t/KpDl7DysT3ZungeOxQSFmqs
-# SH/4nrihvDp10xZJyF6fRmQzH3TPV/yxmxpz5GNr9ryhVdEx1vqsUwfnKjP//JMW
-# uncp1gy/vMBnWGpWX5q1doRg38Y98aaaXR645iI=
+# gjcCARUwIwYJKoZIhvcNAQkEMRYEFP+q73bQU7qS5ZwJIkuon/VaJDgeMA0GCSqG
+# SIb3DQEBAQUABIIBAGlg3+TUPWOox3vRwv9XhrqBEASfuIPiLJZi5gb9PVsEnVOO
+# /oMoPGEZyjLqb2R5ur6fThZZm0/Ag46fKPUWUDCe5+WHIOw5M+/RILf6me3Zf0Ac
+# OcXOGrT5pi8VXhYgRoDDKlU5rRStFqje29/nJMBg1wqKkbozCoH46XFn8+/xm5Jq
+# vpAolkHj3w2wVBnB7mSiUokMdVy0gUchSDA8GMBWYPo7rkEwKTjXr9pI0cZsp3z6
+# ESry1khZrat7HDNGCrlWn1+ZtOmS50uhFgXXsXdsut5DSNYAcyapuZlXLIISL3f4
+# mWTeTIJxUmkn46G+38rkr81k0duMiZot9elYljI=
 # SIG # End signature block
