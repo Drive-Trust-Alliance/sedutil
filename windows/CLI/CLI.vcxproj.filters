@@ -15,147 +15,144 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\MsedDevOS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\os.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\common\log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedCommand.h">
+    <ClInclude Include="..\..\Common\DtaAnnotatedDump.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedConstants.h">
+    <ClInclude Include="..\..\Common\DtaCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedDev.h">
+    <ClInclude Include="..\..\Common\DtaConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedDevEnterprise.h">
+    <ClInclude Include="..\..\Common\DtaDev.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedDevGeneric.h">
+    <ClInclude Include="..\..\Common\DtaDevEnterprise.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedDevOpal.h">
+    <ClInclude Include="..\..\Common\DtaDevGeneric.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedDevOpal1.h">
+    <ClInclude Include="..\..\Common\DtaDevOpal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedDevOpal2.h">
+    <ClInclude Include="..\..\Common\DtaDevOpal1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedEndianFixup.h">
+    <ClInclude Include="..\..\Common\DtaDevOpal2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedHashPwd.h">
+    <ClInclude Include="..\..\Common\DtaEndianFixup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedHexDump.h">
+    <ClInclude Include="..\..\Common\DtaHashPwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedLexicon.h">
+    <ClInclude Include="..\..\Common\DtaHexDump.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedOptions.h">
+    <ClInclude Include="..\..\Common\DtaLexicon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedResponse.h">
+    <ClInclude Include="..\..\Common\DtaOptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedSession.h">
+    <ClInclude Include="..\..\Common\DtaResponse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MsedStructures.h">
+    <ClInclude Include="..\..\Common\DtaSession.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\Version.h">
+    <ClInclude Include="..\..\Common\DtaStructures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\pbdkf2\stdalign.h">
+    <ClInclude Include="..\..\Common\pbkdf2\stdalign.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\pbdkf2\sha1.h">
+    <ClInclude Include="..\..\Common\pbkdf2\sha1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\pbdkf2\memxor.h">
+    <ClInclude Include="..\..\Common\pbkdf2\memxor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\pbdkf2\hmac.h">
+    <ClInclude Include="..\..\Common\pbkdf2\hmac.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\pbdkf2\gc.h">
+    <ClInclude Include="..\..\Common\pbkdf2\gc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\pbdkf2\config.h">
+    <ClInclude Include="..\..\Common\pbkdf2\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\msedannotateddump.h">
+    <ClInclude Include="..\DtaDevOS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\MsedDevOS.cpp">
+    <ClCompile Include="..\..\Common\pbkdf2\gc-gnulib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\msed.cpp">
+    <ClCompile Include="..\..\Common\pbkdf2\gc-pbkdf2-sha1.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\MsedCommand.cpp">
+    <ClCompile Include="..\..\Common\pbkdf2\hmac-sha1.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\MsedDev.cpp">
+    <ClCompile Include="..\..\Common\pbkdf2\memxor.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\MsedDevEnterprise.cpp">
+    <ClCompile Include="..\..\Common\pbkdf2\sha1.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\MsedDevGeneric.cpp">
+    <ClCompile Include="..\..\Common\sedutil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\MsedDevOpal.cpp">
+    <ClCompile Include="..\..\Common\DtaSession.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\MsedDevOpal1.cpp">
+    <ClCompile Include="..\..\Common\DtaResponse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\MsedDevOpal2.cpp">
+    <ClCompile Include="..\..\Common\DtaOptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\MsedHashPwd.cpp">
+    <ClCompile Include="..\..\Common\DtaHexDump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\MsedHexDump.cpp">
+    <ClCompile Include="..\..\Common\DtaHashPwd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\MsedOptions.cpp">
+    <ClCompile Include="..\..\Common\DtaDevOpal2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\MsedResponse.cpp">
+    <ClCompile Include="..\..\Common\DtaDevOpal1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\MsedSession.cpp">
+    <ClCompile Include="..\..\Common\DtaDevOpal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\pbdkf2\sha1.c">
+    <ClCompile Include="..\..\Common\DtaDevGeneric.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\pbdkf2\memxor.c">
+    <ClCompile Include="..\..\Common\DtaDevEnterprise.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\pbdkf2\hmac-sha1.c">
+    <ClCompile Include="..\..\Common\DtaDev.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\pbdkf2\gc-pbkdf2-sha1.c">
+    <ClCompile Include="..\..\Common\DtaCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\pbdkf2\gc-gnulib.c">
+    <ClCompile Include="..\..\Common\DtaAnnotatedDump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Common\MsedAnnotatedDump.cpp">
+    <ClCompile Include="..\DtaDevOS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

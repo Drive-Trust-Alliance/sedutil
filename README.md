@@ -1,26 +1,24 @@
-![alt tag](https://avatars0.githubusercontent.com/u/13870012?v=3&s=200)I am joining forces with the Drive Trust Alliance (Drive-Trust-Alliance on GitHub) to bring the best possible open source SED tools to the community.  Information on the Drive Trust Allinace can be found at https://drivetrust.com.
+![alt tag](https://avatars0.githubusercontent.com/u/13870012?v=3&s=200)
 
-New releases of SED software should be arriving soon from the DTA
+This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+
+This file is part of sedutil.
+
+sedutil is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+sedutil is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 
-This software is Copyright 2014,2015 Michael Romeo <r0m30@r0m30.com>
-
-    This file is part of msed.
-
-    msed is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    msed is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with msed.  If not, see <http://www.gnu.org/licenses/>.
-
-msed - Manage Self Encrypting Drives
+sedutil - The Drive Trust Alliance Self Encrypting Drive Utility
 
 This program and it's accompanying Pre-Boot Authorization image allow
 you to enable the locking in SED's that comply with the TCG OPAL 2.00
@@ -31,11 +29,10 @@ You must be administrator/root to run the host managment program
 In Linux libata.allow_tpm must be set to 1. Either via adding libata.allow_tpm=1 to the kernel flags at boot time 
 or changing the contents of /sys/module/libata/parameters/allow_tpm to a from a "0" to a "1" on a running system.
 
-Currently there is only a PBA for BIOS machines and sleep (S3) is not supported.
+***** sleep (S3) is not supported.
 
-Source code is available on GitHub at https://github.com/r0m30/msed (host management program) and
-https://github.com/syslinux (BIOS PBA)
+Source code is available on GitHub at https://github.com/Drive-Trust-Alliance/sedutil 
 
-Linux and Windows executables are available at http://www.r0m30.com/msed/files
+Linux and Windows executables are available at https://github.com/Drive-Trust-Alliance/sedutil/wiki/Executable-Distributions
 
 If you are looking for the PSID revert function see linux/PSIDRevert_LINUX.txt or win32/PSIDRevert_WINDOWS.txt

@@ -29,10 +29,10 @@ sudo chmod 777 image
 mkdir -p image/boot/extlinux
 sudo ../scratch/${SYSLINUX}/bios/extlinux/extlinux --install image/boot/extlinux
 cp ../scratch/vmlinuz image/boot/
-echo "default msed" >>image/boot/extlinux/extlinux.conf
+echo "default DTA" >>image/boot/extlinux/extlinux.conf
 echo "prompt 0" >>image/boot/extlinux/extlinux.conf
 echo "noescape 1" >>image/boot/extlinux/extlinux.conf
-echo "label msed" >>image/boot/extlinux/extlinux.conf
+echo "label DTA" >>image/boot/extlinux/extlinux.conf
 echo "    kernel /boot/vmlinuz" >>image/boot/extlinux/extlinux.conf
 echo "    initrd /boot/core.gz" >>image/boot/extlinux/extlinux.conf
 echo "    append loglevel=0 libata.allow_tpm=1 tinycore base norestore noswap superuser" >>image/boot/extlinux/extlinux.conf

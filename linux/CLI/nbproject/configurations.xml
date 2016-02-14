@@ -4,35 +4,27 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <logicalFolder name="pbdkf2" displayName="pbdkf2" projectFiles="true">
-        <itemPath>../../Common/pbdkf2/config.h</itemPath>
-        <itemPath>../../Common/pbdkf2/gc.h</itemPath>
-        <itemPath>../../Common/pbdkf2/hmac.h</itemPath>
-        <itemPath>../../Common/pbdkf2/memxor.h</itemPath>
-        <itemPath>../../Common/pbdkf2/sha1.h</itemPath>
-        <itemPath>../../Common/pbdkf2/stdalign.h</itemPath>
-      </logicalFolder>
-      <itemPath>../../Common/MsedAnnotatedDump.h</itemPath>
-      <itemPath>../../Common/MsedCommand.h</itemPath>
-      <itemPath>../../Common/MsedConstants.h</itemPath>
-      <itemPath>../../Common/MsedDev.h</itemPath>
-      <itemPath>../../Common/MsedDevEnterprise.h</itemPath>
-      <itemPath>../../Common/MsedDevGeneric.h</itemPath>
-      <itemPath>../MsedDevLinuxDrive.h</itemPath>
-      <itemPath>../MsedDevLinuxNvme.h</itemPath>
-      <itemPath>../MsedDevLinuxSata.h</itemPath>
-      <itemPath>../MsedDevOS.h</itemPath>
-      <itemPath>../../Common/MsedDevOpal.h</itemPath>
-      <itemPath>../../Common/MsedDevOpal1.h</itemPath>
-      <itemPath>../../Common/MsedDevOpal2.h</itemPath>
-      <itemPath>../../Common/MsedEndianFixup.h</itemPath>
-      <itemPath>../../Common/MsedHashPwd.h</itemPath>
-      <itemPath>../../Common/MsedHexDump.h</itemPath>
-      <itemPath>../../Common/MsedLexicon.h</itemPath>
-      <itemPath>../../Common/MsedOptions.h</itemPath>
-      <itemPath>../../Common/MsedResponse.h</itemPath>
-      <itemPath>../../Common/MsedSession.h</itemPath>
-      <itemPath>../../Common/MsedStructures.h</itemPath>
+      <itemPath>../../Common/DtaAnnotatedDump.h</itemPath>
+      <itemPath>../../Common/DtaCommand.h</itemPath>
+      <itemPath>../../Common/DtaConstants.h</itemPath>
+      <itemPath>../../Common/DtaDev.h</itemPath>
+      <itemPath>../../Common/DtaDevEnterprise.h</itemPath>
+      <itemPath>../../Common/DtaDevGeneric.h</itemPath>
+      <itemPath>../DtaDevLinuxDrive.h</itemPath>
+      <itemPath>../DtaDevLinuxNvme.h</itemPath>
+      <itemPath>../DtaDevLinuxSata.h</itemPath>
+      <itemPath>../DtaDevOS.h</itemPath>
+      <itemPath>../../Common/DtaDevOpal.h</itemPath>
+      <itemPath>../../Common/DtaDevOpal1.h</itemPath>
+      <itemPath>../../Common/DtaDevOpal2.h</itemPath>
+      <itemPath>../../Common/DtaEndianFixup.h</itemPath>
+      <itemPath>../../Common/DtaHashPwd.h</itemPath>
+      <itemPath>../../Common/DtaHexDump.h</itemPath>
+      <itemPath>../../Common/DtaLexicon.h</itemPath>
+      <itemPath>../../Common/DtaOptions.h</itemPath>
+      <itemPath>../../Common/DtaResponse.h</itemPath>
+      <itemPath>../../Common/DtaSession.h</itemPath>
+      <itemPath>../../Common/DtaStructures.h</itemPath>
       <itemPath>../../Common/log.h</itemPath>
       <itemPath>../os.h</itemPath>
     </logicalFolder>
@@ -43,30 +35,47 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <logicalFolder name="pbdkf2" displayName="pbdkf2" projectFiles="true">
-        <itemPath>../../Common/pbdkf2/gc-gnulib.c</itemPath>
-        <itemPath>../../Common/pbdkf2/gc-pbkdf2-sha1.c</itemPath>
-        <itemPath>../../Common/pbdkf2/hmac-sha1.c</itemPath>
-        <itemPath>../../Common/pbdkf2/memxor.c</itemPath>
-        <itemPath>../../Common/pbdkf2/sha1.c</itemPath>
+      <logicalFolder name="pbkdf2" displayName="pbkdf2" projectFiles="true">
+        <itemPath>../../Common/pbkdf2/config.h</itemPath>
+        <itemPath>../../Common/pbkdf2/gc-gnulib.c</itemPath>
+        <itemPath>../../Common/pbkdf2/gc-pbkdf2-sha1.c</itemPath>
+        <itemPath>../../Common/pbkdf2/gc.h</itemPath>
+        <itemPath>../../Common/pbkdf2/hmac-sha1.c</itemPath>
+        <itemPath>../../Common/pbkdf2/hmac.h</itemPath>
+        <itemPath>../../Common/pbkdf2/memxor.c</itemPath>
+        <itemPath>../../Common/pbkdf2/memxor.h</itemPath>
+        <itemPath>../../Common/pbkdf2/sha1.c</itemPath>
+        <itemPath>../../Common/pbkdf2/sha1.h</itemPath>
+        <itemPath>../../Common/pbkdf2/stdalign.h</itemPath>
       </logicalFolder>
-      <itemPath>../../Common/MsedAnnotatedDump.cpp</itemPath>
-      <itemPath>../../Common/MsedCommand.cpp</itemPath>
-      <itemPath>../../Common/MsedDev.cpp</itemPath>
-      <itemPath>../../Common/MsedDevEnterprise.cpp</itemPath>
-      <itemPath>../../Common/MsedDevGeneric.cpp</itemPath>
-      <itemPath>../MsedDevLinuxNvme.cpp</itemPath>
-      <itemPath>../MsedDevLinuxSata.cpp</itemPath>
-      <itemPath>../MsedDevOS.cpp</itemPath>
-      <itemPath>../../Common/MsedDevOpal.cpp</itemPath>
-      <itemPath>../../Common/MsedDevOpal1.cpp</itemPath>
-      <itemPath>../../Common/MsedDevOpal2.cpp</itemPath>
-      <itemPath>../../Common/MsedHashPwd.cpp</itemPath>
-      <itemPath>../../Common/MsedHexDump.cpp</itemPath>
-      <itemPath>../../Common/MsedOptions.cpp</itemPath>
-      <itemPath>../../Common/MsedResponse.cpp</itemPath>
-      <itemPath>../../Common/MsedSession.cpp</itemPath>
-      <itemPath>../../Common/msed.cpp</itemPath>
+      <itemPath>../../Common/DtaAnnotatedDump.cpp</itemPath>
+      <itemPath>../../Common/DtaCommand.cpp</itemPath>
+      <itemPath>../../Common/DtaDev.cpp</itemPath>
+      <itemPath>../../Common/DtaDevEnterprise.cpp</itemPath>
+      <itemPath>../../Common/DtaDevGeneric.cpp</itemPath>
+      <itemPath>../DtaDevLinuxNvme.cpp</itemPath>
+      <itemPath>../DtaDevLinuxSata.cpp</itemPath>
+      <itemPath>../DtaDevOS.cpp</itemPath>
+      <itemPath>../../Common/DtaDevOpal.cpp</itemPath>
+      <itemPath>../../Common/DtaDevOpal1.cpp</itemPath>
+      <itemPath>../../Common/DtaDevOpal2.cpp</itemPath>
+      <itemPath>../../Common/DtaHashPwd.cpp</itemPath>
+      <itemPath>../../Common/DtaHexDump.cpp</itemPath>
+      <itemPath>../../Common/DtaOptions.cpp</itemPath>
+      <itemPath>../../Common/DtaResponse.cpp</itemPath>
+      <itemPath>../../Common/DtaSession.cpp</itemPath>
+      <itemPath>../../Common/sedutil.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -82,6 +91,8 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>../../Common/pbdkf2</Elem>
+    <Elem>../../Common/pbdkf2</Elem>
+    <Elem>../../Common/pbkdf2</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -121,108 +132,108 @@
           <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/sedutil-cli</output>
         </linkerTool>
       </compileType>
-      <item path="../../Common/MsedAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedAnnotatedDump.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaAnnotatedDump.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedCommand.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaCommand.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedConstants.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaConstants.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaDev.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedDev.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDev.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevEnterprise.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaDevEnterprise.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevEnterprise.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevEnterprise.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaDevGeneric.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevGeneric.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevGeneric.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaDevOpal.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevOpal.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaDevOpal1.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal1.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevOpal1.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaDevOpal2.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal2.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevOpal2.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedEndianFixup.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaEndianFixup.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedHashPwd.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaHashPwd.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedHashPwd.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaHashPwd.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedHexDump.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaHexDump.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedHexDump.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaHexDump.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedLexicon.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaLexicon.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedOptions.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaOptions.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedOptions.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaOptions.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedResponse.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaResponse.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedResponse.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaResponse.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedSession.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaSession.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedSession.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaSession.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedStructures.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaStructures.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../Common/log.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/msed.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/pbkdf2/config.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/config.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="../../Common/pbdkf2/gc-pbkdf2-sha1.c"
+      <item path="../../Common/pbkdf2/gc-pbkdf2-sha1.c"
             ex="false"
             tool="0"
             flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/gc.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/gc.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
+      <item path="../../Common/pbkdf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/hmac.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/hmac.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
+      <item path="../../Common/pbkdf2/memxor.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/memxor.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/memxor.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
+      <item path="../../Common/pbkdf2/sha1.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/sha1.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/sha1.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/sedutil.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../DtaDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxNvme.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../DtaDevLinuxNvme.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxSata.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../DtaDevLinuxSata.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevOS.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevOS.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../DtaDevOS.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../os.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -269,108 +280,108 @@
           <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/sedutil-cli</output>
         </linkerTool>
       </compileType>
-      <item path="../../Common/MsedAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedAnnotatedDump.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaAnnotatedDump.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedCommand.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaCommand.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedConstants.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaConstants.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDev.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaDev.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedDev.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDev.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevEnterprise.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaDevEnterprise.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevEnterprise.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevEnterprise.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaDevGeneric.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevGeneric.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevGeneric.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaDevOpal.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevOpal.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaDevOpal1.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal1.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevOpal1.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaDevOpal2.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal2.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevOpal2.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedEndianFixup.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaEndianFixup.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedHashPwd.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaHashPwd.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedHashPwd.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaHashPwd.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedHexDump.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaHexDump.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedHexDump.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaHexDump.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedLexicon.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaLexicon.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedOptions.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaOptions.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedOptions.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaOptions.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedResponse.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaResponse.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedResponse.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaResponse.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedSession.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaSession.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedSession.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaSession.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedStructures.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaStructures.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../Common/log.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/msed.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/pbkdf2/config.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/config.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="../../Common/pbdkf2/gc-pbkdf2-sha1.c"
+      <item path="../../Common/pbkdf2/gc-pbkdf2-sha1.c"
             ex="false"
             tool="0"
             flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/gc.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/gc.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
+      <item path="../../Common/pbkdf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/hmac.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/hmac.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/memxor.c" ex="false" tool="0" flavor2="0">
+      <item path="../../Common/pbkdf2/memxor.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/memxor.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/memxor.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="0">
+      <item path="../../Common/pbkdf2/sha1.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/sha1.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/sha1.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/sedutil.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../DtaDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxNvme.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../DtaDevLinuxNvme.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxSata.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../DtaDevLinuxSata.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevOS.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevOS.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../DtaDevOS.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../os.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -411,108 +422,108 @@
           <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/sedutil-cli</output>
         </linkerTool>
       </compileType>
-      <item path="../../Common/MsedAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedAnnotatedDump.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaAnnotatedDump.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaCommand.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedCommand.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaCommand.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedConstants.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaConstants.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDev.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaDev.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedDev.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDev.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevEnterprise.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaDevEnterprise.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedDevEnterprise.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevEnterprise.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaDevGeneric.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedDevGeneric.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevGeneric.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaDevOpal.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedDevOpal.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevOpal.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaDevOpal1.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedDevOpal1.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevOpal1.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaDevOpal2.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedDevOpal2.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevOpal2.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedEndianFixup.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaEndianFixup.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedHashPwd.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaHashPwd.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedHashPwd.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaHashPwd.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedHexDump.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaHexDump.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedHexDump.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaHexDump.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedLexicon.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaLexicon.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedOptions.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaOptions.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedOptions.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaOptions.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedResponse.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaResponse.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedResponse.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaResponse.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedSession.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaSession.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedSession.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaSession.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedStructures.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaStructures.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../Common/log.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/msed.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/pbkdf2/config.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/config.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="10">
-      </item>
-      <item path="../../Common/pbdkf2/gc-pbkdf2-sha1.c"
+      <item path="../../Common/pbkdf2/gc-pbkdf2-sha1.c"
             ex="false"
             tool="0"
-            flavor2="10">
+            flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/gc.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/gc.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="10">
+      <item path="../../Common/pbkdf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/hmac.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/hmac.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/memxor.c" ex="false" tool="0" flavor2="10">
+      <item path="../../Common/pbkdf2/memxor.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/memxor.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/memxor.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="10">
+      <item path="../../Common/pbkdf2/sha1.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/sha1.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/sha1.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/sedutil.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../DtaDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxNvme.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../DtaDevLinuxNvme.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxSata.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../DtaDevLinuxSata.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevOS.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevOS.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../DtaDevOS.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../os.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -559,108 +570,108 @@
           <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/sedutil-cli</output>
         </linkerTool>
       </compileType>
-      <item path="../../Common/MsedAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../../Common/DtaAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../../Common/MsedAnnotatedDump.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaAnnotatedDump.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedCommand.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaCommand.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedCommand.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaCommand.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedConstants.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaConstants.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDev.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaDev.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedDev.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDev.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevEnterprise.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaDevEnterprise.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedDevEnterprise.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevEnterprise.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevGeneric.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaDevGeneric.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedDevGeneric.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevGeneric.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaDevOpal.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedDevOpal.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevOpal.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal1.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaDevOpal1.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedDevOpal1.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevOpal1.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedDevOpal2.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaDevOpal2.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedDevOpal2.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaDevOpal2.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedEndianFixup.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaEndianFixup.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedHashPwd.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaHashPwd.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedHashPwd.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaHashPwd.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedHexDump.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaHexDump.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedHexDump.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaHexDump.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedLexicon.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaLexicon.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedOptions.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaOptions.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedOptions.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaOptions.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedResponse.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaResponse.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedResponse.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaResponse.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedSession.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/DtaSession.cpp" ex="false" tool="1" flavor2="8">
       </item>
-      <item path="../../Common/MsedSession.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaSession.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/MsedStructures.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/DtaStructures.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../Common/log.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/msed.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../../Common/pbkdf2/config.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/config.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/gc-gnulib.c" ex="false" tool="0" flavor2="10">
-      </item>
-      <item path="../../Common/pbdkf2/gc-pbkdf2-sha1.c"
+      <item path="../../Common/pbkdf2/gc-pbkdf2-sha1.c"
             ex="false"
             tool="0"
-            flavor2="10">
+            flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/gc.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/gc.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/hmac-sha1.c" ex="false" tool="0" flavor2="10">
+      <item path="../../Common/pbkdf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/hmac.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/hmac.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/memxor.c" ex="false" tool="0" flavor2="10">
+      <item path="../../Common/pbkdf2/memxor.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/memxor.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/memxor.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/sha1.c" ex="false" tool="0" flavor2="10">
+      <item path="../../Common/pbkdf2/sha1.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/sha1.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/sha1.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../../Common/pbdkf2/stdalign.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/pbkdf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
+      <item path="../../Common/sedutil.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../DtaDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxNvme.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
+      <item path="../DtaDevLinuxNvme.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevLinuxSata.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevLinuxSata.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../MsedDevOS.cpp" ex="false" tool="1" flavor2="8">
+      <item path="../DtaDevLinuxSata.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="../MsedDevOS.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevOS.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../DtaDevOS.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../os.h" ex="false" tool="3" flavor2="0">
       </item>

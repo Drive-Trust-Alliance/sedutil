@@ -1,4 +1,4 @@
-Pre-requisites for building msed under Windows, tested under Windows 8.1 (which has stricter powershell defaults than Windows 7):
+Pre-requisites for building sedutil under Windows, tested under Windows 8.1 (which has stricter powershell defaults than Windows 7):
 
 1. Visual Studio 2013 Community Edition (minimum).
 2. Git command-line client for Windows. [ http://git-scm.com/download/win ]

@@ -11,6 +11,8 @@
             <make-dep-projects/>
             <sourceRootList>
                 <sourceRootElem>../../Common/pbdkf2</sourceRootElem>
+                <sourceRootElem>../../Common/pbdkf2</sourceRootElem>
+                <sourceRootElem>../../Common/pbkdf2</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

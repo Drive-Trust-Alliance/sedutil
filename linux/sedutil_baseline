@@ -1,0 +1,66 @@
+Begin TestSuite.cmd
+Linux OPALDev 3.13.0-45-generic #74-Ubuntu SMP Tue Jan 13 19:36:28 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+testing sedutil Tue Feb 10 23:19:43 PST 2015
+sedutil v0.21beta 
+
+Scanning for Opal compliant disks
+/dev/sda  2  Crucial_CT120M500SSD3                    MU05    
+/dev/sdb  2  ST500LT025-1DH142                        0001SDM7
+/dev/sdc No  Hitachi HDT725040VLA360                  V5COA7BA
+/dev/sdd 12  Samsung SSD 850 EVO 500GB                EMT01B6Q
+/dev/sde No  ST3500630AS                              3.AAK   
+/dev/sdf No  KINGSTON SV100S264G                      120504  
+No more disks present ending scan
+Perform the initial setup
+- 23:19:45.405 INFO: takeownership complete
+- 23:19:47.453 INFO: Locking SP Activate Complete
+- 23:19:48.566 INFO: LockingRange0 disabled 
+- 23:19:49.464 INFO: LockingRange0 set to RW
+- 23:19:49.974 INFO: MBRDone set on 
+- 23:19:50.407 INFO: MBREnable set on 
+- 23:19:50.407 INFO: Initial setup of TPer complete on /dev/sdb
+    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = Y, MBREnabled = Y, MediaEncrypt = Y
+change the LSP Admin1 password
+- 23:19:51.179 INFO: Admin1 password changed
+- 23:19:52.181 INFO: LockingRange0 enabled 
+    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = Y, MBREnabled = Y, MediaEncrypt = Y
+test readlocking
+- 23:19:53.146 INFO: LockingRange0 set to RO
+    Locked = Y, LockingEnabled = Y, LockingSupported = Y, MBRDone = Y, MBREnabled = Y, MediaEncrypt = Y
+test write locking
+- 23:19:54.100 INFO: LockingRange0 set to RW
+    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = Y, MBREnabled = Y, MediaEncrypt = Y
+set LockingRange 0 LK
+- 23:19:55.120 INFO: LockingRange0 set to LK
+    Locked = Y, LockingEnabled = Y, LockingSupported = Y, MBRDone = Y, MBREnabled = Y, MediaEncrypt = Y
+disable locking on the global range
+- 23:20:00.654 INFO: LockingRange0 disabled 
+    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = Y, MBREnabled = Y, MediaEncrypt = Y
+unset MBRDone
+- 23:20:01.187 INFO: MBRDone set off 
+    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = N, MBREnabled = Y, MediaEncrypt = Y
+disable mbr shadowing
+- 23:20:01.730 INFO: MBREnable set off 
+    Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
+resetting device
+- 23:20:04.186 INFO: Revert LockingSP complete
+    Locked = N, LockingEnabled = N, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
+- 23:20:06.925 INFO: revertTper completed successfully
+    Locked = N, LockingEnabled = N, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
+
+PKCS #5 PBKDF2 validation suite running on sedutil ... 
+
+Password password Salt salt Iterations 1 Length 20
+Expected Result: 0c60c80f961f0e71f3a9b524af6012062fe037a6
+Actual Result  : 0c60c80f961f0e71f3a9b524af6012062fe037a6
+Password password Salt salt Iterations 2 Length 20
+Expected Result: ea6c014dc72d6f8ccd1ed92ace1d41f0d8de8957
+Actual Result  : ea6c014dc72d6f8ccd1ed92ace1d41f0d8de8957
+Password password Salt salt Iterations 4096 Length 20
+Expected Result: 4b007901b765489abead49d926f721d065a429c1
+Actual Result  : 4b007901b765489abead49d926f721d065a429c1
+Password passwordPASSWORDpassword Salt saltSALTsaltSALTsaltSALTsaltSALTsalt Iterations 4096 Length 25
+Expected Result: 3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038
+Actual Result  : 3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038
+
+PKCS #5 PBKDF2 validation suite on sedutil ... passed

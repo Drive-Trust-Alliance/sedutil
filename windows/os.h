@@ -1,22 +1,23 @@
 /* C:B**************************************************************************
-This software is Copyright 2014,2015 Michael Romeo <r0m30@r0m30.com>
+This software is Copyright 2014 - 2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
-This file is part of msed.
+This file is part of sedutil.
 
-msed is free software: you can redistribute it and/or modify
+sedutil is free software : you can redistribute it and / or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-msed is distributed in the hope that it will be useful,
+sedutil is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with msed.  If not, see <http://www.gnu.org/licenses/>.
+along with sedutil.If not, see <http://www.gnu.org/licenses/>.
 
-* C:E********************************************************************** */
+*C : E********************************************************************** */
+
 #pragma once
 
 #include <WinSDKVer.h>
@@ -25,7 +26,7 @@ along with msed.  If not, see <http://www.gnu.org/licenses/>.
 #include <Windows.h>
 #include <assert.h>
 
-#include "MsedConstants.h"
+#include "DtaConstants.h"
 #pragma warning(disable: 4127) //C4127: conditional expression is constant
 #include "log.h"
 /** OS specific implementation of the "safe" snprintf function */
