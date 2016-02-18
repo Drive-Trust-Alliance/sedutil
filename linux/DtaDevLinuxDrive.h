@@ -44,5 +44,5 @@ public:
     virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
             void * buffer, uint16_t bufferlen) = 0;
     /** Routine to send an identify to the device */
-    virtual void identify(OPAL_DiskInfo *disk_info) = 0;
+    virtual void identify(OPAL_DiskInfo& disk_info) = 0;
 };

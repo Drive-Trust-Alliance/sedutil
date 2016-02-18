@@ -93,6 +93,15 @@
     <ClInclude Include="..\DtaDevOS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\DtaDiskATA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DtaDiskUSB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\DtaDiskType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\pbkdf2\gc-gnulib.c">
@@ -153,6 +162,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\DtaDevOS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DtaDiskATA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DtaDiskUSB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\DtaDiskType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -105,7 +105,7 @@ uint8_t DtaDevLinuxNvme::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
 	return err;
 }
 
-void DtaDevLinuxNvme::identify(OPAL_DiskInfo *disk_info)
+void DtaDevLinuxNvme::identify(OPAL_DiskInfo& disk_info)
 {
 	LOG(D4) << "Entering DtaDevLinuxNvme::identify()";
 
@@ -123,16 +123,16 @@ void DtaDevLinuxNvme::identify(OPAL_DiskInfo *disk_info)
 
 	if (err) {
 		LOG(E) << "Identify error. NVMe status " << err;
-		disk_info->devType = DEVICE_TYPE_OTHER;
+		disk_info.devType = DEVICE_TYPE_OTHER;
 		IFLOG(D4) DtaHexDump(&cmd, sizeof(cmd));
 		IFLOG(D4) DtaHexDump(&ctrl, sizeof(ctrl));
 		return;
 	}
 
-	disk_info->devType = DEVICE_TYPE_NVME;
-	memcpy(disk_info->serialNum, ctrl.sn, sizeof (disk_info->serialNum));
-	memcpy(disk_info->firmwareRev, ctrl.fr, sizeof(disk_info->firmwareRev));
-	memcpy(disk_info->modelNum, ctrl.mn, sizeof(disk_info->modelNum));
+	disk_info.devType = DEVICE_TYPE_NVME;
+	memcpy(disk_info.serialNum, ctrl.sn, sizeof (disk_info.serialNum));
+	memcpy(disk_info.firmwareRev, ctrl.fr, sizeof(disk_info.firmwareRev));
+	memcpy(disk_info.modelNum, ctrl.mn, sizeof(disk_info.modelNum));
 
     return;
 }

@@ -69,7 +69,7 @@ void DtaDevOS::init(const char * devref)
 	if (drive->init(devref))
 	{
 		isOpen = TRUE;
-		drive->identify(&disk_info);
+		drive->identify(disk_info);
 		if (disk_info.devType != DEVICE_TYPE_OTHER)
 			discovery0();
 	}
@@ -93,7 +93,7 @@ uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 	return drive->sendCmd(cmd, protocol, comID, buffer, bufferlen);
 }
 
-void DtaDevOS::identify()
+void DtaDevOS::identify(OPAL_DiskInfo& disk_info)
 {
 	if (!isOpen) return; //disk open failed so this will too
 	if (NULL == drive)
@@ -102,7 +102,7 @@ void DtaDevOS::identify()
 		return;
 	}
 
-	drive->identify(&disk_info);
+	drive->identify(disk_info);
 }
 
 void DtaDevOS::osmsSleep(uint32_t ms)

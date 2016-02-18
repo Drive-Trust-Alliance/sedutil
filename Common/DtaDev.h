@@ -92,7 +92,7 @@ public:
 	 */
 	virtual void osmsSleep(uint32_t milliseconds) = 0;
 	/** OS specific routine to send an ATA identify to the device */
-	virtual void identify() = 0;
+	virtual void identify(OPAL_DiskInfo& disk_info) = 0;
 	/*
 	 * virtual functions required to be implemented
 	 * because they are called by sedutil.cpp

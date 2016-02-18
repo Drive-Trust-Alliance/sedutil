@@ -28,6 +28,7 @@
     <ClInclude Include="..\..\Common\DtaDevOpal.h" />
     <ClInclude Include="..\..\Common\DtaDevOpal1.h" />
     <ClInclude Include="..\..\Common\DtaDevOpal2.h" />
+    <ClInclude Include="..\..\Common\DtaDiskType.h" />
     <ClInclude Include="..\..\Common\DtaEndianFixup.h" />
     <ClInclude Include="..\..\Common\DtaHashPwd.h" />
     <ClInclude Include="..\..\Common\DtaHexDump.h" />
@@ -44,6 +45,8 @@
     <ClInclude Include="..\..\Common\pbkdf2\sha1.h" />
     <ClInclude Include="..\..\Common\pbkdf2\stdalign.h" />
     <ClInclude Include="..\DtaDevOS.h" />
+    <ClInclude Include="..\DtaDiskATA.h" />
+    <ClInclude Include="..\DtaDiskUSB.h" />
     <ClInclude Include="..\os.h" />
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +58,7 @@
     <ClCompile Include="..\..\Common\DtaDevOpal.cpp" />
     <ClCompile Include="..\..\Common\DtaDevOpal1.cpp" />
     <ClCompile Include="..\..\Common\DtaDevOpal2.cpp" />
+    <ClCompile Include="..\..\Common\DtaDiskType.cpp" />
     <ClCompile Include="..\..\Common\DtaHashPwd.cpp" />
     <ClCompile Include="..\..\Common\DtaHexDump.cpp" />
     <ClCompile Include="..\..\Common\DtaOptions.cpp" />
@@ -67,6 +71,8 @@
     <ClCompile Include="..\..\Common\pbkdf2\sha1.c" />
     <ClCompile Include="..\..\Common\sedutil.cpp" />
     <ClCompile Include="..\DtaDevOS.cpp" />
+    <ClCompile Include="..\DtaDiskATA.cpp" />
+    <ClCompile Include="..\DtaDiskUSB.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{267E9D28-7245-4182-9740-F386F4299E83}</ProjectGuid>

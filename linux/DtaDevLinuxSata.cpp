@@ -192,7 +192,7 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
     return (sense[11]);
 }
 
-void DtaDevLinuxSata::identify(OPAL_DiskInfo *disk_info)
+void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
 {
     LOG(D4) << "Entering DtaDevLinuxSata::identify()";
     vector<uint8_t> nullz(512, 0x00);
@@ -200,21 +200,21 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo *disk_info)
     memset(buffer, 0, IO_BUFFER_LENGTH);
     if (ioctl(fd, HDIO_GET_IDENTITY, buffer) < 0) {
         LOG(D1) << "Identify failed " << strerror(errno);
-        disk_info->devType = DEVICE_TYPE_OTHER;
-        identify_SAS(disk_info);
+        disk_info.devType = DEVICE_TYPE_OTHER;
+        identify_SAS(&disk_info);
         return;
     }
 
     if (!(memcmp(nullz.data(), buffer, 512))) {
-        disk_info->devType = DEVICE_TYPE_OTHER;
+        disk_info.devType = DEVICE_TYPE_OTHER;
         return;
     }
     IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) buffer;
 //    disk_info->devType = id->devType;
-    disk_info->devType = DEVICE_TYPE_ATA;
-    memcpy(disk_info->serialNum, id->serialNum, sizeof (disk_info->serialNum));
-    memcpy(disk_info->firmwareRev, id->firmwareRev, sizeof (disk_info->firmwareRev));
-    memcpy(disk_info->modelNum, id->modelNum, sizeof (disk_info->modelNum));
+    disk_info.devType = DEVICE_TYPE_ATA;
+    memcpy(disk_info.serialNum, id->serialNum, sizeof (disk_info.serialNum));
+    memcpy(disk_info.firmwareRev, id->firmwareRev, sizeof (disk_info.firmwareRev));
+    memcpy(disk_info.modelNum, id->modelNum, sizeof (disk_info.modelNum));
     // looks like linux does the byte flipping for you
     //    for (int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
     //        disk_info.serialNum[i] = id->serialNum[i + 1];
