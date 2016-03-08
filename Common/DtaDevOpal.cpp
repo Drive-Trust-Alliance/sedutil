@@ -1123,25 +1123,20 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	char star[] = "*";
 	char spinner[] = "|/-\\";
 	char progress_bar[] = "   [                     ]";
-
+	uint32_t blockSize = 1950;
 	uint32_t filepos = 0;
 	ifstream pbafile;
-	vector <uint8_t> buffer(1024,0x00), lengthtoken;
-	//buffer.clear();
-	//buffer.reserve(1024);
-	//for (int i = 0; i < 1024; i++) {
-	//	buffer.push_back(0x00);
-	//}
+	vector <uint8_t> buffer(1950,0x00), lengthtoken;
 	lengthtoken.clear();
-	lengthtoken.push_back(0xd4);
-	lengthtoken.push_back(0x00);
+	lengthtoken.push_back(0xd7);
+	lengthtoken.push_back(0x9e);
 	pbafile.open(filename, ios::in | ios::binary);
 	if (!pbafile) {
 		LOG(E) << "Unable to open PBA image file " << filename;
 		return DTAERROR_OPEN_ERR;
 	}
 	pbafile.seekg(0, pbafile.end);
-	fivepercent = ((pbafile.tellg() / 20) / 1024) * 1024;
+	fivepercent = (uint64_t)((pbafile.tellg() / 20) / blockSize) * blockSize;
 	if (0 == fivepercent) fivepercent++;
 	pbafile.seekg(0, pbafile.beg);
 
@@ -1164,7 +1159,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	}
 	LOG(I) << "Writing PBA to " << dev;
 	while (!pbafile.eof()) {
-		pbafile.read((char *)buffer.data(), 1024);
+		pbafile.read((char *)buffer.data(), blockSize);
 		if (!(filepos % fivepercent)) {
 			progress_bar[complete++] = star[0];
 			delete session;
@@ -1180,7 +1175,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 				return lastRC;
 			}
 		}
-		if (!(filepos % (1024 * 5))) {
+		if (!(filepos % (blockSize * 5))) {
 			progress_bar[1] = spinner[spinnertick.i++];
 			printf("\r%s %i", progress_bar,filepos);
 			fflush(stdout);
@@ -1204,7 +1199,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 			pbafile.close();
 			return lastRC;
 		}
-		filepos += 1024;
+		filepos += blockSize;
 	}
 	printf("\r%s %i bytes written \n", progress_bar, filepos);
 	delete cmd;
