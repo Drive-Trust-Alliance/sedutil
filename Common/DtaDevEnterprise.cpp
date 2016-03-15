@@ -967,7 +967,7 @@ uint8_t DtaDevEnterprise::setBandsEnabled(int16_t lockingrange, char * password)
     for(int n=lo; n<=hi && lastRC==0; n++)
     {
         // BandMaster[n] row
-        setband(object, n);
+        setband(object, (uint16_t) n);
 
         // command to set Enabled column
         DtaCommand *cmd = new DtaCommand();
@@ -993,7 +993,7 @@ uint8_t DtaDevEnterprise::setBandsEnabled(int16_t lockingrange, char * password)
         if (useMSID) session->dontHashPwd();
 
         // start session
-        uint8_t lastRC = session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, (char *)pwd.c_str(), erasemaster);
+        lastRC = session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, (char *)pwd.c_str(), erasemaster);
         if (lastRC == 0)
         {
             // send command
