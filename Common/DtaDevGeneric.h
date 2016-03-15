@@ -138,6 +138,15 @@ public:
 	 *  @param password Password of administrator
 	 */
 	 uint8_t listLockingRanges(char * password, int16_t rangeid);
+	 /** Generate a new encryption key for a locking range.
+	 * @param lockingrange locking range number
+	 * @param password password of the locking administrative authority
+	 */
+	 uint8_t rekeyLockingRange(uint8_t lockingrange, char * password);
+	 /** Enable bands using MSID.
+	 * @param lockingrange locking range number
+	 */
+	 uint8_t setBandsEnabled(int16_t rangeid, char * password);
 	 uint8_t setMBRDone(uint8_t state, char * Admin1Password) ;
          /** Primitive to set the MBREnable flag.
          * @param state 0 or 1  
@@ -178,7 +187,7 @@ public:
          * @param password password of authority (SID or PSID)
          * @param PSID true or false is the authority the PSID
          *   */
-	 uint8_t revertTPer(char * password, uint8_t PSID ) ;
+	 uint8_t revertTPer(char * password, uint8_t PSID, uint8_t AdminSP ) ;
 	    /** Erase a locking range
 	    * @param lockingrange The number of the locking range (0 = global)
 	    * @param password Password of administrative authority for locking range

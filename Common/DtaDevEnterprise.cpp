@@ -531,10 +531,6 @@ uint8_t DtaDevEnterprise::setupLockingRange(uint8_t lockingrange, uint64_t start
 	}
 	delete set;
 	delete session;
-	if ((lastRC = rekeyLockingRange(lockingrange, password)) != 0) {
-		LOG(E) << "setupLockingRange Unable to reKey Locking range -- Possible security issue ";
-		return lastRC;
-	}
 	LOG(I) << "LockingRange" << (uint16_t)lockingrange << " starting block " << start <<
 		" for " << length << " blocks configured as unlocked range";
 	LOG(D1) << "Exiting DtaDevEnterprise::setupLockingRange";
@@ -555,9 +551,9 @@ uint8_t DtaDevEnterprise::listLockingRanges(char * password, int16_t rangeid)
 	if (NULL == password) { LOG(E) << "password NULL"; }
 
     // look up MaxRanges
-	const uint16_t MaxRanges = (rangeid == -1) ? getMaxRanges(password): (rangeid + 1);
+	const uint16_t MaxRanges = (rangeid == -1) ? getMaxRanges(password): rangeid;
 
-    if (MaxRanges == 0 || MaxRanges >= 1024) return 0xff;
+    if (MaxRanges >= 1024) return 0xff;
 
     if(rangeid == -1) {
         LOG(I) << "Maximum ranges supported " << MaxRanges;
@@ -761,7 +757,7 @@ uint8_t DtaDevEnterprise::enableUser(char * password, char * userid)
 	LOG(D1) << "Exiting DtaDevEnterprise::enableUser()";
 	return 0xff;
 }
-uint8_t DtaDevEnterprise::revertTPer(char * password, uint8_t PSID)
+uint8_t DtaDevEnterprise::revertTPer(char * password, uint8_t PSID, uint8_t AdminSP)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::revertTPer()";
 	if (password == NULL) { LOG(D4) << "Referencing formal parameters " << PSID; }
@@ -787,7 +783,10 @@ uint8_t DtaDevEnterprise::revertTPer(char * password, uint8_t PSID)
 		delete session;
 		return lastRC;
 	}
-	cmd->reset(OPAL_UID::OPAL_ADMINSP_UID, OPAL_METHOD::REVERT);
+    if (AdminSP)
+	    cmd->reset(OPAL_UID::OPAL_ADMINSP_UID, OPAL_METHOD::REVERT);
+    else
+	    cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
 	cmd->addToken(OPAL_TOKEN::STARTLIST);
 	cmd->addToken(OPAL_TOKEN::ENDLIST);
 	cmd->complete();
@@ -911,6 +910,103 @@ uint8_t DtaDevEnterprise::takeOwnership(char * newpassword)
 	LOG(D1) << "Exiting takeOwnership()";
 	return 0;
 }
+////////////////////////////////////////////////////////////////////////////////
+uint8_t DtaDevEnterprise::setBandsEnabled(int16_t lockingrange, char * password)
+////////////////////////////////////////////////////////////////////////////////
+{
+    uint8_t lastRC = 0;
+    LOG(D1) << "Entering DtaDevEnterprise::eraseLockingRange";
+
+    // look up MaxRanges
+    const uint16_t MaxRanges = getMaxRanges(password);
+    if (MaxRanges >= 1024) return 0xff;
+
+    // calculate starting and ending bands
+    int lo, hi;
+    if (lockingrange < 0)
+    {
+        lo = 0;
+        hi = MaxRanges;
+    }
+    else if (lockingrange > MaxRanges)
+    {
+        LOG(E) << "Requested locking range " << lockingrange << " greater than MaxRanges " << MaxRanges;
+        return 0xff;
+    }
+    else
+    {
+        lo = lockingrange;
+        hi = lockingrange;
+    }
+
+    // get password (usually MSID)
+    string pwd;
+    const bool useMSID = password == NULL || *password == '\0';
+    if (!useMSID)
+    {
+        pwd = password;
+    }
+    else
+    {
+        if (getDefaultPassword()) return 0xff;
+        pwd = response.getString(5);
+    }
+
+    vector<uint8_t> erasemaster;
+    set8(erasemaster, OPALUID[OPAL_UID::ENTERPRISE_ERASEMASTER_UID]);
+
+    //** BandMaster0 UID of Table 28 Locking SP Authority table, p. 70 of Enterprise SSC rev 3.00
+    vector<uint8_t> object;
+    set8(object, OPALUID[OPAL_UID::ENTERPRISE_BANDMASTER0_UID]);
+
+    // method is enterprise set
+    vector<uint8_t> method;
+    set8(method, OPALMETHOD[OPAL_METHOD::ESET]);
+
+    // set Enabled=TRUE in BandMaster[n] row of (Table 28) Locking SP Authority
+    for(int n=lo; n<=hi && lastRC==0; n++)
+    {
+        // BandMaster[n] row
+        setband(object, n);
+
+        // command to set Enabled column
+        DtaCommand *cmd = new DtaCommand();
+        cmd->reset(object, method);
+        cmd->addToken(OPAL_TOKEN::STARTLIST);
+        cmd->addToken(OPAL_TOKEN::STARTLIST);
+        cmd->addToken(OPAL_TOKEN::ENDLIST);
+        cmd->addToken(OPAL_TOKEN::STARTLIST);
+        cmd->addToken(OPAL_TOKEN::STARTLIST);
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken("Enabled");
+        cmd->addToken(OPAL_TRUE);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+        cmd->addToken(OPAL_TOKEN::ENDLIST);
+        cmd->addToken(OPAL_TOKEN::ENDLIST);
+        cmd->addToken(OPAL_TOKEN::ENDLIST);
+        cmd->complete();
+
+        // create session to use with erasemaster
+        session = new DtaSession(this);
+
+        // MSID ?
+        if (useMSID) session->dontHashPwd();
+
+        // start session
+        uint8_t lastRC = session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, (char *)pwd.c_str(), erasemaster);
+        if (lastRC == 0)
+        {
+            // send command
+            lastRC = session->sendCommand(cmd, response);
+        }
+
+        delete cmd;
+        delete session;
+    }
+
+    return lastRC;
+}
+
 uint8_t DtaDevEnterprise::initLSPUsers(char * defaultPassword, char * newPassword)
 {
     vector<uint8_t> user, usercpin, hash, erasemaster, table;

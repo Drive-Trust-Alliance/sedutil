@@ -186,9 +186,21 @@ int main(int argc, char * argv[])
 		return (d->listLockingRanges(argv[opts.password], -1));
 		break;
 	case sedutiloption::listLockingRange:
-		LOG(D) << "List Locking Range of device" << argv[opts.device];
+		LOG(D) << "List Locking Range[" << opts.lockingrange << "]";
 		return (d->listLockingRanges(argv[opts.password], opts.lockingrange));
 		break;
+    case sedutiloption::rekeyLockingRange:
+		LOG(D) << "Rekey Locking Range[" << opts.lockingrange << "]";
+		return (d->rekeyLockingRange(opts.lockingrange, argv[opts.password]));
+        break;
+    case sedutiloption::setBandsEnabled:
+        LOG(D) << "Set bands Enabled";
+        return (d->setBandsEnabled(-1, argv[opts.password]));
+        break;
+    case sedutiloption::setBandEnabled:
+        LOG(D) << "Set band[" << opts.lockingrange << "] enabled";
+        return (d->setBandsEnabled(opts.lockingrange, argv[opts.password]));
+        break;
 	case sedutiloption::setMBRDone:
 		LOG(D) << "Setting MBRDone " << (uint16_t)opts.mbrstate;
 		return (d->setMBRDone(opts.mbrstate, argv[opts.password]));
@@ -232,7 +244,7 @@ int main(int argc, char * argv[])
         break;
  	case sedutiloption::revertLockingSP:
 		LOG(D) << "Performing revertLockingSP on " << argv[opts.device];
-        return d->revertLockingSP(argv[opts.password]);
+        return d->revertLockingSP(argv[opts.password], 0);
         break;
 	case sedutiloption::setPassword:
         LOG(D) << "Performing setPassword for user " << argv[opts.userid];
@@ -246,7 +258,7 @@ int main(int argc, char * argv[])
 		break;
 	case sedutiloption::revertTPer:
 		LOG(D) << "Performing revertTPer on " << argv[opts.device];
-        return d->revertTPer(argv[opts.password]);
+        return d->revertTPer(argv[opts.password], 0, 0);
         break;
 	case sedutiloption::revertNoErase:
 		LOG(D) << "Performing revertLockingSP  keep global locking range on " << argv[opts.device];
@@ -259,7 +271,11 @@ int main(int argc, char * argv[])
 	case sedutiloption::yesIreallywanttoERASEALLmydatausingthePSID:
 	case sedutiloption::PSIDrevert:
 		LOG(D) << "Performing a PSID Revert on " << argv[opts.device] << " with password " << argv[opts.password];
-        return d->revertTPer(argv[opts.password],1);
+        return d->revertTPer(argv[opts.password], 1, 0);
+        break;
+	case sedutiloption::PSIDrevertAdminSP:
+		LOG(D) << "Performing a PSID RevertAdminSP on " << argv[opts.device] << " with password " << argv[opts.password];
+        return d->revertTPer(argv[opts.password], 1, 1);
         break;
 	case sedutiloption::eraseLockingRange:
 		LOG(D) << "Erase Locking Range " << (uint16_t)opts.lockingrange;

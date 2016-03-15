@@ -32,7 +32,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using namespace std;
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 DtaToken::DtaToken(void) :
 ////////////////////////////////////////////////////////////////////////////////
     m_TokenType     (NONE),
@@ -101,7 +101,7 @@ void DtaToken::str2int(uint8_t * buf, bool byte)
 void DtaToken::parse(uint8_t * buf, uint32_t buflen)
 ////////////////////////////////////////////////////////////////////////////////
 {
-	LOG(D1) << "Entering CDtaToken::parse " << buflen;
+	LOG(D1) << "Entering DtaToken::parse " << buflen;
     m_token = buf;
 
     const CAtomHeader & atom = * (CAtomHeader *) buf;
@@ -268,6 +268,7 @@ int DtaToken::printUID(FILE *stream, uint8_t buf[8])
 		{ { 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x07 }, "Enterprise Set" },
 		{ { 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x0C }, "Enterprise Authenticate" },
 		{ { 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x10 }, "GenKey" },
+		{ { 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x11 }, "RevertSP" },
 		{ { 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x02, 0x02 }, "Revert" },
 		{ { 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x08, 0x03 }, "Erase" },
 		{ { 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x01 }, "Anybody" },

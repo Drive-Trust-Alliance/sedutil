@@ -158,12 +158,13 @@ public:
 	* @param password password of the locking administrative authority
 	*/
 	uint8_t rekeyLockingRange(uint8_t lockingrange, char * password);
+	uint8_t setBandsEnabled(int16_t lockingrange, char * password);
         /** Reset the TPER to its factory condition   
          * ERASES ALL DATA!
          * @param password password of authority (SID or PSID)
          * @param PSID true or false is the authority the PSID
          *   */
-	uint8_t revertTPer(char * password, uint8_t PSID = 0);
+	uint8_t revertTPer(char * password, uint8_t PSID = 0, uint8_t AdminSP = 0);
 	    /** Erase a locking range
 	    * @param lockingrange The number of the locking range (0 = global)
 	    * @param password Password of administrative authority for locking range

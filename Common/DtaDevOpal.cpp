@@ -585,6 +585,13 @@ uint8_t DtaDevOpal::rekeyLockingRange_SUM(vector<uint8_t> LR, vector<uint8_t>  U
 	LOG(D1) << "Exiting DtaDevOpal::rekeyLockingRange_SUM()";
 	return 0;
 }
+uint8_t DtaDevOpal::setBandsEnabled(int16_t lockingrange, char * password)
+{
+	LOG(D1) << "Entering DtaDevOpal::setBandsEnabled()" << lockingrange << " " << dev;
+	LOG(I) << "setBandsEnabled is not implemented.  It is not part of the Opal SSC ";
+	LOG(D1) << "Exiting DtaDevOpal::setBandsEnabled()";
+	return 0;
+}
 uint8_t DtaDevOpal::revertLockingSP(char * password, uint8_t keep)
 {
 	LOG(D1) << "Entering revert DtaDevOpal::revertLockingSP() keep = " << (uint16_t) keep;
@@ -1064,7 +1071,7 @@ uint8_t DtaDevOpal::enableUser(char * password, char * userid)
 	LOG(D1) << "Exiting DtaDevOpal::enableUser()";
 	return 0;
 }
-uint8_t DtaDevOpal::revertTPer(char * password, uint8_t PSID)
+uint8_t DtaDevOpal::revertTPer(char * password, uint8_t PSID, uint8_t AdminSP)
 {
 	LOG(D1) << "Entering DtaDevOpal::revertTPer()";
 	uint8_t lastRC;

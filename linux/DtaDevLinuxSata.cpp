@@ -65,23 +65,11 @@ isSAS = 0;
 bool DtaDevLinuxSata::init(const char * devref)
 {
     LOG(D1) << "Creating DtaDevLinuxSata::DtaDev() " << devref;
-    ifstream kopts;
 	bool isOpen = FALSE;
 
     if(access("/dev/sda", R_OK | W_OK)) {
         LOG(E) << "You do not have permission to access the raw disk in write mode";
         LOG(E) << "Perhaps you might try sudo to run as root";
-    }
-    kopts.open("/sys/module/libata/parameters/allow_tpm", ios::in);
-    if (!kopts) {
-	LOG(W) << "Unable to verify Kernel flag libata.allow_tpm ";
-    } 
-    else {
-        if('1' !=  kopts.get()) {
-            LOG(E) << "The Kernel flag libata.allow_tpm is not set correctly";
-               LOG(E) << "Please see the readme note about setting the libata.allow_tpm ";
-        }
-        kopts.close();
     }
 
     if ((fd = open(devref, O_RDWR)) < 0) {
@@ -163,7 +151,7 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
     sg.dxferp = buffer;
     sg.cmdp = cdb;
     sg.sbp = sense;
-    sg.timeout = 5000;
+    sg.timeout = 60000;
     sg.flags = 0;
     sg.pack_id = 0;
     sg.usr_ptr = NULL;
@@ -203,6 +191,19 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
         disk_info.devType = DEVICE_TYPE_OTHER;
         identify_SAS(&disk_info);
         return;
+    }
+
+    ifstream kopts;
+    kopts.open("/sys/module/libata/parameters/allow_tpm", ios::in);
+    if (!kopts) {
+	LOG(W) << "Unable to verify Kernel flag libata.allow_tpm ";
+    } 
+    else {
+        if('1' !=  kopts.get()) {
+            LOG(E) << "The Kernel flag libata.allow_tpm is not set correctly";
+               LOG(E) << "Please see the readme note about setting the libata.allow_tpm ";
+        }
+        kopts.close();
     }
 
     if (!(memcmp(nullz.data(), buffer, 512))) {
@@ -285,7 +286,7 @@ uint8_t DtaDevLinuxSata::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t 
         sg.dxferp = buffer;
         sg.cmdp = cdb;
         sg.sbp = sense;
-        sg.timeout = 5000;
+        sg.timeout = 60000;
         sg.flags = 0;
         sg.pack_id = 0;
         sg.usr_ptr = NULL;
@@ -348,7 +349,7 @@ void DtaDevLinuxSata::identify_SAS(OPAL_DiskInfo *disk_info)
     sg.dxferp = buffer;
     sg.cmdp = cdb;
     sg.sbp = sense;
-    sg.timeout = 5000;
+    sg.timeout = 60000;
     sg.flags = 0;
     sg.pack_id = 0;
     sg.usr_ptr = NULL;
