@@ -587,7 +587,7 @@ uint8_t DtaDevOpal::rekeyLockingRange_SUM(vector<uint8_t> LR, vector<uint8_t>  U
 }
 uint8_t DtaDevOpal::setBandsEnabled(int16_t lockingrange, char * password)
 {
-	if (password == NULL) LOG(D4) << "Password is NULL"; // unreferenced formal paramater
+	if (password == NULL) { LOG(D4) << "Password is NULL"; } // unreferenced formal paramater
 	LOG(D1) << "Entering DtaDevOpal::setBandsEnabled()" << lockingrange << " " << dev;
 	LOG(I) << "setBandsEnabled is not implemented.  It is not part of the Opal SSC ";
 	LOG(D1) << "Exiting DtaDevOpal::setBandsEnabled()";
