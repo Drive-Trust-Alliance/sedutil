@@ -47,6 +47,10 @@ public:
 	uint8_t isAnySSC();
 	/** Is the MBREnabled flag set */
 	uint8_t MBREnabled();
+	/** Is the MBRDone flag set */
+	uint8_t MBRDone();
+	/** Is the Locked flag set */
+	uint8_t Locked();
 	/** Is there an OS disk represented by this object */
 	uint8_t isPresent();
 	/** Returns the Firmware revision reported by the identify command */
@@ -93,6 +97,8 @@ public:
 	virtual void osmsSleep(uint32_t milliseconds) = 0;
 	/** OS specific routine to send an ATA identify to the device */
 	virtual void identify(OPAL_DiskInfo& disk_info) = 0;
+	/** OS specific routine to get size of the device */
+	virtual unsigned long long getSize() = 0;
 	/*
 	 * virtual functions required to be implemented
 	 * because they are called by sedutil.cpp
