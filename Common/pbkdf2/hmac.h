@@ -1,56 +1,78 @@
-/* hmac.h -- hashed message authentication codes
-   Copyright (C) 2005, 2009-2015 Free Software Foundation, Inc.
-
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, see <http://www.gnu.org/licenses/>.  */
-
-/* Written by Simon Josefsson.  */
+/*
+ * cifra - embedded cryptography library
+ * Written in 2014 by Joseph Birr-Pixton <jpixton@gmail.com>
+ *
+ * To the extent possible under law, the author(s) have dedicated all
+ * copyright and related and neighboring rights to this software to the
+ * public domain worldwide. This software is distributed without any
+ * warranty.
+ *
+ * You should have received a copy of the CC0 Public Domain Dedication
+ * along with this software. If not, see
+ * <http://creativecommons.org/publicdomain/zero/1.0/>.
+ */
 
 #ifndef HMAC_H
-# define HMAC_H 1
+#define HMAC_H
 
 #include <stddef.h>
+#include <stdint.h>
 
-/* Compute Hashed Message Authentication Code with MD5, as described
-   in RFC 2104, over BUFFER data of BUFLEN bytes using the KEY of
-   KEYLEN bytes, writing the output to pre-allocated 16 byte minimum
-   RESBUF buffer.  Return 0 on success.  */
-int
-hmac_md5 (const void *key, size_t keylen,
-          const void *buffer, size_t buflen, void *resbuf);
+#include "chash.h"
 
-/* Compute Hashed Message Authentication Code with SHA-1, over BUFFER
-   data of BUFLEN bytes using the KEY of KEYLEN bytes, writing the
-   output to pre-allocated 20 byte minimum RESBUF buffer.  Return 0 on
-   success.  */
-int
-hmac_sha1 (const void *key, size_t keylen,
-           const void *in, size_t inlen, void *resbuf);
+/**
+ * HMAC
+ * ====
+ * This is a one-shot and incremental interface to computing
+ * HMAC with any hash function.
+ *
+ * (Note: HMAC with SHA3 is possible, but is probably not a
+ * sensible thing to want.)
+ */
 
-/* Compute Hashed Message Authentication Code with SHA-256, over BUFFER
-   data of BUFLEN bytes using the KEY of KEYLEN bytes, writing the
-   output to pre-allocated 32 byte minimum RESBUF buffer.  Return 0 on
-   success.  */
-int
-hmac_sha256 (const void *key, size_t keylen,
-             const void *in, size_t inlen, void *resbuf);
+/* .. c:type:: cf_hmac_ctx
+ * HMAC incremental interface context.
+ *
+ * .. c:member:: cf_hmac_ctx.hash
+ * Hash function description.
+ *
+ * .. c:member:: cf_hmac_ctx.inner
+ * Inner hash computation.
+ *
+ * .. c:member:: cf_hmac_ctx.outer
+ * Outer hash computation.
+ */
+typedef struct
+{
+  const cf_chash *hash;
+  cf_chash_ctx inner;
+  cf_chash_ctx outer;
+} cf_hmac_ctx;
 
-/* Compute Hashed Message Authentication Code with SHA-512, over BUFFER
-   data of BUFLEN bytes using the KEY of KEYLEN bytes, writing the
-   output to pre-allocated 64 byte minimum RESBUF buffer.  Return 0 on
-   success.  */
-int
-hmac_sha512 (const void *key, size_t keylen,
-             const void *in, size_t inlen, void *resbuf);
+/* .. c:function:: $DECL
+ * Set up ctx for computing a HMAC using the given hash and key. */
+void cf_hmac_init(cf_hmac_ctx *ctx,
+                  const cf_chash *hash,
+                  const uint8_t *key, size_t nkey);
 
-#endif /* HMAC_H */
+/* .. c:function:: $DECL
+ * Input data. */
+void cf_hmac_update(cf_hmac_ctx *ctx,
+                    const void *data, size_t ndata);
+
+/* .. c:function:: $DECL
+ * Finish and compute HMAC.
+ * `ctx->hash->hashsz` bytes are written to `out`. */
+void cf_hmac_finish(cf_hmac_ctx *ctx, uint8_t *out);
+
+/* .. c:function:: $DECL
+ * One shot interface: compute `HMAC_hash(key, msg)`, writing the
+ * answer (which is `hash->hashsz` long) to `out`.
+ *
+ * This function does not fail. */
+void cf_hmac(const uint8_t *key, size_t nkey,
+             const uint8_t *msg, size_t nmsg,
+             uint8_t *out,
+             const cf_chash *hash);
+
+#endif

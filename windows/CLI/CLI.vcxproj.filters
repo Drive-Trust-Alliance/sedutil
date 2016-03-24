@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\pbkdf2">
+      <UniqueIdentifier>{89811d18-54fb-4118-b53a-93e9250beb0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\pbkdf2">
+      <UniqueIdentifier>{25ecd795-bbcf-41c5-9773-4f8e6e8c6958}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\os.h">
@@ -60,9 +66,6 @@
     <ClInclude Include="..\..\Common\DtaLexicon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\DtaOptions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Common\DtaResponse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -70,24 +73,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Common\DtaStructures.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\stdalign.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\sha1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\memxor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\hmac.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\gc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\DtaDevOS.h">
@@ -102,23 +87,32 @@
     <ClInclude Include="..\..\Common\DtaDiskType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\bitops.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\blockwise.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\chash.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\handy.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\hmac.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\pbkdf2.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\sha1.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\tassert.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Common\pbkdf2\gc-gnulib.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\pbkdf2\gc-pbkdf2-sha1.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\pbkdf2\hmac-sha1.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\pbkdf2\memxor.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\pbkdf2\sha1.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Common\sedutil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -172,6 +166,21 @@
     </ClCompile>
     <ClCompile Include="..\..\Common\DtaDiskType.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\pbkdf2\blockwise.c">
+      <Filter>Source Files\pbkdf2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\pbkdf2\chash.c">
+      <Filter>Source Files\pbkdf2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\pbkdf2\hmac.c">
+      <Filter>Source Files\pbkdf2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\pbkdf2\pbkdf2.c">
+      <Filter>Source Files\pbkdf2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\pbkdf2\sha1.c">
+      <Filter>Source Files\pbkdf2</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

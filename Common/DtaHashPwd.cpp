@@ -25,10 +25,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDev.h"
 #include "log.h"
 
-extern "C"
-int gc_pbkdf2_sha1(const char *P, size_t Plen,const char *S, size_t Slen,
-					unsigned int c,char *DK, size_t dkLen);
-
+extern "C" {
+#include "pbkdf2.h"
+#include "sha1.h"
+}
 using namespace std;
 
 void DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
@@ -38,7 +38,7 @@ void DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> sal
 	// if the hashsize can be > 255 the token overhead logic needs to be fixed
 	assert(1 == sizeof(hashsize));
 	if (253 < hashsize) { LOG(E) << "Hashsize > 253 incorrect token generated"; }
-
+	
 	hash.clear();
 	// don't hash the devault OPAL password ''
 	if (0 == strnlen(password, 32)) {
@@ -48,8 +48,15 @@ void DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> sal
 	for (uint16_t i = 0; i < hashsize; i++) {
 		hash.push_back(' ');
 	}
-	gc_pbkdf2_sha1(password, strnlen(password, 256), (const char *)salt.data(), salt.size(), iter,
-		(char *)hash.data(), hash.size());
+	
+	cf_pbkdf2_hmac((uint8_t *)password, strnlen(password, 256),
+		salt.data(), salt.size(),
+		iter,
+		hash.data(), hash.size(),
+		&cf_sha1);
+
+//	gc_pbkdf2_sha1(password, strnlen(password, 256), (const char *)salt.data(), salt.size(), iter,
+//		(char *)hash.data(), hash.size());
 exit:	// add the token overhead
 	hash.insert(hash.begin(), (uint8_t)hash.size());
 	hash.insert(hash.begin(), 0xd0);

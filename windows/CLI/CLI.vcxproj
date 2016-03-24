@@ -33,17 +33,18 @@
     <ClInclude Include="..\..\Common\DtaHashPwd.h" />
     <ClInclude Include="..\..\Common\DtaHexDump.h" />
     <ClInclude Include="..\..\Common\DtaLexicon.h" />
-    <ClInclude Include="..\..\Common\DtaOptions.h" />
     <ClInclude Include="..\..\Common\DtaResponse.h" />
     <ClInclude Include="..\..\Common\DtaSession.h" />
     <ClInclude Include="..\..\Common\DtaStructures.h" />
     <ClInclude Include="..\..\common\log.h" />
-    <ClInclude Include="..\..\Common\pbkdf2\config.h" />
-    <ClInclude Include="..\..\Common\pbkdf2\gc.h" />
+    <ClInclude Include="..\..\Common\pbkdf2\bitops.h" />
+    <ClInclude Include="..\..\Common\pbkdf2\blockwise.h" />
+    <ClInclude Include="..\..\Common\pbkdf2\chash.h" />
+    <ClInclude Include="..\..\Common\pbkdf2\handy.h" />
     <ClInclude Include="..\..\Common\pbkdf2\hmac.h" />
-    <ClInclude Include="..\..\Common\pbkdf2\memxor.h" />
+    <ClInclude Include="..\..\Common\pbkdf2\pbkdf2.h" />
     <ClInclude Include="..\..\Common\pbkdf2\sha1.h" />
-    <ClInclude Include="..\..\Common\pbkdf2\stdalign.h" />
+    <ClInclude Include="..\..\Common\pbkdf2\tassert.h" />
     <ClInclude Include="..\DtaDevOS.h" />
     <ClInclude Include="..\DtaDiskATA.h" />
     <ClInclude Include="..\DtaDiskUSB.h" />
@@ -64,10 +65,10 @@
     <ClCompile Include="..\..\Common\DtaOptions.cpp" />
     <ClCompile Include="..\..\Common\DtaResponse.cpp" />
     <ClCompile Include="..\..\Common\DtaSession.cpp" />
-    <ClCompile Include="..\..\Common\pbkdf2\gc-gnulib.c" />
-    <ClCompile Include="..\..\Common\pbkdf2\gc-pbkdf2-sha1.c" />
-    <ClCompile Include="..\..\Common\pbkdf2\hmac-sha1.c" />
-    <ClCompile Include="..\..\Common\pbkdf2\memxor.c" />
+    <ClCompile Include="..\..\Common\pbkdf2\blockwise.c" />
+    <ClCompile Include="..\..\Common\pbkdf2\chash.c" />
+    <ClCompile Include="..\..\Common\pbkdf2\hmac.c" />
+    <ClCompile Include="..\..\Common\pbkdf2\pbkdf2.c" />
     <ClCompile Include="..\..\Common\pbkdf2\sha1.c" />
     <ClCompile Include="..\..\Common\sedutil.cpp" />
     <ClCompile Include="..\DtaDevOS.cpp" />
@@ -129,21 +130,23 @@
     <LinkIncremental>true</LinkIncremental>
     <TargetName>sedutil-cli</TargetName>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>$(OutDir)\OBJDIR\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>sedutil-cli</TargetName>
+    <IntDir>$(OutDir)\OBJDIR\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>sedutil-cli</TargetName>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>$(OutDir)\OBJDIR\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>sedutil-cli</TargetName>
+    <IntDir>$(OutDir)\OBJDIR\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -152,7 +155,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -179,7 +182,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -208,7 +211,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -239,7 +242,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
