@@ -51,6 +51,8 @@ public:
 	uint8_t MBRDone();
 	/** Is the Locked flag set */
 	uint8_t Locked();
+	/** Is the Locking SP enabled */
+	uint8_t LockingEnabled();
 	/** Is there an OS disk represented by this object */
 	uint8_t isPresent();
 	/** Returns the Firmware revision reported by the identify command */

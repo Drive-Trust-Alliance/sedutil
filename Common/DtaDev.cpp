@@ -84,6 +84,11 @@ uint8_t DtaDev::Locked()
 	LOG(D1) << "Entering DtaDev::Locked" << (uint16_t)disk_info.Locking_locked;
 	return disk_info.Locking_locked;
 }
+uint8_t DtaDev::LockingEnabled()
+{
+	LOG(D1) << "Entering DtaDev::LockingEnabled" << (uint16_t)disk_info.Locking_lockingEnabled;
+	return disk_info.Locking_lockingEnabled;
+}
 char *DtaDev::getFirmwareRev()
 {
 	return (char *)&disk_info.firmwareRev;
