@@ -1,6 +1,7 @@
 AUTOMAKE_OPTIONS = foreign subdir-objects
-AM_CFLAGS = -Wall -Werror -std=c11
-AM_CXXFLAGS = -Wall -Werror -std=c++11 -I./linux -I$(srcdir)/Common -I$(srcdir)/Common/pbkdf2 -I$(srcdir)/linux -I$(srcdir)/LinuxPBA
+WERROR = -Werror
+AM_CFLAGS = -Wall $(WERROR) -std=c11
+AM_CXXFLAGS = -Wall $(WERROR) -std=c++11 -I./linux -I$(srcdir)/Common -I$(srcdir)/Common/pbkdf2 -I$(srcdir)/linux -I$(srcdir)/LinuxPBA
 SEDUTIL_COMMON_CODE = Common/log.h \
 	Common/DtaEndianFixup.h Common/DtaStructures.h \
 	Common/DtaLexicon.h Common/DtaConstants.h \
