@@ -80,17 +80,21 @@ void DtaDevOS::init(const char * devref)
 		_In_(DWORD)        sizeof(STORAGE_DEVICE_DESCRIPTOR),		// size of output buffer
 		_Out_opt_(LPDWORD)      &BytesReturned,						// number of bytes returned
 		_Inout_opt_(LPOVERLAPPED) NULL)) {
+        DWORD err = GetLastError();
+        LOG(D1) << "Error quering device properties " << devref << " Error " << err;
 		return;
 	}
 	// OVERLAPPED structure
 	switch (descriptor.BusType) {
-	case BusTypeSata:
+    case BusTypeAta:
+    case BusTypeSata:
 		disk = new DtaDiskATA();
 		break;
 	case BusTypeUsb:
 		disk = new DtaDiskUSB();
 		break;
 	default:
+        LOG(D1) << "Unknown bus type for " << devref << " Bus type " << descriptor.BusType;
 		return;
 	}
 
