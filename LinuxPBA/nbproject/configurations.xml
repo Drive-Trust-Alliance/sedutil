@@ -15,17 +15,11 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="pbkdf2" displayName="pbkdf2" projectFiles="true">
-        <itemPath>../Common/pbkdf2/config.h</itemPath>
-        <itemPath>../Common/pbkdf2/gc-gnulib.c</itemPath>
-        <itemPath>../Common/pbkdf2/gc-pbkdf2-sha1.c</itemPath>
-        <itemPath>../Common/pbkdf2/gc.h</itemPath>
-        <itemPath>../Common/pbkdf2/hmac-sha1.c</itemPath>
-        <itemPath>../Common/pbkdf2/hmac.h</itemPath>
-        <itemPath>../Common/pbkdf2/memxor.c</itemPath>
-        <itemPath>../Common/pbkdf2/memxor.h</itemPath>
+        <itemPath>../Common/pbkdf2/blockwise.c</itemPath>
+        <itemPath>../Common/pbkdf2/chash.c</itemPath>
+        <itemPath>../Common/pbkdf2/hmac.c</itemPath>
+        <itemPath>../Common/pbkdf2/pbkdf2.c</itemPath>
         <itemPath>../Common/pbkdf2/sha1.c</itemPath>
-        <itemPath>../Common/pbkdf2/sha1.h</itemPath>
-        <itemPath>../Common/pbkdf2/stdalign.h</itemPath>
       </logicalFolder>
       <itemPath>../Common/DtaCommand.cpp</itemPath>
       <itemPath>../Common/DtaDev.cpp</itemPath>
@@ -87,7 +81,7 @@
           <incDir>
             <pElem>../linux</pElem>
             <pElem>../Common</pElem>
-            <pElem>../Common/pbdkf2</pElem>
+            <pElem>../Common/pbkdf2</pElem>
           </incDir>
           <preprocessorList>
             <Elem>DTADEBUG</Elem>
@@ -120,27 +114,15 @@
       </item>
       <item path="../Common/DtaSession.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/config.h" ex="false" tool="3" flavor2="0">
+      <item path="../Common/pbkdf2/blockwise.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbkdf2/chash.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/gc-pbkdf2-sha1.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbkdf2/hmac.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/gc.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/hmac.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/memxor.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/memxor.h" ex="false" tool="3" flavor2="0">
+      <item path="../Common/pbkdf2/pbkdf2.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="../Common/pbkdf2/sha1.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/sha1.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../linux/DtaDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -184,7 +166,7 @@
           <incDir>
             <pElem>../linux</pElem>
             <pElem>../Common</pElem>
-            <pElem>../Common/pbdkf2</pElem>
+            <pElem>../Common/pbkdf2</pElem>
           </incDir>
           <warningLevel>3</warningLevel>
         </ccTool>
@@ -220,27 +202,15 @@
       </item>
       <item path="../Common/DtaSession.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/config.h" ex="false" tool="3" flavor2="0">
+      <item path="../Common/pbkdf2/blockwise.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbkdf2/chash.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/gc-pbkdf2-sha1.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbkdf2/hmac.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/gc.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/hmac.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/memxor.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/memxor.h" ex="false" tool="3" flavor2="0">
+      <item path="../Common/pbkdf2/pbkdf2.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="../Common/pbkdf2/sha1.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/sha1.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../linux/DtaDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -284,7 +254,7 @@
           <incDir>
             <pElem>../linux</pElem>
             <pElem>../Common</pElem>
-            <pElem>../Common/pbdkf2</pElem>
+            <pElem>../Common/pbkdf2</pElem>
           </incDir>
           <warningLevel>3</warningLevel>
         </ccTool>
@@ -321,27 +291,15 @@
       </item>
       <item path="../Common/DtaSession.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/config.h" ex="false" tool="3" flavor2="0">
+      <item path="../Common/pbkdf2/blockwise.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbkdf2/chash.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/gc-pbkdf2-sha1.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbkdf2/hmac.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/gc.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/hmac.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/memxor.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/memxor.h" ex="false" tool="3" flavor2="0">
+      <item path="../Common/pbkdf2/pbkdf2.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="../Common/pbkdf2/sha1.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/sha1.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../linux/DtaDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -386,7 +344,7 @@
           <incDir>
             <pElem>../linux</pElem>
             <pElem>../Common</pElem>
-            <pElem>../Common/pbdkf2</pElem>
+            <pElem>../Common/pbkdf2</pElem>
           </incDir>
           <preprocessorList>
             <Elem>DTADEBUG</Elem>
@@ -419,27 +377,15 @@
       </item>
       <item path="../Common/DtaSession.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/config.h" ex="false" tool="3" flavor2="0">
+      <item path="../Common/pbkdf2/blockwise.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/gc-gnulib.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbkdf2/chash.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/gc-pbkdf2-sha1.c" ex="false" tool="0" flavor2="0">
+      <item path="../Common/pbkdf2/hmac.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="../Common/pbkdf2/gc.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/hmac-sha1.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/hmac.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/memxor.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/memxor.h" ex="false" tool="3" flavor2="0">
+      <item path="../Common/pbkdf2/pbkdf2.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="../Common/pbkdf2/sha1.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/sha1.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../Common/pbkdf2/stdalign.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../linux/DtaDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>

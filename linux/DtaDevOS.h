@@ -54,6 +54,8 @@ protected:
     void osmsSleep(uint32_t ms);
     /** OS specific routine to send an ATA identify to the device */
     void identify(OPAL_DiskInfo& disk_info);
+    /** return drive size in bytes */
+    unsigned long long getSize();
     int fd; /**< Linux handle for the device  */
 private:
     /** OS specific routine to send a SCSI INQUIRY to the device */
