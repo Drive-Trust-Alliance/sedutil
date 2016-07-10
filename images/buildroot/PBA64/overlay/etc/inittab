@@ -22,7 +22,7 @@ null::sysinit:/bin/mount -a
 null::sysinit:/bin/hostname -F /etc/hostname
 # now run any rc scripts
 ::sysinit:/etc/init.d/rcS
-::sysinit:/sbin/linuxpba
+#::sysinit:/sbin/linuxpba
 
 # Put a getty on the serial port
 console::respawn:/sbin/getty -L  console 0 vt100 # GENERIC_SERIAL

@@ -1,0 +1,226 @@
+#!/bin/sh
+
+SED_DIR=/etc/sed-crypt
+TPM_SIZE=256
+USB_SIZE=4096
+
+if [ $# -lt 2 ]; then
+	echo "Syntax: $0 <device> <password> [TPM NVRAM Slot|USB device...]"
+	exit 0
+fi
+
+DEV=$1
+PASS=$2
+shift 2
+
+DEV_LOCKING=$(sedutil-cli --query $DEV | grep "[[:space:]]LockingEnabled = " | sed 's/.*[[:space:]]LockingEnabled = \([YyNn]\).*/\1/g')
+#if [ -z "$DEV_LOCKING" ]; then
+#	echo "Locking is not enabled for $DEV"
+#	exit 0
+#fi
+#if [ $DEV_LOCKING = "N" -o $DEV_LOCKING = "n" ]; then
+#	echo "Locking is not enabled for $DEV"
+#	exit 0
+#fi
+
+DEV_MODEL=$(hdparm -i $DEV | awk -F ', ' '{if ($1 ~ /Model=/) { print $1 }}' | cut -f2- -d=)
+DEV_SERIAL=$(hdparm -i $DEV | awk -F ', ' '{if ($1 ~ /Model=/) { print $3 }}' | cut -f2- -d=)
+FULLDEV=ata-$(echo $DEV_MODEL | sed 's/ /_/g')_$(echo $DEV_SERIAL | sed 's/ /_/g')
+
+TMPDIR=`mktemp -d`
+mount -t tmpfs tmpfs $TMPDIR
+
+echo "$PASS" > $TMPDIR/keyfile
+mksquashfs $TMPDIR/keyfile $TMPDIR/$FULLDEV.sqsh
+SQSIZE=$(ls -l --block-size=512 $TMPDIR/$FULLDEV.sqsh | awk '{print $5}')
+
+dd if=/dev/zero of=$TMPDIR/$FULLDEV.img bs=1024 count=$((SQSIZE + 1030))
+CRYPTSETUP=0
+
+SLOT=0
+while [ -n "$1" ]; do
+	if [ $SLOT -ge 8 ]; then
+		break
+	fi
+
+	if [ -f $1 -a -b $1 ]; then
+		USB_DEV=$1
+		DEV_FSTYPE=$(lsblk -o FSTYPE -r $USB_DEV)
+		if [[ ! $FSTYPE =~ /fat$/ &&  ! $FSTYPE =~ /^ext/ ]]; then
+			echo "$USB_DEV is not a *fat or ext* filesystem."
+			shift
+			continue
+		fi
+
+		DEV_PARENT=$(lsblk -o KNAME -r $USB_DEV)
+		DEV_PPARENT=$(lsblk -o PKNAME -r /dev/$PARENT)
+		while [ -n "$PPARENT" ]; do
+			DEV_PARENT=$PPARENT
+			DEV_PPARENT=$(lsblk -o PKNAME -r /dev/$PARENT)
+		done
+
+		DEV_TRAN=$(lsblk -o TRAN -r /dev/$DEV_PARENT)
+		if [ "$DEV_TRAN" != "usb" ]; then
+			echo "$USB_DEV is not a USB device."
+			shift
+			continue
+		fi
+
+		USB_TMPDIR=`mktemp -d -p $TMPDIR`
+		mount $USB_DEV $USB_TMPDIR
+
+		dd if=/dev/urandom of=$TMPDIR/$SLOT.key bs=1 count=$USB_SIZE
+		if [ $SLOT -eq 0 ]; then
+			cryptsetup --batch-mode --align-payload=1 luksFormat $TMPDIR/$FULLDEV.img --key-file $TMPDIR/$SLOT.key --hash sha256
+		else
+			cryptsetup luksAddKey $TMPDIR/$FULLDEV.img $TMPDIR/$SLOT.key --key-file $TMPDIR/0.key
+		fi
+
+		if [ $? -eq 0 ]; then
+			cp $TMPDIR/$SLOT.key $USB_TMPDIR/$FULLDEV.key
+			echo "Added key to $USB_DEV"
+			SLOT=$((SLOT + 1))
+		else
+			echo "Failed to add key for $USB_DEV"
+		fi
+
+		umount $USB_TMPDIR
+		rmdir $USB_TMPDIR
+	else
+		TPM_IDX=$1
+		if [ -n "$(tpm_nvinfo -i $TPM_IDX)" ]; then
+			echo "TPM NVRam slot $TPM_IDX is already occupied"
+			shift
+			continue
+		fi
+
+		if [ -z "$OWNERPASS" ]; then
+			read -s -p "Enter your TPM owner password (hit enter for well-known password): " OPASS
+			if [ -n "$OPASS" ]; then
+				OWNERPASS="-o $OPASS"
+			else
+				OWNERPASS="-y"
+			fi
+		fi
+
+		NVRAM_PASS=$(echo -n "$(dd if=/dev/urandom bs=1 count=15 | base64)")
+		egrep "^PCR-(00|01|02|03|04|05|06|07)" /sys/class/tpm/tpm0/device/pcrs | sed -e 's/ //g' -e 's/:/ /' -e 's/^PCR-/r /' > $TMPDIR/pcrs
+		tpm_nvdefine -i $TPM_IDX -s $TPM_SIZE $OWNERPASS -a "$NVRAM_PASS" -f $TMPDIR/pcrs -p 'AUTHWRITE|PPREAD|READ_STCLEAR|WRITEALL'
+		if [ $? -ne 0 ]; then
+			echo "Could not define nvram area $TPM_IDX"
+			shift
+			continue
+		fi
+
+		dd if=/dev/urandom of=$TMPDIR/$SLOT.key bs=1 count=$TPM_SIZE
+		if [ $SLOT -eq 0 ]; then
+			cryptsetup --batch-mode --align-payload=1 luksFormat $TMPDIR/$FULLDEV.img --key-file $TMPDIR/$SLOT.key --hash sha256
+		else
+			cryptsetup luksAddKey $TMPDIR/$FULLDEV.img $TMPDIR/$SLOT.key --key-file $TMPDIR/0.key
+		fi
+
+		if [ $? -eq 0 ]; then
+			tpm_nvwrite -i $TPM_IDX -s $TPM_SIZE -f $TMPDIR/$SLOT.key --password="$NVRAM_PASS"
+		else
+			tpm_nvrelease -i $TPM_IDX
+		fi
+
+		if [ $? -eq 0 ]; then
+			echo "Added key to TPM NVRam Index $TPM_IDX"
+			echo "$FULLDEV $TPM_IDX" >> $TMPDIR/tpm-idx
+			SLOT=$((SLOT + 1))
+		else
+			echo "Failed to add key to TPM NVRam Index $TPM_IDX"
+		fi
+	fi
+
+	shift
+done
+
+while [ $SLOT -lt 8 ]; do
+	read -p "Do you wish to add a Yubikey challenge [y/N]? " YN
+	if [ -z "$YN" ]; then
+		break
+	fi
+
+	case "$YN" in
+		[Nn]) break ;;
+		[Yy])
+			ID=`ykinfo -s | awk '{print $2}'`
+			if [ -z "$ID" ]; then
+				continue
+			fi
+			if [ -r $TMPDIR/$ID.yk ]; then
+				echo "Yubikey $ID is already configured."
+			fi
+
+			echo "Found Yubikey $ID"
+			YKSLOT=""
+			while [ -z "$YKSLOT" ]; do
+				read -p "Which slot is programmed for Challenge-Response (HMAC) [1, 2 or Q to quit]? " YN
+				case "$YN" in
+					[Qq]) break ;;
+					1) YKSLOT=1 ;;
+					2) YKSLOT=2 ;;
+				esac
+			done
+			if [ -n "$YKSLOT" ]; then
+				read -p "Enter Yubikey password: " -sr PASS
+				echo
+				if [ -z "$PASS" ]; then
+					echo "Failed to add key for $ID"
+				else
+					ykchalresp -$YKSLOT "$PASS" > $TMPDIR/$SLOT.key
+					if [ $? -eq 0 ]; then
+						if [ $SLOT -eq 0 ]; then
+							cryptsetup --batch-mode --align-payload=1 luksFormat $TMPDIR/$FULLDEV.img --key-file $TMPDIR/$SLOT.key --hash sha256
+						else
+							cryptsetup luksAddKey $TMPDIR/$FULLDEV.img $TMPDIR/$SLOT.key --key-file $TMPDIR/0.key
+						fi
+					fi
+
+					if [ $? -eq 0 ]; then
+						echo "$YKSLOT" > ${TMPDIR}/${ID}.yk
+						echo "Added key for $ID:$YKSLOT"
+						SLOT=$((SLOT + 1))
+					else
+						echo "Failed to add key for $ID"
+					fi
+				fi
+			fi
+			;;
+	esac
+done
+
+if [ $SLOT -gt 0 ]; then
+	cryptsetup open $TMPDIR/$FULLDEV.img crypt-$FULLDEV --key-file $TMPDIR/0.key
+	dd if=$TMPDIR/$FULLDEV.sqsh of=/dev/mapper/crypt-$FULLDEV
+	cryptsetup close crypt-$FULLDEV
+
+	cp $TMPDIR/$FULLDEV.img buildroot/PBA32/overlay/${SED_DIR}
+	cp $TMPDIR/*.yk buildroot/PBA32/overlay/${SED_DIR}
+	if [ -f buildroot/PBA32/overlay/${SED_DIR}/tpm-idx ]; then
+		grep -v "^$FULLDEV " buildroot/PBA32/overlay/${SED_DIR}/tpm-idx > $TMPDIR/old-tpm-idx
+	else
+		> $TMPDIR/old-tpm-idx
+	fi
+	if [ -s $TPMDIR/old-tpm-idx -o -s $TMPDIR/tpm-idx ]; then
+		cat $TMPDIR/old-tpm-idx $TMPDIR/tpm-idx > buildroot/PBA32/overlay/${SED_DIR}/tpm-idx
+	fi
+
+	cp $TMPDIR/$FULLDEV.img buildroot/PBA64/overlay/${SED_DIR}
+	cp $TMPDIR/*.yk buildroot/PBA64/overlay/${SED_DIR}
+	if [ -f buildroot/PBA64/overlay/${SED_DIR}/tpm-idx ]; then
+		grep -v "^$FULLDEV " buildroot/PBA64/overlay/${SED_DIR}/tpm-idx > $TMPDIR/old-tpm-idx
+	else
+		> $TMPDIR/old-tpm-idx
+	fi
+	if [ -s $TPMDIR/old-tpm-idx -o -s $TMPDIR/tpm-idx ]; then
+		cat $TMPDIR/old-tpm-idx $TMPDIR/tpm-idx > buildroot/PBA64/overlay/${SED_DIR}/tpm-idx
+	fi
+else
+	echo "Could not setup autounlock for $FULLDEV."
+fi
+
+umount $TMPDIR
+rmdir $TMPDIR

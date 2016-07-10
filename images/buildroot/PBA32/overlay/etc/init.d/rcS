@@ -1,0 +1,206 @@
+#!/bin/sh
+
+#DEBUG=echo
+ATTEMPTS=3
+
+SED_DIR=/etc/sed-crypt
+
+FAILED=0
+SUCCEEDED=0
+# This will find out what devices exist that have OPEL active.
+
+MBRCNT=0
+
+try_unlock() {
+	ITR=$1
+	local DEV=${SED_DEV[$ITR]}
+	local NAME=${SED_NAME[$ITR]}
+	cryptsetup open ${SED_DIR}/${NAME}.img unlock-${NAME} --key-file $2
+	if [ $? -eq 0 ]; then
+		mkdir -p /media/unlock-${NAME}
+		mount -t squashfs /dev/mapper/unlock-${NAME} /media/unlock-${NAME}
+		$DEBUG sedutil-cli --setLockingRange 0 RW "$(cat /media/unlock-${NAME}/keyfile)" ${DEV}
+		if [ $? -eq 0 ]; then
+			echo "$NAME successfully unlocked."
+
+			DEV_MBR_ENABLED=$(sedutil-cli --query $DEV | grep "[[:space:]]MBREnabled = " | sed 's/.*[[:space:]]MBREnabled = \([YyNn]\).*/\1/g')
+			DEV_MBR_DONE=$(sedutil-cli --query $DEV | grep "[[:space:]]MBRDone = " | sed 's/.*[[:space:]]MBRDone = \([YyNn]\).*/\1/g')
+			if [ "$DEV_MBR_ENABLED" = "Y" -o "$DEV_MBR_ENABLED" = "y" ]; then
+				if [ "$DEV_MBR_DONE" = "N" -o "$DEV_MBR_DONE" = "n" ]; then
+					MBR_DEV[$MBRCNT]=${DEV}
+					MBR_PASS[$MBRCNT]=$(cat /media/unlock-${NAME}/keyfile)
+					MBRCNT=$((MBRCNT + 1))
+				fi
+			fi
+
+			SUCCEEDED=$((SUCCEEDED + 1))
+			if [ ${SED_FAILED[$ITR]} -gt 0 ]; then
+				FAILED=$((FAILED - 1))
+			fi
+			unset SED_DEV[$ITR] SED_NAME[$ITR] SED_FAILED[$ITR]
+			SED_COUNT=$((SED_COUNT - 1))
+		else
+			echo "$NAME failed to unlock."
+			FAILED=$((FAILED + 1))
+			SED_FAILED[$ITR]=1
+		fi
+		umount /media/unlock-${NAME}
+		rmdir /media/unlock-${NAME}
+		cryptsetup close unlock-${NAME}
+	fi
+}
+
+process_yubikey() {
+	ID=`ykinfo -s | awk '{print $2}'`
+
+	if [ "x$ID" != "x" -a -r ${SED_DIR}/${ID}.yk ]; then
+		TMPDIR=`mktemp -d`
+		$DEBUG mount -t tmpfs tmpfs $TMPDIR
+
+		SLOT=`cat ${SED_DIR}/${ID}.yk`
+		I=0
+		while [ $I -lt $ATTEMPTS -a $SED_COUNT -gt 0 ]; do
+			read -p "Yubikey Passphrase for $ID [$((I + 1))/$ATTEMPTS]: " -sr PASS
+			echo
+			TMPFILE=`mktemp -p $TMPDIR`
+			ykchalresp -${SLOT} "${PASS}" > $TMPFILE
+
+			J=0
+			for J in $(seq 0 $((${#SED_DEV[@]} - 1)))
+			do
+				if [ -n "${SED_DEV[$J]}" ]; then
+					try_unlock $J $TMPFILE
+				fi
+			done
+
+			rm -f $TMPFILE
+			I=$((I + 1))
+		done
+		
+		$DEBUG umount $TMPDIR
+		$DEBUG rmdir $TMPDIR
+	fi
+}
+
+process_usbdev() {
+	USB_DEV_FILE=`mktemp`
+	lsblk -o KNAME,MAJ:MIN,FSTYPE,TYPE,LABEL -r | awk '{if ($3 ~ /ext/ || $3 ~ /fat/) { print; }}' >$USB_DEV_FILE
+	exec 3<>$USB_DEV_FILE
+
+	while read -u 3 -s DEV
+	do
+		SED_COUNT=$I
+		if [ $SED_COUNT -le 0 ]; then
+			break
+		fi
+
+		DEV_TYPE=$(echo $DEV | awk '{print $4}')
+		if [ "$DEV_TYPE" != "part" -a "$DEV_TYPE" != "disk" ]; then
+			continue
+		fi
+
+		DEV_NAME=$(echo $DEV | awk '{print $1}')
+		DEV_PARENT=$DEV_NAME
+
+		DEV_PPARENT=$(lsblk -o KNAME,PKNAME -r | grep "^$DEV_PARENT " | awk '{print $2}')
+		while [ -n "$DEV_PPARENT" ]; do
+			DEV_PARENT=$DEV_PPARENT
+			DEV_PPARENT=$(lsblk -o KNAME,PKNAME -r | grep "^$DEV_PARENT " | awk '{print $2}')
+		done
+
+		PARENT=$(lsblk -o KNAME,TRAN,SERIAL,VENDOR,MODEL -r | grep "^$DEV_PARENT ")
+
+		DEV_TRAN=$(echo $PARENT | awk '{print $2}')
+		if [ "$DEV_TRAN" != "usb" ]; then
+			continue
+		fi
+
+		DEV_MAJOR=$(echo $DEV | awk '{print $2}' | awk -F: '{print $1}')
+		DEV_MINOR=$(echo $DEV | awk '{print $2}' | awk -F: '{print $2}')
+		DEV_FSTYPE=$(echo $DEV | awk '{print $3}')
+		DEV_LABEL=$(echo $DEV | awk '{print $5}' | sed -e 's/\\x20/ /g' -e 's/ *$//')
+		DEV_SERIAL=$(echo $PARENT | awk '{print $3}' | sed -e 's/\\x20/ /g' -e 's/ *$//')
+		DEV_VENDOR=$(echo $PARENT | awk '{print $4}' | sed -e 's/\\x20/ /g' -e 's/ *$//')
+		DEV_MODEL=$(echo $PARENT | awk '{print $5}' | sed -e 's/\\x20/ /g' -e 's/ *$//')
+
+		#echo "$DEV_NAME|$DEV_PARENT|$DEV_MAJOR|$DEV_MINOR|$DEV_FSTYPE|$DEV_TYPE|$DEV_LABEL|$DEV_TRAN|$DEV_SERIAL|$DEV_VENDOR|$DEV_MODEL"
+		echo "Attempting auto-unlock using USB Device $DEV_VENDOR $DEV_MODEL $DEV_SERIAL"
+
+		if [ ! -b /dev/$DEV_NAME ]; then
+			$DEBUG mknod /dev/$DEV_NAME b $DEV_MAJOR $DEV_MINOR
+		fi
+
+		$DEBUG mkdir -p /media/$DEV_NAME
+		$DEBUG mount -t $DEV_FSTYPE /dev/$DEV_NAME /media/$DEV_NAME
+
+		I=0
+		for I in $(seq 0 $((${#SED_DEV[@]} - 1)))
+		do
+			if [ -n "${SED_DEV[$I]}" ]; then
+				if [ -r /media/$DEV_NAME/${SED_NAME[$I]}.txt ]; then
+					try_unlock $I /media/$DEV_NAME/${SED_NAME[$I]}.txt 
+				fi
+			fi
+		done
+
+		$DEBUG umount /media/$DEV_NAME
+	done
+
+	exec 3>&-
+	rm -f $USB_DEV_FILE
+}
+
+SED_DEV_FILE=`mktemp`
+sedutil-cli --scan 2>/dev/null | grep "^/dev/" | awk '{if ($2 != "No") { print $1; }}' > $SED_DEV_FILE
+exec 3<>$SED_DEV_FILE
+
+I=0
+while read -u 3 -s DEV
+do
+	DATA="`sedutil-cli --query $DEV`"
+	DEV_LOCKING=$(echo "$DATA" | grep "[[:space:]]LockingEnabled = " | sed 's/.*[[:space:]]LockingEnabled = \([YyNn]\).*/\1/g')
+	DEV_LOCKED=$(echo "$DATA" | grep "[[:space:]]Locked = " | sed 's/.*[[:space:]]Locked = \([YyNn]\).*/\1/g')
+
+	DEV_MODEL=$(hdparm -i $DEV | awk -F ', ' '{if ($1 ~ /Model=/) { print $1 }}' | cut -f2- -d=)
+	DEV_SERIAL=$(hdparm -i $DEV | awk -F ', ' '{if ($1 ~ /Model=/) { print $3 }}' | cut -f2- -d=)
+
+	FULLDEV=ata-$(echo $DEV_MODEL | sed 's/ /_/g')_$(echo $DEV_SERIAL | sed 's/ /_/g')
+
+	# echo "$DEV|$DEV_LOCKING|$DEV_LOCKED|$DEV_MODEL|$DEV_SERIAL|$FULLDEV"
+
+	if [ $DEV_LOCKING = "N" -o $DEV_LOCKING = "n" ]; then
+		continue
+	fi
+	if [ $DEV_LOCKED = "N" -o $DEV_LOCKED = "n" ]; then
+		continue
+	fi
+
+	SED_DEV[$I]=$DEV
+	SED_NAME[$I]=$FULLDEV
+	SED_FAILED[$I]=0
+
+	I=$((I + 1))
+done
+
+exec 3>&-
+rm -f $SED_DEV_FILE
+
+SED_COUNT=$I
+if [ $SED_COUNT -gt 0 ]; then
+	process_usbdev
+fi
+
+if [ $SED_COUNT -gt 0 ]; then
+	process_yubikey
+fi
+
+if [ $FAILED -gt 0 -o $SUCCEEDED -eq 0 ]; then
+	echo "Automatic unlocking incomplete or failed."
+	$DEBUG /sbin/linuxpba
+else
+	i=0
+	while [ $I -lt $MBRCNT ]; do
+		$DEBUG sedutil-cli --setMBRDone on "${MBR_PASS[$I]}" ${MBR_DEV[$I]}
+		I=$((I + 1))
+	done
+fi
