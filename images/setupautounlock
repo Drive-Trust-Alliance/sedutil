@@ -14,14 +14,14 @@ PASS=$2
 shift 2
 
 DEV_LOCKING=$(sedutil-cli --query $DEV | grep "[[:space:]]LockingEnabled = " | sed 's/.*[[:space:]]LockingEnabled = \([YyNn]\).*/\1/g')
-#if [ -z "$DEV_LOCKING" ]; then
-#	echo "Locking is not enabled for $DEV"
-#	exit 0
-#fi
-#if [ $DEV_LOCKING = "N" -o $DEV_LOCKING = "n" ]; then
-#	echo "Locking is not enabled for $DEV"
-#	exit 0
-#fi
+if [ -z "$DEV_LOCKING" ]; then
+	echo "Locking is not enabled for $DEV"
+	exit 0
+fi
+if [ $DEV_LOCKING = "N" -o $DEV_LOCKING = "n" ]; then
+	echo "Locking is not enabled for $DEV"
+	exit 0
+fi
 
 DEV_MODEL=$(hdparm -i $DEV | awk -F ', ' '{if ($1 ~ /Model=/) { print $1 }}' | cut -f2- -d=)
 DEV_SERIAL=$(hdparm -i $DEV | awk -F ', ' '{if ($1 ~ /Model=/) { print $3 }}' | cut -f2- -d=)
