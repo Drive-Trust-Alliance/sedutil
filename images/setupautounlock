@@ -3,6 +3,8 @@
 SED_DIR=/etc/sed-crypt
 TPM_SIZE=256
 USB_SIZE=4096
+TPM_PCRS="00|01|02|03"
+ATTEMPTS=3
 
 if [ $# -lt 2 ]; then
 	echo "Syntax: $0 <device> <password> [TPM NVRAM Slot|USB device...]"
@@ -13,15 +15,20 @@ DEV=$1
 PASS=$2
 shift 2
 
+if [ ! -r $DEV ]; then
+	echo "Could not find device $DEV."
+	exit 0
+fi
+
 DEV_LOCKING=$(sedutil-cli --query $DEV | grep "[[:space:]]LockingEnabled = " | sed 's/.*[[:space:]]LockingEnabled = \([YyNn]\).*/\1/g')
-if [ -z "$DEV_LOCKING" ]; then
-	echo "Locking is not enabled for $DEV"
-	exit 0
-fi
-if [ $DEV_LOCKING = "N" -o $DEV_LOCKING = "n" ]; then
-	echo "Locking is not enabled for $DEV"
-	exit 0
-fi
+#if [ -z "$DEV_LOCKING" ]; then
+#	echo "Locking is not enabled for $DEV"
+#	exit 0
+#fi
+#if [ $DEV_LOCKING = "N" -o $DEV_LOCKING = "n" ]; then
+#	echo "Locking is not enabled for $DEV"
+#	exit 0
+#fi
 
 DEV_MODEL=$(hdparm -i $DEV | awk -F ', ' '{if ($1 ~ /Model=/) { print $1 }}' | cut -f2- -d=)
 DEV_SERIAL=$(hdparm -i $DEV | awk -F ', ' '{if ($1 ~ /Model=/) { print $3 }}' | cut -f2- -d=)
@@ -43,23 +50,24 @@ while [ -n "$1" ]; do
 		break
 	fi
 
-	if [ -f $1 -a -b $1 ]; then
+	if [ -b $1 ]; then
 		USB_DEV=$1
-		DEV_FSTYPE=$(lsblk -o FSTYPE -r $USB_DEV)
-		if [[ ! $FSTYPE =~ /fat$/ &&  ! $FSTYPE =~ /^ext/ ]]; then
-			echo "$USB_DEV is not a *fat or ext* filesystem."
+		DEV_FSTYPE=$(lsblk -n -o FSTYPE -r $USB_DEV)
+		if [[ ! $DEV_FSTYPE =~ fat$ && ! $DEV_FSTYPE =~ ^ext ]]; then
+			echo "$USB_DEV is not a *fat or ext* filesystem."
 			shift
 			continue
 		fi
 
-		DEV_PARENT=$(lsblk -o KNAME -r $USB_DEV)
-		DEV_PPARENT=$(lsblk -o PKNAME -r /dev/$PARENT)
-		while [ -n "$PPARENT" ]; do
-			DEV_PARENT=$PPARENT
-			DEV_PPARENT=$(lsblk -o PKNAME -r /dev/$PARENT)
+		DEV_PARENT=$(lsblk -n -o KNAME -r $USB_DEV)
+		DEV_PPARENT=$(lsblk -n -o PKNAME -r /dev/$DEV_PARENT | head -n 1)
+		while [ -n "$DEV_PPARENT" ]; do
+			DEV_PARENT=$DEV_PPARENT
+			DEV_PPARENT=$(lsblk -n -o PKNAME -r /dev/$DEV_PARENT | head -n 1)
 		done
 
-		DEV_TRAN=$(lsblk -o TRAN -r /dev/$DEV_PARENT)
+		DEV_TRAN=$(lsblk -n -o TRAN -r /dev/$DEV_PARENT)
+
 		if [ "$DEV_TRAN" != "usb" ]; then
 			echo "$USB_DEV is not a USB device."
 			shift
@@ -88,41 +96,88 @@ while [ -n "$1" ]; do
 		rmdir $USB_TMPDIR
 	else
 		TPM_IDX=$1
-		if [ -n "$(tpm_nvinfo -i $TPM_IDX)" ]; then
-			echo "TPM NVRam slot $TPM_IDX is already occupied"
-			shift
-			continue
-		fi
-
-		if [ -z "$OWNERPASS" ]; then
-			read -s -p "Enter your TPM owner password (hit enter for well-known password): " OPASS
-			if [ -n "$OPASS" ]; then
-				OWNERPASS="-o $OPASS"
+		NVINFO="$(tpm_nvinfo -i $TPM_IDX)"
+		if [ -n "$NVINFO" ]; then
+			echo "TPM NVRam slot $TPM_IDX already exists."
+			SIZE=$(echo "$NVINFO" | grep "^Size" | awk -F : '{print $2}' | awk '{print $1}')
+			PERM=$(echo "$NVINFO" | grep "^Permissions")
+			if [ -n "$(echo $PERM | egrep '(OWNERREAD|AUTHREAD)')" ]; then
+				I=0
+				while [ $I -lt $ATTEMPTS -a ! -f $TMPDIR/$SLOT.key ]; do
+					tpm_nvread -p -i $TPM_IDX -s $SIZE -f $TMPDIR/$SLOT.key >/dev/null
+					I=$((I + 1))
+				done
 			else
-				OWNERPASS="-y"
+				tpm_nvread -i $TPM_IDX -s $SIZE -f $TMPDIR/$SLOT.key >/dev/null
 			fi
+
+			if [ ! -f $TMPDIR/$SLOT.key ]; then
+				echo "Could not read nvram area $TPM_IDX."
+				shift
+				continue
+			fi
+
+		else
+			if [ -z "$OWNERPASS" ]; then
+				read -s -p "Enter your TPM owner password (hit enter for well-known password): " OPASS
+				echo
+				if [ -n "$OPASS" ]; then
+					OWNERPASS="-o $OPASS"
+				else
+					OWNERPASS="-y"
+				fi
+			fi
+
+			echo "O - Use the TPM Owner password."
+			echo "A - Use a custom NVRam password."
+			echo "N - No password is required (default)."
+			while [ true ]; do
+				read -p "How do you wish to unlock TPM Slot $TPM_IDX [o/a/N]? " YN
+				if [ -z "$YN" ]; then
+					YN=N
+				fi
+
+				case "$YN" in
+					[Oo])
+						READ_TYPE="OWNERREAD";
+						NVRAM_PASS=$(echo -n "$(dd if=/dev/urandom bs=1 count=15 | base64)")
+						break ;;
+					[Aa])
+						READ_TYPE="AUTHREAD";
+						read -s -p "Enter the password to use to unlock TPM Slot $TPM_IDX: " NVRAM_PASS
+						echo
+						break ;;
+					[Nn])
+						READ_TYPE="PPREAD"
+						NVRAM_PASS=$(echo -n "$(dd if=/dev/urandom bs=1 count=15 | base64)")
+						break ;;
+				esac
+			done
+
+			egrep "^PCR-($TPM_PCRS)" /sys/class/tpm/tpm0/device/pcrs | sed -e 's/ //g' -e 's/:/ /' -e 's/^PCR-/r /' > $TMPDIR/pcrs
+			tpm_nvdefine -i $TPM_IDX -s $TPM_SIZE $OWNERPASS -a "$NVRAM_PASS" -f $TMPDIR/pcrs -p "AUTHWRITE|$READ_TYPE|READ_STCLEAR|WRITEALL"
+			if [ $? -ne 0 ]; then
+				echo "Could not define nvram area $TPM_IDX"
+				shift
+				continue
+			fi
+
+			dd if=/dev/urandom of=$TMPDIR/$SLOT.key bs=1 count=$TPM_SIZE
 		fi
 
-		NVRAM_PASS=$(echo -n "$(dd if=/dev/urandom bs=1 count=15 | base64)")
-		egrep "^PCR-(00|01|02|03|04|05|06|07)" /sys/class/tpm/tpm0/device/pcrs | sed -e 's/ //g' -e 's/:/ /' -e 's/^PCR-/r /' > $TMPDIR/pcrs
-		tpm_nvdefine -i $TPM_IDX -s $TPM_SIZE $OWNERPASS -a "$NVRAM_PASS" -f $TMPDIR/pcrs -p 'AUTHWRITE|PPREAD|READ_STCLEAR|WRITEALL'
-		if [ $? -ne 0 ]; then
-			echo "Could not define nvram area $TPM_IDX"
-			shift
-			continue
-		fi
-
-		dd if=/dev/urandom of=$TMPDIR/$SLOT.key bs=1 count=$TPM_SIZE
 		if [ $SLOT -eq 0 ]; then
 			cryptsetup --batch-mode --align-payload=1 luksFormat $TMPDIR/$FULLDEV.img --key-file $TMPDIR/$SLOT.key --hash sha256
 		else
 			cryptsetup luksAddKey $TMPDIR/$FULLDEV.img $TMPDIR/$SLOT.key --key-file $TMPDIR/0.key
 		fi
 
-		if [ $? -eq 0 ]; then
-			tpm_nvwrite -i $TPM_IDX -s $TPM_SIZE -f $TMPDIR/$SLOT.key --password="$NVRAM_PASS"
-		else
-			tpm_nvrelease -i $TPM_IDX
+		if [ -z "$NVINFO" ]; then
+			if [ $? -eq 0 ]; then
+				tpm_nvwrite -i $TPM_IDX -s $TPM_SIZE -f $TMPDIR/$SLOT.key --password="$NVRAM_PASS"
+				echo "You must use the password \"$NVRAM_PASS\" to re-use TPM slot $TPM_IDX."
+			else
+				tpm_nvrelease -i $TPM_IDX
+			fi
 		fi
 
 		if [ $? -eq 0 ]; then

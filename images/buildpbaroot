@@ -67,14 +67,15 @@ fi
 # 64 bit system
 mkdir PBA64
 CFLAGS="-m64 -L$PWD/../buildroot/PBA64/target/lib -L$PWD/../buildroot/PBA64/target/usr/lib" ./configure --host="x86_64-unknown-linux-gnu"
+make clean
 make -j $(nproc) 2>&1 | tee PBA64/build_output.log
 mkdir -p ../buildroot/PBA64/overlay/usr/lib
 cp -a .libs/libyubikey.so* ../buildroot/PBA64/overlay/usr/lib
-make clean
 
 # 32 bit system
 mkdir PBA32
 CFLAGS="-m32 -L$PWD/../buildroot/PBA32/target/lib -L$PWD/../buildroot/PBA32/target/usr/lib" ./configure --host="i686-unknown-linux-gnu"
+make clean
 make -j $(nproc) 2>&1 | tee PBA32/build_output.log
 mkdir -p ../buildroot/PBA32/overlay/usr/lib
 cp -a .libs/libyubikey.so* ../buildroot/PBA32/overlay/usr/lib
@@ -99,17 +100,18 @@ fi
 
 # 64 bit system
 mkdir PBA64
-CFLAGS="-m64 -I$PWD/../yubico-c  -L$PWD/../buildroot/PBA64/overlay/lib -L$PWD/../buildroot/PBA64/overlay/usr/lib -L$PWD/../buildroot/PBA64/target/lib -L$PWD/../buildroot/PBA64/target/usr/lib" ./configure --host="x86_64-unknown-linux-gnu" --disable-rpath
+CFLAGS="-m64 -I$PWD/../yubico-c  -L$PWD/../buildroot/PBA64/overlay/lib -L$PWD/../buildroot/PBA64/overlay/usr/lib -L$PWD/../buildroot/PBA64/target/lib -L$PWD/../buildroot/PBA64/target/usr/lib" ./configure --host="x86_64-unknown-linux-gnu" --disable-rpath --without-json
+make clean
 make -j $(nproc) 2>&1 | tee PBA64/build_output.log
 mkdir -p ../buildroot/PBA64/overlay/usr/bin
 cp -a .libs/libykpers-*.so* ../buildroot/PBA64/overlay/usr/lib
 cp -a .libs/ykinfo ../buildroot/PBA64/overlay/usr/bin
 cp -a .libs/ykchalresp ../buildroot/PBA64/overlay/usr/bin
-make clean
 
 # 32 bit system
 mkdir PBA32
-CFLAGS="-m32 -I$PWD/../yubico-c -L$PWD/../buildroot/PBA32/overlay/lib -L$PWD/../buildroot/PBA32/overlay/usr/lib -L$PWD/../buildroot/PBA32/target/lib -L$PWD/../buildroot/PBA32/target/usr/lib" ./configure --host="i686-unknown-linux-gnu" --disable-rpath
+CFLAGS="-m32 -I$PWD/../yubico-c -L$PWD/../buildroot/PBA32/overlay/lib -L$PWD/../buildroot/PBA32/overlay/usr/lib -L$PWD/../buildroot/PBA32/target/lib -L$PWD/../buildroot/PBA32/target/usr/lib" ./configure --host="i686-unknown-linux-gnu" --disable-rpath --without-json
+make clean
 make -j $(nproc) 2>&1 | tee PBA32/build_output.log
 mkdir -p ../buildroot/PBA32/overlay/usr/bin
 cp -a .libs/libykpers-*.so* ../buildroot/PBA32/overlay/usr/lib
@@ -118,12 +120,12 @@ cp -a .libs/ykchalresp ../buildroot/PBA32/overlay/usr/bin
 
 cd ..
 echo Building the TPM utilities
-if [ "x$1"1!= "noclean" ]; then
+if [ "x$1" != "noclean" ]; then
 	rm -rf tpm-luks
 	git clone ${TPMLUKSROOT} tpm-luks || die
 fi
 cd tpm-luks
-if [ "x$1"1!= "noclean" ]; then
+if [ "x$1" != "noclean" ]; then
 	git reset --hard
 	git clean -df
 
@@ -136,15 +138,15 @@ fi
 # 64 bit system
 mkdir PBA64
 CFLAGS="-m64 -L$PWD/../buildroot/PBA64/target/lib -L$PWD/../buildroot/PBA64/target/usr/lib" ./configure --host="x86_64-unknown-linux-gnu"
+make clean
 make -j $(nproc) 2>&1 | tee PBA64/build_output.log
 cp swtpm-utils/nv_readvalue ../buildroot/PBA64/overlay/usr/bin
 cp swtpm-utils/getcapability ../buildroot/PBA64/overlay/usr/bin
 
-make clean
-
 # 32 bit system
 mkdir PBA32
 CFLAGS="-m32 -L$PWD/../buildroot/PBA32/target/lib -L$PWD/../buildroot/PBA32/target/usr/lib" ./configure --host="i686-unknown-linux-gnu"
+make clean
 make -j $(nproc) 2>&1 | tee PBA32/build_output.log
 cp swtpm-utils/nv_readvalue ../buildroot/PBA32/overlay/usr/bin
 cp swtpm-utils/getcapability ../buildroot/PBA32/overlay/usr/bin

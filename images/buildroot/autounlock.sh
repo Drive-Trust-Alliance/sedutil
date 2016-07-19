@@ -12,6 +12,9 @@ SUCCEEDED=0
 
 MBRCNT=0
 
+TPM_NV_PER_AUTHREAD=0x00040000
+TPM_NV_PER_OWNERREAD=0x00020000
+
 setarray() {
 	eval $(eval echo $1_$2)='$3'
 }
@@ -149,8 +152,8 @@ process_usbdev() {
 		for I in $(seq 0 $((SED_DEV_CNT - 1)))
 		do
 			if [ -n "$(getarray SED_DEV $I)" ]; then
-				if [ -r /media/$DEV_NAME/$(getarray SED_NAME $I).txt ]; then
-					try_unlock $I /media/$DEV_NAME/$(getarray SED_NAME $I).txt
+				if [ -r /media/$DEV_NAME/$(getarray SED_NAME $I).key ]; then
+					try_unlock $I /media/$DEV_NAME/$(getarray SED_NAME $I).key
 				fi
 			fi
 		done
@@ -179,28 +182,54 @@ process_tpm() {
 				do
 					TPM_IDX=$(echo $DEV | awk '{if ($1 == "'"$(getarray SED_NAME $I)"'") { print $2; }}')
 					if [ -n "$TPM_IDX" ]; then
-						PERMS=$(getcapability -cap 0x11 -scap $(printf "%x" $TPM_IDX) | awk -F ': ' '{if ($1 ~ /^Result for capability/) { print $3; }}')
-						if [ -n "$PERMS" ]; then
-							if [ $((PERMS & TPM_NV_PER_AUTHREAD)) -ne 0 -o $((PERMS & TPM_NV_PER_OWNERREAD)) -ne 0 ]; then
-								continue
-							fi
+						TMPFILE=$TMPDIR/$TMP_IDX.tpm
 
-							MATCHES=$(getcapability -cap 0x11 -scap $(printf "%x" $TPM_IDX) | awk -F ': ' '{if ($1 ~ /^Matches current TPM state/) { print $2; }}')
-							if [ "x$MATCHES" = "xNo" ]; then
-								continue
-							fi
+						# Ensure that we only try and unlock a TPM NVRam slot once.  We get 3 attempts
+						# and the TPM state is not going to change in the mean time.
+						if [ ! -f $TMPDIR/$TMP_IDX.try ]; then
+							PERMS=$(getcapability -cap 0x11 -scap $(printf "%x" $TPM_IDX) | awk -F ': ' '{if ($1 ~ /^Result for capability/) { print $3; }}')
+							if [ -n "$PERMS" ]; then
+								MATCHES=$(getcapability -cap 0x11 -scap $(printf "%x" $TPM_IDX) | awk -F ': ' '{if ($1 ~ /^Matches current TPM state/) { print $2; }}')
+								if [ "x$MATCHES" = "xNo" ]; then
+									continue
+								fi
 
-							SIZE=$(getcapability -cap 0x11 -scap $(printf "%x" $TPM_IDX) | awk -F '= ' '{if ($1 ~ /^dataSize /) { print $2; }}')
-							TMPFILE=`mktemp -p $TMPDIR`
-							$DEBUG nv_readvalue -ix $(printf "%x" $TPM_IDX) -sz $SIZE -of $TMPFILE
-							if [ $? -eq 0 ]; then
-								try_unlock $I $TMPFILE
-								if [ -z "$(getarray SED_DEV $I)" ]; then
-									READ_SUCCESS="$READ_SUCCESS $TPM_IDX"
-									break
+								SIZE=$(getcapability -cap 0x11 -scap $(printf "%x" $TPM_IDX) | awk -F '= ' '{if ($1 ~ /^dataSize /) { print $2; }}')
+								if [ ! -f $TMPFILE ]; then
+									if [ $((PERMS & TPM_NV_PER_OWNERREAD)) -ne 0 ]; then
+										J=0
+										while [ $J -lt $ATTEMPTS -a ! -f $TMPFILE ]; do
+											read -p "TPM Owner Passphrase for NVRam Slot $TPM_IDX [$((J + 1))/$ATTEMPTS]: " -sr PASS
+											echo
+											if [ -n "$PASS" ]; then
+												$DEBUG nv_readvalue -ix $(printf "%x" $TPM_IDX) -pwdo "${PASS}" -sz $SIZE -of $TMPFILE >/dev/null
+											fi
+											J=$((J + 1))
+										done
+									elif [ $((PERMS & TPM_NV_PER_AUTHREAD)) -ne 0 ]; then
+										J=0
+										while [ $J -lt $ATTEMPTS -a ! -f $TMPFILE ]; do
+											read -p "TPM Passphrase for NVRam Slot $TPM_IDX [$((J + 1))/$ATTEMPTS]: " -sr PASS
+											echo
+											if [ -n "$PASS" ]; then
+												$DEBUG nv_readvalue -ix $(printf "%x" $TPM_IDX) -pwdd "${PASS}" -sz $SIZE -of $TMPFILE >/dev/null
+											fi
+											J=$((J + 1))
+										done
+									else
+										$DEBUG nv_readvalue -ix $(printf "%x" $TPM_IDX) -sz $SIZE -of $TMPFILE >/dev/null
+									fi
 								fi
 							fi
-							rm -f $TMPFILE
+							touch $TMPDIR/$TMP_IDX.try
+						fi
+
+						if [ -f $TMPFILE ]; then
+							try_unlock $I $TMPFILE
+							if [ -z "$(getarray SED_DEV $I)" ]; then
+								READ_SUCCESS="$READ_SUCCESS $TPM_IDX"
+								break
+							fi
 						fi
 					fi
 				done
@@ -233,8 +262,8 @@ do
 	DEV_LOCKING=$(echo "$DATA" | grep "[[:space:]]LockingEnabled = " | sed 's/.*[[:space:]]LockingEnabled = \([YyNn]\).*/\1/g')
 	DEV_LOCKED=$(echo "$DATA" | grep "[[:space:]]Locked = " | sed 's/.*[[:space:]]Locked = \([YyNn]\).*/\1/g')
 
-	DEV_MODEL=$(hdparm -i $DEV | awk -F ', ' '{if ($1 ~ /Model=/) { print $1 }}' | cut -f2- -d=)
-	DEV_SERIAL=$(hdparm -i $DEV | awk -F ', ' '{if ($1 ~ /Model=/) { print $3 }}' | cut -f2- -d=)
+	DEV_MODEL=$(hdparm -i $DEV 2>/dev/null | awk -F ', ' '{if ($1 ~ /Model=/) { print $1 }}' | cut -f2- -d=)
+	DEV_SERIAL=$(hdparm -i $DEV 2>/dev/null | awk -F ', ' '{if ($1 ~ /Model=/) { print $3 }}' | cut -f2- -d=)
 
 	FULLDEV=ata-$(echo $DEV_MODEL | sed 's/ /_/g')_$(echo $DEV_SERIAL | sed 's/ /_/g')
 
@@ -256,14 +285,17 @@ do
 done
 
 SED_COUNT=$I
-if [ $SED_COUNT -gt 0 ]; then
-	process_tpm
-fi
-
+# USB device is ALWAYS passwordless, try it first
 if [ $SED_COUNT -gt 0 ]; then
 	process_usbdev
 fi
 
+# Next try TPM, which MIGHT be passwordless
+if [ $SED_COUNT -gt 0 ]; then
+	process_tpm
+fi
+
+# Yubikey challenge always requires a password.
 if [ $SED_COUNT -gt 0 ]; then
 	process_yubikey
 fi
