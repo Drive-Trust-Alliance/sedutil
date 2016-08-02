@@ -61,6 +61,8 @@ public:
 	char *getModelNum();
 	/** Returns the Serial Number reported by the Identify command */
 	char *getSerialNum();
+	/* What type of disk attachment is used */
+	DTA_DEVICE_TYPE getDevType();
 	/** displays the information returned by the Discovery 0 reply */
 	virtual void puke();
 

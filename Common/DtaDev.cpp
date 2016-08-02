@@ -101,6 +101,10 @@ char *DtaDev::getSerialNum()
 {
 	return (char *)&disk_info.serialNum;
 }
+DTA_DEVICE_TYPE DtaDev::getDevType()
+	{
+		return disk_info.devType;
+	}
 void DtaDev::discovery0()
 {
     LOG(D1) << "Entering DtaDev::discovery0()";
