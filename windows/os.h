@@ -20,9 +20,9 @@ along with sedutil.If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include <WinSDKVer.h>
-#define _WIN32_WINNT _WIN32_WINNT_WINXP
-#include <SDKDDKVer.h>
+//#include <WinSDKVer.h>
+//#define _WIN32_WINNT _WIN32_WINNT_WINXP
+//#include <SDKDDKVer.h>
 #include <Windows.h>
 #include <assert.h>
 
