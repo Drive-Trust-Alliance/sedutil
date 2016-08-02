@@ -40,6 +40,9 @@ using namespace std;
 /** The Device class represents a Linux generic storage device.
   * At initialization we determine if we map to the NVMe or SATA derived class
  */
+unsigned long long DtaDevOS::getSize()
+{ return 0;
+}
 DtaDevOS::DtaDevOS()
 {
 	drive = NULL;
