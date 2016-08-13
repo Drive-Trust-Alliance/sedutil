@@ -24,15 +24,17 @@ fi
   ] || { echo " prereqs are not available "; exit 1; }
 # recreate the initrd file with the latest PBA
 mkdir scratch/buildroot/PBA64/overlay/sbin/
+mkdir scratch/buildroot/PBA64/overlay/etc/init.d
 cp ../LinuxPBA/dist/${BUILDTYPE}_x86_64/GNU-Linux/linuxpba  scratch/buildroot/PBA64/overlay/sbin/linuxpba
 cp ../linux/CLI/dist/${BUILDTYPE}_x86_64/GNU-Linux/sedutil-cli  scratch/buildroot/PBA64/overlay/sbin/sedutil-cli
+cp buildroot/autounlock.sh scratch/buildroot/PBA64/overlay/etc/init.d/rcS
 cd scratch/buildroot
 make all O=PBA64 2>&1 >PBA64.log
 cd ../..
 # Start fresh
 sudo rm -rf UEFI64_${BUILDTYPE} ; mkdir UEFI64_${BUILDTYPE} ; cd UEFI64_${BUILDTYPE}
 # make an image file
-dd if=/dev/zero of=${BUILDIMG} bs=1M count=7
+dd if=/dev/zero of=${BUILDIMG} bs=1M count=15
 (echo "n";echo "";echo "";echo "";echo "ef00";echo w;echo Y) | gdisk ${BUILDIMG}
 
 LOOPDEV=`sudo losetup --show -f -o 1048576 ${BUILDIMG}`

@@ -30,6 +30,20 @@ Getting TinyCore and syslinux.
 
 ./getresources
 
+If you wish to auto-unlock your SSDs using a USB device, or use a Yubikey's 
+challenge-response password you must first setup those devices here.  The syntax is:
+./setupautounlock <device> <password> [tpm_nvram_slot|usb_device...]
+
+You may specify multiple USB devices or TPM NVRam slots (or none at all).  You will be
+prompted to add Yubikey challenge-responses.  USB devices must have a vfat or ext*
+partition as it's first partition, and you should not delete the .key file written to
+that partition.  You may only have up to 8 keys.
+
+On boot, Unlocking will be attempted first via. TPM NVRam, then via. USB flash drives,
+then via Yubikey challenge-responses.  Failing these methods it will fall back to simply
+prompting for the OPAL unlock password.  This means if you wish to unlock using a USB
+flash device or yubikey it must be inserted when you boot!
+
 Build the PBA kernels and root filesystems
 ./buildpbaroot
 

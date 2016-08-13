@@ -6,13 +6,19 @@ exit 99
 }
 . conf
 cd scratch
+
 # clean up and start over
-rm -rf buildroot
-git clone ${BUILDROOT} || die
+if [ "x$1" != "xnoclean" ]; then
+	rm -rf buildroot
+	git clone ${BUILDROOT} || die
+fi
 cd buildroot
-git checkout -b PBABUILD ${BUILDROOT_TAG}  || die
-git reset --hard
-git clean -df
+
+if [ "x$1" != "xnoclean" ]; then
+	git checkout -b PBABUILD ${BUILDROOT_TAG}  || die
+	git reset --hard
+	git clean -df
+fi
 #fix ncurses build to include libtinfo for compat
 cp ../../buildroot/ncurses.mk package/ncurses/
 # add out of tree build directoried and files
@@ -39,6 +45,112 @@ make O=PBA32 2>&1 | tee PBA32/build_output.txt
 echo Checking for customizations...... 
 grep -i pba PBA*/target/etc/inittab
 grep -i libtinfo PBA*/target/etc/ld.so.cache
+
+cd ..
+echo Building the Yubico utilities
+if [ "x$1" != "xnoclean" ]; then
+	rm -rf yubico-c
+	git clone ${YUBICOCROOT} yubico-c || die
+fi
+cd yubico-c
+if [ "x$1" != "xnoclean" ]; then
+	git checkout -b PBABUILD ${YUBICOCROOT_TAG}  || die
+	git reset --hard
+	git clean -df
+
+	aclocal --install
+	libtoolize
+	automake --add-missing
+	autoconf
+fi
+
+# 64 bit system
+mkdir PBA64
+CFLAGS="-m64 -L$PWD/../buildroot/PBA64/target/lib -L$PWD/../buildroot/PBA64/target/usr/lib" ./configure --host="x86_64-unknown-linux-gnu"
+make clean
+make -j $(nproc) 2>&1 | tee PBA64/build_output.log
+mkdir -p ../buildroot/PBA64/overlay/usr/lib
+cp -a .libs/libyubikey.so* ../buildroot/PBA64/overlay/usr/lib
+
+# 32 bit system
+mkdir PBA32
+CFLAGS="-m32 -L$PWD/../buildroot/PBA32/target/lib -L$PWD/../buildroot/PBA32/target/usr/lib" ./configure --host="i686-unknown-linux-gnu"
+make clean
+make -j $(nproc) 2>&1 | tee PBA32/build_output.log
+mkdir -p ../buildroot/PBA32/overlay/usr/lib
+cp -a .libs/libyubikey.so* ../buildroot/PBA32/overlay/usr/lib
+
+cd ..
+
+if [ "x$1" != "xnoclean" ]; then
+	rm -rf yubikey-personalization
+	git clone ${YUBIPERSROOT} yubikey-personalization || die
+fi
+cd yubikey-personalization
+if [ "x$1" != "xnoclean" ]; then
+	git checkout -b PBABUILD ${YUBIPERSROOT_TAG}  || die
+	git reset --hard
+	git clean -df
+
+	aclocal --install
+	libtoolize
+	automake --add-missing
+	autoconf
+fi
+
+# 64 bit system
+mkdir PBA64
+CFLAGS="-m64 -I$PWD/../yubico-c  -L$PWD/../buildroot/PBA64/overlay/lib -L$PWD/../buildroot/PBA64/overlay/usr/lib -L$PWD/../buildroot/PBA64/target/lib -L$PWD/../buildroot/PBA64/target/usr/lib" ./configure --host="x86_64-unknown-linux-gnu" --disable-rpath --without-json
+make clean
+make -j $(nproc) 2>&1 | tee PBA64/build_output.log
+mkdir -p ../buildroot/PBA64/overlay/usr/bin
+cp -a .libs/libykpers-*.so* ../buildroot/PBA64/overlay/usr/lib
+cp -a .libs/ykinfo ../buildroot/PBA64/overlay/usr/bin
+cp -a .libs/ykchalresp ../buildroot/PBA64/overlay/usr/bin
+
+# 32 bit system
+mkdir PBA32
+CFLAGS="-m32 -I$PWD/../yubico-c -L$PWD/../buildroot/PBA32/overlay/lib -L$PWD/../buildroot/PBA32/overlay/usr/lib -L$PWD/../buildroot/PBA32/target/lib -L$PWD/../buildroot/PBA32/target/usr/lib" ./configure --host="i686-unknown-linux-gnu" --disable-rpath --without-json
+make clean
+make -j $(nproc) 2>&1 | tee PBA32/build_output.log
+mkdir -p ../buildroot/PBA32/overlay/usr/bin
+cp -a .libs/libykpers-*.so* ../buildroot/PBA32/overlay/usr/lib
+cp -a .libs/ykinfo ../buildroot/PBA32/overlay/usr/bin
+cp -a .libs/ykchalresp ../buildroot/PBA32/overlay/usr/bin
+
+cd ..
+echo Building the TPM utilities
+if [ "x$1" != "noclean" ]; then
+	rm -rf tpm-luks
+	git clone ${TPMLUKSROOT} tpm-luks || die
+fi
+cd tpm-luks
+if [ "x$1" != "noclean" ]; then
+	git reset --hard
+	git clean -df
+
+	aclocal --install
+	libtoolize
+	automake --add-missing
+	autoconf
+fi
+
+# 64 bit system
+mkdir PBA64
+CFLAGS="-m64 -L$PWD/../buildroot/PBA64/target/lib -L$PWD/../buildroot/PBA64/target/usr/lib" ./configure --host="x86_64-unknown-linux-gnu"
+make clean
+make -j $(nproc) 2>&1 | tee PBA64/build_output.log
+cp swtpm-utils/nv_readvalue ../buildroot/PBA64/overlay/usr/bin
+cp swtpm-utils/getcapability ../buildroot/PBA64/overlay/usr/bin
+
+# 32 bit system
+mkdir PBA32
+CFLAGS="-m32 -L$PWD/../buildroot/PBA32/target/lib -L$PWD/../buildroot/PBA32/target/usr/lib" ./configure --host="i686-unknown-linux-gnu"
+make clean
+make -j $(nproc) 2>&1 | tee PBA32/build_output.log
+cp swtpm-utils/nv_readvalue ../buildroot/PBA32/overlay/usr/bin
+cp swtpm-utils/getcapability ../buildroot/PBA32/overlay/usr/bin
+
 # back to where we started
 cd ../..
 exit 0

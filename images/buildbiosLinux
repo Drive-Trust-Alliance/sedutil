@@ -25,24 +25,26 @@ sudo rm -rf LINUXPBA${BUILDTYPE} ; mkdir LINUXPBA${BUILDTYPE} ; cd LINUXPBA${BUI
 #
 # recreate the initrd file with the latest PBA
 mkdir  ../scratch/buildroot/PBA32/overlay/sbin
+mkdir  ../scratch/buildroot/PBA32/overlay/etc/init.d
 cp ../../LinuxPBA/dist/${BUILDTYPE}/GNU-Linux/linuxpba  ../scratch/buildroot/PBA32/overlay/sbin/linuxpba
 cp ../../linux/CLI/dist/${BUILDTYPE}_i686/GNU-Linux/sedutil-cli  ../scratch/buildroot/PBA32/overlay/sbin/sedutil-cli
+cp ../buildroot/autounlock.sh ../scratch/buildroot/PBA32/overlay/etc/init.d/rcS
 cd ../scratch/buildroot
 make all O=PBA32 2>&1 >PBA32.log
 cd ../../LINUXPBA${BUILDTYPE}
-dd if=/dev/zero of=${BUILDIMG} bs=1M count=8
+dd if=/dev/zero of=${BUILDIMG} bs=1M count=16
 (echo o;echo n;echo p;echo 1;echo"";echo "";echo "";echo a;echo 1;echo w) | fdisk ${BUILDIMG}
 dd if=../scratch/${SYSLINUX}/bios/mbr/mbr.bin of=${BUILDIMG} count=1 conv=notrunc bs=512
 LOOPDEV=`sudo losetup --show -f -o 1048576 ${BUILDIMG}`
-sudo mkfs.ext4 $LOOPDEV -L ${BUILDTYPE}-${VERSIONINFO}
+sudo mkfs.ext2 $LOOPDEV -L ${BUILDTYPE}-${VERSIONINFO}
 mkdir image
 sudo mount $LOOPDEV image
 sudo chmod 777 image
-sudo mkdir -p image/boot/extlinux
-sudo ../scratch/${SYSLINUX}/bios/extlinux/extlinux --install image/boot/extlinux
-sudo cp ../scratch/buildroot/PBA32/images/bzImage  image/boot/extlinux/
-sudo cp ../scratch/buildroot/PBA32/images/rootfs.cpio.xz image/boot/extlinux/
-sudo cp ../buildroot/syslinux.cfg image/boot/extlinux/extlinux.conf
+sudo mkdir -p image/extlinux
+sudo ../scratch/${SYSLINUX}/bios/extlinux/extlinux --install image/extlinux
+sudo cp ../scratch/buildroot/PBA32/images/bzImage  image/extlinux
+sudo cp ../scratch/buildroot/PBA32/images/rootfs.cpio.xz image/extlinux
+sudo cp ../buildroot/syslinux.cfg image/extlinux/extlinux.conf
 sudo umount image
 sudo losetup -d $LOOPDEV
 gzip ${BUILDIMG}
