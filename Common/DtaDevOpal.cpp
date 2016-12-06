@@ -1124,13 +1124,16 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	char star[] = "*";
 	char spinner[] = "|/-\\";
 	char progress_bar[] = "   [                     ]";
-	uint32_t blockSize = 1950;
+	uint32_t blockSize = 4096;
 	uint32_t filepos = 0;
 	ifstream pbafile;
-	vector <uint8_t> buffer(1950,0x00), lengthtoken;
+	vector <uint8_t> buffer(4096, 0x00), lengthtoken;
 	lengthtoken.clear();
-	lengthtoken.push_back(0xd7);
-	lengthtoken.push_back(0x9e);
+	lengthtoken.push_back(0xe2);
+	lengthtoken.push_back(0x00);
+	lengthtoken.push_back(0x10);
+	lengthtoken.push_back(0x00);
+	
 	pbafile.open(filename, ios::in | ios::binary);
 	if (!pbafile) {
 		LOG(E) << "Unable to open PBA image file " << filename;
