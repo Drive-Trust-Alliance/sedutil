@@ -204,7 +204,7 @@ DtaCommand::complete(uint8_t EOD)
     hdr->pkt.length = SWAP32((bufferpos - sizeof (OPALComPacket))
                              - sizeof (OPALPacket));
     hdr->cp.length = SWAP32(bufferpos - sizeof (OPALComPacket));
-	if (bufferpos > 2048) {
+	if (bufferpos > 4196) {
 		LOG(E) << " Buffer Overrun " << bufferpos;
 		exit(EXIT_FAILURE);
 	}
