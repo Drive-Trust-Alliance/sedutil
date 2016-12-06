@@ -44,11 +44,12 @@ int diskScan()
 		if (d->isPresent()) {
 			printf("%s", devname);
 			if (d->isAnySSC())
-				printf(" %s%s%s ", (d->isOpal1() ? "1" : " "),
-				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
+				printf(" %s%s%s%s%s ", (d->isOpal1() ? "1" : " "),
+				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "),
+                (d->isOpalite() ? "L" : " "), (d->isPyrite() ? "P" : " ") );
 			else
 				printf("%s", " No  ");
-			cout << d->getModelNum() << " " << d->getFirmwareRev() << std::endl;
+			cout << d->getModelNum() << " " << d->getFirmwareRev() << " : " << d->getSerialNum() << std::endl;
 			if (MAX_DISKS == i) {
 				LOG(I) << MAX_DISKS << " disks, really?";
 				delete d;

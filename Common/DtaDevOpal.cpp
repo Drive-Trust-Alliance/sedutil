@@ -251,9 +251,12 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 			return lastRC;
 		}
 		LR[6] = 0x03;  // non global ranges are 00000802000300nn 
-		LOG(I) << "LR" << i << " Begin " << response.getUint64(4) <<
+		//LOG(I) << "LR" << i << " Begin " << response.getUint64(4) <<
+		cout << "LR" << i << " Begin " << response.getUint64(4) <<
 			" for " << response.getUint64(8);
-		LOG(I)	<< "            RLKEna =" << (response.getUint8(12) ? " Y " : " N ") <<
+		//LOG(I)	<< "            RLKEna =" << (response.getUint8(12) ? " Y " : " N ") <<
+        // 12 blank space --> 1 space
+		cout	<< " RLKEna =" << (response.getUint8(12) ? " Y " : " N ") <<
 			" WLKEna =" << (response.getUint8(16) ? " Y " : " N ") <<
 			" RLocked =" << (response.getUint8(20) ? " Y " : " N ") <<
 			" WLocked =" << (response.getUint8(24) ? " Y " : " N ");
