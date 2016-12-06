@@ -29,6 +29,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define FC_SINGLEUSER 0x0201
 #define FC_OPALV100   0x0200
 #define FC_OPALV200   0x0203
+#define FC_OPALITE    0x0301
+#define FC_PYRITE     0x0302
 /** The Discovery 0 Header. As defined in
 * Opal SSC Documentation
 */
@@ -294,6 +296,8 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t OPAL10 : 1;
 	uint8_t Properties : 1;
 	uint8_t ANY_OPAL_SSC : 1;
+    uint8_t OPALITE : 1;
+    uint8_t PYRITE : 1;
     // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
     uint8_t TPer_ACKNACK : 1;
     uint8_t TPer_async : 1;
@@ -330,6 +334,14 @@ typedef struct _OPAL_DiskInfo {
     uint16_t OPAL20_numAdmins;
     uint16_t OPAL20_numUsers;
     uint8_t OPAL20_rangeCrossing;
+    uint16_t OPALITE_basecomID;
+    uint16_t OPALITE_numcomIDs;
+    uint8_t OPALITE_initialPIN;
+    uint8_t OPALITE_revertedPIN;
+    uint16_t PYRITE_basecomID;
+    uint16_t PYRITE_numcomIDs;
+    uint8_t PYRITE_initialPIN;
+    uint8_t PYRITE_revertedPIN;
     // IDENTIFY information
     DTA_DEVICE_TYPE devType;
     uint8_t serialNum[20];
