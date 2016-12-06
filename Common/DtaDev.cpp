@@ -43,6 +43,17 @@ DtaDev::DtaDev()
 DtaDev::~DtaDev()
 {
 }
+
+uint8_t DtaDev::isOpalite()
+{
+	LOG(D1) << "Entering DtaDev::isOpalite " << (uint16_t) disk_info.OPALITE;
+	return disk_info.OPALITE;
+}
+uint8_t DtaDev::isPyrite()
+{
+	LOG(D1) << "Entering DtaDev::isPyrite " << (uint16_t) disk_info.PYRITE;
+	return disk_info.PYRITE;
+}
 uint8_t DtaDev::isOpal2()
 {
 	LOG(D1) << "Entering DtaDev::isOpal2 " << (uint16_t) disk_info.OPAL20;
@@ -189,6 +200,22 @@ void DtaDev::discovery0()
             disk_info.OPAL20_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
             disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
             break;
+        case FC_OPALITE: /* OPALITE */
+            disk_info.OPALITE = 1;
+			disk_info.ANY_OPAL_SSC = 1;
+		    disk_info.OPALITE_basecomID = SWAP16(body->opalv200.baseCommID);
+            disk_info.OPALITE_initialPIN = body->opalv200.initialPIN;
+            disk_info.OPALITE_revertedPIN = body->opalv200.revertedPIN;
+            disk_info.OPALITE_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+            break;
+        case FC_PYRITE: /* PYRITE */
+            disk_info.PYRITE= 1;
+			disk_info.ANY_OPAL_SSC = 1;
+		    disk_info.PYRITE_basecomID = SWAP16(body->opalv200.baseCommID);
+            disk_info.PYRITE_initialPIN = body->opalv200.initialPIN;
+            disk_info.PYRITE_revertedPIN = body->opalv200.revertedPIN;
+            disk_info.PYRITE_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+            break;            
         default:
 			if (0xbfff < (SWAP16(body->TPer.featureCode))) {
 				// silently ignore vendor specific segments as there is no public doc on them
@@ -288,6 +315,22 @@ void DtaDev::puke()
 		cout << ", Range Crossing = " << (disk_info.OPAL20_rangeCrossing ? "Y" : "N");
 		cout << std::endl;
 	}
+	if (disk_info.OPALITE) {
+		cout << "OPALITE function (" << HEXON(4) << FC_OPALITE << ")" << HEXOFF << std::endl;
+		cout << "    Base comID = " << HEXON(4) << disk_info.OPALITE_basecomID << HEXOFF;
+		cout << ", Initial PIN = " << HEXON(2) << disk_info.OPALITE_initialPIN << HEXOFF;
+		cout << ", Reverted PIN = " << HEXON(2) << disk_info.OPALITE_revertedPIN << HEXOFF;
+		cout << ", comIDs = " << disk_info.OPALITE_numcomIDs;
+		cout << std::endl;
+	}
+	if (disk_info.PYRITE) {
+		cout << "PYRITE function (" << HEXON(4) << FC_PYRITE << ")" << HEXOFF << std::endl;
+		cout << "    Base comID = " << HEXON(4) << disk_info.PYRITE_basecomID << HEXOFF;
+		cout << ", Initial PIN = " << HEXON(2) << disk_info.PYRITE_initialPIN << HEXOFF;
+		cout << ", Reverted PIN = " << HEXON(2) << disk_info.PYRITE_revertedPIN << HEXOFF;
+		cout << ", comIDs = " << disk_info.PYRITE_numcomIDs;
+		cout << std::endl;
+	}    
 	if (disk_info.Unknown)
 		cout << "**** " << (uint16_t)disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
 }
