@@ -33,11 +33,20 @@ int diskScan()
 {
 	char devname[25];
 	int i = 0;
+	int j = 0;
+	bool f_sda_end = FALSE;
+	bool f_nvme_first = FALSE;
 	DtaDev * d;
 	LOG(D1) << "Creating diskList";
 	printf("\nScanning for Opal compliant disks\n");
+	
 	while (TRUE) {
 		DEVICEMASK;
+		#ifdef DEVICEMASKN
+		if (f_sda_end )
+			DEVICEMASKN;
+		#endif
+		//snprintf(devname,23,"/dev/nvme%i",i); //Linux nvme
 		//snprintf(devname,23,"/dev/sd%c",(char) 0x61+i) Linux
 		//sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i)  Windows
 		d = new DtaDevGeneric(devname);
@@ -49,15 +58,28 @@ int diskScan()
 			else
 				printf("%s", " No  ");
 			cout << d->getModelNum() << " " << d->getFirmwareRev() << std::endl;
-			if (MAX_DISKS == i) {
+			if (MAX_DISKS == (i+j)) {
 				LOG(I) << MAX_DISKS << " disks, really?";
 				delete d;
 				return 1;
 			}
 		}
-		else break;
+		else {
+			#ifdef DEVICEMASKN
+			if (!f_sda_end) { f_sda_end = TRUE; f_nvme_first = TRUE;}
+			else 
+			#endif
+				break;
+		}
 		delete d;
-		i += 1;
+		#ifdef DEVICEMASKN
+		if (f_sda_end) {
+			if (f_nvme_first) { j = 0; f_nvme_first = FALSE;}
+			else	j += 1;
+		}
+		else 
+		#endif
+			i += 1;
 	}
 	delete d;
 	printf("No more disks present ending scan\n");
