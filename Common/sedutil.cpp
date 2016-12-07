@@ -34,8 +34,10 @@ int diskScan()
 	char devname[25];
 	int i = 0;
 	int j = 0;
+	#ifdef DEVICEMASKN
 	bool f_sda_end = FALSE;
 	bool f_nvme_first = FALSE;
+	#endif
 	DtaDev * d;
 	LOG(D1) << "Creating diskList";
 	printf("\nScanning for Opal compliant disks\n");
