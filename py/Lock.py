@@ -1,7 +1,7 @@
 '''
 Description: 
 
-   Bay Area Loclsmith is a temparary name. Final name will be decided later on
+   Fidelity Lock is a temparary name. Final name will be decided later on
 
 History:
    2016.09.15 inital draft sample program use gtk python 2.7
