@@ -31,5 +31,6 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define FALSE 0
 // a few OS specific methods that need to be worked out
 #define SNPRINTF snprintf
-#define DEVICEMASK snprintf(devname,23,"/dev/sd%c",(char) 0x61+i)
+// Cumbersome, but trying to avoid editing common files. If /sys/block is not present, reverts to enumerating /dev/sd* devices. 
+#define DEVICEMASK switch(DtaDevOS::getNextDevice(i)){ case 1  : snprintf(devname,23,"/dev/%s",DtaDevOS::getDeviceName()); break; case -1 : snprintf(devname,23,"/dev/sd%c",(char) 0x61+i); break; default : snprintf(devname,23,"/dev/sdX"); break; }
 #define DEVICEEXAMPLE "/dev/sdc"
