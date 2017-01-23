@@ -1078,7 +1078,7 @@ class LockApp(gtk.Window):
         print txt
 		
      
-        names = ['PhysicalDrive[0-9]', '/dev/sd[a-z]',  '/dev/disk[0-9]']
+        names = ['PhysicalDrive[0-9]', '/dev/sd[a-z]', '/dev/nvme[0-9]',  '/dev/disk[0-9]']
         idx = 0
         self.devs_list = []
         for index in range(len(names)): #index=0(window) 1(Linux) 2(OSX)
@@ -1105,9 +1105,9 @@ class LockApp(gtk.Window):
                         print tt
                         m2 = re.match(names[index],tt)
                         x_words = tt.split() 
-                        #print ("x_words = ", x_words)
-                        #print x_words[2] # vendor name
-                        #print x_words[1] # Opal version
+                        print ("x_words = ", x_words) #DEBUG
+                        print x_words[2] # vendor name #DEBUG
+                        print x_words[1] # Opal version #DEBUG
                         if (index == 0) : 
                             self.devname = "\\\\.\\" + m2.group()
                         else:
@@ -1122,7 +1122,8 @@ class LockApp(gtk.Window):
                         
                         #x_word contain vendor name and series number separate with :
                         
-                        y_words = x_words[2].split(":",1)
+                        print x_words[2] # vendor name #DEBUG
+                        y_words = x_words[2].split(":",1) # split with : or b
                         print ("y_words = ", y_words)
                         print ("y_words[0] = ", y_words[0])
                         print ("y_words[1] = ", y_words[1])
