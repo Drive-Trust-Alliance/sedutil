@@ -59,7 +59,7 @@ int diskScan()
 				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
 			else
 				printf("%s", " No  ");
-			cout << d->getModelNum() << " " << d->getFirmwareRev() << std::endl;
+			cout << d->getModelNum() << ":" << d->getFirmwareRev() << std::endl;
 			if (MAX_DISKS == (i+j)) {
 				LOG(I) << MAX_DISKS << " disks, really?";
 				delete d;
