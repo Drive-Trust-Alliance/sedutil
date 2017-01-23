@@ -99,7 +99,7 @@ int isValidSEDDisk(char *devname)
 			(d->isOpal2() ? "2" : "-"), (d->isEprise() ? "E" : "-"));
 		else
 			printf("%s", " NO --- ");
-		cout << d->getModelNum() << " " << d->getFirmwareRev();
+		cout << d->getModelNum() << ":" << d->getFirmwareRev();
 		cout << std::endl;
 	}
 	delete d;
