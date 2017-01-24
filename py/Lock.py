@@ -1011,8 +1011,9 @@ class LockApp(gtk.Window):
         txt = os.popen(self.prefix + "sedutil-cli --printDefaultPassword " + self.devname ).read()
         x_words = txt.split(': ',1)
         print x_words
-        self.dev_msid.set_text(x_words[1])
-        self.dev_msid.set_width_chars(8)
+        if self.devs_list != []:
+            self.dev_msid.set_text(x_words[1])
+            self.dev_msid.set_width_chars(8)
 
         
     def scan(self, *args):
@@ -1041,6 +1042,7 @@ class LockApp(gtk.Window):
                 print 'after remove all item, opal_ver_list = ', self.opal_ver_list
                 
         self.finddev()
+        
         for idx in range(len(self.devs_list)) :
             ##map(self.dev_select.append, [self.devs_list[idx]]) # populate the dev array
             self.dev_select.append( self.devs_list[idx]) # populate the dev array
@@ -1053,6 +1055,7 @@ class LockApp(gtk.Window):
             self.dev_opal_ver.set_text(self.opal_ver_list[0])
             
         self.firstscan = False
+        
         self.get_msid() #?????
 ##############################################################################
 
