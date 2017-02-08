@@ -80,6 +80,11 @@ uint8_t DtaDev::isPresent()
 	LOG(D1) << "Entering DtaDev::isPresent() " << (uint16_t) isOpen;
     return isOpen;
 }
+uint8_t DtaDev::isNVMEbus()
+{
+	LOG(D1) << "Entering DtaDev::isNVMEbus() " << (uint16_t)isNVME;
+	return isNVME;
+}
 uint8_t DtaDev::MBREnabled()
 {
 	LOG(D1) << "Entering DtaDev::MBRENabled" << (uint16_t)disk_info.Locking_MBREnabled;
@@ -127,6 +132,7 @@ void DtaDev::discovery0()
         LOG(D) << "Send D0 request to device failed " << (uint16_t)lastRC;
         return;
     }
+	else { LOG(D) << "Send D0 request to device OK " << (uint16_t)lastRC; }
 
     epos = cpos = (uint8_t *) d0Response;
     hdr = (Discovery0Header *) d0Response;
@@ -237,8 +243,8 @@ void DtaDev::puke()
 {
 	LOG(D1) << "Entering DtaDev::puke()";
 	/* IDENTIFY */
-	cout << endl << dev << (disk_info.devType == DEVICE_TYPE_ATA ? " ATA " : disk_info.devType == DEVICE_TYPE_SAS ? " SAS " : disk_info.devType == DEVICE_TYPE_USB ? " USB " : " OTHER ");
-	cout << disk_info.modelNum << " " << disk_info.firmwareRev << " " << disk_info.serialNum << endl;
+	cout << endl << dev << (disk_info.devType == DEVICE_TYPE_ATA ? " ATA " : disk_info.devType == DEVICE_TYPE_SAS ? " SAS " : disk_info.devType == DEVICE_TYPE_USB ? " USB " : disk_info.devType == DEVICE_TYPE_NVME ? "NVMe" : " OTHER ");
+	cout << disk_info.modelNum << ":" << disk_info.firmwareRev << " " << disk_info.serialNum << endl;
 	/* TPer */
 	if (disk_info.TPer) {
 		cout << "TPer function (" << HEXON(4) << FC_TPER << HEXOFF << ")" << std::endl;

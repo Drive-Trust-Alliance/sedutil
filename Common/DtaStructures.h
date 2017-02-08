@@ -273,6 +273,12 @@ typedef enum _ATACOMMAND {
     IDENTIFY = 0xec,
 } ATACOMMAND;
 
+typedef enum _NVMECOMMAND {
+    NVME_RECV = 0x82,
+    NVME_SEND = 0x81,
+    NVME_IDENTIFY = 0x06,
+} NVMECOMMAND;
+
 typedef enum _DTA_DEVICE_TYPE {
     DEVICE_TYPE_ATA,
     DEVICE_TYPE_SAS,
