@@ -32,9 +32,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaHexDump.h"
 #include "DtaDiskATA.h"
 #include "DtaDiskUSB.h"
+#include "DtaDiskNVME.h"
 
 using namespace std;
-DtaDevOS::DtaDevOS() {};
+DtaDevOS::DtaDevOS() { LOG(D1) << "Entering DtaDevOS Constructor"; };
 void DtaDevOS::init(const char * devref)
 {
     LOG(D1) << "Creating DtaDevOS::DtaDevOS() " << devref;
@@ -82,20 +83,32 @@ void DtaDevOS::init(const char * devref)
 		_Inout_opt_(LPOVERLAPPED) NULL)) {
 		return;
 	}
+	LOG(D1) << "descriptor.BusType = " << descriptor.BusType << "\n";
 	// OVERLAPPED structure
+	isNVME = FALSE;
 	switch (descriptor.BusType) {
 	case BusTypeSata:
+		LOG(D1) << "Enter Sata bus type case";
 		disk = new DtaDiskATA();
+		LOG(D1) << "Return from DtaDiskATA bus type case";
 		break;
 	case BusTypeUsb:
 		disk = new DtaDiskUSB();
 		break;
+	case BusTypeNvme:
+		LOG(D1) << "Enter Nvme bus type case";
+		disk = new DtaDiskNVME();
+		LOG(D1) << "Return from DtaDiskNVME";
+		isNVME = TRUE; 
+		break;
 	default:
 		return;
 	}
-
+	LOG(D1) << "Before Entering disk->init";
 	disk->init(dev);
+	LOG(D1) << "Before Entering identify(disk_info";
     identify(disk_info);
+	LOG(D1) << "Before Entering disk->init";
 	if (DEVICE_TYPE_OTHER != disk_info.devType) discovery0();
 }
 
@@ -131,7 +144,7 @@ void DtaDevOS::identify(OPAL_DiskInfo& di)
 {
     LOG(D1) << "Entering DtaDevOS::identify()";
 	LOG(D1) << "Exiting DtaDevOS::identify()";
-	return(disk->identify(di));
+	return(disk->identify(di)); 
 }
 
 /** Close the filehandle so this object can be delete. */

@@ -21,20 +21,20 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include "DtaDiskType.h"
 /** Device specific implementation of disk access functions. */
-class DtaDiskATA : public DtaDiskType {
+class DtaDiskNVME : public DtaDiskType {
 public:
-	DtaDiskATA();
-	~DtaDiskATA();
+	DtaDiskNVME();
+	~DtaDiskNVME();
 	/** device specific initialization.
 	* This function should perform the necessary authority and environment checking
 	* to allow proper functioning of the program, open the device, perform an 
 	* identify, add the fields from the identify response to the disk info structure
-	* and if the device is an ATA device perform a call to Discovery0() to complete
+	* and if the device is an NVME device perform a call to Discovery0() to complete
 	* the disk_info structure
 	* @param devref character representation of the device is standard OS lexicon
 	*/
 	void init(const char * devref);
-	/** OS specific method to send an ATA command to the device
+	/** OS specific method to send an NVME command to the device
 	* @param cmd command to be sent to the device
 	* @param protocol security protocol to be used in the command
 	* @param comID communications ID to be used
@@ -43,11 +43,11 @@ public:
 	*/
 	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 		void * buffer, uint16_t bufferlen);
-	/** OS specific routine to send an ATA identify to the device */
+	/** OS specific routine to send an NVME identify to the device */
 	void identify(OPAL_DiskInfo& disk_info);
 private:
 	
-	void *ataPointer; /**< pointer ro ATA_PASSTHROUGH_DIRECT structure */
+	void * nvmePointer; /**< pointer ro NVME_PASSTHROUGH_DIRECT structure */
 	HANDLE hDev; /**< Windows device handle */
 	uint8_t isOpen = FALSE;
 	uint8_t isNVME = FALSE;
