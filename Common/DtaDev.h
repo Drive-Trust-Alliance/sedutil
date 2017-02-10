@@ -59,6 +59,8 @@ public:
 	uint8_t LockingEnabled();
 	/** Is there an OS disk represented by this object */
 	uint8_t isPresent();
+	/** Is device on NVME bus */
+	uint8_t isNVMEbus();
 	/** Returns the Firmware revision reported by the identify command */
 	char *getFirmwareRev();
 	/** Returns the Model Number reported by the Identify command */
@@ -288,6 +290,7 @@ public:
 protected:
 	const char * dev;   /**< character string representing the device in the OS lexicon */
 	uint8_t isOpen = FALSE;  /**< The device has been opened */
+	uint8_t isNVME = FALSE;  /**< This device is NVME */
 	OPAL_DiskInfo disk_info;  /**< Structure containing info from identify and discovery 0 */
 	DtaResponse response;   /**< shared response object */
 	DtaResponse propertiesResponse;  /**< response fron properties exchange */

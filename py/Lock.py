@@ -20,7 +20,7 @@ History:
               add PBA image file browser dialog
               add warnning message box twice when perform revert psid and rever user wirh password
  
-
+    2017.02.09 beef up option handling. show usage for invalid option and exit 
 
 '''
 
@@ -51,7 +51,6 @@ def make_hbox(homogeneous, spacing, expand, fill, padding,lab,ent):
     button = gtk.Button(lab)
     box.pack_start(button, expand, fill, padding)
     button.show()
-
 
     txt = gtk.Entry()
     txt.set_text(ent)
@@ -88,18 +87,20 @@ class LockApp(gtk.Window):
     LKRNG_SLBA = "0"
     LKRNG_LBALEN = "0"
     LKATTR = "RW"
-
     PASSWORD_ONLY = False        
         
     try:
         opts, args = getopt.getopt(sys.argv[1:], [""], ["passwordonly","PASSWORDONLY"])
     except getopt.GetoptError, err:
-        print "No options given consider ok"
-
+        print "Use --passwordonly or --PASSWORDONLY or no option at all"
+        exit(2)
+        
+    #print "opts=", opts
     for o, a in opts:
+        print o
+        raw_input("PAUSE")
         if o in ("--passwordonly", "--PASSWORDONLY"):
             PASSWORD_ONLY = True
-        
         else:
             assert False, "OK"
    
@@ -529,7 +530,6 @@ class LockApp(gtk.Window):
         self.add(self.vbox)
         self.scan()
 
-        
         
     def util(self, *args):
         print 'UTILITY button clicked, create timer here'
