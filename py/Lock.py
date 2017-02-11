@@ -21,6 +21,8 @@ History:
               add warnning message box twice when perform revert psid and rever user wirh password
  
     2017.02.09 beef up option handling. show usage for invalid option and exit 
+               add linux nvme device support
+               
 
 '''
 
@@ -95,10 +97,7 @@ class LockApp(gtk.Window):
         print "Use --passwordonly or --PASSWORDONLY or no option at all"
         exit(2)
         
-    #print "opts=", opts
     for o, a in opts:
-        print o
-        raw_input("PAUSE")
         if o in ("--passwordonly", "--PASSWORDONLY"):
             PASSWORD_ONLY = True
         else:
@@ -961,8 +960,11 @@ class LockApp(gtk.Window):
         #self.devname = self.txt_dev.get_text()
         self.devname = self.dev_select.get_active_text()
         self.image = self.txt_image.get_text()
+        start = time.clock()
         status = os.system( self.prefix + "sedutil-cli --loadpbaimage " + password + " " + self.image + " "+ self.devname )
-        
+        stop = time.clock()
+        elapsed = (stop - start)
+        print ("elaspsed = ", elapsed)
         if status != 0 :
             #dialog = gtk.Dialog(title=None, parent=None, flags=0, buttons=None)
             message = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
@@ -1108,9 +1110,9 @@ class LockApp(gtk.Window):
                         print tt
                         m2 = re.match(names[index],tt)
                         x_words = tt.split() 
-                        print ("x_words = ", x_words) #DEBUG
-                        print x_words[2] # vendor name #DEBUG
-                        print x_words[1] # Opal version #DEBUG
+                        #print ("x_words = ", x_words)
+                        #print x_words[2] # vendor name
+                        #print x_words[1] # Opal version
                         if (index == 0) : 
                             self.devname = "\\\\.\\" + m2.group()
                         else:
@@ -1125,7 +1127,7 @@ class LockApp(gtk.Window):
                         
                         #x_word contain vendor name and series number separate with :
                         
-                        print x_words[2] # vendor name #DEBUG
+                        #print x_words[2] # vendor name #DEBUG
                         y_words = x_words[2].split(":",1) # split with : or b
                         print ("y_words = ", y_words)
                         print ("y_words[0] = ", y_words[0])
