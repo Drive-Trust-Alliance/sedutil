@@ -21,8 +21,6 @@ History:
               add warnning message box twice when perform revert psid and rever user wirh password
  
     2017.02.09 beef up option handling. show usage for invalid option and exit 
-               add linux nvme device support
-               
 
 '''
 
@@ -53,6 +51,7 @@ def make_hbox(homogeneous, spacing, expand, fill, padding,lab,ent):
     button = gtk.Button(lab)
     box.pack_start(button, expand, fill, padding)
     button.show()
+
 
     txt = gtk.Entry()
     txt.set_text(ent)
@@ -89,6 +88,7 @@ class LockApp(gtk.Window):
     LKRNG_SLBA = "0"
     LKRNG_LBALEN = "0"
     LKATTR = "RW"
+
     PASSWORD_ONLY = False        
         
     try:
@@ -96,10 +96,11 @@ class LockApp(gtk.Window):
     except getopt.GetoptError, err:
         print "Use --passwordonly or --PASSWORDONLY or no option at all"
         exit(2)
-        
+
     for o, a in opts:
         if o in ("--passwordonly", "--PASSWORDONLY"):
             PASSWORD_ONLY = True
+        
         else:
             assert False, "OK"
    
@@ -529,6 +530,7 @@ class LockApp(gtk.Window):
         self.add(self.vbox)
         self.scan()
 
+        
         
     def util(self, *args):
         print 'UTILITY button clicked, create timer here'
@@ -1044,7 +1046,6 @@ class LockApp(gtk.Window):
                 print 'after remove all item, opal_ver_list = ', self.opal_ver_list
                 
         self.finddev()
-        
         for idx in range(len(self.devs_list)) :
             ##map(self.dev_select.append, [self.devs_list[idx]]) # populate the dev array
             self.dev_select.append( self.devs_list[idx]) # populate the dev array
@@ -1057,7 +1058,6 @@ class LockApp(gtk.Window):
             self.dev_opal_ver.set_text(self.opal_ver_list[0])
             
         self.firstscan = False
-        
         self.get_msid() #?????
 ##############################################################################
 
@@ -1128,7 +1128,7 @@ class LockApp(gtk.Window):
                         #x_word contain vendor name and series number separate with :
                         
                         #print x_words[2] # vendor name #DEBUG
-                        y_words = x_words[2].split(":",1) # split with : or b
+                        y_words = x_words[2].split(":",1)
                         print ("y_words = ", y_words)
                         print ("y_words[0] = ", y_words[0])
                         print ("y_words[1] = ", y_words[1])
