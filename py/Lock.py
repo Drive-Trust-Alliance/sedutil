@@ -66,11 +66,11 @@ class LockApp(gtk.Window):
     firstscan = True
     firstmsg = True
     devname="\\\\.\\PhysicalDrive9"
-    psids = dict ({'sandisk 250GB SSD': '55555555555555555555555555555555',
+    psids = dict ({'samsung 250GB NVMe': '1MJHH9BV6EPCX7VHA9EQP1D4LBKDFUJ4', #DELL
                    'samsung 250GB SSD': '12S97B41W3TX9JTZBMVDR2BG7U0U504K', 
                    'crucial 120GB SSD': '53028B2F57814C8AE100000089C981B5',
                    'samsung 500GB SSD': '1FE96DSD0U6K5BY006ESCF2FEPE5MWUG', 
-                   'sandisk 120GB SSD': '44444444444444444444444444444444', 
+                   'samsung 250GB NVMe': '1EE2DS8EKUYVCNW7Q73004NX02C0QT7J', #NUC
                    'crucial 512GB SSD': '54B3F885AB284E2CE100000089C981B5'})
 
     psid = psids["crucial 512GB SSD"]
@@ -669,11 +669,11 @@ class LockApp(gtk.Window):
                 txt11 = txt1.replace(", ", "\n")
                 txt2 = txt2 + txt11 + "\n"
                 #print txt2
-            else:
-                print 'CCCCCCCCCCCC  txt11 not found : ', txt11, ' CCCCCCCCCCCCCCCCCCCCCCCCCCCCC'
+            #else:
+                #print 'CCCCCCCCCCCC  txt11 not found : ', txt11, ' CCCCCCCCCCCCCCCCCCCCCCCCCCCCC'
 
         txt2 = self.devname + " " + self.dev_vendor.get_text() +  "\n" + txt2
-        print txt2
+        #print txt2
         
         # identify objects, table, table size, admins, users, and other status
         tt = [ "Locked = [YN]", 
@@ -784,9 +784,13 @@ class LockApp(gtk.Window):
         print("unlock physical device " + self.devname)
         #password = self.txt_pass.get_text()
         password = self.hash_pass()
-        os.system(self.prefix + "sedutil-cli --disableLockingRange " + self.LKRNG + " " 
+        status1 =  os.system(self.prefix + "sedutil-cli --disableLockingRange " + self.LKRNG + " " 
                 + password + " " + self.devname )
-        os.system(self.prefix + "sedutil-cli --setMBREnable off " + password + " " + self.devname )
+        status2 =  os.system(self.prefix + "sedutil-cli --setMBREnable off " + password + " " + self.devname )
+        if (status1 | status2) != 0 :
+            self.msg_err("TCG Unlock unsuccess")
+        else :
+            self.msg_ok("TCG Unlock success")
 
     def pba(self, *args):  ## Authorize preboot to allow next boot into Locked OS partition
         #self.devname = self.txt_dev.get_text()
@@ -794,12 +798,16 @@ class LockApp(gtk.Window):
         print("PreBoot Authorization physical device " + self.devname)
         #password = self.txt_pass.get_text()
         password = self.hash_pass()
-        os.system(self.prefix + "sedutil-cli --setMBRdone on " + password + " " + self.devname )
-        os.system(self.prefix + "sedutil-cli --setLockingRange " + self.LKRNG
+        status1 =  os.system(self.prefix + "sedutil-cli --setMBRdone on " + password + " " + self.devname )
+        status2 =  os.system(self.prefix + "sedutil-cli --setLockingRange " + self.LKRNG + " " 
                 + self.LKATTR + " " + password + " " + self.devname)
         # must manually reboot
         #if self.PASSWORD_ONLY == True:
         #    self.reboot()
+        if (status1 | status2) != 0 :
+            self.msg_err("PreBoot Unlock unsuccess")
+        else :
+            self.msg_ok("Preboot Unlock success")
                 
 
 
@@ -820,11 +828,11 @@ class LockApp(gtk.Window):
         print rng
         print lba
         print length
-        os.system(self.prefix + "sedutil-cli --setupLockingRange " + rng + " "
+        status =  os.system(self.prefix + "sedutil-cli --setupLockingRange " + rng + " "
                 + lba + " " + length + " "
                 + password + " " + self.devname)
         self.LKATTR = self.txt_LKATTR.get_text()
-        os.system(self.prefix + "sedutil-cli --setLockingRange " + self.LKRNG + " " + self.LKATTR 
+        status =  os.system(self.prefix + "sedutil-cli --setLockingRange " + self.LKRNG + " " + self.LKATTR 
                 + " " + password + " " + self.devname)
 
 
@@ -836,7 +844,7 @@ class LockApp(gtk.Window):
         self.LKRNG = self.txt_LKRNG.get_text()
         self.LKATTR = self.txt_LKATTR.get_text()
         
-        os.system(self.prefix + "sedutil-cli --setLockingRange " + self.LKRNG + " " + self.LKATTR 
+        status =  os.system(self.prefix + "sedutil-cli --setLockingRange " + self.LKRNG + " " + self.LKATTR 
                 + " " + password + " " + self.devname)
 
     def exitapp(self, *args):
@@ -847,21 +855,21 @@ class LockApp(gtk.Window):
         print("Exit and power off")
         
         if self.ostype == 0 :
-            os.system("shutdown -s -t 0")
+            status =  os.system("shutdown -s -t 0")
         elif self.ostype == 1 :
-            os.system(self.prefix + "poweroff")
+            status =  os.system(self.prefix + "poweroff")
         elif self.ostype == 2 :
-            os.system(self.prefix + "poweroff")    
+            status =  os.system(self.prefix + "poweroff")    
         exit(0)
 
     def reboot(self, *args):
         print("Exit and reboot")
         if self.ostype == 0 :
-            os.system("shutdown -r -t 0")
+            status =  os.system("shutdown -r -t 0")
         elif self.ostype == 1 :
-            os.system(self.prefix + "reboot now")
+            status =  os.system(self.prefix + "reboot now")
         elif self.ostype == 2 :
-            os.system(self.prefix + "reboot now")    
+            status =  os.system(self.prefix + "reboot now")    
         exit(0)
 
     def lock(self, *args):
@@ -870,11 +878,15 @@ class LockApp(gtk.Window):
         print("lock physical device "+ self.devname)
         #password = self.txt_pass.get_text()
         password = self.hash_pass()
-        os.system(self.prefix + "sedutil-cli --initialSetup " + password + " " + self.devname )
-        os.system(self.prefix + "sedutil-cli --enableLockingRange " + str(self.LKRNG) + " "    + password + " " + self.devname )
-        os.system(self.prefix + "sedutil-cli --setMBRdone on " + password + " " + self.devname )
-        os.system(self.prefix + "sedutil-cli --setMBREnable on " + password + " " + self.devname )
-
+        status1 =  os.system(self.prefix + "sedutil-cli --initialSetup " + password + " " + self.devname )
+        status2 =  os.system(self.prefix + "sedutil-cli --enableLockingRange " + str(self.LKRNG) + " "    + password + " " + self.devname )
+        status3 =  os.system(self.prefix + "sedutil-cli --setMBRdone on " + password + " " + self.devname )
+        status4 =  os.system(self.prefix + "sedutil-cli --setMBREnable on " + password + " " + self.devname )
+        if (status1 | status2 | status3 | status4) !=0 :
+            self.msg_err("Initial Setup unsuccess")
+        else : 
+            self.msg_ok("Initial Setup success")
+        
     def revert_psid(self, *args):
         message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK_CANCEL)
         message.set_markup("Warning : Revert with PSID erase all data. Do you want to proceed?")
@@ -893,11 +905,13 @@ class LockApp(gtk.Window):
                 psid = self.psid_select.get_active_text()
                 #self.devname = self.txt_dev.get_text()
                 self.devname = self.dev_select.get_active_text()
-                os.system(self.prefix + "sedutil-cli --yesIreallywanttoERASEALLmydatausingthePSID " + psid + " " + self.devname )
+                status =  os.system(self.prefix + "sedutil-cli --yesIreallywanttoERASEALLmydatausingthePSID " + psid + " " + self.devname )
             messageA.destroy()
-
         message.destroy()
-
+        if status != 0 :
+            self.msg_err("Revert with PSID unsuccess")
+        else :
+            self.msg_ok("Revert with PSID success")
 
     def revert_user(self, *args):
         message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK_CANCEL)
@@ -917,11 +931,14 @@ class LockApp(gtk.Window):
                 password = self.hash_pass()
                 #self.devname = self.txt_dev.get_text()
                 self.devname = self.dev_select.get_active_text()
-                os.system(self.prefix + "sedutil-cli --revertTPer " + password + " " + self.devname )
+                status =  os.system(self.prefix + "sedutil-cli --revertTPer " + password + " " + self.devname )
             messageA.destroy()
         message.destroy()
-
-
+        if status != 0 :
+            self.msg_err("Revert with PSID unsuccess")
+        else :
+            self.msg_ok("Revert with PSID success")
+            
     def image_dialog(self, *args):
     ##def on_file_open_activate(self, menuitem, data=None):
         self.fcd = gtk.FileChooserDialog("Open...",
@@ -1274,14 +1291,14 @@ class LockApp(gtk.Window):
                 print ("ps = ",ps) 
                 print ("t = ",t)
                 print ("self.dev_series = ", self.dev_series.get_text())
-                raw_input("split file name into 4 piece")
+                ## JERRY raw_input("split file name into 4 piece")
                 # look for matching series number then determine if latest
                 if self.dev_series.get_text() == n : # if series number match, we have candidate of password
-                    raw_input("find_passmatch return True, hit any key to continue :")
+                    ## JERRY raw_input("find_passmatch return True, hit any key to continue :")
                     print ("interge of t = ",int(t))
                     print ("integer of latest_t = ", int(latest_t))
                     if int(t) > int(latest_t):
-                            raw_input("find the latest password file, does it match the device ?")
+                            ## JERRY raw_input("find the latest password file, does it match the device ?")
                     
                             latest_t = t
                             latest_f = f 
@@ -1306,7 +1323,7 @@ class LockApp(gtk.Window):
         else:
             print "No Matching device found"
         
-        raw_input("hit anykey to continue")
+        ## JERRY raw_input("hit anykey to continue")
         
         # use file dialog for now
         self.fcd = gtk.FileChooserDialog("Open...",
@@ -1333,7 +1350,17 @@ class LockApp(gtk.Window):
     
 
     def msg_err(self, msg):
-        message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK)
+        message = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
+        message.set_markup(msg)
+        res = message.run()
+        print message.get_widget_for_response(gtk.RESPONSE_OK)
+        print gtk.RESPONSE_OK
+        if res == gtk.RESPONSE_OK :
+            print "OK button clicked"
+        message.destroy()
+        
+    def msg_ok(self, msg):
+        message = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_OK)
         message.set_markup(msg)
         res = message.run()
         print message.get_widget_for_response(gtk.RESPONSE_OK)
@@ -1353,7 +1380,7 @@ class LockApp(gtk.Window):
         # Create devname buttons, entry with the appropriate settings
         #
         self.box_dev = gtk.HBox(homogeneous, spacing)
-        self.label_dev = gtk.Label("Select Device") 
+        self.label_dev = gtk.Label(" Select Device") 
         self.label_dev.set_width_chars(width)
         self.label_dev.set_justify(gtk.JUSTIFY_LEFT)
         self.box_dev.pack_start(self.label_dev, expand, fill, padding)
@@ -1396,38 +1423,39 @@ class LockApp(gtk.Window):
         
         
         # move series number to next line of gui
+        # Label expand=False;  Entry expand=False; field will expand according to input text
         
-        self.box_ser = gtk.HBox(True, spacing)
+        self.box_ser = gtk.HBox(False, 20)
         
         # entry to show series number
         
-        self.label_series = gtk.Label('Series #')
+        self.label_series = gtk.Label(' Series #')
         self.label_series.show()
-        self.box_ser.pack_start(self.label_series, True, True, padding)
+        self.box_ser.pack_start(self.label_series, False, False, padding)
 
         self.dev_series = gtk.Entry()
         self.dev_series.set_text("")
         self.dev_series.set_property("editable", False)
         self.dev_series.show()
-        self.box_ser.pack_start(self.dev_series, True, True, padding)
+        self.box_ser.pack_start(self.dev_series, False, True, padding)
         
         # entry to show device Opal version
         
         self.label_opal_ver = gtk.Label('Opal Version')
         self.label_opal_ver.show()
-        self.box_ser.pack_start(self.label_opal_ver, True, True, padding)
+        self.box_ser.pack_start(self.label_opal_ver, False, False, padding)
         
         self.dev_opal_ver = gtk.Entry()
         self.dev_opal_ver.set_text("")
         self.dev_opal_ver.set_property("editable", False)
         self.dev_opal_ver.show()
-        self.box_ser.pack_start(self.dev_opal_ver, True, True, padding)
+        self.box_ser.pack_start(self.dev_opal_ver, False, True, padding)
         
         # device default msid
        
         self.label_msid = gtk.Label('MSID')
         self.label_msid.show()
-        self.box_ser.pack_start(self.label_msid, True, True, padding)
+        self.box_ser.pack_start(self.label_msid, False, False, padding)
         
         self.dev_msid = gtk.Entry()
         self.dev_msid.set_text("")
