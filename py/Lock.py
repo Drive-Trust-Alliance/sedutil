@@ -92,13 +92,13 @@ class LockApp(gtk.Window):
     PASSWORD_ONLY = False        
         
     try:
-        opts, args = getopt.getopt(sys.argv[1:], [""], ["passwordonly","PASSWORDONLY"])
+        opts, args = getopt.getopt(sys.argv[1:], [""], ["Passwordonly"])
     except getopt.GetoptError, err:
-        print "Use --passwordonly or --PASSWORDONLY or no option at all"
+        print "Use --Passwordonly or no option at all"
         exit(2)
 
     for o, a in opts:
-        if o in ("--passwordonly", "--PASSWORDONLY"):
+        if o in ("--Passwordonly"):
             PASSWORD_ONLY = True
         
         else:
