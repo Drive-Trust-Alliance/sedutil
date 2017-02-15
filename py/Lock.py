@@ -1028,11 +1028,12 @@ class LockApp(gtk.Window):
         self.get_msid()
         
 
-    def get_msid(self, *args):       
+    def get_msid(self, *args):  
         txt = os.popen(self.prefix + "sedutil-cli --printDefaultPassword " + self.devname ).read()
+        if txt == '' :
+            return
         x_words = txt.split(': ',1)
-        print x_words
-        if self.devs_list != []:
+        if self.devs_list != [] :
             self.dev_msid.set_text(x_words[1])
             self.dev_msid.set_width_chars(8)
 
