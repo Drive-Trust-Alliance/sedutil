@@ -21,6 +21,7 @@ History:
               add warnning message box twice when perform revert psid and rever user wirh password
  
     2017.02.09 beef up option handling. show usage for invalid option and exit 
+    2017.02.15 utility button handle Linux/Darwin/Win
 
 '''
 
@@ -544,8 +545,9 @@ class LockApp(gtk.Window):
         if self.PASSWORD_ONLY == True:
             print '***** Utility button timeout *********'
             #run python Lock.py"
-            cmd = 'python Lock.py'
-            process = subprocess.Popen(cmd, shell=True,
+
+            
+            process = subprocess.Popen(self.cmd, shell=True,
                            stdout=subprocess.PIPE, 
                            stderr=subprocess.PIPE)
 
@@ -984,13 +986,18 @@ class LockApp(gtk.Window):
         stop = time.clock()
         elapsed = (stop - start)
         print ("elaspsed = ", elapsed)
+        
         if status != 0 :
+            self.msg_err("Write PBA image "+ self.image + " Unsuccess")
+        else :
+            self.msg_ok("Write PBA image "+ self.image + " Success")        
+        '''if status != 0 :
             #dialog = gtk.Dialog(title=None, parent=None, flags=0, buttons=None)
             message = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
             message.set_markup("Error: Write PBA image "+ self.image)
             message.run()
             message.destroy()
-        '''else:
+        else:
             print "show progress bar"
             #  Create a centering alignment object
             align = gtk.Alignment(0.5, 0.5, 0, 0)
@@ -1084,14 +1091,17 @@ class LockApp(gtk.Window):
             print platform
             self.ostype = 1
             self.prefix = "sudo "
+            self.cmd = 'python `find / -name Lock.py`'
         elif platform == "darwin":
             print platform
             self.ostype = 2
             self.prefix = "sudo "
+            self.cmd = 'python `find / -name Lock.py`'
         elif platform == "win32":
             print platform
             self.ostype = 0
             self.prefix = ""
+            self.cmd = 'python Lock.py'
 
     def finddev(self, *args):
         txt = os.popen(self.prefix + 'sedutil-cli --scan').read()
