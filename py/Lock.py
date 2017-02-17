@@ -545,15 +545,23 @@ class LockApp(gtk.Window):
         if self.PASSWORD_ONLY == True:
             print '***** Utility button timeout *********'
             #run python Lock.py"
+            #####'python `find / -name Lock.py`' -> NG
+            #####'python ~/Downloads/util/py/Lock.py' -> ok
+            #####'python /usr/local/bin/Lock.py' -> ok
 
-            
             process = subprocess.Popen(self.cmd, shell=True,
                            stdout=subprocess.PIPE, 
                            stderr=subprocess.PIPE)
 
             # wait for the process to terminate
             # out, err = process.communicate()
-            # errcode = process.returncode
+            errcode = process.returncode
+            #print ("errcode = ", errcode)
+            #out, err = process.communicate()
+            #print ("err = ",err)
+            #print ("out = ",out)
+            if errcode != None :
+               self.msg_err("sprawning additional utility error")
             self.exitapp()
         
         
@@ -1091,17 +1099,19 @@ class LockApp(gtk.Window):
             print platform
             self.ostype = 1
             self.prefix = "sudo "
-            self.cmd = 'python `find / -name Lock.py`'
+            self.cmd = 'python /usr/local/bin/Lock.py'
+            print ("self.cmd = ", self.cmd)
         elif platform == "darwin":
             print platform
             self.ostype = 2
             self.prefix = "sudo "
-            self.cmd = 'python `find / -name Lock.py`'
+            self.cmd = 'python /usr/local/bin/Lock.py'
         elif platform == "win32":
             print platform
             self.ostype = 0
             self.prefix = ""
             self.cmd = 'python Lock.py'
+        
 
     def finddev(self, *args):
         txt = os.popen(self.prefix + 'sedutil-cli --scan').read()
