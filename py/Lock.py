@@ -31,6 +31,7 @@ import os
 import re
 import sys
 from sys import platform
+#import platform
 import getopt
 import hashlib
 import gobject
@@ -562,12 +563,17 @@ class LockApp(gtk.Window):
             #print ("out = ",out)
             if errcode != None :
                self.msg_err("sprawning additional utility error")
-            self.exitapp()
-        
-        
+            #time.sleep(5)
+            if self.ostype != 1 :
+                self.exitapp()
+            else : # linux platform
+                import platform
+                if platform.architecture()[0] == '64bit' :
+                   self.iconify()
+                else :
+                   self.exitapp()
+                
         else:
-        
-
             message = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_OK)
             txt = 'Please Click OK to return to Utility GUI and Click \'Authentication with admin password\' to continue boot process'
             message.set_markup(txt)
