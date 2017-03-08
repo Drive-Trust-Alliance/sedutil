@@ -22,7 +22,9 @@ History:
  
     2017.02.09 beef up option handling. show usage for invalid option and exit 
     2017.02.15 utility button handle Linux/Darwin/Win
-
+    2017.03.05 do not kill or iconify on 64bit tinycore. force_true set to False 
+    2017.03.07 iconify work 
+    
 '''
 
 
@@ -110,7 +112,7 @@ class LockApp(gtk.Window):
     vendor_list = [] # "Sandisk" 
     opal_ver_list = [] # 1, 2, or 12
     series_list = [] # series number 
-    force_true = True
+    force_true = False # test only to avoid confusion when developing code # True
     
     def __init__(self):
         # Initialize window
@@ -569,7 +571,8 @@ class LockApp(gtk.Window):
             else : # linux platform
                 import platform
                 if platform.architecture()[0] == '64bit' :
-                   self.iconify()
+                   print "64bit no killing of process" # could be a bug in cliorx on tinycore or something else unknown
+                   # self.iconify()
                 else :
                    self.exitapp()
                 
@@ -1137,7 +1140,6 @@ class LockApp(gtk.Window):
             m = re.search(names[index] + ".*", txt) # 1st search identify OS type and the pattern we are looking for
             
             if m:
-                self.ostype = index
                 if (index == 0 ):
                    self.prefix = ""
                 else:
