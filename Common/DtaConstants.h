@@ -24,7 +24,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 * but when things weren't working this was one of the 
 * things I tried to make it work.
 */
-#define IO_BUFFER_ALIGNMENT 4096 // 1024
+#define IO_BUFFER_ALIGNMENT 4096
 /** maximum number of disks to be scanned */
 #define MAX_DISKS 20
 /** iomanip commands to hexdump a field */
