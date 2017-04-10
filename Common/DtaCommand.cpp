@@ -197,6 +197,9 @@ DtaCommand::complete(uint8_t EOD)
     /* fill in the lengths and add the modulo 4 padding */
     OPALHeader * hdr;
     hdr = (OPALHeader *) cmdbuf;
+	LOG(D1) << "bufferpos=" << bufferpos << endl;
+	LOG(D1) << "sizeof(OPALHeader)=" << sizeof(OPALHeader) << endl;
+	LOG(D1) << "sizeof(OPALComPacket)=" << sizeof(OPALComPacket) << endl;
     hdr->subpkt.length = SWAP32(bufferpos - (sizeof (OPALHeader)));
     while (bufferpos % 4 != 0) {
         cmdbuf[bufferpos++] = 0x00;
@@ -204,7 +207,11 @@ DtaCommand::complete(uint8_t EOD)
     hdr->pkt.length = SWAP32((bufferpos - sizeof (OPALComPacket))
                              - sizeof (OPALPacket));
     hdr->cp.length = SWAP32(bufferpos - sizeof (OPALComPacket));
-	if (bufferpos > 2048) {
+	LOG(D1) << "bufferpos=" << bufferpos << endl;
+	LOG(D1) << "hdr->subpkt.length=" << SWAP32(hdr->subpkt.length) << endl;
+	LOG(D1) << "hdr->pkt.length=" << SWAP32(hdr->pkt.length) << endl;
+	LOG(D1) << "hdr->cp.length=" << SWAP32(hdr->cp.length) << endl;
+	if (bufferpos > 57444) { 
 		LOG(E) << " Buffer Overrun " << bufferpos;
 		exit(EXIT_FAILURE);
 	}

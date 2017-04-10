@@ -85,7 +85,6 @@ void DtaDevOS::init(const char * devref)
 	}
 	LOG(D1) << "descriptor.BusType = " << descriptor.BusType << "\n";
 	// OVERLAPPED structure
-	isNVME = FALSE;
 	switch (descriptor.BusType) {
 	case BusTypeSata:
 		LOG(D1) << "Enter Sata bus type case";
@@ -99,7 +98,6 @@ void DtaDevOS::init(const char * devref)
 		LOG(D1) << "Enter Nvme bus type case";
 		disk = new DtaDiskNVME();
 		LOG(D1) << "Return from DtaDiskNVME";
-		isNVME = TRUE; 
 		break;
 	default:
 		return;

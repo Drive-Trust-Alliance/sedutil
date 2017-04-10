@@ -183,6 +183,9 @@ DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response)
         (0 == response.h.pkt.length) ||
         (0 == response.h.subpkt.length)) {
         LOG(E) << "One or more header fields have 0 length";
+		LOG(E) << "response.h.cp.length= " << response.h.cp.length;
+		LOG(E) << "response.h.pkt.length= " << response.h.pkt.length;
+		LOG(E) << "response.h.subpkt.length= " << response.h.subpkt.length << endl; 
 		return DTAERROR_COMMAND_ERROR;
     }
     // if we get an endsession response return 0

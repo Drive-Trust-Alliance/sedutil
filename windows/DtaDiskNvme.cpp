@@ -177,7 +177,6 @@ uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 		pCmd->CDW11 = bufferlen; //  0x800 ok; // bufferlen;
 		memcpy(nvme->DataBuffer, buffer, bufferlen); //0x800 ok ); // move data from caller's buffer to deviceiocontrol buffer ???? temp 4096 may change to 8192
 		nvme->DataBufferLen = bufferlen ; // ????? maybe it doesn't matter for data in command, but for data out, it should be the length of the data out ????
-
 	}
 	
 	nvme->QueueId = 0; // Admin queue

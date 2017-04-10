@@ -50,5 +50,4 @@ private:
 	void * nvmePointer; /**< pointer ro NVME_PASSTHROUGH_DIRECT structure */
 	HANDLE hDev; /**< Windows device handle */
 	uint8_t isOpen = FALSE;
-	uint8_t isNVME = FALSE;
 };
