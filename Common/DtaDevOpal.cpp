@@ -1042,7 +1042,7 @@ uint8_t DtaDevOpal::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
 	return 0;
 }
 
-uint8_t DtaDevOpal::enableUser(char * password, char * userid)
+uint8_t DtaDevOpal::enableUser(char * password, char * userid, OPAL_TOKEN status)
 {
 	LOG(D1) << "Entering DtaDevOpal::enableUser";
 	uint8_t lastRC;
@@ -1062,7 +1062,7 @@ uint8_t DtaDevOpal::enableUser(char * password, char * userid)
 		delete session;
 		return lastRC;
 	}
-	if ((lastRC = setTable(userUID, (OPAL_TOKEN)0x05, OPAL_TOKEN::OPAL_TRUE)) != 0) {
+	if ((lastRC = setTable(userUID, (OPAL_TOKEN)0x05, status)) != 0) {
 		LOG(E) << "Unable to enable user " << userid;
 		delete session;
 		return lastRC;

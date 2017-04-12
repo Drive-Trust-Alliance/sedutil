@@ -749,7 +749,7 @@ uint8_t DtaDevEnterprise::setLockingRange_SUM(uint8_t lockingrange, uint8_t lock
         LOG(D1) << "Exiting DtaDevEnterprise::setLockingRange_SUM()";
 	return 0;
 }
-uint8_t DtaDevEnterprise::enableUser(char * password, char * userid)
+uint8_t DtaDevEnterprise::enableUser(char * password, char * userid, OPAL_TOKEN status)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::enableUser";
 	LOG(E) << "enableUser not implemented";

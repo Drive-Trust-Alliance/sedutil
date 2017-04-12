@@ -212,7 +212,7 @@ public:
 	 * @param password password of locking sp administrative authority
 	 * @param userid  the user to be enabled
 	 */
-	virtual uint8_t enableUser(char * password, char * userid) = 0;
+	virtual uint8_t enableUser(char * password, char * userid, OPAL_TOKEN status = OPAL_TOKEN::OPAL_TRUE) = 0;
 	/** Enable locking on the device
 	 * @param password password of the admin sp SID authority
 	 */

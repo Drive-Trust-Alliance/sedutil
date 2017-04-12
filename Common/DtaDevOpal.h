@@ -127,10 +127,11 @@ public:
          * @param password the password of the Locking SP administrative authority 
          * @param userid Character name of the user to be enabled
          */
-	uint8_t enableUser(char * password, char * userid);
+	uint8_t enableUser(char * password, char * userid, OPAL_TOKEN status = OPAL_TOKEN::OPAL_TRUE);
         /** Primitive to set the MBRDone flag.
          * @param state 0 or 1  
          * @param Admin1Password Locking SP authority with access to flag
+		 * @param status true or false to enable/disable
          */
 	uint8_t setMBRDone(uint8_t state, char * Admin1Password);
           /** Primitive to set the MBREnable flag.
