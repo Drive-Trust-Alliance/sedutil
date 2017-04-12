@@ -33,6 +33,7 @@ using namespace std;
 DtaSession::DtaSession(DtaDev * device)
 {
     LOG(D1) << "Creating DtaSsession()";
+	sessionauth = 0;
     d = device;
 }
 
@@ -53,8 +54,46 @@ DtaSession::start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority)
 	}
 	return(start(SP, HostChallenge, auth));
 }
+uint8_t DtaSession::authuser() {
+	return sessionauth;
+}
+#ifdef MULTISTART
 uint8_t
 DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority)
+{
+	vector <uint8_t> auth;
+	if ((lastRC = unistart(SP, HostChallenge, SignAuthority)) == 0) {
+		sessionauth = 0;
+		return 0;
+	}
+	else {
+		for (uint8_t i = 1; i < 9; i++) {
+			// { 0x00, 0x00, 0x00, 0x09, 0x00, 0x03, 0x00, 0x01 }, /**< USER1 */
+			auth.clear();
+			auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+			auth.push_back(0x00);
+			auth.push_back(0x00);
+			auth.push_back(0x00);
+			auth.push_back(0x09);
+			auth.push_back(0x00);
+			auth.push_back(0x03);
+			auth.push_back(0x00);
+			auth.push_back(i);
+			if ((lastRC = unistart(SP, HostChallenge, auth)) == 0) {
+				sessionauth = i;
+				return 0;
+			}
+		}
+
+	}
+	return lastRC;
+}
+uint8_t
+DtaSession::unistart(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority)
+#else
+uint8_t
+DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority)
+#endif
 {
     LOG(D1) << "Entering DtaSession::startSession ";
 	vector<uint8_t> hash;
