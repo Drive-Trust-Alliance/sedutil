@@ -83,7 +83,8 @@ typedef enum _sedutiloption {
 	validatePBKDF2,
 	objDump,
     printDefaultPassword,
-	rawCmd,
+	rawCmd, 
+	version,
 
 } sedutiloption;
 /** verify the number of arguments passed */

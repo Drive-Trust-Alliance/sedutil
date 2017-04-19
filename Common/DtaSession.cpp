@@ -192,6 +192,11 @@ DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response)
     if (OPAL_TOKEN::ENDOFSESSION == response.tokenIs(0)) {
         return 0;
     }
+	// IF we receive start transaction status or end transaction JERRY
+	if (OPAL_TOKEN::STARTTRANSACTON == response.tokenIs(0) || OPAL_TOKEN::ENDTRANSACTON == response.tokenIs(0)) {
+		return 0;
+	}
+
     // IF we received a method status return it
     if (!((OPAL_TOKEN::ENDLIST == response.tokenIs(response.getTokenCount() - 1)) &&
         (OPAL_TOKEN::STARTLIST == response.tokenIs(response.getTokenCount() - 5)))) {

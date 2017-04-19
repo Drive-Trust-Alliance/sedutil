@@ -100,6 +100,7 @@ void usage()
 	printf("sedutil-cli --query %s \n", DEVICEEXAMPLE);
 	printf("sedutil-cli --yesIreallywanttoERASEALLmydatausingthePSID <PSIDALLCAPSNODASHED> %s \n", DEVICEEXAMPLE);
 	printf("sedutil-cli --initialSetup <newSIDpassword> %s \n", DEVICEEXAMPLE);
+	printf("sedutil-cli --version \n");
     return;
 }
 
@@ -218,6 +219,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(query, 1) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(scan, 0)  END_OPTION
+		BEGIN_OPTION(version, 0)  END_OPTION
 		BEGIN_OPTION(isValidSED, 1) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(eraseLockingRange, 3)
 			TESTARG(0, lockingrange, 0)

@@ -116,6 +116,7 @@ int main(int argc, char * argv[])
 	
 	if ((opts.action != sedutiloption::scan) && 
 		(opts.action != sedutiloption::validatePBKDF2) &&
+		(opts.action != sedutiloption::version) &&
 		(opts.action != sedutiloption::isValidSED)) {
 		if (opts.device > (argc - 1)) opts.device = 0;
 		tempDev = new DtaDevGeneric(argv[opts.device]);
@@ -317,6 +318,10 @@ int main(int argc, char * argv[])
 	case sedutiloption::rawCmd:
 		LOG(D) << "Performing cmdDump ";
 		return d->rawCmd(argv[argc - 7], argv[argc - 6], argv[argc - 5], argv[argc - 4], argv[argc - 3], argv[argc - 2]);
+		break;
+	case sedutiloption::version:
+		LOG(D) << "print version number ";
+		printf("Fidelity Lock Version : 20170417-A001");
 		break;
     default:
         LOG(E) << "Unable to determine what you want to do ";
