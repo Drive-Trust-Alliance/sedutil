@@ -9,6 +9,9 @@ if [ -z ${MAKEFLAGS+x} ]; then
     export MAKEFLAGS=$((1 + $(grep processor /proc/cpuinfo | wc -l)))
 fi
 
+# Run everything from the path of this script despite how invoked
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+
 source conf
 
 cd ../LinuxPBA
@@ -31,13 +34,13 @@ cd ../../images
 
 ./buildpbaroot
 
+# Rescue build
 ./buildrescue
 
-#./buildbiosLinux Release
+# Release builds
+./buildbiosLinux Release
 ./buildUEFI64 Release
 
-
-#./buildbiosLinux Debug
+# Debug builds
+./buildbiosLinux Debug
 ./buildUEFI64 Debug
-
-
