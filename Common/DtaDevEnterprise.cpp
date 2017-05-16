@@ -1300,11 +1300,14 @@ uint8_t DtaDevEnterprise::properties()
 }
 void DtaDevEnterprise::puke()
 {
+
 	LOG(D1) << "Entering DtaDevEnterprise::puke()";
 	DtaDev::puke();
 	if (disk_info.Properties) {
+		uint32_t i = 0, j = 0;
+
 		cout << std::endl << "TPer Properties: " << std::endl;
-		for (uint32_t i = 0, j = 1; i < propertiesResponse.getTokenCount(); i++) {
+		for (i = 0, j = 1; i < propertiesResponse.getTokenCount(); i++) {
 			if (OPAL_TOKEN::ENDLIST == propertiesResponse.tokenIs(i)) {
 				if (OPAL_TOKEN::STARTNAME == propertiesResponse.tokenIs(i + 1)) {
 					cout << std::endl << "Host Properties: " << std::endl;
@@ -1325,6 +1328,8 @@ void DtaDevEnterprise::puke()
 				}
 			}	
 		}
+		if ((j % 3) != 0)
+			cout << std::endl;
 	}
 }
 uint8_t DtaDevEnterprise::rawCmd(char *sp, char *hexauth, char *pass,
