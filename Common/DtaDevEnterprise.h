@@ -206,6 +206,6 @@ public:
 protected:
 	uint8_t getDefaultPassword();
 private:
-    uint16_t getMaxRanges(char * password);
-    uint16_t getMaxRangesOpal(char * password);
+    uint8_t getMaxRanges(char * password, uint16_t *maxRanges);
+    uint8_t getMaxRangesOpal(char * password, uint16_t *maxRanges);
 };

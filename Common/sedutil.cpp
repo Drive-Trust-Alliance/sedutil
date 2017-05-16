@@ -287,8 +287,7 @@ int main(int argc, char * argv[])
 		break;
     case sedutiloption::printDefaultPassword:
 		LOG(D) << "print default password";
-        d->printDefaultPassword();
-        return 0;
+        return d->printDefaultPassword();
         break;
 	case sedutiloption::rawCmd:
 		LOG(D) << "Performing cmdDump ";
