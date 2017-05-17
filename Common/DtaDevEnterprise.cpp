@@ -1205,18 +1205,26 @@ uint8_t DtaDevEnterprise::initLSPUsers(char * defaultPassword, char * newPasswor
 		session->dontHashPwd();
 		if ((lastRC = session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, defaultPassword, user)) != 0) {
 			delete session;
-			return lastRC;
+			// We only return failure if we fail to set BandMaster0.
+			if (i == 0) {
+				return lastRC;
+			} else {
+				continue;
+			}
 		}
 		DtaHashPwd(hash, newPassword, this);
         user2cpin(usercpin, user);
 		if ((lastRC = setTable(usercpin, "PIN", hash)) != 0) {
 			LOG(E) << "Unable to set BandMaster" << (uint16_t) i << " new password ";
-			delete session;
-			return lastRC;
+			// We only return failure if we fail to set BandMaster0.
+			if (i == 0) {
+				delete session;
+				return lastRC;
+			}
+		} else {
+			LOG(I) << "BandMaster" << (uint16_t) i << " password set";
 		}
-		LOG(I) << "BandMaster" << (uint16_t) i << " password set";
 		delete session;
-
 	}
 	LOG(D1) << "Exiting DtaDevEnterprise::initLSPUsers()";
 	return 0;
