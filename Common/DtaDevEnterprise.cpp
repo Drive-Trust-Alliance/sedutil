@@ -899,12 +899,26 @@ uint8_t DtaDevEnterprise::revertTPer(char * password, uint8_t PSID, uint8_t Admi
 uint8_t DtaDevEnterprise::eraseLockingRange(uint8_t lockingrange, char * password)
 {
 	uint8_t lastRC;
+	string defaultPassword;
+	char *pwd = NULL;
 	LOG(D1) << "Entering DtaDevEnterprise::eraseLockingRange";
 
     // look up MaxRanges
 	uint16_t MaxRanges = 0;
 
-	if ((lastRC = getMaxRanges(password, &MaxRanges)) != 0) {
+	if ((password == NULL) || (*password == '\0')) {
+
+		if ((lastRC = getDefaultPassword()) != 0) {
+			LOG(E) << __func__ << ": unable to retrieve MSID";
+			return lastRC;
+		}
+		defaultPassword = response.getString(5);
+		pwd = (char *)defaultPassword.c_str();
+	} else {
+		pwd = password;
+	}
+
+	if ((lastRC = getMaxRanges(pwd, &MaxRanges)) != 0) {
 		return lastRC;
 	}
     if (MaxRanges == 0 || MaxRanges >= 1024)
@@ -944,7 +958,10 @@ uint8_t DtaDevEnterprise::eraseLockingRange(uint8_t lockingrange, char * passwor
 		LOG(E) << "Unable to create session object ";
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
-	if ((lastRC = session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, password, user)) != 0) {
+	if (!defaultPassword.empty())
+		session->dontHashPwd();
+
+	if ((lastRC = session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, pwd, user)) != 0) {
 		delete session;
 		return lastRC;
 	}
