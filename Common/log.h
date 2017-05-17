@@ -42,6 +42,7 @@
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
+#include "DtaOptions.h"
 
 inline std::string NowTime();
 
@@ -141,19 +142,134 @@ TLogLevel Log<T>::FromInt(const int level) {
     return I;
 }
 
+template <typename T>
+class RLog {
+public:
+    RLog();
+    virtual ~RLog();
+    std::ostringstream& Get(TLogLevel level = I, sedutiloutput format = sedutilReadable);
+public:
+    static TLogLevel& Level();
+    static std::string ToString(TLogLevel level);
+    static TLogLevel FromString(const std::string& level);
+    static TLogLevel FromInt(const int level);
+protected:
+    std::ostringstream os;
+private:
+    RLog(const RLog&);
+    RLog& operator =(const RLog&);
+    TLogLevel curlevel;
+};
+
+template <typename T>
+RLog<T>::RLog() {
+}
+
+template <typename T>
+std::ostringstream& RLog<T>::Get(TLogLevel level, sedutiloutput output_format) {
+	curlevel = level;
+	if (output_format == sedutilNormal) {
+		os << "- " << NowTime();
+		os << " " << ToString(level) << ": ";
+	}
+    //	os << std::string(level > D ? level - D : 0, '\t');
+    return os;
+}
+
+template <typename T>
+RLog<T>::~RLog() {
+    os << std::endl;
+	if (curlevel == I)
+		T::Output(os.str());
+	else
+		T::OutputErr(os.str());
+}
+
+template <typename T>
+TLogLevel& RLog<T>::Level() {
+    static TLogLevel Level = D4;
+    return Level;
+}
+
+template <typename T>
+std::string RLog<T>::ToString(TLogLevel level) {
+    static const char* const buffer[] = {"ERR ", "WARN", "INFO", "DBG ", "DBG1", "DBG2", "DBG3", "DBG4"};
+    return buffer[level];
+}
+
+template <typename T>
+TLogLevel RLog<T>::FromString(const std::string& level) {
+    if (level == "DEBUG4")
+        return D4;
+    if (level == "DEBUG3")
+        return D3;
+    if (level == "DEBUG2")
+        return D2;
+    if (level == "DEBUG1")
+        return D1;
+    if (level == "DEBUG")
+        return D;
+    if (level == "INFO")
+        return I;
+    if (level == "WARN")
+        return W;
+    if (level == "ERROR")
+        return E;
+    RLog<T>().Get(W, sedutilNormal) << "Unknown logging level '" << level << "'. Using INFO level as default.";
+    return I;
+}
+
+template <typename T>
+TLogLevel RLog<T>::FromInt(const int level) {
+    if (level == 7)
+        return D4;
+    if (level == 6)
+        return D3;
+    if (level == 5)
+        return D2;
+    if (level == 4)
+        return D1;
+    if (level == 3)
+        return D;
+    if (level == 2)
+        return I;
+    if (level == 1)
+        return W;
+    if (level == 0)
+        return E;
+    RLog<T>().Get(W, sedutilNormal) << "Unknown logging level '" << level << "'. Using INFO level as default.";
+    return I;
+}
+
+
 class Output2FILE {
 public:
     static FILE*& Stream();
+    static FILE*& StreamStdout();
     static void Output(const std::string& msg);
+    static void OutputErr(const std::string& msg);
 };
+
+inline FILE*& Output2FILE::StreamStdout() {
+    static FILE* pStream = stdout;
+    return pStream;
+}
 
 inline FILE*& Output2FILE::Stream() {
     static FILE* pStream = stderr;
     return pStream;
 }
 
-inline void Output2FILE::Output(const std::string& msg) {
+inline void Output2FILE::OutputErr(const std::string& msg) {
     FILE* pStream = Stream();
+    if (!pStream)
+        return;
+    fprintf(pStream, "%s", msg.c_str());
+    fflush(pStream);
+}
+
+inline void Output2FILE::Output(const std::string& msg) {
+    FILE* pStream = StreamStdout();
     if (!pStream)
         return;
     fprintf(pStream, "%s", msg.c_str());
@@ -176,18 +292,32 @@ class FILELOG_DECLSPEC CLog : public Log<Output2FILE> {
 };
 //typedef Log<Output2FILE> FILELog;
 
+class FILELOG_DECLSPEC RCLog : public RLog<Output2FILE> {
+};
+
 #ifndef CLOG_MAX_LEVEL
 #define CLOG_MAX_LEVEL D4
 #endif
 
+#if 0
 #define LOG(level) \
 	if (level > CLOG_MAX_LEVEL) ;\
 	else if (level > CLog::Level() || !Output2FILE::Stream()) ; \
 	else CLog().Get(level)
+#endif
+
 #define IFLOG(level) \
 	if (level > CLOG_MAX_LEVEL) ;\
 	else if (level > CLog::Level() || !Output2FILE::Stream()) ; \
 	else
+
+extern sedutiloutput output_format;
+
+#define	LOGX(level) \
+	if (level > CLOG_MAX_LEVEL) ;\
+	else if (level > RCLog::Level() || !Output2FILE::Stream()) ; \
+	else RCLog().Get(level, output_format)
+#define	LOG LOGX
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 

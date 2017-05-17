@@ -21,6 +21,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaStructures.h"
 #include "DtaLexicon.h"
 #include <vector>
+#include "DtaOptions.h"
 #include "DtaResponse.h"
 class DtaCommand;
 class DtaSession;
@@ -281,6 +282,7 @@ public:
 	/** return the communications ID to be used for sessions to this device */
 	virtual uint16_t comID() = 0;
 	bool no_hash_passwords; /** disables hashing of passwords */
+	sedutiloutput output_format; /** standard, readable, JSON */
 protected:
 	const char * dev;   /**< character string representing the device in the OS lexicon */
 	uint8_t isOpen = FALSE;  /**< The device has been opened */

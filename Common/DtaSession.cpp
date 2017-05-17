@@ -20,6 +20,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include <stdio.h>
 #include "DtaSession.h"
+#include "DtaOptions.h"
 #include "DtaDev.h"
 #include "DtaCommand.h"
 #include "DtaResponse.h"

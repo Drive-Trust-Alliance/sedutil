@@ -109,6 +109,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
     uint16_t loggingLevel = 2;
 	uint8_t baseOptions = 2; // program and option
     CLog::Level() = CLog::FromInt(loggingLevel);
+    RCLog::Level() = RCLog::FromInt(loggingLevel);
     if (2 > argc) {
         usage();
 		return DTAERROR_INVALID_COMMAND;
@@ -132,6 +133,11 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			opts->no_hash_passwords = true;
 			LOG(D) << "Password hashing is disabled";
                 }
+		else if (!strcmp("-x", argv[i])) {
+			baseOptions += 1;
+			opts->output_format = sedutilReadable;
+			output_format = sedutilReadable;
+		}
 		else if (!(('-' == argv[i][0]) && ('-' == argv[i][1])) && 
 			(0 == opts->action))
 		{

@@ -22,6 +22,7 @@ class DtaCommand;
 class DtaSession;
 
 #include "os.h"
+#include "DtaOptions.h"
 #include "DtaDev.h"
 #include "DtaDevOS.h"
 #include "DtaStructures.h"

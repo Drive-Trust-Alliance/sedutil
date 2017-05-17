@@ -22,6 +22,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <iomanip>
 #include "DtaHashPwd.h"
 #include "DtaLexicon.h"
+#include "DtaOptions.h"
 #include "DtaDev.h"
 #include "log.h"
 

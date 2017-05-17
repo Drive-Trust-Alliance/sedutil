@@ -581,10 +581,24 @@ uint8_t DtaDevEnterprise::setupLockingRange_SUM(uint8_t lockingrange, uint64_t s
 uint8_t DtaDevEnterprise::listLockingRanges(char * password, int16_t rangeid)
 ////////////////////////////////////////////////////////////////////////////////
 {
-	LOG(D) << "Entering DtaDevEnterprise::listLockingRanges";
-	uint8_t lastRC;
+	LOG(D1) << "Entering DtaDevEnterprise::listLockingRanges";
+	uint8_t lastRC = 0, failRC = 0;
+	int one_succeeded = 0;
+	string defaultPassword;
+	char *pwd = NULL;
 
-	if (NULL == password) { LOG(E) << "password NULL"; }
+	// if (NULL == password) { LOG(E) << "password NULL"; }
+	if ((password == NULL) || (*password == '\0')) {
+
+		if ((lastRC = getDefaultPassword()) != 0) {
+			LOG(E) << __func__ << ": unable to retrieve MSID";
+			return lastRC;
+		}
+		defaultPassword = response.getString(5);
+		pwd = (char *)defaultPassword.c_str();
+	} else {
+		pwd = password;
+	}
 
     // look up MaxRanges
 	uint16_t MaxRanges;
@@ -600,7 +614,7 @@ uint8_t DtaDevEnterprise::listLockingRanges(char * password, int16_t rangeid)
 		return DTAERROR_UNSUPORTED_LOCKING_RANGE;
 
     if(rangeid == -1) {
-        LOG(I) << "Maximum ranges supported " << MaxRanges;
+		LOG(I) << "Maximum ranges supported: " << MaxRanges;
     }
 
     //** BandMaster0 UID of Table 28 Locking SP Authority table, p. 70 of Enterprise SSC rev 3.00
@@ -616,15 +630,29 @@ uint8_t DtaDevEnterprise::listLockingRanges(char * password, int16_t rangeid)
     uint16_t start = (rangeid == -1)? 0: rangeid;
 	for (uint16_t i = start; i <= MaxRanges; i++)
     {
+		uint8_t curRC = 0;
+
         setband(user, i);
         setband(table, i);
 
-        LOG(I) << "Band[" << i << "]";
+		if (output_format == sedutilNormal) {
+        	LOG(I) << "Band[" << i << "]:";
+		}
 
 		session = new DtaSession(this);
-		if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, password, user))
+		if (session == NULL) {
+			LOG(E) << "Unable to create session object ";
+			return DTAERROR_OBJECT_CREATE_FAILED;
+		}
+		if (!defaultPassword.empty())
+			session->dontHashPwd();
+
+		if ((curRC = session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, pwd, user)) != 0)
         {
-			LOG(I) << "    could not establish session for row[" << i << "]";
+			if ((output_format == sedutilNormal) || (rangeid != -1)) {
+				LOG(I) << "    could not establish session for row[" << i << "]";
+			}
+			failRC = curRC;
 			delete session;
 			continue;
 		}
@@ -688,18 +716,31 @@ uint8_t DtaDevEnterprise::listLockingRanges(char * password, int16_t rangeid)
                                         && response.tokenIs(5+4*8+1) == DTA_TOKENID_UINT;
         delete session;
 
-        LOG(I) << "    Name             " << Name;
-        LOG(I) << "    CommonName       " << CommonName;
-        LOG(I) << "    RangeStart       " << RangeStart;
-        LOG(I) << "    RangeLength      " << RangeLength;
-        LOG(I) << "    ReadLockEnabled  " << ReadLockEnabled;
-        LOG(I) << "    WriteLockEnabled " << WriteLockEnabled;
-        LOG(I) << "    ReadLocked       " << ReadLocked;
-        LOG(I) << "    WriteLocked      " << WriteLocked;
-        LOG(I) << "    LockOnReset      " << LockOnReset;
+		if (output_format == sedutilReadable) {
+			LOG(I) << "Band[" << i << "]: ";
+		}
+
+		LOG(I) << "    Name:            " << Name;
+		LOG(I) << "    CommonName:      " << CommonName;
+		LOG(I) << "    RangeStart:      " << RangeStart;
+		LOG(I) << "    RangeLength:     " << RangeLength;
+		LOG(I) << "    ReadLockEnabled: " << ReadLockEnabled;
+		LOG(I) << "    WriteLockEnabled:" << WriteLockEnabled;
+		LOG(I) << "    ReadLocked:      " << ReadLocked;
+		LOG(I) << "    WriteLocked:     " << WriteLocked;
+		LOG(I) << "    LockOnReset:     " << LockOnReset;
+
+		one_succeeded = 1;
 	}
+
+	// If we're getting the list of ranges and none succeed, that is an error.
+	// If we're getting one range, return any failure.
+	if (((rangeid == -1) && (one_succeeded == 0))
+	 || (rangeid != -1))
+		lastRC = failRC;
+
 	LOG(D1) << "Exiting DtaDevEnterprise::listLockingRanges";
-	return 0;
+	return lastRC;
 }
 
 uint8_t DtaDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
