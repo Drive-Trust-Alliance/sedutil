@@ -14,33 +14,34 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 source conf
 
-cd ../LinuxPBA
-rm -rf dist
-make CONF=Release
-make CONF=Release_x86_64
+# Build buildroot before other tools as it provides the toolchain for linuxpba
+# and sedutil-cli.
+./getresources
+./buildpbaroot
+
+pushd ../LinuxPBA
+rm -rf dist build
 make CONF=Debug
 make CONF=Debug_x86_64
-cd ../images
-
-cd ../linux/CLI
-rm -rf dist
-make CONF=Release_i686
+make CONF=Release
 make CONF=Release_x86_64
+popd
+
+pushd ../linux/CLI
+rm -rf dist build
 make CONF=Debug_i686
 make CONF=Debug_x86_64
-cd ../../images
-
-./getresources
-
-./buildpbaroot
+make CONF=Release_i686
+make CONF=Release_x86_64
+popd
 
 # Rescue build
 ./buildrescue
 
-# Release builds
-./buildbiosLinux Release
-./buildUEFI64 Release
+# Build BIOS images (untested, probably subtly broken)
+#./buildbiospba Release
+#./buildbiospba Debug
 
-# Debug builds
-./buildbiosLinux Debug
+# Build UEFI images
+./buildUEFI64 Release
 ./buildUEFI64 Debug
