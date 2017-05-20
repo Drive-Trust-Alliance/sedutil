@@ -1,5 +1,5 @@
 #!/bin/bash
-set +x
+set -ex
 function die {
 echo An error has occured please fix this and start over
 exit 99
@@ -20,14 +20,12 @@ cp ../../buildroot/ncurses.mk package/ncurses/
 # 64 bit system
 mkdir PBA64
 cp ../../buildroot/PBA64/.config PBA64/
-cp ../../buildroot/PBA64/* PBA64/
-cp -r ../../buildroot/PBA64/overlay PBA64/
+cp -r ../../buildroot/PBA64/* PBA64/
 
 # 32 bit system
 mkdir PBA32
 cp ../../buildroot/PBA32/.config PBA32/
-cp ../../buildroot/PBA32/* PBA32/
-cp -r ../../buildroot/PBA32/overlay PBA32/
+cp -r ../../buildroot/PBA32/* PBA32/
 
 echo This is going to take a while ..... Press enter to continue
 read INOUT
