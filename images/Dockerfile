@@ -6,14 +6,15 @@ RUN dpkg --add-architecture i386 && apt update && apt install -y \
         cpio \
         dosfstools \
         g++-multilib \
+        gdisk \
         git-core \
         libncurses5-dev \
         libncurses5-dev:i386 \
         python \
+        squashfs-tools \
         sudo \
         unzip \
         wget \
-        gdisk \
     && rm -rf /var/lib/apt/lists/*
 
 RUN locale-gen en_US.UTF-8
