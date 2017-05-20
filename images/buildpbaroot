@@ -27,8 +27,8 @@ mkdir PBA32
 cp ../../buildroot/PBA32/.config PBA32/
 cp -r ../../buildroot/PBA32/* PBA32/
 
-echo This is going to take a while ..... Press enter to continue
-read INOUT
+#echo This is going to take a while ..... Press enter to continue
+#read INOUT
 echo Making the 64bit PBA Linux system
 make O=PBA64 2>&1 | tee PBA64/build_output.txt
 echo Making the 32bit PBA Linux system
