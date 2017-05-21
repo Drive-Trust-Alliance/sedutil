@@ -231,6 +231,8 @@ typedef enum _OPAL_LOCKINGSTATE {
 	READWRITE = 0x01,
 	READONLY = 0x02,
 	LOCKED = 0x03,
+	ARCHIVELOCKED = 0x04,
+	ARCHIVEUNLOCKED = 0x05,
 } OPAL_LOCKINGSTATE;
 /*
  * Structures to build and decode the Opal SSC messages

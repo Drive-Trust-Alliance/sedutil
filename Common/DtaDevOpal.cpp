@@ -833,6 +833,7 @@ uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 	char * Admin1Password)
 {
 	uint8_t lastRC;
+	uint8_t archiveuser = 0;
 	OPAL_TOKEN readlocked, writelocked;
 	const char *msg;
 
@@ -842,11 +843,15 @@ uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 		readlocked = writelocked = OPAL_TOKEN::OPAL_FALSE;
 		msg = "RW";
 		break;
+	case OPAL_LOCKINGSTATE::ARCHIVEUNLOCKED:
+		archiveuser = 1;
 	case OPAL_LOCKINGSTATE::READONLY:
 		readlocked = OPAL_TOKEN::OPAL_FALSE;
 		writelocked = OPAL_TOKEN::OPAL_TRUE;
 		msg = "RO";
 		break;
+	case OPAL_LOCKINGSTATE::ARCHIVELOCKED:
+		archiveuser = 1;
 	case OPAL_LOCKINGSTATE::LOCKED:
 		readlocked = writelocked = OPAL_TOKEN::OPAL_TRUE;
 		msg = "LK";
@@ -889,10 +894,12 @@ uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 	set->addToken(OPAL_TOKEN::READLOCKED);
 	set->addToken(readlocked);
 	set->addToken(OPAL_TOKEN::ENDNAME);
-	set->addToken(OPAL_TOKEN::STARTNAME);
-	set->addToken(OPAL_TOKEN::WRITELOCKED);
-	set->addToken(writelocked);
-	set->addToken(OPAL_TOKEN::ENDNAME);
+	if (!archiveuser) {
+		set->addToken(OPAL_TOKEN::STARTNAME);
+		set->addToken(OPAL_TOKEN::WRITELOCKED);
+		set->addToken(writelocked);
+		set->addToken(OPAL_TOKEN::ENDNAME);
+	}
 	set->addToken(OPAL_TOKEN::ENDLIST);
 	set->addToken(OPAL_TOKEN::ENDNAME);
 	set->addToken(OPAL_TOKEN::ENDLIST);
