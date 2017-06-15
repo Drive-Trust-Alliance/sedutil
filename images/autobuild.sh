@@ -35,9 +35,6 @@ make CONF=Release_i686
 make CONF=Release_x86_64
 popd
 
-# Rescue build
-./buildrescue
-
 # Build BIOS images (untested, probably subtly broken)
 #./buildbiospba Release
 #./buildbiospba Debug
@@ -45,3 +42,6 @@ popd
 # Build UEFI images
 ./buildUEFI64 Release
 ./buildUEFI64 Debug
+
+# Rescue build
+./buildrescue
