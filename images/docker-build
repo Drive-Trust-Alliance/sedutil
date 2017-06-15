@@ -1,0 +1,2 @@
+docker build -t sedutil
+docker run --rm -it -v $PWD/../:/sedutil --privileged sedutil $@
