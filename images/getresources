@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -ex
 ## Get version information
 . conf
 ## Make a clean start

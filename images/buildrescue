@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -ex
 # Build a custom tinycore bootable image
 ## define releases for tools
 . conf
@@ -18,7 +18,7 @@ sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE}
      -f ${PROGRAM} \
   ] || { echo " prereqs are not available "; exit 1; }
 #
-dd if=/dev/zero of=${BUILDIMG} bs=1M count=15
+dd if=/dev/zero of=${BUILDIMG} bs=1M count=30
 (echo o;echo n;echo p;echo 1;echo "";echo "";echo a;echo 1;echo w) | fdisk -C 100 ${BUILDIMG}
 dd if=../scratch/${SYSLINUX}/bios/mbr/mbr.bin of=${BUILDIMG} count=1 conv=notrunc bs=512
 LOOPDEV=`sudo losetup --show -f -o 1048576 ${BUILDIMG}`
@@ -44,6 +44,9 @@ cd ..
 sudo mkdir -p core/usr/local/sbin/
 sudo unsquashfs -f -li -d core ../scratch/hdparm.tcz
 sudo cp ${PROGRAM} core/usr/local/sbin/
+## Bundle UEFI images
+sudo gunzip -k /sedutil/images/UEFI*/*.gz
+sudo cp /sedutil/images/UEFI*/*.img core/
 ## now repackage it
 cd core
 sudo find | sudo cpio -o -H newc | gzip -9 > ../image/boot/core.gz
