@@ -15,6 +15,7 @@ RUN dpkg --add-architecture i386 && apt update && apt install -y \
         sudo \
         unzip \
         wget \
+        locales \
     && rm -rf /var/lib/apt/lists/*
 
 RUN locale-gen en_US.UTF-8
