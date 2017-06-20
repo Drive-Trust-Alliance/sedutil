@@ -35,6 +35,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevLinuxSata.h"
 #include "DtaDevLinuxNvme.h"
 
+// Variables holding state of block directory
+DIR * block_dir;
+struct dirent * block_ent;
+
 using namespace std;
 
 /** The Device class represents a Linux generic storage device.
@@ -120,4 +124,30 @@ DtaDevOS::~DtaDevOS()
     LOG(D1) << "Destroying DtaDevOS";
 	if (NULL != drive)
 		delete drive;
+}
+
+// Get name of current file
+char * DtaDevOS::getDeviceName() {
+    return block_ent->d_name;
+}
+
+// Open next block device matching pattern /dev/sd* or /dev/nvme*
+// returns 0 if no more devices can be found, 1 if new device was found, and -1 if /sys/block is not present
+int DtaDevOS::getNextDevice(int i){
+    if (block_dir == NULL) {
+        if ((block_dir = opendir("/sys/block")) == NULL){
+            closedir(block_dir);
+            return -1;
+        }
+    }
+    if ((block_ent = readdir(block_dir)) == NULL) {
+        closedir(block_dir);    // End of device list
+        return 0;
+    } else if (strncmp(block_ent->d_name,"nvme",4) && strncmp(block_ent->d_name,"sd",2)){
+        return getNextDevice(i);    // Recursively find next device matching pattern
+    } else {
+        if (i == MAX_DISKS)     // Make sure to close block_dir if sedutil.cpp breaks at MAX_DISKS
+            closedir(block_dir);
+        return 1;
+    }
 }

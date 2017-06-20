@@ -38,7 +38,7 @@ int diskScan()
 	printf("\nScanning for Opal compliant disks\n");
 	while (TRUE) {
 		DEVICEMASK;
-		//snprintf(devname,23,"/dev/sd%c",(char) 0x61+i) Linux
+		//snprintf(devname,23,"/dev/sd%c",'a'+i) Linux
 		//sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i)  Windows
 		d = new DtaDevGeneric(devname);
 		if (d->isPresent()) {
