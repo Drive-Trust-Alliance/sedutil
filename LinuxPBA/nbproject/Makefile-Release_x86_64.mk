@@ -11,14 +11,14 @@
 MKDIR=mkdir
 CP=cp
 GREP=grep
-NM=nm
+NM=x86_64-linux-nm
 CCADMIN=CCadmin
-RANLIB=ranlib
-CC=gcc
-CCC=g++
-CXX=g++
-FC=gfortran
-AS=as
+RANLIB=x86_64-linux-ranlib
+CC=x86_64-linux-gcc
+CCC=x86_64-linux-g++
+CXX=x86_64-linux-g++
+FC=x86_64-linux-gfortran
+AS=x86_64-linux-as
 
 # Macros
 CND_PLATFORM=GNU-Linux
@@ -72,7 +72,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lcurses
+LDLIBSOPTIONS=-lcurses -ltinfo
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}

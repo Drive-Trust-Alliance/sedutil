@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -ex
 # Build a custom tinycore bootable image
 ## define releases for tools
 . conf
