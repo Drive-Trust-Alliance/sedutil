@@ -35,7 +35,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define DEVICEMASK switch(DtaDevOS::getNextDevice(i)) {
     case 1 : snprintf(devname,23,"/dev/%s",DtaDevOS::getDeviceName()); 
         break;
-    case -1 : snprintf(devname,23,"/dev/sd%c",(char) 0x61+i); 
+    case -1 : snprintf(devname,23,"/dev/sd%c",'a'+i); 
         break;
     default : snprintf(devname,23,"/dev/sdX"); 
         break;

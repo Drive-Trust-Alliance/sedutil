@@ -37,7 +37,7 @@ uint8_t UnlockSEDs(char * password) {
     while (TRUE) {
         switch(DtaDevOS::getNextDevice(i)){
             case 1  : snprintf(devref,23,"/dev/%s",DtaDevOS::getDeviceName()); break;
-            case -1 : snprintf(devref,23,"/dev/sd%c",(char) 0x61+i);    break;
+            case -1 : snprintf(devref,23,"/dev/sd%c",'a'+i);    break;
             default : snprintf(devref,23,"/dev/sdX"); break;
         }
          i += 1;
