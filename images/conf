@@ -6,3 +6,15 @@ SYSLINUX=syslinux-6.03
 TCDISTRO=http://distro.ibiblio.org/tinycorelinux/6.x/x86/
 BUILDROOT=git://git.buildroot.net/buildroot
 BUILDROOT_TAG=2015.11
+
+# Prefix PATH with i686 toolchain path, only once
+PATH_TC_32="/sedutil/images/scratch/buildroot/PBA32/host/usr/bin"
+if [[ $PATH != ${PATH_TC_32}* ]]; then
+    export PATH="$PATH_TC_32:$PATH"
+fi
+
+# Prefix PATH with x86_64 toolchain path, only once
+PATH_TC_64="/sedutil/images/scratch/buildroot/PBA64/host/usr/bin"
+if [[ $PATH != ${PATH_TC_64}* ]]; then
+    export PATH="$PATH_TC_64:$PATH"
+fi

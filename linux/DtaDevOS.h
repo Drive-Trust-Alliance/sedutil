@@ -20,6 +20,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 #include "DtaDev.h"
 #include "DtaDevLinuxDrive.h"
+#include <dirent.h>
 
 /** Linux specific implementation of DtaDevOS.
  */
@@ -47,6 +48,9 @@ public:
      */
     uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
             void * buffer, uint16_t bufferlen);
+
+    static char * getDeviceName();
+    static int getNextDevice(int i);
 protected:
     /** OS specific command to Wait for specified number of milliseconds 
      * @param ms  number of milliseconds to wait

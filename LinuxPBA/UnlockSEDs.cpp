@@ -35,7 +35,11 @@ uint8_t UnlockSEDs(char * password) {
     LOG(D4) << "Enter UnlockSEDs";
     mvprintw(6,2,"Scanning....");
     while (TRUE) {
-        snprintf(devref,23,"/dev/sd%c",(char) 0x61+i);
+        switch(DtaDevOS::getNextDevice(i)){
+            case 1  : snprintf(devref,23,"/dev/%s",DtaDevOS::getDeviceName()); break;
+            case -1 : snprintf(devref,23,"/dev/sd%c",'a'+i);    break;
+            default : snprintf(devref,23,"/dev/sdX"); break;
+        }
          i += 1;
 	tempDev = new DtaDevGeneric(devref);
 	if (!tempDev->isPresent()) {break;}
@@ -64,7 +68,7 @@ uint8_t UnlockSEDs(char * password) {
             failed = 1;
         }
         printw("%s",(failed ? "Failed" : "Success"));
-    delete d;             
+    delete d;
     doupdate();
     if (MAX_DISKS == i) {
         LOG(I) << MAX_DISKS << " disks, really?";
