@@ -111,6 +111,9 @@
     <ClInclude Include="..\..\Common\pbkdf2\tassert.h">
       <Filter>Header Files\pbkdf2</Filter>
     </ClInclude>
+    <ClInclude Include="..\DtaDiskNVMe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\sedutil.cpp">
@@ -181,6 +184,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Common\pbkdf2\sha1.c">
       <Filter>Source Files\pbkdf2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DtaDiskNVMe.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

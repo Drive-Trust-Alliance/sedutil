@@ -33,6 +33,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevGeneric.h"
 #include "DtaDiskATA.h"
 #include "DtaDiskUSB.h"
+#include "DtaDiskNVMe.h"
 
 using namespace std;
 DtaDevOS::DtaDevOS() {};
@@ -85,11 +86,15 @@ void DtaDevOS::init(const char * devref)
 	}
 	// OVERLAPPED structure
 	switch (descriptor.BusType) {
+	case BusTypeAta:
 	case BusTypeSata:
 		disk = new DtaDiskATA();
 		break;
 	case BusTypeUsb:
 		disk = new DtaDiskUSB();
+		break;
+	case BusTypeNvme:
+		disk = new DtaDiskNVMe();
 		break;
 	default:
 		return;

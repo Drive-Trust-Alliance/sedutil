@@ -47,6 +47,7 @@
     <ClInclude Include="..\..\Common\pbkdf2\tassert.h" />
     <ClInclude Include="..\DtaDevOS.h" />
     <ClInclude Include="..\DtaDiskATA.h" />
+    <ClInclude Include="..\DtaDiskNVMe.h" />
     <ClInclude Include="..\DtaDiskUSB.h" />
     <ClInclude Include="..\os.h" />
   </ItemGroup>
@@ -73,6 +74,7 @@
     <ClCompile Include="..\..\Common\sedutil.cpp" />
     <ClCompile Include="..\DtaDevOS.cpp" />
     <ClCompile Include="..\DtaDiskATA.cpp" />
+    <ClCompile Include="..\DtaDiskNVMe.cpp" />
     <ClCompile Include="..\DtaDiskUSB.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
