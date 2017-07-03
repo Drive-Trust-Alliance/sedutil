@@ -94,7 +94,7 @@ public:
 	 * @param bufferlen length of the input/output buffer
 	 */
 	virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-		void * buffer, uint16_t bufferlen) = 0;
+		void * buffer, uint32_t bufferlen) = 0;
 	/** OS specific command to Wait for specified number of milliseconds
 	 * @param milliseconds  number of milliseconds to wait
 	 */
@@ -290,5 +290,7 @@ protected:
 	DtaResponse response;   /**< shared response object */
 	DtaResponse propertiesResponse;  /**< response fron properties exchange */
 	DtaSession *session;  /**< shared session object pointer */
-	uint8_t discovery0buffer[IO_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT];
+	uint8_t discovery0buffer[MIN_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT];
+	uint32_t tperMaxPacket = 2048;
+	uint32_t tperMaxToken = 1950;
 };

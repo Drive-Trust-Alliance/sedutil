@@ -50,8 +50,8 @@ void
 DtaCommand::reset()
 {
     LOG(D1) << "Entering DtaCommand::reset()";
-    memset(cmdbuf, 0, IO_BUFFER_LENGTH);
-	memset(respbuf, 0, IO_BUFFER_LENGTH);
+    memset(cmdbuf, 0, MAX_BUFFER_LENGTH);
+	memset(respbuf, 0, MIN_BUFFER_LENGTH);
     bufferpos = sizeof (OPALHeader);
 }
 void 
@@ -204,8 +204,8 @@ DtaCommand::complete(uint8_t EOD)
     hdr->pkt.length = SWAP32((bufferpos - sizeof (OPALComPacket))
                              - sizeof (OPALPacket));
     hdr->cp.length = SWAP32(bufferpos - sizeof (OPALComPacket));
-	if (bufferpos > 2048) {
-		LOG(E) << " Buffer Overrun " << bufferpos;
+	if (bufferpos > MAX_BUFFER_LENGTH) {
+		LOG(D1) << " Standard Buffer Overrun " << bufferpos;
 		exit(EXIT_FAILURE);
 	}
 }
@@ -244,7 +244,14 @@ DtaCommand::dumpResponse()
 	OPALHeader *hdr = (OPALHeader *)respbuf;
 	DtaHexDump(respbuf, SWAP32(hdr->cp.length) + sizeof(OPALComPacket));
 }
-
+uint16_t 
+DtaCommand::outputBufferSize() {
+//	if (MIN_BUFFER_LENGTH + 1 > bufferpos) return(MIN_BUFFER_LENGTH);
+	if(bufferpos % 512) 
+		return(((uint16_t)(bufferpos / 512) + 1) * 512);
+	else
+		return((uint16_t)(bufferpos / 512) * 512);
+}
 void
 DtaCommand::setcomID(uint16_t comID)
 {

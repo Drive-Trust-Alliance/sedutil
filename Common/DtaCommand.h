@@ -118,13 +118,15 @@ public:
 	void dumpResponse();
     /** Produce a hexdump of the command.  Typically used in debugging and tracing */
 	void dumpCommand();
+	/** Return the space used in the command buffer (rounded to 512 bytes) */
+	uint16_t outputBufferSize();
 private:
     /** return a pointer to the command buffer */
 	void * getCmdBuffer();
     /** return a pointer to the response buffer. */
 	void * getRespBuffer();
-	uint8_t commandbuffer[IO_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT]; /**< buffer allocation allow for 1k alignment */
-	uint8_t responsebuffer[IO_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT]; /**< buffer allocation allow for 1k alignment */
+	uint8_t commandbuffer[MAX_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT]; /**< buffer allocation allow for 1k alignment */
+	uint8_t responsebuffer[MIN_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT]; /**< buffer allocation allow for 1k alignment */
 	uint8_t *cmdbuf;  /**< Pointer to the command buffer */
     uint8_t *respbuf;  /**< pointer to the response buffer */
     uint32_t bufferpos = 0;  /**< position of the next byte in the command buffer */

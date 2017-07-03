@@ -100,7 +100,7 @@ void DtaDevOS::init(const char * devref)
 }
 
 uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                        void * buffer, uint16_t bufferlen)
+                        void * buffer, uint32_t bufferlen)
 {
     LOG(D1) << "Entering DtaDevOS::sendCmd";
 	LOG(D1) << "Exiting DtaDevOS::sendCmd";

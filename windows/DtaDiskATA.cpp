@@ -52,7 +52,7 @@ void DtaDiskATA::init(const char * devref)
         isOpen = TRUE;
 }
 uint8_t DtaDiskATA::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                        void * buffer, uint16_t bufferlen)
+                        void * buffer, uint32_t bufferlen)
 {
     LOG(D1) << "Entering DtaDiskATA::sendCmd";
     DWORD bytesReturned = 0; // data returned
@@ -110,10 +110,10 @@ void DtaDiskATA::identify(OPAL_DiskInfo& disk_info)
     LOG(D1) << "Entering DtaDiskATA::identify()";
 	vector<uint8_t> nullz(512, 0x00);
     void * identifyResp = NULL;
-	identifyResp = _aligned_malloc(IO_BUFFER_LENGTH, IO_BUFFER_ALIGNMENT);
+	identifyResp = _aligned_malloc(MIN_BUFFER_LENGTH, IO_BUFFER_ALIGNMENT);
     if (NULL == identifyResp) return;
-    memset(identifyResp, 0, IO_BUFFER_LENGTH);
-    uint8_t iorc = sendCmd(IDENTIFY, 0x00, 0x0000, identifyResp, IO_BUFFER_LENGTH);
+    memset(identifyResp, 0, MIN_BUFFER_LENGTH);
+    uint8_t iorc = sendCmd(IDENTIFY, 0x00, 0x0000, identifyResp, MIN_BUFFER_LENGTH);
     // TODO: figure out why iorc = 4
     if ((0x00 != iorc) && (0x04 != iorc)) {
         LOG(D) << "IDENTIFY Failed " << (uint16_t) iorc;

@@ -115,8 +115,8 @@ void DtaDev::discovery0()
     Discovery0Features * body;
 	d0Response = discovery0buffer + IO_BUFFER_ALIGNMENT;
 	d0Response = (void *)((uintptr_t)d0Response & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
-	memset(d0Response, 0, IO_BUFFER_LENGTH);
-    if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, IO_BUFFER_LENGTH)) != 0) {
+	memset(d0Response, 0, MIN_BUFFER_LENGTH);
+    if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, MIN_BUFFER_LENGTH)) != 0) {
         LOG(D) << "Send D0 request to device failed " << (uint16_t)lastRC;
         return;
     }

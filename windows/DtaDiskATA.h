@@ -42,7 +42,7 @@ public:
 	* @param bufferlen length of the input/output buffer
 	*/
 	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-		void * buffer, uint16_t bufferlen);
+		void * buffer, uint32_t bufferlen);
 	/** OS specific routine to send an ATA identify to the device */
 	void identify(OPAL_DiskInfo& disk_info);
 private:
