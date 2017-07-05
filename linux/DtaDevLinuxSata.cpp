@@ -89,7 +89,7 @@ bool DtaDevLinuxSata::init(const char * devref)
 
 /** Send an ioctl to the device using pass through. */
 uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                         void * buffer, uint16_t bufferlen)
+                         void * buffer, uint32_t bufferlen)
 {
     if(isSAS) {
         return(sendCmd_SAS(cmd, protocol, comID, buffer, bufferlen));
@@ -147,7 +147,7 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
     sg.cmd_len = sizeof (cdb);
     sg.mx_sb_len = sizeof (sense);
     sg.iovec_count = 0;
-    sg.dxfer_len = IO_BUFFER_LENGTH;
+    sg.dxfer_len = bufferlen;
     sg.dxferp = buffer;
     sg.cmdp = cdb;
     sg.sbp = sense;
@@ -190,8 +190,8 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
     memset(&sg, 0, sizeof (sg));
     LOG(D4) << "Entering DtaDevLinuxSata::identify()";
     vector<uint8_t> nullz(512, 0x00);
-    uint8_t * buffer = (uint8_t *) memalign(IO_BUFFER_ALIGNMENT, IO_BUFFER_LENGTH);
-    memset(buffer, 0, IO_BUFFER_LENGTH);
+    uint8_t * buffer = (uint8_t *) memalign(IO_BUFFER_ALIGNMENT, MIN_BUFFER_LENGTH);
+    memset(buffer, 0, MIN_BUFFER_LENGTH);
      /*
      * Initialize the CDB as described in SAT-2 and the
      * ATA Command set reference (protocol and commID placement)
@@ -298,7 +298,7 @@ for (unsigned int i = 0; i < sizeof (disk_info.modelNum); i += 2) {
 }
 /** Send an ioctl to the device using pass through. */
 uint8_t DtaDevLinuxSata::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                         void * buffer, uint16_t bufferlen)
+                         void * buffer, uint32_t bufferlen)
 {
     sg_io_hdr_t sg;
     uint8_t sense[32]; // how big should this be??
@@ -345,7 +345,7 @@ uint8_t DtaDevLinuxSata::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t 
         sg.cmd_len = sizeof (cdb);
         sg.mx_sb_len = sizeof (sense);
         sg.iovec_count = 0;
-        sg.dxfer_len = IO_BUFFER_LENGTH;
+        sg.dxfer_len = bufferlen;
         sg.dxferp = buffer;
         sg.cmdp = cdb;
         sg.sbp = sense;
@@ -391,7 +391,7 @@ void DtaDevLinuxSata::identify_SAS(OPAL_DiskInfo *disk_info)
     uint8_t cdb[sizeof(CScsiCmdInquiry)];
 
     LOG(D4) << "Entering DtaDevLinuxSata::identify_SAS()";
-    uint8_t * buffer = (uint8_t *) aligned_alloc(IO_BUFFER_ALIGNMENT, IO_BUFFER_LENGTH);
+    uint8_t * buffer = (uint8_t *) aligned_alloc(IO_BUFFER_ALIGNMENT, MIN_BUFFER_LENGTH);
 
     memset(&cdb, 0, sizeof (cdb));
     memset(&sense, 0, sizeof (sense));
@@ -408,7 +408,7 @@ void DtaDevLinuxSata::identify_SAS(OPAL_DiskInfo *disk_info)
     sg.cmd_len = sizeof (cdb);
     sg.mx_sb_len = sizeof (sense);
     sg.iovec_count = 0;
-    sg.dxfer_len = IO_BUFFER_LENGTH;
+    sg.dxfer_len = MIN_BUFFER_LENGTH;
     sg.dxferp = buffer;
     sg.cmdp = cdb;
     sg.sbp = sense;

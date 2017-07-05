@@ -63,7 +63,7 @@ bool DtaDevLinuxNvme::init(const char * devref)
 
 /** Send an ioctl to the device using nvme admin commands. */
 uint8_t DtaDevLinuxNvme::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                         void * buffer, uint16_t bufferlen)
+                         void * buffer, uint32_t bufferlen)
 {
     struct nvme_admin_cmd nvme_cmd;
 	int err;
