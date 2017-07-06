@@ -54,6 +54,8 @@ public:
 	* @param bufferlen length of the input/output buffer
 	*/
 	unsigned long long	getSize();
+	/** A static class to scan for supported drives */
+	static int diskScan();
 protected:
      /** OS specific command to Wait for specified number of milliseconds 
      * @param milliseconds  number of milliseconds to wait
