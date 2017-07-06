@@ -33,6 +33,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevLinuxNvme.h"
 #include "DtaHexDump.h"
 
+#define  NVME_SECURITY_SEND 0x81
+#define  NVME_SECURITY_RECV 0x82
+#define  NVME_IDENTIFY 0x06
+
 using namespace std;
 
 /** The Device class represents a single disk device.
@@ -50,10 +54,10 @@ bool DtaDevLinuxNvme::init(const char * devref)
         isOpen = FALSE;
         // This is a D1 because diskscan looks for open fail to end scan
         LOG(D1) << "Error opening device " << devref << " " << (int32_t) fd;
-        //        if (-EPERM == fd) {
-        //            LOG(E) << "You do not have permission to access the raw disk in write mode";
-        //            LOG(E) << "Perhaps you might try sudo to run as root";
-        //        }
+        if (-EPERM == fd) {
+            LOG(E) << "You do not have permission to access the raw disk in write mode";
+            LOG(E) << "Perhaps you might try sudo to run as root";
+        }
     }
     else {
         isOpen = TRUE;
@@ -74,7 +78,7 @@ uint8_t DtaDevLinuxNvme::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
 
 	if (IF_RECV == cmd) {
 		LOG(D3) << "Security Receive Command";
-		nvme_cmd.opcode = nvme_admin_security_recv;
+		nvme_cmd.opcode = NVME_SECURITY_RECV;
 		nvme_cmd.cdw10 = protocol << 24 | comID << 8;
 		nvme_cmd.cdw11 = bufferlen;
 		nvme_cmd.data_len = bufferlen;
@@ -82,7 +86,7 @@ uint8_t DtaDevLinuxNvme::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
 	}
 	else {
 		LOG(D3) << "Security Send Command";
-		nvme_cmd.opcode = nvme_admin_security_send;
+		nvme_cmd.opcode = NVME_SECURITY_SEND;
 		nvme_cmd.cdw10 = protocol << 24 | comID << 8;
 		nvme_cmd.cdw11 = bufferlen;
 		nvme_cmd.data_len = bufferlen;
@@ -110,11 +114,11 @@ void DtaDevLinuxNvme::identify(OPAL_DiskInfo& disk_info)
 	LOG(D4) << "Entering DtaDevLinuxNvme::identify()";
 
 	struct nvme_admin_cmd cmd;
-	struct nvme_id_ctrl ctrl;
+        uint8_t ctrl[4096];
 	int err;
 
 	memset(&cmd, 0, sizeof(cmd));
-	cmd.opcode = nvme_admin_identify;
+	cmd.opcode = NVME_IDENTIFY;
 	cmd.nsid = 0;
 	cmd.addr = (unsigned long)&ctrl;
 	cmd.data_len = 4096;
@@ -130,9 +134,14 @@ void DtaDevLinuxNvme::identify(OPAL_DiskInfo& disk_info)
 	}
 
 	disk_info.devType = DEVICE_TYPE_NVME;
-	memcpy(disk_info.serialNum, ctrl.sn, sizeof (disk_info.serialNum));
-	memcpy(disk_info.firmwareRev, ctrl.fr, sizeof(disk_info.firmwareRev));
-	memcpy(disk_info.modelNum, ctrl.mn, sizeof(disk_info.modelNum));
+	uint8_t *results = ctrl;
+	results += 4;
+	memcpy(disk_info.serialNum, results, sizeof(disk_info.serialNum));
+	results += sizeof(disk_info.serialNum);
+	memcpy(disk_info.modelNum, results, sizeof(disk_info.modelNum));
+	results += sizeof(disk_info.modelNum);
+	memcpy(disk_info.firmwareRev, results, sizeof(disk_info.firmwareRev));
+
 
     return;
 }
