@@ -155,6 +155,30 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+
+# Autotools
+Makefile.in
+/autom4te.cache
+/aclocal.m4
+/compile
+/configure
+/depcomp
+/install-sh
+/missing
+/stamp-h1
+config.h
+config.h.in
+config.status
+Makefile
+sedutil-*.tar.*
+linuxpba
+sedutil-cli
+
+# GCC
+.deps/
+*.o
+.dirstamp
+
 # project specific files
 *.VC.opendb
 *.lnk
