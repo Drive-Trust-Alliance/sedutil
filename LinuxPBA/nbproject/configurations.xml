@@ -70,9 +70,7 @@
             <pElem>../Common</pElem>
             <pElem>../Common/pbdkf2</pElem>
           </incDir>
-          <preprocessorList>
-            <Elem>DTADEBUG</Elem>
-          </preprocessorList>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </cTool>
         <ccTool>
@@ -83,16 +81,9 @@
             <pElem>../Common</pElem>
             <pElem>../Common/pbkdf2</pElem>
           </incDir>
-          <preprocessorList>
-            <Elem>DTADEBUG</Elem>
-          </preprocessorList>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </ccTool>
-        <linkerTool>
-          <linkerLibItems>
-            <linkerLibStdlibItem>Curses</linkerLibStdlibItem>
-          </linkerLibItems>
-        </linkerTool>
       </compileType>
       <item path="../Common/DtaCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -157,6 +148,7 @@
             <pElem>../Common</pElem>
             <pElem>../Common/pbdkf2</pElem>
           </incDir>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </cTool>
         <ccTool>
@@ -168,6 +160,7 @@
             <pElem>../Common</pElem>
             <pElem>../Common/pbkdf2</pElem>
           </incDir>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </ccTool>
         <fortranCompilerTool>
@@ -176,11 +169,6 @@
         <asmTool>
           <developmentMode>5</developmentMode>
         </asmTool>
-        <linkerTool>
-          <linkerLibItems>
-            <linkerLibStdlibItem>Curses</linkerLibStdlibItem>
-          </linkerLibItems>
-        </linkerTool>
       </compileType>
       <item path="../Common/DtaCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -245,6 +233,7 @@
             <pElem>../Common</pElem>
             <pElem>../Common/pbdkf2</pElem>
           </incDir>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </cTool>
         <ccTool>
@@ -256,6 +245,7 @@
             <pElem>../Common</pElem>
             <pElem>../Common/pbkdf2</pElem>
           </incDir>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </ccTool>
         <fortranCompilerTool>
@@ -266,9 +256,6 @@
         </asmTool>
         <linkerTool>
           <stripSymbols>true</stripSymbols>
-          <linkerLibItems>
-            <linkerLibStdlibItem>Curses</linkerLibStdlibItem>
-          </linkerLibItems>
         </linkerTool>
       </compileType>
       <item path="../Common/DtaCommand.cpp" ex="false" tool="1" flavor2="0">
@@ -333,9 +320,7 @@
             <pElem>../Common</pElem>
             <pElem>../Common/pbdkf2</pElem>
           </incDir>
-          <preprocessorList>
-            <Elem>DTADEBUG</Elem>
-          </preprocessorList>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </cTool>
         <ccTool>
@@ -346,16 +331,9 @@
             <pElem>../Common</pElem>
             <pElem>../Common/pbkdf2</pElem>
           </incDir>
-          <preprocessorList>
-            <Elem>DTADEBUG</Elem>
-          </preprocessorList>
+          <commandLine>-Wall</commandLine>
           <warningLevel>3</warningLevel>
         </ccTool>
-        <linkerTool>
-          <linkerLibItems>
-            <linkerLibStdlibItem>Curses</linkerLibStdlibItem>
-          </linkerLibItems>
-        </linkerTool>
       </compileType>
       <item path="../Common/DtaCommand.cpp" ex="false" tool="1" flavor2="0">
       </item>

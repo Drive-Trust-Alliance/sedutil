@@ -59,11 +59,11 @@ OBJECTFILES= \
 
 
 # C Compiler Flags
-CFLAGS=-m32
+CFLAGS=-m32 -Wall
 
 # CC Compiler Flags
-CCFLAGS=-m32
-CXXFLAGS=-m32
+CCFLAGS=-m32 -Wall
+CXXFLAGS=-m32 -Wall
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -72,7 +72,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lcurses
+LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -85,107 +85,107 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/linuxpba: ${OBJECTFILES}
 ${OBJECTDIR}/_ext/7daaf93a/DtaCommand.o: ../Common/DtaCommand.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/7daaf93a
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaCommand.o ../Common/DtaCommand.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaCommand.o ../Common/DtaCommand.cpp
 
 ${OBJECTDIR}/_ext/7daaf93a/DtaDev.o: ../Common/DtaDev.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/7daaf93a
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaDev.o ../Common/DtaDev.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaDev.o ../Common/DtaDev.cpp
 
 ${OBJECTDIR}/_ext/7daaf93a/DtaDevGeneric.o: ../Common/DtaDevGeneric.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/7daaf93a
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaDevGeneric.o ../Common/DtaDevGeneric.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaDevGeneric.o ../Common/DtaDevGeneric.cpp
 
 ${OBJECTDIR}/_ext/7daaf93a/DtaDevOpal.o: ../Common/DtaDevOpal.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/7daaf93a
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaDevOpal.o ../Common/DtaDevOpal.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaDevOpal.o ../Common/DtaDevOpal.cpp
 
 ${OBJECTDIR}/_ext/7daaf93a/DtaDevOpal1.o: ../Common/DtaDevOpal1.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/7daaf93a
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaDevOpal1.o ../Common/DtaDevOpal1.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaDevOpal1.o ../Common/DtaDevOpal1.cpp
 
 ${OBJECTDIR}/_ext/7daaf93a/DtaDevOpal2.o: ../Common/DtaDevOpal2.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/7daaf93a
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaDevOpal2.o ../Common/DtaDevOpal2.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaDevOpal2.o ../Common/DtaDevOpal2.cpp
 
 ${OBJECTDIR}/_ext/7daaf93a/DtaHashPwd.o: ../Common/DtaHashPwd.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/7daaf93a
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaHashPwd.o ../Common/DtaHashPwd.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaHashPwd.o ../Common/DtaHashPwd.cpp
 
 ${OBJECTDIR}/_ext/7daaf93a/DtaHexDump.o: ../Common/DtaHexDump.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/7daaf93a
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaHexDump.o ../Common/DtaHexDump.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaHexDump.o ../Common/DtaHexDump.cpp
 
 ${OBJECTDIR}/_ext/7daaf93a/DtaResponse.o: ../Common/DtaResponse.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/7daaf93a
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaResponse.o ../Common/DtaResponse.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaResponse.o ../Common/DtaResponse.cpp
 
 ${OBJECTDIR}/_ext/7daaf93a/DtaSession.o: ../Common/DtaSession.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/7daaf93a
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaSession.o ../Common/DtaSession.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaSession.o ../Common/DtaSession.cpp
 
 ${OBJECTDIR}/_ext/b7b9df0c/blockwise.o: ../Common/pbkdf2/blockwise.c 
 	${MKDIR} -p ${OBJECTDIR}/_ext/b7b9df0c
 	${RM} "$@.d"
-	$(COMPILE.c) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbdkf2 -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/b7b9df0c/blockwise.o ../Common/pbkdf2/blockwise.c
+	$(COMPILE.c) -g -Werror -I../linux -I../Common -I../Common/pbdkf2 -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/b7b9df0c/blockwise.o ../Common/pbkdf2/blockwise.c
 
 ${OBJECTDIR}/_ext/b7b9df0c/chash.o: ../Common/pbkdf2/chash.c 
 	${MKDIR} -p ${OBJECTDIR}/_ext/b7b9df0c
 	${RM} "$@.d"
-	$(COMPILE.c) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbdkf2 -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/b7b9df0c/chash.o ../Common/pbkdf2/chash.c
+	$(COMPILE.c) -g -Werror -I../linux -I../Common -I../Common/pbdkf2 -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/b7b9df0c/chash.o ../Common/pbkdf2/chash.c
 
 ${OBJECTDIR}/_ext/b7b9df0c/hmac.o: ../Common/pbkdf2/hmac.c 
 	${MKDIR} -p ${OBJECTDIR}/_ext/b7b9df0c
 	${RM} "$@.d"
-	$(COMPILE.c) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbdkf2 -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/b7b9df0c/hmac.o ../Common/pbkdf2/hmac.c
+	$(COMPILE.c) -g -Werror -I../linux -I../Common -I../Common/pbdkf2 -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/b7b9df0c/hmac.o ../Common/pbkdf2/hmac.c
 
 ${OBJECTDIR}/_ext/b7b9df0c/pbkdf2.o: ../Common/pbkdf2/pbkdf2.c 
 	${MKDIR} -p ${OBJECTDIR}/_ext/b7b9df0c
 	${RM} "$@.d"
-	$(COMPILE.c) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbdkf2 -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/b7b9df0c/pbkdf2.o ../Common/pbkdf2/pbkdf2.c
+	$(COMPILE.c) -g -Werror -I../linux -I../Common -I../Common/pbdkf2 -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/b7b9df0c/pbkdf2.o ../Common/pbkdf2/pbkdf2.c
 
 ${OBJECTDIR}/_ext/b7b9df0c/sha1.o: ../Common/pbkdf2/sha1.c 
 	${MKDIR} -p ${OBJECTDIR}/_ext/b7b9df0c
 	${RM} "$@.d"
-	$(COMPILE.c) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbdkf2 -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/b7b9df0c/sha1.o ../Common/pbkdf2/sha1.c
+	$(COMPILE.c) -g -Werror -I../linux -I../Common -I../Common/pbdkf2 -std=c11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/b7b9df0c/sha1.o ../Common/pbkdf2/sha1.c
 
 ${OBJECTDIR}/_ext/822bcbe5/DtaDevLinuxNvme.o: ../linux/DtaDevLinuxNvme.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/822bcbe5
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/822bcbe5/DtaDevLinuxNvme.o ../linux/DtaDevLinuxNvme.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/822bcbe5/DtaDevLinuxNvme.o ../linux/DtaDevLinuxNvme.cpp
 
 ${OBJECTDIR}/_ext/822bcbe5/DtaDevLinuxSata.o: ../linux/DtaDevLinuxSata.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/822bcbe5
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/822bcbe5/DtaDevLinuxSata.o ../linux/DtaDevLinuxSata.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/822bcbe5/DtaDevLinuxSata.o ../linux/DtaDevLinuxSata.cpp
 
 ${OBJECTDIR}/_ext/822bcbe5/DtaDevOS.o: ../linux/DtaDevOS.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/822bcbe5
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/822bcbe5/DtaDevOS.o ../linux/DtaDevOS.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/822bcbe5/DtaDevOS.o ../linux/DtaDevOS.cpp
 
 ${OBJECTDIR}/GetPassPhrase.o: GetPassPhrase.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GetPassPhrase.o GetPassPhrase.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GetPassPhrase.o GetPassPhrase.cpp
 
 ${OBJECTDIR}/LinuxPBA.o: LinuxPBA.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/LinuxPBA.o LinuxPBA.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/LinuxPBA.o LinuxPBA.cpp
 
 ${OBJECTDIR}/UnlockSEDs.o: UnlockSEDs.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -Werror -DDTADEBUG -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/UnlockSEDs.o UnlockSEDs.cpp
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/UnlockSEDs.o UnlockSEDs.cpp
 
 # Subprojects
 .build-subprojects:
