@@ -192,3 +192,7 @@ Doxygen/
 !/images/buildroot/*
 /LinuxPBA/dist/
 /linux/CLI/dist/
+# inno installer output
+windows/installer/Output/
+# hacked exe files for different flavors
+windows/installer/exe
