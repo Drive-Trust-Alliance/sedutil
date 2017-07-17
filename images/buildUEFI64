@@ -4,32 +4,25 @@ set -x
 ## define releases for tools
 . conf
 VERSIONINFO=`git describe --dirty` || VERSIONINFO=downloaded
-BUILDTYPE=Release
-BUILDIMG=UEFI64_${BUILDTYPE}-${VERSIONINFO}.img
-if [ "$BUILDTYPE" == "Debug" ] || [ "$BUILDTYPE" == "Release" ] ; then
-            echo "Building " $BUILDTYPE "image"
-	else
-	    echo "You must select Debug|Release"
-	    exit		
-fi
-
+BUILDTYPE=UEFI64
+BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 
 ## check that everything is available
-[ -f scratch/${SYSLINUX}/efi64/efi/syslinux.efi -a \
-  -f scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64 -a \
-  -f scratch/buildroot/64bit/images/bzImage  -a \
-  -f scratch/buildroot/64bit/images/rootfs.cpio.xz  -a \
-  -f scratch/buildroot/64bit/target/sbin/linuxpba  -a \
-  -f scratch/buildroot/64bit/target/sbin/sedutil-cli  -a \
-  -f buildroot/syslinux.cfg \
-  ] || { echo " prereqs are not available "; exit 1; }
+[  -f scratch/${SYSLINUX}/efi64/efi/syslinux.efi ] || { echo " prereqs are not available "; exit 1; }
+[  -f scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64 ] || { echo " prereqs are not available "; exit 1; }
+[  -f scratch/buildroot/64bit/images/bzImage ] || { echo " prereqs are not available "; exit 1; }
+[  -f scratch/buildroot/64bit/images/rootfs.cpio.xz ] || { echo " prereqs are not available "; exit 1; }
+[  -f scratch/buildroot/64bit/target/sbin/linuxpba  ] || { echo " prereqs are not available "; exit 1; }
+[  -f scratch/buildroot/64bit/target/sbin/sedutil-cli  ] || { echo " prereqs are not available "; exit 1; }
+[  -f buildroot/syslinux.cfg ] || { echo " prereqs are not available "; exit 1; }
+  
 # Start fresh
-sudo rm -rf UEFI64_${BUILDTYPE} ; mkdir UEFI64_${BUILDTYPE} ; cd UEFI64_${BUILDTYPE}
+sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE}
 # make an image file
 dd if=/dev/zero of=${BUILDIMG} bs=1M count=32
 (echo "n";echo "";echo "";echo "";echo "ef00";echo w;echo Y) | gdisk ${BUILDIMG}
 LOOPDEV=`sudo losetup --show -f -o 1048576 ${BUILDIMG}`
-sudo mkfs.vfat $LOOPDEV -n UEFI64_${BUILDTYPE}
+sudo mkfs.vfat $LOOPDEV -n ${BUILDTYPE}
 sudo mkdir image
 sudo mount $LOOPDEV image
 sudo chmod 777 image
