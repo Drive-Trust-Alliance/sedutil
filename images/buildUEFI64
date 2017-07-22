@@ -3,7 +3,7 @@ set -x
 # Build a custom UEFI linux based PBA image
 ## define releases for tools
 . conf
-VERSIONINFO=`git describe --dirty` || VERSIONINFO=downloaded
+VERSIONINFO=`git describe --dirty`  || VERSIONINFO=tarball
 BUILDTYPE=UEFI64
 BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 

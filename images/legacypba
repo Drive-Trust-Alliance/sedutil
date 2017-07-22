@@ -3,8 +3,7 @@ set -x
 # Build the bios PBA
 ## define releases for tools
 . conf
-
-VERSIONINFO=`git describe --dirty`
+VERSIONINFO=`git describe --dirty`  || VERSIONINFO=tarball
 SYSLINUX_PBA=../../../syslinux
 BUILDTYPE=biospba
 BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img

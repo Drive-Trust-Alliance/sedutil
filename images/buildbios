@@ -3,7 +3,7 @@ set -x
 # Build a custom bootable image for BIOS machines
 ## define releases for tools
 . conf
-VERSIONINFO=`git describe --dirty`
+VERSIONINFO=`git describe --dirty`  || VERSIONINFO=tarball
 BUILDTYPE=BIOS32
 BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 
