@@ -40,6 +40,7 @@ linuxpba_SOURCES = LinuxPBA/LinuxPBA.cpp LinuxPBA/GetPassPhrase.cpp LinuxPBA/Unl
 	\
 	$(SEDUTIL_COMMON_CODE)
 EXTRA_DIST = linux/GitVersion.sh linux/PSIDRevert_LINUX.txt linux/TestSuite.sh README.md
+man_MANS = docs/sedutil-cli.8
 linux/Version.h:
 	./linux/GitVersion.sh > linux/Version.h
 .INTERMEDIATE: linux/Version.h
