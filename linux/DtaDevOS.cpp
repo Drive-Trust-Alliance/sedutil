@@ -70,8 +70,12 @@ void DtaDevOS::init(const char * devref)
 //		DtaDevLinuxSata *SataDrive = new DtaDevLinuxSata();
 		drive = new DtaDevLinuxSata();
 	}
-	else
+	else 
+        {
 		LOG(E) << "DtaDevOS::init ERROR - unknown drive type";
+                isOpen = FALSE;
+                return;
+        }
 
 	if (drive->init(devref))
 	{
