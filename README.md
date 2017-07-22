@@ -27,7 +27,7 @@ standard on bios machines.
 You must be administrator/root to run the host managment program
 
 In Linux libata.allow_tpm must be set to 1. Either via adding libata.allow_tpm=1 to the kernel flags at boot time 
-or changing the contents of /sys/module/libata/parameters/allow_tpm to a from a "0" to a "1" on a running system.
+or changing the contents of /sys/module/libata/parameters/allow_tpm from a "0" to a "1" on a running system.
 
 ***** sleep (S3) is not supported.
 
