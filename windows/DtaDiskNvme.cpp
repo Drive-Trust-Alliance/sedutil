@@ -97,7 +97,6 @@ uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 	//PADMIN_SECURITY_RECEIVE_COMMAND_DW11 dw11;
 
     LOG(D1) << "Entering DtaDiskNVME::sendCmd";
-	//getchar();
     DWORD bytesReturned = 0; // data returned
     if (!isOpen) {
         LOG(D1) << "Device open failed";
@@ -110,11 +109,7 @@ uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
      */
 	
 	//NVME_PASS_THROUGH_IOCTL * nvme = (NVME_PASS_THROUGH_IOCTL *) nvmePointer;
-	//LOG(D1) << "before memset\n"; //ok
-	//getchar();
 	memset(nvme, 0, sizeof (NVME_PASS_THROUGH_IOCTL)+ IO_BUFFER_LENGTH);
-	//LOG(D1) << "after memset\n"; //ok
-	//getchar();
 
     ///////////////////////////////////////////////////////////////////////
 	nvme->SrbIoCtrl.ControlCode = (ULONG)NVME_PASS_THROUGH_SRB_IO_CODE;
@@ -213,7 +208,6 @@ uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                     &bytesReturned, // # bytes returned
                     (LPOVERLAPPED) NULL); // synchronous I/O
 	LOG(D1) << "after iocontrol" << endl; // dead here 
-	//getchar();
 	if (FALSE == b) {
 		switch (cmd) {
 			case IDENTIFY:
@@ -243,7 +237,7 @@ uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 				break;
 			case IF_RECV:
 				LOG(D1) << "Security Receive Command SUCCESS!!!\n";
-				memcpy(buffer, nvme->DataBuffer, 4096); // move data to caller's buffer ??? 
+				memcpy(buffer, nvme->DataBuffer, 4096*15);
 				break;
 			default:
 				LOG(D1) << "Security Send Command SUCCESS!!!\n";
