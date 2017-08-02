@@ -137,12 +137,19 @@ void DtaDev::discovery0()
     epos = cpos = (uint8_t *) d0Response;
     hdr = (Discovery0Header *) d0Response;
     LOG(D3) << "Dumping D0Response";
+    if ( (SWAP32(hdr->length) > 8192) || (SWAP32(hdr->length) < 48) )
+    {
+	LOG(E) << "Level 0 Discovery header length abnormal " << hex << SWAP32(hdr->length); 
+	return;
+    }
     IFLOG(D3) DtaHexDump(hdr, SWAP32(hdr->length));
+
     epos = epos + SWAP32(hdr->length);
     cpos = cpos + 48; // TODO: check header version
 
     do {
         body = (Discovery0Features *) cpos;
+        LOG(D2) << "Discover0FeatureCode: " << hex << SWAP16(body->TPer.featureCode);
         switch (SWAP16(body->TPer.featureCode)) { /* could use of the structures here is a common field */
         case FC_TPER: /* TPer */
             disk_info.TPer = 1;
@@ -222,6 +229,12 @@ void DtaDev::discovery0()
             disk_info.PYRITE_revertedPIN = body->opalv200.revertedPIN;
             disk_info.PYRITE_numcomIDs = SWAP16(body->opalv200.numCommIDs);
             break;            
+		case FC_BlockSID: /* Block SID */
+			disk_info.BlockSID = 1;
+			disk_info.BlockSID_BlockSIDState = body->blocksidauth.BlockSIDState;
+			disk_info.BlockSID_SIDvalueState = body->blocksidauth.SIDvalueState;
+			disk_info.BlockSID_HardReset = body->blocksidauth.HardReset;
+			break;
         default:
 			if (0xbfff < (SWAP16(body->TPer.featureCode))) {
 				// silently ignore vendor specific segments as there is no public doc on them
@@ -337,6 +350,13 @@ void DtaDev::puke()
 		cout << ", comIDs = " << disk_info.PYRITE_numcomIDs;
 		cout << std::endl;
 	}    
+	if (disk_info.BlockSID) {
+		cout << "BlockSID function (" << HEXON(4) << FC_BlockSID << ")" << HEXOFF << std::endl;
+		cout << "BlockSID_BlockSIDState (" << HEXON(1) << disk_info.BlockSID_BlockSIDState << ")" << HEXOFF << std::endl;
+		cout << "    BlockSID_SIDvalueState = " << HEXON(4) << disk_info.BlockSID_SIDvalueState << HEXOFF;
+		cout << ", BlockSID_HardReset  = " << HEXON(2) << disk_info.BlockSID_HardReset << HEXOFF;
+		cout << std::endl;
+	}
 	if (disk_info.Unknown)
 		cout << "**** " << (uint16_t)disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
 }
