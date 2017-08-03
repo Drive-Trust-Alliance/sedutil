@@ -857,6 +857,43 @@ uint8_t DtaDevEnterprise::eraseLockingRange(uint8_t lockingrange, char * passwor
 	LOG(D1) << "Exiting DtaDevEnterprise::eraseLockingRange";
 	return 0;
 }
+uint8_t DtaDevEnterprise::activate(char * password) {
+	LOG(D1) << "Entering DtaDevEnterprise::activate() not implemted in Enterprize";
+	return 0;
+}
+uint8_t DtaDevEnterprise::auditWrite(char * password, char * idstr) {
+	LOG(D1) << "Entering DtaDevEnterprise::auditWrite() not implemted in Enterprize";
+	return 0;
+}
+uint8_t DtaDevEnterprise::auditRead(char * password) {
+	LOG(D1) << "Entering DtaDevEnterprise::auditRead() not implemted in Enterprize";
+	return 0;
+}
+uint8_t DtaDevEnterprise::auditErase(char * password) {
+	LOG(D1) << "Entering DtaDevEnterprise::auditErase() not implemted in Enterprize";
+	return 0;
+}
+uint8_t DtaDevEnterprise::getmfgstate() {
+	LOG(D1) << "Entering DtaDevEnterprise::getmfgstate() not implemted in Enterprize";
+	return 0;
+}
+uint8_t DtaDevEnterprise::DataStoreWrite(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len) {
+	LOG(D1) << "Entering DtaDevEnterprise::DataStoreWrite() not implemted in Enterprize";
+	return 0;
+}
+uint8_t DtaDevEnterprise::DataStoreRead(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len) {
+	LOG(D1) << "Entering DtaDevEnterprise::DataStoreRead() not implemted in Enterprize";
+	return 0;
+}
+uint8_t DtaDevEnterprise::MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len)
+{
+	LOG(D1) << "Entering DtaDevEnterprise::MBRRead() not implemted in Enterprize";
+	return 0;
+}
+uint8_t DtaDevEnterprise::getMBRsize(char * password) {
+	LOG(D1) << "Entering DtaDevEnterprise::getMBRsize() not implemted in Enterprize";
+	return 0; 
+}
 uint8_t DtaDevEnterprise::loadPBA(char * password, char * filename) {
 	LOG(D1) << "Entering DtaDevEnterprise::loadPBAimage()" << filename << " " << dev;
 	if (password == NULL) { LOG(D4) << "Referencing formal parameters " << filename; }
