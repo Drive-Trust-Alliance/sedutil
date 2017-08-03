@@ -27,6 +27,7 @@ class DtaSession;
 #include "DtaLexicon.h"
 #include "DtaResponse.h"   // wouldn't take class
 #include <vector>
+#include <DtaAudit.h>
 
 using namespace std;
 /** Common code for OPAL SSCs.
@@ -220,10 +221,28 @@ public:
 	    * @param password Password of administrative authority for locking range
 	    */
 	uint8_t eraseLockingRange(uint8_t lockingrange, char * password);
-        /** Loads a disk image file to the shadow MBR table.
+	/** Loads a disk image file to the shadow MBR table.
          * @param password the password for the administrative authority with access to the table
          * @param filename the filename of the disk image
          */
+	uint8_t activate(char * password);
+	uint8_t auditRec(char * password, entry_t * pent);
+	uint8_t auditErase(char * password);
+	uint8_t auditRead(char * password);
+	uint8_t auditWrite(char * password,char * idstr);
+
+	uint8_t getmfgstate(void);
+	uint8_t DataStoreWrite(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
+	uint8_t DataStoreRead(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
+	uint8_t MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len);
+	uint8_t getMBRsize(char * password, uint32_t * msize);
+	uint8_t getMBRsize(char * password);
+	uint8_t MBRRead(char * password, uint32_t startpos, uint32_t len, char * buffer);
+	uint8_t DataRead(char * password, uint32_t startpos, uint32_t len, char * buffer);
+	uint8_t DataWrite(char * password, uint32_t startpos, uint32_t len, char * buffer);
+	uint8_t auditlogwr(char * password, uint32_t startpos, uint32_t len, char * buffer, entry_t * ent); // audit log write 
+	uint8_t auditlogrd(char * password, uint32_t startpos, uint32_t len, char * buffer); // audit log read
+
 	uint8_t loadPBA(char * password, char * filename);
         /** User command to prepare the device for management by sedutil. 
          * Specific to the SSC that the device supports
@@ -260,6 +279,36 @@ public:
          */
 	uint8_t rawCmd(char *sp, char * auth, char *pass,
 		char *invoker, char *method, char *plist);
+/*
+	typedef struct _entry_t {
+		uint8_t yy;
+		uint8_t mm;
+		uint8_t dd;
+		uint8_t hh;
+		uint8_t min;
+		uint8_t event;
+		uint16_t reserved;
+	} entry_t;
+
+
+	typedef struct _audit_header {
+		char * hdr = "Fidelity Lock Audit Log";
+		uint8_t ver_major = 1;
+		uint8_t ver_minor = 0;
+		uint16_t head = 0; // 0 to 1000
+		uint16_t tail = 0; // 0 to 1000
+		uint16_t num_entry = 0; 
+	}audit_header;
+	typedef struct _audit_t
+	{
+		audit_header header;
+		uint8_t buffer[1000 * 8];
+	}audit_t;
+	*/
+	
+	//audit_t auditL;
+	//vector <entry_t> entryA;
+
 protected:
         /** Primitive to handle the setting of a value in the locking sp.
          * @param table_uid UID of the table 
@@ -288,5 +337,4 @@ protected:
 	 *  @param password Admin1 Password for TPer
 	 */
 	lrStatus_t getLockingRange_status(uint8_t lockingrange, char * password);
-
 };

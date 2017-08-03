@@ -21,10 +21,13 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * also supports the Opal 1.0 SSC
  */
 #include "os.h"
+#include <Windows.h>
+#include "compressapi-8.1.h"
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
-#include<iomanip>
+#include <iomanip>
+
 #include "DtaDevOpal.h"
 #include "DtaHashPwd.h"
 #include "DtaEndianFixup.h"
@@ -33,6 +36,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaResponse.h"
 #include "DtaSession.h"
 #include "DtaHexDump.h"
+#include <signal.h>
+
+
 
 using namespace std;
 
@@ -344,6 +350,7 @@ uint8_t DtaDevOpal::setupLockingRange(uint8_t lockingrange, uint64_t start,
 	}
 	LOG(I) << "LockingRange" << (uint16_t)lockingrange << " starting block " << start <<
 		" for " << length << " blocks configured as unlocked range";
+	
 	LOG(D1) << "Exiting DtaDevOpal:setupLockingRange()";
 	return 0;
 }
@@ -716,6 +723,7 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 	}
 	LOG(I) << userid << " password changed";
 	delete session;
+	//auditRec(newpassword, memcmp(userid, "Admin", 5) ? (uint8_t)evt_PasswordChangedUser: (uint8_t)evt_PasswordChangedAdmin);
 	LOG(D1) << "Exiting DtaDevOpal::setPassword()";
 	return 0;
 }
@@ -1113,11 +1121,623 @@ uint8_t DtaDevOpal::revertTPer(char * password, uint8_t PSID, uint8_t AdminSP)
 	LOG(I) << "revertTper completed successfully";
 	delete cmd;
 	delete session;
+
+	//auditRec(password, evt_Revert);
 	LOG(D1) << "Exiting DtaDevOpal::revertTPer()";
 	return 0;
 }
-uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
-	LOG(D1) << "Entering DtaDevOpal::loadPBAimage()" << filename << " " << dev;
+
+
+uint8_t DtaDevOpal::MBRRead(char * password, uint32_t startpos, uint32_t len,char * buffer)
+{
+	LOG(D1) << "Entering DtaDevOpal::MBRRead()";
+	uint8_t lastRC;
+	vector<uint8_t> LR;
+	char * buf;
+	uint32_t filepos = startpos;
+	uint32_t blocksize = len;
+
+	buf = buffer; // dummy JERRY
+	DtaCommand *cmd = new DtaCommand();
+	if (NULL == cmd) {
+		LOG(E) << "Unable to create command object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+
+	session = new DtaSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+		delete cmd;
+		delete session;
+		return lastRC;
+	}
+
+	LOG(D1) << "***** read shadow mbr";
+	cmd->reset(OPAL_UID::OPAL_MBR, OPAL_METHOD::GET);
+	cmd->addToken(OPAL_TOKEN::STARTLIST);
+	cmd->addToken(OPAL_TOKEN::STARTLIST);
+	cmd->addToken(OPAL_TOKEN::STARTNAME);
+	cmd->addToken(OPAL_TOKEN::STARTROW);
+	cmd->addToken(filepos);
+	cmd->addToken(OPAL_TOKEN::ENDNAME);
+	cmd->addToken(OPAL_TOKEN::STARTNAME);
+	cmd->addToken(OPAL_TOKEN::ENDROW);
+	cmd->addToken(blocksize);
+	cmd->addToken(OPAL_TOKEN::ENDNAME);
+	cmd->addToken(OPAL_TOKEN::ENDLIST);
+	cmd->addToken(OPAL_TOKEN::ENDLIST);
+	cmd->complete();
+	LOG(D1) << "***** send read shadow mbr command ";
+	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+		delete cmd;
+		delete session;
+		return lastRC;
+	}
+	for (int i = 0; i < (int)response.getTokenCount(); i++) {
+		response.getString(0);
+	}
+	LOG(D1) << "***** end of send read shadow mbr command ";
+	delete cmd;
+	delete session;
+
+	return 0;
+
+}
+
+uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, char * buffer)
+{
+	LOG(D1) << "Entering DtaDevOpal::DataRead()";
+	uint8_t lastRC;
+	vector<uint8_t> LR;
+	uint32_t filepos = startpos;
+	uint32_t blocksize = len;
+
+	DtaCommand *cmd = new DtaCommand();
+	if (NULL == cmd) {
+	LOG(E) << "Unable to create command object ";
+	return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+
+	session = new DtaSession(this);
+	if (NULL == session) {
+	LOG(E) << "Unable to create session object ";
+	return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	LOG(D1) << "start lockingSP session";
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	delete cmd;
+	delete session;
+	return lastRC;
+	}
+
+	LOG(D1) << "***** start read data store";
+
+	cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::GET);
+	cmd->addToken(OPAL_TOKEN::STARTLIST);
+	cmd->addToken(OPAL_TOKEN::STARTLIST);
+	cmd->addToken(OPAL_TOKEN::STARTNAME);
+	cmd->addToken(OPAL_TOKEN::STARTROW);
+	cmd->addToken(filepos);
+	cmd->addToken(OPAL_TOKEN::ENDNAME);
+	cmd->addToken(OPAL_TOKEN::STARTNAME);
+	cmd->addToken(OPAL_TOKEN::ENDROW);
+	cmd->addToken(blocksize);
+	cmd->addToken(OPAL_TOKEN::ENDNAME);
+	cmd->addToken(OPAL_TOKEN::ENDLIST);
+	cmd->addToken(OPAL_TOKEN::ENDLIST);
+	cmd->complete();
+	LOG(D1) << "***** send read data store command ";
+	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+	delete cmd;
+	delete session;
+	return lastRC;
+	}
+	
+	response.getBytes(1, (uint8_t *) buffer); // data is token 1
+	LOG(D1) << "raw data after data store read response data";
+
+	IFLOG(D4) DtaHexDump(buffer, gethdrsize()); // contain header and entries
+	LOG(D1) << "***** end of send read data store command ";
+	delete cmd;
+	delete session;
+	return 0;
+	
+}
+
+uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, char * buffer)
+{
+	LOG(D1) << "Entering DtaDevOpal::DataWrite()";
+	uint8_t lastRC;
+	vector<uint8_t> LR;
+	vector <uint8_t> bufferA; // (8192, 0x66); // 0 buffer  (57344, 0x00),
+	vector <uint8_t> lengthtoken;
+	uint32_t filepos = startpos;
+
+	bufferA.insert(bufferA.begin(), buffer, buffer + len); 
+	//////////////////////////////////////////////
+	LOG(D1) << "bufferA contents after copy passed buffer content";
+	IFLOG(D4) DtaHexDump(bufferA.data(), 256);
+	//////////////////////////////////////////////
+	lengthtoken.clear();
+	lengthtoken.push_back(0xe2); // 8k = 8192 (0x2000)
+	lengthtoken.push_back(0x00);
+	lengthtoken.push_back((len>>8) & 0x000000ff);
+	lengthtoken.push_back(len & 0x000000ff);
+
+	DtaCommand *cmd = new DtaCommand();
+	if (NULL == cmd) {
+		LOG(E) << "Unable to create command object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+
+	session = new DtaSession(this);
+	if (NULL == session) {
+	LOG(E) << "Unable to create session object ";
+	return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	LOG(D1) << "start lockingSP session";
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	delete cmd;
+	delete session;
+	return lastRC;
+	}
+	LOG(D1) << "Start transaction";
+	cmd->reset();
+	cmd->addToken(OPAL_TOKEN::STARTTRANSACTON);
+	cmd->addToken(OPAL_TOKEN::WHERE);
+	cmd->complete();
+	// cmd buffer before write 
+	LOG(D1) << "bufferA before send write data command";
+	IFLOG(D4) DtaHexDump(bufferA.data(), 256);
+	// //////////////////////////
+	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+	delete cmd;
+	delete session;
+	return lastRC;
+	}
+	LOG(D1) << "Writing to data store 0" << dev;
+
+	cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::SET);
+	cmd->addToken(OPAL_TOKEN::STARTLIST);
+	cmd->addToken(OPAL_TOKEN::STARTNAME);
+	cmd->addToken(OPAL_TOKEN::WHERE);
+	cmd->addToken(filepos);
+	cmd->addToken(OPAL_TOKEN::ENDNAME);
+	cmd->addToken(OPAL_TOKEN::STARTNAME);
+	cmd->addToken(OPAL_TOKEN::VALUES);
+	cmd->addToken(lengthtoken);
+	cmd->addToken(bufferA);
+	cmd->addToken(OPAL_TOKEN::ENDNAME);
+	cmd->addToken(OPAL_TOKEN::ENDLIST);
+	cmd->complete();
+	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+	delete cmd;
+	delete session;
+	return lastRC;
+	}
+	LOG(D1) << "***** command buffer of write data store buffer:";
+	IFLOG(D4) cmd->dumpCommand(); // JERRY
+	
+	// end write
+	LOG(D1) << "end transaction";
+	cmd->reset();
+	cmd->addToken(OPAL_TOKEN::ENDTRANSACTON);
+	cmd->addToken(OPAL_TOKEN::WHERE);
+	cmd->complete();
+	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+	delete cmd;
+	delete session;
+	return lastRC;
+	}
+
+	delete cmd;
+	delete session;
+	LOG(D1) << "Exiting DtaDevOpal::DataWrite()";
+	return 0;
+}
+
+
+
+uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len, char * buffer, entry_t * pent) // add event ID and write audit log to Data Store
+{
+	audit_t * ptr;
+	entry_t * ptrent;
+	vector <entry_t> entryA;
+	uint8_t lastRC;
+	SYSTEMTIME st, lt;
+
+	LOG(D1) << "***** Entering DtaDevOpal::auditlogwr *****";
+
+	ptr = (audit_t *)buffer;
+	LOG(D1) << "copy passing buffer to entryA ";
+
+	ptrent = (entry_t *) ptr->buffer;
+	entryA.insert(entryA.begin(), ptrent, ptrent + MAX_ENTRY );
+	LOG(D1) << "after memcpy to entryA[0]";
+	char zero[8];
+	memset(zero, 0, 8);
+	if (!memcmp(pent, zero, 8))
+	{
+		LOG(D1) << "passing empty entry";
+		GetSystemTime(&st);
+		GetLocalTime(&lt);
+		//entry_t ent; passing from caller
+		pent->yy = (uint8_t)(lt.wYear - 2000);
+		pent->mm = (uint8_t)lt.wMonth;
+		pent->dd = (uint8_t)lt.wDay;
+		pent->hh = (uint8_t)lt.wHour;
+		pent->min = (uint8_t)lt.wMinute;
+		pent->sec = (uint8_t)lt.wSecond;
+		//pent->event = ID;
+	} // if empty entry past, fill up the entry with system time
+	// otherwise, past entry already has time stamp and eventID
+	entryA.insert(entryA.begin(), *pent); // push_back -> insert
+	if (entryA.size() > MAX_ENTRY * 8) {
+		LOG(D1) << "Next execute erase()";
+		entryA.erase(entryA.begin() + MAX_ENTRY);
+	}
+	//printf("size of entryA = %zd\n", entryA.size() * 8);
+	memcpy(ptr->buffer, &entryA[0], MAX_ENTRY * 8);
+ 	ptr->header.num_entry = (ptr->header.num_entry + 1) % MAX_ENTRY;
+	ptr->header.tail = (ptr->header.tail + 1) % MAX_ENTRY;
+	wrtchksum(buffer, genchksum(buffer));
+	if (0)
+	{
+		printf("entryA[0].yy=%d ", entryA[0].yy);
+		printf("entryA[0].mm=%d ", entryA[0].mm);
+		printf("entryA[0].dd=%d ", entryA[0].dd);
+		printf("entryA[0].hh=%d ", entryA[0].hh);
+		printf("entryA[0].min=%d ", entryA[0].min);
+		printf("entryA[0].sec=%d ", entryA[0].sec);
+		printf("entryA[0].event=%d\n", entryA[0].event);
+		//printf("entryA[i].reserved=%d\n", entryA[i].reserved);
+	}
+	if (0) 
+	{
+		printf("ptr->header.hdr=%s ", ptr->header.hdr);
+		printf("ptr->header.ver_major=%d ", ptr->header.ver_major);
+		printf("ptr->header.ver_minor=%d ", ptr->header.ver_minor);
+		printf("ptr->header.head=%d ", ptr->header.head);
+		printf("ptr->header.tail=%d ", ptr->header.tail);
+		printf("ptr->header.num_entry=%d\n\n", ptr->header.num_entry);
+	}
+	//memcpy(ptr->buffer, &entryA[0].yy, auditL.header.num_entry * 8);
+	//memcpy(auditL.buffer, &entryA[0].yy, auditL.header.num_entry * 8);
+	//uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len,char * buffer)
+	// dummy for startpos and len
+	len = len + 2;	startpos = startpos + 2;
+	len = len - 2;	startpos = startpos - 2 ; // LAME......
+
+	lastRC = DataWrite(password, startpos, len, buffer);
+	if (lastRC == 0)
+	{
+		LOG(D1) << "write data store success";
+		//DtaHexDump(&auditL, (int)(entryA.size()) * 8 + sizeof(_audit_hdr));
+		IFLOG(D4) DtaHexDump(buffer, (int)ptr->header.num_entry * 8 + sizeof(_audit_hdr));
+		return 0;
+	}
+	else {
+		LOG(E) << "write data store Error";
+		return lastRC;
+	}
+}
+
+uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len, char * buffer) // read audit log to Data Store
+{
+	LOG(D1) << "entering DtaDevOpal::auditlogrd";
+	//uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, char * buffer)
+	uint8_t lastRC;
+
+	lastRC = DataRead(password, startpos, len, buffer);
+	if (lastRC == 0)
+	{
+		audit_t * A = (audit_t *)buffer;
+		entry_t * ent;
+		char * str1 = SIGNATURE;
+		
+		if ((lastRC = (uint8_t)memcmp(A->header.signature, str1, strlen(str1))) != 0)
+		{
+			printf("Invalid Audit Signature or No Audit Entry log\n");
+			IFLOG(D4) DtaHexDump(buffer, gethdrsize());
+			return ERRCHKSUM;
+		}
+		if (getchksum(buffer) != genchksum(buffer))
+		{
+			LOG(D1) << "Audit log header check sum error";
+			return ERRCHKSUM; // checksum error
+		}
+		printf("Fidelity Audit Log Entry :\n");
+		IFLOG(D4) DtaHexDump(buffer + gethdrsize(), A->header.num_entry * 8);
+
+		ent = (entry_t *)A->buffer;
+		printf("Total Number of Audit Entries: %d\n", A->header.num_entry);
+		for (int i = 0; i < A->header.num_entry; i++)
+		{
+			printf("%02d/%02d/%02d %02d:%02d:%02d %3d\n", ((ent->yy) & 0xff)+2000, ent->mm, ent->dd,ent->hh, ent->min, ent->sec, ent->event);
+			ent += 1;
+		}
+		return 0;
+	}
+	else
+	{
+		LOG(E) << "read data store Error";
+		return lastRC;
+	}
+
+}
+
+uint16_t genchksum(char * buffer)
+{
+	audit_hdr * hdr;
+	hdr = (audit_hdr *)buffer;
+	uint16_t sum ;
+	//printf("sizeof(audit_hdr)=0x%Xh; sizeof(hdr->chksum)=0x%Xh \n", (int)sizeof(audit_hdr), (int)sizeof(hdr->chksum));
+	sum = 0;
+	for (int i=0; i < (gethdrsize() - sizeof(hdr->chksum)) ;i++ ) 
+	{
+		sum += buffer[i];
+	}
+	//printf("generated checksum = 0x%Xh\n",sum);
+	return sum;
+
+}
+
+uint16_t getchksum(char * buffer)
+{
+	audit_hdr * hdr;
+	hdr = (audit_hdr *)buffer;
+	//printf("header checksum location value = 0x%Xh\n", hdr->chksum);
+	return hdr->chksum;
+}
+
+void wrtchksum(char * buffer,uint16_t sum)
+{
+	audit_hdr * hdr;
+	hdr = (audit_hdr *)buffer;
+	hdr->chksum=sum;
+	//printf("write this value(0x%Xh) to header checksum\n", sum);
+}
+
+
+uint16_t gethdrsize() {
+	return (sizeof(audit_hdr));
+}
+
+// For internal use to record the activities of all password required command
+
+//uint8_t DtaDevOpal::auditRec(char * password, uint8_t id)
+uint8_t DtaDevOpal::auditRec(char * password, entry_t * pent) 
+{
+
+	char * buffer;
+	uint8_t lastRC;
+
+	//printf("auditlog header size=%d", gethdrsize());
+	buffer = (char *)malloc(8 * MAX_ENTRY + gethdrsize());
+	//lastRC = auditlogrd(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buffer);
+
+	lastRC = DataRead(password, 0, 8 * MAX_ENTRY + gethdrsize(), buffer);
+
+	if (lastRC != 0)
+	{
+		LOG(E) << "auditlogrd() returned error"; 
+		return lastRC;
+	}
+	LOG(D4) << "raw data of data store read";
+	IFLOG(D4)  DtaHexDump(buffer, gethdrsize());
+	audit_t * ptr = (audit_t *)buffer;
+	audit_hdr hdrtmp;
+	char str1[] = SIGNATURE; // strlen() return 23 char but the array length is 24
+	//lastRC = (uint8_t)memcmp(ptr->header.signature, str1, strlen(str1));
+	//printf("ptr->header.signature=%s string length = %d\n", ptr->header.signature, (int) strlen(str1));
+	//printf("***** lastRC = %d ; ptr->header.num_entry= %d*****\n", lastRC, ptr->header.num_entry);
+	if ((lastRC = (uint8_t)memcmp(ptr->header.signature, str1, strlen(str1))) !=0)
+	{
+		SYSTEMTIME st, lt;
+		LOG(D1) << "Invalid Audit signature : lastRC = " << lastRC << " or num_entry is zero : " << hex << ptr->header.num_entry;
+		GetSystemTime(&st);
+		GetLocalTime(&lt);
+		//entry_t ent;
+		hdrtmp.date_created.yy = (uint8_t)((lt.wYear-2000) & 0xff);
+		hdrtmp.date_created.mm = (uint8_t)lt.wMonth;
+		hdrtmp.date_created.dd = (uint8_t)lt.wDay;
+		hdrtmp.date_created.hh = (uint8_t)lt.wHour;
+		hdrtmp.date_created.min = (uint8_t)lt.wMinute;
+		hdrtmp.date_created.sec = (uint8_t)lt.wSecond;
+			
+		memset(buffer, 0, MAX_ENTRY * 8 + gethdrsize());
+		memcpy(buffer, (char *)&hdrtmp, gethdrsize());
+		wrtchksum(buffer, genchksum(buffer)); 
+		IFLOG(D4) DtaHexDump(buffer, gethdrsize());
+	}
+	if (getchksum(buffer) != genchksum(buffer))
+	{
+		LOG(E) << "Read Audit log header check sum error, stop writing audit log";
+		//printf("getchksum(buffer) = 0x%Xh ; genchksum(buffer)= 0x%Xh\n", getchksum(buffer), genchksum(buffer));
+		//DtaHexDump(buffer, gethdrsize());
+		return ERRCHKSUM; // checksum error
+	}
+	LOG(D1) << "hdrtmp header info :";
+	IFLOG(D4) DtaHexDump((char*)&hdrtmp, sizeof(audit_hdr));
+	LOG(D1) << "buffer header info : ";
+	IFLOG(D4) DtaHexDump(buffer, sizeof(audit_hdr));
+
+	// only for testing purpose
+	//srand((uint16_t)time(NULL));
+	//id = 1 + rand() % ((uint8_t)evt::evt_lastID);
+	printf("***** (uint8_t )evt::evt_lastID=%d event  %d  ***** \n", (uint8_t)evt::evt_lastID, pent->event);
+	lastRC = auditlogwr(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buffer, pent); // use rand id for test
+	if (lastRC)
+	{
+		LOG(E) << "audit write error : " << hex << lastRC;
+		return lastRC;
+	}
+	else
+	{
+		LOG(D1) << "audit write success";
+		return 0;
+	}
+}
+
+uint8_t DtaDevOpal::auditErase(char * password)
+{
+	char * buffer;
+	uint8_t lastRC;
+	audit_hdr hdr;
+
+	buffer = (char *)malloc(8 * MAX_ENTRY + gethdrsize());
+	memset(buffer, 0, (MAX_ENTRY * 8) + gethdrsize());
+	/*
+	memcpy(buffer, &hdr, gethdrsize());
+	wrtchksum(buffer,genchksum(buffer));
+	*/
+	lastRC = DataWrite(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buffer); 
+	return lastRC;
+}
+
+uint8_t DtaDevOpal::auditRead(char * password)
+{
+	char * buffer;
+	uint8_t lastRC;
+
+	buffer = (char *)malloc(8 * MAX_ENTRY + gethdrsize());
+	memset(buffer, 0, (MAX_ENTRY * 8) + gethdrsize());
+	lastRC = auditlogrd(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buffer);
+	return lastRC;
+}
+
+uint8_t DtaDevOpal::auditWrite(char * password, char * idstr)
+{
+	//char * buffer;
+	uint8_t lastRC;
+
+	//buffer = (char *)malloc(8 * MAX_ENTRY + gethdrsize());
+	//memset(buffer, 0, (MAX_ENTRY * 8) + gethdrsize());
+	// proc char * id
+	// 
+
+	entry_t ent;
+	memset(&ent, 0, sizeof(entry_t));
+
+	char t[2];
+	memcpy(t, idstr, 2);
+	ent.event = (uint8_t)atoi(t);
+	memcpy(t, idstr+2, 2);
+	ent.yy = (uint8_t)atoi(t);
+	memcpy(t, idstr+4, 2);
+	ent.mm = (uint8_t)atoi(t);
+	memcpy(t, idstr+6, 2);
+	ent.dd = (uint8_t)atoi(t);
+	memcpy(t, idstr+8, 2);
+	ent.hh = (uint8_t)atoi(t);
+	memcpy(t, idstr+10, 2);
+	ent.min = (uint8_t)atoi(t);
+	memcpy(t, idstr+12, 2);
+	ent.sec = (uint8_t)atoi(t);
+	ent.reserved = 0;
+
+	lastRC = auditRec(password, &ent);
+	return lastRC;
+}
+
+uint8_t DtaDevOpal::activate(char * password)
+{
+	uint8_t lastRC;
+
+	if ((lastRC = getDefaultPassword()) != 0) {
+		LOG(E) << "Unable to read MSID password ";
+		return lastRC;
+	}
+	char * newpassword = password; 
+	if ((lastRC = setSIDPassword((char *)response.getString(4).c_str(), newpassword, 0)) != 0) {
+		LOG(E) << "takeOwnership failed";
+		return lastRC;
+	}
+
+	if ((lastRC = activateLockingSP(password)) != 0) {
+		LOG(E) << "Unable to activate LockingSP with default MSID";
+		return lastRC;
+	}
+	return lastRC;
+}
+
+uint8_t DtaDevOpal::getmfgstate()
+{
+	LOG(D1) << "Entering DtaDevOpal::getmfgstate()";
+	uint8_t lastRC;
+	vector<uint8_t> LR;
+
+	session = new DtaSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID)) != 0) {
+		LOG(E) << "Unable to start Unauthenticated session " << dev;
+		delete session;
+		return lastRC;
+	}
+
+	LR.clear();
+	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+	for (int i = 0; i < 8; i++) {
+		LR.push_back(OPALUID[OPAL_UID::OPAL_ADMINSP_UID][i]); // OPAL_LOCKINGSP_UID or OPAL_ADMINSP_UID? 
+	}
+	if ((lastRC = getTable(LR, 0x06, 0x07)) != 0) {
+		LOG(E) << "Unable to determine LockingSP Lifecycle state";
+		delete session;
+		return lastRC;
+	}
+
+	//uint8_t col_lifecycle_adminSP = response.getUint8(3); // column lifecycle
+	uint8_t val_lifecycle_adminSP = response.getUint8(4); // value
+	(val_lifecycle_adminSP == 9) ? printf("adminSP life cycle state :  manufactured\n") : printf("adminSP life cycle state :  manufactured-inactive\n");
+	//printf("col_lifecycle_adminSP 0x%0Xh val_lifecycle_adminSP 0x%0Xh\n", col_lifecycle_adminSP, val_lifecycle_adminSP);
+
+	//uint8_t col_frozen_adminSP = response.getUint8(7); // column frozen 
+	//uint8_t val_frozen_adminSP = response.getUint8(8); // value
+	//printf("col_frozen_adminSP 0x%0Xh val_frozen_adminSP 0x%0Xh\n", col_frozen_adminSP, val_frozen_adminSP);
+
+	// for locking SP
+
+	LR.clear();
+	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+	for (int i = 0; i < 8; i++) {
+		LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGSP_UID][i]); // OPAL_LOCKINGSP_UID or OPAL_ADMINSP_UID? 
+	}
+	if ((lastRC = getTable(LR, 0x06, 0x07)) != 0) {
+		LOG(E) << "Unable to determine LockingSP Lifecycle state";
+		delete session;
+		return lastRC;
+	}
+
+	//uint8_t col_lifecycle_lockingSP = response.getUint8(3); // column lifecycle
+	uint8_t val_lifecycle_lockingSP = response.getUint8(4); // value
+	(val_lifecycle_lockingSP == 9) ? printf("lockingSP life cycle state :  manufactured\n") : printf("lockingSP life cycle state :  manufactured-inactive\n");
+	//printf("col_lifecycle_lockingSP 0x%0Xh val_lifecycle_lockingSP 0x%0Xh\n", col_lifecycle_lockingSP, val_lifecycle_lockingSP);
+	//uint8_t col_frozen_lockingSP = response.getUint8(7); // column frozen 
+	//uint8_t val_frozen_lockingSP = response.getUint8(8); // value
+	//printf("col_frozen_lockingSP 0x%0Xh val_frozen_lockingSP 0x%0Xh\n", col_frozen_lockingSP, val_frozen_lockingSP);
+
+	delete session;
+
+
+
+
+	LOG(D1) << "Exiting DtaDevOpal::getmfgstate()";
+	return 0;
+}
+
+uint8_t DtaDevOpal::DataStoreWrite(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len)
+{
+	LOG(D1) << "Entering DtaDevOpal::DataStoreWrite()";
+
+	ifstream datafile;
+	vector <uint8_t> bufferA(57344, 0x00); // (8192, 0x66); // 0 buffer  (57344, 0x00),
+	vector <uint8_t> lengthtoken;
 	uint8_t lastRC;
 	uint64_t fivepercent = 0;
 	int complete = 4;
@@ -1127,24 +1747,944 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	char star[] = "*";
 	char spinner[] = "|/-\\";
 	char progress_bar[] = "   [                     ]";
+	uint32_t blockSize = 57344; // 57344=512*112=E000h 1950=0x79E;
+	uint32_t filepos = 0;
+	uint64_t imgsize;
+	uint32_t newSize;
+
+	//printf("dsnum = %d startpos=%ld len=%ld\n", dsnum, startpos, len);
+
+	if (dsnum > disk_info.DataStore_maxTables)
+	{
+		LOG(E) << "Data Store number must be " << disk_info.DataStore_maxTables << " or less";
+		return 1;
+	}
+	if (len > disk_info.DataStore_maxTableSize)
+	{
+		LOG(E) << "Data Store Length must be " << disk_info.DataStore_maxTableSize << " or less";
+		return 1;
+	}
+	if (startpos > disk_info.DataStore_maxTableSize)
+	{
+		LOG(E) << "Data Store Startpos must be " << disk_info.DataStore_maxTableSize << " or less";
+		return 1;
+	}
+
+	if ((startpos + len) > disk_info.DataStore_maxTableSize)
+	{
+		LOG(E) << "Data Store write exceed maxTableSize " << disk_info.DataStore_maxTableSize;
+		return 1;
+	}
+
+	//buffer = (char *)malloc(blockSize);
+	datafile.open(filename, ios::in | ios::binary);
+	if (!datafile) {
+		LOG(E) << "Unable to open Data file " << filename;
+		return DTAERROR_OPEN_ERR;
+	}
+	datafile.seekg(0, datafile.end);
+	imgsize = datafile.tellg();
+	printf("datafile size %I64Xh\n", imgsize);
+	if (imgsize < len)
+	{
+		len = (uint32_t)imgsize; // Min(imgsize,len)
+		LOG(I) << "File truncated to " << len;
+	}
+	else
+	{
+		imgsize = len; // cap len to imgsize // 
+		LOG(I) << "Write Length truncated " << len;
+	}
+	if ((startpos + imgsize) > disk_info.DataStore_maxTableSize)
+	{
+		LOG(E) << "startpos + File size exceed max Data Store Table Size " << disk_info.DataStore_maxTableSize;
+		return 1;
+	}
+
+
+	if (imgsize < len)
+		fivepercent = (uint64_t)((imgsize / 20) / blockSize) * blockSize;
+	else
+		fivepercent = (uint64_t)((len / 20) / blockSize) * blockSize;
+	if (0 == fivepercent) fivepercent++;
+	datafile.seekg(0, datafile.beg);
+	if (imgsize > disk_info.DataStore_maxTableSize)
+	{
+		LOG(E) << "Data file size exceed maximum Data Store Table size";
+		datafile.close();
+		return 1; // general error 
+	}
+
+	LOG(I) << "Writing datafile to " << dev;
+
+	DtaCommand *cmd = new DtaCommand();
+	if (NULL == cmd) {
+		LOG(E) << "Unable to create command object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+
+	session = new DtaSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	LOG(D1) << "start lockingSP session";
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+		delete cmd;
+		delete session;
+		return lastRC;
+	}
+	LOG(D1) << "Start transaction";
+	cmd->reset();
+	cmd->addToken(OPAL_TOKEN::STARTTRANSACTON);
+	cmd->addToken(OPAL_TOKEN::WHERE);
+	cmd->complete();
+	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+		delete cmd;
+		delete session;
+		return lastRC;
+	}
+	// 3 boundary
+	// (1) eof (2) len (3) data store size
+	while (!datafile.eof()  && filepos < (len) ) {
+		datafile.read((char *)bufferA.data(), blockSize);
+		if (!(filepos % fivepercent)) {
+			if (complete <24)
+				progress_bar[complete++] = star[0];
+			else
+				progress_bar[complete] = star[0];
+		}
+		if (!(filepos % (blockSize * 5))) {
+			progress_bar[1] = spinner[spinnertick.i++];
+			printf("\r%s %i", progress_bar, filepos);
+			fflush(stdout);
+		}
+		// Max Tables = disk_info.DataStore_maxTables
+		// Max Size Tables = " disk_info.DataStore_maxTableSize
+		// 
+		if (filepos + blockSize + startpos > disk_info.DataStore_maxTableSize)
+		{
+			newSize = disk_info.DataStore_maxTableSize - filepos - startpos; // JERRY 
+			//printf("***** filepos=%ld - startpos = %ld *****\n", filepos, startpos);
+			//printf("***** newSize = disk_info.DataStore_maxTableSize - filepos - startpos = %ld ; bufferA.size()=%I64d *****\n", newSize, bufferA.size());
+			vector <uint8_t> tmpbuf;
+			
+			// bufferA.insert(bufferA.begin(), buffer, buffer + len);
+			tmpbuf.insert(tmpbuf.begin(), bufferA.begin(), bufferA.begin() + newSize);
+			bufferA.erase(bufferA.begin(), bufferA.end());
+			bufferA.insert(bufferA.begin(), tmpbuf.begin(), tmpbuf.end());
+			//printf("***** newSize = disk_info.DataStore_maxTableSize - filepos - startpos = %ld ; bufferA.size()=%I64d tmpbuf.size()=%I64d *****\n", newSize, bufferA.size(), tmpbuf.size());
+		}
+		else {
+			newSize = blockSize;
+		}
+
+		//bufferA.insert(bufferA.begin(), buffer, buffer + len);
+		//////////////////////////////////////////////
+		LOG(D1) << "bufferA contents after copy passed buffer content";
+		IFLOG(D4) DtaHexDump(bufferA.data(), 256);
+		//////////////////////////////////////////////
+		lengthtoken.clear();
+		lengthtoken.push_back(0xe2); // 8k = 8192 (0x2000)
+		lengthtoken.push_back(0x00);
+		lengthtoken.push_back((newSize >> 8) & 0x000000ff);
+		lengthtoken.push_back(newSize & 0x000000ff);
+
+		// cmd buffer before write 
+		LOG(D1) << "bufferA before send write data command";
+		IFLOG(D4) DtaHexDump(bufferA.data(), 256);
+
+		LOG(D1) << "Writing to data store" << hex << dsnum << " of " << dev;
+		//printf(" ***** dsnum = %d *****\n", dsnum);
+		switch (dsnum)
+		{
+		case 0:
+		case 1:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::SET);
+			break;
+		case 2:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE2, OPAL_METHOD::SET);
+			break;
+		case 3:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE3, OPAL_METHOD::SET);
+			break;
+		case 4:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE4, OPAL_METHOD::SET);
+			break;
+		case 5:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE5, OPAL_METHOD::SET);
+			break;
+		case 6:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE6, OPAL_METHOD::SET);
+			break;
+		case 7:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE7, OPAL_METHOD::SET);
+			break;
+		case 8:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE8, OPAL_METHOD::SET);
+			break;
+		case 9:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE9, OPAL_METHOD::SET);
+			break;
+		}
+		cmd->addToken(OPAL_TOKEN::STARTLIST);
+		cmd->addToken(OPAL_TOKEN::STARTNAME);
+		cmd->addToken(OPAL_TOKEN::WHERE);
+		cmd->addToken(filepos+startpos);
+		cmd->addToken(OPAL_TOKEN::ENDNAME);
+		cmd->addToken(OPAL_TOKEN::STARTNAME);
+		cmd->addToken(OPAL_TOKEN::VALUES);
+		cmd->addToken(lengthtoken);
+		cmd->addToken(bufferA);
+		cmd->addToken(OPAL_TOKEN::ENDNAME);
+		cmd->addToken(OPAL_TOKEN::ENDLIST);
+		cmd->complete();
+		if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+			delete cmd;
+			delete session;
+			return lastRC;
+		}
+		LOG(D1) << "***** command buffer of write data store buffer:";
+		IFLOG(D4) cmd->dumpCommand();
+
+		if (lastRC) {
+			LOG(E) << "DataStoreWrite Error";
+			datafile.close();
+			return lastRC;
+		}
+		filepos += newSize;
+	}
+	printf("\r%s %i bytes written \n", progress_bar, filepos);
+
+	LOG(D1) << "end transaction";
+	cmd->reset();
+	cmd->addToken(OPAL_TOKEN::ENDTRANSACTON);
+	cmd->addToken(OPAL_TOKEN::WHERE);
+	cmd->complete();
+	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+		delete cmd;
+		delete session;
+		return lastRC;
+	}
+	datafile.close();
+	delete cmd;
+	delete session;
+	LOG(I) << "Data Store file  " << filename << " written to " << dev;
+	LOG(D1) << "Exiting DtaDevOpal::DataStoreWrite()";
+	return 0;
+
+}
+
+uint8_t DtaDevOpal::DataStoreRead(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len)
+{
+	LOG(D1) << "Entering DtaDevOpal::DataStoreRead()";
+
+	ofstream datafile;
+	char * buffer;
+	uint8_t lastRC;
+	uint64_t fivepercent = 0;
+	int complete = 4;
+	typedef struct { uint8_t  i : 2; } spinnertik;
+	spinnertik spinnertick;
+	spinnertick.i = 0;
+	char star[] = "*";
+	char spinner[] = "|/-\\";
+	char progress_bar[] = "   [                     ]";
+	uint32_t blockSize = 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
+	uint32_t filepos = 0;
+	uint32_t newSize;
+
+	//printf("dsnum = %d startpos=%ld len=%ld\n", dsnum, startpos, len);
+
+	if (dsnum > disk_info.DataStore_maxTables)
+	{
+		LOG(E) << "Data Store number must be " << disk_info.DataStore_maxTables << " or less";
+		return 1;
+	}
+	if (len > disk_info.DataStore_maxTableSize)
+	{
+		LOG(E) << "Data Store Length must be " << disk_info.DataStore_maxTableSize << " or less";
+		return 1;
+	}
+	if (startpos > disk_info.DataStore_maxTableSize)
+	{
+		LOG(E) << "Data Store Startpos must be " << disk_info.DataStore_maxTableSize << " or less";
+		return 1;
+	}
+
+	if ((startpos + len) > disk_info.DataStore_maxTableSize)
+	{
+		len = disk_info.DataStore_maxTableSize - startpos - len;
+		LOG(I) << "Data Store read exceed Data Store max Table Size " << disk_info.DataStore_maxTableSize << " truncated Len to " << len;
+
+	}
+
+	buffer = (char *)malloc(1024*58);
+	datafile.open(filename, ios::out | ios::binary);
+	if (!datafile) {
+		LOG(E) << "Unable to open Data file " << filename;
+		return DTAERROR_OPEN_ERR;
+	}
+	//datafile.seekg(0, datafile.end);
+	//imgsize = datafile.tellg();
+	//printf("datafile size %I64Xh", imgsize);
+	fivepercent = (uint64_t)((disk_info.DataStore_maxTableSize / 20) / blockSize) * blockSize;
+	if (0 == fivepercent) fivepercent++;
+
+	vector<uint8_t> LR;
+
+	DtaCommand *cmd = new DtaCommand();
+	if (NULL == cmd) {
+		LOG(E) << "Unable to create command object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+
+	session = new DtaSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	LOG(D1) << "start lockingSP session";
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+		delete cmd;
+		delete session;
+		LOG(E) << "DataStore Read Error";
+		datafile.close();
+		free(buffer);
+		return lastRC;
+	}
+
+	LOG(I) << "Reading Data store from " << dev << " to " << filename;
+	while ((filepos + startpos) < disk_info.DataStore_maxTableSize && (filepos < len)) {
+		
+		if (!(filepos % fivepercent)) {
+			progress_bar[complete++] = star[0];
+		}
+		if (!(filepos % (blockSize * 5))) {
+			progress_bar[1] = spinner[spinnertick.i++];
+			printf("\r%s %i", progress_bar, filepos);
+			fflush(stdout);
+		}
+		// Max Tables = disk_info.DataStore_maxTables
+		// Max Size Tables = " disk_info.DataStore_maxTableSize
+		newSize = ((filepos + startpos + blockSize) <= disk_info.DataStore_maxTableSize) ? 
+			blockSize : (disk_info.DataStore_maxTableSize - filepos - startpos);
+		if (len < newSize)
+		{
+			newSize = len;
+		}
+		//printf("newSize=%d filepos=%d\n", newSize,filepos); // JERRY
+		memset(buffer, 0, blockSize);
+
+		LOG(D1) << "***** start read data store";
+		switch (dsnum)
+		{
+		case 0:
+		case 1:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::GET);
+			break;
+		case 2:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE2, OPAL_METHOD::GET);
+			break;
+		case 3:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE3, OPAL_METHOD::GET);
+			break;
+		case 4:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE4, OPAL_METHOD::GET);
+			break;
+		case 5:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE5, OPAL_METHOD::GET);
+			break;
+		case 6:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE6, OPAL_METHOD::GET);
+			break;
+		case 7:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE7, OPAL_METHOD::GET);
+			break;
+		case 8:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE8, OPAL_METHOD::GET);
+			break;
+		case 9:
+			cmd->reset(OPAL_UID::OPAL_DATA_STORE9, OPAL_METHOD::GET);
+			break;
+		}
+		cmd->addToken(OPAL_TOKEN::STARTLIST);
+		cmd->addToken(OPAL_TOKEN::STARTLIST);
+		cmd->addToken(OPAL_TOKEN::STARTNAME);
+		cmd->addToken(OPAL_TOKEN::STARTROW);
+		cmd->addToken(filepos+startpos);
+		cmd->addToken(OPAL_TOKEN::ENDNAME);
+		cmd->addToken(OPAL_TOKEN::STARTNAME);
+		cmd->addToken(OPAL_TOKEN::ENDROW);
+		cmd->addToken(filepos+startpos+newSize-1);// end row is size -1
+		cmd->addToken(OPAL_TOKEN::ENDNAME);
+		cmd->addToken(OPAL_TOKEN::ENDLIST);
+		cmd->addToken(OPAL_TOKEN::ENDLIST);
+		cmd->complete();
+		LOG(D1) << "***** send read data store command ";
+		if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+			delete cmd;
+			delete session;
+			LOG(E) << "DataStore Read Error";
+			datafile.close();
+			free(buffer);
+			return lastRC;
+		}
+
+		// DtaResponse::getBytes(uint32_t tokenNum, uint8_t bytearray[])
+		response.getBytes(1, (uint8_t *)buffer); // data is token 1
+												 //IFLOG(D4) DtaHexDump(buffer, 8192); // contain header and entries
+		LOG(D1) << "raw data after data store read response data";
+
+		IFLOG(D4) DtaHexDump(buffer, gethdrsize()); // contain header and entries
+		LOG(D1) << "***** end of send read data store command ";
+
+		if (lastRC) {
+			LOG(E) << "DataStore Read Error";
+			datafile.close();
+			free(buffer);
+			delete cmd;
+			delete session;
+			return lastRC;
+		}
+		datafile.write(buffer, newSize);
+		if (datafile.fail())
+		{
+			LOG(E) << "Saving datafile error";
+			delete cmd;
+			delete session;
+			datafile.close();
+			free(buffer);
+			return lastRC;
+		}
+		filepos += blockSize;
+	}
+	if (newSize != blockSize)
+	{
+		printf("\r%s %i bytes read \n", progress_bar, filepos - blockSize + newSize);
+	} else {
+		printf("\r%s %i bytes read \n", progress_bar, filepos);
+	}
+
+	delete cmd;
+	delete session;
+	datafile.close();
+	free(buffer);
+
+	LOG(I) << "Read Data Store from "<< dev << " to " << filename ;
+	LOG(D1) << "Exiting DtaDevOpal::DataStoreRead()";
+	return 0;
+}
+
+uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len)
+{
+	LOG(D1) << "Entering DtaDevOpal::MBRRead()";
+	ofstream datafile;
+	char * buffer;
+	uint8_t lastRC;
+	uint64_t fivepercent = 0;
+	int complete = 4;
+	typedef struct { uint8_t  i : 2; } spinnertik;
+	spinnertik spinnertick;
+	spinnertick.i = 0;
+	char star[] = "*";
+	char spinner[] = "|/-\\";
+	char progress_bar[] = "   [                     ]";
+	uint32_t blockSize = 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
+	uint32_t filepos = 0;
+	uint32_t newSize;
+	uint32_t maxMBRSize;
+
+	printf("startpos=%ld len=%ld\n", startpos, len);
+
+	if ((lastRC = getMBRsize(password, &maxMBRSize))!=0)
+	{
+		LOG(E) << " Can not get MBR table size";
+		return lastRC;
+	}
+
+
+	if (len > maxMBRSize)
+	{
+		LOG(E) << "MBR Length must be " << maxMBRSize << " or less";
+		return 1;
+	}
+	if (startpos > maxMBRSize)
+	{
+		LOG(E) << "MBR Startpos must be " << maxMBRSize << " or less";
+		return 1;
+	}
+
+	if ((startpos + len) > maxMBRSize)
+	{
+		len = maxMBRSize - startpos - len;
+		LOG(I) << "MBR read exceed MBR max Table Size " << maxMBRSize << " truncated Len to " << len;
+
+	}
+
+	buffer = (char *)malloc(1024 * 58);
+	datafile.open(filename, ios::out | ios::binary);
+	if (!datafile) {
+		LOG(E) << "Unable to open Data file " << filename;
+		return DTAERROR_OPEN_ERR;
+	}
+	//datafile.seekg(0, datafile.end);
+	//imgsize = datafile.tellg();
+	//printf("datafile size %I64Xh", imgsize);
+	fivepercent = (uint64_t)((maxMBRSize / 20) / blockSize) * blockSize;
+	if (0 == fivepercent) fivepercent++;
+
+	vector<uint8_t> LR;
+
+	DtaCommand *cmd = new DtaCommand();
+	if (NULL == cmd) {
+		LOG(E) << "Unable to create command object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+
+	session = new DtaSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	LOG(D1) << "start lockingSP session";
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+		delete cmd;
+		delete session;
+		LOG(E) << "DataStore Read Error";
+		datafile.close();
+		free(buffer);
+		return lastRC;
+	}
+
+	LOG(I) << "Reading MBR from " << dev << " to " << filename;
+	while ((filepos + startpos) < maxMBRSize && (filepos < len)) {
+
+		if (!(filepos % fivepercent)) {
+			progress_bar[complete++] = star[0];
+		}
+		if (!(filepos % (blockSize * 5))) {
+			progress_bar[1] = spinner[spinnertick.i++];
+			printf("\r%s %i", progress_bar, filepos);
+			fflush(stdout);
+		}
+		// Max Tables = disk_info.DataStore_maxTables
+		// Max Size Tables = " maxMBRSize
+		newSize = ((filepos + startpos + blockSize) <= maxMBRSize) ?
+			blockSize : (maxMBRSize - filepos - startpos);
+		if (len < newSize)
+		{
+			newSize = len;
+		}
+		//printf("newSize=%d filepos=%d\n", newSize, filepos); // JERRY
+		memset(buffer, 0, blockSize);
+
+		LOG(D1) << "***** start Read MBR";
+		cmd->reset(OPAL_UID::OPAL_MBR, OPAL_METHOD::GET);
+		cmd->addToken(OPAL_TOKEN::STARTLIST);
+		cmd->addToken(OPAL_TOKEN::STARTLIST);
+		cmd->addToken(OPAL_TOKEN::STARTNAME);
+		cmd->addToken(OPAL_TOKEN::STARTROW);
+		cmd->addToken(filepos + startpos);
+		cmd->addToken(OPAL_TOKEN::ENDNAME);
+		cmd->addToken(OPAL_TOKEN::STARTNAME);
+		cmd->addToken(OPAL_TOKEN::ENDROW);
+		cmd->addToken(filepos + startpos + newSize - 1);// end row is size -1
+		cmd->addToken(OPAL_TOKEN::ENDNAME);
+		cmd->addToken(OPAL_TOKEN::ENDLIST);
+		cmd->addToken(OPAL_TOKEN::ENDLIST);
+		cmd->complete();
+		LOG(D1) << "***** send Read MBR command ";
+		if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+			delete cmd;
+			delete session;
+			LOG(E) << "DataStore Read Error";
+			datafile.close();
+			free(buffer);
+			return lastRC;
+		}
+
+		// DtaResponse::getBytes(uint32_t tokenNum, uint8_t bytearray[])
+		response.getBytes(1, (uint8_t *)buffer); // data is token 1
+												 //IFLOG(D4) DtaHexDump(buffer, 8192); // contain header and entries
+		LOG(D1) << "raw data after MBR read response data";
+
+		IFLOG(D4) DtaHexDump(buffer, gethdrsize()); // contain header and entries
+		LOG(D1) << "***** end of send Read MBR command ";
+
+		if (lastRC) {
+			LOG(E) << "DataStore Read Error";
+			datafile.close();
+			free(buffer);
+			delete cmd;
+			delete session;
+			return lastRC;
+		}
+		datafile.write(buffer, newSize);
+		if (datafile.fail())
+		{
+			LOG(E) << "Saving datafile error";
+			delete cmd;
+			delete session;
+			datafile.close();
+			free(buffer);
+			return lastRC;
+		}
+		filepos += blockSize;
+	}
+	if (newSize != blockSize)
+	{
+		printf("\r%s %i bytes read \n", progress_bar, filepos - blockSize + newSize);
+	}
+	else {
+		printf("\r%s %i bytes read \n", progress_bar, filepos);
+	}
+
+	delete cmd;
+	delete session;
+	datafile.close();
+	free(buffer);
+
+	LOG(I) << "Read MBR from " << dev << " to " << filename;
+	LOG(D1) << "Exiting DtaDevOpal::MBRRead()";
+	return 0;
+
+}
+
+
+
+uint8_t DtaDevOpal::getMBRsize(char * password, uint32_t * msize)
+{
+	LOG(D1) << "Entering DtaDevOpal::getMBRsize()";
+
+	uint8_t lastRC;
+	vector<uint8_t> LR;
+
+	LR.clear();
+	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+	for (int i = 0; i < 8; i++) {
+		LR.push_back(OPALUID[OPAL_UID::OPAL_MBR_SZ][i]);
+	}
+
+	session = new DtaSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+		delete session;
+		return lastRC;
+	}
+	if ((lastRC = getTable(LR, 0x07, 0x07)) != 0) {
+		delete session;
+		return lastRC;
+	}
+
+	uint32_t MBRsz = response.getUint32(4);
+	* msize = MBRsz;
+	printf("Shadow MBR size 0x%lX\n", MBRsz);
+	delete session;
+	return 0;
+}
+
+
+
+
+
+
+
+
+uint8_t DtaDevOpal::getMBRsize(char * password)
+{
+	LOG(D1) << "Entering DtaDevOpal::getMBRsize()";
+
+	uint8_t lastRC;
+	vector<uint8_t> LR;
+
+	LR.clear();
+	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+	for (int i = 0; i < 8; i++) {
+		LR.push_back(OPALUID[OPAL_UID::OPAL_MBR_SZ][i]);
+	}
+
+	session = new DtaSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+		delete session;
+		return lastRC;
+	}
+	if ((lastRC = getTable(LR, 0x07, 0x07)) != 0) {
+		delete session;
+		return lastRC;
+	}
+
+	uint32_t MBRsz = response.getUint32(4);
+	printf("Shadow MBR size 0x%lX\n", MBRsz);
+
+	if ((lastRC = getTable(LR, 0x0D, 0x0E)) != 0) {
+		delete session;
+		return lastRC;
+	}
+	uint32_t MandatoryWriteGranularity = response.getUint32(4);
+	printf("MandatoryWriteGranularity 0x%X\n", MandatoryWriteGranularity);
+	uint32_t RecommandedAccessGranularity = response.getUint32(8);
+	printf("RecommandedAccessGranularity 0x%X\n", RecommandedAccessGranularity);
+
+	//
+	// adminN userN enabled state
+	//
+	for (uint8_t usr = 0; usr < disk_info.OPAL20_numUsers; usr++)
+	{
+		LR.clear();
+		LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+		for (int i = 0; i < 7; i++) {
+			LR.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]); // OPAL_USERX_UID or OPAL_ADMINX_UID
+		}
+		//LR.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][7])=usr+1;
+		LR.push_back(usr+1);
+		if ((lastRC = getTable(LR, 0x05, 0x05)) != 0) {
+			printf("***** lastRC=%d *****\n", lastRC);
+			LOG(E) << "Unable to determine User1 enabled state";
+			delete session;
+			return lastRC;
+		}
+
+		//uint8_t col_lifecycle_adminSP = response.getUint8(3); // column lifecycle
+		uint8_t userenabled = response.getUint8(4); // value
+		printf("User%d enabled = %d\n", usr+1, userenabled);
+	}
+
+	for (uint8_t usr = 0; usr < disk_info.OPAL20_numAdmins; usr++)
+	{
+		LR.clear();
+		LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+		for (int i = 0; i < 7; i++) {
+			LR.push_back(OPALUID[OPAL_UID::OPAL_ADMIN1_UID][i]); // OPAL_USERX_UID or OPAL_ADMINX_UID
+		}
+		//LR.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][7])=usr+1;
+		LR.push_back(usr + 1);
+		if ((lastRC = getTable(LR, 0x05, 0x05)) != 0) {
+			printf("***** lastRC=%d *****\n", lastRC);
+			LOG(E) << "Unable to determine Admin enabled state";
+			delete session;
+			return lastRC;
+		}
+		
+		uint8_t userenabled = response.getUint8(4); // value
+		printf("Admin%d enabled = %d\n", usr + 1, userenabled);
+	}
+	//delete session;
+
+
+
+
+
+	//
+	// adminSP GUDID
+	//
+	//getchar(); // JERRY 
+	//OPAL_UID uid = OPAL_UID::OPAL_SID_UID;
+	//if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, uid)) != 0) {
+	//	delete session;
+	//	return lastRC;
+	//}
+	/* 
+	LR.clear();
+	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+	for (int i = 0; i < 8; i++) {
+		LR.push_back(OPALUID[OPAL_UID::OPAL_GUDID_UID][i]); // OPAL_GUDID_UID
+	}
+
+	if ((lastRC = getTable(LR, 0x02, 0x02)) != 0) {
+		printf("***** lastRC=%d *****\n", lastRC);
+		LOG(E) << "Unable to get adminSP GUDID";
+		delete session;
+		return lastRC;
+	}
+
+	// DtaResponse::getBytes(uint32_t tokenNum, uint8_t bytearray[])
+	uint8_t * gudid = (uint8_t *)malloc(12);
+	
+	response.getBytes(1, gudid); // data is token 1
+	printf("GUDID = ");
+	uint8_t * p = gudid;
+	for (int i = 0; i < 12; i++)
+	{
+		printf("%02X", *p & 0x00ff);
+		p++;
+	}
+	printf("\n");
+	free(gudid);
+
+	*/
+
+	delete session;
+	// 
+	//srand((uint16_t)time(NULL));
+	//auditRec(password, 1 + rand() % evt_lastID); // for testing purpose
+	LOG(D1) << "Exiting DtaDevOpal::getMBRsize()";
+	return 0;
+}
+///////////////////////////////////////////////////////////////////////////
+void SignalHandler(int signal)
+{
+	printf("Signal %d\n", signal);
+	throw "!Access Violation!";
+}
+
+uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
+	LOG(D1) << "Entering DtaDevOpal::loadPBAimage()" << filename << " " << dev;
+	uint8_t embed = 1;
+	uint8_t lastRC;
+	uint64_t fivepercent = 0;
+	uint64_t imgsize;
+	int complete = 4;
+	typedef struct { uint8_t  i : 2; } spinnertik;
+	spinnertik spinnertick;
+	spinnertick.i = 0;
+	char star[] = "*";
+	char spinner[] = "|/-\\";
+	char progress_bar[] = "   [                     ]";
 	uint32_t blockSize = 57344 ; // 57344=512*112=E000h 1950=0x79E;
 	uint32_t filepos = 0;
+	uint64_t sz;
 	ifstream pbafile;
-	vector <uint8_t> buffer(57344,0x00), lengthtoken;
+	// for decompression
+	PBYTE DecompressedBuffer = NULL;
+	uint64_t DecompressedBufferSize = NULL;
+	PBYTE CompressedBuffer = NULL;
+	uint64_t CompressedBufferSize = 0;
+	DECOMPRESSOR_HANDLE Decompressor = NULL;
+	DecompressedBuffer = NULL;
+	BOOL Success;
+	SIZE_T  DecompressedDataSize;
+	void * somebuf;
+
+	vector <uint8_t> buffer; // 0 buffer  (57344, 0x00),
+	vector <uint8_t> lengthtoken;
+
 	lengthtoken.clear();
-	lengthtoken.push_back(0xe2);
+	lengthtoken.push_back(0xe2); // E2 is byte string which mean the followind data is byte-stream, but for read, there is no byte string so it should be E0
 	lengthtoken.push_back(0x00);
 	lengthtoken.push_back(0xE0);
 	lengthtoken.push_back(0x00);
-	pbafile.open(filename, ios::in | ios::binary);
-	if (!pbafile) {
-		LOG(E) << "Unable to open PBA image file " << filename;
-		return DTAERROR_OPEN_ERR;
+	if (embed == 0) {
+		pbafile.open(filename, ios::in | ios::binary);
+		if (!pbafile) {
+			LOG(E) << "Unable to open PBA image file " << filename;
+			return DTAERROR_OPEN_ERR;
+		}
+		pbafile.seekg(0, pbafile.end);
+		fivepercent = (uint64_t)((pbafile.tellg() / 20) / blockSize) * blockSize;
 	}
-	pbafile.seekg(0, pbafile.end);
-	fivepercent = (uint64_t)((pbafile.tellg() / 20) / blockSize) * blockSize;
+	else {
+		const char * fname[] = { "sedutil-cli.exe" }; // , "..\\rc\\sedutil.exe", "..\\rc\\UEFI.img"	};
+		#include "sedsize.h" 
+		pbafile.open(fname[0], ios::in | ios::binary);
+		pbafile.seekg(0, pbafile.end);
+		imgsize = pbafile.tellg();
+		pbafile.seekg(0, pbafile.beg);
+		pbafile.seekg(sedsize);
+		//LOG(I) << "read pointer=" << pbafile.tellg();
+		int comprss = 1;
+
+		if (comprss) { 
+			CompressedBufferSize = imgsize - sedsize;
+			CompressedBuffer = (PBYTE)malloc(CompressedBufferSize);
+			if (!CompressedBuffer)
+			{
+				LOG(E) << "Cannot allocate memory for compressed buffer.";
+				return DTAERROR_OPEN_ERR;
+			}
+			pbafile.read((char *)CompressedBuffer, CompressedBufferSize); // read all img data
+            
+			Success = CreateDecompressor(
+				COMPRESS_ALGORITHM_XPRESS_HUFF, //  Compression Algorithm
+				NULL,                           //  Optional allocation routine
+				&Decompressor);                 //  Handle
+			if (!Success)
+			{
+				LOG(E) << "Cannot create a decompressor: " << GetLastError();
+				goto done;
+			}
+			//  Query decompressed buffer size.
+			Success = Decompress(
+				Decompressor,                //  Compressor Handle
+				CompressedBuffer,            //  Compressed data
+				CompressedBufferSize,        //  Compressed data size
+				NULL,                        //  Buffer set to NULL
+				0,                           //  Buffer size set to 0
+				&DecompressedBufferSize);    //  Decompressed Data size
+											 // Allocate memory for decompressed buffer.
+			if (!Success)
+			{
+				DWORD ErrorCode = GetLastError();
+				// Note that the original size returned by the function is extracted 
+				// from the buffer itself and should be treated as untrusted and tested
+				// against reasonable limits.
+				if (ErrorCode != ERROR_INSUFFICIENT_BUFFER)
+				{
+					LOG(E) << "Cannot query decompress data: " << ErrorCode ;
+					//printf("DecompressedBufferSize=%I64d \n", DecompressedBufferSize);
+					goto done;
+				}
+				DecompressedBuffer = (PBYTE)malloc(DecompressedBufferSize);
+				if (!DecompressedBuffer)
+				{
+					LOG(E) << "Cannot allocate memory for decompressed buffer";
+					goto done;
+				}
+				somebuf = malloc(DecompressedBufferSize);
+				if (!somebuf) {
+					LOG(E) << "Cannot allocate memory for somebuf buffer";
+					goto done;
+				} 
+				memset(DecompressedBuffer, 0, DecompressedBufferSize);
+			}
+			//  Decompress data 
+			Success = Decompress(
+				Decompressor,               //  Decompressor handle
+				CompressedBuffer,           //  Compressed data
+				CompressedBufferSize,       //  Compressed data size
+				DecompressedBuffer,         //  Decompressed buffer
+				DecompressedBufferSize,     //  Decompressed buffer size
+				&DecompressedDataSize);     //  Decompressed data size
+			if (!Success)
+			{
+				LOG(E) << "Cannot really decompress data: " << GetLastError();
+				//LOG(I) << ("DecompressedBufferSize=%I64d DecompressedDataSize=%I64d\n", DecompressedBufferSize, DecompressedDataSize);
+				goto done;
+			}
+				
+			/*
+			printf("CompressedBuffer size: %I64d; DecompressedBufferSize:%I64d; DecompressedDataSize: %I64d\n",
+				CompressedBufferSize,
+				DecompressedBufferSize,
+				DecompressedDataSize);
+			printf("File decompressed.\n");
+			*/
+		done:
+			// house keeping buffer and file handler
+			if (Decompressor != NULL)
+			{
+				LOG(D1) << "free Decompressor" << endl;
+				CloseDecompressor(Decompressor);
+			}
+			if (CompressedBuffer)
+			{
+				LOG(D1) << "free CompressBuffer" << endl;
+				free(CompressedBuffer);
+			}
+		} // end cmprss
+		fivepercent = (uint64_t)((DecompressedBufferSize / 20) / blockSize) * blockSize;
+	}
+
 	if (0 == fivepercent) fivepercent++;
-	pbafile.seekg(0, pbafile.beg);
+	if (embed ==0) 
+		pbafile.seekg(0, pbafile.beg);
 
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
@@ -1175,28 +2715,50 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 		return lastRC;
 	}
 	LOG(I) << "Writing PBA to " << dev;
-		while (!pbafile.eof()) {
-		pbafile.read((char *)buffer.data(), blockSize);
-		if (!(filepos % fivepercent)) {
-			progress_bar[complete++] = star[0];
-			//do not delete session at 5% progress
-			/* 
-			delete session;
-			session = new DtaSession(this);
-			if (NULL == session) {
-				LOG(E) << "Unable to create session object ";
-				return DTAERROR_OBJECT_CREATE_FAILED;
-			}
-			if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
-				delete cmd;
-				delete session;
-				pbafile.close();
-				return lastRC;
-			} */
+	
+	while (!pbafile.eof() || (filepos <= DecompressedBufferSize)) {
+		if (embed == 0) {
+			pbafile.read((char *)buffer.data(), blockSize);
 		}
+		else {
+			
+				signal(SIGSEGV, SignalHandler);
+				try { 
+					//memcpy(&buffer[0], &(DecompressedBuffer[filepos]), ((filepos + blockSize) <= DecompressedBufferSize) ? blockSize: DecompressedBufferSize - filepos);
+					buffer.erase(buffer.begin(), buffer.end());
+					sz = (((filepos + blockSize) <= DecompressedBufferSize) ? blockSize : DecompressedBufferSize - filepos);
+					
+					if (sz < blockSize) {
+						somebuf = (PBYTE)malloc(blockSize);
+						if (!somebuf)
+						{
+							LOG(E) << "Cannot allocate memory for last block buffer.";
+							return DTAERROR_OPEN_ERR;
+						}
+						memset(somebuf, 0, blockSize);
+						memcpy(somebuf, DecompressedBuffer + filepos,sz);
+						buffer.insert(buffer.begin(), (PBYTE)somebuf, (PBYTE)somebuf + blockSize );
+						free(somebuf);
+					}
+					else
+					{
+						buffer.insert(buffer.begin(), DecompressedBuffer + filepos, DecompressedBuffer + filepos + sz);
+						//LOG(I) << "buffer.size()=" << buffer.size(); 
+					}
+					//printf("DecompressedBuffer + filepos=%I64d; DecompressedBuffer + filepos + sz=%I64d; filepos=%ld; sz=%I64d\n", (uint64_t)DecompressedBuffer + filepos, (uint64_t)DecompressedBuffer + filepos + sz, filepos, sz);
+				}
+				catch (char *e) {
+					LOG(E) << "Exception Caught: " << e;
+					break;
+				}
+		}
+
+		if (!(filepos % fivepercent))
+			progress_bar[complete++] = star[0];
+
 		if (!(filepos % (blockSize * 5))) {
 			progress_bar[1] = spinner[spinnertick.i++];
-			printf("\r%s %i", progress_bar,filepos);
+			printf("\r%s %i(%I64d)", progress_bar,filepos, DecompressedBufferSize);
 			fflush(stdout);
 		}
 		cmd->reset(OPAL_UID::OPAL_MBR, OPAL_METHOD::SET);
@@ -1219,14 +2781,18 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 			return lastRC;
 		}
 		filepos += blockSize;
-	}
-	printf("\r%s %i bytes written \n", progress_bar, filepos);
+		if (filepos > DecompressedBufferSize)
+		{
+			break;
+		}
+	} // end of while 
 
+	printf("\r%s %i(%I64d) bytes written \n", progress_bar, filepos, DecompressedBufferSize);
 	LOG(D1) << "end transaction";
 	cmd->reset();
 	cmd->addToken(OPAL_TOKEN::ENDTRANSACTON);
 	cmd->addToken(OPAL_TOKEN::WHERE);
-	cmd->complete();
+	cmd->complete(); 
 	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
 		delete cmd;
 		delete session;
@@ -1236,7 +2802,12 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	delete cmd;
 	delete session;
 	pbafile.close();
-	LOG(I) << "PBA image  " << filename << " written to " << dev;
+	if (embed ==0)
+		LOG(I) << "PBA image  " << filename << " written to " << dev;
+	else {
+		LOG(I) << "PBA image written to " << dev;
+
+	}
 	LOG(D1) << "Exiting DtaDevOpal::loadPBAimage()";
 	return 0;
 }
@@ -1521,6 +3092,7 @@ uint8_t DtaDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
 		return lastRC;
 	}
 	delete session;
+	//auditRec(newpassword, evt_PasswordChangedSID);
 	LOG(D1) << "Exiting DtaDevOpal::setSIDPassword()";
 	return 0;
 }
@@ -1602,8 +3174,10 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 {
 	uint8_t lastRC;
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
+	LOG(D1) << "Entering DtaDevOpal::exec"; // JERRY
     LOG(D3) << endl << "Dumping command buffer";
     IFLOG(D3) DtaHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
+	LOG(D1) << "Entering DtaDevOpal::exec sendCmd(IF_SEND, IO_BUFFER_LENGTH)"; // JERRY
     if((lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH)) != 0) {
 		LOG(E) << "Command failed on send " << (uint16_t) lastRC;
         return lastRC;
@@ -1612,6 +3186,7 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
     do {
         osmsSleep(25);
         memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
+		LOG(D1) << "Entering DtaDevOpal::exec sendCmd(IF_RECV, IO_BUFFER_LENGTH)";// JERRY
         lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
 
     }
