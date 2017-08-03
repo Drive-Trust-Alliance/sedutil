@@ -26,10 +26,11 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevOpal1.h"
 #include "DtaDevOpal2.h"
 #include "DtaDevEnterprise.h"
+#include "Version.h"
 
 using namespace std;
 
-int diskScan()
+int diskScan(char * devskip)
 {
 	char devname[25];
 	int i = 0;
@@ -44,6 +45,12 @@ int diskScan()
 	
 	while (TRUE) {
 		DEVICEMASK;
+		if (!strcasecmp(devname,devskip)) 
+		{
+			LOG(D1) << "Find skipped device " << devskip;
+			i += 1; 
+			DEVICEMASK;
+		}
 		#ifdef DEVICEMASKN
 		if (f_sda_end )
 			DEVICEMASKN;
@@ -150,7 +157,7 @@ int main(int argc, char * argv[])
 		// make sure DtaDev::no_hash_passwords is initialized
 		d->no_hash_passwords = opts.no_hash_passwords;
 	}
-
+	string st1;
     switch (opts.action) {
  	case sedutiloption::initialSetup:
 		LOG(D) << "Performing initial setup to use sedutil on drive " << argv[opts.device];
@@ -169,6 +176,45 @@ int main(int argc, char * argv[])
         return d->setPassword(argv[opts.password], (char *) "Admin1",
                             argv[opts.newpassword]);
 		break;
+    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+	case sedutiloption::activate:
+		LOG(D) << "activate LockingSP with MSID";
+		return d->activate(argv[opts.password]);
+		break;
+	case sedutiloption::auditWrite:
+		LOG(D) << "audit log write";
+		printf("argv[opts.eventid]=%s\n", argv[opts.eventid]);
+		return d->auditWrite(argv[opts.password], argv[opts.eventid]);
+		break;
+	case sedutiloption::auditRead:
+		LOG(D) << "audit log read";
+		return d->auditRead(argv[opts.password]);
+		break;
+	case sedutiloption::auditErase:
+		LOG(D) << "audit log erase ";
+		return d->auditErase(argv[opts.password]);
+		break;
+	case sedutiloption::getmfgstate:
+		LOG(D) << "get manufacture life cycle state";
+		return d->getmfgstate();
+		break;
+	case sedutiloption::DataStoreWrite:
+		LOG(D) << "Write to Data Store";
+		return d->DataStoreWrite(argv[opts.password], argv[opts.pbafile], (uint8_t)atoi(argv[opts.dsnum]), atol(argv[opts.startpos]), atol(argv[opts.len]));
+		break;
+	case sedutiloption::DataStoreRead:
+		LOG(D) << "Read Data Store to file";
+		return d->DataStoreRead(argv[opts.password], argv[opts.pbafile], (uint8_t)atoi(argv[opts.dsnum]), atol(argv[opts.startpos]), atol(argv[opts.len]));
+		break;
+	case sedutiloption::MBRRead:
+		LOG(D) << "Read shadow MBR to file";
+		return d->MBRRead(argv[opts.password], argv[opts.pbafile], atol(argv[opts.startpos]), atol(argv[opts.len]));
+		break;
+	case sedutiloption::getMBRsize:
+		LOG(D) << "get shadow MBR table size ";
+		return d->getMBRsize(argv[opts.password]);
+		break;
+    #endif
 	case sedutiloption::loadPBAimage:
         LOG(D) << "Loading PBA image " << argv[opts.pbafile] << " to " << opts.device;
         return d->loadPBA(argv[opts.password], argv[opts.pbafile]);
@@ -256,8 +302,8 @@ int main(int argc, char * argv[])
         return 0;
         break;
 	case sedutiloption::scan:
-        LOG(D) << "Performing diskScan() ";
-        diskScan();
+        LOG(D) << "Performing diskScan(skipdevice) ";
+        diskScan(argv[opts.device]);
         break;
 	case sedutiloption::isValidSED:
 		LOG(D) << "Verify whether " << argv[opts.device] << "is valid SED or not";
@@ -321,7 +367,19 @@ int main(int argc, char * argv[])
 		break;
 	case sedutiloption::version:
 		LOG(D) << "print version number ";
-		printf("Fidelity Lock Version : 20170417-A001");
+		st1 = "unknownOS";
+        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+		st1 = "unix";
+        #endif
+        #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+		st1 = "window";
+        #endif
+
+        #if defined(APPLE) || defined(_APPLE) || defined(__APPLE__)
+		st1 = "macOS";
+        #endif
+
+        printf("Fidelity Lock Version : 0.1.1.%s.%s 20170802-A001\n", st1.c_str(),GIT_VERSION);
 		break;
     default:
         LOG(E) << "Unable to determine what you want to do ";
