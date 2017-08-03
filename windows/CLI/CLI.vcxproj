@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Common\DtaAnnotatedDump.h" />
+    <ClInclude Include="..\..\Common\DtaAudit.h" />
     <ClInclude Include="..\..\Common\DtaCommand.h" />
     <ClInclude Include="..\..\Common\DtaConstants.h" />
     <ClInclude Include="..\..\Common\DtaDev.h" />
@@ -45,9 +46,13 @@
     <ClInclude Include="..\..\Common\pbkdf2\pbkdf2.h" />
     <ClInclude Include="..\..\Common\pbkdf2\sha1.h" />
     <ClInclude Include="..\..\Common\pbkdf2\tassert.h" />
+    <ClInclude Include="..\..\Common\sedsize.h" />
     <ClInclude Include="..\DtaDevOS.h" />
     <ClInclude Include="..\DtaDiskATA.h" />
+    <ClInclude Include="..\DtaDiskNvme.h" />
     <ClInclude Include="..\DtaDiskUSB.h" />
+    <ClInclude Include="..\nvme.h" />
+    <ClInclude Include="..\nvmeIoctl.h" />
     <ClInclude Include="..\os.h" />
   </ItemGroup>
   <ItemGroup>
@@ -73,13 +78,17 @@
     <ClCompile Include="..\..\Common\sedutil.cpp" />
     <ClCompile Include="..\DtaDevOS.cpp" />
     <ClCompile Include="..\DtaDiskATA.cpp" />
+    <ClCompile Include="..\DtaDiskNvme.cpp" />
     <ClCompile Include="..\DtaDiskUSB.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\..\rc\Cabinet_x64.Lib" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{267E9D28-7245-4182-9740-F386F4299E83}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CLI</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -184,6 +193,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalOptions>/Zm2000 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

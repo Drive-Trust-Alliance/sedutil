@@ -111,6 +111,21 @@
     <ClInclude Include="..\..\Common\pbkdf2\tassert.h">
       <Filter>Header Files\pbkdf2</Filter>
     </ClInclude>
+    <ClInclude Include="..\DtaDiskNvme.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\nvmeIoctl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\nvme.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\sedsize.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\DtaAudit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\sedutil.cpp">
@@ -182,5 +197,13 @@
     <ClCompile Include="..\..\Common\pbkdf2\sha1.c">
       <Filter>Source Files\pbkdf2</Filter>
     </ClCompile>
+    <ClCompile Include="..\DtaDiskNvme.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\..\rc\Cabinet_x64.Lib">
+      <Filter>Resource Files</Filter>
+    </Library>
   </ItemGroup>
 </Project>
