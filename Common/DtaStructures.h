@@ -31,6 +31,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define FC_OPALV200   0x0203
 #define FC_OPALITE    0x0301
 #define FC_PYRITE     0x0302
+#define FC_BlockSID   0x0402
 /** The Discovery 0 Header. As defined in
 * Opal SSC Documentation
 */
@@ -221,6 +222,21 @@ typedef struct _Discovery0OPALV200 {
     uint8_t reserved02;
     uint32_t reserved03;
 } Discovery0OPALV200;
+typedef struct _Discovery0BlockSIDFeatures {
+	uint16_t featureCode; /* 0x0402 in 2.00.100 */
+	uint8_t reserved_v : 4;
+	uint8_t version : 4;
+	uint8_t length;
+	uint8_t reserved07 : 6;
+	uint8_t BlockSIDState : 1;
+	uint8_t SIDvalueState : 1;
+	uint8_t reserved06 : 7;
+	uint8_t HardReset : 1;
+	uint16_t reserved05;
+	uint32_t reserved04;
+	uint32_t reserved03;
+} Discovery0BlockSIDFeatures;
+
 /** Union of features used to parse the discovery 0 response */
 union Discovery0Features {
     Discovery0TPerFeatures TPer;
@@ -231,6 +247,7 @@ union Discovery0Features {
     Discovery0OPALV200 opalv200;
 	Discovery0OpalV100 opalv100;
     Discovery0DatastoreTable datastore;
+	Discovery0BlockSIDFeatures blocksidauth;
 };
 
 /** ComPacket (header) for transmissions. */
@@ -304,6 +321,7 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t ANY_OPAL_SSC : 1;
     uint8_t OPALITE : 1;
     uint8_t PYRITE : 1;
+	uint8_t BlockSID : 1;
     // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
     uint8_t TPer_ACKNACK : 1;
     uint8_t TPer_async : 1;
@@ -348,6 +366,10 @@ typedef struct _OPAL_DiskInfo {
     uint16_t PYRITE_numcomIDs;
     uint8_t PYRITE_initialPIN;
     uint8_t PYRITE_revertedPIN;
+	uint8_t BlockSID_BlockSIDState : 1;
+	uint8_t BlockSID_SIDvalueState : 1;
+	uint8_t BlockSID_HardReset : 1;
+
     // IDENTIFY information
     DTA_DEVICE_TYPE devType;
     uint8_t serialNum[20];
