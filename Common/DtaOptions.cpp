@@ -31,7 +31,7 @@ void usage()
     printf("-v (optional)                       increase verbosity, one to five v's\n");
     printf("-n (optional)                       no password hashing. Passwords will be sent in clear text!\n");
     printf("actions \n");
-    printf("--scan \n");
+    printf("--scan <skipdevice>\n");
     printf("                                Scans the devices on the system \n");
     printf("                                identifying Opal compliant devices \n");
     printf("--query <device>\n");
@@ -96,7 +96,7 @@ void usage()
     printf("                                print MSID \n");
     printf("\n");
     printf("Examples \n");
-    printf("sedutil-cli --scan \n");
+    printf("sedutil-cli --scan <skipdevice>\n");
 	printf("sedutil-cli --query %s \n", DEVICEEXAMPLE);
 	printf("sedutil-cli --yesIreallywanttoERASEALLmydatausingthePSID <PSIDALLCAPSNODASHED> %s \n", DEVICEEXAMPLE);
 	printf("sedutil-cli --initialSetup <newSIDpassword> %s \n", DEVICEEXAMPLE);
@@ -168,6 +168,22 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			END_OPTION
 		BEGIN_OPTION(setAdmin1Pwd, 3) OPTION_IS(password) OPTION_IS(newpassword) 
 			OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(activate, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(auditWrite, 3)  
+		OPTION_IS(eventid) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(auditRead, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(auditErase, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(getmfgstate, 1) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(DataStoreWrite, 6) OPTION_IS(password) OPTION_IS(pbafile)
+			OPTION_IS(dsnum) OPTION_IS(startpos) OPTION_IS(len)
+			OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(DataStoreRead, 6) OPTION_IS(password) OPTION_IS(pbafile)
+			OPTION_IS(dsnum) OPTION_IS(startpos) OPTION_IS(len)
+			OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(MBRRead, 5) OPTION_IS(password) OPTION_IS(pbafile)
+			OPTION_IS(startpos) OPTION_IS(len)
+			OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(getMBRsize, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(loadPBAimage, 3) OPTION_IS(password) OPTION_IS(pbafile) 
 			OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(revertTPer, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
@@ -218,7 +234,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			TESTFAIL("Invalid Locking Range (1-15)")
 			OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(query, 1) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(scan, 0)  END_OPTION
+		BEGIN_OPTION(scan, 1) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(version, 0)  END_OPTION
 		BEGIN_OPTION(isValidSED, 1) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(eraseLockingRange, 3)

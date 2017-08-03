@@ -30,6 +30,10 @@ typedef struct _DTA_OPTIONS {
 	uint8_t lockingstate;  /**< locking state to set a lockingrange to */
 	uint8_t lrstart;		/** the starting block of a lockingrange */
 	uint8_t lrlength;		/** the length in blocks of a lockingrange */
+	uint8_t eventid;		/** audit log event ID */
+	uint8_t dsnum;			/** which data store to read write*/
+	uint32_t startpos;		/** data store start position  */
+	uint32_t len;			/** data store length */
 
 	bool no_hash_passwords; /** global parameter, disables hashing of passwords */
 } DTA_OPTIONS;
@@ -50,6 +54,15 @@ typedef enum _sedutiloption {
 	setAdmin1Pwd,
 	setPassword,
 	setPassword_SUM,
+	activate,
+	auditWrite,
+	auditRead,
+	auditErase,
+	getmfgstate,
+	DataStoreWrite,
+	DataStoreRead,
+	MBRRead,
+	getMBRsize,
 	loadPBAimage,
 	setLockingRange,
 	revertTPer,
