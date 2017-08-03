@@ -159,6 +159,7 @@ private:
     RLog(const RLog&);
     RLog& operator =(const RLog&);
     TLogLevel curlevel;
+    sedutiloutput outputformat;
 };
 
 template <typename T>
@@ -168,6 +169,7 @@ RLog<T>::RLog() {
 template <typename T>
 std::ostringstream& RLog<T>::Get(TLogLevel level, sedutiloutput output_format) {
 	curlevel = level;
+	outputformat = output_format;
 	if (output_format == sedutilNormal) {
 		os << "- " << NowTime();
 		os << " " << ToString(level) << ": ";
@@ -179,7 +181,7 @@ std::ostringstream& RLog<T>::Get(TLogLevel level, sedutiloutput output_format) {
 template <typename T>
 RLog<T>::~RLog() {
     os << std::endl;
-	if (curlevel == I)
+	if ((curlevel == I) && (outputformat != sedutilNormal))
 		T::Output(os.str());
 	else
 		T::OutputErr(os.str());
