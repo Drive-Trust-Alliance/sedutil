@@ -313,12 +313,12 @@ class FILELOG_DECLSPEC RCLog : public RLog<Output2FILE> {
 	else if (level > CLog::Level() || !Output2FILE::Stream()) ; \
 	else
 
-extern sedutiloutput output_format;
+extern sedutiloutput outputFormat;
 
 #define	LOGX(level) \
 	if (level > CLOG_MAX_LEVEL) ;\
 	else if (level > RCLog::Level() || !Output2FILE::Stream()) ; \
-	else RCLog().Get(level, output_format)
+	else RCLog().Get(level, outputFormat)
 #define	LOG LOGX
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)

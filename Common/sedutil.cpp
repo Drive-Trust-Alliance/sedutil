@@ -29,7 +29,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-sedutiloutput output_format;
+/* Default to output that omits timestamps and goes to stdout */
+sedutiloutput outputFormat = sedutilReadable;
 
 int isValidSEDDisk(char *devname)
 {
