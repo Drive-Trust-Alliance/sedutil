@@ -352,9 +352,9 @@ void DtaDev::puke()
 	}    
 	if (disk_info.BlockSID) {
 		cout << "BlockSID function (" << HEXON(4) << FC_BlockSID << ")" << HEXOFF << std::endl;
-		cout << "BlockSID_BlockSIDState (" << HEXON(1) << disk_info.BlockSID_BlockSIDState << ")" << HEXOFF << std::endl;
-		cout << "    BlockSID_SIDvalueState = " << HEXON(4) << disk_info.BlockSID_SIDvalueState << HEXOFF;
-		cout << ", BlockSID_HardReset  = " << HEXON(2) << disk_info.BlockSID_HardReset << HEXOFF;
+		cout << "    BlockSIDState " << HEXON(2) << disk_info.BlockSID_BlockSIDState << HEXOFF;
+		cout << ", SIDvalueState = " << HEXON(2) << disk_info.BlockSID_SIDvalueState << HEXOFF;
+		cout << ", HardReset  = " << HEXON(2) << disk_info.BlockSID_HardReset << HEXOFF;
 		cout << std::endl;
 	}
 	if (disk_info.Unknown)

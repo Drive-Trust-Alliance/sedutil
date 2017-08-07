@@ -227,11 +227,11 @@ typedef struct _Discovery0BlockSIDFeatures {
 	uint8_t reserved_v : 4;
 	uint8_t version : 4;
 	uint8_t length;
-	uint8_t reserved07 : 6;
-	uint8_t BlockSIDState : 1;
 	uint8_t SIDvalueState : 1;
-	uint8_t reserved06 : 7;
+	uint8_t BlockSIDState : 1;
+	uint8_t reserved07 : 6;
 	uint8_t HardReset : 1;
+	uint8_t reserved06 : 7;
 	uint16_t reserved05;
 	uint32_t reserved04;
 	uint32_t reserved03;
