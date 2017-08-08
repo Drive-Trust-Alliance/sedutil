@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 This software is Copyright 2017 Spectra Logic Corporation
 
 This file is part of sedutil.
@@ -856,7 +856,7 @@ uint8_t DtaDevEnterprise::setLockingRange_SUM(uint8_t lockingrange, uint8_t lock
         LOG(D1) << "Exiting DtaDevEnterprise::setLockingRange_SUM()";
 	return DTAERROR_INVALID_PARAMETER;
 }
-uint8_t DtaDevEnterprise::enableUser(char * password, char * userid)
+uint8_t DtaDevEnterprise::enableUser(char * password, char * userid, OPAL_TOKEN status)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::enableUser";
 	LOG(E) << "enableUser not implemented";
@@ -1419,9 +1419,9 @@ uint8_t DtaDevEnterprise::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t pro
     uint8_t rc = 0;
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
     LOG(D3) << endl << "Dumping command buffer";
-    IFLOG(D) DtaAnnotatedDump(IF_SEND, cmd->getCmdBuffer(), IO_BUFFER_LENGTH);
+    IFLOG(D) DtaAnnotatedDump(IF_SEND, cmd->getCmdBuffer(), cmd->outputBufferSize());
     IFLOG(D3) DtaHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
-    rc = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH);
+    rc = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), cmd->outputBufferSize());
     if (0 != rc) {
         LOG(E) << "Command failed on send " << (uint16_t) rc;
         return rc;
@@ -1430,8 +1430,8 @@ uint8_t DtaDevEnterprise::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t pro
     do {
         //LOG(I) << "read loop";
         osmsSleep(25);
-        memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
-        rc = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
+        memset(cmd->getRespBuffer(), 0, MIN_BUFFER_LENGTH);
+        rc = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), MIN_BUFFER_LENGTH);
 
     }
     while ((0 != hdr->cp.outstandingData) && (0 == hdr->cp.minTransfer));

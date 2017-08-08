@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -102,6 +102,10 @@ char *DtaDev::getSerialNum()
 {
 	return (char *)&disk_info.serialNum;
 }
+DTA_DEVICE_TYPE DtaDev::getDevType()
+	{
+		return disk_info.devType;
+	}
 void DtaDev::discovery0()
 {
     LOG(D1) << "Entering DtaDev::discovery0()";
@@ -112,8 +116,8 @@ void DtaDev::discovery0()
     Discovery0Features * body;
 	d0Response = discovery0buffer + IO_BUFFER_ALIGNMENT;
 	d0Response = (void *)((uintptr_t)d0Response & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
-	memset(d0Response, 0, IO_BUFFER_LENGTH);
-    if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, IO_BUFFER_LENGTH)) != 0) {
+	memset(d0Response, 0, MIN_BUFFER_LENGTH);
+    if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, MIN_BUFFER_LENGTH)) != 0) {
         LOG(D) << "Send D0 request to device failed " << (uint16_t)lastRC;
         return;
     }
@@ -211,7 +215,11 @@ void DtaDev::puke()
 {
 	LOG(D1) << "Entering DtaDev::puke()";
 	/* IDENTIFY */
-	cout << endl << dev << (disk_info.devType == DEVICE_TYPE_ATA ? " ATA " : disk_info.devType == DEVICE_TYPE_SAS ? " SAS " : disk_info.devType == DEVICE_TYPE_USB ? " USB " : " OTHER ");
+	cout << endl << dev << (disk_info.devType == DEVICE_TYPE_ATA ? " ATA " : 
+            disk_info.devType == DEVICE_TYPE_SAS ? " SAS " : 
+            disk_info.devType == DEVICE_TYPE_USB ? " USB " :
+            disk_info.devType == DEVICE_TYPE_NVME ? " NVMe " :
+                    " OTHER ");
 	cout << disk_info.modelNum << " " << disk_info.firmwareRev << " " << disk_info.serialNum << endl;
 	/* TPer */
 	if (disk_info.TPer) {

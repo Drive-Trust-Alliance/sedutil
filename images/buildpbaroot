@@ -1,5 +1,5 @@
 #!/bin/bash
-set +x
+set -x
 function die {
 echo An error has occured please fix this and start over
 exit 99
@@ -13,32 +13,37 @@ cd buildroot
 git checkout -b PBABUILD ${BUILDROOT_TAG}  || die
 git reset --hard
 git clean -df
-#fix ncurses build to include libtinfo for compat
-cp ../../buildroot/ncurses.mk package/ncurses/
 # add out of tree build directoried and files
-
 # 64 bit system
-mkdir PBA64
-cp ../../buildroot/PBA64/.config PBA64/
-cp ../../buildroot/PBA64/* PBA64/
-cp -r ../../buildroot/PBA64/overlay PBA64/
-
+mkdir 64bit
+cp ../../buildroot/64bit/.config 64bit/
+cp ../../buildroot/64bit/* 64bit/
+cp -r ../../buildroot/64bit/overlay 64bit/
 # 32 bit system
-mkdir PBA32
-cp ../../buildroot/PBA32/.config PBA32/
-cp ../../buildroot/PBA32/* PBA32/
-cp -r ../../buildroot/PBA32/overlay PBA32/
-
-echo This is going to take a while ..... Press enter to continue
+mkdir 32bit
+cp ../../buildroot/32bit/.config 32bit/
+cp ../../buildroot/32bit/* 32bit/
+cp -r ../../buildroot/32bit/overlay 32bit/
+# add the current buildroot packages
+sed -i '/sedutil/d' package/Config.in
+sed -i '/menu "System tools"/a \\tsource "package/sedutil/Config.in"' package/Config.in
+cp -r ../../buildroot/packages/sedutil/ package/
+# Make a distribution from the current source
+cd ../../..
+autoreconf 
+./configure
+make dist
+mkdir images/scratch/buildroot/dl/
+cp sedutil-*.tar.gz images/scratch/buildroot/dl/
+make distclean
+cd images/scratch/buildroot
+# build the rootfs for 64 and 32 bit systems
+echo Building bootable systems for the PBA, this is going to take a while ..... Press enter to continue
 read INOUT
 echo Making the 64bit PBA Linux system
-make O=PBA64 2>&1 | tee PBA64/build_output.txt
+make O=64bit 2>&1 | tee 64bit/build_output.txt
 echo Making the 32bit PBA Linux system
-make O=PBA32 2>&1 | tee PBA32/build_output.txt
-# List the stuff we need to check
-echo Checking for customizations...... 
-grep -i pba PBA*/target/etc/inittab
-grep -i libtinfo PBA*/target/etc/ld.so.cache
+make O=32bit 2>&1 | tee 32bit/build_output.txt
 # back to where we started
 cd ../..
 exit 0

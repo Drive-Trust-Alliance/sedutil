@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -30,41 +30,6 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 using namespace std;
 
 sedutiloutput output_format;
-
-int diskScan()
-{
-	char devname[25];
-	int i = 0;
-	DtaDev * d;
-	LOG(D1) << "Creating diskList";
-	printf("\nScanning for Opal compliant disks\n");
-	while (TRUE) {
-		DEVICEMASK;
-		//snprintf(devname,23,"/dev/sd%c",(char) 0x61+i) Linux
-		//sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i)  Windows
-		d = new DtaDevGeneric(devname);
-		if (d->isPresent()) {
-			printf("%s", devname);
-			if (d->isAnySSC())
-				printf(" %s%s%s ", (d->isOpal1() ? "1" : " "),
-				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
-			else
-				printf("%s", " No  ");
-			cout << d->getModelNum() << " " << d->getFirmwareRev() << std::endl;
-			if (MAX_DISKS == i) {
-				LOG(I) << MAX_DISKS << " disks, really?";
-				delete d;
-				return 1;
-			}
-		}
-		else break;
-		delete d;
-		i += 1;
-	}
-	delete d;
-	printf("No more disks present ending scan\n");
-	return 0;
-}
 
 int isValidSEDDisk(char *devname)
 {
@@ -236,7 +201,7 @@ int main(int argc, char * argv[])
         break;
 	case sedutiloption::scan:
         LOG(D) << "Performing diskScan() ";
-        diskScan();
+        return(DtaDevOS::diskScan());
         break;
 	case sedutiloption::isValidSED:
 		LOG(D) << "Verify whether " << argv[opts.device] << "is valid SED or not";

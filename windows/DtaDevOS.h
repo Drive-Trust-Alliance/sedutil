@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -45,7 +45,7 @@ public:
      * @param bufferlen length of the input/output buffer
      */
 	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-		void * buffer, uint16_t bufferlen);
+		void * buffer, uint32_t bufferlen);
 	/** OS specific method to send an determing size of disk (in bytes)
 	* @param cmd ATA command to be sent to the device
 	* @param protocol security protocol to be used in the command
@@ -54,6 +54,8 @@ public:
 	* @param bufferlen length of the input/output buffer
 	*/
 	unsigned long long	getSize();
+	/** A static class to scan for supported drives */
+	static int diskScan();
 protected:
      /** OS specific command to Wait for specified number of milliseconds 
      * @param milliseconds  number of milliseconds to wait

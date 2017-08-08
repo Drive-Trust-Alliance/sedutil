@@ -53,6 +53,7 @@ ipch/
 *.opensdf
 *.sdf
 *.cachefile
+*.VC.db
 
 # Visual Studio profiler
 *.psess
@@ -154,6 +155,30 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+
+# Autotools
+Makefile.in
+/autom4te.cache
+/aclocal.m4
+/compile
+/configure
+/depcomp
+/install-sh
+/missing
+/stamp-h1
+config.h
+config.h.in
+config.status
+Makefile
+sedutil-*.tar.*
+linuxpba
+sedutil-cli
+
+# GCC
+.deps/
+*.o
+.dirstamp
+
 # project specific files
 *.VC.opendb
 *.lnk
@@ -167,3 +192,7 @@ Doxygen/
 !/images/buildroot/*
 /LinuxPBA/dist/
 /linux/CLI/dist/
+# inno installer output
+windows/installer/Output/
+# hacked exe files for different flavors
+windows/installer/exe

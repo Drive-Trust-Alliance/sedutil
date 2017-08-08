@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -30,8 +30,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaEndianFixup.h"
 #include "DtaStructures.h"
 #include "DtaHexDump.h"
+#include "DtaDevGeneric.h"
 #include "DtaDiskATA.h"
 #include "DtaDiskUSB.h"
+#include "DtaDiskNVMe.h"
 
 using namespace std;
 DtaDevOS::DtaDevOS() {};
@@ -84,11 +86,15 @@ void DtaDevOS::init(const char * devref)
 	}
 	// OVERLAPPED structure
 	switch (descriptor.BusType) {
+	case BusTypeAta:
 	case BusTypeSata:
 		disk = new DtaDiskATA();
 		break;
 	case BusTypeUsb:
 		disk = new DtaDiskUSB();
+		break;
+	case BusTypeNvme:
+		disk = new DtaDiskNVMe();
 		break;
 	default:
 		return;
@@ -100,7 +106,7 @@ void DtaDevOS::init(const char * devref)
 }
 
 uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                        void * buffer, uint16_t bufferlen)
+                        void * buffer, uint32_t bufferlen)
 {
     LOG(D1) << "Entering DtaDevOS::sendCmd";
 	LOG(D1) << "Exiting DtaDevOS::sendCmd";
@@ -133,7 +139,39 @@ void DtaDevOS::identify(OPAL_DiskInfo& di)
 	LOG(D1) << "Exiting DtaDevOS::identify()";
 	return(disk->identify(di));
 }
-
+/** Static member to scann for supported drives */
+int DtaDevOS::diskScan()
+{
+	char devname[25];
+	int i = 0;
+	DtaDev * d;
+	LOG(D1) << "Creating diskList";
+	printf("\nScanning for Opal compliant disks\n");
+	while (TRUE) {
+		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i);
+		d = new DtaDevGeneric(devname);
+		if (d->isPresent()) {
+			printf("%s", devname);
+			if (d->isAnySSC())
+				printf(" %s%s%s ", (d->isOpal1() ? "1" : " "),
+				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
+			else
+				printf("%s", " No  ");
+			cout << d->getModelNum() << " " << d->getFirmwareRev() << std::endl;
+			if (MAX_DISKS == i) {
+				LOG(I) << MAX_DISKS << " disks, really?";
+				delete d;
+				return 1;
+			}
+		}
+		else break;
+		delete d;
+		i += 1;
+	}
+	delete d;
+	printf("No more disks present ending scan\n");
+	return 0;
+}
 /** Close the filehandle so this object can be delete. */
 
 DtaDevOS::~DtaDevOS()

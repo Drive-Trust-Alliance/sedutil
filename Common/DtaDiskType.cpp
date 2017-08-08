@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
-#pragma once
 #include "DtaDiskType.h"
 
 using namespace std;
@@ -30,7 +29,7 @@ DtaDiskType::~DtaDiskType() {}
 #endif
 void DtaDiskType::init(const char * devref) {}
 uint8_t	DtaDiskType::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-	void * buffer, uint16_t bufferlen) {
+	void * buffer, uint32_t bufferlen) {
 	return 10;
 }
 void DtaDiskType::identify(OPAL_DiskInfo& disk_info) {}

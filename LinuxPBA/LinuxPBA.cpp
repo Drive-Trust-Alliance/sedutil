@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
     This file is part of sedutil.
 
@@ -18,33 +18,29 @@ This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.co
 
 * C:E********************************************************************** */
 
-using namespace std;
-#include <ncurses.h>
+
 #include <unistd.h>
 #include <sys/reboot.h>
+#include <iostream>
 #include "log.h"
 #include "GetPassPhrase.h"
 #include "UnlockSEDs.h"
 
+using namespace std;
+
 int main(int argc, char** argv) {
+    
     CLog::Level() = CLog::FromInt(0);
     LOG(D4) << "Legacy PBA start" << endl;
-    initscr();
-    raw();
-    attron(A_BOLD);
-    mvprintw(1,20,"DTA LINUX Pre Boot Authorization \n");
-    attroff(A_BOLD);
+//    system ("tput clear");
+    printf("DTA LINUX Pre Boot Authorization \n");
     string p = GetPassPhrase("Please enter pass-phrase to unlock OPAL drives: ");
     UnlockSEDs((char *)p.c_str());
-#ifdef DTADEBUG
-    getch();
-#endif
-    mvprintw(8,20,"Starting OS \n");
-#ifndef DTADEBUG
-    sync();
-    reboot(RB_AUTOBOOT);
-#endif
-    endwin();
+    if (strcmp(p.c_str(), "debug")) {
+        printf("Starting OS \n");
+        sync();
+        reboot(RB_AUTOBOOT);
+    }
     return 0;
 }
 
