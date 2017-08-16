@@ -1,5 +1,6 @@
 /* C:B**************************************************************************
 This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2017 Spectra Logic Corporation
 
 This file is part of sedutil.
 
@@ -22,6 +23,7 @@ class DtaCommand;
 class DtaSession;
 
 #include "os.h"
+#include "DtaOptions.h"
 #include "DtaDev.h"
 #include "DtaDevOS.h"
 #include "DtaStructures.h"
@@ -206,6 +208,6 @@ public:
 protected:
 	uint8_t getDefaultPassword();
 private:
-    uint16_t getMaxRanges(char * password);
-    uint16_t getMaxRangesOpal(char * password);
+    uint8_t getMaxRanges(char * password, uint16_t *maxRanges);
+    uint8_t getMaxRangesOpal(char * password, uint16_t *maxRanges);
 };

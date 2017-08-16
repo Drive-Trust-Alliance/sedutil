@@ -26,6 +26,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <iostream>
 #include <iomanip>
+#include "DtaOptions.h"
 #include "DtaDev.h"
 #include "DtaStructures.h"
 #include "DtaConstants.h"

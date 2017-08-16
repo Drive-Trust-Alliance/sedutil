@@ -20,6 +20,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include <stdio.h>
 #include "DtaSession.h"
+#include "DtaOptions.h"
 #include "DtaDev.h"
 #include "DtaCommand.h"
 #include "DtaResponse.h"
@@ -97,6 +98,8 @@ DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthori
 {
     LOG(D1) << "Entering DtaSession::startSession ";
 	vector<uint8_t> hash;
+	uint8_t lastRC = 0;
+
     DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
 		LOG(E) << "Unable to create session object ";
@@ -138,7 +141,7 @@ DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthori
     cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
 	if ((lastRC = sendCommand(cmd, response)) != 0) {
-		LOG(E) << "Session start failed";
+		LOG(E) << "Session start failed rc = " << (int)lastRC;
 		delete cmd;
 		return lastRC;
 	}  
