@@ -21,8 +21,11 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * also supports the Opal 1.0 SSC
  */
 #include "os.h"
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+#else
 #include <Windows.h>
 #include "compressapi-8.1.h"
+#endif
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
@@ -1137,7 +1140,8 @@ uint8_t DtaDevOpal::MBRRead(char * password, uint32_t startpos, uint32_t len,cha
 	uint32_t filepos = startpos;
 	uint32_t blocksize = len;
 
-	buf = buffer; // dummy JERRY
+	buf = buffer; // dummy usage for window error 
+        buf += 1; // dummy usage for linux error
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
 		LOG(E) << "Unable to create command object ";
@@ -1319,7 +1323,7 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	return lastRC;
 	}
 	LOG(D1) << "***** command buffer of write data store buffer:";
-	IFLOG(D4) cmd->dumpCommand(); // JERRY
+	IFLOG(D4) cmd->dumpCommand();
 	
 	// end write
 	LOG(D1) << "end transaction";
@@ -1343,6 +1347,10 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 
 uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len, char * buffer, entry_t * pent) // add event ID and write audit log to Data Store
 {
+        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+        return 0;
+        LOG(D1) << "DtaDevOpal::auditlogwr() isn't supported in Linux";
+        #else
 	audit_t * ptr;
 	entry_t * ptrent;
 	vector <entry_t> entryA;
@@ -1423,10 +1431,15 @@ uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len,
 		LOG(E) << "write data store Error";
 		return lastRC;
 	}
+	#endif
 }
 
 uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len, char * buffer) // read audit log to Data Store
 {
+        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+        LOG(D1) << "DtaDevOpal::auditlogrd() isn't supported in Linux";
+	return 0;
+        #else
 	LOG(D1) << "entering DtaDevOpal::auditlogrd";
 	//uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, char * buffer)
 	uint8_t lastRC;
@@ -1436,7 +1449,7 @@ uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len,
 	{
 		audit_t * A = (audit_t *)buffer;
 		entry_t * ent;
-		char * str1 = SIGNATURE;
+		char str1[] = SIGNATURE;
 		
 		if ((lastRC = (uint8_t)memcmp(A->header.signature, str1, strlen(str1))) != 0)
 		{
@@ -1466,6 +1479,7 @@ uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len,
 		LOG(E) << "read data store Error";
 		return lastRC;
 	}
+	#endif
 
 }
 
@@ -1476,7 +1490,7 @@ uint16_t genchksum(char * buffer)
 	uint16_t sum ;
 	//printf("sizeof(audit_hdr)=0x%Xh; sizeof(hdr->chksum)=0x%Xh \n", (int)sizeof(audit_hdr), (int)sizeof(hdr->chksum));
 	sum = 0;
-	for (int i=0; i < (gethdrsize() - sizeof(hdr->chksum)) ;i++ ) 
+	for (unsigned int i=0; i < (gethdrsize() - sizeof(hdr->chksum)) ;i++ ) 
 	{
 		sum += buffer[i];
 	}
@@ -1511,7 +1525,11 @@ uint16_t gethdrsize() {
 //uint8_t DtaDevOpal::auditRec(char * password, uint8_t id)
 uint8_t DtaDevOpal::auditRec(char * password, entry_t * pent) 
 {
-
+	
+        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+        LOG(D1) << "DtaDevOpal::auditRec() isn't supported in Linux";
+        return 0;
+        #else
 	char * buffer;
 	uint8_t lastRC;
 
@@ -1580,10 +1598,15 @@ uint8_t DtaDevOpal::auditRec(char * password, entry_t * pent)
 		LOG(D1) << "audit write success";
 		return 0;
 	}
+	#endif
 }
 
 uint8_t DtaDevOpal::auditErase(char * password)
 {
+        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+        LOG(D1) << "DtaDevOpal::auditErase() isn't supported in Linux";
+	return 0;
+        #else
 	char * buffer;
 	uint8_t lastRC;
 	audit_hdr hdr;
@@ -1596,10 +1619,15 @@ uint8_t DtaDevOpal::auditErase(char * password)
 	*/
 	lastRC = DataWrite(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buffer); 
 	return lastRC;
+	#endif
 }
 
 uint8_t DtaDevOpal::auditRead(char * password)
 {
+        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+        LOG(D1) << "DtaDevOpal::auditread() isn't supported in Linux";
+	return 0;
+        #else
 	char * buffer;
 	uint8_t lastRC;
 
@@ -1607,10 +1635,15 @@ uint8_t DtaDevOpal::auditRead(char * password)
 	memset(buffer, 0, (MAX_ENTRY * 8) + gethdrsize());
 	lastRC = auditlogrd(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buffer);
 	return lastRC;
+	#endif
 }
 
 uint8_t DtaDevOpal::auditWrite(char * password, char * idstr)
 {
+        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+        LOG(D1) << "DtaDevOpal::auditWrite() isn't supported in Linux";
+	return 0;
+        #else
 	//char * buffer;
 	uint8_t lastRC;
 
@@ -1641,6 +1674,7 @@ uint8_t DtaDevOpal::auditWrite(char * password, char * idstr)
 
 	lastRC = auditRec(password, &ent);
 	return lastRC;
+	#endif
 }
 
 uint8_t DtaDevOpal::activate(char * password)
@@ -1733,6 +1767,10 @@ uint8_t DtaDevOpal::getmfgstate()
 
 uint8_t DtaDevOpal::DataStoreWrite(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len)
 {
+        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+        LOG(D1) << "DtaDevOpal::DataStoreWrite() isn't supported in Linux";
+	return 0;
+        #else
 	LOG(D1) << "Entering DtaDevOpal::DataStoreWrite()";
 
 	ifstream datafile;
@@ -1864,7 +1902,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * filename, uint8_t dsn
 		// 
 		if (filepos + blockSize + startpos > disk_info.DataStore_maxTableSize)
 		{
-			newSize = disk_info.DataStore_maxTableSize - filepos - startpos; // JERRY 
+			newSize = disk_info.DataStore_maxTableSize - filepos - startpos;
 			//printf("***** filepos=%ld - startpos = %ld *****\n", filepos, startpos);
 			//printf("***** newSize = disk_info.DataStore_maxTableSize - filepos - startpos = %ld ; bufferA.size()=%I64d *****\n", newSize, bufferA.size());
 			vector <uint8_t> tmpbuf;
@@ -1972,11 +2010,16 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * filename, uint8_t dsn
 	LOG(I) << "Data Store file  " << filename << " written to " << dev;
 	LOG(D1) << "Exiting DtaDevOpal::DataStoreWrite()";
 	return 0;
+	#endif
 
 }
 
 uint8_t DtaDevOpal::DataStoreRead(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len)
 {
+        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+        LOG(D1) << "DtaDevOpal::DataStoreRead() isn't supported in Linux";
+	return 0;
+        #else
 	LOG(D1) << "Entering DtaDevOpal::DataStoreRead()";
 
 	ofstream datafile;
@@ -2073,7 +2116,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * filename, uint8_t dsnu
 		{
 			newSize = len;
 		}
-		//printf("newSize=%d filepos=%d\n", newSize,filepos); // JERRY
+		//printf("newSize=%d filepos=%d\n", newSize,filepos); 
 		memset(buffer, 0, blockSize);
 
 		LOG(D1) << "***** start read data store";
@@ -2174,6 +2217,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * filename, uint8_t dsnu
 	LOG(I) << "Read Data Store from "<< dev << " to " << filename ;
 	LOG(D1) << "Exiting DtaDevOpal::DataStoreRead()";
 	return 0;
+	#endif
 }
 
 uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len)
@@ -2195,7 +2239,7 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 	uint32_t newSize;
 	uint32_t maxMBRSize;
 
-	printf("startpos=%ld len=%ld\n", startpos, len);
+	//printf("startpos=%ld len=%ld\n", startpos, len);
 
 	if ((lastRC = getMBRsize(password, &maxMBRSize))!=0)
 	{
@@ -2276,7 +2320,7 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 		{
 			newSize = len;
 		}
-		//printf("newSize=%d filepos=%d\n", newSize, filepos); // JERRY
+		//printf("newSize=%d filepos=%d\n", newSize, filepos); 
 		memset(buffer, 0, blockSize);
 
 		LOG(D1) << "***** start Read MBR";
@@ -2382,7 +2426,8 @@ uint8_t DtaDevOpal::getMBRsize(char * password, uint32_t * msize)
 
 	uint32_t MBRsz = response.getUint32(4);
 	* msize = MBRsz;
-	printf("Shadow MBR size 0x%lX\n", MBRsz);
+	//printf("Shadow MBR size 0x%lX\n", MBRsz);
+	cout << "Shadow MBR size 0x" << hex << MBRsz;
 	delete session;
 	return 0;
 }
@@ -2422,7 +2467,8 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 	}
 
 	uint32_t MBRsz = response.getUint32(4);
-	printf("Shadow MBR size 0x%lX\n", MBRsz);
+	//printf("Shadow MBR size 0x%lX\n", MBRsz);
+	cout << "Shadow MBR size 0x" << hex << MBRsz;
 
 	if ((lastRC = getTable(LR, 0x0D, 0x0E)) != 0) {
 		delete session;
@@ -2485,7 +2531,6 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 	//
 	// adminSP GUDID
 	//
-	//getchar(); // JERRY 
 	//OPAL_UID uid = OPAL_UID::OPAL_SID_UID;
 	//if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, uid)) != 0) {
 	//	delete session;
@@ -2536,6 +2581,10 @@ void SignalHandler(int signal)
 }
 
 uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
+        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+        LOG(D1) << "DtaDevOpal::loadPBAimage() isn't supported in Linux";
+	return 0;
+        #else
 	LOG(D1) << "Entering DtaDevOpal::loadPBAimage()" << filename << " " << dev;
 	uint8_t embed = 1;
 	uint8_t lastRC;
@@ -2808,6 +2857,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 		LOG(I) << "PBA image written to " << dev;
 
 	}
+        #endif
 	LOG(D1) << "Exiting DtaDevOpal::loadPBAimage()";
 	return 0;
 }
@@ -3174,10 +3224,10 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 {
 	uint8_t lastRC;
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
-	LOG(D1) << "Entering DtaDevOpal::exec"; // JERRY
+	LOG(D1) << "Entering DtaDevOpal::exec";
     LOG(D3) << endl << "Dumping command buffer";
     IFLOG(D3) DtaHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
-	LOG(D1) << "Entering DtaDevOpal::exec sendCmd(IF_SEND, IO_BUFFER_LENGTH)"; // JERRY
+	LOG(D1) << "Entering DtaDevOpal::exec sendCmd(IF_SEND, IO_BUFFER_LENGTH)";
     if((lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH)) != 0) {
 		LOG(E) << "Command failed on send " << (uint16_t) lastRC;
         return lastRC;
@@ -3186,7 +3236,7 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
     do {
         osmsSleep(25);
         memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
-		LOG(D1) << "Entering DtaDevOpal::exec sendCmd(IF_RECV, IO_BUFFER_LENGTH)";// JERRY
+		LOG(D1) << "Entering DtaDevOpal::exec sendCmd(IF_RECV, IO_BUFFER_LENGTH)";
         lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
 
     }
