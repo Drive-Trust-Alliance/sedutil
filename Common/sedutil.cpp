@@ -369,7 +369,7 @@ int main(int argc, char * argv[])
 		LOG(D) << "print version number ";
 		st1 = "unknownOS";
         #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-		st1 = "unix";
+		st1 = "linux";
         #endif
         #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 		st1 = "window";
@@ -379,7 +379,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-        printf("Fidelity Lock Version : 0.1.2.%s.%s 20170807-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.1.2.%s.%s 20170816-A001\n", st1.c_str(),GIT_VERSION);
 		break;
     default:
         LOG(E) << "Unable to determine what you want to do ";
