@@ -98,7 +98,7 @@ DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthori
 {
     LOG(D1) << "Entering DtaSession::startSession ";
 	vector<uint8_t> hash;
-	uint8_t lastRC = 0;
+	lastRC = 0;
 
     DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
