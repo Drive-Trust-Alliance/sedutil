@@ -168,6 +168,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			END_OPTION
 		BEGIN_OPTION(setAdmin1Pwd, 3) OPTION_IS(password) OPTION_IS(newpassword) 
 			OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(pbaValid, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(activate, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(auditWrite, 3)  
 		OPTION_IS(eventid) OPTION_IS(password) OPTION_IS(device) END_OPTION

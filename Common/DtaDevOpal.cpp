@@ -41,9 +41,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaHexDump.h"
 #include <signal.h>
 
-
-
 using namespace std;
+
+
 
 DtaDevOpal::DtaDevOpal()
 {
@@ -841,6 +841,7 @@ uint8_t DtaDevOpal::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 		}
 	}
 	LOG(D1) << "Exiting DtaDevOpal::setMBRDone";
+
 	return 0;
 }
 uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
@@ -1131,17 +1132,78 @@ uint8_t DtaDevOpal::revertTPer(char * password, uint8_t PSID, uint8_t AdminSP)
 }
 
 
+
+uint8_t DtaDevOpal::pbaValid(char * password)
+{
+	// check if boot sector exist 55AA(offset 510-511)  FAT16(
+	// get PBA version offset 512 to (up to 32 bytes)
+	#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+	LOG(D1) << "DtaDevOpal::pbaValid() isn't supported in Linux";
+	return 0;
+	#else
+	
+	uint8_t lastRC;
+	uint8_t boot[512];
+	uint8_t pbaver[512];
+	uint8_t bootsig[2] = { 0x55,0xAA };
+	uint8_t pat[16] = { 0xEB,0x3C, 0x90, 0x6D,  0x6B, 0x66, 0x73, 0x2E,  0x66, 0x61, 0x74, };
+	lastRC = MBRRead(password, 512, 512, (char *)pbaver);
+	if (lastRC) {
+		LOG(D1) << "MBRRead error";
+		return lastRC;
+	}
+	IFLOG(D4) DtaHexDump(pbaver, 64);
+	printf("PBA image version : %s", (char *)pbaver);
+
+	lastRC = MBRRead(password, 1048576,512,(char *)boot);
+	if (lastRC) {
+		LOG(D1) << "MBRRead error";
+		return lastRC;
+	}
+	lastRC = (uint8_t)memcmp(boot, pat, 11);
+	if (lastRC) {
+		LOG(D1) << "boot sector header incorrect";
+		return lastRC;
+	}
+	lastRC = (uint8_t)memcmp(boot + 0x36, "FAT16", 5);
+	if (lastRC) {
+		LOG(D1) << "boot sector FAT16 signature incorrect";
+		return lastRC;
+	}
+	lastRC = (uint8_t)memcmp(boot + 510, (char *)bootsig, 5);
+	if (lastRC) {
+		LOG(D1) << "boot sector signature 55AA incorrect";
+		return lastRC;
+	}
+	printf("PBA image valid");
+	/*
+	// audit log header version
+	char * buffer;
+
+	buffer = (char *)malloc(8 * MAX_ENTRY + gethdrsize());
+	memset(buffer, 0, (MAX_ENTRY * 8) + gethdrsize());
+	lastRC = auditlogrd(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buffer);
+	if (lastRC) {
+		LOG(D1) << "Audit read error : " << lastRC;
+		return lastRC;
+	};
+	
+	audit_hdr * phdr = (audit_hdr *)buffer;
+	printf("audit log version : %d.%d", phdr->ver_major, phdr->ver_minor);
+	*/
+	return 0;
+	#endif
+}
+
+
 uint8_t DtaDevOpal::MBRRead(char * password, uint32_t startpos, uint32_t len,char * buffer)
 {
-	LOG(D1) << "Entering DtaDevOpal::MBRRead()";
+	LOG(D1) << "Entering DtaDevOpal::MBRRead() with buffer";
 	uint8_t lastRC;
 	vector<uint8_t> LR;
-	char * buf;
-	uint32_t filepos = startpos;
+	uint32_t filepos = 0; // startpos;
 	uint32_t blocksize = len;
 
-	buf = buffer; // dummy usage for window error 
-        buf += 1; // dummy usage for linux error
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
 		LOG(E) << "Unable to create command object ";
@@ -1165,11 +1227,11 @@ uint8_t DtaDevOpal::MBRRead(char * password, uint32_t startpos, uint32_t len,cha
 	cmd->addToken(OPAL_TOKEN::STARTLIST);
 	cmd->addToken(OPAL_TOKEN::STARTNAME);
 	cmd->addToken(OPAL_TOKEN::STARTROW);
-	cmd->addToken(filepos);
+	cmd->addToken(filepos + startpos);
 	cmd->addToken(OPAL_TOKEN::ENDNAME);
 	cmd->addToken(OPAL_TOKEN::STARTNAME);
 	cmd->addToken(OPAL_TOKEN::ENDROW);
-	cmd->addToken(blocksize);
+	cmd->addToken(filepos + startpos + blocksize - 1);
 	cmd->addToken(OPAL_TOKEN::ENDNAME);
 	cmd->addToken(OPAL_TOKEN::ENDLIST);
 	cmd->addToken(OPAL_TOKEN::ENDLIST);
@@ -1180,9 +1242,7 @@ uint8_t DtaDevOpal::MBRRead(char * password, uint32_t startpos, uint32_t len,cha
 		delete session;
 		return lastRC;
 	}
-	for (int i = 0; i < (int)response.getTokenCount(); i++) {
-		response.getString(0);
-	}
+	response.getBytes(1, (uint8_t *)buffer); // data is token 1
 	LOG(D1) << "***** end of send read shadow mbr command ";
 	delete cmd;
 	delete session;
@@ -1462,7 +1522,7 @@ uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len,
 			LOG(D1) << "Audit log header check sum error";
 			return ERRCHKSUM; // checksum error
 		}
-		printf("Fidelity Audit Log Entry :\n");
+		printf("Fidelity Audit Log Version %d.%d :\n",A->header.ver_major,A->header.ver_minor);
 		IFLOG(D4) DtaHexDump(buffer + gethdrsize(), A->header.num_entry * 8);
 
 		ent = (entry_t *)A->buffer;
@@ -1480,7 +1540,6 @@ uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len,
 		return lastRC;
 	}
 	#endif
-
 }
 
 uint16_t genchksum(char * buffer)
@@ -2222,7 +2281,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * filename, uint8_t dsnu
 
 uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len)
 {
-	LOG(D1) << "Entering DtaDevOpal::MBRRead()";
+	LOG(D1) << "Entering DtaDevOpal::MBRRead() with filename"; // D1->I
 	ofstream datafile;
 	char * buffer;
 	uint8_t lastRC;
@@ -2239,7 +2298,8 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 	uint32_t newSize;
 	uint32_t maxMBRSize;
 
-	//printf("startpos=%ld len=%ld\n", startpos, len);
+
+	printf("startpos=%ld len=%ld\n", startpos, len); // linux has error
 
 	if ((lastRC = getMBRsize(password, &maxMBRSize))!=0)
 	{
@@ -2394,7 +2454,6 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 	return 0;
 
 }
-
 
 
 uint8_t DtaDevOpal::getMBRsize(char * password, uint32_t * msize)

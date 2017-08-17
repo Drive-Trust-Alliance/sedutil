@@ -177,6 +177,10 @@ int main(int argc, char * argv[])
                             argv[opts.newpassword]);
 		break;
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+	case sedutiloption::pbaValid:
+		LOG(D) << "PBA image validation";
+		return d->pbaValid(argv[opts.password]);
+		break;
 	case sedutiloption::activate:
 		LOG(D) << "activate LockingSP with MSID";
 		return d->activate(argv[opts.password]);

@@ -149,6 +149,7 @@ public:
 	 * @param password the password for the administrative authority with access to the table
 	 * @param filename the filename of the disk image
 	 */
+	virtual uint8_t pbaValid(char * password) = 0;
 	virtual uint8_t activate(char * password) = 0;
 	virtual uint8_t auditWrite(char * password, char * idstr) = 0;
 	virtual uint8_t auditRead(char * password) = 0;

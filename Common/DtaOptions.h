@@ -54,6 +54,7 @@ typedef enum _sedutiloption {
 	setAdmin1Pwd,
 	setPassword,
 	setPassword_SUM,
+	pbaValid,
 	activate,
 	auditWrite,
 	auditRead,

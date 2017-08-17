@@ -225,6 +225,7 @@ public:
          * @param password the password for the administrative authority with access to the table
          * @param filename the filename of the disk image
          */
+	uint8_t pbaValid(char * password);
 	uint8_t activate(char * password);
 	uint8_t auditRec(char * password, entry_t * pent);
 	uint8_t auditErase(char * password);
@@ -240,7 +241,7 @@ public:
 	uint8_t MBRRead(char * password, uint32_t startpos, uint32_t len, char * buffer);
 	uint8_t DataRead(char * password, uint32_t startpos, uint32_t len, char * buffer);
 	uint8_t DataWrite(char * password, uint32_t startpos, uint32_t len, char * buffer);
-	uint8_t auditlogwr(char * password, uint32_t startpos, uint32_t len, char * buffer, entry_t * ent); // audit log write 
+	uint8_t auditlogwr(char * password, uint32_t startpos, uint32_t len, char * buffer, entry_t * ent); // audit log write
 	uint8_t auditlogrd(char * password, uint32_t startpos, uint32_t len, char * buffer); // audit log read
 
 	uint8_t loadPBA(char * password, char * filename);
