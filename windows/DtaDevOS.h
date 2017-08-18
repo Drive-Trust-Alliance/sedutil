@@ -55,7 +55,7 @@ public:
 	*/
 	unsigned long long	getSize();
 	/** A static class to scan for supported drives */
-	static int diskScan();
+	static int diskScan(uint8_t alt_output = 0);
 protected:
      /** OS specific command to Wait for specified number of milliseconds 
      * @param milliseconds  number of milliseconds to wait

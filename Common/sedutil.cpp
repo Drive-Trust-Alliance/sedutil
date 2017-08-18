@@ -202,7 +202,7 @@ int main(int argc, char * argv[])
         break;
 	case sedutiloption::scan:
         LOG(D) << "Performing diskScan() ";
-        return(DtaDevOS::diskScan());
+        return(DtaDevOS::diskScan(opts.altscanoutput));
         break;
 	case sedutiloption::isValidSED:
 		LOG(D) << "Verify whether " << argv[opts.device] << "is valid SED or not";

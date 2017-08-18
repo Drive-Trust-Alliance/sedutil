@@ -140,7 +140,7 @@ void DtaDevOS::identify(OPAL_DiskInfo& di)
 	return(disk->identify(di));
 }
 /** Static member to scann for supported drives */
-int DtaDevOS::diskScan()
+int DtaDevOS::diskScan(uint8_t alt_output)
 {
 	char devname[25];
 	int i = 0;
