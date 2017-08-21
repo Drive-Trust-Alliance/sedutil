@@ -595,7 +595,7 @@ uint8_t DtaDevOpal::setBandsEnabled(int16_t lockingrange, char * password)
 }
 uint8_t DtaDevOpal::revertLockingSP(char * password, uint8_t keep)
 {
-	LOG(D1) << "Entering revert DtaDevOpal::revertLockingSP() keep = " << (uint16_t) keep;
+	LOG(D1) << "Entering DtaDevOpal::revertLockingSP() keep = " << (uint16_t) keep;
 	uint8_t lastRC;
 	vector<uint8_t> keepGlobalLocking;
 	keepGlobalLocking.push_back(0x83);
@@ -616,6 +616,7 @@ uint8_t DtaDevOpal::revertLockingSP(char * password, uint8_t keep)
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete cmd;
 		delete session;
+                LOG(E) << "Start session failed";
 		return lastRC;
 	}
 	cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
@@ -629,6 +630,7 @@ uint8_t DtaDevOpal::revertLockingSP(char * password, uint8_t keep)
 	cmd->addToken(OPAL_TOKEN::ENDLIST);
 	cmd->complete();
 	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+                LOG(E) << "Command failed";
 		delete cmd;
 		delete session;
 		return lastRC;
@@ -637,7 +639,7 @@ uint8_t DtaDevOpal::revertLockingSP(char * password, uint8_t keep)
 	LOG(I) << "Revert LockingSP complete";
 	session->expectAbort();
 	delete session;
-	LOG(D1) << "Exiting revert DtaDev:LockingSP()";
+	LOG(D1) << "Exiting DtaDevOpal::revertLockingSP()";
 	return 0;
 }
 uint8_t DtaDevOpal::eraseLockingRange(uint8_t lockingrange, char * password)
