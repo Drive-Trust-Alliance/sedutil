@@ -49,9 +49,10 @@ sudo cp ../../UEFI64/UEFI64-*.img.gz usr/sedutil/
 sudo cp ../../BIOS32/BIOS32-*.img.gz usr/sedutil/
 sudo find . | sudo cpio -o -H newc | xz -9 -C crc32 -c > ../buildroot/${ROOTDIR}/images/rescuefs.cpio.xz
 cd ../..
+sudo rm -rf scratch/rescuefs
 #
 sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE}
-dd if=/dev/zero of=${BUILDIMG} bs=1M count=128
+dd if=/dev/zero of=${BUILDIMG} bs=1M count=75
 if [ ${BUILDTYPE} == "RESCUE32" ] ; then
 	(echo o;echo n;echo p;echo 1;echo "";echo "";echo a;echo 1;echo w) | fdisk -C 100 ${BUILDIMG}
 	dd if=../scratch/${SYSLINUX}/bios/mbr/mbr.bin of=${BUILDIMG} count=1 conv=notrunc bs=512
