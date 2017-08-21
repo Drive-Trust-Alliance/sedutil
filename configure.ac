@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([sedutil], [1.15], [https://github.com/Drive-Trust-Alliance/sedutil/issues])
+AC_INIT([sedutil], [1.15.1], [https://github.com/Drive-Trust-Alliance/sedutil/issues])
 AC_CONFIG_SRCDIR([Common/sedutil.cpp])
 AC_CONFIG_HEADERS([config.h])
 

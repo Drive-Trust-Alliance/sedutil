@@ -3,7 +3,7 @@
 # sedutil
 #
 ################################################################################
-SEDUTIL_VERSION = 1.15
+SEDUTIL_VERSION = 1.15.1
 SEDUTIL_SOURCE = sedutil-$(SEDUTIL_VERSION).tar.gz
 SEDUTIL_SITE = http://www.foosoftware.org/download
 SEDUTIL_INSTALL_STAGING = NO
