@@ -11,16 +11,16 @@ read INOUT
 echo  Last chance to hit Ctrl-c an keep the data on your drive
 read INPUT
 ## test sedutil commands
-PROG=./CLI/dist/Release_i686/GNU-Linux/sedutil-cli
-##PROG=./CLI/dist/Release_x86_64/GNU-Linux/sedutil-cli
+##PROG=./CLI/dist/Release_i686/GNU-Linux/sedutil-cli
+PROG=./CLI/dist/Release_x86_64/GNU-Linux/sedutil-cli
 ##PROG=./sedutil-cli
 ##PROG=echo 
 LOGFILE=sedutil_baseline
 OUTPUTSINK=">>  ${LOGFILE} 2>&1"
-echo  testing sedutil `date` > ${LOGFILE}
+echo  testing ${PROG} `date` > ${LOGFILE}
 
 ##
-echo  Begin TestSuite.cmd > ${LOGFILE}
+echo  Begin TestSuite >> ${LOGFILE}
 uname -a >> ${LOGFILE}
 echo testing sedutil `date` | tee -a ${LOGFILE} 
 ${PROG} --help | grep -a Copyright >>  ${LOGFILE} 2>&1
