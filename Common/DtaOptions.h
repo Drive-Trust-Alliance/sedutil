@@ -43,6 +43,7 @@ typedef struct _DTA_OPTIONS {
 	uint8_t lrlength;		/** the length in blocks of a lockingrange */
 
 	bool no_hash_passwords; /** global parameter, disables hashing of passwords */
+	uint8_t altscanoutput;  /**alternate scan output form */
 	sedutiloutput output_format;
 } DTA_OPTIONS;
 /** Print a usage message */

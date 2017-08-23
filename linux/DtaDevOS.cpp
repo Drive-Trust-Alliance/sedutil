@@ -121,7 +121,7 @@ void DtaDevOS::osmsSleep(uint32_t ms)
 	usleep(ms * 1000); //convert to microseconds
     return;
 }
-int  DtaDevOS::diskScan()
+int  DtaDevOS::diskScan(uint8_t alt_output)
 {
     DIR *dir;
     struct dirent *dirent;
