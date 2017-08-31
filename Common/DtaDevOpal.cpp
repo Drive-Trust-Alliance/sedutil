@@ -1416,6 +1416,12 @@ uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len,
 	vector <entry_t> entryA;
 	uint8_t lastRC;
 	SYSTEMTIME st, lt;
+	uint32_t MAX_ENTRY;
+
+	MAX_ENTRY = 1000; // default size
+	if (disk_info.DataStore_maxTableSize < 10485760) {
+		MAX_ENTRY = 100;
+	}
 
 	LOG(D1) << "***** Entering DtaDevOpal::auditlogwr *****";
 
@@ -1592,6 +1598,13 @@ uint8_t DtaDevOpal::auditRec(char * password, entry_t * pent)
 	char * buffer;
 	uint8_t lastRC;
 
+	uint32_t MAX_ENTRY;
+
+	MAX_ENTRY = 1000; // default size
+	if (disk_info.DataStore_maxTableSize < 10485760) {
+		MAX_ENTRY = 100;
+	}
+
 	//printf("auditlog header size=%d", gethdrsize());
 	buffer = (char *)malloc(8 * MAX_ENTRY + gethdrsize());
 	//lastRC = auditlogrd(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buffer);
@@ -1669,6 +1682,12 @@ uint8_t DtaDevOpal::auditErase(char * password)
 	char * buffer;
 	uint8_t lastRC;
 	audit_hdr hdr;
+	uint32_t MAX_ENTRY;
+
+	MAX_ENTRY = 1000; // default size
+	if (disk_info.DataStore_maxTableSize < 10485760) {
+		MAX_ENTRY = 100;
+	}
 
 	buffer = (char *)malloc(8 * MAX_ENTRY + gethdrsize());
 	memset(buffer, 0, (MAX_ENTRY * 8) + gethdrsize());
@@ -1689,6 +1708,12 @@ uint8_t DtaDevOpal::auditRead(char * password)
         #else
 	char * buffer;
 	uint8_t lastRC;
+	uint32_t MAX_ENTRY;
+
+	MAX_ENTRY = 1000; // default size
+	if (disk_info.DataStore_maxTableSize < 10485760) {
+		MAX_ENTRY = 100;
+	}
 
 	buffer = (char *)malloc(8 * MAX_ENTRY + gethdrsize());
 	memset(buffer, 0, (MAX_ENTRY * 8) + gethdrsize());

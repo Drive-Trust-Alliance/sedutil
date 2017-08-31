@@ -30,7 +30,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-#define MAX_ENTRY 1000
+#define MAX_ENTRY_NUM 1000
 #define ERRCHKSUM 1
 #define SIGNATURE "Fidelity Lock Signature"
 
@@ -93,7 +93,7 @@ typedef struct _audit_hdr {
 typedef struct _audit_t
 {
 	audit_hdr header;
-	uint8_t buffer[MAX_ENTRY * 8];
+	uint8_t buffer[MAX_ENTRY_NUM * 8];
 }audit_t;
 
 
