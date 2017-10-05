@@ -87,30 +87,6 @@
     <ClInclude Include="..\..\Common\DtaDiskType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\bitops.h">
-      <Filter>Header Files\pbkdf2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\blockwise.h">
-      <Filter>Header Files\pbkdf2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\chash.h">
-      <Filter>Header Files\pbkdf2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\handy.h">
-      <Filter>Header Files\pbkdf2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\hmac.h">
-      <Filter>Header Files\pbkdf2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\pbkdf2.h">
-      <Filter>Header Files\pbkdf2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\sha1.h">
-      <Filter>Header Files\pbkdf2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\tassert.h">
-      <Filter>Header Files\pbkdf2</Filter>
-    </ClInclude>
     <ClInclude Include="..\DtaDiskNvme.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -124,6 +100,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Common\DtaAudit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\License\LicenseValidator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -182,22 +161,10 @@
     <ClCompile Include="..\..\Common\DtaDiskType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Common\pbkdf2\blockwise.c">
-      <Filter>Source Files\pbkdf2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\pbkdf2\chash.c">
-      <Filter>Source Files\pbkdf2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\pbkdf2\hmac.c">
-      <Filter>Source Files\pbkdf2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\pbkdf2\pbkdf2.c">
-      <Filter>Source Files\pbkdf2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\pbkdf2\sha1.c">
-      <Filter>Source Files\pbkdf2</Filter>
-    </ClCompile>
     <ClCompile Include="..\DtaDiskNvme.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\License\LicenseValidator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

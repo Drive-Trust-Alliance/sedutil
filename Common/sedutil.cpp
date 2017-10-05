@@ -27,6 +27,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevOpal2.h"
 #include "DtaDevEnterprise.h"
 #include "Version.h"
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#include <LicenseValidator.h>
+#include <msclr\marshal_cppstd.h>
+#endif
 
 using namespace std;
 
@@ -120,7 +124,29 @@ int main(int argc, char * argv[])
 	if (DtaOptions(argc, argv, &opts)) {
 		return DTAERROR_COMMAND_ERROR;
 	}
-	
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+	LicenseValidator ^lv = gcnew  LicenseValidator;
+	System::String^ computerID = "";
+	bool needsActivation;
+	System::String^ returnMsg;
+
+	if (lv->ValidateLicenseAtStartup(System::Environment::MachineName, &needsActivation, returnMsg) == false)
+	{
+		char url[250] = "https://fidelityl.test.onfastspring.com/";
+		printf("No valid license of Fidelity Lock found, please register to get demo license or buy basic/premium license\n");
+		ShellExecute(0, 0, url, 0, 0, SW_SHOWNORMAL);
+		return 0;
+	}
+	else {
+		//#include <msclr\marshal_cppstd.h> // got error to have include here, move to top
+		// std::string unmanaged = msclr::interop::marshal_as<std::string>(managed);
+		std::string lic = msclr::interop::marshal_as<std::string>(lv->getfeaturestr());
+
+		printf("Valid Fidelity Lock License found %s \n",lic.c_str());
+		//property System::String^ Features { get; set; }
+	}
+#endif
+
 	if ((opts.action != sedutiloption::scan) && 
 		(opts.action != sedutiloption::validatePBKDF2) &&
 		(opts.action != sedutiloption::version) &&
