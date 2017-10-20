@@ -38,15 +38,8 @@
     <ClInclude Include="..\..\Common\DtaSession.h" />
     <ClInclude Include="..\..\Common\DtaStructures.h" />
     <ClInclude Include="..\..\common\log.h" />
-    <ClInclude Include="..\..\Common\pbkdf2\bitops.h" />
-    <ClInclude Include="..\..\Common\pbkdf2\blockwise.h" />
-    <ClInclude Include="..\..\Common\pbkdf2\chash.h" />
-    <ClInclude Include="..\..\Common\pbkdf2\handy.h" />
-    <ClInclude Include="..\..\Common\pbkdf2\hmac.h" />
-    <ClInclude Include="..\..\Common\pbkdf2\pbkdf2.h" />
-    <ClInclude Include="..\..\Common\pbkdf2\sha1.h" />
-    <ClInclude Include="..\..\Common\pbkdf2\tassert.h" />
     <ClInclude Include="..\..\Common\sedsize.h" />
+    <ClInclude Include="..\..\License\LicenseValidator.h" />
     <ClInclude Include="..\DtaDevOS.h" />
     <ClInclude Include="..\DtaDiskATA.h" />
     <ClInclude Include="..\DtaDiskNvme.h" />
@@ -70,12 +63,8 @@
     <ClCompile Include="..\..\Common\DtaOptions.cpp" />
     <ClCompile Include="..\..\Common\DtaResponse.cpp" />
     <ClCompile Include="..\..\Common\DtaSession.cpp" />
-    <ClCompile Include="..\..\Common\pbkdf2\blockwise.c" />
-    <ClCompile Include="..\..\Common\pbkdf2\chash.c" />
-    <ClCompile Include="..\..\Common\pbkdf2\hmac.c" />
-    <ClCompile Include="..\..\Common\pbkdf2\pbkdf2.c" />
-    <ClCompile Include="..\..\Common\pbkdf2\sha1.c" />
     <ClCompile Include="..\..\Common\sedutil.cpp" />
+    <ClCompile Include="..\..\License\LicenseValidator.cpp" />
     <ClCompile Include="..\DtaDevOS.cpp" />
     <ClCompile Include="..\DtaDiskATA.cpp" />
     <ClCompile Include="..\DtaDiskNvme.cpp" />
@@ -83,6 +72,9 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\..\rc\Cabinet_x64.Lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="QlmLicenseLib, Version=10.0.17227.1, Culture=neutral, PublicKeyToken=9c65e32c060523a1" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{267E9D28-7245-4182-9740-F386F4299E83}</ProjectGuid>
@@ -109,6 +101,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
+    <CLRSupport>true</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -187,11 +180,11 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2;$(SolutionDir)..\..\License</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalOptions>/Zm2000 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -200,7 +193,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h</Command>
+      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
+
+REM copy  "..\..\..\License\Redistrib\.net 4.0\QlmLicenseLib.dll"  "$(TargetDir)"
+</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Create version header from git --version dirty</Message>
