@@ -2323,9 +2323,10 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 	uint32_t newSize;
 	uint32_t maxMBRSize;
 
-
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+#else
 	printf("startpos=%ld len=%ld\n", startpos, len); // linux has error
-
+#endif
 	if ((lastRC = getMBRsize(password, &maxMBRSize))!=0)
 	{
 		LOG(E) << " Can not get MBR table size";
