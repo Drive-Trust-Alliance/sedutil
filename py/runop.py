@@ -30,10 +30,9 @@ def findos(ui):
         ui.cmd = 'python Lock.py'
     
 def finddev(ui):
-    txt = os.popen(ui.prefix + 'sedutil-cli --scan \\\\.\\PhysicalDrive0').read()
+    txt = os.popen(ui.prefix + 'sedutil-cli --scan n').read()
     print "scan result : "
     print txt
-    
  
     names = ['PhysicalDrive[0-9]', '/dev/sd[a-z]', '/dev/nvme[0-9]',  '/dev/disk[0-9]']
     idx = 0
@@ -104,7 +103,13 @@ def finddev(ui):
     if ui.devs_list != []:
         for i in range(len(ui.devs_list)):
             queryText = os.popen(ui.prefix + 'sedutil-cli --query ' + ui.devs_list[i]).read()
-
+            
+            txt_msid = os.popen(ui.prefix + "sedutil-cli --printDefaultPassword " + ui.devs_list[i] ).read()
+            msid = 'N/A'
+            if txt_msid != '' :
+                x_words = txt_msid.split(': ',1)
+                msid = re.sub(r'\n', '', x_words[1])
+            
             regex = ':\s*[A-z0-9]+\s+([A-z0-9]+)'
             p = re.compile(regex)
             m = p.search(queryText)
@@ -112,25 +117,30 @@ def finddev(ui):
                 ui.sn_list.append(m.group(1))
             else:
                 ui.sn_list.append("N/A")
+            ui.msid_list.append(msid)
             
+            txt_TCG = "Locked = "
             txt_L = "Locked = Y"
             txt_S = "LockingEnabled = Y"
-            txt_NS = "LockingEnabled = N"
+            txt_ALO = "AUTHORITY_LOCKED_OUT"
+            txt_NA = "NOT_AUTHORIZED"
+            #msidText = os.popen(ui.prefix + 'sedutil-cli -n --getmbrsize ' + msid + ' ' + ui.devs_list[i]).read()
+            isTCG = re.search(txt_TCG, queryText)
             isLocked = re.search(txt_L, queryText)
-            isSetup = re.search(txt_S, queryText)
-            isNotSetup = re.search(txt_NS, queryText)
-            if isLocked:
-                ui.locked_list.append(i)
-                ui.setup_list.append(i)
-                ui.tcg_list.append(i)
-            elif isSetup:
-                ui.setup_list.append(i)
-                ui.unlocked_list.append(i)
-                ui.tcg_list.append(i)
-                ui.nonsetup_list.append(i)
-            elif isNotSetup:
-                ui.nonsetup_list.append(i)
-                ui.tcg_list.append(i)
+            isSetup = (re.search(txt_S, queryText) != None) #& (msidText == '')
+            if isTCG:
+                if isLocked:
+                    ui.locked_list.append(i)
+                    ui.setup_list.append(i)
+                    ui.tcg_list.append(i)
+                elif isSetup:
+                    ui.setup_list.append(i)
+                    ui.unlocked_list.append(i)
+                    ui.nonsetup_list.append(i)
+                    ui.tcg_list.append(i)
+                else:
+                    ui.nonsetup_list.append(i)
+                    ui.tcg_list.append(i)
         print ("devs_list: ",  ui.devs_list)
         print ("vendor_list: ", ui.vendor_list)
         print ("opal_ver_list: ", ui.opal_ver_list)
@@ -139,6 +149,7 @@ def finddev(ui):
 def run_setupFull(button, ui, mode):
     index = ui.dev_select.get_active()
     ui.devname = ui.devs_list[ui.nonsetup_list[index]]
+    dev_msid = ui.msid_list[ui.nonsetup_list[index]]
     print("lock physical device "+ ui.devname)
     pw = ui.new_pass_entry.get_text()
     pw_confirm = ui.confirm_pass_entry.get_text()
@@ -167,7 +178,6 @@ def run_setupFull(button, ui, mode):
                 ui.wait_instr.show()
                 
                 def t1_run():
-                    #queryText = os.popen(ui.prefix + 'sedutil-cli --query ' + ui.devs_list[ui.nonsetup_list[ui.dev_select.get_active()]]).read()
                     queryText = os.popen(ui.prefix + 'sedutil-cli --query ' + ui.devname).read()
                     txt_LE = "LockingEnabled = N"
                     txt_ME = "MBREnabled = N"
@@ -188,7 +198,7 @@ def run_setupFull(button, ui, mode):
                         timeStr = timeStr[2:]
                         statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 11" + timeStr + " " + password + " " + ui.devname)
                     elif activated:
-                        dev_msid = ui.get_msid()
+                        #dev_msid = ui.get_msid()
                         s1 = os.system(ui.prefix + "sedutil-cli -n --setSIDPassword " + dev_msid + " " + password + " " + ui.devname)
                         s2 = os.system(ui.prefix + "sedutil-cli -n --setAdmin1Pwd " + dev_msid + " " + password + " " + ui.devname)
                         timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
@@ -227,7 +237,7 @@ def run_setupFull(button, ui, mode):
                         if mode == 0:
                             ui.setup_prompt2()
                         else:
-                            ui.updateDevs(index,4,1)
+                            ui.updateDevs(index,[1,2])
                             ui.returnToMain()
                             
                 t1 = threading.Thread(target=t1_run, args=())
@@ -266,7 +276,7 @@ def run_pbaWrite(button, ui, mode):
         t1.join()
         if status != 0 :
             ui.msg_err("Error: Writing PBA image to " + ui.devname + " failed.")
-            ui.go_button_cancel.show()
+            
             ui.op_instr.show()
             if mode == 1:
                 ui.setupLockOnly.show()
@@ -275,6 +285,7 @@ def run_pbaWrite(button, ui, mode):
                 ui.box_pass.show()
                 ui.check_box_pass.show()
                 ui.updatePBA_button.show()
+                ui.go_button_cancel.show()
         else :
             status2 =  os.system(ui.prefix + "sedutil-cli -n --setMBREnable on " + password + " " + ui.devname )
             p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--pbaValid", devpass, ui.devname])
@@ -407,7 +418,8 @@ def run_revertUser(button, ui):
                     elif alo :
                         ui.msg_err("Error: Locked out due to multiple failed attempts.  Please reboot and try again.")
                     else :
-                        dev_msid = ui.get_msid()
+                        index = ui.dev_select.get_active()
+                        dev_msid = ui.msid_list[ui.setup_list[index]]
                         
                         status = os.system(ui.prefix + "sedutil-cli -n --activate " + dev_msid + " " + ui.devname)
                         
@@ -425,8 +437,7 @@ def run_revertUser(button, ui):
                         ui.msg_ok("Device " + ui.devname + " successfully reverted with password.")
                         index = ui.dev_select.get_active()
                         ui.query(1)
-                        if index in ui.locked_list:
-                            ui.updateDevs(index,1,2)
+                        ui.updateDevs(index,[4])
                         ui.returnToMain()
                 t1 = threading.Thread(target=t1_run, args=())
                 t1.start()
@@ -483,7 +494,8 @@ def run_revertUser(button, ui):
                 txtLE = "LockingEnabled = N"
                 le_check = re.search(txtLE, p0)
                 if le_check:
-                    dev_msid = ui.get_msid()
+                    index = ui.dev_select.get_active()
+                    dev_msid = ui.msid_list[ui.setup_list[index]]
                     p1 = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--revertTPer", password, ui.devname])
                     
                     status = os.system(ui.prefix + "sedutil-cli -n --activate " + dev_msid + " " + ui.devname)
@@ -498,10 +510,7 @@ def run_revertUser(button, ui):
                     ui.msg_ok("Device " + ui.devname + " successfully reverted with password.")
                     index = ui.dev_select.get_active()
                     ui.query(1)
-                    if index in ui.locked_list:
-                        ui.updateDevs(index,1,4)
-                    else:
-                        ui.updateDevs(index,3,4)
+                    ui.updateDevs(index,[4])
                     ui.returnToMain()
                 else:
                     ui.msg_err("Error: Revert failed.")
@@ -528,11 +537,12 @@ def run_revertPSID(button, ui):
             message.destroy()
             ui.start_spin()
             ui.wait_instr.show()
+            index = ui.dev_select.get_active()
             
             def t1_run():            
                 print "execute the revert with PSID"
                 psid = ui.revert_psid_entry.get_text()
-                index = ui.dev_select.get_active()
+                
                 ui.devname = ui.devs_list[ui.setup_list[index]]
                 
                 status =  os.system(ui.prefix + "sedutil-cli -n --yesIreallywanttoERASEALLmydatausingthePSID " + psid + " " + ui.devname )
@@ -544,7 +554,8 @@ def run_revertPSID(button, ui):
                 if status != 0 :
                     ui.msg_err("Error: Incorrect PSID, please try again." )
                 else :
-                    dev_msid = ui.get_msid()
+                    index = ui.dev_select.get_active()
+                    dev_msid = ui.msid_list[ui.setup_list[index]]
                     status = os.system(ui.prefix + "sedutil-cli -n --activate " + dev_msid + " " + ui.devname)
                     timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
                     timeStr = timeStr[2:]
@@ -560,10 +571,7 @@ def run_revertPSID(button, ui):
                     ui.msg_ok("Device " + ui.devname + " successfully reverted with PSID.")
                     index = ui.dev_select.get_active()
                     ui.query(1)
-                    if index in ui.locked_list:
-                        ui.updateDevs(index,1,4)
-                    else:
-                        ui.updateDevs(index,3,4)
+                    ui.updateDevs(index,[4])
                     ui.returnToMain()
             
             t1 = threading.Thread(target=t1_run, args=())
@@ -604,7 +612,7 @@ def run_lockset(button, ui):
         else :
             ui.msg_ok("TCG Lock setting success") 
             ui.query(1)
-            ui.updateDevs(index,3,1)
+            ui.updateDevs(index,[1,2])
             ui.returnToMain()
 
     t1 = threading.Thread(target=t1_run, args=())
@@ -618,18 +626,34 @@ def run_unlockPBA(button, ui):
     ui.devname = ui.devs_list[ui.locked_list[index]]
     print("PreBoot Authorization physical device " + ui.devname)
     ui.LKATTR = "RW"
-    password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.dev_sn.get_text(), ui.dev_msid.get_text())
-    status1 =  os.system(ui.prefix + "sedutil-cli -n --setMBRdone on " + password + " " + ui.devname )
-    status2 =  os.system(ui.prefix + "sedutil-cli -n --setLockingRange " + ui.LKRNG + " " 
-            + ui.LKATTR + " " + password + " " + ui.devname)
-    
-    if (status1 | status2) != 0 :
-        ui.msg_err("Error: Preboot unlock of " + ui.devname + " failed.")
-    else :
-        ui.msg_ok(ui.devname + " preboot unlocked successfully.")
-        ui.query(1)
-        ui.updateDevs(index,1,3)
-        ui.returnToMain()
+    password = ''
+    if ui.check_pass_rd.get_active():
+        password = passReadUSB(ui, ui.dev_vendor.get_text(), ui.dev_sn.get_text())
+    else:
+        password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.dev_sn.get_text(), ui.dev_msid.get_text())
+    ui.start_spin()
+    ui.wait_instr.show()
+    def t1_run():
+        status1 =  os.system(ui.prefix + "sedutil-cli -n --setMBRdone on " + password + " " + ui.devname )
+        status2 =  os.system(ui.prefix + "sedutil-cli -n --setLockingRange " + ui.LKRNG + " " 
+                + ui.LKATTR + " " + password + " " + ui.devname)
+        gobject.idle_add(cleanup, status1 | status2)
+    def cleanup(status):
+        ui.stop_spin()
+        t1.join()
+        if status != 0 :
+            ui.msg_err("Error: Preboot unlock of " + ui.devname + " failed.")
+            ui.unlock_prompt(ui)
+        else :
+            ui.msg_ok(ui.devname + " preboot unlocked successfully.")
+            ui.query(1)
+            ui.updateDevs(index,[2,3])
+            ui.returnToMain()
+    t1 = threading.Thread(target=t1_run, args=())
+    t1.start()
+    start_time = time.time()
+    t2 = threading.Thread(target=timeout_track, args=(ui, 10.0, start_time, t1))
+    t2.start()
 
 def run_unlockFull(button, ui):
     index = ui.dev_select.get_active()
@@ -650,7 +674,8 @@ def run_unlockFull(button, ui):
         else:
             status1 =  os.system(ui.prefix + "sedutil-cli -n --disableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
             status2 =  os.system(ui.prefix + "sedutil-cli -n --setMBREnable off " + password + " " + ui.devname )
-            dev_msid = ui.get_msid()
+            index = ui.dev_select.get_active()
+            dev_msid = ui.msid_list[ui.setup_list[index]]
             status3 = os.system(ui.prefix + "sedutil-cli -n --setSIDPassword " + password + " " + dev_msid + " " + ui.devname)
             status4 = os.system(ui.prefix + "sedutil-cli -n --setAdmin1Pwd " + password + " " + dev_msid + " " + ui.devname)
             gobject.idle_add(cleanup, status1 | status2 | status3 | status4)
@@ -668,10 +693,7 @@ def run_unlockFull(button, ui):
         else :
             ui.msg_ok("TCG Unlock success")
             ui.query(1)
-            if index in ui.locked_list:
-                ui.updateDevs(index,1,4)
-            else:
-                ui.updateDevs(index,3,4)
+            ui.updateDevs(index,[4])
             ui.returnToMain()
     t1 = threading.Thread(target=t1_run, args=())
     t1.start()
@@ -713,7 +735,7 @@ def run_unlockPartial(button, ui):
             ui.msg_ok("Partial unlock completed")
             ui.query(1)
             if index in ui.locked_list:
-                ui.updateDevs(index,1,3)
+                ui.updateDevs(index,[2,3])
             ui.returnToMain()
             
     t1 = threading.Thread(target=t1_run, args=())
@@ -760,7 +782,7 @@ def run_unlockUSB(button, ui):
                     status2 =  os.system(ui.prefix + "sedutil-cli -n --setLockingRange " + ui.LKRNG + " " 
                             + ui.LKATTR + " " + pw + " " + ui.devs_list[i])
                     if (status1 | status2) == 0 :
-                        dev_unlocked.append(ui.devs_list[i])
+                        dev_unlocked.append(i)
             gobject.idle_add(cleanup, dev_unlocked)
             
         def cleanup(dev_unlocked):
@@ -769,9 +791,11 @@ def run_unlockUSB(button, ui):
             else:
                 txt = 'The following drives were unlocked: '
                 for j in range(len(dev_unlocked) - 1):
-                    txt = txt + dev_unlocked[j] + ','
+                    txt = txt + ui.devs_list[dev_unlocked[j]] + ','
                 txt = txt + dev_unlocked[len(dev_unlocked) - 1]
                 ui.msg_ok(txt)
+                for i in dev_unlocked:
+                    ui.updateDevs(i,[2,3])
                 ui.returnToMain()
                 
         t1 = threading.Thread(target=t1_run, args=())

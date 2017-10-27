@@ -86,12 +86,12 @@ class LockApp(gtk.Window):
     LKRNG_LBALEN = "0"
     LKATTR = "RW"
 
-    VERSION = 3
+    VERSION = -1
     
     queryWinText = ""
      
     try:
-        opts, args = getopt.getopt(sys.argv[1:], [""], ["pba", "demo", "basic"])
+        opts, args = getopt.getopt(sys.argv[1:], [""], ["pba", "demo", "standard", "premium"])
     except getopt.GetoptError, err:
         print "Update the usage information"
         exit(2)
@@ -101,10 +101,11 @@ class LockApp(gtk.Window):
             VERSION = 0
         elif o in ("--pba"):
             VERSION = 1
-        elif o in ("--basic"):
+        elif o in ("--standard"):
             VERSION = 2
-        else:
+        elif o in ("--premium"):
             VERSION = 3
+    
    
     devs_list = [] #[ "/dev/sda" , "/dev/sdb",  "/dev/sdc",  "/dev/sdd",  "/dev/sde" ]
     locked_list = []
@@ -112,6 +113,7 @@ class LockApp(gtk.Window):
     unlocked_list = []
     nonsetup_list = []
     tcg_list = []
+    msid_list = []
     
     vendor_list = [] # "Sandisk" 
     opal_ver_list = [] # 1, 2, or 12
@@ -125,366 +127,387 @@ class LockApp(gtk.Window):
         status = lockhash.testPBKDF2()
         if status != 0:
             self.msg_err("Hash validation failed")
+            self.exitapp()
         
-        # Initialize window
-        gtk.Window.__init__(self)
-        if self.VERSION == 0:
-            self.set_title('Fidelity Lock Disk Drive Security Manager - Demo version')
-        elif self.VERSION == 1:
-            self.set_title('Fidelity Lock Disk Drive Security Manager - PBA version')
-        elif self.VERSION == 2:
-            self.set_title('Fidelity Lock Disk Drive Security Manager - Standard version')
-        else:
-            self.set_title('Fidelity Lock Disk Drive Security Manager - Premium version')
-        if os.path.isfile('icon.jpg'):
-            self.set_icon_from_file('icon.jpg')
-
-        height = 475
-        width = 550
-            
-        self.set_size_request(width, height)
-
-        self.connect('destroy', gtk.main_quit)
+        runop.findos(self)
         
-        # new hbox variable for appropriate homogeneous
-        # and spacing settings
-        homogeneous = False
-        spacing = 0
-        expand = False
-        fill = False
-        padding = 0
+        version_text = os.popen(self.prefix + 'sedutil-cli --version').read()
+        regex_license = 'Valid Fidelity Lock License found 0:([124]);'
+        f = re.search(regex_license, version_text)
         
-        # receive license information to know which version to show
- 
-        # Structure the layout vertically
-        self.vbox0 = gtk.VBox(False,0)
-        self.hbox0 = gtk.HBox(False,0)
-        self.hbox = gtk.HBox(False,0)
-        self.vbox = gtk.VBox(False,5)
+        if f or self.VERSION != -1:
+            if self.VERSION == -1:
+                v = f.group(1)
+                if v == '1':
+                    self.VERSION == 0
+                elif v == '2':
+                    self.VERSION == 2
+                elif v == '4':
+                    self.VERSION == 3
         
-        self.menuBar = gtk.MenuBar()
         
-        self.navMenu = gtk.Menu()
-        self.navM = gtk.MenuItem("View")
-        self.navM.set_submenu(self.navMenu)
-        self.backToMain = gtk.MenuItem("Main")
-        self.backToMain.connect("activate", self.returnToMain)
-        self.backToMain.set_tooltip_text('Return to Main view')
-        self.navMenu.append(self.backToMain)
-        self.readLog = gtk.MenuItem("Audit Log")
-        self.readLog.connect("activate", self.openLog_prompt)
-        self.readLog.set_tooltip_text('Access a drive\'s event log')
-        self.navMenu.append(self.readLog)
-        self.exitApp = gtk.MenuItem("Exit")
-        self.exitApp.connect("activate", self.exitapp)
-        self.exitApp.set_tooltip_text('Exit the app')
-        self.navMenu.append(self.exitApp)
-        
-        self.menuBar.append(self.navM)
-        
-        self.devMenu = gtk.Menu()
-        self.devM = gtk.MenuItem("Device")
-        self.devM.set_submenu(self.devMenu)
-        self.devQuery = gtk.MenuItem("Query drive")
-        self.devQuery.connect("activate", self.query)
-        self.devQuery.set_tooltip_text('Query the currently selected drive')
-        self.devMenu.append(self.devQuery)
-        self.devScan = gtk.MenuItem("Rescan drives")
-        self.devScan.connect("activate", self.run_scan)
-        self.devScan.set_tooltip_text('Update the list of detected drives')
-        self.devMenu.append(self.devScan)
-        
-        self.menuBar.append(self.devM)
-        
-        self.setupMenu = gtk.Menu()
-        self.setupM = gtk.MenuItem("Setup")
-        self.setupM.set_submenu(self.setupMenu)
-        if self.VERSION != 1:
-            self.setupFull = gtk.MenuItem("Full Setup")
-            self.setupFull.connect("activate", self.setup_prompt1)
-            self.setupFull.set_tooltip_text('Set up password and preboot image for a drive')
-            self.setupMenu.append(self.setupFull)
-            self.setupPW = gtk.MenuItem("Password only")
-            self.setupPW.connect("activate", self.setupPW_prompt)
-            self.setupPW.set_tooltip_text('Set up password for a drive')
-            self.setupMenu.append(self.setupPW)
-            self.updatePBA = gtk.MenuItem("Update Preboot Image")
-            self.updatePBA.connect("activate", self.updatePBA_prompt)
-            self.updatePBA.set_tooltip_text('Update a drive\'s preboot image')
-            self.setupMenu.append(self.updatePBA)
-        self.changePassword = gtk.MenuItem("Change Password")
-        self.changePassword.connect("activate", self.changePW_prompt)
-        self.changePassword.set_tooltip_text('Change a drive\'s password')
-        self.setupMenu.append(self.changePassword)
-        
-        self.menuBar.append(self.setupM)
-        
-        if self.VERSION != 1:
-            self.unlockMenu = gtk.Menu()
-            self.unlockM = gtk.MenuItem("Unlock")
-            self.unlockM.set_submenu(self.unlockMenu)
-            self.unlock1 = gtk.MenuItem("Preboot unlock")
-            self.unlock1.connect("activate", self.unlock_prompt)
-            self.unlock1.set_tooltip_text('Unlock a drive to boot into')
-            self.unlockMenu.append(self.unlock1)
-            self.unlockFull = gtk.MenuItem("Full unlock")
-            self.unlockFull.connect("activate", self.unlockFull_prompt)
-            self.unlockFull.set_tooltip_text('Disable locking on a drive and reset password')
-            self.unlockMenu.append(self.unlockFull)
-            self.unlockPartial = gtk.MenuItem("Partial unlock")
-            self.unlockPartial.connect("activate", self.unlockPartial_prompt)
-            self.unlockPartial.set_tooltip_text('Disable locking on a drive')
-            self.unlockMenu.append(self.unlockPartial)
-            self.unlockMulti = gtk.MenuItem("Unlock with USB")
-            self.unlockMulti.connect("activate", self.unlockUSB_prompt)
-            self.unlockMulti.set_tooltip_text('Unlock one or more drives using USB password files')
-            self.unlockMenu.append(self.unlockMulti)
-        
-            self.menuBar.append(self.unlockM)
-            
-            self.lockMenu = gtk.Menu()
-            self.lockM = gtk.MenuItem("Lock")
-            self.lockM.set_submenu(self.lockMenu)
-            self.lockMI = gtk.MenuItem("Lock a device")
-            self.lockMI.connect("activate", self.lock_prompt)
-            self.lockMI.set_tooltip_text('Enable locking on a device')
-            self.lockMenu.append(self.lockMI)
-            
-            self.menuBar.append(self.lockM)
-        
-        self.revertMenu = gtk.Menu()
-        self.revertM = gtk.MenuItem("Revert")
-        self.revertM.set_submenu(self.revertMenu)
-        self.revertPW = gtk.MenuItem("with Password")
-        self.revertPW.connect("activate", self.revert_user_prompt)
-        self.revertPW.set_tooltip_text('Use password to revert the drive\'s LockingSP')
-        self.revertMenu.append(self.revertPW)
-        self.revertPSID = gtk.MenuItem("with PSID")
-        self.revertPSID.connect("activate", self.revert_psid_prompt)
-        self.revertPSID.set_tooltip_text('Use drive\'s PSID to revert drive to manufacturer settings')
-        self.revertMenu.append(self.revertPSID)
-        
-        self.menuBar.append(self.revertM)
-        
-        self.helpMenu = gtk.Menu()
-        self.helpM = gtk.MenuItem("Help")
-        self.helpM.set_submenu(self.helpMenu)
-        self.help1 = gtk.MenuItem("Help")
-        self.help1.set_tooltip_text('Access online help')
-        self.helpMenu.append(self.help1)
-        self.updateM = gtk.MenuItem("Check for updates")
-        self.updateM.set_tooltip_text('Check for an updated version of this app')
-        self.helpMenu.append(self.updateM)
-        self.aboutM = gtk.MenuItem("About")
-        self.aboutM.set_tooltip_text('About Fidelity Lock')
-        self.helpMenu.append(self.aboutM)
-        
-        self.menuBar.append(self.helpM)
-        
-        if self.VERSION < 3 and self.VERSION != 1:
-            self.upgradeMenu = gtk.Menu()
-            self.upgradeM = gtk.MenuItem("Upgrade")
-            self.upgradeM.set_submenu(self.upgradeMenu)
+            # Initialize window
+            gtk.Window.__init__(self)
             if self.VERSION == 0:
-                self.upgradeBasic = gtk.MenuItem("Upgrade to Basic")
-                self.upgradeMenu.append(self.upgradeBasic)
-            self.upgradePro = gtk.MenuItem("Upgrade to Pro")
-            self.upgradeMenu.append(self.upgradePro)
-            self.menuBar.append(self.upgradeM)
-        
-        self.hbox0.pack_start(self.menuBar, True, True, 0)
-        self.vbox0.pack_start(self.hbox0, False, False, 0)
-        
-        self.buttonBox = gtk.HBox(homogeneous, 0)
-        
-        self.go_button_cancel = gtk.Button('_Cancel')
-        
-        self.viewLog = gtk.Button('_View Audit Log')
-        
-        self.setup_next = gtk.Button('_Activate and Continue')
-        self.setupLockOnly = gtk.Button('_Skip writing Preboot Image')
-        self.setupLockPBA = gtk.Button('_Write Preboot Image')
-        
-        self.setupPWOnly = gtk.Button('_Set Up password')
-        
-        self.updatePBA_button = gtk.Button('_Update')
-        
-        self.go_button_changePW_confirm = gtk.Button('_Change Password')
-        
-        self.pbaUnlock = gtk.Button("_Unlock with password")
-        self.pbaUSB_button = gtk.Button('_Unlock with USB')
-        
-        self.unlockFull_button = gtk.Button('_Full Unlock')
-        self.unlockPartial_button = gtk.Button('_Partial Unlock')
-        
-        self.go_button_revert_user_confirm = gtk.Button('_Revert with Password')
-        self.go_button_revert_psid_confirm = gtk.Button('_Revert with PSID')
-        
-        self.lock_button = gtk.Button('_Lock Drive')
-        
-        self.op_label = gtk.Label('Main')
-        self.op_label.set_alignment(0,0.5)
-        self.vbox.pack_start(self.op_label, False, False, 0)
-        
-        self.noTCG_instr = gtk.Label('No TCG drives were detected, please insert a TCG drive and use \'Rescan devices\' to continue.')
-        self.noTCG_instr.set_alignment(0,0.5)
-        self.vbox.pack_start(self.noTCG_instr, False, False, 0)
-        
-        self.select_instr = gtk.Label('Select a drive from the dropdown menu.')
-        self.select_instr.set_alignment(0,0.5)
-        self.vbox.pack_start(self.select_instr, False, False, 0)
-        
-        self.main_instr = gtk.Label('Select an operation from the menu bar above.  Below are all detected drives.')
-        self.main_instr.set_alignment(0,0.5)
-        self.vbox.pack_start(self.main_instr, False, False, 0)
-        
-        self.naDevices_instr = gtk.Label('\nNo drives available for this operation.')
-        self.naDevices_instr.set_alignment(0,0.5)
-        self.vbox.pack_start(self.naDevices_instr, False, False, 0)
-        
-        self.op_instr = gtk.Label('\n\n')
-        self.op_instr.set_alignment(0,0.5)
-        
-        self.go_button_cancel.connect('clicked', self.returnToMain)
-        self.go_button_revert_user_confirm.connect('clicked', runop.run_revertUser, self)
-        self.go_button_revert_psid_confirm.connect('clicked', runop.run_revertPSID, self)
-        self.go_button_changePW_confirm.connect('clicked', runop.run_changePW, self)
-        self.setup_next.connect('clicked', runop.run_setupFull, self, 0)
-        self.updatePBA_button.connect('clicked', runop.run_pbaWrite, self, 0)
-        
-        self.setupLockOnly.connect('clicked', self.setup_finish)
-        self.setupLockPBA.connect('clicked', runop.run_pbaWrite, self, 1)
-        
-        self.setupPWOnly.connect('clicked', runop.run_setupFull, self, 1)
-        
-        self.pbaUnlock.connect("clicked", runop.run_unlockPBA, self)   
-        self.pbaUSB_button.connect("clicked", runop.run_unlockUSB, self)
-        
-        self.lock_button.connect('clicked', runop.run_lockset, self)
-        
-        self.unlockFull_button.connect('clicked', runop.run_unlockFull, self)
-        self.unlockPartial_button.connect('clicked', runop.run_unlockPartial, self)
-        
-        self.viewLog.connect('clicked', runop.openLog, self)
+                self.set_title('Fidelity Lock Disk Drive Security Manager - Demo version')
+            elif self.VERSION == 1:
+                self.set_title('Fidelity Lock Disk Drive Security Manager - PBA version')
+            elif self.VERSION == 2:
+                self.set_title('Fidelity Lock Disk Drive Security Manager - Standard version')
+            else:
+                self.set_title('Fidelity Lock Disk Drive Security Manager - Premium version')
+            if os.path.isfile('icon.jpg'):
+                self.set_icon_from_file('icon.jpg')
 
-        self.scan_passwordonly()
-        
-        self.wait_instr = gtk.Label('This may take a few seconds...')
-        self.pba_wait_instr = gtk.Label('Please wait, writing the preboot image will take a few minutes...')
-        self.vbox.pack_start(self.wait_instr, False, False, 5)
-        self.vbox.pack_start(self.pba_wait_instr, False, False, 5)
-        
-        self.waitSpin = gtk.Spinner()
-        self.vbox.pack_start(self.waitSpin, False, False, 5)
-        
-        self.vbox.pack_start(self.op_instr, True, False, 5)
-        
-        self.box_psid = gtk.HBox(homogeneous, 0)
-        
-        self.revert_psid_label = gtk.Label("Enter PSID")
-        self.revert_psid_label.set_width_chars(22)
-        self.revert_psid_label.set_alignment(0,0.5)
-        self.box_psid.pack_start(self.revert_psid_label, expand, fill, padding)
-        
-        self.revert_psid_entry = gtk.Entry()
-        self.revert_psid_entry.set_text("")
-        self.box_psid.pack_start(self.revert_psid_entry, True, True, padding)
-        
-        self.box_newpass_confirm = gtk.HBox(homogeneous, 0)
-        
-        self.confirm_pass_label = gtk.Label("Confirm new password")
-        self.confirm_pass_label.set_width_chars(22)
-        self.confirm_pass_label.set_alignment(0,0.5)
-        self.box_newpass_confirm.pack_start(self.confirm_pass_label, expand, fill, padding)
-        self.confirm_pass_entry = gtk.Entry()
-        self.confirm_pass_entry.set_text("")
-        self.confirm_pass_entry.set_width_chars(27)
-        self.confirm_pass_entry.set_visibility(False)
-        self.box_newpass_confirm.pack_start(self.confirm_pass_entry, False, False, padding)
-        
-        self.checkbox_box = gtk.HBox(homogeneous, 0)
-        
-        self.check_box_pass = gtk.CheckButton("Show Password")
-        self.check_box_pass.connect("toggled", self.entry_check_box_pass, self.check_box_pass)
-        self.check_box_pass.set_active(False)  # By default don't show
-        self.check_box_pass.show()
-        self.checkbox_box.pack_start(self.check_box_pass, expand, fill, padding)
-        
-        self.eraseData_check = gtk.CheckButton("Erase the drive's data")
-        self.eraseData_check.set_active(False)  # By default don't erase
-        self.eraseData_check.show()
-        self.checkbox_box.pack_start(self.eraseData_check, expand, fill, padding)
-        
-        check_align = gtk.Alignment(1,0,0,0)
-        check_align.add(self.checkbox_box)
-        
-        self.buttonBox.pack_start(self.setup_next, False, False, padding)
-        self.buttonBox.pack_start(self.setupLockOnly, False, False, padding)
-        self.buttonBox.pack_start(self.setupLockPBA, False, False, padding)
-        self.buttonBox.pack_start(self.go_button_changePW_confirm, False, False, padding)
-        self.buttonBox.pack_start(self.go_button_revert_user_confirm, False, False, padding)
-        self.buttonBox.pack_start(self.go_button_revert_psid_confirm, False, False, padding)
-        self.buttonBox.pack_start(self.pbaUnlock, False, False, padding)
-        self.buttonBox.pack_start(self.setupPWOnly, False, False, padding)
-        self.buttonBox.pack_start(self.updatePBA_button, False, False, padding)
-        self.buttonBox.pack_start(self.pbaUSB_button, False, False, padding)
-        self.buttonBox.pack_start(self.lock_button, False, False, padding)
-        self.buttonBox.pack_start(self.unlockFull_button, False, False, padding)
-        self.buttonBox.pack_start(self.unlockPartial_button, False, False, padding)
-        self.buttonBox.pack_start(self.viewLog, False, False, padding)
-        
-        self.buttonBox.pack_start(self.go_button_cancel, False, False, padding)
-        
-        self.pass_dialog()
-        self.new_pass_dialog()
-        
-        self.vbox.pack_start(self.box_newpass_confirm, False)
-        self.vbox.pack_start(self.box_psid, False)
-        
-        self.vbox.pack_start(check_align, False, False, padding)
-        
-        valign = gtk.Alignment(0,1,0,0)
-        self.vbox.pack_start(valign)
-        halign = gtk.Alignment(1,0,0,0)
-        halign.add(self.buttonBox)
-        self.vbox.pack_end(halign, False, False, padding)
-        
-        self.hbox.set_border_width(20)
-        
-        self.hbox.pack_start(self.vbox, True, True, padding)
-        self.vbox0.pack_start(self.hbox, True, True, padding)
-        
-        self.add(self.vbox0)
-        self.show_all()
-        
-        self.hideAll()
-        self.select_box.show()
-        self.main_instr.show()
-        self.op_label.show()
+            height = 475
+            width = 550
                 
-        self.run_scan()
-        
-        if self.VERSION == 0:            #Demo
-            self.updateM.set_sensitive(False)
-            self.readLog.set_sensitive(False)
-            self.setupFull.set_sensitive(False)
-            self.setupPW.set_sensitive(False)
-            self.updatePBA.set_sensitive(False)
-            self.changePassword.set_sensitive(False)
-            self.revertPW.set_sensitive(False)
-            self.revertPSID.set_sensitive(False)
-            self.unlock1.set_sensitive(False)
-            self.unlockUSB.set_sensitive(False)
-            self.lockMI.set_sensitive(False) 
-        elif self.VERSION == 1:#PBA
-            self.unlock_prompt()
-        
-        print self.devs_list
-        print self.locked_list
-        print self.setup_list
-        print self.unlocked_list
-        print self.nonsetup_list
-        print self.tcg_list
+            self.set_size_request(width, height)
+
+            self.connect('destroy', gtk.main_quit)
+            
+            # new hbox variable for appropriate homogeneous
+            # and spacing settings
+            homogeneous = False
+            spacing = 0
+            expand = False
+            fill = False
+            padding = 0
+            
+            # receive license information to know which version to show
+     
+            # Structure the layout vertically
+            self.vbox0 = gtk.VBox(False,0)
+            self.hbox0 = gtk.HBox(False,0)
+            self.hbox = gtk.HBox(False,0)
+            self.vbox = gtk.VBox(False,5)
+            
+            self.menuBar = gtk.MenuBar()
+            
+            self.navMenu = gtk.Menu()
+            self.navM = gtk.MenuItem("View")
+            self.navM.set_submenu(self.navMenu)
+            self.backToMain = gtk.MenuItem("Main")
+            self.backToMain.connect("activate", self.returnToMain)
+            self.backToMain.set_tooltip_text('Return to Main view')
+            self.navMenu.append(self.backToMain)
+            self.readLog = gtk.MenuItem("Audit Log")
+            self.readLog.connect("activate", self.openLog_prompt)
+            self.readLog.set_tooltip_text('Access a drive\'s event log')
+            self.navMenu.append(self.readLog)
+            self.exitApp = gtk.MenuItem("Exit")
+            self.exitApp.connect("activate", self.exitapp)
+            self.exitApp.set_tooltip_text('Exit the app')
+            self.navMenu.append(self.exitApp)
+            
+            self.menuBar.append(self.navM)
+            
+            self.devMenu = gtk.Menu()
+            self.devM = gtk.MenuItem("Device")
+            self.devM.set_submenu(self.devMenu)
+            self.devQuery = gtk.MenuItem("Query drive")
+            self.devQuery.connect("activate", self.query)
+            self.devQuery.set_tooltip_text('Query the currently selected drive')
+            self.devMenu.append(self.devQuery)
+            self.devScan = gtk.MenuItem("Rescan drives")
+            self.devScan.connect("activate", self.run_scan)
+            self.devScan.set_tooltip_text('Update the list of detected drives')
+            self.devMenu.append(self.devScan)
+            
+            self.menuBar.append(self.devM)
+            
+            self.setupMenu = gtk.Menu()
+            self.setupM = gtk.MenuItem("Setup")
+            self.setupM.set_submenu(self.setupMenu)
+            if self.VERSION != 1:
+                self.setupFull = gtk.MenuItem("Full Setup")
+                self.setupFull.connect("activate", self.setup_prompt1)
+                self.setupFull.set_tooltip_text('Set up password and preboot image for a drive')
+                self.setupMenu.append(self.setupFull)
+                self.setupPW = gtk.MenuItem("Password only")
+                self.setupPW.connect("activate", self.setupPW_prompt)
+                self.setupPW.set_tooltip_text('Set up password for a drive')
+                self.setupMenu.append(self.setupPW)
+                self.updatePBA = gtk.MenuItem("Update Preboot Image")
+                self.updatePBA.connect("activate", self.updatePBA_prompt)
+                self.updatePBA.set_tooltip_text('Update a drive\'s preboot image')
+                self.setupMenu.append(self.updatePBA)
+            self.changePassword = gtk.MenuItem("Change Password")
+            self.changePassword.connect("activate", self.changePW_prompt)
+            self.changePassword.set_tooltip_text('Change a drive\'s password')
+            self.setupMenu.append(self.changePassword)
+            
+            self.menuBar.append(self.setupM)
+            
+            if self.VERSION != 1:
+                self.unlockMenu = gtk.Menu()
+                self.unlockM = gtk.MenuItem("Unlock")
+                self.unlockM.set_submenu(self.unlockMenu)
+                self.unlock1 = gtk.MenuItem("Preboot unlock")
+                self.unlock1.connect("activate", self.unlock_prompt)
+                self.unlock1.set_tooltip_text('Unlock a drive to boot into')
+                self.unlockMenu.append(self.unlock1)
+                self.unlockFull = gtk.MenuItem("Full unlock")
+                self.unlockFull.connect("activate", self.unlockFull_prompt)
+                self.unlockFull.set_tooltip_text('Disable locking on a drive and reset password')
+                self.unlockMenu.append(self.unlockFull)
+                self.unlockPartial = gtk.MenuItem("Partial unlock")
+                self.unlockPartial.connect("activate", self.unlockPartial_prompt)
+                self.unlockPartial.set_tooltip_text('Disable locking on a drive')
+                self.unlockMenu.append(self.unlockPartial)
+                self.unlockMulti = gtk.MenuItem("Unlock with USB")
+                self.unlockMulti.connect("activate", self.unlockUSB_prompt)
+                self.unlockMulti.set_tooltip_text('Unlock one or more drives using USB password files')
+                self.unlockMenu.append(self.unlockMulti)
+            
+                self.menuBar.append(self.unlockM)
+                
+                self.lockMenu = gtk.Menu()
+                self.lockM = gtk.MenuItem("Lock")
+                self.lockM.set_submenu(self.lockMenu)
+                self.lockMI = gtk.MenuItem("Lock a device")
+                self.lockMI.connect("activate", self.lock_prompt)
+                self.lockMI.set_tooltip_text('Enable locking on a device')
+                self.lockMenu.append(self.lockMI)
+                
+                self.menuBar.append(self.lockM)
+            
+            self.revertMenu = gtk.Menu()
+            self.revertM = gtk.MenuItem("Revert")
+            self.revertM.set_submenu(self.revertMenu)
+            self.revertPW = gtk.MenuItem("with Password")
+            self.revertPW.connect("activate", self.revert_user_prompt)
+            self.revertPW.set_tooltip_text('Use password to revert the drive\'s LockingSP')
+            self.revertMenu.append(self.revertPW)
+            self.revertPSID = gtk.MenuItem("with PSID")
+            self.revertPSID.connect("activate", self.revert_psid_prompt)
+            self.revertPSID.set_tooltip_text('Use drive\'s PSID to revert drive to manufacturer settings')
+            self.revertMenu.append(self.revertPSID)
+            
+            self.menuBar.append(self.revertM)
+            
+            self.helpMenu = gtk.Menu()
+            self.helpM = gtk.MenuItem("Help")
+            self.helpM.set_submenu(self.helpMenu)
+            self.help1 = gtk.MenuItem("Help")
+            self.help1.set_tooltip_text('Access online help')
+            self.helpMenu.append(self.help1)
+            self.updateM = gtk.MenuItem("Check for updates")
+            self.updateM.set_tooltip_text('Check for an updated version of this app')
+            self.helpMenu.append(self.updateM)
+            self.aboutM = gtk.MenuItem("About")
+            self.aboutM.set_tooltip_text('About Fidelity Lock')
+            self.helpMenu.append(self.aboutM)
+            
+            self.menuBar.append(self.helpM)
+            
+            if self.VERSION < 3 and self.VERSION != 1:
+                self.upgradeMenu = gtk.Menu()
+                self.upgradeM = gtk.MenuItem("Upgrade")
+                self.upgradeM.set_submenu(self.upgradeMenu)
+                if self.VERSION == 0:
+                    self.upgradeBasic = gtk.MenuItem("Upgrade to Basic")
+                    self.upgradeMenu.append(self.upgradeBasic)
+                self.upgradePro = gtk.MenuItem("Upgrade to Pro")
+                self.upgradeMenu.append(self.upgradePro)
+                self.menuBar.append(self.upgradeM)
+            
+            self.hbox0.pack_start(self.menuBar, True, True, 0)
+            self.vbox0.pack_start(self.hbox0, False, False, 0)
+            
+            self.buttonBox = gtk.HBox(homogeneous, 0)
+            
+            self.go_button_cancel = gtk.Button('_Cancel')
+            
+            self.viewLog = gtk.Button('_View Audit Log')
+            
+            self.setup_next = gtk.Button('_Activate and Continue')
+            self.setupLockOnly = gtk.Button('_Skip writing Preboot Image')
+            self.setupLockPBA = gtk.Button('_Write Preboot Image')
+            
+            self.setupPWOnly = gtk.Button('_Set Up password')
+            
+            self.updatePBA_button = gtk.Button('_Update')
+            
+            self.go_button_changePW_confirm = gtk.Button('_Change Password')
+            
+            self.pbaUnlock = gtk.Button("_Unlock with password")
+            self.pbaUSB_button = gtk.Button('_Unlock with USB')
+            
+            self.unlockFull_button = gtk.Button('_Full Unlock')
+            self.unlockPartial_button = gtk.Button('_Partial Unlock')
+            
+            self.go_button_revert_user_confirm = gtk.Button('_Revert with Password')
+            self.go_button_revert_psid_confirm = gtk.Button('_Revert with PSID')
+            
+            self.lock_button = gtk.Button('_Lock Drive')
+            
+            self.op_label = gtk.Label('Main')
+            self.op_label.set_alignment(0,0.5)
+            self.vbox.pack_start(self.op_label, False, False, 0)
+            
+            self.noTCG_instr = gtk.Label('No TCG drives were detected, please insert a TCG drive and use \'Rescan devices\' to continue.')
+            self.noTCG_instr.set_alignment(0,0.5)
+            self.vbox.pack_start(self.noTCG_instr, False, False, 0)
+            
+            self.select_instr = gtk.Label('Select a drive from the dropdown menu.')
+            self.select_instr.set_alignment(0,0.5)
+            self.vbox.pack_start(self.select_instr, False, False, 0)
+            
+            self.main_instr = gtk.Label('Select an operation from the menu bar above.  Below are all detected drives.')
+            self.main_instr.set_alignment(0,0.5)
+            self.vbox.pack_start(self.main_instr, False, False, 0)
+            
+            self.naDevices_instr = gtk.Label('\nNo drives available for this operation.')
+            self.naDevices_instr.set_alignment(0,0.5)
+            self.vbox.pack_start(self.naDevices_instr, False, False, 0)
+            
+            self.op_instr = gtk.Label('\n\n')
+            self.op_instr.set_alignment(0,0.5)
+            
+            self.go_button_cancel.connect('clicked', self.returnToMain)
+            self.go_button_revert_user_confirm.connect('clicked', runop.run_revertUser, self)
+            self.go_button_revert_psid_confirm.connect('clicked', runop.run_revertPSID, self)
+            self.go_button_changePW_confirm.connect('clicked', runop.run_changePW, self)
+            self.setup_next.connect('clicked', runop.run_setupFull, self, 0)
+            self.updatePBA_button.connect('clicked', runop.run_pbaWrite, self, 0)
+            
+            self.setupLockOnly.connect('clicked', self.setup_finish)
+            self.setupLockPBA.connect('clicked', runop.run_pbaWrite, self, 1)
+            
+            self.setupPWOnly.connect('clicked', runop.run_setupFull, self, 1)
+            
+            self.pbaUnlock.connect("clicked", runop.run_unlockPBA, self)   
+            self.pbaUSB_button.connect("clicked", runop.run_unlockUSB, self)
+            
+            self.lock_button.connect('clicked', runop.run_lockset, self)
+            
+            self.unlockFull_button.connect('clicked', runop.run_unlockFull, self)
+            self.unlockPartial_button.connect('clicked', runop.run_unlockPartial, self)
+            
+            self.viewLog.connect('clicked', runop.openLog, self)
+
+            self.scan_passwordonly()
+            
+            self.wait_instr = gtk.Label('This may take a few seconds...')
+            self.pba_wait_instr = gtk.Label('Please wait, writing the preboot image will take a few minutes...')
+            self.vbox.pack_start(self.wait_instr, False, False, 5)
+            self.vbox.pack_start(self.pba_wait_instr, False, False, 5)
+            
+            self.waitSpin = gtk.Spinner()
+            self.vbox.pack_start(self.waitSpin, False, False, 5)
+            
+            self.vbox.pack_start(self.op_instr, True, False, 5)
+            
+            self.box_psid = gtk.HBox(homogeneous, 0)
+            
+            self.revert_psid_label = gtk.Label("Enter PSID")
+            self.revert_psid_label.set_width_chars(22)
+            self.revert_psid_label.set_alignment(0,0.5)
+            self.box_psid.pack_start(self.revert_psid_label, expand, fill, padding)
+            
+            self.revert_psid_entry = gtk.Entry()
+            self.revert_psid_entry.set_text("")
+            self.box_psid.pack_start(self.revert_psid_entry, True, True, padding)
+            
+            self.box_newpass_confirm = gtk.HBox(homogeneous, 0)
+            
+            self.confirm_pass_label = gtk.Label("Confirm new password")
+            self.confirm_pass_label.set_width_chars(22)
+            self.confirm_pass_label.set_alignment(0,0.5)
+            self.box_newpass_confirm.pack_start(self.confirm_pass_label, expand, fill, padding)
+            self.confirm_pass_entry = gtk.Entry()
+            self.confirm_pass_entry.set_text("")
+            self.confirm_pass_entry.set_width_chars(27)
+            self.confirm_pass_entry.set_visibility(False)
+            self.box_newpass_confirm.pack_start(self.confirm_pass_entry, False, False, padding)
+            
+            self.checkbox_box = gtk.HBox(homogeneous, 0)
+            
+            self.check_box_pass = gtk.CheckButton("Show Password")
+            self.check_box_pass.connect("toggled", self.entry_check_box_pass, self.check_box_pass)
+            self.check_box_pass.set_active(False)  # By default don't show
+            self.check_box_pass.show()
+            self.checkbox_box.pack_start(self.check_box_pass, expand, fill, padding)
+            
+            self.eraseData_check = gtk.CheckButton("Erase the drive's data")
+            self.eraseData_check.set_active(False)  # By default don't erase
+            self.eraseData_check.show()
+            self.checkbox_box.pack_start(self.eraseData_check, expand, fill, padding)
+            
+            check_align = gtk.Alignment(1,0,0,0)
+            check_align.add(self.checkbox_box)
+            
+            self.buttonBox.pack_start(self.setup_next, False, False, padding)
+            self.buttonBox.pack_start(self.setupLockOnly, False, False, padding)
+            self.buttonBox.pack_start(self.setupLockPBA, False, False, padding)
+            self.buttonBox.pack_start(self.go_button_changePW_confirm, False, False, padding)
+            self.buttonBox.pack_start(self.go_button_revert_user_confirm, False, False, padding)
+            self.buttonBox.pack_start(self.go_button_revert_psid_confirm, False, False, padding)
+            self.buttonBox.pack_start(self.pbaUnlock, False, False, padding)
+            self.buttonBox.pack_start(self.setupPWOnly, False, False, padding)
+            self.buttonBox.pack_start(self.updatePBA_button, False, False, padding)
+            self.buttonBox.pack_start(self.pbaUSB_button, False, False, padding)
+            self.buttonBox.pack_start(self.lock_button, False, False, padding)
+            self.buttonBox.pack_start(self.unlockFull_button, False, False, padding)
+            self.buttonBox.pack_start(self.unlockPartial_button, False, False, padding)
+            self.buttonBox.pack_start(self.viewLog, False, False, padding)
+            
+            self.buttonBox.pack_start(self.go_button_cancel, False, False, padding)
+            
+            self.pass_dialog()
+            self.new_pass_dialog()
+            
+            self.vbox.pack_start(self.box_newpass_confirm, False)
+            self.vbox.pack_start(self.box_psid, False)
+            
+            self.vbox.pack_start(check_align, False, False, padding)
+            
+            valign = gtk.Alignment(0,1,0,0)
+            self.vbox.pack_start(valign)
+            halign = gtk.Alignment(1,0,0,0)
+            halign.add(self.buttonBox)
+            self.vbox.pack_end(halign, False, False, padding)
+            
+            self.hbox.set_border_width(20)
+            
+            self.hbox.pack_start(self.vbox, True, True, padding)
+            self.vbox0.pack_start(self.hbox, True, True, padding)
+            
+            self.add(self.vbox0)
+            self.show_all()
+            
+            self.hideAll()
+            self.select_box.show()
+            self.main_instr.show()
+            self.op_label.show()
+                    
+            self.run_scan()
+            
+            if self.VERSION == 0:            #Demo
+                self.updateM.set_sensitive(False)
+                self.readLog.set_sensitive(False)
+                self.setupFull.set_sensitive(False)
+                self.setupPW.set_sensitive(False)
+                self.updatePBA.set_sensitive(False)
+                self.changePassword.set_sensitive(False)
+                self.revertPW.set_sensitive(False)
+                self.revertPSID.set_sensitive(False)
+                self.unlock1.set_sensitive(False)
+                self.unlockUSB.set_sensitive(False)
+                self.lockMI.set_sensitive(False) 
+            elif self.VERSION == 1:#PBA
+                self.unlock_prompt()
+            
+            print self.devs_list
+            print self.locked_list
+            print self.setup_list
+            print self.unlocked_list
+            print self.nonsetup_list
+            print self.tcg_list
+        else:
+            self.msg_err('No valid license of Fidelity Lock found, please register to get demo license or buy basic/premium license')
+            self.exitapp()
            
     def scan_passwordonly(self, *args):
         homogeneous = False
@@ -605,7 +628,7 @@ class LockApp(gtk.Window):
         
         self.dev_info.pack_start(self.msid_box, True, True, padding)
         
-        self.series_label = gtk.Label("Series")
+        self.series_label = gtk.Label("Firmware")
         self.series_label.set_alignment(0,0.5)
         self.series_label.set_width_chars(14)
         self.series_label.show()
@@ -768,10 +791,7 @@ class LockApp(gtk.Window):
                 self.dev_vendor.set_text(self.vendor_list[0])
                 self.dev_sn.set_text(self.sn_list[0])
                 self.dev_series.set_text(self.series_list[0])
-                if len(self.tcg_list) > 0 and (0 in self.tcg_list):
-                    self.dev_msid.set_text(self.get_msid())
-                else:
-                    self.dev_msid.set_text('N/A')
+                self.dev_msid.set_text(self.msid_list[0])
         elif self.view_state == 1:
             length = len(self.locked_list)
             if length > 0:
@@ -782,7 +802,7 @@ class LockApp(gtk.Window):
                 self.dev_vendor.set_text(self.vendor_list[self.locked_list[0]])
                 self.dev_sn.set_text(self.sn_list[self.locked_list[0]])
                 self.dev_series.set_text(self.series_list[self.locked_list[0]])
-                self.dev_msid.set_text(self.get_msid())
+                self.dev_msid.set_text(self.msid_list[self.locked_list[0]])
         elif self.view_state == 2:
             length = len(self.setup_list)
             if length > 0:
@@ -793,7 +813,7 @@ class LockApp(gtk.Window):
                 self.dev_vendor.set_text(self.vendor_list[self.setup_list[0]])
                 self.dev_sn.set_text(self.sn_list[self.setup_list[0]])
                 self.dev_series.set_text(self.series_list[self.setup_list[0]])
-                self.dev_msid.set_text(self.get_msid())
+                self.dev_msid.set_text(self.msid_list[self.setup_list[0]])
         elif self.view_state == 3:
             length = len(self.unlocked_list)
             if length > 0:
@@ -804,7 +824,7 @@ class LockApp(gtk.Window):
                 self.dev_vendor.set_text(self.vendor_list[self.unlocked_list[0]])
                 self.dev_sn.set_text(self.sn_list[self.unlocked_list[0]])
                 self.dev_series.set_text(self.series_list[self.unlocked_list[0]])
-                self.dev_msid.set_text(self.get_msid())
+                self.dev_msid.set_text(self.msid_list[self.unlocked_list[0]])
         elif self.view_state == 4:
             length = len(self.nonsetup_list)
             if length > 0:
@@ -815,7 +835,7 @@ class LockApp(gtk.Window):
                 self.dev_vendor.set_text(self.vendor_list[self.nonsetup_list[0]])
                 self.dev_sn.set_text(self.sn_list[self.nonsetup_list[0]])
                 self.dev_series.set_text(self.series_list[self.nonsetup_list[0]])
-                self.dev_msid.set_text(self.get_msid())
+                self.dev_msid.set_text(self.msid_list[self.nonsetup_list[0]])
         else:
             length = len(self.tcg_list)
             if length > 0:
@@ -826,7 +846,7 @@ class LockApp(gtk.Window):
                 self.dev_vendor.set_text(self.vendor_list[self.tcg_list[0]])
                 self.dev_sn.set_text(self.sn_list[self.tcg_list[0]])
                 self.dev_series.set_text(self.series_list[self.tcg_list[0]])
-                self.dev_msid.set_text(self.get_msid())
+                self.dev_msid.set_text(self.msid_list[self.tcg_list[0]])
             
         
         numTCG = len(self.tcg_list)
@@ -879,214 +899,220 @@ class LockApp(gtk.Window):
         self.dev_vendor.set_text(self.vendor_list[index])
         self.dev_sn.set_text(self.sn_list[index])
         self.dev_series.set_text(self.series_list[index])
-        if index in self.tcg_list:
-            self.dev_msid.set_text(self.get_msid())
-        else:
-            self.dev_msid.set_text('N/A')
+        self.dev_msid.set_text(self.msid_list[index])
         self.dev_opal_ver.set_text(self.opal_ver_list[index])
         txt2 = ""
         txt = os.popen(self.prefix + "sedutil-cli --query " + self.devname ).read()
+        
+        txt_msid = os.popen(self.prefix + "sedutil-cli --printDefaultPassword " + self.devs_list[index] ).read()
+        x_words = txt_msid.split(': ',1)
+        msid = re.sub(r'\n', '', x_words[1])
         
         if mode == 1:
             txt11 = "Locked ="
             m = re.search(txt11, txt)
             if m:
-                print m.group()
+                #print m.group()
 
-            txt_L = "Locked = Y"
-            txt_UL = "Locked = N"
-            txt_S = "LockingEnabled = Y"
-            txt_BSID = "BlockSID"
-            txt_BSID_enabled = "BlockSID_BlockSIDState = 0x001"
-            
-            isLocked = re.search(txt_L, txt)
-            isUnlocked = re.search(txt_UL, txt)
-            isSetup = re.search(txt_S, txt)
-            hasBlockSID = re.search(txt_BSID, txt)
-            isBlockSID = re.search(txt_BSID_enabled, txt)
-            
-            if isLocked:
-                self.dev_status.set_text("Locked")
-                self.dev_setup.set_text("Yes")
-            elif isUnlocked:
-                self.dev_status.set_text("Unlocked")
-                if isSetup:
+
+                txt_L = "Locked = Y"
+                txt_UL = "Locked = N"
+                txt_S = "LockingEnabled = Y"
+                txt_ALO = "AUTHORITY_LOCKED_OUT"
+                txt_NA = "NOT_AUTHORIZED"
+                txt_BSID = "BlockSID"
+                txt_BSID_enabled = "BlockSID_BlockSIDState = 0x001"
+                
+                msidText = os.popen(self.prefix + 'sedutil-cli -n --getmbrsize ' + msid + ' ' + self.devs_list[index]).read()
+
+                isLocked = re.search(txt_L, txt)
+                isUnlocked = re.search(txt_UL, txt)
+                isSetup = (re.search(txt_S, txt) != None) & (msidText == '')
+                hasBlockSID = re.search(txt_BSID, txt)
+                isBlockSID = re.search(txt_BSID_enabled, txt)
+                
+                if isLocked:
+                    self.dev_status.set_text("Locked")
                     self.dev_setup.set_text("Yes")
+                elif isUnlocked:
+                    self.dev_status.set_text("Unlocked")
+                    if isSetup:
+                        self.dev_setup.set_text("Yes")
+                    else:
+                        self.dev_setup.set_text("No")
                 else:
-                    self.dev_setup.set_text("No")
-            else:
-                self.dev_status.set_text("N/A")
-                self.dev_setup.set_text("N/A")
-                
-            if hasBlockSID and isBlockSID:
-                self.dev_blockSID.set_text("Enabled")
-            elif hasBlockSID:
-                self.dev_blockSID.set_texT("Disabled")
-            else:
-                self.dev_blockSID.set_text("Not Supported")
-                
-        elif index in self.tcg_list:
-            queryTextList = ["Fidelity Lock Query information for device " + self.devname + "\n"]
-            
-            txtVersion = os.popen(self.prefix + "sedutil-cli --version" ).read()
-            queryTextList.append(txtVersion + "\n\nDevice information\n")
-            
-            queryTextList.append("Model: " + self.dev_vendor.get_text() + "\n")
-            queryTextList.append("Serial Number: " + self.dev_sn.get_text() + "\n")
-            queryTextList.append("TCG SSC: " + self.dev_opal_ver.get_text() + "\n")
-            queryTextList.append("MSID: " + self.get_msid() + "\n")
-            
-            txtState = os.popen(self.prefix + "sedutil-cli --getmfgstate " + self.devname).read()
-            queryTextList.append(txtState + "\nLocking information\n")
-            
-            queryTextList.append("Lock Status: " + self.dev_status.get_text() + "\n")
-            
-            t = [ "Locked = [YN], LockingEnabled = [YN], LockingSupported = [YN], MBRDone = [YN], MBREnabled = [YN]",
-                "Locking Objects = [0-9]*",
-                "Max Tables = [0-9]*, Max Size Tables = [0-9]*",
-                "Locking Admins = [0-9]*.*, Locking Users = [0-9]*.",
-                "Policy = [NY].*",
-                "Base comID = 0x[0-9A-F]*, Initial PIN = 0x[0-9A-F]*"]
-
-            for txt11 in t:
-                m = re.search(txt11, txt) # 1 or 2 follow by anything ; look for Opal drive
-                if m:
-                    txt1 = m.group()
-                    txt11 = txt1.replace("Locking ", "")            
-                    txt1 = txt11
-                    txt11 = txt1.replace(", ", "\n")
-                    txt2 = txt2 + txt11 + "\n"
-            txt2 = self.devname + " " + self.dev_vendor.get_text() + "\n" + txt2
-            print txt2
-        
-            tt = [ "Locked = [YN]", 
-                    "LockingEnabled = [YN]",
-                    "LockingSupported = [YN]",
-                    "MBRDone = [YN]",
-                    "MBREnabled = [YN]",
-                    "Objects = [0-9]*",
-                    "Max Tables = [0-9]*",
-                    "Max Size Tables = [0-9]*",
-                    "Admins = [0-9]",
-                    "Users = [0-9]*",
-                    "Policy = [YN]",
-                    "Base comID = 0x[0-9A-F]*",
-                    "Initial PIN = 0x[0-9A-F]*"]
+                    self.dev_status.set_text("N/A")
+                    self.dev_setup.set_text("N/A")
                     
-            sts_Locked = ""
-            sts_LockingEnabled = ""
-            sts_LockingSupported = ""
-            sts_MBRDone = ""
-            sts_MBREnabled = ""
-            tblsz = ""
-            nbr_MaxTables = ""
-            nbr_Admins = ""
-            nbr_Users = ""
-            singleUser = ""
-            comID_base = ""
-            initialPIN = ""
-            nbr_Objects = ""
-            for txt_33 in tt:
-                m = re.search(txt_33,txt2) 
-                if m:
-                    t3 = m.group()
-                    x_words = t3.split(' = ',1)
-                    print x_words[0] # keyword
-                    if x_words[0] == "Locked":
-                        sts_Locked = x_words[1]
-                    elif x_words[0] == "LockingEnabled":
-                        sts_LockingEnabled = x_words[1]                   
-                    elif x_words[0] == "LockingSupported":
-                        sts_LockingSupported = x_words[1]
-                    elif x_words[0] == "MBRDone":
-                        sts_MBRDone = x_words[1]
-                    elif x_words[0] == "MBREnabled":
-                        sts_MBREnabled = x_words[1]
-                    elif x_words[0] == "Max Size Tables":
-                        tblsz_i = int(x_words[1],10) # 10 base      
-                        tblsz = str(tblsz_i/1000000) + "MB"
-                        print ("x_words[1] = ", x_words[1])
-                    elif x_words[0] == "Max Tables":
-                        nbr_MaxTables = x_words[1]
-                    elif x_words[0] == "Objects":
-                        nbr_Objects = x_words[1]
-                    elif x_words[0] == "Admins":
-                        nbr_Admins = x_words[1]
-                    elif x_words[0] == "Users":
-                        nbr_Users = x_words[1]  
-                    elif x_words[0] == "Policy":
-                        singleUser = x_words[1]
-                    elif x_words[0] == "Base comID":
-                        comID_base = x_words[1]
-                    elif x_words[0] == "Initial PIN":
-                        initialPIN = x_words[1]
-            queryTextList.append("Locked: " + sts_Locked + "\n")
-            queryTextList.append("Locking Enabled: " + sts_LockingEnabled + "\n")
-            queryTextList.append("Locking Supported: " + sts_LockingSupported + "\n")
-            queryTextList.append("Shadow MBR Enabled: " + sts_MBREnabled + "\n")
-            queryTextList.append("Shadow MBR Done: " + sts_MBRDone + "\n\nSingle User information\n")
-            queryTextList.append("Single User Mode Support: " + singleUser + "\n")
-            queryTextList.append("Number of Locking Ranges Supported: " + nbr_Objects + "\n\nDataStore information\n")
-            queryTextList.append("DataStore Table Size: " + tblsz + "\n")
-            queryTextList.append("Number of DataStore Tables: " + nbr_MaxTables + "\n\nOpal information\n")
-            queryTextList.append("Number of Admins: " + nbr_Admins + "\n")
-            queryTextList.append("Number of Users: " + nbr_Users + "\n")
-            queryTextList.append("Base comID: " + comID_base + "\n")
-            queryTextList.append("Initial PIN: " + initialPIN + "\n")
+                if hasBlockSID and isBlockSID:
+                    self.dev_blockSID.set_text("Enabled")
+                elif hasBlockSID:
+                    self.dev_blockSID.set_texT("Disabled")
+                else:
+                    self.dev_blockSID.set_text("Not Supported")
+                    
+            elif index in self.tcg_list:
+                queryTextList = ["Fidelity Lock Query information for device " + self.devname + "\n"]
+                
+                txtVersion = os.popen(self.prefix + "sedutil-cli --version" ).read()
+                queryTextList.append(txtVersion + "\n\nDevice information\n")
+                
+                queryTextList.append("Model: " + self.dev_vendor.get_text() + "\n")
+                queryTextList.append("Serial Number: " + self.dev_sn.get_text() + "\n")
+                queryTextList.append("TCG SSC: " + self.dev_opal_ver.get_text() + "\n")
+                queryTextList.append("MSID: " + self.dev_msid.get_text() + "\n")
+                
+                txtState = os.popen(self.prefix + "sedutil-cli --getmfgstate " + self.devname).read()
+                queryTextList.append(txtState + "\nLocking information\n")
+                
+                queryTextList.append("Lock Status: " + self.dev_status.get_text() + "\n")
+                
+                t = [ "Locked = [YN], LockingEnabled = [YN], LockingSupported = [YN], MBRDone = [YN], MBREnabled = [YN]",
+                    "Locking Objects = [0-9]*",
+                    "Max Tables = [0-9]*, Max Size Tables = [0-9]*",
+                    "Locking Admins = [0-9]*.*, Locking Users = [0-9]*.",
+                    "Policy = [NY].*",
+                    "Base comID = 0x[0-9A-F]*, Initial PIN = 0x[0-9A-F]*"]
+
+                for txt11 in t:
+                    m = re.search(txt11, txt) # 1 or 2 follow by anything ; look for Opal drive
+                    if m:
+                        txt1 = m.group()
+                        txt11 = txt1.replace("Locking ", "")            
+                        txt1 = txt11
+                        txt11 = txt1.replace(", ", "\n")
+                        txt2 = txt2 + txt11 + "\n"
+                txt2 = self.devname + " " + self.dev_vendor.get_text() + "\n" + txt2
+                print txt2
             
-            self.queryWinText = ''.join(queryTextList)
-        
-            if not self.scanning :
-                queryWin = gtk.Window()
-                queryWin.set_title("Query Device")
+                tt = [ "Locked = [YN]", 
+                        "LockingEnabled = [YN]",
+                        "LockingSupported = [YN]",
+                        "MBRDone = [YN]",
+                        "MBREnabled = [YN]",
+                        "Objects = [0-9]*",
+                        "Max Tables = [0-9]*",
+                        "Max Size Tables = [0-9]*",
+                        "Admins = [0-9]",
+                        "Users = [0-9]*",
+                        "Policy = [YN]",
+                        "Base comID = 0x[0-9A-F]*",
+                        "Initial PIN = 0x[0-9A-F]*"]
+                        
+                sts_Locked = ""
+                sts_LockingEnabled = ""
+                sts_LockingSupported = ""
+                sts_MBRDone = ""
+                sts_MBREnabled = ""
+                tblsz = ""
+                nbr_MaxTables = ""
+                nbr_Admins = ""
+                nbr_Users = ""
+                singleUser = ""
+                comID_base = ""
+                initialPIN = ""
+                nbr_Objects = ""
+                for txt_33 in tt:
+                    m = re.search(txt_33,txt2) 
+                    if m:
+                        t3 = m.group()
+                        x_words = t3.split(' = ',1)
+                        print x_words[0] # keyword
+                        if x_words[0] == "Locked":
+                            sts_Locked = x_words[1]
+                        elif x_words[0] == "LockingEnabled":
+                            sts_LockingEnabled = x_words[1]                   
+                        elif x_words[0] == "LockingSupported":
+                            sts_LockingSupported = x_words[1]
+                        elif x_words[0] == "MBRDone":
+                            sts_MBRDone = x_words[1]
+                        elif x_words[0] == "MBREnabled":
+                            sts_MBREnabled = x_words[1]
+                        elif x_words[0] == "Max Size Tables":
+                            tblsz_i = int(x_words[1],10) # 10 base      
+                            tblsz = str(tblsz_i/1000000) + "MB"
+                            print ("x_words[1] = ", x_words[1])
+                        elif x_words[0] == "Max Tables":
+                            nbr_MaxTables = x_words[1]
+                        elif x_words[0] == "Objects":
+                            nbr_Objects = x_words[1]
+                        elif x_words[0] == "Admins":
+                            nbr_Admins = x_words[1]
+                        elif x_words[0] == "Users":
+                            nbr_Users = x_words[1]  
+                        elif x_words[0] == "Policy":
+                            singleUser = x_words[1]
+                        elif x_words[0] == "Base comID":
+                            comID_base = x_words[1]
+                        elif x_words[0] == "Initial PIN":
+                            initialPIN = x_words[1]
+                queryTextList.append("Locked: " + sts_Locked + "\n")
+                queryTextList.append("Locking Enabled: " + sts_LockingEnabled + "\n")
+                queryTextList.append("Locking Supported: " + sts_LockingSupported + "\n")
+                queryTextList.append("Shadow MBR Enabled: " + sts_MBREnabled + "\n")
+                queryTextList.append("Shadow MBR Done: " + sts_MBRDone + "\n\nSingle User information\n")
+                queryTextList.append("Single User Mode Support: " + singleUser + "\n")
+                queryTextList.append("Number of Locking Ranges Supported: " + nbr_Objects + "\n\nDataStore information\n")
+                queryTextList.append("DataStore Table Size: " + tblsz + "\n")
+                queryTextList.append("Number of DataStore Tables: " + nbr_MaxTables + "\n\nOpal information\n")
+                queryTextList.append("Number of Admins: " + nbr_Admins + "\n")
+                queryTextList.append("Number of Users: " + nbr_Users + "\n")
+                queryTextList.append("Base comID: " + comID_base + "\n")
+                queryTextList.append("Initial PIN: " + initialPIN + "\n")
                 
-                winWidth = 400
-                winHeight = 500
-                
-                scrolledWin = gtk.ScrolledWindow()
-                scrolledWin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-                
-                queryWin.set_size_request(winWidth, winHeight)
-                if os.path.isfile('icon.jpg'):
-                    queryWin.set_icon_from_file('icon.jpg')
-                
-                queryText = gtk.Label(txt2)
-                queryVbox = gtk.VBox(False, 0)
-                queryVbox.set_border_width(10)
-                
-                queryTextView = gtk.TextView()
-                queryTextView.set_editable(False)
-                self.queryTextBuffer = queryTextView.get_buffer()
-                self.queryTextBuffer.set_text(self.queryWinText)
-                scrolledWin.add_with_viewport(queryTextView)
-                queryVbox.pack_start(scrolledWin, True, True, 0)
-                
-                query_instr = gtk.Label('Enter the device\'s password to access more query information.')
-                queryVbox.pack_start(query_instr, False, False, 0)
-                
-                self.passBoxQ = gtk.HBox(False, 0)
-                passLabel = gtk.Label('Enter Password')
-                self.queryPass = gtk.Entry()
-                self.queryPass.set_visibility(False)
-                
-                submitPass = gtk.Button('Submit')
-                submitPass.connect("clicked", self.queryAuth)
-                self.passBoxQ.pack_start(passLabel, True, True, 0)
-                self.passBoxQ.pack_start(self.queryPass, True, True, 0)
-                self.passBoxQ.pack_start(submitPass, False, False, 0)
-                queryVbox.pack_start(self.passBoxQ, False, False, 0)
-                
-                save_instr = gtk.Label('Press \'Save to text file\' to save the query information in a file.')
-                queryVbox.pack_start(save_instr, False, False, 0)
-                
-                querySave = gtk.Button('_Save to text file')
-                querySave.connect("clicked", self.saveToText)
-                queryVbox.pack_start(querySave, False, False, 0)
-                queryWin.add(queryVbox)
-                queryWin.show_all()
-                
-            else:
-                self.scanning = False
+                self.queryWinText = ''.join(queryTextList)
+            
+                if not self.scanning :
+                    queryWin = gtk.Window()
+                    queryWin.set_title("Query Device")
+                    
+                    winWidth = 400
+                    winHeight = 500
+                    
+                    scrolledWin = gtk.ScrolledWindow()
+                    scrolledWin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+                    
+                    queryWin.set_size_request(winWidth, winHeight)
+                    if os.path.isfile('icon.jpg'):
+                        queryWin.set_icon_from_file('icon.jpg')
+                    
+                    queryText = gtk.Label(txt2)
+                    queryVbox = gtk.VBox(False, 0)
+                    queryVbox.set_border_width(10)
+                    
+                    queryTextView = gtk.TextView()
+                    queryTextView.set_editable(False)
+                    self.queryTextBuffer = queryTextView.get_buffer()
+                    self.queryTextBuffer.set_text(self.queryWinText)
+                    scrolledWin.add_with_viewport(queryTextView)
+                    queryVbox.pack_start(scrolledWin, True, True, 0)
+                    
+                    query_instr = gtk.Label('Enter the device\'s password to access more query information.')
+                    queryVbox.pack_start(query_instr, False, False, 0)
+                    
+                    self.passBoxQ = gtk.HBox(False, 0)
+                    passLabel = gtk.Label('Enter Password')
+                    self.queryPass = gtk.Entry()
+                    self.queryPass.set_visibility(False)
+                    
+                    submitPass = gtk.Button('Submit')
+                    submitPass.connect("clicked", self.queryAuth)
+                    self.passBoxQ.pack_start(passLabel, True, True, 0)
+                    self.passBoxQ.pack_start(self.queryPass, True, True, 0)
+                    self.passBoxQ.pack_start(submitPass, False, False, 0)
+                    queryVbox.pack_start(self.passBoxQ, False, False, 0)
+                    
+                    save_instr = gtk.Label('Press \'Save to text file\' to save the query information in a file.')
+                    queryVbox.pack_start(save_instr, False, False, 0)
+                    
+                    querySave = gtk.Button('_Save to text file')
+                    querySave.connect("clicked", self.saveToText)
+                    queryVbox.pack_start(querySave, False, False, 0)
+                    queryWin.add(queryVbox)
+                    queryWin.show_all()
+                    
+                else:
+                    self.scanning = False
         else:
             self.msg_err('Non-TCG devices cannot be queried.')
 
@@ -1147,32 +1173,37 @@ class LockApp(gtk.Window):
             self.dev_vendor.set_text(self.vendor_list[act_idx])
             self.dev_single.set_text(self.devs_list[act_idx])
             self.dev_sn.set_text(self.sn_list[act_idx])
+            self.dev_msid.set_text(self.msid_list[act_idx])
         elif self.view_state == 1:
             self.devname = self.devs_list[self.locked_list[act_idx]]
             self.dev_vendor.set_text(self.vendor_list[self.locked_list[act_idx]])
             self.dev_single.set_text(self.devs_list[self.locked_list[act_idx]])
             self.dev_sn.set_text(self.sn_list[self.locked_list[act_idx]])
+            self.dev_msid.set_text(self.msid_list[self.locked_list[act_idx]])
         elif self.view_state == 2:
             self.devname = self.devs_list[self.setup_list[act_idx]]
             self.dev_vendor.set_text(self.vendor_list[self.setup_list[act_idx]])
             self.dev_single.set_text(self.devs_list[self.setup_list[act_idx]])
             self.dev_sn.set_text(self.sn_list[self.setup_list[act_idx]])
+            self.dev_msid.set_text(self.msid_list[self.setup_list[act_idx]])
         elif self.view_state == 3:
             self.devname = self.devs_list[self.unlocked_list[act_idx]]
             self.dev_vendor.set_text(self.vendor_list[self.unlocked_list[act_idx]])
             self.dev_single.set_text(self.devs_list[self.unlocked_list[act_idx]])
             self.dev_sn.set_text(self.sn_list[self.unlocked_list[act_idx]])
+            self.dev_msid.set_text(self.msid_list[self.unlocked_list[act_idx]])
         elif self.view_state == 4:
             self.devname = self.devs_list[self.nonsetup_list[act_idx]]
             self.dev_vendor.set_text(self.vendor_list[self.nonsetup_list[act_idx]])
             self.dev_single.set_text(self.devs_list[self.nonsetup_list[act_idx]])
             self.dev_sn.set_text(self.sn_list[self.nonsetup_list[act_idx]])
+            self.dev_msid.set_text(self.msid_list[self.nonsetup_list[act_idx]])
         else:
             self.devname = self.devs_list[self.tcg_list[act_idx]]
             self.dev_vendor.set_text(self.vendor_list[self.tcg_list[act_idx]])
             self.dev_single.set_text(self.devs_list[self.tcg_list[act_idx]])
             self.dev_sn.set_text(self.sn_list[self.tcg_list[act_idx]])
-        self.dev_msid.set_text(self.get_msid())
+            self.dev_msid.set_text(self.msid_list[self.tcg_list[act_idx]])
             
         if self.opal_ver_list[act_idx] != "None":
             self.scanning = True
@@ -1184,13 +1215,13 @@ class LockApp(gtk.Window):
             self.dev_msid.set_text("N/A")
             self.dev_setup.set_text("N/A")
             
-    def get_msid(self, *args):  
-        txt = os.popen(self.prefix + "sedutil-cli --printDefaultPassword " + self.devname ).read()
-        if txt == '' :
-            return
-        x_words = txt.split(': ',1)
-        msid = re.sub(r'\n', '', x_words[1])
-        return msid
+    #def get_msid(self, *args):  
+    #    txt = os.popen(self.prefix + "sedutil-cli --printDefaultPassword " + self.devname ).read()
+    #    if txt == '' :
+    #        return
+    #    x_words = txt.split(': ',1)
+    #    msid = re.sub(r'\n', '', x_words[1])
+    #    return msid
     
     def pass_dialog(self, *args):
         # Create a new hbox with the appropriate homogeneous and spacing settings
@@ -1299,9 +1330,11 @@ class LockApp(gtk.Window):
         message.destroy()
         
     def setup_finish(self, *args):
+        index = self.nonsetup_list[self.dev_select.get_active()]
         #popup message to signal setup complete
         self.msg_ok("Device " + self.devname + "has been setup successfully.") 
-        self.query(1)
+        self.updateDevs(index,[2,3])
+        
         self.returnToMain()
 
     def returnToMain(self, *args):
@@ -1319,11 +1352,7 @@ class LockApp(gtk.Window):
         self.query(1)
             
         if self.VERSION == 1:
-            if len(self.devs_list) == 1 and self.dev_status.get_text() == "Locked":
-                self.unlock_instr.show()
-
-                self.box_pass.show()
-                self.pbaUnlock.show()
+            self.unlock_prompt()
             
     def setup_prompt1(self, *args):
         self.hideAll()
@@ -1422,7 +1451,7 @@ class LockApp(gtk.Window):
         self.hideAll()
         self.go_button_cancel.show()
         self.op_label.set_text('Change Password')
-        self.op_instr.set_text('\n\nTo change the password of the selected drive, enter the drive\'s current password and the new password.')
+        self.op_instr.set_text('\n\nTo change the password of the selected drive, enter the drive\'s current password\nand the new password.')
         
         if self.view_state != 2:
             self.view_state = 2
@@ -1515,7 +1544,7 @@ class LockApp(gtk.Window):
             self.pbaUnlock.show()
             
             self.check_box_pass.show()
-            
+        
             self.query(1)
             
         else:
@@ -1687,6 +1716,25 @@ class LockApp(gtk.Window):
         self.lockM.set_sensitive(False)
         self.revertM.set_sensitive(False)
         self.helpM.set_sensitive(False)
+        self.go_button_cancel.set_sensitive(False)
+        self.go_button_revert_user_confirm.set_sensitive(False)
+        self.go_button_revert_psid_confirm.set_sensitive(False)
+        self.go_button_changePW_confirm.set_sensitive(False)
+        self.setupLockOnly.set_sensitive(False)
+        self.setupLockPBA.set_sensitive(False)        
+        self.pbaUnlock.set_sensitive(False)
+        self.setupPWOnly.set_sensitive(False)
+        self.updatePBA_button.set_sensitive(False)
+        self.pbaUSB_button.set_sensitive(False)
+        self.lock_button.set_sensitive(False)
+        self.unlockFull_button.set_sensitive(False)
+        self.unlockPartial_button.set_sensitive(False)
+        self.viewLog.set_sensitive(False)
+        
+        self.box_newpass.set_sensitive(False)
+        self.box_newpass_confirm.set_sensitive(False)
+        self.setup_next.set_sensitive(False)
+        
         
     def enable_menu(self, *args):
         self.navM.set_sensitive(True)
@@ -1697,30 +1745,43 @@ class LockApp(gtk.Window):
         self.revertM.set_sensitive(True)
         self.helpM.set_sensitive(True)
         
-    def updateDevs(self, index, old, new, *args):
-        if old == 1:
+        self.go_button_cancel.set_sensitive(True)
+        self.go_button_revert_user_confirm.set_sensitive(True)
+        self.go_button_revert_psid_confirm.set_sensitive(True)
+        self.go_button_changePW_confirm.set_sensitive(True)
+        self.setupLockOnly.set_sensitive(True)
+        self.setupLockPBA.set_sensitive(True)        
+        self.pbaUnlock.set_sensitive(True)
+        self.setupPWOnly.set_sensitive(True)
+        self.updatePBA_button.set_sensitive(True)
+        self.pbaUSB_button.set_sensitive(True)
+        self.lock_button.set_sensitive(True)
+        self.unlockFull_button.set_sensitive(True)
+        self.unlockPartial_button.set_sensitive(True)
+        self.viewLog.set_sensitive(True)
+        
+        self.box_newpass.set_sensitive(True)
+        self.box_newpass_confirm.set_sensitive(True)
+        self.setup_next.set_sensitive(True)
+        
+    def updateDevs(self, index, add, *args):
+        if index in self.locked_list:
             self.locked_list.remove(index)
-            if new >= 3:
-                self.nonsetup_list.append(index)
-                if new == 3:
-                    self.unlocked_list.append(index)
-                else:
-                    self.setup_list.remove(index)
-        elif old == 3:
+        if index in self.setup_list:
+            self.setup_list.remove(index)
+        if index in self.unlocked_list:
             self.unlocked_list.remove(index)
-            if index not in self.setup_list:
-                self.setup_list.append(index)
-            if new == 1:
-                self.nonsetup_list.remove(index)
+        if index in self.nonsetup_list:
+            self.nonsetup_list.remove(index)
+        for j in add:
+            if j == 1:
                 self.locked_list.append(index)
-        elif old == 4:
-            if index not in self.setup_list:
+            elif j == 2:
                 self.setup_list.append(index)
-            if new == 1:
-                self.nonsetup_list.remove(index)
-                self.locked_list.append(index)
-            elif new == 3:
+            elif j == 3:
                 self.unlocked_list.append(index)
+            elif j == 4:
+                self.nonsetup_list.append(index)
                 
         self.locked_list.sort()
         self.setup_list.sort()
