@@ -951,168 +951,168 @@ class LockApp(gtk.Window):
                 else:
                     self.dev_blockSID.set_text("Not Supported")
                     
-            elif index in self.tcg_list:
-                queryTextList = ["Fidelity Lock Query information for device " + self.devname + "\n"]
-                
-                txtVersion = os.popen(self.prefix + "sedutil-cli --version" ).read()
-                queryTextList.append(txtVersion + "\n\nDevice information\n")
-                
-                queryTextList.append("Model: " + self.dev_vendor.get_text() + "\n")
-                queryTextList.append("Serial Number: " + self.dev_sn.get_text() + "\n")
-                queryTextList.append("TCG SSC: " + self.dev_opal_ver.get_text() + "\n")
-                queryTextList.append("MSID: " + self.dev_msid.get_text() + "\n")
-                
-                txtState = os.popen(self.prefix + "sedutil-cli --getmfgstate " + self.devname).read()
-                queryTextList.append(txtState + "\nLocking information\n")
-                
-                queryTextList.append("Lock Status: " + self.dev_status.get_text() + "\n")
-                
-                t = [ "Locked = [YN], LockingEnabled = [YN], LockingSupported = [YN], MBRDone = [YN], MBREnabled = [YN]",
-                    "Locking Objects = [0-9]*",
-                    "Max Tables = [0-9]*, Max Size Tables = [0-9]*",
-                    "Locking Admins = [0-9]*.*, Locking Users = [0-9]*.",
-                    "Policy = [NY].*",
-                    "Base comID = 0x[0-9A-F]*, Initial PIN = 0x[0-9A-F]*"]
+        elif index in self.tcg_list:
+            queryTextList = ["Fidelity Lock Query information for device " + self.devname + "\n"]
+            
+            txtVersion = os.popen(self.prefix + "sedutil-cli --version" ).read()
+            queryTextList.append(txtVersion + "\n\nDevice information\n")
+            
+            queryTextList.append("Model: " + self.dev_vendor.get_text() + "\n")
+            queryTextList.append("Serial Number: " + self.dev_sn.get_text() + "\n")
+            queryTextList.append("TCG SSC: " + self.dev_opal_ver.get_text() + "\n")
+            queryTextList.append("MSID: " + self.dev_msid.get_text() + "\n")
+            
+            txtState = os.popen(self.prefix + "sedutil-cli --getmfgstate " + self.devname).read()
+            queryTextList.append(txtState + "\nLocking information\n")
+            
+            queryTextList.append("Lock Status: " + self.dev_status.get_text() + "\n")
+            
+            t = [ "Locked = [YN], LockingEnabled = [YN], LockingSupported = [YN], MBRDone = [YN], MBREnabled = [YN]",
+                "Locking Objects = [0-9]*",
+                "Max Tables = [0-9]*, Max Size Tables = [0-9]*",
+                "Locking Admins = [0-9]*.*, Locking Users = [0-9]*.",
+                "Policy = [NY].*",
+                "Base comID = 0x[0-9A-F]*, Initial PIN = 0x[0-9A-F]*"]
 
-                for txt11 in t:
-                    m = re.search(txt11, txt) # 1 or 2 follow by anything ; look for Opal drive
-                    if m:
-                        txt1 = m.group()
-                        txt11 = txt1.replace("Locking ", "")            
-                        txt1 = txt11
-                        txt11 = txt1.replace(", ", "\n")
-                        txt2 = txt2 + txt11 + "\n"
-                txt2 = self.devname + " " + self.dev_vendor.get_text() + "\n" + txt2
-                print txt2
+            for txt11 in t:
+                m = re.search(txt11, txt) # 1 or 2 follow by anything ; look for Opal drive
+                if m:
+                    txt1 = m.group()
+                    txt11 = txt1.replace("Locking ", "")            
+                    txt1 = txt11
+                    txt11 = txt1.replace(", ", "\n")
+                    txt2 = txt2 + txt11 + "\n"
+            txt2 = self.devname + " " + self.dev_vendor.get_text() + "\n" + txt2
+            print txt2
+        
+            tt = [ "Locked = [YN]", 
+                    "LockingEnabled = [YN]",
+                    "LockingSupported = [YN]",
+                    "MBRDone = [YN]",
+                    "MBREnabled = [YN]",
+                    "Objects = [0-9]*",
+                    "Max Tables = [0-9]*",
+                    "Max Size Tables = [0-9]*",
+                    "Admins = [0-9]",
+                    "Users = [0-9]*",
+                    "Policy = [YN]",
+                    "Base comID = 0x[0-9A-F]*",
+                    "Initial PIN = 0x[0-9A-F]*"]
+                    
+            sts_Locked = ""
+            sts_LockingEnabled = ""
+            sts_LockingSupported = ""
+            sts_MBRDone = ""
+            sts_MBREnabled = ""
+            tblsz = ""
+            nbr_MaxTables = ""
+            nbr_Admins = ""
+            nbr_Users = ""
+            singleUser = ""
+            comID_base = ""
+            initialPIN = ""
+            nbr_Objects = ""
+            for txt_33 in tt:
+                m = re.search(txt_33,txt2) 
+                if m:
+                    t3 = m.group()
+                    x_words = t3.split(' = ',1)
+                    print x_words[0] # keyword
+                    if x_words[0] == "Locked":
+                        sts_Locked = x_words[1]
+                    elif x_words[0] == "LockingEnabled":
+                        sts_LockingEnabled = x_words[1]                   
+                    elif x_words[0] == "LockingSupported":
+                        sts_LockingSupported = x_words[1]
+                    elif x_words[0] == "MBRDone":
+                        sts_MBRDone = x_words[1]
+                    elif x_words[0] == "MBREnabled":
+                        sts_MBREnabled = x_words[1]
+                    elif x_words[0] == "Max Size Tables":
+                        tblsz_i = int(x_words[1],10) # 10 base      
+                        tblsz = str(tblsz_i/1000000) + "MB"
+                        print ("x_words[1] = ", x_words[1])
+                    elif x_words[0] == "Max Tables":
+                        nbr_MaxTables = x_words[1]
+                    elif x_words[0] == "Objects":
+                        nbr_Objects = x_words[1]
+                    elif x_words[0] == "Admins":
+                        nbr_Admins = x_words[1]
+                    elif x_words[0] == "Users":
+                        nbr_Users = x_words[1]  
+                    elif x_words[0] == "Policy":
+                        singleUser = x_words[1]
+                    elif x_words[0] == "Base comID":
+                        comID_base = x_words[1]
+                    elif x_words[0] == "Initial PIN":
+                        initialPIN = x_words[1]
+            queryTextList.append("Locked: " + sts_Locked + "\n")
+            queryTextList.append("Locking Enabled: " + sts_LockingEnabled + "\n")
+            queryTextList.append("Locking Supported: " + sts_LockingSupported + "\n")
+            queryTextList.append("Shadow MBR Enabled: " + sts_MBREnabled + "\n")
+            queryTextList.append("Shadow MBR Done: " + sts_MBRDone + "\n\nSingle User information\n")
+            queryTextList.append("Single User Mode Support: " + singleUser + "\n")
+            queryTextList.append("Number of Locking Ranges Supported: " + nbr_Objects + "\n\nDataStore information\n")
+            queryTextList.append("DataStore Table Size: " + tblsz + "\n")
+            queryTextList.append("Number of DataStore Tables: " + nbr_MaxTables + "\n\nOpal information\n")
+            queryTextList.append("Number of Admins: " + nbr_Admins + "\n")
+            queryTextList.append("Number of Users: " + nbr_Users + "\n")
+            queryTextList.append("Base comID: " + comID_base + "\n")
+            queryTextList.append("Initial PIN: " + initialPIN + "\n")
             
-                tt = [ "Locked = [YN]", 
-                        "LockingEnabled = [YN]",
-                        "LockingSupported = [YN]",
-                        "MBRDone = [YN]",
-                        "MBREnabled = [YN]",
-                        "Objects = [0-9]*",
-                        "Max Tables = [0-9]*",
-                        "Max Size Tables = [0-9]*",
-                        "Admins = [0-9]",
-                        "Users = [0-9]*",
-                        "Policy = [YN]",
-                        "Base comID = 0x[0-9A-F]*",
-                        "Initial PIN = 0x[0-9A-F]*"]
-                        
-                sts_Locked = ""
-                sts_LockingEnabled = ""
-                sts_LockingSupported = ""
-                sts_MBRDone = ""
-                sts_MBREnabled = ""
-                tblsz = ""
-                nbr_MaxTables = ""
-                nbr_Admins = ""
-                nbr_Users = ""
-                singleUser = ""
-                comID_base = ""
-                initialPIN = ""
-                nbr_Objects = ""
-                for txt_33 in tt:
-                    m = re.search(txt_33,txt2) 
-                    if m:
-                        t3 = m.group()
-                        x_words = t3.split(' = ',1)
-                        print x_words[0] # keyword
-                        if x_words[0] == "Locked":
-                            sts_Locked = x_words[1]
-                        elif x_words[0] == "LockingEnabled":
-                            sts_LockingEnabled = x_words[1]                   
-                        elif x_words[0] == "LockingSupported":
-                            sts_LockingSupported = x_words[1]
-                        elif x_words[0] == "MBRDone":
-                            sts_MBRDone = x_words[1]
-                        elif x_words[0] == "MBREnabled":
-                            sts_MBREnabled = x_words[1]
-                        elif x_words[0] == "Max Size Tables":
-                            tblsz_i = int(x_words[1],10) # 10 base      
-                            tblsz = str(tblsz_i/1000000) + "MB"
-                            print ("x_words[1] = ", x_words[1])
-                        elif x_words[0] == "Max Tables":
-                            nbr_MaxTables = x_words[1]
-                        elif x_words[0] == "Objects":
-                            nbr_Objects = x_words[1]
-                        elif x_words[0] == "Admins":
-                            nbr_Admins = x_words[1]
-                        elif x_words[0] == "Users":
-                            nbr_Users = x_words[1]  
-                        elif x_words[0] == "Policy":
-                            singleUser = x_words[1]
-                        elif x_words[0] == "Base comID":
-                            comID_base = x_words[1]
-                        elif x_words[0] == "Initial PIN":
-                            initialPIN = x_words[1]
-                queryTextList.append("Locked: " + sts_Locked + "\n")
-                queryTextList.append("Locking Enabled: " + sts_LockingEnabled + "\n")
-                queryTextList.append("Locking Supported: " + sts_LockingSupported + "\n")
-                queryTextList.append("Shadow MBR Enabled: " + sts_MBREnabled + "\n")
-                queryTextList.append("Shadow MBR Done: " + sts_MBRDone + "\n\nSingle User information\n")
-                queryTextList.append("Single User Mode Support: " + singleUser + "\n")
-                queryTextList.append("Number of Locking Ranges Supported: " + nbr_Objects + "\n\nDataStore information\n")
-                queryTextList.append("DataStore Table Size: " + tblsz + "\n")
-                queryTextList.append("Number of DataStore Tables: " + nbr_MaxTables + "\n\nOpal information\n")
-                queryTextList.append("Number of Admins: " + nbr_Admins + "\n")
-                queryTextList.append("Number of Users: " + nbr_Users + "\n")
-                queryTextList.append("Base comID: " + comID_base + "\n")
-                queryTextList.append("Initial PIN: " + initialPIN + "\n")
+            self.queryWinText = ''.join(queryTextList)
+        
+            if not self.scanning :
+                queryWin = gtk.Window()
+                queryWin.set_title("Query Device")
                 
-                self.queryWinText = ''.join(queryTextList)
-            
-                if not self.scanning :
-                    queryWin = gtk.Window()
-                    queryWin.set_title("Query Device")
-                    
-                    winWidth = 400
-                    winHeight = 500
-                    
-                    scrolledWin = gtk.ScrolledWindow()
-                    scrolledWin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-                    
-                    queryWin.set_size_request(winWidth, winHeight)
-                    if os.path.isfile('icon.jpg'):
-                        queryWin.set_icon_from_file('icon.jpg')
-                    
-                    queryText = gtk.Label(txt2)
-                    queryVbox = gtk.VBox(False, 0)
-                    queryVbox.set_border_width(10)
-                    
-                    queryTextView = gtk.TextView()
-                    queryTextView.set_editable(False)
-                    self.queryTextBuffer = queryTextView.get_buffer()
-                    self.queryTextBuffer.set_text(self.queryWinText)
-                    scrolledWin.add_with_viewport(queryTextView)
-                    queryVbox.pack_start(scrolledWin, True, True, 0)
-                    
-                    query_instr = gtk.Label('Enter the device\'s password to access more query information.')
-                    queryVbox.pack_start(query_instr, False, False, 0)
-                    
-                    self.passBoxQ = gtk.HBox(False, 0)
-                    passLabel = gtk.Label('Enter Password')
-                    self.queryPass = gtk.Entry()
-                    self.queryPass.set_visibility(False)
-                    
-                    submitPass = gtk.Button('Submit')
-                    submitPass.connect("clicked", self.queryAuth)
-                    self.passBoxQ.pack_start(passLabel, True, True, 0)
-                    self.passBoxQ.pack_start(self.queryPass, True, True, 0)
-                    self.passBoxQ.pack_start(submitPass, False, False, 0)
-                    queryVbox.pack_start(self.passBoxQ, False, False, 0)
-                    
-                    save_instr = gtk.Label('Press \'Save to text file\' to save the query information in a file.')
-                    queryVbox.pack_start(save_instr, False, False, 0)
-                    
-                    querySave = gtk.Button('_Save to text file')
-                    querySave.connect("clicked", self.saveToText)
-                    queryVbox.pack_start(querySave, False, False, 0)
-                    queryWin.add(queryVbox)
-                    queryWin.show_all()
-                    
-                else:
-                    self.scanning = False
+                winWidth = 400
+                winHeight = 500
+                
+                scrolledWin = gtk.ScrolledWindow()
+                scrolledWin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+                
+                queryWin.set_size_request(winWidth, winHeight)
+                if os.path.isfile('icon.jpg'):
+                    queryWin.set_icon_from_file('icon.jpg')
+                
+                queryText = gtk.Label(txt2)
+                queryVbox = gtk.VBox(False, 0)
+                queryVbox.set_border_width(10)
+                
+                queryTextView = gtk.TextView()
+                queryTextView.set_editable(False)
+                self.queryTextBuffer = queryTextView.get_buffer()
+                self.queryTextBuffer.set_text(self.queryWinText)
+                scrolledWin.add_with_viewport(queryTextView)
+                queryVbox.pack_start(scrolledWin, True, True, 0)
+                
+                query_instr = gtk.Label('Enter the device\'s password to access more query information.')
+                queryVbox.pack_start(query_instr, False, False, 0)
+                
+                self.passBoxQ = gtk.HBox(False, 0)
+                passLabel = gtk.Label('Enter Password')
+                self.queryPass = gtk.Entry()
+                self.queryPass.set_visibility(False)
+                
+                submitPass = gtk.Button('Submit')
+                submitPass.connect("clicked", self.queryAuth)
+                self.passBoxQ.pack_start(passLabel, True, True, 0)
+                self.passBoxQ.pack_start(self.queryPass, True, True, 0)
+                self.passBoxQ.pack_start(submitPass, False, False, 0)
+                queryVbox.pack_start(self.passBoxQ, False, False, 0)
+                
+                save_instr = gtk.Label('Press \'Save to text file\' to save the query information in a file.')
+                queryVbox.pack_start(save_instr, False, False, 0)
+                
+                querySave = gtk.Button('_Save to text file')
+                querySave.connect("clicked", self.saveToText)
+                queryVbox.pack_start(querySave, False, False, 0)
+                queryWin.add(queryVbox)
+                queryWin.show_all()
+                
+            else:
+                self.scanning = False
         else:
             self.msg_err('Non-TCG devices cannot be queried.')
 
