@@ -119,6 +119,7 @@ int isValidSEDDisk(char *devname)
 
 int main(int argc, char * argv[])
 {
+	string st1;
 	DTA_OPTIONS opts;
 	DtaDev *tempDev = NULL, *d = NULL;
 	if (DtaOptions(argc, argv, &opts)) {
@@ -183,7 +184,7 @@ int main(int argc, char * argv[])
 		// make sure DtaDev::no_hash_passwords is initialized
 		d->no_hash_passwords = opts.no_hash_passwords;
 	}
-	string st1;
+
     switch (opts.action) {
  	case sedutiloption::initialSetup:
 		LOG(D) << "Performing initial setup to use sedutil on drive " << argv[opts.device];
@@ -400,6 +401,8 @@ int main(int argc, char * argv[])
 		st1 = "unknownOS";
         #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
 		st1 = "linux";
+
+printf("define linux %s\n",st1.c_str());
         #endif
         #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 		st1 = "window";
@@ -408,8 +411,8 @@ int main(int argc, char * argv[])
         #if defined(APPLE) || defined(_APPLE) || defined(__APPLE__)
 		st1 = "macOS";
         #endif
-
-        printf("Fidelity Lock Version : 0.1.3.%s.%s 20171026-A001\n", st1.c_str(),GIT_VERSION);
+printf("%s\n",st1.c_str());
+        printf("Fidelity Lock Version : 0.1.5.%s.%s 20171026-A001\n", st1.c_str(),GIT_VERSION);
 		break;
     default:
         LOG(E) << "Unable to determine what you want to do ";
