@@ -121,6 +121,7 @@ int isValidSEDDisk(char *devname)
 
 int main(int argc, char * argv[])
 {
+	string st1;
 	DTA_OPTIONS opts;
 	DtaDev *tempDev = NULL, *d = NULL;
 	if (DtaOptions(argc, argv, &opts)) {
@@ -274,7 +275,6 @@ int main(int argc, char * argv[])
 		// make sure DtaDev::no_hash_passwords is initialized
 		d->no_hash_passwords = opts.no_hash_passwords;
 	}
-	string st1;
     switch (opts.action) {
  	case sedutiloption::initialSetup:
 		LOG(D) << "Performing initial setup to use sedutil on drive " << argv[opts.device];
