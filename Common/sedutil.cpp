@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
+
 #include <iostream>
 #include "os.h"
 #include "DtaHashPwd.h"
@@ -28,8 +29,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevEnterprise.h"
 #include "Version.h"
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#include <Stdafx.h>
 #include <LicenseValidator.h>
-#include <msclr\marshal_cppstd.h>
+//#include <msclr\marshal_cppstd.h>
 #endif
 
 using namespace std;
@@ -125,6 +127,94 @@ int main(int argc, char * argv[])
 		return DTAERROR_COMMAND_ERROR;
 	}
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+	//m_strFirst = _T("This sample simulates your application. Since no license key was detected, the application launched the License Activation Form at startup.\r\n\r\n1. To generate an Activation Key, launch the QLM Console.\r\n2. Click on the Manage Keys tab.\r\n3. Click on the Create button in the License Keys group\r\n4. Select the Demo product and the settings of your choice and click OK.\r\n5. Copy/Paste the generated Activation Key in the License Activation field.\r\n6. Click on the Activate button\r\n\r\nOnce the license is activated, a computer bound key is generated.\r\n\r\n8. Go back to the QLM Console and click the Search button to refresh the page.\r\n9. The Computer Key is now recorded in the DB and on the end user system. The computer key is the license key that enables the application.");
+	//m_strSecond = _T("This sample uses the QLM License Wizard Control to activate a license over the internet.\r\n\r\n When the user enters an activation key and clicks the Activate button, the QLM Control validates and activates the key.\r\n\r\nIf the activation succeeds, the activation key and a new license key that is valid only on this computer are stored in a file or in the registry.\r\n\r\nThe next time the sample is launched, the keys are retrieved and validated. \r\n\r\nUse the Open License Form button to activate and view license information. An activation key can be generated using the QLM console's Manage Keys - Create button.\r\n\r\nUse the Clear License button to release a license and start over.\r\n\r\nIf you need help, please contact us at support@soraco.co.");
+	LicenseValidator *m_lv;
+	//Initialize COM
+	CoInitialize(NULL);
+	CString computerName;
+	try
+	{
+		m_lv = new LicenseValidator();
+
+		m_lv->SetCustomData1(_T("C++"));
+		m_lv->SetCustomData2(_T("Desktop"));
+		m_lv->SetCustomData3(_T("QlmLicenseWizardVC_NoMFC"));
+
+		computerName = m_lv->GetComputerName();
+		LicenseBinding licenseBinding = LicenseBinding_ComputerName;
+
+		bool needsActivation = false;
+		CString returnMsg("");
+		// bool ValidateLicenseAtStartup(CString computerID, LicenseBinding licenseBinding, bool &needsActivation, CString &returnMsg);
+		if (m_lv->ValidateLicenseAtStartup(licenseBinding, needsActivation, returnMsg) == FALSE)
+		{
+			// no valid license 
+			char url[250] = "https://fidelityl.test.onfastspring.com/";
+			printf("No valid license of Fidelity Lock found, please register to get demo license or buy basic/premium license\n");
+			ShellExecute(0, 0, url, 0, 0, SW_SHOWNORMAL);
+			return 0;
+			//this->LaunchLicenseWizard();
+			//if (m_lv->ValidateLicenseAtStartup(licenseBinding, needsActivation, returnMsg) == FALSE)
+			//{
+				//FreeResources();
+			//	ExitProcess(0);
+			//}
+			//else
+			//{
+			//	m_lv->WriteProductProperties(returnMsg);
+			//}
+
+		}
+		else
+		{
+			printf("Valid Fidelity Lock License found %s \n", (char*) m_lv->getf2s());
+			// printf("License will expire  in %f \n", m_lv->getexpire());
+
+			long licmodel = m_lv->getlicmodel();
+			long lictype = m_lv->getlictype();
+			long feat = m_lv->getfeature();
+			long nlic = m_lv->getnlic();
+			long nday = m_lv->getdaylft();
+			printf("License Model = %ld \n", licmodel);
+			printf("License Type = %ld \n",lictype);
+			printf("Features = %ld \n", feat);
+			printf("Number of License = %ld \n",nlic );
+			printf("Number of Day Left = %ld \n", nday);
+			
+			bool eval = m_lv->IsEvaluation();
+			bool licexpired =  m_lv->EvaluationExpired();
+			int rem = m_lv->EvaluationRemainingDays();
+			printf("License is evaluation = %ld \n",eval );
+			printf("License Evaluation Remaining Days = %d \n", rem);
+			printf("License is expired = %d \n", licexpired);
+
+
+			//printf(" = %ld \n", );
+
+
+			SYSTEMTIME lt;
+			VariantTimeToSystemTime(m_lv->getexpire(), &lt);
+			printf("License Expire date : %d/%d/%d %d:%d:%d\n", lt.wYear, lt.wMonth,lt.wDay,lt.wHour,lt.wMinute,lt.wSecond);
+
+			// found valid license
+			//std::string lic = msclr::interop::marshal_as<std::string>(m_lv->getfeaturestr());
+			//printf("Valid Fidelity Lock License found %s \n", lic.c_str());
+			//ReadProductProperties();
+			//ReadProductProperty(_bstr_t("engineering"), _bstr_t("module_eng"));
+
+		}
+	}
+	catch (char *error)
+	{
+		//MessageBox(QlmLicenseWizardDlg::s_hwndDialog, CString(error), _T("QlmLicenseWizard"), MB_OK);
+		//FreeResources();
+		ExitProcess(0);
+	}
+
+	//UpdateData(FALSE);
+
+	/*
 	LicenseValidator ^lv = gcnew  LicenseValidator;
 	System::String^ computerID = "";
 	bool needsActivation;
@@ -145,6 +235,7 @@ int main(int argc, char * argv[])
 		printf("Valid Fidelity Lock License found %s \n",lic.c_str());
 		//property System::String^ Features { get; set; }
 	}
+	*/
 #endif
 
 	if ((opts.action != sedutiloption::scan) && 
@@ -202,15 +293,6 @@ int main(int argc, char * argv[])
         return d->setPassword(argv[opts.password], (char *) "Admin1",
                             argv[opts.newpassword]);
 		break;
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-	case sedutiloption::pbaValid:
-		LOG(D) << "PBA image validation";
-		return d->pbaValid(argv[opts.password]);
-		break;
-	case sedutiloption::activate:
-		LOG(D) << "activate LockingSP with MSID";
-		return d->activate(argv[opts.password]);
-		break;
 	case sedutiloption::auditWrite:
 		LOG(D) << "audit log write";
 		printf("argv[opts.eventid]=%s\n", argv[opts.eventid]);
@@ -227,6 +309,15 @@ int main(int argc, char * argv[])
 	case sedutiloption::getmfgstate:
 		LOG(D) << "get manufacture life cycle state";
 		return d->getmfgstate();
+		break;
+    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+	case sedutiloption::pbaValid:
+		LOG(D) << "PBA image validation";
+		return d->pbaValid(argv[opts.password]);
+		break;
+	case sedutiloption::activate:
+		LOG(D) << "activate LockingSP with MSID";
+		return d->activate(argv[opts.password]);
 		break;
 	case sedutiloption::DataStoreWrite:
 		LOG(D) << "Write to Data Store";
@@ -409,7 +500,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-        printf("Fidelity Lock Version : 0.1.3.%s.%s 20171026-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.1.6.%s.%s 20171106-A001\n", st1.c_str(),GIT_VERSION);
 		break;
     default:
         LOG(E) << "Unable to determine what you want to do ";

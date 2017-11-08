@@ -40,6 +40,7 @@
     <ClInclude Include="..\..\common\log.h" />
     <ClInclude Include="..\..\Common\sedsize.h" />
     <ClInclude Include="..\..\License\LicenseValidator.h" />
+    <ClInclude Include="..\..\License\stdafx.h" />
     <ClInclude Include="..\DtaDevOS.h" />
     <ClInclude Include="..\DtaDiskATA.h" />
     <ClInclude Include="..\DtaDiskNvme.h" />
@@ -65,6 +66,7 @@
     <ClCompile Include="..\..\Common\DtaSession.cpp" />
     <ClCompile Include="..\..\Common\sedutil.cpp" />
     <ClCompile Include="..\..\License\LicenseValidator.cpp" />
+    <ClCompile Include="..\..\License\stdafx.cpp" />
     <ClCompile Include="..\DtaDevOS.cpp" />
     <ClCompile Include="..\DtaDiskATA.cpp" />
     <ClCompile Include="..\DtaDiskNvme.cpp" />
@@ -74,13 +76,17 @@
     <Library Include="..\..\rc\Cabinet_x64.Lib" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="QlmLicenseLib, Version=10.0.17227.1, Culture=neutral, PublicKeyToken=9c65e32c060523a1" />
+    <None Include="app.config" />
+    <None Include="QlmLicenseLib.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="QlmLicenseLib.dll.manifest" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{267E9D28-7245-4182-9740-F386F4299E83}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CLI</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -101,7 +107,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
-    <CLRSupport>true</CLRSupport>
+    <CLRSupport>false</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -185,8 +191,9 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2;$(SolutionDir)..\..\License</AdditionalIncludeDirectories>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <AdditionalOptions>/Zm2000 %(AdditionalOptions)</AdditionalOptions>
+      <CompileAsManaged>false</CompileAsManaged>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -195,7 +202,8 @@
     <PreBuildEvent>
       <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
 
-REM copy  "..\..\..\License\Redistrib\.net 4.0\QlmLicenseLib.dll"  "$(TargetDir)"
+copy  "..\..\rc\QlmLicenseLib.*"  "$(TargetDir)"
+copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
 </Command>
     </PreBuildEvent>
     <PreBuildEvent>

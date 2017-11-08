@@ -1,41 +1,107 @@
-//#pragma once
+#pragma once
+
+//*****************************************************************************
+//
+// You can either import the .NET 2.0/QlmLicenseLib.dll or .NET 4.0/QlmLicenseLib.dll
+//
+//*****************************************************************************
+//#import "..\..\..\redistrib\.net 2.0\QlmLicenseLib.tlb" rename( "publicKey", "PublicKey" )
+#import "C:\Program Files\Soraco\QuickLicenseMgr\redistrib\.net 4.0\QlmLicenseLib.tlb"
 
 using namespace QlmLicenseLib;
 
-ref class LicenseValidator
+class LicenseValidator
 {
 public:
 	LicenseValidator(void);
 	virtual ~LicenseValidator(void);
 
-	bool ValidateLicenseAtStartup(System::String^ computerID, bool* needsActivation, System::String^ returnMsg);
+	virtual bool ValidateLicenseAtStartup(LicenseBinding licenseBinding, bool &needsActivation, CString &returnMsg);
+	virtual bool ValidateLicenseAtStartup(CString computerID, bool &needsActivation, CString &returnMsg);
 
-	bool ValidateLicense(System::String^ activationKey, System::String^ computerKey, System::String^ computerID,
-							bool *needsActivation, System::String^% returnMsg);
+	virtual bool ValidateLicense(CString activationKey, CString computerKey, CString &computerID, LicenseBinding licenseBinding, bool &needsActivation, CString &errorMsg);
+	virtual bool ReactivateKey(CString computerID);
+	virtual bool ValidateOnServer(CString computerID, CString &returnMsg);
+	virtual void DeleteAllKeys();
 
-	System::String^ GetActivationKey ();
-	System::String^ GetComputerKey ();
-	void DeleteKeys();
+	CString GetComputerName();
 
-	System::String ^ getfeaturestr();
+	virtual bool IsEvaluation();
+	virtual bool EvaluationExpired();
+	virtual int	 EvaluationRemainingDays();
 
-	bool IsEvaluation ();
-	bool HasEvaluationExpired ();
-	int GetEvaluationRemainingDays ();
+	bool WriteProductProperties(CString &returnMsg);
+	IQlmProductPropertiesPtr ReadProductProperties(CString &returnMsg);
 
-	QlmLicense license;
+	//void PublishAnalyticsToServer(CString computerID, CString customData1, CString customData2, CString customData3);
+	//void UnpublishAnalyticsToServer();
 
-private:
-	
-	System::String ^ activationKey;
-	System::String^ computerKey;
-	System::String^ defaultTrialKey;
+	CString GetCustomData1();
+	CString GetCustomData2();
+	CString GetCustomData3();
+
+	void SetCustomData1(CString customData);
+	void SetCustomData2(CString customData);
+	void SetCustomData3(CString customData);
+
+	CString GetThisModuleFolder();
+
+	ELicenseModel getlicmodel();
+
+	ELicenseType getlictype();
+
+	long getdaylft();
+
+	long getnlic();
+
+	long getfeature();
+
+	_bstr_t getf2s();
+
+	DATE getexpire();
+
+	//SAFEARRAY getfeature_2();
+
+	IQlmLicensePtr license;
+	ILicenseInfoPtr licenseInfo;
+	IQlmHardwarePtr hardware;
+	IQlmProductPropertiesPtr productProperties;
+	IQlmAnalyticsPtr analytics;
+
+	// Uncomment this line if you are using floating licenses
+	// IQlmFloatingLicenseMgrPtr floatingLicense;
+
+protected:
+	CComBSTR activationKey;
+	CComBSTR computerKey;
+	CComBSTR defaultTrialKey;
+	CComBSTR rsaPublicKey;
+
+	CString productPropertiesFileName;
+	CString computerID;
+
 	bool isEvaluation;
 	bool evaluationExpired;
 	int evaluationRemainingDays;
 
-	
+	bool wrongProductVersion;
 
+	bool checkIfLicenseIsRevoked;
+	bool checkIfComputerIsRegistered;
+	bool reactivateSubscription;
+
+	bool publishAnalytics;
+	CString customData1;
+	CString customData2;
+	CString customData3;
+
+	void InitializeLicenseInfo();
 	bool IsTrue(int nVal1, int nVal2);
-};
+	//CString GetProductVersion();
 
+	CString Dirname(const CString &strFileName);
+	//bool FileExists(const CString &strFileName);
+
+	bool ValidateLicenseAtStartup(CString computerID, LicenseBinding licenseBinding, bool &needsActivation, CString &returnMsg);
+
+};
