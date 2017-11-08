@@ -105,6 +105,9 @@
     <ClInclude Include="..\..\License\LicenseValidator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\License\stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\sedutil.cpp">
@@ -167,10 +170,20 @@
     <ClCompile Include="..\..\License\LicenseValidator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\License\stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\..\rc\Cabinet_x64.Lib">
       <Filter>Resource Files</Filter>
     </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="QlmLicenseLib.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="QlmLicenseLib.dll.manifest" />
   </ItemGroup>
 </Project>
