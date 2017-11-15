@@ -1,6 +1,7 @@
 #!/bin/bash
 set -x
 # Build a custom UEFI linux based PBA image
+# 
 ## define releases for tools
 . conf
 VERSIONINFO=`git describe --dirty` || VERSIONINFO=downloaded
@@ -36,7 +37,7 @@ echo "***** B4 rmicon_x64"
 echo "***** after rmicon_x64"
 #read VAR
 cp  Xprogs.tcz ../clone-pure64/cde/optional/
-cp  wifi.tcz ../clone-pure64/cde/optional/
+#cp  wifi.tcz ../clone-pure64/cde/optional/
 else
 #sed s/--Passwordonly// lock.desktop.original > lock.desktop
 sed s/--pba// lock.desktop.original > lock.desktop
