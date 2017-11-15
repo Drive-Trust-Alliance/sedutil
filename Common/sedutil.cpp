@@ -500,7 +500,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-        printf("Fidelity Lock Version : 0.1.6.%s.%s 20171106-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.1.7.%s.%s 20171115-A001\n", st1.c_str(),GIT_VERSION);
 		break;
     default:
         LOG(E) << "Unable to determine what you want to do ";
