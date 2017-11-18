@@ -27,10 +27,11 @@ void usage()
     printf("a utility to manage self encrypting drives that conform\n");
     printf("to the Trusted Computing Group OPAL 2.0 SSC specification\n");
     printf("General Usage:                     (see readme for extended commandset)\n");
-    printf("sedutil-cli <-v> <-n> <action> <options> <device>\n");
+    printf("sedutil-cli <-v> <-n> <-x> <action> <options> <device>\n");
     printf("-v (optional)                       increase verbosity, one to five v's\n");
     printf("-n (optional)                       no password hashing. Passwords will be sent in clear text!\n");
     printf("-l (optional)                       log style output to stderr only\n");
+    printf("-x (optional)                       password inputs are in hex form\n");
     printf("actions \n");
     printf("--scan \n");
     printf("                                Scans the devices on the system \n");
@@ -139,6 +140,10 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			baseOptions += 1;
 			opts->output_format = sedutilNormal;
 			outputFormat = sedutilNormal;
+		}
+		else if (!strcmp("-x", argv[i])) {
+			baseOptions += 1;
+            opts->hex_passwords = true;
 		}
 		else if (!(('-' == argv[i][0]) && ('-' == argv[i][1])) && 
 			(0 == opts->action))

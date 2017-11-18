@@ -93,6 +93,8 @@ int main(int argc, char * argv[])
 		// make sure DtaDev::no_hash_passwords is initialized
 		d->no_hash_passwords = opts.no_hash_passwords;
 
+		d->hex_passwords = opts.hex_passwords;
+
 		d->output_format = opts.output_format;
 	}
 
