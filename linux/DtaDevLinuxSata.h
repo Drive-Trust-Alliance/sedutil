@@ -55,6 +55,5 @@ public:
             void * buffer, uint32_t bufferlen);
     /** Linux specific routine to send an ATA identify to the device */
     void identify_SAS(OPAL_DiskInfo *disk_info);
-    int fd; /**< Linux handle for the device  */
     int isSAS; /* The device is sas */
 };

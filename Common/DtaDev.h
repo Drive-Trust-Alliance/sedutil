@@ -252,6 +252,11 @@ public:
 	 * @param password Password of administrative authority for locking range
 	 */
 	virtual uint8_t eraseLockingRange(uint8_t lockingrange, char * password) = 0;
+    /** Optionally implemented s3 sleep support.
+     * On Linux, it saves the password to the kernel to use on resume.
+     * @param password the password to save to the kernel
+     */
+    virtual uint8_t prepareForS3Sleep(uint8_t lockingrange, char* password);
 	/** Dumps an object for diagnostic purposes
 	 * @param sp index into the OPALUID table for the SP the object is in
 	 * @param auth the authority ti use for the dump

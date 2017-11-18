@@ -319,3 +319,9 @@ void DtaDev::puke()
 	if (disk_info.Unknown)
 		cout << "**** " << (uint16_t)disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
 }
+
+uint8_t DtaDev::prepareForS3Sleep(uint8_t lockingrange, char* password)
+{
+    LOG(E) << "S3 sleep not supported on this platform";
+    return 1;
+}
