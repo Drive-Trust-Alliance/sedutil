@@ -74,6 +74,9 @@ public:
 	 */
 	void discovery0();
 
+	/** Print password hash, computed with this device's serial number
+	 */
+	uint8_t printPasswordHash(char * password);
 	/*
 	 * virtual methods required in the OS specific
 	 * device class
