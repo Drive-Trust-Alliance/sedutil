@@ -34,8 +34,8 @@ typedef struct _DTA_OPTIONS {
 	uint8_t dsnum;			/** which data store to read write*/
 	uint32_t startpos;		/** data store start position  */
 	uint32_t len;			/** data store length */
-
 	bool no_hash_passwords; /** global parameter, disables hashing of passwords */
+	uint8_t devusb;			/** usb devname */
 } DTA_OPTIONS;
 /** Print a usage message */
 void usage();
@@ -64,6 +64,7 @@ typedef enum _sedutiloption {
 	DataStoreRead,
 	MBRRead,
 	getMBRsize,
+	createUSB,
 	loadPBAimage,
 	setLockingRange,
 	revertTPer,

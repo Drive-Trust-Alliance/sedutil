@@ -81,6 +81,8 @@ void usage()
 	printf("                                Enable|Disable MBR shadowing \n");
 	printf("--setMBRDone <on|off> <Admin1password> <device> \n");
 	printf("                                set|unset MBRDone\n");
+	printf("--createUSB <file> <device> \n");
+	printf("                                Write image file to USB\n");
 	printf("--loadPBAimage <Admin1password> <file> <device> \n");
 	printf("                                Write <file> to MBR Shadow area\n");
     printf("--revertTPer <SIDpassword> <device>\n");
@@ -185,6 +187,8 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(startpos) OPTION_IS(len)
 			OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(getMBRsize, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(createUSB, 3) OPTION_IS(pbafile)
+			OPTION_IS(device) OPTION_IS(devusb) END_OPTION
 		BEGIN_OPTION(loadPBAimage, 3) OPTION_IS(password) OPTION_IS(pbafile) 
 			OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(revertTPer, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION

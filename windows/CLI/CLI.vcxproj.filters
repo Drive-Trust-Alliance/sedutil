@@ -108,6 +108,36 @@
     <ClInclude Include="..\..\License\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\bitops.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\blockwise.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\chash.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\handy.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\hmac.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\pbkdf2.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\sha1.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\tassert.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\compressapi-8.1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\sedutil.cpp">
@@ -172,6 +202,21 @@
     </ClCompile>
     <ClCompile Include="..\..\License\stdafx.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\pbkdf2\blockwise.c">
+      <Filter>Source Files\pbkdf2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\pbkdf2\chash.c">
+      <Filter>Source Files\pbkdf2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\pbkdf2\hmac.c">
+      <Filter>Source Files\pbkdf2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\pbkdf2\pbkdf2.c">
+      <Filter>Source Files\pbkdf2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\pbkdf2\sha1.c">
+      <Filter>Source Files\pbkdf2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

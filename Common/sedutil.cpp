@@ -29,6 +29,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevEnterprise.h"
 #include "Version.h"
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#include "sedsize.h" 
+#include "compressapi-8.1.h"
+#include <iostream>
+#include <fstream>
 #include <Stdafx.h>
 #include <LicenseValidator.h>
 //#include <msclr\marshal_cppstd.h>
@@ -72,7 +76,7 @@ int diskScan(char * devskip)
 				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
 			else
 				printf("%s", " No  ");
-			cout << d->getModelNum() << ":" << d->getFirmwareRev() << std::endl;
+			cout << d->getModelNum() << ":" << d->getFirmwareRev() << ":" << d->getSerialNum() << std::endl;
 			if (MAX_DISKS == (i+j)) {
 				LOG(I) << MAX_DISKS << " disks, really?";
 				delete d;
@@ -119,6 +123,454 @@ int isValidSEDDisk(char *devname)
 	return 0;
 }
 
+
+int createvol(HANDLE &vol_handle, char * USBname)
+{
+	vol_handle = CreateFile(USBname, GENERIC_READ | GENERIC_WRITE,
+		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
+		OPEN_EXISTING,
+		FILE_FLAG_NO_BUFFERING | FILE_FLAG_RANDOM_ACCESS | FILE_FLAG_WRITE_THROUGH, // add write through
+		NULL);
+
+	if (vol_handle == INVALID_HANDLE_VALUE)
+	{
+		printf("CreateFile error \n");
+		return false;
+	}
+	else {
+		printf("CreateFile(%s,..) OK , vol_handle = %ld\n", USBname, vol_handle);
+	}
+	return true;
+}
+
+int lockvol( HANDLE &vol_handle)
+{
+	DWORD   n;
+	if (!DeviceIoControl(vol_handle, FSCTL_DISMOUNT_VOLUME,
+		NULL, 0, NULL, 0, &n, NULL))
+	{
+		DWORD err = GetLastError();
+		printf("FSCTL_DISMOUNT_VOLUME error %d\n", err);
+		return false;
+	}
+	else {
+		printf("DeviceIoControl(vol_handle, FSCTL_DISMOUNT_VOLUME...) OK\n");
+	}
+
+	// lock volume
+	DWORD status;
+	if (!DeviceIoControl(vol_handle, FSCTL_LOCK_VOLUME,
+		NULL, 0, NULL, 0, &status, NULL))
+	{
+		// error handling; not sure if retrying is useful
+		// lock vol fail ; probably ok if there is no file system exist
+		printf("DeviceIoControl(vol_handle, FSCTL_LOCK_VOLUME,...) error\n");
+		printf("error = %d \n", GetLastError());
+	}
+	else {
+		printf("DeviceIoControl(vol_handle, FSCTL_LOCK_VOLUME,...) OK\n");
+	}
+	return true;
+}
+
+// unlock FSCTL_UNLOCK_VOLUME
+// lock volume
+int unlockvol(HANDLE &vol_handle)
+{
+	DWORD status;
+	if (!DeviceIoControl(vol_handle, FSCTL_UNLOCK_VOLUME,
+		NULL, 0, NULL, 0, &status, NULL))
+	{
+		// error handling; not sure if retrying is useful
+		// lock vol fail ; probably ok if there is no file system exist
+		printf("DeviceIoControl(vol_handle, FSCTL_UNLOCK_VOLUME,...) error\n");
+		printf("error = %d \n", GetLastError());
+	}
+	else {
+		printf("DeviceIoControl(vol_handle, FSCTL_UNLOCK_VOLUME,...) OK\n");
+	}
+	return true;
+}
+
+int setfp(HANDLE &vol_handle,long sect)
+{
+	long    hipart = sect >> (32 - 9);
+	long    lopart = sect << 9;
+	long    err;
+
+	SetLastError(0);       // needed before SetFilePointer post err detection
+	lopart = SetFilePointer(vol_handle, lopart, &hipart, FILE_BEGIN);
+
+	if (lopart == -1 && NO_ERROR != (err = GetLastError()))
+	{
+		//errormsg("HWWrite: error %d seeking drive %x sector %ld:  %s",
+		//	err, drive, sect, w32errtxt(err));
+		printf("SetFilePointe error %d\n", err);
+		return false;
+	}
+	else {
+		printf("SetFilePointer(vol_handle, lopart, &hipart, FILE_BEGIN) OK\n");
+		return true;
+	}
+
+}
+
+int diskUSBwrite(char *devname, char * USBname)
+{
+	HANDLE vol_handle;
+	int status;
+	long sect;
+	DWORD n;
+	DtaDev * d, * u;
+	d = new DtaDevGeneric(devname);
+	if (d->isPresent() && d->isAnySSC()) 
+		printf("Find Opal Drive %s\n", devname);
+	else {
+		printf("No Opal Drive %s\n", devname);
+		delete d;
+		return false;
+	}
+
+	u = new DtaDevGeneric(USBname);
+	if (u->isPresent())
+		printf("Find USB drive %s\n", USBname);
+	else {
+		printf("No USB drive %s\n", USBname);
+		delete u;
+		return false;
+	}
+
+	char * model = d->getModelNum();
+	char * firmware = d->getFirmwareRev();
+	char * sernum = d->getSerialNum();
+	vector<uint8_t> hash;
+	printf("model : %s ", model);
+	printf("firmware : %s ", firmware);
+	printf("serial : %s\n", sernum);
+	hash.clear();
+	LOG(I) <<  "start hashing";
+	DtaHashPwd(hash, sernum, d);
+	LOG(I) << "end hashing";
+	printf("hashed size = %d\n", hash.size());
+	printf("hashed serial number is ");
+	for (int i = 0; i < hash.size(); i++)
+	{
+		printf("%02X", hash.at(i));
+	}
+	printf("\n");
+
+	// write hashed series num to decompressed image buffer
+	// write to USB ??????
+
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+	LOG(D1) << "createUSB() isn't supported in Linux";
+	return 0;
+#else
+	char * filename = "sedutil-cli.exe";
+	LOG(D1) << "Entering createUSB()" << filename << " " << USBname;
+	uint8_t lastRC;
+	uint64_t fivepercent = 0;
+	uint64_t imgsize;
+	int complete = 4;
+	ifstream pbafile;
+	// for decompression
+	PBYTE DecompressedBuffer = NULL;
+	uint64_t DecompressedBufferSize = NULL;
+	PBYTE CompressedBuffer = NULL;
+	uint64_t CompressedBufferSize = 0;
+	DECOMPRESSOR_HANDLE Decompressor = NULL;
+	DecompressedBuffer = NULL;
+	BOOL Success;
+	SIZE_T  DecompressedDataSize;
+	void * somebuf;
+
+	vector <uint8_t> buffer; // 0 buffer  (57344, 0x00),
+
+		const char * fname[] = { "sedutil-cli.exe" }; // , "..\\rc\\sedutil.exe", "..\\rc\\UEFI.img"	};
+		pbafile.open(fname[0], ios::in | ios::binary);
+		pbafile.seekg(0, pbafile.end);
+		imgsize = pbafile.tellg();
+		pbafile.seekg(0, pbafile.beg);
+		pbafile.seekg(sedsize);
+		//LOG(I) << "read pointer=" << pbafile.tellg();
+		int comprss = 1;
+
+		if (comprss) {
+			CompressedBufferSize = imgsize - sedsize;
+			CompressedBuffer = (PBYTE)malloc(CompressedBufferSize);
+			if (!CompressedBuffer)
+			{
+				LOG(E) << "Cannot allocate memory for compressed buffer.";
+				return DTAERROR_OPEN_ERR;
+			}
+			pbafile.read((char *)CompressedBuffer, CompressedBufferSize); // read all img data
+
+			Success = CreateDecompressor(
+				COMPRESS_ALGORITHM_XPRESS_HUFF, //  Compression Algorithm
+				NULL,                           //  Optional allocation routine
+				&Decompressor);                 //  Handle
+			if (!Success)
+			{
+				LOG(E) << "Cannot create a decompressor: " << GetLastError();
+				goto done;
+			}
+			//  Query decompressed buffer size.
+			Success = Decompress(
+				Decompressor,                //  Compressor Handle
+				CompressedBuffer,            //  Compressed data
+				CompressedBufferSize,        //  Compressed data size
+				NULL,                        //  Buffer set to NULL
+				0,                           //  Buffer size set to 0
+				&DecompressedBufferSize);    //  Decompressed Data size
+											 // Allocate memory for decompressed buffer.
+			if (!Success)
+			{
+				DWORD ErrorCode = GetLastError();
+				// Note that the original size returned by the function is extracted 
+				// from the buffer itself and should be treated as untrusted and tested
+				// against reasonable limits.
+				if (ErrorCode != ERROR_INSUFFICIENT_BUFFER)
+				{
+					LOG(E) << "Cannot query decompress data: " << ErrorCode;
+					//printf("DecompressedBufferSize=%I64d \n", DecompressedBufferSize);
+					goto done;
+				}
+				DecompressedBuffer = (PBYTE)malloc(DecompressedBufferSize);
+				if (!DecompressedBuffer)
+				{
+					LOG(E) << "Cannot allocate memory for decompressed buffer";
+					goto done;
+				}
+				somebuf = malloc(DecompressedBufferSize);
+				if (!somebuf) {
+					LOG(E) << "Cannot allocate memory for somebuf buffer";
+					goto done;
+				}
+				memset(DecompressedBuffer, 0, DecompressedBufferSize);
+			}
+			//  Decompress data 
+			Success = Decompress(
+				Decompressor,               //  Decompressor handle
+				CompressedBuffer,           //  Compressed data
+				CompressedBufferSize,       //  Compressed data size
+				DecompressedBuffer,         //  Decompressed buffer
+				DecompressedBufferSize,     //  Decompressed buffer size
+				&DecompressedDataSize);     //  Decompressed data size
+			if (!Success)
+			{
+				LOG(E) << "Cannot really decompress data: " << GetLastError();
+				//LOG(I) << ("DecompressedBufferSize=%I64d DecompressedDataSize=%I64d\n", DecompressedBufferSize, DecompressedDataSize);
+				goto done;
+			}
+
+			/*
+			printf("CompressedBuffer size: %I64d; DecompressedBufferSize:%I64d; DecompressedDataSize: %I64d\n",
+			CompressedBufferSize,
+			DecompressedBufferSize,
+			DecompressedDataSize);
+			printf("File decompressed.\n");
+			*/
+		done:
+			// house keeping buffer and file handler
+			if (Decompressor != NULL)
+			{
+				LOG(D1) << "free Decompressor" << endl;
+				CloseDecompressor(Decompressor);
+			}
+			if (CompressedBuffer)
+			{
+				LOG(D1) << "free CompressBuffer" << endl;
+				free(CompressedBuffer);
+			}
+		 // end cmprss
+		}
+
+	// no zero write does it work ????  --> Nope, require to zero out first ,   why ?????
+	vol_handle = INVALID_HANDLE_VALUE;
+	status = createvol(vol_handle, USBname); 
+	if (!status)
+		return false;
+	status = lockvol(vol_handle);
+	/*
+	// disregard vol lock or dismount error
+	if (!status)
+	{
+		unlockvol(vol_handle);
+		CloseHandle(vol_handle);
+		return false;
+	}
+	*/
+	sect = 0;
+	status = setfp(vol_handle, sect);
+	if (!status)
+	{
+		unlockvol(vol_handle);
+		CloseHandle(vol_handle);
+		delete u;
+		delete d;
+		return false;
+	}
+		
+
+	//DWORD   n;
+	//     
+	// first zero out the image area
+	PBYTE Bufferzero = (PBYTE)malloc(DecompressedBufferSize);
+	if (!Bufferzero)
+	{
+		LOG(E) << "Cannot allocate memory for Bufferzero";
+		unlockvol(vol_handle);
+		CloseHandle(vol_handle);
+		delete u;
+		delete d;
+		return false;
+	}
+
+	memset(Bufferzero, 0, DecompressedBufferSize);
+	LOG(I) << "zero out image area" << endl;
+	if (!WriteFile(vol_handle, Bufferzero, DecompressedBufferSize, &n, NULL))
+		//	if (!WriteFile(vol_handle, DecompressedBuffer, DecompressedBufferSize, &n, NULL))
+	{
+		int err = GetLastError();
+		printf("write zero data error %d\n", err);
+		unlockvol(vol_handle);
+		CloseHandle(vol_handle);
+		delete u;
+		delete d;
+		return false;
+	}
+	LOG(I) << "zero out image area OK" << endl;
+	printf("close vol_handle %d\n",vol_handle);
+	unlockvol(vol_handle);
+	CloseHandle(vol_handle);
+	if (Bufferzero != NULL) free(Bufferzero);
+	Sleep(10);
+	
+
+
+	LOG(I) << "Writing PBA to USB " << USBname;
+	vol_handle = INVALID_HANDLE_VALUE;
+	status = createvol(vol_handle, USBname);
+	if (!status)
+		return false;
+	status = lockvol(vol_handle);
+	if (!status)
+	{
+		unlockvol(vol_handle);
+		CloseHandle(vol_handle);
+		delete u;
+		delete d;
+		return false;
+	}
+	sect = 0;
+	status = setfp(vol_handle, sect);
+	if (!status)
+	{
+		unlockvol(vol_handle);
+		CloseHandle(vol_handle);
+		if (DecompressedBuffer != NULL) free(DecompressedBuffer);
+		delete u;
+		delete d;
+		return false;
+	}
+	if (!WriteFile(vol_handle, DecompressedBuffer, DecompressedBufferSize, &n, NULL))
+	{
+		int err = GetLastError();
+		printf("write image data to USB error %d\n", err);
+		unlockvol(vol_handle);
+		CloseHandle(vol_handle);
+		if (DecompressedBuffer != NULL) free(DecompressedBuffer);
+		delete d;
+		delete u;
+		return false;
+	}
+	printf("write image data to USB %lld OK; close handle %d\n", n, vol_handle);
+	if (DecompressedBuffer != NULL) free(DecompressedBuffer);
+	unlockvol(vol_handle);
+	CloseHandle(vol_handle);
+	delete d;
+	delete u;
+	return true;
+	/*
+	//DecompressedBufferSize = 1024 * 1024; // smaller amount of data write, 1M ok, 2/5/10M NG  ?????
+	printf("DecompressedBufferSize = %lld \n", DecompressedBufferSize);
+	// remove usb and re-plug-in seem to make it work again 
+	// memset(DecompressedBuffer, 0, DecompressedBufferSize); // test if zero get write into; yes write zero ok
+	// it seems that after write 1024 sector, OS will jmp in to mount the usb drive, bc it has a file system in place. 
+	// how to stop the OS interverion in the middle of the write image ??????
+	uint64_t bsz = 1024 * 1024 * 2; // this is the only size OK -> reduced to 512K byte
+	uint64_t sz = bsz;
+	vol_handle = INVALID_HANDLE_VALUE;
+
+	for (uint64_t ofs = 0 ; ofs < DecompressedBufferSize; )
+	{
+		createvol(vol_handle,USBname);
+		lockvol(vol_handle);
+		setfp(vol_handle,sect);
+
+		printf("Write ofs = %lld for %lld byte to USB ", ofs, bsz);
+		if (!WriteFile(vol_handle, DecompressedBuffer + ofs, bsz, &n, NULL))
+			//	if (!WriteFile(vol_handle, DecompressedBuffer, DecompressedBufferSize, &n, NULL))
+		{
+			int err = GetLastError();
+			printf("write image data error %d\n", err);
+			CloseHandle(vol_handle);
+			return false;
+		}
+		else {
+			printf("success\n");
+			ofs += bsz;
+			if ((ofs < DecompressedBufferSize) && ((ofs + bsz) > DecompressedBufferSize))
+			{
+				bsz = (DecompressedBufferSize - ofs);
+				printf("block size reduced to %lld\n", bsz);
+			}
+			sect += (bsz / 512); // set new file pointer
+			CloseHandle(vol_handle);
+			Sleep(1000);
+		}
+	}
+	*/
+
+	/*
+	// write the first bsz (4MB) after all other data has been written 
+
+	sect = 0;
+	setfp(vol_handle);
+
+	bsz = sz; // restore original sz 
+	if (!WriteFile(vol_handle, DecompressedBuffer , bsz, &n, NULL))
+	{
+		err = GetLastError();
+		//printf("%ld", ERROR_NOT_ENOUGH_QUOTA);
+		printf("write first 2M of image data error %d\n", err);
+
+		//errormsg("WriteFile: error %d writing drive %x sectors %lu..%lu:  %s",
+		//	err, drv, sect, sect + num_sects - 1,
+		//	w32errtxt(err));
+		CloseHandle(vol_handle);
+		return false;
+	}
+	else {
+		printf("Write first 2MB of image data : %lld byte to USB success\n", bsz);
+	}
+
+	*/
+
+	LOG(I) << "PBA image written to USB " << USBname;
+
+	if (vol_handle)
+	{
+		LOG(I) << "close handler " << endl;
+		CloseHandle(vol_handle);
+	}
+
+#endif
+	delete d;
+	delete u;
+	return 0;
+}
+
 int main(int argc, char * argv[])
 {
 	string st1;
@@ -151,7 +603,8 @@ int main(int argc, char * argv[])
 		if (m_lv->ValidateLicenseAtStartup(licenseBinding, needsActivation, returnMsg) == FALSE)
 		{
 			// no valid license 
-			char url[250] = "https://fidelityl.test.onfastspring.com/";
+			//char url[250] = "https://fidelityl.test.onfastspring.com/"; // old 
+			char url[250] = "https://fidelityheight.test.onfastspring.com/"; // new 12/1/2017
 			printf("No valid license of Fidelity Lock found, please register to get demo license or buy basic/premium license\n");
 			ShellExecute(0, 0, url, 0, 0, SW_SHOWNORMAL);
 			return 0;
@@ -242,6 +695,7 @@ int main(int argc, char * argv[])
 	if ((opts.action != sedutiloption::scan) && 
 		(opts.action != sedutiloption::validatePBKDF2) &&
 		(opts.action != sedutiloption::version) &&
+		(opts.action != sedutiloption::createUSB) &&
 		(opts.action != sedutiloption::isValidSED)) {
 		if (opts.device > (argc - 1)) opts.device = 0;
 		tempDev = new DtaDevGeneric(argv[opts.device]);
@@ -263,6 +717,7 @@ int main(int argc, char * argv[])
 				if (tempDev->isEprise())
 					d = new DtaDevEnterprise(argv[opts.device]);
 				else
+				// isOpalite() isPyrite()
 				{
 					LOG(E) << "Unknown OPAL SSC ";
 					return DTAERROR_INVALID_COMMAND;
@@ -335,7 +790,13 @@ int main(int argc, char * argv[])
 		LOG(D) << "get shadow MBR table size ";
 		return d->getMBRsize(argv[opts.password]);
 		break;
+
     #endif
+	case sedutiloption::createUSB:
+		LOG(D) << "create bootable USB drive " << argv[opts.pbafile] << " to " << opts.device;
+		//return d->createUSB(argv[opts.pbafile]);
+		diskUSBwrite(argv[opts.device], argv[opts.devusb]);
+		break;
 	case sedutiloption::loadPBAimage:
         LOG(D) << "Loading PBA image " << argv[opts.pbafile] << " to " << opts.device;
         return d->loadPBA(argv[opts.password], argv[opts.pbafile]);

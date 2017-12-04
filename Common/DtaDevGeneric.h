@@ -100,6 +100,7 @@ public:
 	 uint8_t DataStoreRead(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
 	 uint8_t MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len);
 	 uint8_t getMBRsize(char * password);
+	 uint8_t createUSB(char * filename);
 	 uint8_t loadPBA(char * password, char * filename) ;
          /** Change the locking state of a locking range 
          * @param lockingrange The number of the locking range (0 = global)

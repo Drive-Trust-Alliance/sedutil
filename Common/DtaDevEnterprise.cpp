@@ -898,6 +898,16 @@ uint8_t DtaDevEnterprise::getMBRsize(char * password) {
 	LOG(D1) << "Entering DtaDevEnterprise::getMBRsize() not implemented in Enterprize";
 	return 0; 
 }
+
+
+uint8_t DtaDevEnterprise::createUSB(char * filename) {
+	LOG(D1) << "Entering DtaDevEnterprise::createUSB()" << filename << " " << dev;
+	LOG(I) << " createUSB is not implemented.  It is not a mandatory part of  ";
+	LOG(I) << "the enterprise SSC ";
+	LOG(D1) << "Exiting DtaDevEnterprise::createUSB()";
+	return 0;
+}
+
 uint8_t DtaDevEnterprise::loadPBA(char * password, char * filename) {
 	LOG(D1) << "Entering DtaDevEnterprise::loadPBAimage()" << filename << " " << dev;
 	if (password == NULL) { LOG(D4) << "Referencing formal parameters " << filename; }

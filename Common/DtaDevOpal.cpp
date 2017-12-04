@@ -40,6 +40,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaSession.h"
 #include "DtaHexDump.h"
 #include <signal.h>
+#include "sedsize.h" 
 
 using namespace std;
 
@@ -2664,6 +2665,23 @@ void SignalHandler(int signal)
 	printf("Signal %d\n", signal);
 	throw "!Access Violation!";
 }
+//////////////////////////////////////////////////////////////////////////////////////////////
+//createUSB
+uint8_t DtaDevOpal::createUSB(char * filename) {
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+	LOG(D1) << "DtaDevOpal::createUSB() isn't supported in Linux";
+	return 0;
+#else
+	LOG(D1) << "Entering DtaDevOpal::createUSB()" << filename << " " << dev;
+#endif
+	LOG(D1) << "Exiting DtaDevOpal::createUSB()";
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+//  above code is for createUSB 
+//////////////////////////////////////////////////////////////////////////////////////////////
+
 
 uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
         #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)

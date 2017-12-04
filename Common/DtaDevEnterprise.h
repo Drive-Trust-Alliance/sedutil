@@ -184,6 +184,7 @@ public:
 	uint8_t DataStoreRead(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
 	uint8_t MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len);
 	uint8_t getMBRsize(char * password);
+	uint8_t createUSB(char * filename);
 	uint8_t loadPBA(char * password, char * filename);
          /** User command to prepare the device for management by sedutil. 
          * Specific to the SSC that the device supports

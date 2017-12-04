@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Common\compressapi-8.1.h" />
     <ClInclude Include="..\..\Common\DtaAnnotatedDump.h" />
     <ClInclude Include="..\..\Common\DtaAudit.h" />
     <ClInclude Include="..\..\Common\DtaCommand.h" />
@@ -38,6 +39,14 @@
     <ClInclude Include="..\..\Common\DtaSession.h" />
     <ClInclude Include="..\..\Common\DtaStructures.h" />
     <ClInclude Include="..\..\common\log.h" />
+    <ClInclude Include="..\..\Common\pbkdf2\bitops.h" />
+    <ClInclude Include="..\..\Common\pbkdf2\blockwise.h" />
+    <ClInclude Include="..\..\Common\pbkdf2\chash.h" />
+    <ClInclude Include="..\..\Common\pbkdf2\handy.h" />
+    <ClInclude Include="..\..\Common\pbkdf2\hmac.h" />
+    <ClInclude Include="..\..\Common\pbkdf2\pbkdf2.h" />
+    <ClInclude Include="..\..\Common\pbkdf2\sha1.h" />
+    <ClInclude Include="..\..\Common\pbkdf2\tassert.h" />
     <ClInclude Include="..\..\Common\sedsize.h" />
     <ClInclude Include="..\..\License\LicenseValidator.h" />
     <ClInclude Include="..\..\License\stdafx.h" />
@@ -48,6 +57,7 @@
     <ClInclude Include="..\nvme.h" />
     <ClInclude Include="..\nvmeIoctl.h" />
     <ClInclude Include="..\os.h" />
+    <ClInclude Include="..\Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\DtaAnnotatedDump.cpp" />
@@ -64,6 +74,11 @@
     <ClCompile Include="..\..\Common\DtaOptions.cpp" />
     <ClCompile Include="..\..\Common\DtaResponse.cpp" />
     <ClCompile Include="..\..\Common\DtaSession.cpp" />
+    <ClCompile Include="..\..\Common\pbkdf2\blockwise.c" />
+    <ClCompile Include="..\..\Common\pbkdf2\chash.c" />
+    <ClCompile Include="..\..\Common\pbkdf2\hmac.c" />
+    <ClCompile Include="..\..\Common\pbkdf2\pbkdf2.c" />
+    <ClCompile Include="..\..\Common\pbkdf2\sha1.c" />
     <ClCompile Include="..\..\Common\sedutil.cpp" />
     <ClCompile Include="..\..\License\LicenseValidator.cpp" />
     <ClCompile Include="..\..\License\stdafx.cpp" />
@@ -201,7 +216,6 @@
     </Link>
     <PreBuildEvent>
       <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
-
 copy  "..\..\rc\QlmLicenseLib.*"  "$(TargetDir)"
 copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
 </Command>
@@ -210,7 +224,7 @@ copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
       <Message>Create version header from git --version dirty</Message>
     </PreBuildEvent>
     <PreLinkEvent>
-      <Command>del ..\Version.h</Command>
+      <Command>REM del ..\Version.h</Command>
     </PreLinkEvent>
     <PreLinkEvent>
       <Message>Remove version header file</Message>

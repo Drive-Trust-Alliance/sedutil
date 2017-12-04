@@ -95,6 +95,7 @@ uint8NOCODE(DataStoreWrite, char * password, char * filename, uint8_t dsnum, uin
 uint8NOCODE(DataStoreRead, char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len)
 uint8NOCODE(MBRRead, char * password, char * filename, uint32_t startpos, uint32_t len)
 uint8NOCODE(getMBRsize, char * password)
+uint8NOCODE(createUSB, char * password)
 uint8NOCODE(loadPBA,char * password, char * filename)
 uint8NOCODE(activateLockingSP,char * password)
 uint8NOCODE(activateLockingSP_SUM,uint8_t lockingrange, char * password)
