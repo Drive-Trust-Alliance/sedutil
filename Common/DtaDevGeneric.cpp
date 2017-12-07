@@ -82,6 +82,7 @@ uint8NOCODE(setupLockingRange_SUM, uint8_t lockingrange, uint64_t start,
 uint8NOCODE(rekeyLockingRange, uint8_t lockingrange, char * password)
 uint8NOCODE(setBandsEnabled, int16_t lockingrange, char * password)
 uint8NOCODE(enableUser,char * password, char * userid)
+uint8NOCODE(enableUserRead, char * password, char * userid)
 uint8NOCODE(revertTPer,char * password, uint8_t PSID, uint8_t AdminSP)
 uint8NOCODE(eraseLockingRange,uint8_t lockingrange, char * password)
 uint8NOCODE(printDefaultPassword)

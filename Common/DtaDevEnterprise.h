@@ -111,6 +111,7 @@ public:
          * @param state 0 or 1  
          * @param Admin1Password Locking SP authority with access to flag
          */
+	uint8_t enableUserRead(char * password, char * userid);
 	uint8_t setMBRDone(uint8_t state, char * Admin1Password);
         /** Primitive to set the MBREnable flag.
          * @param state 0 or 1  

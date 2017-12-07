@@ -183,6 +183,15 @@ DtaCommand::addToken(OPAL_UID token)
 }
 
 void
+DtaCommand::addToken(OPAL_UID token,uint8_t factor)
+{
+	LOG(D1) << "Entering DtaCommand::addToken(OPAL_UID, factor)";
+	cmdbuf[bufferpos++] = OPAL_SHORT_ATOM::BYTESTRING4;
+	memcpy(&cmdbuf[bufferpos], &OPALUID[token][0], factor);
+	bufferpos += factor;
+}
+
+void
 DtaCommand::complete(uint8_t EOD)
 {
     LOG(D1) << "Entering DtaCommand::complete(uint8_t EOD)";

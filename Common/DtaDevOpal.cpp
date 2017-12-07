@@ -710,7 +710,8 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 		LOG(E) << "Unable to create session object ";
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	// if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // ok work : JERRY can user set its own password ?????
 		delete session;
 		return lastRC;
 	}
@@ -885,7 +886,7 @@ uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 		LOG(E) << "Unable to create session object ";
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, Admin1Password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, Admin1Password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // JERRY can User1 set Lockingrange RW ??????
 		delete session;
 		return lastRC;
 	}
@@ -1040,7 +1041,8 @@ uint8_t DtaDevOpal::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
 		LOG(E) << "Unable to create session object ";
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode()? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // JERRY ADMIN1 or USER1 ?????
 		delete session;
 		return lastRC;
 	}
@@ -1084,10 +1086,108 @@ uint8_t DtaDevOpal::enableUser(char * password, char * userid)
 		return lastRC;
 	}
 	LOG(I) << userid << " has been enabled ";
+
 	delete session;
 	LOG(D1) << "Exiting DtaDevOpal::enableUser()";
 	return 0;
 }
+
+
+uint8_t DtaDevOpal::userAcccessEnable(OPAL_UID UID)
+{
+	uint8_t lastRC;
+	// Give UserN read access to the DataStore table
+	DtaCommand *cmd = new DtaCommand();
+	if (NULL == cmd) {
+		LOG(E) << "Unable to create command object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+
+	cmd->reset(UID, OPAL_METHOD::SET);
+	cmd->addToken(OPAL_TOKEN::STARTLIST);
+	cmd->addToken(OPAL_TOKEN::STARTNAME);
+	cmd->addToken(OPAL_TOKEN::VALUES);
+	cmd->addToken(OPAL_TOKEN::STARTLIST);
+	cmd->addToken(OPAL_TOKEN::STARTNAME);
+	cmd->addToken(OPAL_TOKEN::OPAL_BOOLEAN_EXPR);
+	cmd->addToken(OPAL_TOKEN::STARTLIST);
+	// User1
+	cmd->addToken(OPAL_TOKEN::STARTNAME);
+	cmd->addToken(OPAL_UID::OPAL_HALF_UID_AUTHORITY_OBJ_REF, 4); //????? how to insert 4-byte here, addToken will insert BYTESTRING4 token
+	cmd->addToken(OPAL_UID::OPAL_USER1_UID); // ???? no need to add BYTESTRING8 Token ???????  seem duplicated A8 in buffer 
+	cmd->addToken(OPAL_TOKEN::ENDNAME);
+	// User2
+	cmd->addToken(OPAL_TOKEN::STARTNAME);
+	cmd->addToken(OPAL_UID::OPAL_HALF_UID_AUTHORITY_OBJ_REF, 4); //????? how to insert 4-byte here, addToken will insert BYTESTRING4 token
+	cmd->addToken(OPAL_UID::OPAL_USER2_UID); // ???? no need to add BYTESTRING8 Token ???????  seem duplicated A8 in buffer 
+	cmd->addToken(OPAL_TOKEN::ENDNAME);
+	//
+	cmd->addToken(OPAL_TOKEN::STARTNAME);
+	cmd->addToken(OPAL_UID::OPAL_HALF_UID_BOOLEAN_ACE, 4);
+	cmd->addToken(OPAL_TOKEN::VALUES);
+	cmd->addToken(OPAL_TOKEN::ENDNAME);
+	cmd->addToken(OPAL_TOKEN::ENDLIST);
+	cmd->addToken(OPAL_TOKEN::ENDNAME);
+	cmd->addToken(OPAL_TOKEN::ENDLIST);
+	cmd->addToken(OPAL_TOKEN::ENDNAME);
+	cmd->addToken(OPAL_TOKEN::ENDLIST);
+	cmd->complete();
+
+	//LOG(I) << "Dump enable user access cmd buffer";
+	//IFLOG(D1) DtaHexDump(cmd->cmdbuf, 512);
+
+	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+		LOG(E) << "***** send enable user access command fail";
+		delete cmd;
+		return lastRC;
+	}
+	LOG(I) << "***** send enable user access command OK";
+	delete cmd;
+	LOG(D1) << "***** end of enable user access command ";
+	return 0;
+}
+uint8_t DtaDevOpal::enableUserRead(char * password, char * userid)
+{
+	LOG(D1) << "Entering DtaDevOpal::enableUserRead";
+	uint8_t lastRC;
+	uint8_t error;
+	vector<uint8_t> userUID;
+
+	session = new DtaSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+		delete session;
+		return lastRC;
+	}
+	if ((lastRC = getAuth4User(userid, 0, userUID)) != 0) {
+		LOG(E) << "Unable to find user " << userid << " in Authority Table";
+		delete session;
+		return lastRC;
+	}
+	/*	OPAL_ACE_DataStore_Get_All,
+		OPAL_ACE_MBRControl_Set_Done,
+	    OPAL_ACE_LOCKINGRANGE_RDLOCKED,
+		OPAL_ACE_LOCKINGRANGE_WRLOCKED,
+	*/
+	error = 0;
+	error = userAcccessEnable(OPAL_UID::OPAL_ACE_DataStore_Get_All);
+	error |= userAcccessEnable(OPAL_UID::OPAL_ACE_MBRControl_Set_Done);
+	error |= userAcccessEnable(OPAL_UID::OPAL_ACE_LOCKINGRANGE_RDLOCKED);
+	error |= userAcccessEnable(OPAL_UID::OPAL_ACE_LOCKINGRANGE_WRLOCKED);
+	if (error) {
+		LOG(E) << "one of user access enable fail";
+		delete session;
+		return error;
+	}
+
+	delete session;
+	return 0;
+}
+
+
 uint8_t DtaDevOpal::revertTPer(char * password, uint8_t PSID, uint8_t AdminSP)
 {
 	LOG(D1) << "Entering DtaDevOpal::revertTPer() " << AdminSP;
@@ -1272,7 +1372,11 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 	return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	LOG(D1) << "start lockingSP session";
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	// ???????????????????????????????????????????????????????????????????????????????????
+	// experiement start lockingSP with User1 password"
+	// ????????????????????????????????????????????????????????????????????????????????????
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID :  OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // JERRY 
+	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 	delete cmd;
 	delete session;
 	return lastRC;
@@ -2173,7 +2277,8 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * filename, uint8_t dsnu
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	LOG(D1) << "start lockingSP session";
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // JERRY TEST User 1 
 		delete cmd;
 		delete session;
 		LOG(E) << "DataStore Read Error";

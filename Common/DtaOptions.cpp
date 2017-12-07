@@ -81,7 +81,7 @@ void usage()
 	printf("                                Enable|Disable MBR shadowing \n");
 	printf("--setMBRDone <on|off> <Admin1password> <device> \n");
 	printf("                                set|unset MBRDone\n");
-	printf("--createUSB <file> <device> \n");
+	printf("--createUSB <file> <device1> <device2\n");
 	printf("                                Write image file to USB\n");
 	printf("--loadPBAimage <Admin1password> <file> <device> \n");
 	printf("                                Write <file> to MBR Shadow area\n");
@@ -130,6 +130,12 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			LOG(D) << "Log level set to " << CLog::ToString(CLog::FromInt(loggingLevel));
 			LOG(D) << "sedutil version : " << GIT_VERSION;
 		}
+		else if (!(strcmp("-u", argv[i]))) {
+			baseOptions += 1;
+			opts->usermode = true;
+			LOG(D) << "user mode ON";
+		}
+
 		else if (!(strcmp("-n", argv[i]))) {
                         baseOptions += 1;
 			opts->no_hash_passwords = true;
@@ -142,7 +148,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			return DTAERROR_INVALID_COMMAND;
 		}
 		BEGIN_OPTION(initialSetup, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(setSIDPassword, 3) OPTION_IS(password) OPTION_IS(newpassword) 
+		BEGIN_OPTION(setSIDPassword, 3) OPTION_IS(password) OPTION_IS(newpassword)
 		         OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(setup_SUM, 6)
 			TESTARG(0, lockingrange, 0)
@@ -197,7 +203,9 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 		BEGIN_OPTION(PSIDrevertAdminSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2) OPTION_IS(password) 
 			OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(enableuser, 2) OPTION_IS(password) OPTION_IS(userid) 
+		BEGIN_OPTION(enableuser, 3) OPTION_IS(password) OPTION_IS(userid) 
+			OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(enableuserread, 3) OPTION_IS(password) OPTION_IS(userid)
 			OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(activateLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(activateLockingSP_SUM, 3)

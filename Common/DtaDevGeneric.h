@@ -172,6 +172,7 @@ public:
           /** Enable locking on the device
          * @param password password of the admin sp SID authority
          */
+	 uint8_t enableUserRead(char * password, char * userid);
 	 uint8_t activateLockingSP(char * password) ;
 	/** Enable locking on the device in Single User Mode
 	 * @param lockingrange locking range to activate in SUM

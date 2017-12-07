@@ -129,10 +129,13 @@ public:
          * @param userid Character name of the user to be enabled
          */
 	uint8_t enableUser(char * password, char * userid);
-        /** Primitive to set the MBRDone flag.
+
+	/**
          * @param state 0 or 1  
          * @param Admin1Password Locking SP authority with access to flag
          */
+	uint8_t enableUserRead(char * password, char * userid);
+	uint8_t userAcccessEnable(OPAL_UID UID);	
 	uint8_t setMBRDone(uint8_t state, char * Admin1Password);
           /** Primitive to set the MBREnable flag.
          * @param state 0 or 1  
@@ -250,7 +253,7 @@ public:
          * @param password the password that is to be assigned to the SSC master entities 
          */
 	uint8_t initialSetup(char * password);
-	uint8_t initialsetup(char * password);
+	//uint8_t initialsetup(char * password);
 	/** User command to prepare the drive for Single User Mode and rekey a SUM locking range.
          * @param lockingrange locking range number to enable
          * @param start LBA to start locking range
@@ -338,4 +341,5 @@ protected:
 	 *  @param password Admin1 Password for TPer
 	 */
 	lrStatus_t getLockingRange_status(uint8_t lockingrange, char * password);
+	bool getusermode() { return usermodeON; };
 };

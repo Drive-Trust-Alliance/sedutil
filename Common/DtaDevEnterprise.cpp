@@ -757,6 +757,14 @@ uint8_t DtaDevEnterprise::enableUser(char * password, char * userid)
 	LOG(D1) << "Exiting DtaDevEnterprise::enableUser()";
 	return 0xff;
 }
+uint8_t DtaDevEnterprise::enableUserRead(char * password, char * userid)
+{
+	LOG(D1) << "Entering DtaDevEnterprise::enableUserRead";
+	LOG(E) << "enableUserRead not implemented";
+	if (!password && !userid) { LOG(E) << "Formal Parameters"; }
+	LOG(D1) << "Exiting DtaDevEnterprise::enableUserRead()";
+	return 0xff;
+}
 uint8_t DtaDevEnterprise::revertTPer(char * password, uint8_t PSID, uint8_t AdminSP)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::revertTPer()";

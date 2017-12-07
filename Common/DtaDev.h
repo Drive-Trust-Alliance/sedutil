@@ -231,6 +231,10 @@ public:
 	/** Enable locking on the device
 	 * @param password password of the admin sp SID authority
 	 */
+	virtual uint8_t enableUserRead(char * password, char * userid) = 0;
+	/** Enable locking on the device
+	* @param password password of the admin sp SID authority
+	*/
 	virtual uint8_t activateLockingSP(char * password) = 0;
 	/** Enable locking on the device in Single User Mode
 	* @param lockingrange the locking range number to activate in SUM
@@ -298,6 +302,7 @@ public:
 	/** return the communications ID to be used for sessions to this device */
 	virtual uint16_t comID() = 0;
 	bool no_hash_passwords; /** disables hashing of passwords */
+	bool usermodeON = FALSE;
 protected:
 	const char * dev;   /**< character string representing the device in the OS lexicon */
 	uint8_t isOpen = FALSE;  /**< The device has been opened */

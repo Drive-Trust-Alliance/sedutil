@@ -643,10 +643,6 @@ int main(int argc, char * argv[])
 			printf("License Evaluation Remaining Days = %d \n", rem);
 			printf("License is expired = %d \n", licexpired);
 
-
-			//printf(" = %ld \n", );
-
-
 			SYSTEMTIME lt;
 			VariantTimeToSystemTime(m_lv->getexpire(), &lt);
 			printf("License Expire date : %d/%d/%d %d:%d:%d\n", lt.wYear, lt.wMonth,lt.wDay,lt.wHour,lt.wMinute,lt.wSecond);
@@ -729,6 +725,7 @@ int main(int argc, char * argv[])
 		}
 		// make sure DtaDev::no_hash_passwords is initialized
 		d->no_hash_passwords = opts.no_hash_passwords;
+		d->usermodeON = opts.usermode;
 	}
     switch (opts.action) {
  	case sedutiloption::initialSetup:
@@ -790,13 +787,13 @@ int main(int argc, char * argv[])
 		LOG(D) << "get shadow MBR table size ";
 		return d->getMBRsize(argv[opts.password]);
 		break;
-
-    #endif
 	case sedutiloption::createUSB:
 		LOG(D) << "create bootable USB drive " << argv[opts.pbafile] << " to " << opts.device;
 		//return d->createUSB(argv[opts.pbafile]);
 		diskUSBwrite(argv[opts.device], argv[opts.devusb]);
 		break;
+    #endif
+
 	case sedutiloption::loadPBAimage:
         LOG(D) << "Loading PBA image " << argv[opts.pbafile] << " to " << opts.device;
         return d->loadPBA(argv[opts.password], argv[opts.pbafile]);
@@ -866,6 +863,10 @@ int main(int argc, char * argv[])
         LOG(D) << "Performing enable user for user " << argv[opts.userid];
         return d->enableUser(argv[opts.password], argv[opts.userid]);
         break;
+	case sedutiloption::enableuserread:
+		LOG(D) << "Performing enable user for user " << argv[opts.userid];
+		return d->enableUserRead(argv[opts.password], argv[opts.userid]);
+		break;
 	case sedutiloption::activateLockingSP:
 		LOG(D) << "Activating the LockingSP on" << argv[opts.device];
         return d->activateLockingSP(argv[opts.password]);
@@ -961,7 +962,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-        printf("Fidelity Lock Version : 0.1.7.%s.%s 20171115-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.1.8.%s.%s 20171206-A001\n", st1.c_str(),GIT_VERSION);
 		break;
     default:
         LOG(E) << "Unable to determine what you want to do ";
