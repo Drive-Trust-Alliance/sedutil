@@ -178,10 +178,10 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(pbaValid, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(activate, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(auditWrite, 3)  
-		OPTION_IS(eventid) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(auditRead, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(auditErase, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(auditWrite, 4)  
+		OPTION_IS(eventid) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(auditRead, 3) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(auditErase, 3) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(getmfgstate, 1) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(DataStoreWrite, 6) OPTION_IS(password) OPTION_IS(pbafile)
 			OPTION_IS(dsnum) OPTION_IS(startpos) OPTION_IS(len)
@@ -203,9 +203,21 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 		BEGIN_OPTION(PSIDrevertAdminSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2) OPTION_IS(password) 
 			OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(enableuser, 3) OPTION_IS(password) OPTION_IS(userid) 
+		BEGIN_OPTION(enableuser, 4)  
+			TESTARG(ON, mbrstate, 1)
+			TESTARG(on, mbrstate, 1)
+			TESTARG(off, mbrstate, 0)
+			TESTARG(OFF, mbrstate, 0)
+			TESTFAIL("Invalid enableuser argument not <on|off>")
+			OPTION_IS(password) OPTION_IS(userid)
 			OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(enableuserread, 3) OPTION_IS(password) OPTION_IS(userid)
+		BEGIN_OPTION(enableuserread, 4) 
+			TESTARG(ON, mbrstate, 1)
+			TESTARG(on, mbrstate, 1)
+			TESTARG(off, mbrstate, 0)
+			TESTARG(OFF, mbrstate, 0)
+			TESTFAIL("Invalid enableuser argument not <on|off>")
+			OPTION_IS(password) OPTION_IS(userid)
 			OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(activateLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(activateLockingSP_SUM, 3)

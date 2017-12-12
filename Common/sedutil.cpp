@@ -748,15 +748,15 @@ int main(int argc, char * argv[])
 	case sedutiloption::auditWrite:
 		LOG(D) << "audit log write";
 		printf("argv[opts.eventid]=%s\n", argv[opts.eventid]);
-		return d->auditWrite(argv[opts.password], argv[opts.eventid]);
+		return d->auditWrite(argv[opts.password], argv[opts.eventid], argv[opts.userid]);
 		break;
 	case sedutiloption::auditRead:
 		LOG(D) << "audit log read";
-		return d->auditRead(argv[opts.password]);
+		return d->auditRead(argv[opts.password], argv[opts.userid]);
 		break;
 	case sedutiloption::auditErase:
 		LOG(D) << "audit log erase ";
-		return d->auditErase(argv[opts.password]);
+		return d->auditErase(argv[opts.password], argv[opts.userid]);
 		break;
 	case sedutiloption::getmfgstate:
 		LOG(D) << "get manufacture life cycle state";
@@ -861,11 +861,11 @@ int main(int argc, char * argv[])
 		break;
 	case sedutiloption::enableuser:
         LOG(D) << "Performing enable user for user " << argv[opts.userid];
-        return d->enableUser(argv[opts.password], argv[opts.userid]);
+        return d->enableUser(opts.mbrstate, argv[opts.password], argv[opts.userid]);
         break;
 	case sedutiloption::enableuserread:
 		LOG(D) << "Performing enable user for user " << argv[opts.userid];
-		return d->enableUserRead(argv[opts.password], argv[opts.userid]);
+		return d->enableUserRead(opts.mbrstate, argv[opts.password], argv[opts.userid]);
 		break;
 	case sedutiloption::activateLockingSP:
 		LOG(D) << "Activating the LockingSP on" << argv[opts.device];
@@ -962,7 +962,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-        printf("Fidelity Lock Version : 0.1.8.%s.%s 20171206-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.1.9.%s.%s 20171212-A001\n", st1.c_str(),GIT_VERSION);
 		break;
     default:
         LOG(E) << "Unable to determine what you want to do ";

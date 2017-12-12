@@ -128,14 +128,14 @@ public:
          * @param password the password of the Locking SP administrative authority 
          * @param userid Character name of the user to be enabled
          */
-	uint8_t enableUser(char * password, char * userid);
+	uint8_t enableUser(uint8_t mbrstate, char * password, char * userid);
 
 	/**
          * @param state 0 or 1  
          * @param Admin1Password Locking SP authority with access to flag
          */
-	uint8_t enableUserRead(char * password, char * userid);
-	uint8_t userAcccessEnable(OPAL_UID UID);	
+	uint8_t enableUserRead(uint8_t mbrstate, char * password, char * userid);
+	uint8_t userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * userid);
 	uint8_t setMBRDone(uint8_t state, char * Admin1Password);
           /** Primitive to set the MBREnable flag.
          * @param state 0 or 1  
@@ -230,10 +230,10 @@ public:
          */
 	uint8_t pbaValid(char * password);
 	uint8_t activate(char * password);
-	uint8_t auditRec(char * password, entry_t * pent);
-	uint8_t auditErase(char * password);
-	uint8_t auditRead(char * password);
-	uint8_t auditWrite(char * password,char * idstr);
+	uint8_t auditRec(char * password, entry_t * pent, char * userid);
+	uint8_t auditErase(char * password,char * userid);
+	uint8_t auditRead(char * password, char * userid);
+	uint8_t auditWrite(char * password,char * idstr, char * userid);
 
 	uint8_t getmfgstate(void);
 	uint8_t DataStoreWrite(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
@@ -242,10 +242,10 @@ public:
 	uint8_t getMBRsize(char * password, uint32_t * msize);
 	uint8_t getMBRsize(char * password);
 	uint8_t MBRRead(char * password, uint32_t startpos, uint32_t len, char * buffer);
-	uint8_t DataRead(char * password, uint32_t startpos, uint32_t len, char * buffer);
-	uint8_t DataWrite(char * password, uint32_t startpos, uint32_t len, char * buffer);
-	uint8_t auditlogwr(char * password, uint32_t startpos, uint32_t len, char * buffer, entry_t * ent); // audit log write
-	uint8_t auditlogrd(char * password, uint32_t startpos, uint32_t len, char * buffer); // audit log read
+	uint8_t DataRead(char * password, uint32_t startpos, uint32_t len, char * buffer,char * userid);
+	uint8_t DataWrite(char * password, uint32_t startpos, uint32_t len, char * buffer, char * userid);
+	uint8_t auditlogwr(char * password, uint32_t startpos, uint32_t len, char * buffer, entry_t * ent, char * userid); // audit log write
+	uint8_t auditlogrd(char * password, uint32_t startpos, uint32_t len, char * buffer,char * userid); // audit log read
 	uint8_t createUSB(char * filename);
 	uint8_t loadPBA(char * password, char * filename);
         /** User command to prepare the device for management by sedutil. 
@@ -342,4 +342,6 @@ protected:
 	 */
 	lrStatus_t getLockingRange_status(uint8_t lockingrange, char * password);
 	bool getusermode() { return usermodeON; };
+	uint8_t adminEnabledTab[16];
+	uint8_t userEnabledTab[16];
 };

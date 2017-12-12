@@ -749,7 +749,7 @@ uint8_t DtaDevEnterprise::setLockingRange_SUM(uint8_t lockingrange, uint8_t lock
         LOG(D1) << "Exiting DtaDevEnterprise::setLockingRange_SUM()";
 	return 0;
 }
-uint8_t DtaDevEnterprise::enableUser(char * password, char * userid)
+uint8_t DtaDevEnterprise::enableUser(uint8_t mbrstate, char * password, char * userid)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::enableUser";
 	LOG(E) << "enableUser not implemented";
@@ -757,7 +757,7 @@ uint8_t DtaDevEnterprise::enableUser(char * password, char * userid)
 	LOG(D1) << "Exiting DtaDevEnterprise::enableUser()";
 	return 0xff;
 }
-uint8_t DtaDevEnterprise::enableUserRead(char * password, char * userid)
+uint8_t DtaDevEnterprise::enableUserRead(uint8_t mbrstate, char * password, char * userid)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::enableUserRead";
 	LOG(E) << "enableUserRead not implemented";
@@ -873,15 +873,15 @@ uint8_t DtaDevEnterprise::activate(char * password) {
 	LOG(D1) << "Entering DtaDevEnterprise::activate() not implemented in Enterprize";
 	return 0;
 }
-uint8_t DtaDevEnterprise::auditWrite(char * password, char * idstr) {
+uint8_t DtaDevEnterprise::auditWrite(char * password, char * idstr, char * userid) {
 	LOG(D1) << "Entering DtaDevEnterprise::auditWrite() not implemented in Enterprize";
 	return 0;
 }
-uint8_t DtaDevEnterprise::auditRead(char * password) {
+uint8_t DtaDevEnterprise::auditRead(char * password, char * userid) {
 	LOG(D1) << "Entering DtaDevEnterprise::auditRead() not implemented in Enterprize";
 	return 0;
 }
-uint8_t DtaDevEnterprise::auditErase(char * password) {
+uint8_t DtaDevEnterprise::auditErase(char * password, char * userid) {
 	LOG(D1) << "Entering DtaDevEnterprise::auditErase() not implemented in Enterprize";
 	return 0;
 }

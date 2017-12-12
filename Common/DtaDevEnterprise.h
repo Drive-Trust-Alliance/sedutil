@@ -106,12 +106,8 @@ public:
         /** get the UID or CPIN ID of a user from their character name*/
 	uint8_t getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData);
         /** Enable a Bandmaster Not functional */
-	uint8_t enableUser(char * password, char * userid);
-         /** Primitive to set the MBRDone flag.
-         * @param state 0 or 1  
-         * @param Admin1Password Locking SP authority with access to flag
-         */
-	uint8_t enableUserRead(char * password, char * userid);
+	uint8_t enableUser(uint8_t mbrstate, char * password, char * userid);
+	uint8_t enableUserRead(uint8_t mbrstate, char * password, char * userid);
 	uint8_t setMBRDone(uint8_t state, char * Admin1Password);
         /** Primitive to set the MBREnable flag.
          * @param state 0 or 1  
@@ -177,9 +173,9 @@ public:
          */
 	uint8_t pbaValid(char * password);
 	uint8_t activate(char * password);
-	uint8_t auditWrite(char * password, char * idstr);
-	uint8_t auditRead(char * password);
-	uint8_t auditErase(char * password);
+	uint8_t auditWrite(char * password, char * idstr, char * userid);
+	uint8_t auditRead(char * password, char * userid);
+	uint8_t auditErase(char * password, char * userid);
 	uint8_t getmfgstate(void);
 	uint8_t DataStoreWrite(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
 	uint8_t DataStoreRead(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);

@@ -92,9 +92,9 @@ public:
          */
 	 uint8_t pbaValid(char * password);
 	 uint8_t activate(char * password);
-	 uint8_t auditWrite(char * password,char * idstr);
-	 uint8_t auditRead(char * password);
-	 uint8_t auditErase(char * password);
+	 uint8_t auditWrite(char * password,char * idstr,char * userid);
+	 uint8_t auditRead(char * password, char * userid);
+	 uint8_t auditErase(char * password, char * userid);
 	 uint8_t getmfgstate(void);
 	 uint8_t DataStoreWrite(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
 	 uint8_t DataStoreRead(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
@@ -168,11 +168,11 @@ public:
          * @param password password of locking sp administrative authority
          * @param userid  the user to be enabled
          */
-	 uint8_t enableUser(char * password, char * userid) ;
+	 uint8_t enableUser(uint8_t state, char * password, char * userid) ;
           /** Enable locking on the device
          * @param password password of the admin sp SID authority
          */
-	 uint8_t enableUserRead(char * password, char * userid);
+	 uint8_t enableUserRead(uint8_t state, char * password, char * userid);
 	 uint8_t activateLockingSP(char * password) ;
 	/** Enable locking on the device in Single User Mode
 	 * @param lockingrange locking range to activate in SUM
