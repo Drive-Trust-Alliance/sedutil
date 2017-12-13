@@ -1126,25 +1126,30 @@ OPAL_UID getUIDtoken(char * userid)
 	}
 }
 
-vector<uint8_t> getUID(char * userid)
+vector<uint8_t> getUID(char * userid, vector<uint8_t> &auth2)
 {
 	// translate UserN AdminN into <int8_t 
 	vector<uint8_t> auth;
+	;
 	uint8_t id;
 	auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+	auth2.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
 	for (int i = 0; i < 7; i++) {
 		if (!memcmp("User", userid, 4)) {// UserI UID
 			//printf("UserN : %s", userid);
 			auth.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
 			id = (uint8_t)atoi(&userid[4]); // (uint8_t)atoi(argv[opts.dsnum])
+			auth2.push_back(OPALUID[OPAL_UID::OPAL_ADMIN1_UID][i]); 
 		}
 		else { // "Admin"
 			//printf("AdminN %s\n", userid);
 			auth.push_back(OPALUID[OPAL_UID::OPAL_ADMIN1_UID][i]);
 			id = (uint8_t)atoi(&userid[5]);
+			auth2.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
 		}
 	}
 	auth.push_back(id);
+	auth2.push_back(id);
 	return auth;
 }
 
@@ -1171,8 +1176,8 @@ uint8_t DtaDevOpal::userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * use
 	cmd->addToken(OPAL_TOKEN::STARTNAME);
 	cmd->addToken(OPAL_UID::OPAL_HALF_UID_AUTHORITY_OBJ_REF, 4); //????? how to insert 4-byte here, addToken will insert BYTESTRING4 token
 	// translate UserN AdminN into <int8_t 
-	vector<uint8_t> auth;
-	auth = getUID(userid);
+	vector<uint8_t> auth, auth2;
+	auth = getUID(userid, auth2);
 	cmd->addToken(auth);
 	//for (int i = 0; i < 9; i++) printf("%02X, ", auth[i]);  printf("\n"); 
 
@@ -1183,7 +1188,7 @@ uint8_t DtaDevOpal::userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * use
 
 	////// auth.at(8) = auth.at(8) + 1;
 	////// for (int i = 0; i < 9; i++) printf("%02X, ", auth[i]);  printf("\n");
-	cmd->addToken(auth);
+	cmd->addToken(auth2);  
 	cmd->addToken(OPAL_TOKEN::ENDNAME);
 	//
 	cmd->addToken(OPAL_TOKEN::STARTNAME);
@@ -1445,8 +1450,8 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 	// ????????????????????????????????????????????????????????????????????????????????????
 		// translate UserN AdminN into <int8_t 
 		//printf(" ***** start LOCKINGSP with %s  Token = %d\n", userid, getUIDtoken(userid));
-		vector<uint8_t> auth;
-		auth = getUID(userid); // pass vector directly, not enum index of vector table
+		vector<uint8_t> auth,auth2;
+		auth = getUID(userid,auth2); // pass vector directly, not enum index of vector table
 		//for (int i = 0; i < 9; i++) {
 		//	printf("%02X ", auth[i]);
 		//} 
@@ -1523,8 +1528,8 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	LOG(D1) << "start lockingSP session";
-	vector<uint8_t> auth;
-	auth = getUID(userid);
+	vector<uint8_t> auth,auth2;
+	auth = getUID(userid,auth2);
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth)) != 0) { // OPAL_UID::OPAL_ADMIN1_UID
 	delete cmd;
 	delete session;
