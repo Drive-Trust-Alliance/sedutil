@@ -122,6 +122,11 @@ class LockApp(gtk.Window):
     series_list = [] # series number 
     sn_list = []
     
+    salt_list = []
+    
+    lockstatus_list = []
+    setupstatus_list = []
+    
     scanning = False
     view_state = 0
     
@@ -456,7 +461,7 @@ class LockApp(gtk.Window):
                 self.drive_menu.append = self.drive_menu.append_text
                 self.auth_menu.append = self.auth_menu.append_text
                 self.authQuery.append = self.authQuery.append_text
-                self.usb_menu.append = self.auth_menu.append_text
+                self.usb_menu.append = self.usb_menu.append_text
             
             self.box_drive = gtk.HBox(homogeneous, 0)
             
@@ -585,6 +590,8 @@ class LockApp(gtk.Window):
                 self.unlock_prompt()
             
             print self.devs_list
+            print self.sn_list
+            print self.salt_list
             print self.locked_list
             print self.setup_list
             print self.unlocked_list
@@ -861,7 +868,7 @@ class LockApp(gtk.Window):
                     if drive != 'C' and os.path.isdir('%s:\\' % drive):
                         self.drive_list.append(drive + ':')
             elif dev_os == 'Linux':
-                txt = os.popen(ui.prefix + 'mount -l').read()
+                txt = os.popen(self.prefix + 'mount -l').read()
                 dev_regex = '/dev/sd[b-z][1-9]?\son\s(/[A-z/]*)\stype'
                 self.drive_list = re.findall(dev_regex, txt)
             #empty the list and refill it
@@ -926,8 +933,11 @@ class LockApp(gtk.Window):
                 self.opal_ver_list = []
                 #print 'after remove all item, opal_ver_list = ', self.opal_ver_list
                 self.sn_list = []
+                self.salt_list = []
                 self.series_list = []
                 self.pba_list = []
+                self.lockstatus_list = []
+                self.setupstatus_list = []
         
         runop.finddev(self)
             
@@ -943,6 +953,8 @@ class LockApp(gtk.Window):
                 self.dev_sn.set_text(self.sn_list[0])
                 self.dev_series.set_text(self.series_list[0])
                 self.dev_msid.set_text(self.msid_list[0])
+                self.dev_status.set_text(self.lockstatus_list[0])
+                self.dev_setup.set_text(self.setupstatus_list[0])
         elif self.view_state == 1:
             length = len(self.locked_list)
             if length > 0:
@@ -954,6 +966,8 @@ class LockApp(gtk.Window):
                 self.dev_sn.set_text(self.sn_list[self.locked_list[0]])
                 self.dev_series.set_text(self.series_list[self.locked_list[0]])
                 self.dev_msid.set_text(self.msid_list[self.locked_list[0]])
+                self.dev_status.set_text(self.lockstatus_list[self.locked_list[0]])
+                self.dev_setup.set_text(self.setupstatus_list[self.locked_list[0]])
         elif self.view_state == 2:
             length = len(self.setup_list)
             if length > 0:
@@ -965,6 +979,8 @@ class LockApp(gtk.Window):
                 self.dev_sn.set_text(self.sn_list[self.setup_list[0]])
                 self.dev_series.set_text(self.series_list[self.setup_list[0]])
                 self.dev_msid.set_text(self.msid_list[self.setup_list[0]])
+                self.dev_status.set_text(self.lockstatus_list[self.setup_list[0]])
+                self.dev_setup.set_text(self.setupstatus_list[self.setup_list[0]])
         elif self.view_state == 3:
             length = len(self.unlocked_list)
             if length > 0:
@@ -976,6 +992,8 @@ class LockApp(gtk.Window):
                 self.dev_sn.set_text(self.sn_list[self.unlocked_list[0]])
                 self.dev_series.set_text(self.series_list[self.unlocked_list[0]])
                 self.dev_msid.set_text(self.msid_list[self.unlocked_list[0]])
+                self.dev_status.set_text(self.lockstatus_list[self.unlocked_list[0]])
+                self.dev_setup.set_text(self.setupstatus_list[self.unlocked_list[0]])
         elif self.view_state == 4:
             length = len(self.nonsetup_list)
             if length > 0:
@@ -987,6 +1005,8 @@ class LockApp(gtk.Window):
                 self.dev_sn.set_text(self.sn_list[self.nonsetup_list[0]])
                 self.dev_series.set_text(self.series_list[self.nonsetup_list[0]])
                 self.dev_msid.set_text(self.msid_list[self.nonsetup_list[0]])
+                self.dev_status.set_text(self.lockstatus_list[self.nonsetup_list[0]])
+                self.dev_setup.set_text(self.setupstatus_list[self.nonsetup_list[0]])
         else:
             length = len(self.tcg_list)
             if length > 0:
@@ -998,6 +1018,8 @@ class LockApp(gtk.Window):
                 self.dev_sn.set_text(self.sn_list[self.tcg_list[0]])
                 self.dev_series.set_text(self.series_list[self.tcg_list[0]])
                 self.dev_msid.set_text(self.msid_list[self.tcg_list[0]])
+                self.dev_status.set_text(self.lockstatus_list[self.tcg_list[0]])
+                self.dev_setup.set_text(self.setupstatus_list[self.tcg_list[0]])
             
         
         numTCG = len(self.tcg_list)
@@ -1052,6 +1074,8 @@ class LockApp(gtk.Window):
         self.dev_series.set_text(self.series_list[index])
         self.dev_msid.set_text(self.msid_list[index])
         self.dev_opal_ver.set_text(self.opal_ver_list[index])
+        self.dev_status.set_text(self.lockstatus_list[index])
+        self.dev_setup.set_text(self.setupstatus_list[index])
         txt2 = ""
         txt = os.popen(self.prefix + "sedutil-cli --query " + self.devname ).read()
         
@@ -1075,26 +1099,27 @@ class LockApp(gtk.Window):
                 txt_BSID = "BlockSID"
                 txt_BSID_enabled = "BlockSID_BlockSIDState = 0x001"
                 
-                msidText = os.popen(self.prefix + 'sedutil-cli -n --getmbrsize ' + msid + ' ' + self.devs_list[index]).read()
-
-                isLocked = re.search(txt_L, txt)
-                isUnlocked = re.search(txt_UL, txt)
-                isSetup = (re.search(txt_S, txt) != None) & (msidText == '')
+                #msidText = os.popen(self.prefix + 'sedutil-cli -n --getmbrsize ' + msid + ' ' + self.devs_list[index]).read()
+                #m = re.search('Shadow', msidText)
+                
+                #isLocked = re.search(txt_L, txt)
+                #isUnlocked = re.search(txt_UL, txt)
+                #isSetup = (re.search(txt_S, txt) != None) & (not m)
                 hasBlockSID = re.search(txt_BSID, txt)
                 isBlockSID = re.search(txt_BSID_enabled, txt)
                 
-                if isLocked:
-                    self.dev_status.set_text("Locked")
-                    self.dev_setup.set_text("Yes")
-                elif isUnlocked:
-                    self.dev_status.set_text("Unlocked")
-                    if isSetup:
-                        self.dev_setup.set_text("Yes")
-                    else:
-                        self.dev_setup.set_text("No")
-                else:
-                    self.dev_status.set_text("N/A")
-                    self.dev_setup.set_text("N/A")
+                #if isLocked:
+                #    self.dev_status.set_text("Locked")
+                #    self.dev_setup.set_text("Yes")
+                #elif isUnlocked:
+                #    self.dev_status.set_text("Unlocked")
+                #    if isSetup:
+                #        self.dev_setup.set_text("Yes")
+                #    else:
+                #        self.dev_setup.set_text("No")
+                #else:
+                #    self.dev_status.set_text("N/A")
+                #    self.dev_setup.set_text("N/A")
                     
                 if hasBlockSID and isBlockSID:
                     self.dev_blockSID.set_text("Enabled")
@@ -1301,7 +1326,7 @@ class LockApp(gtk.Window):
             timeStr = timeStr[2:]
             #level = self.authQuery.get_active()
             #if level == 0:
-            statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 02" + timeStr + " " + devpass + " " + self.devname)
+            statusAW = os.system(self.prefix + "sedutil-cli -n --auditwrite 02" + timeStr + " " + devpass + " " + self.devname)
             #p1 = subprocess.check_output([self.prefix + "sedutil-cli", "-n", "--pbaValid", devpass, self.devname])
             p1 = os.popen(self.prefix + "sedutil-cli -n --pbaValid " + devpass + " " + self.devname).read()
             #p2 = subprocess.check_output([self.prefix + "sedutil-cli", "-n", "--auditread", devpass, self.devname])
