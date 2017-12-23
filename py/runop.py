@@ -332,15 +332,16 @@ def run_pbaWrite(button, ui, mode):
             #    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--pbaValid", password, ui.devname])
             #else:
             status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable on " + password + " " + ui.devname )
-            p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--pbaValid", password, ui.devname])
+            p = os.popen(ui.prefix + "sedutil-cli -n -t --pbaValid " +  password + " " + ui.devname)
             pba_regex = 'PBA image version\s*:\s*(.+)\nPBA image valid'
             m1 = re.search(pba_regex, p)
-            pba_ver = m1.group(1)
-            ui.msg_ok("PBA image " + pba_ver + " written to " + ui.devname + " successfully.")
-            if mode == 0:
-                ui.pba_list[ui.setup_list[index]] = pba_ver
-            else:
-                ui.pba_list[ui.nonsetup_list[index]] = pba_ver
+            if m1:
+                pba_ver = m1.group(1)
+                ui.msg_ok("PBA image " + pba_ver + " written to " + ui.devname + " successfully.")
+                if mode == 0:
+                    ui.pba_list[ui.setup_list[index]] = pba_ver
+                else:
+                    ui.pba_list[ui.nonsetup_list[index]] = pba_ver
             if mode == 1:
                 ui.setup_finish()
             else:
