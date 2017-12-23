@@ -1325,10 +1325,10 @@ class LockApp(gtk.Window):
         txt1 = "NOT_AUTHORIZED"
         txt2 = "AUTHORITY_LOCKED_OUT"
         p = ''
-        if devpass == self.dev_msid.get_text():
-            p = subprocess.check_output([self.prefix + "sedutil-cli", "-n", "--getmbrsize", devpass, self.devname])
-        else:
-            p = subprocess.check_output([self.prefix + "sedutil-cli", "-n", "-t", "--getmbrsize", devpass, self.devname])
+        #if devpass == self.dev_msid.get_text():
+        #    p = subprocess.check_output([self.prefix + "sedutil-cli", "-n", "--getmbrsize", devpass, self.devname])
+        #else:
+        p = subprocess.check_output([self.prefix + "sedutil-cli", "-n", "-t", "--getmbrsize", devpass, self.devname])
         na = re.search(txt1, p)
         alo = re.search(txt2, p)
         if na :
@@ -1343,12 +1343,12 @@ class LockApp(gtk.Window):
             statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + devpass + " " + self.devname)
             p1 = ''
             p2 = ''
-            if devpass == self.dev_msid.get_text():
-                p1 = os.popen(self.prefix + "sedutil-cli -n --pbaValid " + devpass + " " + self.devname).read()
-                p2 = os.popen(self.prefix + "sedutil-cli -n --auditread " + devpass + " " + self.devname).read()
-            else:
-                p1 = os.popen(self.prefix + "sedutil-cli -n -t --pbaValid " + devpass + " " + self.devname).read()
-                p2 = os.popen(self.prefix + "sedutil-cli -n -t --auditread " + devpass + " " + self.devname).read()
+            #if devpass == self.dev_msid.get_text():
+            #    p1 = os.popen(self.prefix + "sedutil-cli -n --pbaValid " + devpass + " " + self.devname).read()
+            #    p2 = os.popen(self.prefix + "sedutil-cli -n --auditread " + devpass + " " + self.devname).read()
+            #else:
+            p1 = os.popen(self.prefix + "sedutil-cli -n -t --pbaValid " + devpass + " " + self.devname).read()
+            p2 = os.popen(self.prefix + "sedutil-cli -n -t --auditread " + devpass + " " + self.devname).read()
             #else:
             
             pba_regex = 'PBA image version: (.+)\nPBA image valid'

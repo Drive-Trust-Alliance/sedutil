@@ -194,52 +194,52 @@ def run_setupFull(button, ui, mode):
                     activated = re.search(txt_ME, queryText)
                     status1 = -1
                     if unlocked:
-                        if password == ui.dev_msid.get_text():
-                            status1 =  os.system(ui.prefix + "sedutil-cli -n --initialSetup " + password + " " + ui.devname )
-                        
-                            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                            timeStr = timeStr[2:]
-                            statusAW3 = os.system(ui.prefix + "sedutil-cli -n --auditwrite 01" + timeStr + " " + password + " Admin1 " + ui.devname)
-                        
-                            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                            timeStr = timeStr[2:]
-                            statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 10" + timeStr + " " + password + " Admin1 " + ui.devname)
-                            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                            timeStr = timeStr[2:]
-                            statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 11" + timeStr + " " + password + " Admin1 " + ui.devname)
-                        else:
-                            status1 =  os.system(ui.prefix + "sedutil-cli -n -t --initialSetup " + password + " " + ui.devname )
-                        
-                            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                            timeStr = timeStr[2:]
-                            statusAW3 = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 01" + timeStr + " " + password + " Admin1 " + ui.devname)
-                        
-                            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                            timeStr = timeStr[2:]
-                            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 10" + timeStr + " " + password + " Admin1 " + ui.devname)
-                            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                            timeStr = timeStr[2:]
-                            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 11" + timeStr + " " + password + " Admin1 " + ui.devname)
+                        #if password == ui.dev_msid.get_text():
+                        #    status1 =  os.system(ui.prefix + "sedutil-cli -n --initialSetup " + password + " " + ui.devname )
+                        #
+                        #    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                        #    timeStr = timeStr[2:]
+                        #    statusAW3 = os.system(ui.prefix + "sedutil-cli -n --auditwrite 01" + timeStr + " " + password + " Admin1 " + ui.devname)
+                        #
+                        #    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                        #    timeStr = timeStr[2:]
+                        #    statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 10" + timeStr + " " + password + " Admin1 " + ui.devname)
+                        #    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                        #    timeStr = timeStr[2:]
+                        #    statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 11" + timeStr + " " + password + " Admin1 " + ui.devname)
+                        #else:
+                        status1 =  os.system(ui.prefix + "sedutil-cli -n -t --initialSetup " + password + " " + ui.devname )
+                    
+                        timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                        timeStr = timeStr[2:]
+                        statusAW3 = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 01" + timeStr + " " + password + " Admin1 " + ui.devname)
+                    
+                        timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                        timeStr = timeStr[2:]
+                        statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 10" + timeStr + " " + password + " Admin1 " + ui.devname)
+                        timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                        timeStr = timeStr[2:]
+                        statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 11" + timeStr + " " + password + " Admin1 " + ui.devname)
                     elif activated:
-                        if password != ui.dev_msid.get_text():
-                            s1 = os.system(ui.prefix + "sedutil-cli -n -t --setSIDPassword " + msid + " " + password + " " + ui.devname)
-                            s2 = os.system(ui.prefix + "sedutil-cli -n -t --setAdmin1Pwd " + msid + " " + password + " " + ui.devname)
-                            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                            timeStr = timeStr[2:]
-                            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 10" + timeStr + " " + password + " Admin1 " + ui.devname)
-                            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                            timeStr = timeStr[2:]
-                            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 11" + timeStr + " " + password + " Admin1 " + ui.devname)
-                            status1 = (s1 | s2)
+                        #if password != ui.dev_msid.get_text():
+                        s1 = os.system(ui.prefix + "sedutil-cli -n -t --setSIDPassword " + msid + " " + password + " " + ui.devname)
+                        s2 = os.system(ui.prefix + "sedutil-cli -n -t --setAdmin1Pwd " + msid + " " + password + " " + ui.devname)
+                        timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                        timeStr = timeStr[2:]
+                        statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 10" + timeStr + " " + password + " Admin1 " + ui.devname)
+                        timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                        timeStr = timeStr[2:]
+                        statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 11" + timeStr + " " + password + " Admin1 " + ui.devname)
+                        status1 = (s1 | s2)
                     
                     status2 = ''
                     status3 = ''
-                    if password == ui.dev_msid.get_text():
-                        status2 =  os.system(ui.prefix + "sedutil-cli -n --enableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
-                        status3 =  os.system(ui.prefix + "sedutil-cli -n --setMBRdone on " + password + " " + ui.devname )
-                    else:
-                        status2 =  os.system(ui.prefix + "sedutil-cli -n -t --enableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
-                        status3 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRdone on " + password + " " + ui.devname )
+                    #if password == ui.dev_msid.get_text():
+                    #    status2 =  os.system(ui.prefix + "sedutil-cli -n --enableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
+                    #    status3 =  os.system(ui.prefix + "sedutil-cli -n --setMBRdone on " + password + " " + ui.devname )
+                    #else:
+                    status2 =  os.system(ui.prefix + "sedutil-cli -n -t --enableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
+                    status3 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRdone on " + password + " " + ui.devname )
                     gobject.idle_add(cleanup, status1 | status2 | status3)
                 
                 def cleanup(status):
@@ -258,14 +258,14 @@ def run_setupFull(button, ui, mode):
                         if ui.VERSION == 3 and ui.pass_sav.get_active():
                             passSaveUSB(ui)
                         if mode == 1:
-                            if password == ui.dev_msid.get_text():
-                                status5 =  os.system(ui.prefix + "sedutil-cli -n --enableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
-                                status6 =  os.system(ui.prefix + "sedutil-cli -n --setLockingrange " + ui.LKRNG + " LK " + password + " " + ui.devname )
-                                status7 =  os.system(ui.prefix + "sedutil-cli -n --setMBRDone on " + password + " " + ui.devname )
-                            else:
-                                status5 =  os.system(ui.prefix + "sedutil-cli -n -t --enableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
-                                status6 =  os.system(ui.prefix + "sedutil-cli -n -t --setLockingrange " + ui.LKRNG + " LK " + password + " " + ui.devname )
-                                status7 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRDone on " + password + " " + ui.devname )
+                            #if password == ui.dev_msid.get_text():
+                            #    status5 =  os.system(ui.prefix + "sedutil-cli -n --enableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
+                            #    status6 =  os.system(ui.prefix + "sedutil-cli -n --setLockingrange " + ui.LKRNG + " LK " + password + " " + ui.devname )
+                            #    status7 =  os.system(ui.prefix + "sedutil-cli -n --setMBRDone on " + password + " " + ui.devname )
+                            #else:
+                            status5 =  os.system(ui.prefix + "sedutil-cli -n -t --enableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
+                            status6 =  os.system(ui.prefix + "sedutil-cli -n -t --setLockingrange " + ui.LKRNG + " LK " + password + " " + ui.devname )
+                            status7 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRDone on " + password + " " + ui.devname )
                         ui.query(1)
                         ui.msg_ok("Password for " + ui.devname + " set up successfully.")
                         if mode == 0:
@@ -300,10 +300,10 @@ def run_pbaWrite(button, ui, mode):
     
     def t1_run():
         if password != None:
-            if password == ui.dev_msid.get_text():
-                status = os.system( ui.prefix + "sedutil-cli -n --loadpbaimage " + password + " n " + ui.devname )
-            else:
-                status = os.system( ui.prefix + "sedutil-cli -n -t --loadpbaimage " + password + " n " + ui.devname )
+            #if password == ui.dev_msid.get_text():
+            #    status = os.system( ui.prefix + "sedutil-cli -n --loadpbaimage " + password + " n " + ui.devname )
+            #else:
+            status = os.system( ui.prefix + "sedutil-cli -n -t --loadpbaimage " + password + " n " + ui.devname )
             gobject.idle_add(cleanup, status)
         else:
             gobject.idle_add(cleanup, 1)
@@ -327,12 +327,12 @@ def run_pbaWrite(button, ui, mode):
         else :
             status2 = ''
             p = ''
-            if password == ui.dev_msid.get_text():
-                status2 =  os.system(ui.prefix + "sedutil-cli -n --setMBREnable on " + password + " " + ui.devname )
-                p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--pbaValid", password, ui.devname])
-            else:
-                status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable on " + password + " " + ui.devname )
-                p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--pbaValid", password, ui.devname])
+            #if password == ui.dev_msid.get_text():
+            #    status2 =  os.system(ui.prefix + "sedutil-cli -n --setMBREnable on " + password + " " + ui.devname )
+            #    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--pbaValid", password, ui.devname])
+            #else:
+            status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable on " + password + " " + ui.devname )
+            p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--pbaValid", password, ui.devname])
             pba_regex = 'PBA image version\s*:\s*(.+)\nPBA image valid'
             m1 = re.search(pba_regex, p)
             pba_ver = m1.group(1)
@@ -415,28 +415,28 @@ def run_changePW(button, ui):
                 t1.join()
                 ui.stop_spin()
                 #if ui.VERSION == 3 and level == 1:
-                if new_hash == ui.dev_msid.get_text():
-                    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                    timeStr = timeStr[2:]
-                    statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 10" + timeStr + " " + new_hash + " Admin1 " + ui.devname)
-                    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                    timeStr = timeStr[2:]
-                    statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 11" + timeStr + " " + new_hash + " Admin1 " + ui.devname)
-                else:
-                    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                    timeStr = timeStr[2:]
-                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 10" + timeStr + " " + new_hash + " Admin1 " + ui.devname)
-                    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                    timeStr = timeStr[2:]
-                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 11" + timeStr + " " + new_hash + " Admin1 " + ui.devname)
+                #if new_hash == ui.dev_msid.get_text():
+                #    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                #    timeStr = timeStr[2:]
+                #    statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 10" + timeStr + " " + new_hash + " Admin1 " + ui.devname)
+                #    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                #    timeStr = timeStr[2:]
+                #    statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 11" + timeStr + " " + new_hash + " Admin1 " + ui.devname)
+                #else:
+                timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                timeStr = timeStr[2:]
+                statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 10" + timeStr + " " + new_hash + " Admin1 " + ui.devname)
+                timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                timeStr = timeStr[2:]
+                statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 11" + timeStr + " " + new_hash + " Admin1 " + ui.devname)
                 ui.msg_ok("Password for " + ui.devname + " changed successfully.") 
                 
                 if ui.pba_list[ui.setup_list[index]] == 'N/A':
                     p = ''
-                    if new_hash == ui.dev_msid.get_text():
-                        p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--pbaValid", new_hash, ui.devname])
-                    else:
-                        p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--pbaValid", new_hash, ui.devname])
+                    #if new_hash == ui.dev_msid.get_text():
+                    #    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--pbaValid", new_hash, ui.devname])
+                    #else:
+                    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--pbaValid", new_hash, ui.devname])
                     pba_regex = 'PBA image version\s*:\s*(.+)\nPBA image valid'
                     m1 = re.search(pba_regex, p)
                     if m1:
@@ -488,12 +488,12 @@ def run_revertUser(button, ui):
                         p1 = ''
                         txt1 = "NOT_AUTHORIZED"
                         txt2 = "AUTHORITY_LOCKED_OUT"
-                        if password == ui.dev_msid.get_text():
-                            statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 15" + timeStr + " " + password + " Admin1 " + ui.devname)
-                            p1 = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--revertTPer", password, ui.devname])
-                        else:
-                            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 15" + timeStr + " " + password + " Admin1 " + ui.devname)
-                            p1 = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--revertTPer", password, ui.devname])
+                        #if password == ui.dev_msid.get_text():
+                        #    statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 15" + timeStr + " " + password + " Admin1 " + ui.devname)
+                        #    p1 = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--revertTPer", password, ui.devname])
+                        #else:
+                        statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 15" + timeStr + " " + password + " Admin1 " + ui.devname)
+                        p1 = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--revertTPer", password, ui.devname])
                         
                         na = re.search(txt1, p1)
                         alo = re.search(txt2, p1)
@@ -557,24 +557,24 @@ def run_revertUser(button, ui):
             timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             timeStr = timeStr[2:]
             statusAW = -1
-            if password == ui.dev_msid.get_text():
-                statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 13" + timeStr + " " + password + " Admin1 " + ui.devname)
-            else:
-                statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 13" + timeStr + " " + password + " Admin1 " + ui.devname)
+            #if password == ui.dev_msid.get_text():
+            #    statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 13" + timeStr + " " + password + " Admin1 " + ui.devname)
+            #else:
+            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 13" + timeStr + " " + password + " Admin1 " + ui.devname)
             if statusAW == 0:
                 status1 = ''
                 status2 = ''
                 p = ''
-                if password == ui.dev_msid.get_text():
-                    status1 =  os.system(ui.prefix + "sedutil-cli -n --setMBRdone on " + password + " " + ui.devname )
-                    status2 =  os.system(ui.prefix + "sedutil-cli -n --setLockingRange " + ui.LKRNG + " " 
-                            + ui.LKATTR + " " + password + " " + ui.devname)
-                    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--revertnoerase", password, ui.devname])
-                else:
-                    status1 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRdone on " + password + " " + ui.devname )
-                    status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setLockingRange " + ui.LKRNG + " " 
-                            + ui.LKATTR + " " + password + " " + ui.devname)
-                    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--revertnoerase", password, ui.devname])
+                #if password == ui.dev_msid.get_text():
+                #    status1 =  os.system(ui.prefix + "sedutil-cli -n --setMBRdone on " + password + " " + ui.devname )
+                #    status2 =  os.system(ui.prefix + "sedutil-cli -n --setLockingRange " + ui.LKRNG + " " 
+                #            + ui.LKATTR + " " + password + " " + ui.devname)
+                #    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--revertnoerase", password, ui.devname])
+                #else:
+                status1 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRdone on " + password + " " + ui.devname )
+                status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setLockingRange " + ui.LKRNG + " " 
+                        + ui.LKATTR + " " + password + " " + ui.devname)
+                p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--revertnoerase", password, ui.devname])
                 
                 na = re.search(txt1, p)
                 alo = re.search(txt2, p)
@@ -600,10 +600,10 @@ def run_revertUser(button, ui):
                 if le_check:
                     index = ui.dev_select.get_active()
                     dev_msid = ui.msid_list[ui.setup_list[index]]
-                    if password == ui.dev_msid.get_text():
-                        p1 = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--revertTPer", password, ui.devname])
-                    else:
-                        p1 = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--revertTPer", password, ui.devname])
+                    #if password == ui.dev_msid.get_text():
+                    #    p1 = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--revertTPer", password, ui.devname])
+                    #else:
+                    p1 = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--revertTPer", password, ui.devname])
                     status = os.system(ui.prefix + "sedutil-cli -n --activate " + dev_msid + " " + ui.devname)
                     
                     timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
@@ -706,22 +706,22 @@ def run_lockset(button, ui):
         if password == None or password == 'x':
             gobject.idle_add(cleanup, 1)
         else:
-            if password == ui.dev_msid.get_text():
-                status1 =  os.system(ui.prefix + "sedutil-cli -n --enableLockingRange " + ui.LKRNG + " " 
-                        + password + " " + ui.devname )
-                status2 =  os.system(ui.prefix + "sedutil-cli -n --setLockingrange " + ui.LKRNG + " LK "
-                        + password + " " + ui.devname )
-                status3 =  os.system(ui.prefix + "sedutil-cli -n --setMBRDone on " + password + " " + ui.devname )
-                status4 =  os.system(ui.prefix + "sedutil-cli -n --setMBREnable on " + password + " " + ui.devname )
-                gobject.idle_add(cleanup, status1 | status2 | status3 | status4)
-            else:
-                status1 =  os.system(ui.prefix + "sedutil-cli -n -t --enableLockingRange " + ui.LKRNG + " " 
-                        + password + " " + ui.devname )
-                status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setLockingrange " + ui.LKRNG + " LK "
-                        + password + " " + ui.devname )
-                status3 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRDone on " + password + " " + ui.devname )
-                status4 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable on " + password + " " + ui.devname )
-                gobject.idle_add(cleanup, status1 | status2 | status3 | status4)
+            #if password == ui.dev_msid.get_text():
+            #    status1 =  os.system(ui.prefix + "sedutil-cli -n --enableLockingRange " + ui.LKRNG + " " 
+            #            + password + " " + ui.devname )
+            #    status2 =  os.system(ui.prefix + "sedutil-cli -n --setLockingrange " + ui.LKRNG + " LK "
+            #            + password + " " + ui.devname )
+            #    status3 =  os.system(ui.prefix + "sedutil-cli -n --setMBRDone on " + password + " " + ui.devname )
+            #    status4 =  os.system(ui.prefix + "sedutil-cli -n --setMBREnable on " + password + " " + ui.devname )
+            #    gobject.idle_add(cleanup, status1 | status2 | status3 | status4)
+            #else:
+            status1 =  os.system(ui.prefix + "sedutil-cli -n -t --enableLockingRange " + ui.LKRNG + " " 
+                    + password + " " + ui.devname )
+            status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setLockingrange " + ui.LKRNG + " LK "
+                    + password + " " + ui.devname )
+            status3 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRDone on " + password + " " + ui.devname )
+            status4 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable on " + password + " " + ui.devname )
+            gobject.idle_add(cleanup, status1 | status2 | status3 | status4)
         
     def cleanup(status):
         ui.stop_spin()
@@ -731,18 +731,18 @@ def run_lockset(button, ui):
         else :
             timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             timeStr = timeStr[2:]
-            if password == ui.dev_msid.get_text():
-                statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
-            else:
-                statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
+            #if password == ui.dev_msid.get_text():
+            #    statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
+            #else:
+            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
             ui.msg_ok("Drive " + ui.devname + "locked successfully.") 
             
             if ui.pba_list[ui.unlocked_list[index]] == 'N/A':
                 p = ''
-                if password == ui.dev_msid.get_text():
-                    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--pbaValid", password, ui.devname])
-                else:
-                    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--pbaValid", password, ui.devname])
+                #if password == ui.dev_msid.get_text():
+                #p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--pbaValid", password, ui.devname])
+                #else:
+                p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--pbaValid", password, ui.devname])
                 pba_regex = 'PBA image version\s*:\s*(.+)\nPBA image valid'
                 m1 = re.search(pba_regex, p)
                 if m1:
@@ -772,16 +772,16 @@ def run_unlockPBA(button, ui):
     ui.start_spin()
     ui.wait_instr.show()
     def t1_run():
-        if password == ui.dev_msid.get_text():
-            status1 =  os.system(ui.prefix + "sedutil-cli -n --setMBRdone on " + password + " " + ui.devname )
-            status2 =  os.system(ui.prefix + "sedutil-cli -n --setLockingRange " + ui.LKRNG + " " 
-                    + ui.LKATTR + " " + password + " " + ui.devname)
-            gobject.idle_add(cleanup, status1 | status2)
-        else:
-            status1 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRdone on " + password + " " + ui.devname )
-            status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setLockingRange " + ui.LKRNG + " " 
-                    + ui.LKATTR + " " + password + " " + ui.devname)
-            gobject.idle_add(cleanup, status1 | status2)
+        #if password == ui.dev_msid.get_text():
+        #    status1 =  os.system(ui.prefix + "sedutil-cli -n --setMBRdone on " + password + " " + ui.devname )
+        #    status2 =  os.system(ui.prefix + "sedutil-cli -n --setLockingRange " + ui.LKRNG + " " 
+        #            + ui.LKATTR + " " + password + " " + ui.devname)
+        #    gobject.idle_add(cleanup, status1 | status2)
+        #else:
+        status1 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRdone on " + password + " " + ui.devname )
+        status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setLockingRange " + ui.LKRNG + " " 
+                + ui.LKATTR + " " + password + " " + ui.devname)
+        gobject.idle_add(cleanup, status1 | status2)
         
     def cleanup(status):
         ui.stop_spin()
@@ -792,18 +792,18 @@ def run_unlockPBA(button, ui):
         else :
             timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             timeStr = timeStr[2:]
-            if password == ui.dev_msid.get_text():
-                statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
-            else:
-                statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
+            #if password == ui.dev_msid.get_text():
+            #    statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
+            #else:
+            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
             ui.msg_ok(ui.devname + " preboot unlocked successfully.")
             
             if ui.pba_list[ui.locked_list[index]] == 'N/A':
                 p = ''
-                if password == ui.dev_msid.get_text():
-                    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--pbaValid", password, ui.devname])
-                else:
-                    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--pbaValid", password, ui.devname])
+                #if password == ui.dev_msid.get_text():
+                #    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--pbaValid", password, ui.devname])
+                #else:
+                p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--pbaValid", password, ui.devname])
                 pba_regex = 'PBA image version\s*:\s*(.+)\nPBA image valid'
                 m1 = re.search(pba_regex, p)
                 if m1:
@@ -839,16 +839,16 @@ def run_unlockFull(button, ui):
         else:
             index = ui.dev_select.get_active()
             msid = ui.msid_list[ui.setup_list[index]]
-            if password == msid:
-                status1 =  os.system(ui.prefix + "sedutil-cli -n --disableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
-                status2 =  os.system(ui.prefix + "sedutil-cli -n --setMBREnable off " + password + " " + ui.devname )
-                gobject.idle_add(cleanup, status1 | status2)
-            else:
-                status1 =  os.system(ui.prefix + "sedutil-cli -n -t --disableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
-                status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable off " + password + " " + ui.devname )
-                status3 = os.system(ui.prefix + "sedutil-cli -n -t --setSIDPassword " + password + " " + msid + " " + ui.devname)
-                status4 = os.system(ui.prefix + "sedutil-cli -n -t --setAdmin1Pwd " + password + " " + msid + " " + ui.devname)
-                gobject.idle_add(cleanup, status1 | status2 | status3 | status4)
+            #if password == msid:
+            #    status1 =  os.system(ui.prefix + "sedutil-cli -n --disableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
+            #    status2 =  os.system(ui.prefix + "sedutil-cli -n --setMBREnable off " + password + " " + ui.devname )
+            #    gobject.idle_add(cleanup, status1 | status2)
+            #else:
+            status1 =  os.system(ui.prefix + "sedutil-cli -n -t --disableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
+            status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable off " + password + " " + ui.devname )
+            status3 = os.system(ui.prefix + "sedutil-cli -n -t --setSIDPassword " + password + " " + msid + " " + ui.devname)
+            status4 = os.system(ui.prefix + "sedutil-cli -n -t --setAdmin1Pwd " + password + " " + msid + " " + ui.devname)
+            gobject.idle_add(cleanup, status1 | status2 | status3 | status4)
             
     
     def cleanup(status):
@@ -903,14 +903,14 @@ def run_unlockPartial(button, ui):
         if password == None or password == 'x':
             gobject.idle_add(cleanup, 1)
         else:
-            if password == ui.dev_msid.get_text():
-                status1 =  os.system(ui.prefix + "sedutil-cli -n --disableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
-                status2 =  os.system(ui.prefix + "sedutil-cli -n --setMBREnable off " + password + " " + ui.devname )
-                gobject.idle_add(cleanup, status1 | status2)
-            else:
-                status1 =  os.system(ui.prefix + "sedutil-cli -n -t --disableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
-                status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable off " + password + " " + ui.devname )
-                gobject.idle_add(cleanup, status1 | status2)
+            #if password == ui.dev_msid.get_text():
+            #    status1 =  os.system(ui.prefix + "sedutil-cli -n --disableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
+            #    status2 =  os.system(ui.prefix + "sedutil-cli -n --setMBREnable off " + password + " " + ui.devname )
+            #    gobject.idle_add(cleanup, status1 | status2)
+            #else:
+            status1 =  os.system(ui.prefix + "sedutil-cli -n -t --disableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
+            status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable off " + password + " " + ui.devname )
+            gobject.idle_add(cleanup, status1 | status2)
     
     def cleanup(status):
         ui.stop_spin()
@@ -923,22 +923,22 @@ def run_unlockPartial(button, ui):
             ui.unlockPartial_button.show()
             ui.go_button_cancel.show()
         else :
-            if password == dev_msid.get_text():
-                timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                timeStr = timeStr[2:]
-                statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
-            else:
-                timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                timeStr = timeStr[2:]
-                statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
+            #if password == dev_msid.get_text():
+            #    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+            #    timeStr = timeStr[2:]
+            #    statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
+            #else:
+            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+            timeStr = timeStr[2:]
+            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
             ui.msg_ok("Partial unlock completed")
             
             if ui.pba_list[ui.setup_list[index]] == 'N/A':
                 p = ''
-                if password == dev_msid.get_text():
-                    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--pbaValid", password, ui.devname])
-                else:
-                    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--pbaValid", password, ui.devname])
+                #if password == dev_msid.get_text():
+                #    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--pbaValid", password, ui.devname])
+                #else:
+                p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--pbaValid", password, ui.devname])
                 pba_regex = 'PBA image version\s*:\s*(.+)\nPBA image valid'
                 m1 = re.search(pba_regex, p)
                 if m1:
@@ -993,28 +993,28 @@ def run_unlockUSB(button, ui):
                     ui.LKRNG = "0"
                     status1 = ''
                     status2 = ''
-                    if pw == ui.msid_list[i]:
-                        status1 =  os.system(ui.prefix + "sedutil-cli -n --setMBRdone on " + pw + " " + ui.devs_list[i] )
-                        status2 =  os.system(ui.prefix + "sedutil-cli -n --setLockingRange " + ui.LKRNG + " " 
-                                + ui.LKATTR + " " + pw + " " + ui.devs_list[i])
-                    else:
-                        status1 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRdone on " + pw + " " + ui.devs_list[i] )
-                        status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setLockingRange " + ui.LKRNG + " " 
-                                + ui.LKATTR + " " + pw + " " + ui.devs_list[i])
+                    #if pw == ui.msid_list[i]:
+                    #    status1 =  os.system(ui.prefix + "sedutil-cli -n --setMBRdone on " + pw + " " + ui.devs_list[i] )
+                    #    status2 =  os.system(ui.prefix + "sedutil-cli -n --setLockingRange " + ui.LKRNG + " " 
+                    #            + ui.LKATTR + " " + pw + " " + ui.devs_list[i])
+                    #else:
+                    status1 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRdone on " + pw + " " + ui.devs_list[i] )
+                    status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setLockingRange " + ui.LKRNG + " " 
+                            + ui.LKATTR + " " + pw + " " + ui.devs_list[i])
                     if (status1 | status2) == 0 :
                         timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
                         timeStr = timeStr[2:]
-                        if pw == ui.msid_list[i]:
-                            statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 02" + timeStr + " " + pw + " Admin1 " + ui.devs_list[i])
-                        else:
-                            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + pw + " Admin1 " + ui.devs_list[i])
+                        #if pw == ui.msid_list[i]:
+                        #    statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 02" + timeStr + " " + pw + " Admin1 " + ui.devs_list[i])
+                        #else:
+                        statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + pw + " Admin1 " + ui.devs_list[i])
                         dev_unlocked.append(i)
                         
                         if ui.pba_list[i] == 'N/A':
-                            if pw == ui.msid_list[i]:
-                                p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--pbaValid", pw, ui.devname])
-                            else:
-                                p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--pbaValid", pw, ui.devname])
+                            #if pw == ui.msid_list[i]:
+                            #    p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "--pbaValid", pw, ui.devname])
+                            #else:
+                            p = subprocess.check_output([ui.prefix + "sedutil-cli", "-n", "-t", "--pbaValid", pw, ui.devname])
                             pba_regex = 'PBA image version\s*:\s*(.+)\nPBA image valid'
                             m1 = re.search(pba_regex, p)
                             if m1:
@@ -1151,18 +1151,18 @@ def run_setupUser(ui, *args):
         ui.wait_instr.show()
         
         def t1_run():
-            if password_a == ui.dev_msid.get_text():
-                s2 = os.system(ui.prefix + "sedutil-cli -n --enableuser ON " + password_a + " User1 " + ui.devname)
-                s3 = os.system(ui.prefix + "sedutil-cli -n --enableuserread ON " + password_a + " User1 " + ui.devname)
-                s1 = os.system(ui.prefix + "sedutil-cli -n --setpassword " + password_a + " User1 " + password_u)
-                
-                gobject.idle_add(cleanup, s1|s2|s3)
-            else:
-                s2 = os.system(ui.prefix + "sedutil-cli -n -t --enableuser ON " + password_a + " User1 " + ui.devname)
-                s3 = os.system(ui.prefix + "sedutil-cli -n -t --enableuserread ON " + password_a + " User1 " + ui.devname)
-                s1 = os.system(ui.prefix + "sedutil-cli -n -t --setpassword " + password_a + " User1 " + password_u)
-                
-                gobject.idle_add(cleanup, s1|s2|s3)
+            #if password_a == ui.dev_msid.get_text():
+            #    s2 = os.system(ui.prefix + "sedutil-cli -n --enableuser ON " + password_a + " User1 " + ui.devname)
+            #    s3 = os.system(ui.prefix + "sedutil-cli -n --enableuserread ON " + password_a + " User1 " + ui.devname)
+            #    s1 = os.system(ui.prefix + "sedutil-cli -n --setpassword " + password_a + " User1 " + password_u)
+            #    
+            #    gobject.idle_add(cleanup, s1|s2|s3)
+            #else:
+            s2 = os.system(ui.prefix + "sedutil-cli -n -t --enableuser ON " + password_a + " User1 " + ui.devname)
+            s3 = os.system(ui.prefix + "sedutil-cli -n -t --enableuserread ON " + password_a + " User1 " + ui.devname)
+            s1 = os.system(ui.prefix + "sedutil-cli -n -t --setpassword " + password_a + " User1 " + password_u)
+            
+            gobject.idle_add(cleanup, s1|s2|s3)
         
         def cleanup(status):
             ui.stop_spin()
@@ -1257,24 +1257,24 @@ def openLog(button, ui, *args):
     
     #print password
     txt = ""
-    if password == ui.dev_msid.get_text():
-        if ui.VERSION == 3:
-            auth_level = ui.auth_menu.get_active()
-            if auth_level == 0:
-                txt = os.popen(ui.prefix + "sedutil-cli -n -u --auditread " + password + " Admin1 " + ui.devname ).read()
-            else:
-                txt = os.popen(ui.prefix + "sedutil-cli -n -u --auditread " + password + " User1 " + ui.devname ).read()
+    #if password == ui.dev_msid.get_text():
+    #    if ui.VERSION == 3:
+    #        auth_level = ui.auth_menu.get_active()
+    #        if auth_level == 0:
+    #            txt = os.popen(ui.prefix + "sedutil-cli -n -u --auditread " + password + " Admin1 " + ui.devname ).read()
+    #        else:
+    #            txt = os.popen(ui.prefix + "sedutil-cli -n -u --auditread " + password + " User1 " + ui.devname ).read()
+    #    else:
+    #        txt = os.popen(ui.prefix + "sedutil-cli -n --auditread " + password + " Admin1 " + ui.devname ).read()
+    #else:
+    if ui.VERSION == 3:
+        auth_level = ui.auth_menu.get_active()
+        if auth_level == 0:
+            txt = os.popen(ui.prefix + "sedutil-cli -n -t -u --auditread " + password + " Admin1 " + ui.devname ).read()
         else:
-            txt = os.popen(ui.prefix + "sedutil-cli -n --auditread " + password + " Admin1 " + ui.devname ).read()
+            txt = os.popen(ui.prefix + "sedutil-cli -n -t -u --auditread " + password + " User1 " + ui.devname ).read()
     else:
-        if ui.VERSION == 3:
-            auth_level = ui.auth_menu.get_active()
-            if auth_level == 0:
-                txt = os.popen(ui.prefix + "sedutil-cli -n -t -u --auditread " + password + " Admin1 " + ui.devname ).read()
-            else:
-                txt = os.popen(ui.prefix + "sedutil-cli -n -t -u --auditread " + password + " User1 " + ui.devname ).read()
-        else:
-            txt = os.popen(ui.prefix + "sedutil-cli -n -t --auditread " + password + " Admin1 " + ui.devname ).read()
+        txt = os.popen(ui.prefix + "sedutil-cli -n -t --auditread " + password + " Admin1 " + ui.devname ).read()
     
     if txt == "" or txt == "Invalid Audit Signature or No Audit Entry log\n":
         ui.msg_err("Invalid Audit Signature or No Audit Entry Log or Read Error")
