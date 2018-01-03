@@ -12,7 +12,7 @@ def hash_pass(plaintext, salt, msid):
         return plaintext
     pw_trim = re.sub('\s', '', plaintext)
     pw = hash_pbkdf2(pw_trim, salt)
-    return pw
+    return 'd020' + pw
 
 def testsedutil(testSet):
     passed = 1;
