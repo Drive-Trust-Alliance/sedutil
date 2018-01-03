@@ -90,6 +90,10 @@ class LockApp(gtk.Window):
     VERSION = -1
     
     queryWinText = ""
+    
+    __gsignals__ = {
+        "delete-event" : "override"
+    }
      
     try:
         opts, args = getopt.getopt(sys.argv[1:], [""], ["pba", "demo", "standard", "premium"])
@@ -121,6 +125,11 @@ class LockApp(gtk.Window):
     opal_ver_list = [] # 1, 2, or 12
     series_list = [] # series number 
     sn_list = []
+    
+    salt_list = []
+    
+    lockstatus_list = []
+    setupstatus_list = []
     
     scanning = False
     view_state = 0
@@ -167,6 +176,8 @@ class LockApp(gtk.Window):
             self.set_size_request(width, height)
 
             self.connect('destroy', gtk.main_quit)
+            
+            self.connect('delete_event', self.destroy_main)
             
             # new hbox variable for appropriate homogeneous
             # and spacing settings
@@ -456,7 +467,7 @@ class LockApp(gtk.Window):
                 self.drive_menu.append = self.drive_menu.append_text
                 self.auth_menu.append = self.auth_menu.append_text
                 self.authQuery.append = self.authQuery.append_text
-                self.usb_menu.append = self.auth_menu.append_text
+                self.usb_menu.append = self.usb_menu.append_text
             
             self.box_drive = gtk.HBox(homogeneous, 0)
             
@@ -581,10 +592,66 @@ class LockApp(gtk.Window):
                 self.unlockPartial.set_sensitive(False)
                 self.unlockMulti.set_sensitive(False)
                 self.setupUSB.set_sensitive(False)
+                self.setupUser.set_sensitive(False)
             elif self.VERSION == 1:#PBA
                 self.unlock_prompt()
+                
+            self.queryWin = gtk.Window()
+            self.queryWin.set_border_width(10)
+            self.queryWin.set_title("Query Device")
+            
+            scrolledWin = gtk.ScrolledWindow()
+            scrolledWin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+            
+            self.queryWin.set_default_size(400, 500)
+            if os.path.isfile('icon.jpg'):
+                self.queryWin.set_icon_from_file('icon.jpg')
+            
+            queryVbox = gtk.VBox()
+            self.queryWin.add(queryVbox)
+            
+            queryTextView = gtk.TextView()
+            queryTextView.set_editable(False)
+            self.queryTextBuffer = queryTextView.get_buffer()
+            self.queryTextBuffer.set_text('')
+            scrolledWin.add_with_viewport(queryTextView)
+            queryVbox.pack_start(scrolledWin, True, True, 0)
+            
+            query_instr = gtk.Label('Enter the device\'s password to access more query information.')
+            queryVbox.pack_start(query_instr, False, False, 0)
+            
+            self.authBoxQ = gtk.HBox(False, 0)
+            authLabel = gtk.Label('Auth Level')
+            self.authBoxQ.pack_start(authLabel, True, True, 0)
+            self.authBoxQ.pack_start(self.authQuery, True, True,0)
+            queryVbox.pack_start(self.authBoxQ, False, False, 0)
+            
+            self.passBoxQ = gtk.HBox(False, 0)
+            passLabel = gtk.Label('Enter Password')
+            self.queryPass = gtk.Entry()
+            self.queryPass.set_visibility(False)
+            
+            submitPass = gtk.Button('Submit')
+            submitPass.connect("clicked", self.queryAuth)
+            self.passBoxQ.pack_start(passLabel, True, True, 0)
+            self.passBoxQ.pack_start(self.queryPass, True, True, 0)
+            self.passBoxQ.pack_start(submitPass, False, False, 0)
+            queryVbox.pack_start(self.passBoxQ, False, False, 0)
+            
+            save_instr = gtk.Label('Press \'Save to text file\' to save the query information in a file.')
+            queryVbox.pack_start(save_instr, False, False, 0)
+            
+            querySave = gtk.Button('_Save to text file')
+            querySave.connect("clicked", self.saveToText)
+            queryVbox.pack_start(querySave, False, False, 0)
+            
+            self.queryWin.connect('delete_event', self.hide_queryWin)
+            
+            self.queryWin.hide()
             
             print self.devs_list
+            print self.sn_list
+            print self.salt_list
             print self.locked_list
             print self.setup_list
             print self.unlocked_list
@@ -595,17 +662,18 @@ class LockApp(gtk.Window):
             
             
             dev_os = platform.system()
-            verified = powerset.verify_power() #verify first
-            if 0 in self.setup_list and dev_os == 'Windows' and not verified:
-                message = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_YES_NO)
-                message.set_markup("Your system does not have the recommended power settings, would you like to change the settings?")
-                res = message.run()
-                if res == gtk.RESPONSE_YES:
-                    message.destroy()
-                    powerset.set_power()
-                    self.msg_ok("Your power settings have been changed successfully.")
-                elif res == gtk.RESPONSE_NO:
-                    message.destroy()
+            if dev_os == 'Windows':
+                verified = powerset.verify_power() #verify first
+                if 0 in self.setup_list and not verified:
+                    message = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_YES_NO)
+                    message.set_markup("Your system does not have the recommended power settings, would you like to change the settings?")
+                    res = message.run()
+                    if res == gtk.RESPONSE_YES:
+                        message.destroy()
+                        powerset.set_power()
+                        self.msg_ok("Your power settings have been changed successfully.")
+                    elif res == gtk.RESPONSE_NO:
+                        message.destroy()
         else:
             self.msg_err('No valid license of Fidelity Lock found, please register to get demo license or buy basic/premium license')
             self.exitapp()
@@ -861,7 +929,7 @@ class LockApp(gtk.Window):
                     if drive != 'C' and os.path.isdir('%s:\\' % drive):
                         self.drive_list.append(drive + ':')
             elif dev_os == 'Linux':
-                txt = os.popen(ui.prefix + 'mount -l').read()
+                txt = os.popen(self.prefix + 'mount -l').read()
                 dev_regex = '/dev/sd[b-z][1-9]?\son\s(/[A-z/]*)\stype'
                 self.drive_list = re.findall(dev_regex, txt)
             #empty the list and refill it
@@ -926,8 +994,11 @@ class LockApp(gtk.Window):
                 self.opal_ver_list = []
                 #print 'after remove all item, opal_ver_list = ', self.opal_ver_list
                 self.sn_list = []
+                self.salt_list = []
                 self.series_list = []
                 self.pba_list = []
+                self.lockstatus_list = []
+                self.setupstatus_list = []
         
         runop.finddev(self)
             
@@ -943,6 +1014,8 @@ class LockApp(gtk.Window):
                 self.dev_sn.set_text(self.sn_list[0])
                 self.dev_series.set_text(self.series_list[0])
                 self.dev_msid.set_text(self.msid_list[0])
+                self.dev_status.set_text(self.lockstatus_list[0])
+                self.dev_setup.set_text(self.setupstatus_list[0])
         elif self.view_state == 1:
             length = len(self.locked_list)
             if length > 0:
@@ -954,6 +1027,8 @@ class LockApp(gtk.Window):
                 self.dev_sn.set_text(self.sn_list[self.locked_list[0]])
                 self.dev_series.set_text(self.series_list[self.locked_list[0]])
                 self.dev_msid.set_text(self.msid_list[self.locked_list[0]])
+                self.dev_status.set_text(self.lockstatus_list[self.locked_list[0]])
+                self.dev_setup.set_text(self.setupstatus_list[self.locked_list[0]])
         elif self.view_state == 2:
             length = len(self.setup_list)
             if length > 0:
@@ -965,6 +1040,8 @@ class LockApp(gtk.Window):
                 self.dev_sn.set_text(self.sn_list[self.setup_list[0]])
                 self.dev_series.set_text(self.series_list[self.setup_list[0]])
                 self.dev_msid.set_text(self.msid_list[self.setup_list[0]])
+                self.dev_status.set_text(self.lockstatus_list[self.setup_list[0]])
+                self.dev_setup.set_text(self.setupstatus_list[self.setup_list[0]])
         elif self.view_state == 3:
             length = len(self.unlocked_list)
             if length > 0:
@@ -976,6 +1053,8 @@ class LockApp(gtk.Window):
                 self.dev_sn.set_text(self.sn_list[self.unlocked_list[0]])
                 self.dev_series.set_text(self.series_list[self.unlocked_list[0]])
                 self.dev_msid.set_text(self.msid_list[self.unlocked_list[0]])
+                self.dev_status.set_text(self.lockstatus_list[self.unlocked_list[0]])
+                self.dev_setup.set_text(self.setupstatus_list[self.unlocked_list[0]])
         elif self.view_state == 4:
             length = len(self.nonsetup_list)
             if length > 0:
@@ -987,6 +1066,8 @@ class LockApp(gtk.Window):
                 self.dev_sn.set_text(self.sn_list[self.nonsetup_list[0]])
                 self.dev_series.set_text(self.series_list[self.nonsetup_list[0]])
                 self.dev_msid.set_text(self.msid_list[self.nonsetup_list[0]])
+                self.dev_status.set_text(self.lockstatus_list[self.nonsetup_list[0]])
+                self.dev_setup.set_text(self.setupstatus_list[self.nonsetup_list[0]])
         else:
             length = len(self.tcg_list)
             if length > 0:
@@ -998,6 +1079,8 @@ class LockApp(gtk.Window):
                 self.dev_sn.set_text(self.sn_list[self.tcg_list[0]])
                 self.dev_series.set_text(self.series_list[self.tcg_list[0]])
                 self.dev_msid.set_text(self.msid_list[self.tcg_list[0]])
+                self.dev_status.set_text(self.lockstatus_list[self.tcg_list[0]])
+                self.dev_setup.set_text(self.setupstatus_list[self.tcg_list[0]])
             
         
         numTCG = len(self.tcg_list)
@@ -1052,6 +1135,8 @@ class LockApp(gtk.Window):
         self.dev_series.set_text(self.series_list[index])
         self.dev_msid.set_text(self.msid_list[index])
         self.dev_opal_ver.set_text(self.opal_ver_list[index])
+        self.dev_status.set_text(self.lockstatus_list[index])
+        self.dev_setup.set_text(self.setupstatus_list[index])
         txt2 = ""
         txt = os.popen(self.prefix + "sedutil-cli --query " + self.devname ).read()
         
@@ -1075,26 +1160,27 @@ class LockApp(gtk.Window):
                 txt_BSID = "BlockSID"
                 txt_BSID_enabled = "BlockSID_BlockSIDState = 0x001"
                 
-                msidText = os.popen(self.prefix + 'sedutil-cli -n --getmbrsize ' + msid + ' ' + self.devs_list[index]).read()
-
-                isLocked = re.search(txt_L, txt)
-                isUnlocked = re.search(txt_UL, txt)
-                isSetup = (re.search(txt_S, txt) != None) & (msidText == '')
+                #msidText = os.popen(self.prefix + 'sedutil-cli -n --getmbrsize ' + msid + ' ' + self.devs_list[index]).read()
+                #m = re.search('Shadow', msidText)
+                
+                #isLocked = re.search(txt_L, txt)
+                #isUnlocked = re.search(txt_UL, txt)
+                #isSetup = (re.search(txt_S, txt) != None) & (not m)
                 hasBlockSID = re.search(txt_BSID, txt)
                 isBlockSID = re.search(txt_BSID_enabled, txt)
                 
-                if isLocked:
-                    self.dev_status.set_text("Locked")
-                    self.dev_setup.set_text("Yes")
-                elif isUnlocked:
-                    self.dev_status.set_text("Unlocked")
-                    if isSetup:
-                        self.dev_setup.set_text("Yes")
-                    else:
-                        self.dev_setup.set_text("No")
-                else:
-                    self.dev_status.set_text("N/A")
-                    self.dev_setup.set_text("N/A")
+                #if isLocked:
+                #    self.dev_status.set_text("Locked")
+                #    self.dev_setup.set_text("Yes")
+                #elif isUnlocked:
+                #    self.dev_status.set_text("Unlocked")
+                #    if isSetup:
+                #        self.dev_setup.set_text("Yes")
+                #    else:
+                #        self.dev_setup.set_text("No")
+                #else:
+                #    self.dev_status.set_text("N/A")
+                #    self.dev_setup.set_text("N/A")
                     
                 if hasBlockSID and isBlockSID:
                     self.dev_blockSID.set_text("Enabled")
@@ -1225,59 +1311,9 @@ class LockApp(gtk.Window):
             self.queryWinText = ''.join(queryTextList)
         
             if not self.scanning :
-                queryWin = gtk.Window()
-                queryWin.set_title("Query Device")
-                
-                winWidth = 400
-                winHeight = 500
-                
-                scrolledWin = gtk.ScrolledWindow()
-                scrolledWin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-                
-                queryWin.set_size_request(winWidth, winHeight)
-                if os.path.isfile('icon.jpg'):
-                    queryWin.set_icon_from_file('icon.jpg')
-                
-                queryText = gtk.Label(txt2)
-                queryVbox = gtk.VBox(False, 0)
-                queryVbox.set_border_width(10)
-                
-                queryTextView = gtk.TextView()
-                queryTextView.set_editable(False)
-                self.queryTextBuffer = queryTextView.get_buffer()
                 self.queryTextBuffer.set_text(self.queryWinText)
-                scrolledWin.add_with_viewport(queryTextView)
-                queryVbox.pack_start(scrolledWin, True, True, 0)
                 
-                query_instr = gtk.Label('Enter the device\'s password to access more query information.')
-                queryVbox.pack_start(query_instr, False, False, 0)
-                
-                self.authBoxQ = gtk.HBox(False, 0)
-                authLabel = gtk.Label('Auth Level')
-                self.authBoxQ.pack_start(authLabel, True, True, 0)
-                self.authBoxQ.pack_start(self.authQuery, True, True,0)
-                queryVbox.pack_start(self.authBoxQ, False, False, 0)
-                
-                self.passBoxQ = gtk.HBox(False, 0)
-                passLabel = gtk.Label('Enter Password')
-                self.queryPass = gtk.Entry()
-                self.queryPass.set_visibility(False)
-                
-                submitPass = gtk.Button('Submit')
-                submitPass.connect("clicked", self.queryAuth)
-                self.passBoxQ.pack_start(passLabel, True, True, 0)
-                self.passBoxQ.pack_start(self.queryPass, True, True, 0)
-                self.passBoxQ.pack_start(submitPass, False, False, 0)
-                queryVbox.pack_start(self.passBoxQ, False, False, 0)
-                
-                save_instr = gtk.Label('Press \'Save to text file\' to save the query information in a file.')
-                queryVbox.pack_start(save_instr, False, False, 0)
-                
-                querySave = gtk.Button('_Save to text file')
-                querySave.connect("clicked", self.saveToText)
-                queryVbox.pack_start(querySave, False, False, 0)
-                queryWin.add(queryVbox)
-                queryWin.show_all()
+                self.queryWin.show_all()
                 
             else:
                 self.scanning = False
@@ -1288,8 +1324,11 @@ class LockApp(gtk.Window):
         devpass = lockhash.hash_pass(self.queryPass.get_text(), self.dev_sn.get_text(), self.dev_msid.get_text())
         txt1 = "NOT_AUTHORIZED"
         txt2 = "AUTHORITY_LOCKED_OUT"
-        
-        p = subprocess.check_output([self.prefix + "sedutil-cli", "-n", "--getmbrsize", devpass, self.devname])
+        p = ''
+        #if devpass == self.dev_msid.get_text():
+        #    p = subprocess.check_output([self.prefix + "sedutil-cli", "-n", "--getmbrsize", devpass, self.devname])
+        #else:
+        p = subprocess.check_output([self.prefix + "sedutil-cli", "-n", "-t", "--getmbrsize", devpass, self.devname])
         na = re.search(txt1, p)
         alo = re.search(txt2, p)
         if na :
@@ -1301,11 +1340,15 @@ class LockApp(gtk.Window):
             timeStr = timeStr[2:]
             #level = self.authQuery.get_active()
             #if level == 0:
-            statusAW = os.system(ui.prefix + "sedutil-cli -n --auditwrite 02" + timeStr + " " + devpass + " " + self.devname)
-            #p1 = subprocess.check_output([self.prefix + "sedutil-cli", "-n", "--pbaValid", devpass, self.devname])
-            p1 = os.popen(self.prefix + "sedutil-cli -n --pbaValid " + devpass + " " + self.devname).read()
-            #p2 = subprocess.check_output([self.prefix + "sedutil-cli", "-n", "--auditread", devpass, self.devname])
-            p2 = os.popen(self.prefix + "sedutil-cli -n --auditread " + devpass + " " + self.devname).read()
+            statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + devpass + " " + self.devname)
+            p1 = ''
+            p2 = ''
+            #if devpass == self.dev_msid.get_text():
+            #    p1 = os.popen(self.prefix + "sedutil-cli -n --pbaValid " + devpass + " " + self.devname).read()
+            #    p2 = os.popen(self.prefix + "sedutil-cli -n --auditread " + devpass + " " + self.devname).read()
+            #else:
+            p1 = os.popen(self.prefix + "sedutil-cli -n -t --pbaValid " + devpass + " " + self.devname).read()
+            p2 = os.popen(self.prefix + "sedutil-cli -n -t --auditread " + devpass + " " + self.devname).read()
             #else:
             
             pba_regex = 'PBA image version: (.+)\nPBA image valid'
@@ -1385,7 +1428,7 @@ class LockApp(gtk.Window):
             self.dev_single.set_text(self.devs_list[self.tcg_list[act_idx]])
             self.dev_sn.set_text(self.sn_list[self.tcg_list[act_idx]])
             self.dev_msid.set_text(self.msid_list[self.tcg_list[act_idx]])
-            self.dev_pbaVer.set_text(self.pba_list[self.tcg_list_list[act_idx]])
+            self.dev_pbaVer.set_text(self.pba_list[self.tcg_list[act_idx]])
             
         if self.opal_ver_list[act_idx] != "None":
             self.scanning = True
@@ -1510,17 +1553,18 @@ class LockApp(gtk.Window):
     def setup_finish(self, *args):
         index = self.nonsetup_list[self.dev_select.get_active()]
         dev_os = platform.system()
-        verified = powerset.verify_power()
-        if index == 0 and dev_os == 'Windows' and not verified:
-            message = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_YES_NO)
-            message.set_markup("We recommend changing your power settings to better secure your data, would you like to proceed with the changes?")
-            res = message.run()
-            if res == gtk.RESPONSE_YES:
-                message.destroy()
-                powerset.set_power()
-                self.msg_ok("Your power settings have been changed successfully.")
-            elif res == gtk.RESPONSE_NO:
-                message.destroy()
+        if dev_os == 'Windows':
+            verified = powerset.verify_power()
+            if index == 0 and not verified:
+                message = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_YES_NO)
+                message.set_markup("We recommend changing your power settings to better secure your data, would you like to proceed with the changes?")
+                res = message.run()
+                if res == gtk.RESPONSE_YES:
+                    message.destroy()
+                    powerset.set_power()
+                    self.msg_ok("Your power settings have been changed successfully.")
+                elif res == gtk.RESPONSE_NO:
+                    message.destroy()
         #popup message to signal setup complete
         self.msg_ok("Device " + self.devname + "has been setup successfully.") 
         self.updateDevs(index,[2,3])
@@ -1573,6 +1617,7 @@ class LockApp(gtk.Window):
         
     def setup_prompt2(self, *args):
         #self.hideAll()
+        self.box_drive.hide()
         self.box_newpass.hide()
         self.box_newpass_confirm.hide()
         self.setup_next.hide()
@@ -1786,8 +1831,8 @@ class LockApp(gtk.Window):
         self.op_label.set_text('Revert with PSID')
         self.op_instr.set_text('\nReverting with PSID reverts the drive to manufacturer settings and erases all data.\nEnter the drive\'s PSID and press \'Revert with PSID\'.')
         
-        if self.view_state != 2:
-            self.view_state = 2
+        if self.view_state != 5:
+            self.view_state = 5
             self.changeList()
             
         if len(self.setup_list) > 1:
@@ -2171,6 +2216,14 @@ class LockApp(gtk.Window):
             self.label_dev2.hide()
             self.dev_select.show()
             self.label_dev.show()
+            
+    def hide_queryWin(event, self, widget):
+        self.hide()
+        return True
+        
+    def destroy_main(event, self, widget):
+        gtk.main_quit()
+        return False
                         
     def run(self):
         ''' Run the app. '''

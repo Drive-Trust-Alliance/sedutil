@@ -65,26 +65,110 @@ exit:	// add the token overhead
 	hash.insert(hash.begin(), 0xd0);
 }
 
+// credit
+// https://www.codeproject.com/articles/99547/hex-strings-to-raw-data-and-back
+//
+
+inline unsigned char hex_digit_to_nybble(char ch)
+{
+	switch (ch)
+	{
+	case '0': return 0x0;
+	case '1': return 0x1;
+	case '2': return 0x2;
+	case '3': return 0x3;
+	case '4': return 0x4;
+	case '5': return 0x5;
+	case '6': return 0x6;
+	case '7': return 0x7;
+	case '8': return 0x8;
+	case '9': return 0x9;
+	case 'a': return 0xa;
+	case 'A': return 0xa;
+	case 'b': return 0xb;
+	case 'B': return 0xb;
+	case 'c': return 0xc;
+	case 'C': return 0xc;
+	case 'd': return 0xd;
+	case 'D': return 0xd;
+	case 'e': return 0xe;
+	case 'E': return 0xe;
+	case 'f': return 0xf;
+	case 'F': return 0xf;
+	//default: throw std::invalid_argument();
+	}
+}
+
+vector<uint8_t> hex2data(char * password)
+{
+	vector<uint8_t> h;
+	h.clear();
+	printf("strlen(password)=%d\n", strlen(password));
+	if (strlen(password) != 64)
+	{
+		printf("Hashed Password length isn't 64-byte, no translation\n");
+		h.clear();
+		for (uint16_t i = 0; i < strnlen(password, 32); i++)
+			h.push_back(password[i]);
+		return h;
+	}
+
+	printf("GUI hashed password=");
+	for (int i=0; i < strlen(password); i+=2)
+	{
+		h.push_back(
+		(hex_digit_to_nybble(password[i]) << 4) |  // high 4-bit
+			(hex_digit_to_nybble(password[i + 1]) & 0x0f)); // lo 4-bit
+	}
+	for (int i = 0; i < h.size(); i++)
+		printf("%02x", h[i]);
+	printf("\n");
+	return h;
+}
+
+
 void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d)
 {
     LOG(D1) << " Entered DtaHashPwd";
     char *serNum;
 
-	//d->no_hash_passwords = true; 
-    if (d->no_hash_passwords) {
-        hash.clear();
-	for (uint16_t i = 0; i < strnlen(password, 32); i++)
-		hash.push_back(password[i]);
-	// add the token overhead
-	hash.insert(hash.begin(), (uint8_t)hash.size());
-	hash.insert(hash.begin(), 0xd0);
-	LOG(D1) << " Exit DtaHashPwd";
-	return;
+	//d->no_hash_passwords = true; // force no hashing for debug purpose
+	printf("d->translate_req = %d\n", d->translate_req); 
+	if (d->no_hash_passwords) {
+		if (d->translate_req) { // host-hashed password, convert 64-byte ascii into 32-byte data ???????
+			hash = hex2data(password); 
+		}
+		else {
+			hash.clear();
+			for (uint16_t i = 0; i < strnlen(password, 32); i++)
+				hash.push_back(password[i]);
+		}
+		// add the token overhead
+		hash.insert(hash.begin(), (uint8_t)hash.size());
+		hash.insert(hash.begin(), 0xd0);
+		LOG(D1) << " Exit DtaHashPwd";
+		return;
     }
     serNum = d->getSerialNum();
     vector<uint8_t> salt(serNum, serNum + 20);
     //	vector<uint8_t> salt(DEFAULTSALT);
+
     DtaHashPassword(hash, password, salt);
+#if false
+	printf("serNum=%s\n", serNum);
+	printf("serNum as data =");
+	for (int i = 0; i < strnlen(serNum,20); i++) printf("%02X", serNum[i]);
+	printf("\n");
+	printf("salt size = %d ; salt =",salt.size());
+	for (int i = 0; i < salt.size(); i++) printf("%02X", salt[i]);
+	printf("\n");
+	printf("salt as string =%s\n", salt.data());
+	//printf("password : %s\n",password); // non-printable char cause screen error 
+	printf("Hashed password size = %d ; hashed password =",hash.size());
+	for (int i = 0; i < hash.size(); i++)
+		printf("%02x", hash[i]);
+	printf("\n");
+#endif	
     LOG(D1) << " Exit DtaHashPwd"; // log for hash timing
 }
 

@@ -342,6 +342,7 @@ protected:
 	 */
 	lrStatus_t getLockingRange_status(uint8_t lockingrange, char * password);
 	bool getusermode() { return usermodeON; };
+	bool gettranslate() { return translate_req; };
 	uint8_t adminEnabledTab[16];
 	uint8_t userEnabledTab[16];
 };
