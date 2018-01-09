@@ -789,10 +789,7 @@ int main(int argc, char * argv[])
 		LOG(D) << "Read shadow MBR to file";
 		return d->MBRRead(argv[opts.password], argv[opts.pbafile], atol(argv[opts.startpos]), atol(argv[opts.len]));
 		break;
-	case sedutiloption::getMBRsize:
-		LOG(D) << "get shadow MBR table size ";
-		return d->getMBRsize(argv[opts.password]);
-		break;
+
 	case sedutiloption::createUSB:
 		LOG(D) << "create bootable USB drive " << argv[opts.pbafile] << " to " << opts.device;
 		//return d->createUSB(argv[opts.pbafile]);
@@ -800,6 +797,10 @@ int main(int argc, char * argv[])
 		break;
     #endif
 
+	case sedutiloption::getMBRsize:
+		LOG(D) << "get shadow MBR table size ";
+		return d->getMBRsize(argv[opts.password]);
+		break;
 	case sedutiloption::loadPBAimage:
         LOG(D) << "Loading PBA image " << argv[opts.pbafile] << " to " << opts.device;
         return d->loadPBA(argv[opts.password], argv[opts.pbafile]);
