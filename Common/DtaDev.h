@@ -303,6 +303,7 @@ public:
 	virtual uint16_t comID() = 0;
 	bool no_hash_passwords; /** disables hashing of passwords */
 	bool usermodeON = FALSE;
+	bool translate_req = FALSE;
 protected:
 	const char * dev;   /**< character string representing the device in the OS lexicon */
 	uint8_t isOpen = FALSE;  /**< The device has been opened */

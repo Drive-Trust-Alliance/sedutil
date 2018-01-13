@@ -124,6 +124,7 @@ int isValidSEDDisk(char *devname)
 }
 
 
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 int createvol(HANDLE &vol_handle, char * USBname)
 {
 	vol_handle = CreateFile(USBname, GENERIC_READ | GENERIC_WRITE,
@@ -214,9 +215,12 @@ int setfp(HANDLE &vol_handle,long sect)
 	}
 
 }
+#endif
+
 
 int diskUSBwrite(char *devname, char * USBname)
 {
+        #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 	HANDLE vol_handle;
 	int status;
 	long sect;
@@ -568,6 +572,7 @@ int diskUSBwrite(char *devname, char * USBname)
 #endif
 	delete d;
 	delete u;
+#endif
 	return 0;
 }
 
@@ -726,6 +731,7 @@ int main(int argc, char * argv[])
 		// make sure DtaDev::no_hash_passwords is initialized
 		d->no_hash_passwords = opts.no_hash_passwords;
 		d->usermodeON = opts.usermode;
+		d->translate_req = opts.translate_req;
 	}
     switch (opts.action) {
  	case sedutiloption::initialSetup:
@@ -783,10 +789,7 @@ int main(int argc, char * argv[])
 		LOG(D) << "Read shadow MBR to file";
 		return d->MBRRead(argv[opts.password], argv[opts.pbafile], atol(argv[opts.startpos]), atol(argv[opts.len]));
 		break;
-	case sedutiloption::getMBRsize:
-		LOG(D) << "get shadow MBR table size ";
-		return d->getMBRsize(argv[opts.password]);
-		break;
+
 	case sedutiloption::createUSB:
 		LOG(D) << "create bootable USB drive " << argv[opts.pbafile] << " to " << opts.device;
 		//return d->createUSB(argv[opts.pbafile]);
@@ -794,6 +797,10 @@ int main(int argc, char * argv[])
 		break;
     #endif
 
+	case sedutiloption::getMBRsize:
+		LOG(D) << "get shadow MBR table size ";
+		return d->getMBRsize(argv[opts.password]);
+		break;
 	case sedutiloption::loadPBAimage:
         LOG(D) << "Loading PBA image " << argv[opts.pbafile] << " to " << opts.device;
         return d->loadPBA(argv[opts.password], argv[opts.pbafile]);
@@ -962,7 +969,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-        printf("Fidelity Lock Version : 0.2.0.%s.%s 20171212-A002\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.2.1.%s.%s 20180102-A001\n", st1.c_str(),GIT_VERSION);
 		break;
     default:
         LOG(E) << "Unable to determine what you want to do ";

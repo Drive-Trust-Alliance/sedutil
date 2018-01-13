@@ -35,8 +35,9 @@ typedef struct _DTA_OPTIONS {
 	uint32_t startpos;		/** data store start position  */
 	uint32_t len;			/** data store length */
 	bool no_hash_passwords; /** global parameter, disables hashing of passwords */
-	bool usermode; /* true : start session with User1 UID, otherwise with Admin1 UID */
+	bool usermode; /* true : start session with UserN UID, otherwise with AdminN UID */
 	uint8_t devusb;			/** usb devname */
+	bool		translate_req;	/* global parameter, require to translate the hashed password string into hex data */
 } DTA_OPTIONS;
 /** Print a usage message */
 void usage();
