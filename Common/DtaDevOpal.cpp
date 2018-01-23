@@ -234,6 +234,7 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 		LOG(E) << "Unable to create session object ";
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
+	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG JERRY
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete session;
 		return lastRC;
@@ -296,6 +297,7 @@ uint8_t DtaDevOpal::setupLockingRange(uint8_t lockingrange, uint64_t start,
 		LOG(E) << "Unable to create session object ";
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
+	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG : JERRY 
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete session;
 		return lastRC;
@@ -465,6 +467,7 @@ uint8_t DtaDevOpal::configureLockingRange(uint8_t lockingrange, uint8_t enabled,
 		LOG(E) << "Unable to create session object ";
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
+	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG : JERRY 
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete session;
 		return lastRC;
@@ -2688,6 +2691,7 @@ uint8_t DtaDevOpal::getMBRsize(char * password, uint32_t * msize)
 		LOG(E) << "Unable to create session object ";
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
+	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG : JERRY 
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete session;
 		return lastRC;
@@ -2730,6 +2734,7 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 		LOG(E) << "Unable to create session object ";
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
+	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG : JERRY 
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete session;
 		return lastRC;
@@ -3018,6 +3023,46 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 		} // end cmprss
 		fivepercent = (uint64_t)((DecompressedBufferSize / 20) / blockSize) * blockSize;
 	}
+	// embedded info to MBR
+	bool saved_flag = no_hash_passwords;
+	no_hash_passwords = false;
+	char * model = getModelNum();
+	char * firmware = getFirmwareRev();
+	char * sernum = getSerialNum();
+	vector<uint8_t> hash;
+	printf("model : %s ", model);
+	printf("firmware : %s ", firmware);
+	printf("serial : %s\n", sernum);
+	hash.clear();
+	LOG(I) << "start hashing";
+	DtaHashPwd(hash, sernum, this);
+	LOG(I) << "end hashing";
+	printf("hashed size = %zd\n", hash.size());
+	printf("hashed serial number is ");
+	for (int i = 0; i < hash.size(); i++)
+	{
+		printf("%02X", hash.at(i));
+	}
+	printf("\n");
+	// try dump decompressed buffer of sector 0 , 1 
+	//DtaHexDump(DecompressedBuffer + 512, 512);
+	// write 32-byte date into buffer 
+	for (int i = 2; i < hash.size(); i++)
+	{
+		DecompressedBuffer[512 + 64 + i - 2] = hash.at(i);
+	}
+
+	hash.clear();
+	LOG(I) << "start hashing";
+	char mbrstr[16] = "FidelityLockMBR";
+	DtaHashPwd(hash, mbrstr, this);
+	for (int i = 2; i < hash.size(); i++)
+	{
+		DecompressedBuffer[512 + 96 + i - 2] = hash.at(i);
+	}
+
+	DtaHexDump(DecompressedBuffer + 512, 512);
+	no_hash_passwords = saved_flag;
 
 	if (0 == fivepercent) fivepercent++;
 	if (embed ==0) 

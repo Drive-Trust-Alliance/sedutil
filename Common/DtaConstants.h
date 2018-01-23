@@ -42,6 +42,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define DTAERROR_COMMAND_ERROR				0x88
 #define DTAERROR_NO_METHOD_STATUS			0x89
 #define DTAERROR_NO_LOCKING_INFO			0x8a
+#define DTAERROR_CREATE_USB				0x8b
 /** Locking Range Configurations */
 #define DTA_DISABLELOCKING		0x00
 #define DTA_READLOCKINGENABLED		0x01
