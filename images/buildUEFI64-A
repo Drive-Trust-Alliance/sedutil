@@ -57,6 +57,7 @@ cd pure64
 zcat ../../clone-pure64/boot6.4.1/corepure64.gz | sudo cpio -i -d -H newc
 sudo cp ../../clone-pure64/misc1/tce-setup usr/bin/tc-setup
 mkdir -p tmp/tce
+mkdir -p tmp/h.d
 cp -av ../../clone-pure64/cde/* tmp/tce/ # 2> /dev/null
 sudo find . | sudo cpio -o -H newc | gzip -9 > ../../clone-pure64/boot/corepure64.gz
 cd ../
