@@ -35,12 +35,8 @@ def testPBKDF2():
         ( 25, 4096, "passwordPASSWORDpassword", "saltSALTsaltSALTsaltSALTsaltSALTsalt",
             "3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038")]
 
-    #print "\nPKCS #5 PBKDF2 validation suite running ... \n\n"
     passed = testsedutil(testSet) and passed
-    #print "\nPKCS #5 PBKDF2 validation suite ... "
     if (passed):
-        print "passed\n"
         return 0
     else:
-        print "**FAILED**\n"
         return 1
