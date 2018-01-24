@@ -467,8 +467,8 @@ uint8_t DtaDevOpal::configureLockingRange(uint8_t lockingrange, uint8_t enabled,
 		LOG(E) << "Unable to create session object ";
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
-	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG : JERRY 
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG : JERRY 
+	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete session;
 		return lastRC;
 	}
@@ -1178,7 +1178,7 @@ uint8_t DtaDevOpal::userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * use
 	// User1
 	cmd->addToken(OPAL_TOKEN::STARTNAME);
 	cmd->addToken(OPAL_UID::OPAL_HALF_UID_AUTHORITY_OBJ_REF, 4); //????? how to insert 4-byte here, addToken will insert BYTESTRING4 token
-	// translate UserN AdminN into <int8_t 
+	// translate UserN AdminN into <int8_t>
 	vector<uint8_t> auth, auth2;
 	auth = getUID(userid, auth2);
 	cmd->addToken(auth);
@@ -1209,16 +1209,14 @@ uint8_t DtaDevOpal::userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * use
 	//IFLOG(D1) DtaHexDump(cmd->cmdbuf, 512);
 
 	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
-		LOG(E) << "***** send enable user access command fail";
+		LOG(E) << "***** send enable/disable user access command fail";
 		delete cmd;
 		return lastRC;
 	}
-	if (mbrstate) 
-		LOG(I) << "***** enable user access command OK";
-	else
-		LOG(I) << "***** disable user access command OK";
+	LOG(I) << "***** " << (mbrstate ? "enable" : "disable") << " user access command OK";
+
 	delete cmd;
-	LOG(D1) << "***** end of enable user access command ";
+	LOG(D1) << "***** end of enable/disable user access command ";
 	return 0;
 }
 uint8_t DtaDevOpal::enableUserRead(uint8_t mbrstate, char * password, char * userid)
@@ -1248,13 +1246,40 @@ uint8_t DtaDevOpal::enableUserRead(uint8_t mbrstate, char * password, char * use
 		OPAL_ACE_LOCKINGRANGE_WRLOCKED,
 	*/
 	error = 0;
+	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_DataStore_Get_All for " << userid; 
 	error = userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_DataStore_Get_All,userid);
+	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "enable OPAL_ACE_DataStore_Set_All for " << userid;
 	error = userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_DataStore_Set_All, userid);
+	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "enable OPAL_ACE_MBRControl_Set_Done for " << userid;
 	error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_MBRControl_Set_Done, userid);
-	error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_LOCKINGRANGE_RDLOCKED, userid);
-	error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_LOCKINGRANGE_WRLOCKED, userid);
+	// DO NOT turn on lockingrange 1
+	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "enable OPAL_ACE_LOCKINGRANGE1_RDLOCKED for " << userid;
+	//error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_LOCKINGRANGE1_RDLOCKED, userid);
+	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "enable OPAL_ACE_LOCKINGRANGE1_WRLOCKED for " << userid;
+	//error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_LOCKINGRANGE1_WRLOCKED, userid);
+	/*
+	OPAL_ACE_MBRControl_Set_Enable,
+	ACE_Locking_GlobalRange_Get_RangeStartToActiveKey,
+	ACE_Locking_GlobalRange_Set_ReadLocked,
+	ACE_Locking_GlobalRange_Set_WriteLocked,
+	ACE_Locking_GlobalRange_Admin_Set,	// allow to set/reset
+	ACE_Locking_GlobalRange_Admin_Start, // allow to set/reset range start and length
+	*/
+	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_MBRControl_Set_Enable for " << userid;
+	error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_MBRControl_Set_Enable, userid); // NG6
+	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey for " << userid;
+	error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey, userid);
+	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey for " << userid;
+	error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Set_ReadLocked, userid);
+	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_Locking_GlobalRange_Set_WriteLocked for " << userid;
+	error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Set_WriteLocked, userid);
+	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_Locking_GlobalRange_Admin_Set for " << userid;
+	error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Admin_Set, userid); // NG10
+	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_Locking_GlobalRange_Admin_Start for " << userid;
+	error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Admin_Start, userid); // NG11
+
 	if (error) {
-		LOG(E) << "one of user access enable fail";
+		LOG(E) << (mbrstate ? "enable " : "disbale ") << "one of user accese fail";
 		delete session;
 		return error;
 	}
