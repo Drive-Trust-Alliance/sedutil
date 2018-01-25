@@ -126,6 +126,8 @@ class LockApp(gtk.Window):
     
     scanning = False
     view_state = 0
+    NOT_AUTHORIZED = 256
+    AUTHORITY_LOCKED_OUT = 4608
     
     def __init__(self):
         status = lockhash.testPBKDF2()
@@ -163,6 +165,8 @@ class LockApp(gtk.Window):
 
             height = 550
             width = 600
+            if platform.system() == 'Linux':
+                width = 650
                 
             self.set_size_request(width, height)
 
@@ -190,10 +194,11 @@ class LockApp(gtk.Window):
             self.backToMain.connect("activate", self.returnToMain)
             self.backToMain.set_tooltip_text('Return to Main view')
             self.navMenu.append(self.backToMain)
-            self.readLog = gtk.MenuItem("Audit Log")
-            self.readLog.connect("activate", self.openLog_prompt)
-            self.readLog.set_tooltip_text('Access a drive\'s event log')
-            self.navMenu.append(self.readLog)
+            if self.VERSION != 1:
+                self.readLog = gtk.MenuItem("Audit Log")
+                self.readLog.connect("activate", self.openLog_prompt)
+                self.readLog.set_tooltip_text('Access a drive\'s event log')
+                self.navMenu.append(self.readLog)
             self.exitApp = gtk.MenuItem("Exit")
             self.exitApp.connect("activate", self.exitapp)
             self.exitApp.set_tooltip_text('Exit the app')
@@ -347,7 +352,8 @@ class LockApp(gtk.Window):
             
             self.setupUSB_button = gtk.Button('_Create bootable USB')
             
-            self.pbaUnlock = gtk.Button("_Unlock with password")
+            self.pbaUnlockReboot = gtk.Button("_Unlock and Reboot")
+            self.pbaUnlockOnly = gtk.Button("_Unlock only")
             self.pbaUSB_button = gtk.Button('_Unlock with USB')
             
             self.unlockFull_button = gtk.Button('_Full Unlock')
@@ -396,7 +402,8 @@ class LockApp(gtk.Window):
             self.setupPWOnly.connect('clicked', runop.run_setupFull, self, 1)
             self.setupUserPW.connect('clicked', runop.run_setupUser, self)
             
-            self.pbaUnlock.connect("clicked", runop.run_unlockPBA, self)   
+            self.pbaUnlockReboot.connect("clicked", runop.run_unlockPBA, self, True)
+            self.pbaUnlockOnly.connect("clicked", runop.run_unlockPBA, self, False)
             self.pbaUSB_button.connect("clicked", runop.run_unlockUSB, self)
             
             self.lock_button.connect('clicked', runop.run_lockset, self)
@@ -512,7 +519,8 @@ class LockApp(gtk.Window):
             self.buttonBox.pack_start(self.go_button_changePW_confirm, False, False, padding)
             self.buttonBox.pack_start(self.go_button_revert_user_confirm, False, False, padding)
             self.buttonBox.pack_start(self.go_button_revert_psid_confirm, False, False, padding)
-            self.buttonBox.pack_start(self.pbaUnlock, False, False, padding)
+            self.buttonBox.pack_start(self.pbaUnlockReboot, False, False, padding)
+            self.buttonBox.pack_start(self.pbaUnlockOnly, False, False, padding)
             self.buttonBox.pack_start(self.setupPWOnly, False, False, padding)
             self.buttonBox.pack_start(self.updatePBA_button, False, False, padding)
             self.buttonBox.pack_start(self.pbaUSB_button, False, False, padding)
@@ -618,13 +626,13 @@ class LockApp(gtk.Window):
             self.passBoxQ.pack_start(self.queryPass, True, True, 0)
             self.passBoxQ.pack_start(submitPass, False, False, 0)
             queryVbox.pack_start(self.passBoxQ, False, False, 0)
-            
-            save_instr = gtk.Label('Press \'Save to text file\' to save the query information in a file.')
-            queryVbox.pack_start(save_instr, False, False, 0)
-            
-            querySave = gtk.Button('_Save to text file')
-            querySave.connect("clicked", self.saveToText)
-            queryVbox.pack_start(querySave, False, False, 0)
+            if self.VERSION != 1:
+                save_instr = gtk.Label('Press \'Save to text file\' to save the query information in a file.')
+                queryVbox.pack_start(save_instr, False, False, 0)
+                
+                querySave = gtk.Button('_Save to text file')
+                querySave.connect("clicked", self.saveToText)
+                queryVbox.pack_start(querySave, False, False, 0)
             
             self.queryWin.connect('delete_event', self.hide_queryWin)
             
@@ -1248,7 +1256,8 @@ class LockApp(gtk.Window):
         
             if not self.scanning :
                 self.queryTextBuffer.set_text(self.queryWinText)
-                self.queryPass.set_text('')
+                if self.VERSION != 1:
+                    self.queryPass.set_text('')
                 self.queryWin.show_all()
                 
             else:
@@ -1274,32 +1283,27 @@ class LockApp(gtk.Window):
         devpass = lockhash.hash_pass(self.queryPass.get_text(), salt, self.dev_msid.get_text())
         txt1 = "NOT_AUTHORIZED"
         txt2 = "AUTHORITY_LOCKED_OUT"
-        p = ''
-        #p = subprocess.check_output([self.prefix + "sedutil-cli", "-n", "--getmbrsize", devpass, self.devname])
-        p = subprocess.Popen([self.prefix + "sedutil-cli", "-n", "-t", "--getmbrsize", devpass, self.devname], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = p.communicate()
-        na = re.search(txt1, stderr)
-        alo = re.search(txt2, stderr)
-        if na :
+        p0 = os.popen(self.prefix + "sedutil-cli -n -t --getmbrsize " + devpass + " " + self.devname).read()
+        out_regex = 'Shadow.+(?:\n.+)+'
+        m3 = re.search(out_regex, p0)
+        if not m3:
             self.msg_err("Error: Invalid password, try again.")
-        elif alo :
-            self.msg_err("Error: Locked out due to multiple failed attempts.  Please reboot and try again.")
         else :
             timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             timeStr = timeStr[2:]
             level = self.authQuery.get_active()
             p1 = ''
             p2 = ''
-            if level == 1:
+            if level == 1 and self.VERSION != 1:
                 statusAW = os.system(self.prefix + "sedutil-cli -n -t -u --auditwrite 02" + timeStr + " " + devpass + " User1 " + self.devname)
-                
-                #p1 = os.popen(self.prefix + "sedutil-cli -n -t --pbaValid " + devpass + " " + self.devname).read()
                 p2 = os.popen(self.prefix + "sedutil-cli -n -t -u --auditread " + devpass + " User1 " + self.devname).read()
             else:
-                statusAW = os.system(self.prefix + "sedutil-cli -n -t -u --auditwrite 02" + timeStr + " " + devpass + " Admin1 " + self.devname)
+                if self.VERSION != 1:
+                    statusAW = os.system(self.prefix + "sedutil-cli -n -t -u --auditwrite 02" + timeStr + " " + devpass + " Admin1 " + self.devname)
+                    p2 = os.popen(self.prefix + "sedutil-cli -n -t --auditread " + devpass + " Admin1 " + self.devname).read()
                 
                 p1 = os.popen(self.prefix + "sedutil-cli -n -t --pbaValid " + devpass + " " + self.devname).read()
-                p2 = os.popen(self.prefix + "sedutil-cli -n -t --auditread " + devpass + " Admin1 " + self.devname).read()
+                
             pba_regex = 'PBA image version\s*:\s*(.+)'
             audit_regex = 'Fidelity Audit Log Version\s*([0-9]+\.[0-9]+)\s*:'
             m1 = re.search(pba_regex, p1)
@@ -1314,8 +1318,7 @@ class LockApp(gtk.Window):
                 audit_ver = m2.group(1)
             else:
                 audit_ver = 'N/A'
-            out_regex = 'Shadow.+(?:\n)+'
-            m3 = re.search(out_regex, stdout)
+            
             self.queryWinText = self.queryWinText + "\n" + m3.group(0) + "\nPBA image version: " + pba_ver + "\nAudit Log Version: " + audit_ver
             self.queryTextBuffer.set_text(self.queryWinText)
             self.passBoxQ.hide()
@@ -1794,8 +1797,7 @@ class LockApp(gtk.Window):
         self.hideAll()
         self.op_label.set_text('Preboot Unlock')
         self.op_instr.set_text('\nPreboot Unlock unlocks a drive for bootup.\nEnter the drive\'s password and press \'Preboot Unlock\'\nAfterwards, reboot into the unlocked drive.')
-        if self.VERSION > 1:
-            self.go_button_cancel.show()
+        self.go_button_cancel.show()
         
         if self.view_state != 1:
             self.view_state = 1
@@ -1806,7 +1808,8 @@ class LockApp(gtk.Window):
             self.op_instr.show()
 
             self.box_pass.show()
-            self.pbaUnlock.show()
+            self.pbaUnlockReboot.show()
+            self.pbaUnlockOnly.show()
             
             self.check_box_pass.show()
         
@@ -1955,7 +1958,8 @@ class LockApp(gtk.Window):
         self.go_button_changePW_confirm.hide()
         self.setupLockOnly.hide()
         self.setupLockPBA.hide()        
-        self.pbaUnlock.hide()
+        self.pbaUnlockReboot.hide()
+        self.pbaUnlockOnly.hide()
         self.setupPWOnly.hide()
         self.updatePBA_button.hide()
         self.setupUSB_button.hide()
@@ -2017,8 +2021,10 @@ class LockApp(gtk.Window):
         self.go_button_revert_psid_confirm.set_sensitive(False)
         self.go_button_changePW_confirm.set_sensitive(False)
         self.setupLockOnly.set_sensitive(False)
-        self.setupLockPBA.set_sensitive(False)        
-        self.pbaUnlock.set_sensitive(False)
+        self.setupLockPBA.set_sensitive(False)
+        self.setupUSB_button.set_sensitive(False)
+        self.pbaUnlockReboot.set_sensitive(False)
+        self.pbaUnlockOnly.set_sensitive(False)
         self.setupPWOnly.set_sensitive(False)
         self.updatePBA_button.set_sensitive(False)
         self.pbaUSB_button.set_sensitive(False)
@@ -2055,8 +2061,10 @@ class LockApp(gtk.Window):
         self.go_button_revert_psid_confirm.set_sensitive(True)
         self.go_button_changePW_confirm.set_sensitive(True)
         self.setupLockOnly.set_sensitive(True)
-        self.setupLockPBA.set_sensitive(True)        
-        self.pbaUnlock.set_sensitive(True)
+        self.setupLockPBA.set_sensitive(True)
+        self.setupUSB_button.set_sensitive(True)
+        self.pbaUnlockReboot.set_sensitive(True)
+        self.pbaUnlockOnly.set_sensitive(True)
         self.setupPWOnly.set_sensitive(True)
         self.updatePBA_button.set_sensitive(True)
         self.pbaUSB_button.set_sensitive(True)
