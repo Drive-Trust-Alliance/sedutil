@@ -58,11 +58,8 @@ def verify_power():
     s = os.popen('powercfg -QUERY ' + scheme + ' ' + Subgp).read()
     
     s1 = re.search(regex_Lid, s)
-    print s1
     s2 = re.search(regex_Slp, s)
-    print s2
     s3 = re.search(regex_Pwr, s)
-    print s3
     return ((s1 != None) & (s2 != None) & (s3 != None))
     
     
