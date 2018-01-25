@@ -136,11 +136,11 @@ int createvol(HANDLE &vol_handle, char * USBname)
 
 	if (vol_handle == INVALID_HANDLE_VALUE)
 	{
-		printf("CreateFile error \n");
+		IFLOG(D1) printf("CreateFile error \n");
 		return false;
 	}
 	else {
-		printf("CreateFile(%s,..) OK , vol_handle = %zd\n", USBname, (int64_t)vol_handle);
+		IFLOG(D1) printf("CreateFile(%s,..) OK , vol_handle = %zd\n", USBname, (int64_t)vol_handle);
 	}
 	return true;
 }
@@ -152,11 +152,11 @@ int lockvol( HANDLE &vol_handle)
 		NULL, 0, NULL, 0, &n, NULL))
 	{
 		DWORD err = GetLastError();
-		printf("FSCTL_DISMOUNT_VOLUME error %d\n", err);
+		IFLOG(D1) printf("FSCTL_DISMOUNT_VOLUME error %d\n", err);
 		return false;
 	}
 	else {
-		printf("DeviceIoControl(vol_handle, FSCTL_DISMOUNT_VOLUME...) OK\n");
+		IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_DISMOUNT_VOLUME...) OK\n");
 	}
 
 	// lock volume
@@ -166,11 +166,11 @@ int lockvol( HANDLE &vol_handle)
 	{
 		// error handling; not sure if retrying is useful
 		// lock vol fail ; probably ok if there is no file system exist
-		printf("DeviceIoControl(vol_handle, FSCTL_LOCK_VOLUME,...) error\n");
-		printf("error = %d \n", GetLastError());
+		IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_LOCK_VOLUME,...) error\n");
+		IFLOG(D1) printf("error = %d \n", GetLastError());
 	}
 	else {
-		printf("DeviceIoControl(vol_handle, FSCTL_LOCK_VOLUME,...) OK\n");
+		IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_LOCK_VOLUME,...) OK\n");
 	}
 	return true;
 }
@@ -185,11 +185,11 @@ int unlockvol(HANDLE &vol_handle)
 	{
 		// error handling; not sure if retrying is useful
 		// lock vol fail ; probably ok if there is no file system exist
-		printf("DeviceIoControl(vol_handle, FSCTL_UNLOCK_VOLUME,...) error\n");
-		printf("error = %d \n", GetLastError());
+		IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_UNLOCK_VOLUME,...) error\n");
+		IFLOG(D1) printf("error = %d \n", GetLastError());
 	}
 	else {
-		printf("DeviceIoControl(vol_handle, FSCTL_UNLOCK_VOLUME,...) OK\n");
+		IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_UNLOCK_VOLUME,...) OK\n");
 	}
 	return true;
 }
@@ -207,11 +207,11 @@ int setfp(HANDLE &vol_handle,long sect)
 	{
 		//errormsg("HWWrite: error %d seeking drive %x sector %ld:  %s",
 		//	err, drive, sect, w32errtxt(err));
-		printf("SetFilePointe error %d\n", err);
+		IFLOG(D1) printf("SetFilePointe error %d\n", err);
 		return false;
 	}
 	else {
-		printf("SetFilePointer(vol_handle, lopart, &hipart, FILE_BEGIN) OK\n");
+		IFLOG(D1) printf("SetFilePointer(vol_handle, lopart, &hipart, FILE_BEGIN) OK\n");
 		return true;
 	}
 
@@ -263,17 +263,17 @@ BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 	}
 
 	memset(Bufferzero, 0, DecompressedBufferSize);
-	LOG(I) << "zero out image area";
+	LOG(D1) << "zero out image area";
 	if (!WriteFile(vol_handle, Bufferzero, (DWORD)DecompressedBufferSize, &n, NULL))
 	{
 		int err = GetLastError();
-		printf("zero out image error %d\n", err);
+		IFLOG(D1) printf("zero out image error %d\n", err);
 		unlockvol(vol_handle);
 		CloseHandle(vol_handle);
 		return false;
 	}
-	LOG(I) << "zero out image area OK";
-	printf("close vol_handle %zd\n", (int64_t)vol_handle);
+	LOG(D1) << "zero out image area OK";
+	IFLOG(D1) printf("close vol_handle %zd\n", (int64_t)vol_handle);
 	reloadvol(vol_handle);
 	unlockvol(vol_handle);
 	CloseHandle(vol_handle);
@@ -281,8 +281,6 @@ BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 	//Sleep(1000);
 	return true;
 }
-
-
 #endif
 
 
@@ -441,29 +439,30 @@ int diskUSBwrite(char *devname, char * USBname)
 		char * firmware = d->getFirmwareRev();
 		char * sernum = d->getSerialNum();
 		vector<uint8_t> hash;
-		printf("model : %s ", model);
-		printf("firmware : %s ", firmware);
-		printf("serial : %s\n", sernum);
+		IFLOG(D1) printf("model : %s ", model);
+		IFLOG(D1) printf("firmware : %s ", firmware);
+		IFLOG(D1) printf("serial : %s\n", sernum);
 		hash.clear();
-		LOG(I) << "start hashing";
-		DtaHashPwd(hash, sernum, d);
-		LOG(I) << "end hashing";
-		printf("hashed size = %zd\n", hash.size());
-		printf("hashed serial number is ");
+		LOG(D1) << "start hashing";
+		IFLOG(D4) DtaHashPwd(hash, sernum, d);
+		LOG(D1) << "end hashing";
+		IFLOG(D1) printf("hashed size = %zd\n", hash.size());
+		IFLOG(D1) printf("hashed serial number is ");
+		IFLOG(D1)
 		for (int i = 0; i < hash.size(); i++)
 		{
 			printf("%02X", hash.at(i));
 		}
 		printf("\n");
 	// try dump decompressed buffer of sector 0 , 1 
-	DtaHexDump(DecompressedBuffer+512,512);
+	IFLOG(D4) DtaHexDump(DecompressedBuffer+512,512);
 	// write 32-byte date into buffer 
 	for (int i = 2; i < hash.size(); i++)
 	{
 		DecompressedBuffer[512+64+i-2] = hash.at(i);
 	}
 	hash.clear();
-	LOG(I) << "start hashing usb";
+	LOG(D1) << "start hashing usb";
 	char usbstr[16] = "FidelityLockUSB";
 
 	DtaHashPwd(hash,usbstr, d);
@@ -471,7 +470,7 @@ int diskUSBwrite(char *devname, char * USBname)
 	{
 		DecompressedBuffer[512 + 96 + i - 2] = hash.at(i);
 	}
-	DtaHexDump(DecompressedBuffer + 512, 512);
+	IFLOG(D4) DtaHexDump(DecompressedBuffer + 512, 512);
 	// no zero write does it work ????  --> Nope, require to zero out first ,   why ?????
 	vol_handle = INVALID_HANDLE_VALUE;
 	status = createvol(vol_handle, USBname); 
@@ -524,7 +523,7 @@ int diskUSBwrite(char *devname, char * USBname)
 	if (!WriteFile(vol_handle, DecompressedBuffer, (DWORD)DecompressedBufferSize, &n, NULL))
 	{
 		int err = GetLastError();
-		printf("write image data to USB error %d\n", err);
+		//printf("write image data to USB error %d\n", err);
 		unlockvol(vol_handle);
 		CloseHandle(vol_handle);
 		if (DecompressedBuffer != NULL) free(DecompressedBuffer);
@@ -532,7 +531,7 @@ int diskUSBwrite(char *devname, char * USBname)
 		delete u;
 		return DTAERROR_CREATE_USB;
 	}
-	printf("write image data to USB %ld OK; close handle %zd\n", n, (int64_t)vol_handle);
+	//printf("write image data to USB %ld OK; close handle %zd\n", n, (int64_t)vol_handle);
 	if (DecompressedBuffer != NULL) free(DecompressedBuffer);
 	reloadvol(vol_handle);
 	CloseHandle(vol_handle);

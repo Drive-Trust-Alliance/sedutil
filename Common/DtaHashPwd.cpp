@@ -107,23 +107,23 @@ vector<uint8_t> hex2data(char * password)
 		printf("strlen(password)=%d\n", (int)strlen(password));
 	if (strlen(password) != 64)
 	{
-		printf("Hashed Password length isn't 64-byte, no translation\n");
+		LOG(E) << "Hashed Password length isn't 64-byte, no translation";
 		h.clear();
 		for (uint16_t i = 0; i < (uint16_t)strnlen(password, 32); i++)
 			h.push_back(password[i]);
 		return h;
 	}
 
-	printf("GUI hashed password=");
+	//printf("GUI hashed password=");
 	for (uint16_t i=0; i < (uint16_t)strlen(password); i+=2)
 	{
 		h.push_back(
 		(hex_digit_to_nybble(password[i]) << 4) |  // high 4-bit
 			(hex_digit_to_nybble(password[i + 1]) & 0x0f)); // lo 4-bit
 	}
-	for (uint16_t i = 0; i < (uint16_t)h.size(); i++)
-		printf("%02x", h[i]);
-	printf("\n");
+	//for (uint16_t i = 0; i < (uint16_t)h.size(); i++)
+	//	printf("%02x", h[i]);
+	//printf("\n");
 	return h;
 }
 
@@ -134,7 +134,7 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d)
     char *serNum;
 
 	//d->no_hash_passwords = true; // force no hashing for debug purpose
-	printf("d->translate_req = %d\n", d->translate_req); 
+	IFLOG(D4) printf("d->translate_req = %d\n", d->translate_req); 
 	if (d->no_hash_passwords) {
 		if (d->translate_req) { // host-hashed password, convert 64-byte ascii into 32-byte data ???????
 			hash = hex2data(password); 

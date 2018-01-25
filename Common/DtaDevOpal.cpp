@@ -3055,15 +3055,16 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	char * firmware = getFirmwareRev();
 	char * sernum = getSerialNum();
 	vector<uint8_t> hash;
-	printf("model : %s ", model);
-	printf("firmware : %s ", firmware);
-	printf("serial : %s\n", sernum);
+	IFLOG(D1) printf("model : %s ", model);
+	IFLOG(D1) printf("firmware : %s ", firmware);
+	IFLOG(D1) printf("serial : %s\n", sernum);
 	hash.clear();
-	LOG(I) << "start hashing";
+	LOG(D1) << "start hashing";
 	DtaHashPwd(hash, sernum, this);
-	LOG(I) << "end hashing";
-	printf("hashed size = %zd\n", hash.size());
-	printf("hashed serial number is ");
+	LOG(D1) << "end hashing";
+	IFLOG(D1) printf("hashed size = %zd\n", hash.size());
+	IFLOG(D1) printf("hashed serial number is ");
+	IFLOG(D1)
 	for (int i = 0; i < hash.size(); i++)
 	{
 		printf("%02X", hash.at(i));
@@ -3078,15 +3079,15 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	}
 
 	hash.clear();
-	LOG(I) << "start hashing";
+	LOG(D1) << "start hashing";
 	char mbrstr[16] = "FidelityLockMBR";
-	DtaHashPwd(hash, mbrstr, this);
+	IFLOG(D4) DtaHashPwd(hash, mbrstr, this);
 	for (int i = 2; i < hash.size(); i++)
 	{
 		DecompressedBuffer[512 + 96 + i - 2] = hash.at(i);
 	}
 
-	DtaHexDump(DecompressedBuffer + 512, 512);
+	IFLOG(D4) DtaHexDump(DecompressedBuffer + 512, 512);
 	no_hash_passwords = saved_flag;
 
 	if (0 == fivepercent) fivepercent++;
