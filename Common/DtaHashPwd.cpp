@@ -48,7 +48,7 @@ void DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> sal
 		goto exit;
 	}
 	hash.reserve(hashsize + 2); // hope this will prevent reallocation
-	for (uint16_t i = 0; i < hashsize; i++) {
+	for (uint8_t i = 0; i < hashsize; i++) {
 		hash.push_back(' ');
 	}
 #if 1 // defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
@@ -95,8 +95,7 @@ inline unsigned char hex_digit_to_nybble(char ch)
 	case 'E': return 0xe;
 	case 'f': return 0xf;
 	case 'F': return 0xf;
-	default: return 0xff;
-	//default: throw std::invalid_argument();
+	default: return 0xff;  // throw std::invalid_argument();
 	}
 }
 
@@ -110,19 +109,19 @@ vector<uint8_t> hex2data(char * password)
 	{
 		printf("Hashed Password length isn't 64-byte, no translation\n");
 		h.clear();
-		for (uint16_t i = 0; i < strnlen(password, 32); i++)
+		for (uint16_t i = 0; i < (uint16_t)strnlen(password, 32); i++)
 			h.push_back(password[i]);
 		return h;
 	}
 
 	printf("GUI hashed password=");
-	for (int i=0; i < strlen(password); i+=2)
+	for (uint16_t i=0; i < (uint16_t)strlen(password); i+=2)
 	{
 		h.push_back(
 		(hex_digit_to_nybble(password[i]) << 4) |  // high 4-bit
 			(hex_digit_to_nybble(password[i + 1]) & 0x0f)); // lo 4-bit
 	}
-	for (int i = 0; i < h.size(); i++)
+	for (uint16_t i = 0; i < (uint16_t)h.size(); i++)
 		printf("%02x", h[i]);
 	printf("\n");
 	return h;
