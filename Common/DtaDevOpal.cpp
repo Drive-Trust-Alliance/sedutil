@@ -234,8 +234,8 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 		LOG(E) << "Unable to create session object ";
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
-	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG JERRY
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG JERRY
+	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete session;
 		return lastRC;
 	}
@@ -248,6 +248,17 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 		delete session;
 		return lastRC;
 	}
+	// JERRY dump raw token info 
+	uint32_t tc = response.getTokenCount();
+	printf("***** getTokenCount()=%ld\n", tc);
+	for (uint32_t i = 0; i < tc; i++) {
+		printf("token %ld = ", i);
+		for (uint32_t j = 0; j < response.getRawToken(i).size(); j++)
+			printf("%02X ", response.getRawToken(i)[j]);
+		cout << endl;
+	}
+
+	// JERRY
 	if (response.tokenIs(4) != _OPAL_TOKEN::DTA_TOKENID_UINT) {
 		LOG(E) << "Unable to determine number of ranges ";
 		delete session;
@@ -257,10 +268,34 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 	uint32_t numRanges = response.getUint32(4) + 1;
 	for (uint32_t i = 0; i < numRanges; i++){
 		if(0 != i) LR[8] = i & 0xff;
+		// JERRY 
+		if (0) {
+			for (uint8_t k = 0; k < LR.size(); k++) printf("%02X ", LR[k]);
+			cout << endl;
+		}
+		// JERRY
 		if ((lastRC = getTable(LR, _OPAL_TOKEN::RANGESTART, _OPAL_TOKEN::WRITELOCKED)) != 0) {
 			delete session;
 			return lastRC;
 		}
+		// JERRY dump raw token info 
+		uint32_t tc = response.getTokenCount();
+		if (0) {
+			printf("***** getTokenCount()=%ld\n", tc);
+			for (uint32_t i = 0; i < tc; i++) {
+				printf("token %ld = ", i);
+				for (uint32_t j = 0; j < response.getRawToken(i).size(); j++)
+					printf("%02X ", response.getRawToken(i)[j]);
+				cout << endl;
+			}
+		}
+		if (tc != 34) { // why ?????
+			cout << endl;
+			LOG(E) << "token count is wrong. Exit loop";
+			break;
+		}
+		// JERRY
+
 		LR[6] = 0x03;  // non global ranges are 00000802000300nn 
 		//LOG(I) << "LR" << i << " Begin " << response.getUint64(4) <<
 		cout << "LR" << i << " Begin " << response.getUint64(4) <<

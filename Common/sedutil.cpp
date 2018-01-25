@@ -617,7 +617,7 @@ int main(int argc, char * argv[])
 			SYSTEMTIME lt;
 			VariantTimeToSystemTime(m_lv->getexpire(), &lt);
 			printf("License Expire date : %d/%d/%d %d:%d:%d\n", lt.wYear, lt.wMonth,lt.wDay,lt.wHour,lt.wMinute,lt.wSecond);
-			// JERRY additional lic info 
+			// additional lic info 
 			long majver = m_lv->getmajorversion(); 
 			long minver = m_lv->getminorversion(); 
 			_bstr_t ver = m_lv->getversion(); 
@@ -628,25 +628,25 @@ int main(int argc, char * argv[])
 			printf("License Major Version = %ld \n", majver);
 			printf("License Minor Version = %ld \n", minver);
 			printf("License Version = %s \n", (char *)ver);
+			if (0) {
+				_bstr_t company = m_lv->getcompany();
+				printf("Company = %s\n", (char *)company);
+				_bstr_t ckey = m_lv->getcomputerkey();
+				printf("ComputerKey = %s\n", (char *)ckey);
+				_bstr_t email = m_lv->getemail();
+				printf("email = %s\n", (char *)email);
+				_bstr_t fullname = m_lv->getfullname();
+				printf("fullname = %s\n", (char *)fullname);
 
-			_bstr_t company = m_lv->getcompany();
-			printf("Company = %s\n", (char *)company);
-			_bstr_t ckey = m_lv->getcomputerkey();
-			printf("ComputerKey = %s\n", (char *)ckey);
-			_bstr_t email = m_lv->getemail();
-			printf("email = %s\n", (char *)email);
-			_bstr_t fullname = m_lv->getfullname();
-			printf("fullname = %s\n", (char *)fullname);
+				_bstr_t latestversion = m_lv->getlatestversion();
+				printf("Lateset Version = %s\n", (char *)latestversion);
+				_bstr_t eligibleversion = m_lv->getemail();
+				printf("Eligible Version = %s\n", (char *)eligibleversion);
 
-			_bstr_t latestversion = m_lv->getlatestversion();
-			printf("Lateset Version = %s\n", (char *)latestversion);
-			_bstr_t eligibleversion = m_lv->getemail();
-			printf("Eligible Version = %s\n", (char *)eligibleversion);
-			
-			printf("Email = %s\n", (char *)m_lv->getemail());
-			printf("GetFeatures = %s\n", (char *)m_lv->getfeatures());
+				printf("Email = %s\n", (char *)m_lv->getemail());
+				printf("GetFeatures = %s\n", (char *)m_lv->getfeatures());
+			}
 
-			// JERRY 
 			// found valid license
 			//std::string lic = msclr::interop::marshal_as<std::string>(m_lv->getfeaturestr());
 			//printf("Valid Fidelity Lock License found %s \n", lic.c_str());

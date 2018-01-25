@@ -52,7 +52,7 @@ public:
 	long getfeature();
 	_bstr_t getf2s();
 	DATE getexpire();
-	// JERRY addition lic info
+	// addition lic info
 	long getmajorversion();
 	long getminorversion();
 	_bstr_t getversion();
@@ -85,10 +85,6 @@ public:
 	_bstr_t getvendorid();
 	_bstr_t getfeatures();
 	
-
-
-	// JERRY
-
 	//SAFEARRAY getfeature_2();
 
 	IQlmLicensePtr license;
