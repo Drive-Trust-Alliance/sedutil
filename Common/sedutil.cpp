@@ -790,7 +790,7 @@ int main(int argc, char * argv[])
 	case sedutiloption::createUSB:
 		LOG(D) << "create bootable USB drive " << argv[opts.pbafile] << " to " << opts.device;
 		//return d->createUSB(argv[opts.pbafile]);
-		diskUSBwrite(argv[opts.device], argv[opts.devusb]);
+		return diskUSBwrite(argv[opts.device], argv[opts.devusb]);
 		break;
     #endif
 
