@@ -45,20 +45,49 @@ public:
 	void SetCustomData3(CString customData);
 
 	CString GetThisModuleFolder();
-
 	ELicenseModel getlicmodel();
-
 	ELicenseType getlictype();
-
 	long getdaylft();
-
 	long getnlic();
-
 	long getfeature();
-
 	_bstr_t getf2s();
-
 	DATE getexpire();
+	// JERRY addition lic info
+	long getmajorversion();
+	long getminorversion();
+	_bstr_t getversion();
+	long getproductid();
+	_bstr_t getproductname();
+	_bstr_t getprivatekey();
+	_bstr_t getpublickey();
+	VARIANT_BOOL getbackwardcompatible();
+	VARIANT_BOOL getevaluationperuser();
+
+
+
+	// licenseInfo 
+	DATE getreleasedate();  
+	_bstr_t getcompany();
+	_bstr_t getcomputerkey();
+	_bstr_t getemail();
+	_bstr_t getfullname();
+	////////
+	_bstr_t getlatestversion();
+	_bstr_t geteligibleversion();
+	_bstr_t getlatestversionurl();
+	_bstr_t getlatestversionnotes();
+	_bstr_t getserverdate();
+	enum ReturnStatus getstatus();
+	_bstr_t getregisteredcomputerkey();
+	_bstr_t getregisteredcomputername();
+	_bstr_t getregisteredcomputerid();
+	DATE getactivationdate();
+	_bstr_t getvendorid();
+	_bstr_t getfeatures();
+	
+
+
+	// JERRY
 
 	//SAFEARRAY getfeature_2();
 

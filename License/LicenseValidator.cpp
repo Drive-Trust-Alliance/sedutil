@@ -832,6 +832,172 @@ long LicenseValidator::getfeature()
 	return license->GetFeatures(); //long GetFeatures ( );
 }
 
+// JERRY additional lic info
+
+long LicenseValidator::getmajorversion()
+{
+	return license->GetmajorVersion(); 
+}
+
+long LicenseValidator::getminorversion()
+{
+	return license->GetminorVersion();
+}
+
+_bstr_t LicenseValidator::getversion()
+{
+	return license->GetVersion();
+}
+
+long LicenseValidator::getproductid()
+{
+	return license->GetProductID();
+}
+
+//_bstr_tGetProxyUser ( )
+//_bstr_t GetProxyDomain ( )
+//_bstr_t GetProxyHost()
+//long GetProxyPort()
+//VARIANT_BOOL GetUseProxyServer
+//VARIANT_BOOL GetEnableRedirectUrl ( )
+//VARIANT_BOOL GetEnableDRSite ( )
+//_bstr_t GetRedirectorUrl()
+//VARIANT_BOOL  GetEnableClientLanguageDetection ( )
+//_bstr_t GetPrivateKey ( )
+//_bstr_t GetPublicKey ( )
+//VARIANT_BOOL GetBackwardCompatible ( )
+//VARIANT_BOOL_bstr_t GetEvaluationPerUser ( ) 
+
+
+
+//GetproductName
+_bstr_t LicenseValidator::getproductname()
+{
+	return (_bstr_t)""; 
+	return license->GetproductName(); // be careful GetproductName NOT GetProductName, lower case p NOT upper case P
+}
+
+_bstr_t LicenseValidator::getprivatekey()
+{
+	return license->GetPrivateKey();
+}
+
+_bstr_t  LicenseValidator::getpublickey()
+{
+	return license->GetPublicKey();
+}
+VARIANT_BOOL LicenseValidator::getbackwardcompatible()
+{
+	return license->GetBackwardCompatible();
+}
+VARIANT_BOOL LicenseValidator::getevaluationperuser()
+{
+	return license->GetEvaluationPerUser();
+}
+
+// licenseInfo all blank if not set, unlike license is from QLM server ?????
+DATE LicenseValidator::getreleasedate()  // always return 0
+{
+	return licenseInfo->GetReleaseDate();
+}
+
+_bstr_t LicenseValidator::getcompany()
+{
+	return licenseInfo->GetCompany();
+}
+
+_bstr_t LicenseValidator::getcomputerkey() // NG
+{
+	return licenseInfo->GetComputerKey();
+}
+
+_bstr_t LicenseValidator::getemail()
+{
+	return licenseInfo->GetEmail();
+}
+
+_bstr_t LicenseValidator::getfullname() 
+{
+	return licenseInfo->GetFullName();
+}
+////////////////////////////////////////////
+_bstr_t LicenseValidator::getlatestversion()
+{
+	return licenseInfo->GetLatestVersion();
+}
+_bstr_t LicenseValidator::geteligibleversion()
+{
+	return licenseInfo->GetEligibleVersion();
+}
+
+_bstr_t LicenseValidator::getlatestversionurl()
+{
+	return licenseInfo->GetLatestVersionUrl();
+}
+_bstr_t LicenseValidator::getlatestversionnotes()
+{
+	return licenseInfo->GetLatestVersionNotes();
+}
+
+_bstr_t LicenseValidator::getserverdate()
+{
+	return licenseInfo->GetServerDate();
+}
+
+enum ReturnStatus LicenseValidator::getstatus()
+{
+	return licenseInfo->GetStatus();
+}
+_bstr_t LicenseValidator::getregisteredcomputerkey()
+{
+	return licenseInfo->GetRegisteredComputerKey();
+}
+
+_bstr_t LicenseValidator::getregisteredcomputername()
+{
+	return licenseInfo->GetRegisteredComputerName();
+}
+
+_bstr_t LicenseValidator::getregisteredcomputerid()
+{
+	return licenseInfo->GetRegisteredComputerID();
+}
+
+DATE LicenseValidator::getactivationdate()
+{
+	return licenseInfo->GetActivationDate();
+}
+
+_bstr_t LicenseValidator::getvendorid()
+{
+	return licenseInfo->GetVendorID();
+}
+
+//
+_bstr_t LicenseValidator::getfeatures()
+{
+	return licenseInfo->GetFeatures();
+}
+/*
+_bstr_t LicenseValidator::getvendorid()
+{
+	return licenseInfo->GetVendorID();
+}
+_bstr_t LicenseValidator::getvendorid()
+{
+	return licenseInfo->GetVendorID();
+}
+_bstr_t LicenseValidator::getvendorid()
+{
+	return licenseInfo->GetVendorID();
+}
+_bstr_t LicenseValidator::getvendorid()
+{
+	return licenseInfo->GetVendorID();
+}
+*/
+
+//  JERRY 
 
 _bstr_t LicenseValidator::getf2s()
 {

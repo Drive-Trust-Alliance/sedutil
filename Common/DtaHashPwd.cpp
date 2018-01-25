@@ -95,6 +95,7 @@ inline unsigned char hex_digit_to_nybble(char ch)
 	case 'E': return 0xe;
 	case 'f': return 0xf;
 	case 'F': return 0xf;
+	default: return 0xff;
 	//default: throw std::invalid_argument();
 	}
 }
@@ -104,7 +105,7 @@ vector<uint8_t> hex2data(char * password)
 	vector<uint8_t> h;
 	h.clear();
 	if (false)
-		printf("strlen(password)=%d\n", strlen(password));
+		printf("strlen(password)=%d\n", (int)strlen(password));
 	if (strlen(password) != 64)
 	{
 		printf("Hashed Password length isn't 64-byte, no translation\n");

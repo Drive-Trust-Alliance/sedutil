@@ -35,6 +35,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <Stdafx.h>
 #include <LicenseValidator.h>
+#include "DtaHexDump.h"
 //#include <msclr\marshal_cppstd.h>
 #endif
 
@@ -139,7 +140,7 @@ int createvol(HANDLE &vol_handle, char * USBname)
 		return false;
 	}
 	else {
-		printf("CreateFile(%s,..) OK , vol_handle = %ld\n", USBname, vol_handle);
+		printf("CreateFile(%s,..) OK , vol_handle = %zd\n", USBname, (int64_t)vol_handle);
 	}
 	return true;
 }
@@ -215,12 +216,83 @@ int setfp(HANDLE &vol_handle,long sect)
 	}
 
 }
+int reloadvol(HANDLE &vol_handle)
+{
+	DWORD n;
+	DeviceIoControl(vol_handle, IOCTL_STORAGE_EJECT_MEDIA, NULL, 0, NULL, 0, &n, NULL);
+	unlockvol(vol_handle);
+	DeviceIoControl(vol_handle, IOCTL_STORAGE_LOAD_MEDIA, NULL, 0, NULL, 0, &n, NULL);
+	FlushFileBuffers(vol_handle);
+	return 0;
+}
+
+
+// retry zero out error
+BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
+{
+	HANDLE vol_handle;
+	int status;
+	DWORD   n;
+	long sect;
+
+	vol_handle = INVALID_HANDLE_VALUE;
+	status = createvol(vol_handle, USBname);
+	if (!status)
+	{
+		return false;
+	}
+	reloadvol(vol_handle);
+	status = lockvol(vol_handle);
+
+	sect = 0;
+	status = setfp(vol_handle, sect);
+	if (!status)
+	{
+		unlockvol(vol_handle);
+		CloseHandle(vol_handle);
+		return false;
+	}
+
+	PBYTE Bufferzero = (PBYTE)malloc(DecompressedBufferSize);
+	if (!Bufferzero)
+	{
+		LOG(E) << "Cannot allocate memory for Bufferzero";
+		unlockvol(vol_handle);
+		CloseHandle(vol_handle);
+		return false;
+	}
+
+	memset(Bufferzero, 0, DecompressedBufferSize);
+	LOG(I) << "zero out image area";
+	if (!WriteFile(vol_handle, Bufferzero, (DWORD)DecompressedBufferSize, &n, NULL))
+	{
+		int err = GetLastError();
+		printf("zero out image error %d\n", err);
+		unlockvol(vol_handle);
+		CloseHandle(vol_handle);
+		return false;
+	}
+	LOG(I) << "zero out image area OK";
+	printf("close vol_handle %zd\n", (int64_t)vol_handle);
+	reloadvol(vol_handle);
+	unlockvol(vol_handle);
+	CloseHandle(vol_handle);
+	if (Bufferzero != NULL) free(Bufferzero);
+	//Sleep(1000);
+	return true;
+}
+
+
 #endif
 
 
 int diskUSBwrite(char *devname, char * USBname)
 {
-        #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+	LOG(D1) << "createUSB() isn't supported in Linux";
+	return 0;
+#endif
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 	HANDLE vol_handle;
 	int status;
 	long sect;
@@ -232,7 +304,7 @@ int diskUSBwrite(char *devname, char * USBname)
 	else {
 		printf("No Opal Drive %s\n", devname);
 		delete d;
-		return false;
+		return DTAERROR_CREATE_USB;
 	}
 
 	u = new DtaDevGeneric(USBname);
@@ -241,38 +313,14 @@ int diskUSBwrite(char *devname, char * USBname)
 	else {
 		printf("No USB drive %s\n", USBname);
 		delete u;
-		return false;
+		return DTAERROR_CREATE_USB;
 	}
-
-	char * model = d->getModelNum();
-	char * firmware = d->getFirmwareRev();
-	char * sernum = d->getSerialNum();
-	vector<uint8_t> hash;
-	printf("model : %s ", model);
-	printf("firmware : %s ", firmware);
-	printf("serial : %s\n", sernum);
-	hash.clear();
-	LOG(I) <<  "start hashing";
-	DtaHashPwd(hash, sernum, d);
-	LOG(I) << "end hashing";
-	printf("hashed size = %d\n", hash.size());
-	printf("hashed serial number is ");
-	for (int i = 0; i < hash.size(); i++)
-	{
-		printf("%02X", hash.at(i));
-	}
-	printf("\n");
 
 	// write hashed series num to decompressed image buffer
-	// write to USB ??????
 
-#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-	LOG(D1) << "createUSB() isn't supported in Linux";
-	return 0;
-#else
 	char * filename = "sedutil-cli.exe";
 	LOG(D1) << "Entering createUSB()" << filename << " " << USBname;
-	uint8_t lastRC;
+	//uint8_t lastRC;
 	uint64_t fivepercent = 0;
 	uint64_t imgsize;
 	int complete = 4;
@@ -389,95 +437,91 @@ int diskUSBwrite(char *devname, char * USBname)
 		 // end cmprss
 		}
 
+		char * model = d->getModelNum();
+		char * firmware = d->getFirmwareRev();
+		char * sernum = d->getSerialNum();
+		vector<uint8_t> hash;
+		printf("model : %s ", model);
+		printf("firmware : %s ", firmware);
+		printf("serial : %s\n", sernum);
+		hash.clear();
+		LOG(I) << "start hashing";
+		DtaHashPwd(hash, sernum, d);
+		LOG(I) << "end hashing";
+		printf("hashed size = %zd\n", hash.size());
+		printf("hashed serial number is ");
+		for (int i = 0; i < hash.size(); i++)
+		{
+			printf("%02X", hash.at(i));
+		}
+		printf("\n");
+	// try dump decompressed buffer of sector 0 , 1 
+	DtaHexDump(DecompressedBuffer+512,512);
+	// write 32-byte date into buffer 
+	for (int i = 2; i < hash.size(); i++)
+	{
+		DecompressedBuffer[512+64+i-2] = hash.at(i);
+	}
+	hash.clear();
+	LOG(I) << "start hashing usb";
+	char usbstr[16] = "FidelityLockUSB";
+
+	DtaHashPwd(hash,usbstr, d);
+	for (int i = 2; i < hash.size(); i++)
+	{
+		DecompressedBuffer[512 + 96 + i - 2] = hash.at(i);
+	}
+	DtaHexDump(DecompressedBuffer + 512, 512);
 	// no zero write does it work ????  --> Nope, require to zero out first ,   why ?????
 	vol_handle = INVALID_HANDLE_VALUE;
 	status = createvol(vol_handle, USBname); 
 	if (!status)
-		return false;
-	status = lockvol(vol_handle);
-	/*
-	// disregard vol lock or dismount error
-	if (!status)
 	{
-		unlockvol(vol_handle);
-		CloseHandle(vol_handle);
-		return false;
-	}
-	*/
-	sect = 0;
-	status = setfp(vol_handle, sect);
-	if (!status)
-	{
-		unlockvol(vol_handle);
-		CloseHandle(vol_handle);
 		delete u;
 		delete d;
-		return false;
+		return DTAERROR_CREATE_USB;
 	}
-		
-
-	//DWORD   n;
-	//     
-	// first zero out the image area
-	PBYTE Bufferzero = (PBYTE)malloc(DecompressedBufferSize);
-	if (!Bufferzero)
-	{
-		LOG(E) << "Cannot allocate memory for Bufferzero";
-		unlockvol(vol_handle);
-		CloseHandle(vol_handle);
-		delete u;
-		delete d;
-		return false;
-	}
-
-	memset(Bufferzero, 0, DecompressedBufferSize);
-	LOG(I) << "zero out image area" << endl;
-	if (!WriteFile(vol_handle, Bufferzero, DecompressedBufferSize, &n, NULL))
-		//	if (!WriteFile(vol_handle, DecompressedBuffer, DecompressedBufferSize, &n, NULL))
-	{
-		int err = GetLastError();
-		printf("write zero data error %d\n", err);
-		unlockvol(vol_handle);
-		CloseHandle(vol_handle);
-		delete u;
-		delete d;
-		return false;
-	}
-	LOG(I) << "zero out image area OK" << endl;
-	printf("close vol_handle %d\n",vol_handle);
-	unlockvol(vol_handle);
+	reloadvol(vol_handle);
 	CloseHandle(vol_handle);
-	if (Bufferzero != NULL) free(Bufferzero);
-	Sleep(10);
-	
 
+	// zero out file system, retry once, seems to OK
+	BOOL res;
+	for (int cnt = 0; cnt < 2; cnt += 1)
+	{
+		if ((res = zeromem(DecompressedBufferSize,USBname))) //    DecompressedBufferSize))
+			break;
+	}
+	if (!res) // zero twice fail 
+	{
+		delete u;
+		delete d;
+		return DTAERROR_CREATE_USB;
+	}
 
 	LOG(I) << "Writing PBA to USB " << USBname;
 	vol_handle = INVALID_HANDLE_VALUE;
 	status = createvol(vol_handle, USBname);
 	if (!status)
-		return false;
-	status = lockvol(vol_handle);
-	if (!status)
 	{
-		unlockvol(vol_handle);
-		CloseHandle(vol_handle);
 		delete u;
 		delete d;
-		return false;
+		return DTAERROR_CREATE_USB;
 	}
+	reloadvol(vol_handle);
+	status = lockvol(vol_handle);
 	sect = 0;
 	status = setfp(vol_handle, sect);
 	if (!status)
 	{
+		reloadvol(vol_handle);
 		unlockvol(vol_handle);
 		CloseHandle(vol_handle);
 		if (DecompressedBuffer != NULL) free(DecompressedBuffer);
 		delete u;
 		delete d;
-		return false;
+		return DTAERROR_CREATE_USB;
 	}
-	if (!WriteFile(vol_handle, DecompressedBuffer, DecompressedBufferSize, &n, NULL))
+	if (!WriteFile(vol_handle, DecompressedBuffer, (DWORD)DecompressedBufferSize, &n, NULL))
 	{
 		int err = GetLastError();
 		printf("write image data to USB error %d\n", err);
@@ -486,92 +530,15 @@ int diskUSBwrite(char *devname, char * USBname)
 		if (DecompressedBuffer != NULL) free(DecompressedBuffer);
 		delete d;
 		delete u;
-		return false;
+		return DTAERROR_CREATE_USB;
 	}
-	printf("write image data to USB %lld OK; close handle %d\n", n, vol_handle);
+	printf("write image data to USB %ld OK; close handle %zd\n", n, (int64_t)vol_handle);
 	if (DecompressedBuffer != NULL) free(DecompressedBuffer);
-	unlockvol(vol_handle);
+	reloadvol(vol_handle);
 	CloseHandle(vol_handle);
 	delete d;
 	delete u;
-	return true;
-	/*
-	//DecompressedBufferSize = 1024 * 1024; // smaller amount of data write, 1M ok, 2/5/10M NG  ?????
-	printf("DecompressedBufferSize = %lld \n", DecompressedBufferSize);
-	// remove usb and re-plug-in seem to make it work again 
-	// memset(DecompressedBuffer, 0, DecompressedBufferSize); // test if zero get write into; yes write zero ok
-	// it seems that after write 1024 sector, OS will jmp in to mount the usb drive, bc it has a file system in place. 
-	// how to stop the OS interverion in the middle of the write image ??????
-	uint64_t bsz = 1024 * 1024 * 2; // this is the only size OK -> reduced to 512K byte
-	uint64_t sz = bsz;
-	vol_handle = INVALID_HANDLE_VALUE;
-
-	for (uint64_t ofs = 0 ; ofs < DecompressedBufferSize; )
-	{
-		createvol(vol_handle,USBname);
-		lockvol(vol_handle);
-		setfp(vol_handle,sect);
-
-		printf("Write ofs = %lld for %lld byte to USB ", ofs, bsz);
-		if (!WriteFile(vol_handle, DecompressedBuffer + ofs, bsz, &n, NULL))
-			//	if (!WriteFile(vol_handle, DecompressedBuffer, DecompressedBufferSize, &n, NULL))
-		{
-			int err = GetLastError();
-			printf("write image data error %d\n", err);
-			CloseHandle(vol_handle);
-			return false;
-		}
-		else {
-			printf("success\n");
-			ofs += bsz;
-			if ((ofs < DecompressedBufferSize) && ((ofs + bsz) > DecompressedBufferSize))
-			{
-				bsz = (DecompressedBufferSize - ofs);
-				printf("block size reduced to %lld\n", bsz);
-			}
-			sect += (bsz / 512); // set new file pointer
-			CloseHandle(vol_handle);
-			Sleep(1000);
-		}
-	}
-	*/
-
-	/*
-	// write the first bsz (4MB) after all other data has been written 
-
-	sect = 0;
-	setfp(vol_handle);
-
-	bsz = sz; // restore original sz 
-	if (!WriteFile(vol_handle, DecompressedBuffer , bsz, &n, NULL))
-	{
-		err = GetLastError();
-		//printf("%ld", ERROR_NOT_ENOUGH_QUOTA);
-		printf("write first 2M of image data error %d\n", err);
-
-		//errormsg("WriteFile: error %d writing drive %x sectors %lu..%lu:  %s",
-		//	err, drv, sect, sect + num_sects - 1,
-		//	w32errtxt(err));
-		CloseHandle(vol_handle);
-		return false;
-	}
-	else {
-		printf("Write first 2MB of image data : %lld byte to USB success\n", bsz);
-	}
-
-	*/
-
-	LOG(I) << "PBA image written to USB " << USBname;
-
-	if (vol_handle)
-	{
-		LOG(I) << "close handler " << endl;
-		CloseHandle(vol_handle);
-	}
-
-#endif
-	delete d;
-	delete u;
+	return 0;
 #endif
 	return 0;
 }
@@ -651,7 +618,36 @@ int main(int argc, char * argv[])
 			SYSTEMTIME lt;
 			VariantTimeToSystemTime(m_lv->getexpire(), &lt);
 			printf("License Expire date : %d/%d/%d %d:%d:%d\n", lt.wYear, lt.wMonth,lt.wDay,lt.wHour,lt.wMinute,lt.wSecond);
+			// JERRY additional lic info 
+			long majver = m_lv->getmajorversion(); 
+			long minver = m_lv->getminorversion(); 
+			_bstr_t ver = m_lv->getversion(); 
+			long prodid = m_lv->getproductid();
+			DATE relsdate = m_lv->getreleasedate();
+			printf("Product Release Date = %f \n", relsdate);
+			printf("Product ID = %ld \n", prodid);
+			printf("License Major Version = %ld \n", majver);
+			printf("License Minor Version = %ld \n", minver);
+			printf("License Version = %s \n", (char *)ver);
 
+			_bstr_t company = m_lv->getcompany();
+			printf("Company = %s\n", (char *)company);
+			_bstr_t ckey = m_lv->getcomputerkey();
+			printf("ComputerKey = %s\n", (char *)ckey);
+			_bstr_t email = m_lv->getemail();
+			printf("email = %s\n", (char *)email);
+			_bstr_t fullname = m_lv->getfullname();
+			printf("fullname = %s\n", (char *)fullname);
+
+			_bstr_t latestversion = m_lv->getlatestversion();
+			printf("Lateset Version = %s\n", (char *)latestversion);
+			_bstr_t eligibleversion = m_lv->getemail();
+			printf("Eligible Version = %s\n", (char *)eligibleversion);
+			
+			printf("Email = %s\n", (char *)m_lv->getemail());
+			printf("GetFeatures = %s\n", (char *)m_lv->getfeatures());
+
+			// JERRY 
 			// found valid license
 			//std::string lic = msclr::interop::marshal_as<std::string>(m_lv->getfeaturestr());
 			//printf("Valid Fidelity Lock License found %s \n", lic.c_str());
@@ -664,6 +660,7 @@ int main(int argc, char * argv[])
 	{
 		//MessageBox(QlmLicenseWizardDlg::s_hwndDialog, CString(error), _T("QlmLicenseWizard"), MB_OK);
 		//FreeResources();
+		printf("License Error : %s\n",error);
 		ExitProcess(0);
 	}
 
@@ -969,7 +966,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-        printf("Fidelity Lock Version : 0.2.1.%s.%s 20180102-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.2.3.%s.%s 20180124-A001\n", st1.c_str(),GIT_VERSION);
 		break;
     default:
         LOG(E) << "Unable to determine what you want to do ";
