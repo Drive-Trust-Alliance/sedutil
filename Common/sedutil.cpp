@@ -442,10 +442,12 @@ int diskUSBwrite(char *devname, char * USBname)
 		IFLOG(D1) printf("model : %s ", model);
 		IFLOG(D1) printf("firmware : %s ", firmware);
 		IFLOG(D1) printf("serial : %s\n", sernum);
+		bool saved_flag = d->no_hash_passwords;
+		d->no_hash_passwords = false;
 		hash.clear();
-		LOG(D1) << "start hashing";
-		IFLOG(D4) DtaHashPwd(hash, sernum, d);
-		LOG(D1) << "end hashing";
+		LOG(D1) << "start hashing ser";
+		DtaHashPwd(hash, sernum, d);
+		LOG(D1) << "end hashing ser";
 		IFLOG(D1) printf("hashed size = %zd\n", hash.size());
 		IFLOG(D1) printf("hashed serial number is ");
 		IFLOG(D1)
@@ -464,13 +466,15 @@ int diskUSBwrite(char *devname, char * USBname)
 	hash.clear();
 	LOG(D1) << "start hashing usb";
 	char usbstr[16] = "FidelityLockUSB";
-
 	DtaHashPwd(hash,usbstr, d);
+	LOG(D1) << "end hashing usb";
 	for (int i = 2; i < hash.size(); i++)
 	{
 		DecompressedBuffer[512 + 96 + i - 2] = hash.at(i);
 	}
 	IFLOG(D4) DtaHexDump(DecompressedBuffer + 512, 512);
+	d->no_hash_passwords = saved_flag ; // restore no_hash_password flag
+
 	// no zero write does it work ????  --> Nope, require to zero out first ,   why ?????
 	vol_handle = INVALID_HANDLE_VALUE;
 	status = createvol(vol_handle, USBname); 
@@ -965,7 +969,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-        printf("Fidelity Lock Version : 0.2.3.%s.%s 20180124-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.2.4.%s.%s 20180126-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
     default:
