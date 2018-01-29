@@ -168,6 +168,7 @@ void DtaDev::discovery0()
             disk_info.Locking_MBRDone = body->locking.MBRDone;
             disk_info.Locking_MBREnabled = body->locking.MBREnabled;
             disk_info.Locking_mediaEncrypt = body->locking.mediaEncryption;
+			disk_info.Locking_MBRshadowingNotSupported = body->locking.MBRshadowingNotSupported; // 
             break;
         case FC_GEOMETRY: /* Geometry Features */
             disk_info.Geometry = 1;
@@ -228,13 +229,25 @@ void DtaDev::discovery0()
             disk_info.PYRITE_initialPIN = body->opalv200.initialPIN;
             disk_info.PYRITE_revertedPIN = body->opalv200.revertedPIN;
             disk_info.PYRITE_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-            break;            
+            break;        
+		case FC_RUBY: /* RUBY */
+			disk_info.RUBY = 1;
+			disk_info.ANY_OPAL_SSC = 1;
+			disk_info.RUBY_basecomID = SWAP16(body->opalv200.baseCommID);
+			disk_info.RUBY_initialPIN = body->opalv200.initialPIN;
+			disk_info.RUBY_revertedPIN = body->opalv200.revertedPIN;
+			disk_info.RUBY_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+			disk_info.RUBY_numAdmins = SWAP16(body->opalv200.numlockingAdminAuth);
+			disk_info.RUBY_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
+			break;
 		case FC_BlockSID: /* Block SID */
 			disk_info.BlockSID = 1;
 			disk_info.BlockSID_BlockSIDState = body->blocksidauth.BlockSIDState;
 			disk_info.BlockSID_SIDvalueState = body->blocksidauth.SIDvalueState;
 			disk_info.BlockSID_HardReset = body->blocksidauth.HardReset;
 			break;
+// 0x0304
+
         default:
 			if (0xbfff < (SWAP16(body->TPer.featureCode))) {
 				// silently ignore vendor specific segments as there is no public doc on them
@@ -274,8 +287,8 @@ void DtaDev::puke()
 		cout << "Locking function (" << HEXON(4) << FC_LOCKING << HEXOFF << ")" << std::endl;
 		cout << "    Locked = " << (disk_info.Locking_locked ? "Y, " : "N, ")
 			<< "LockingEnabled = " << (disk_info.Locking_lockingEnabled ? "Y, " : "N, ")
-			<< "LockingSupported = " << (disk_info.Locking_lockingSupported ? "Y, " : "N, ");
-		cout << "MBRDone = " << (disk_info.Locking_MBRDone ? "Y, " : "N, ")
+			<< "MBR shadowing Not Supported = " << (disk_info.Locking_MBRshadowingNotSupported ? "Y, " : "N, ")
+			<< "MBRDone = " << (disk_info.Locking_MBRDone ? "Y, " : "N, ")
 			<< "MBREnabled = " << (disk_info.Locking_MBREnabled ? "Y, " : "N, ")
 			<< "MediaEncrypt = " << (disk_info.Locking_mediaEncrypt ? "Y" : "N")
 			<< std::endl;

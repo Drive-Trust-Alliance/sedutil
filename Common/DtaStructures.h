@@ -31,6 +31,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define FC_OPALV200   0x0203
 #define FC_OPALITE    0x0301
 #define FC_PYRITE     0x0302
+#define FC_RUBY       0x0304
 #define FC_BlockSID   0x0402
 /** The Discovery 0 Header. As defined in
 * Opal SSC Documentation
@@ -101,7 +102,7 @@ typedef struct _Discovery0LockingFeatures {
     uint8_t mediaEncryption : 1;
     uint8_t MBREnabled : 1;
     uint8_t MBRDone : 1;
-    uint8_t reserved01 : 1;
+    uint8_t MBRshadowingNotSupported : 1;
     uint8_t reserved02 : 1;
 
     uint32_t reserved03;
@@ -321,6 +322,7 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t ANY_OPAL_SSC : 1;
     uint8_t OPALITE : 1;
     uint8_t PYRITE : 1;
+	uint8_t RUBY : 1;
 	uint8_t BlockSID : 1;
     // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
     uint8_t TPer_ACKNACK : 1;
@@ -332,6 +334,7 @@ typedef struct _OPAL_DiskInfo {
     uint8_t Locking_locked : 1;
     uint8_t Locking_lockingEnabled : 1;
     uint8_t Locking_lockingSupported : 1;
+	uint8_t Locking_MBRshadowingNotSupported : 1;
     uint8_t Locking_MBRDone : 1;
     uint8_t Locking_MBREnabled : 1;
     uint8_t Locking_mediaEncrypt : 1;
@@ -366,6 +369,15 @@ typedef struct _OPAL_DiskInfo {
     uint16_t PYRITE_numcomIDs;
     uint8_t PYRITE_initialPIN;
     uint8_t PYRITE_revertedPIN;
+	//
+	uint16_t RUBY_basecomID;
+	uint16_t RUBY_numcomIDs;
+	uint16_t RUBY_numAdmins;
+	uint16_t RUBY_numUsers;
+	uint8_t RUBY_initialPIN;
+	uint8_t RUBY_revertedPIN;
+
+	//
 	uint8_t BlockSID_BlockSIDState : 1;
 	uint8_t BlockSID_SIDvalueState : 1;
 	uint8_t BlockSID_HardReset : 1;
