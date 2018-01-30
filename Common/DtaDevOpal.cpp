@@ -250,12 +250,14 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 	}
 	// JERRY dump raw token info 
 	uint32_t tc = response.getTokenCount();
-	printf("***** getTokenCount()=%ld\n", tc);
-	for (uint32_t i = 0; i < tc; i++) {
-		printf("token %ld = ", i);
-		for (uint32_t j = 0; j < response.getRawToken(i).size(); j++)
-			printf("%02X ", response.getRawToken(i)[j]);
-		cout << endl;
+	if (0) {
+		printf("***** getTokenCount()=%ld\n", (long)tc);
+		for (uint32_t i = 0; i < tc; i++) {
+			printf("token %ld = ", (long)i);
+			for (uint32_t j = 0; j < response.getRawToken(i).size(); j++)
+				printf("%02X ", response.getRawToken(i)[j]);
+			cout << endl;
+		}
 	}
 
 	// JERRY
@@ -281,7 +283,7 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 		// JERRY dump raw token info 
 		uint32_t tc = response.getTokenCount();
 		if (0) {
-			printf("***** getTokenCount()=%ld\n", tc);
+			printf("***** getTokenCount()=%ld\n", (long)tc);
 			for (uint32_t i = 0; i < tc; i++) {
 				printf("token %ld = ", i);
 				for (uint32_t j = 0; j < response.getRawToken(i).size(); j++)
