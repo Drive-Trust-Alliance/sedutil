@@ -285,7 +285,7 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 		if (0) {
 			printf("***** getTokenCount()=%ld\n", (long)tc);
 			for (uint32_t i = 0; i < tc; i++) {
-				printf("token %ld = ", i);
+				printf("token %ld = ", (long)i);
 				for (uint32_t j = 0; j < response.getRawToken(i).size(); j++)
 					printf("%02X ", response.getRawToken(i)[j]);
 				cout << endl;
