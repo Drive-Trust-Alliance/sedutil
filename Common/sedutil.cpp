@@ -119,7 +119,7 @@ int hashvalidate(char * password, char *devname)
 	LOG(D1) << "start hashing random password";
 	DtaHashPwd(hash, password, d);
 	printf("hashed password : ");
-	for (int i = 2; i < (hash.size() - 2); i++) printf("%02X",hash.at(i));
+	for (int i = 2; i < (int)(hash.size() - 2); i++) printf("%02X",hash.at(i));
 	printf("\n");
 	return 0;
 }
