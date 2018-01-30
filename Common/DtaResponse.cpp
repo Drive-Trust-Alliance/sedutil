@@ -147,7 +147,7 @@ uint64_t DtaResponse::getUint64(uint32_t tokenNum)
     else { // TOKEN
         LOG(E) << "unsigned int requested for token is unsupported";
 		//exit(EXIT_FAILURE); // JERRY this exit cause the session not close and contribute to SP_BUSY
-
+		return EXIT_FAILURE;
     }
 }
 
