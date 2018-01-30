@@ -106,6 +106,24 @@ int diskScan(char * devskip)
 	return 0;
 }
 
+
+int hashvalidate(char * password, char *devname)
+{
+	vector <uint8_t> hash;
+	DtaDev * d;
+	d = new DtaDevGeneric(devname);
+
+	//bool saved_flag = d->no_hash_passwords;
+	d->no_hash_passwords = false; // force to hash
+	hash.clear();
+	LOG(D1) << "start hashing random password";
+	DtaHashPwd(hash, password, d);
+	printf("hashed password : ");
+	for (int i = 2; i < (hash.size() - 2); i++) printf("%02X",hash.at(i));
+	printf("\n");
+	return 0;
+}
+
 int isValidSEDDisk(char *devname)
 {
 	DtaDev * d;
@@ -697,6 +715,7 @@ int main(int argc, char * argv[])
 		(opts.action != sedutiloption::validatePBKDF2) &&
 		(opts.action != sedutiloption::version) &&
 		(opts.action != sedutiloption::createUSB) &&
+		(opts.action != sedutiloption::hashvalidation) &&
 		(opts.action != sedutiloption::isValidSED)) {
 		if (opts.device > (argc - 1)) opts.device = 0;
 		tempDev = new DtaDevGeneric(argv[opts.device]);
@@ -971,6 +990,10 @@ int main(int argc, char * argv[])
 		
         printf("Fidelity Lock Version : 0.2.5.%s.%s 20180129-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
+		break;
+	case sedutiloption::hashvalidation:
+		LOG(D) << "Hash Validation";
+		return hashvalidate(argv[opts.password],argv[opts.device]);
 		break;
     default:
         LOG(E) << "Unable to determine what you want to do ";
