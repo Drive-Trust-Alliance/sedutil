@@ -140,7 +140,6 @@ class LockApp(gtk.Window):
         version_text = os.popen(self.prefix + 'sedutil-cli --version').read()
         regex_license = 'Valid Fidelity Lock License found 0:([124]);'
         f = re.search(regex_license, version_text)
-        
         if f or self.VERSION != -1:
             if self.VERSION == -1:
                 v = f.group(1)
@@ -188,21 +187,25 @@ class LockApp(gtk.Window):
             self.menuBar = gtk.MenuBar()
             
             self.navMenu = gtk.Menu()
-            self.navM = gtk.MenuItem("View")
+            self.navM = gtk.MenuItem("Main")
             self.navM.set_submenu(self.navMenu)
-            self.backToMain = gtk.MenuItem("Main")
+            self.backToMain = gtk.MenuItem("Home")
             self.backToMain.connect("activate", self.returnToMain)
-            self.backToMain.set_tooltip_text('Return to Main view')
+            self.backToMain.set_tooltip_text('Return to Home View')
             self.navMenu.append(self.backToMain)
-            if self.VERSION != 1:
-                self.readLog = gtk.MenuItem("Audit Log")
-                self.readLog.connect("activate", self.openLog_prompt)
-                self.readLog.set_tooltip_text('Access a drive\'s event log')
-                self.navMenu.append(self.readLog)
             self.exitApp = gtk.MenuItem("Exit")
             self.exitApp.connect("activate", self.exitapp)
             self.exitApp.set_tooltip_text('Exit the app')
             self.navMenu.append(self.exitApp)
+            self.exitReboot = gtk.MenuItem("Reboot")
+            self.exitReboot.connect("activate", self.reboot)
+            self.exitReboot.set_tooltip_text('Reboots the computer')
+            self.navMenu.append(self.exitReboot)
+            self.exitShutDown = gtk.MenuItem("Shut Down")
+            self.exitShutDown.connect("activate", self.shutdown)
+            self.exitShutDown.set_tooltip_text('Shuts down the computer')
+            self.navMenu.append(self.exitShutDown)
+            
             
             self.menuBar.append(self.navM)
             
@@ -213,6 +216,11 @@ class LockApp(gtk.Window):
             self.devQuery.connect("activate", self.query)
             self.devQuery.set_tooltip_text('Query the currently selected drive')
             self.devMenu.append(self.devQuery)
+            if self.VERSION != 1:
+                self.readLog = gtk.MenuItem("View Audit Log")
+                self.readLog.connect("activate", self.openLog_prompt)
+                self.readLog.set_tooltip_text('Access a drive\'s event log')
+                self.devMenu.append(self.readLog)
             self.devScan = gtk.MenuItem("Rescan drives")
             self.devScan.connect("activate", self.run_scan)
             self.devScan.set_tooltip_text('Update the list of detected drives')
@@ -228,10 +236,10 @@ class LockApp(gtk.Window):
                 self.setupFull.connect("activate", self.setup_prompt1)
                 self.setupFull.set_tooltip_text('Set up password and preboot image for a drive')
                 self.setupMenu.append(self.setupFull)
-                self.setupPW = gtk.MenuItem("Password only")
-                self.setupPW.connect("activate", self.setupPW_prompt)
-                self.setupPW.set_tooltip_text('Set up password for a drive')
-                self.setupMenu.append(self.setupPW)
+                #self.setupPW = gtk.MenuItem("Password only")
+                #self.setupPW.connect("activate", self.setupPW_prompt)
+                #self.setupPW.set_tooltip_text('Set up password for a drive')
+                #self.setupMenu.append(self.setupPW)
                 self.updatePBA = gtk.MenuItem("Update Preboot Image")
                 self.updatePBA.connect("activate", self.updatePBA_prompt)
                 self.updatePBA.set_tooltip_text('Update a drive\'s preboot image')
@@ -258,19 +266,15 @@ class LockApp(gtk.Window):
             self.unlockMenu = gtk.Menu()
             self.unlockM = gtk.MenuItem("Unlock")
             self.unlockM.set_submenu(self.unlockMenu)
-            self.unlock1 = gtk.MenuItem("Preboot unlock")
+            self.unlock1 = gtk.MenuItem("Preboot Unlock")
             self.unlock1.connect("activate", self.unlock_prompt)
             self.unlock1.set_tooltip_text('Unlock a drive to boot into')
             self.unlockMenu.append(self.unlock1)
             if self.VERSION != 1:
-                self.unlockFull = gtk.MenuItem("Full unlock")
-                self.unlockFull.connect("activate", self.unlockFull_prompt)
-                self.unlockFull.set_tooltip_text('Disable locking on a drive and reset password')
-                self.unlockMenu.append(self.unlockFull)
-                self.unlockPartial = gtk.MenuItem("Partial unlock")
-                self.unlockPartial.connect("activate", self.unlockPartial_prompt)
-                self.unlockPartial.set_tooltip_text('Disable locking on a drive')
-                self.unlockMenu.append(self.unlockPartial)
+                self.disableLock = gtk.MenuItem("Disable Lock")
+                self.disableLock.connect("activate", self.disableLock_prompt)
+                self.disableLock.set_tooltip_text('Disables locking on a drive')
+                self.unlockMenu.append(self.disableLock)
             if self.VERSION != 2:
                 self.unlockMulti = gtk.MenuItem("Unlock with USB")
                 self.unlockMulti.connect("activate", self.unlockUSB_prompt)
@@ -282,19 +286,27 @@ class LockApp(gtk.Window):
                 self.lockMenu = gtk.Menu()
                 self.lockM = gtk.MenuItem("Lock")
                 self.lockM.set_submenu(self.lockMenu)
-                self.lockMI = gtk.MenuItem("Lock a device")
-                self.lockMI.connect("activate", self.lock_prompt)
-                self.lockMI.set_tooltip_text('Enable locking on a device')
+                self.lockMI = gtk.MenuItem("Enable Lock")
+                self.lockMI.connect("activate", self.lockEnable_prompt)
+                self.lockMI.set_tooltip_text('Enable locking on a drive')
                 self.lockMenu.append(self.lockMI)
+                self.lockD = gtk.MenuItem("Lock Drive")
+                self.lockD.connect("activate", self.lock_prompt)
+                self.lockD.set_tooltip_text('Lock a drive')
+                self.lockMenu.append(self.lockD)
                 
                 self.menuBar.append(self.lockM)
             
             self.revertMenu = gtk.Menu()
             self.revertM = gtk.MenuItem("Revert")
             self.revertM.set_submenu(self.revertMenu)
-            self.revertPW = gtk.MenuItem("with Password")
-            self.revertPW.connect("activate", self.revert_user_prompt)
-            self.revertPW.set_tooltip_text('Use password to revert the drive\'s LockingSP')
+            self.revertO = gtk.MenuItem("and Keep Data")
+            self.revertO.connect("activate", self.revert_keep_prompt)
+            self.revertO.set_tooltip_text('Use password to revert the drive\'s LockingSP while keeping its data')
+            self.revertMenu.append(self.revertO)
+            self.revertPW = gtk.MenuItem("and Erase")
+            self.revertPW.connect("activate", self.revert_erase_prompt)
+            self.revertPW.set_tooltip_text('Use password to revert the drive\'s LockingSP and erase data')
             self.revertMenu.append(self.revertPW)
             self.revertPSID = gtk.MenuItem("with PSID")
             self.revertPSID.connect("activate", self.revert_psid_prompt)
@@ -338,6 +350,7 @@ class LockApp(gtk.Window):
             self.go_button_cancel = gtk.Button('_Cancel')
             
             self.viewLog = gtk.Button('_View Audit Log')
+            self.viewLog.set_flags(gtk.CAN_DEFAULT)
             
             self.setup_next = gtk.Button('_Activate and Continue')
             self.setupLockOnly = gtk.Button('_Skip writing Preboot Image')
@@ -347,22 +360,30 @@ class LockApp(gtk.Window):
             self.setupUserPW = gtk.Button('_Set Up User Password')
             
             self.updatePBA_button = gtk.Button('_Update')
+            self.updatePBA_button.set_flags(gtk.CAN_DEFAULT)
             
             self.go_button_changePW_confirm = gtk.Button('_Change Password')
             
             self.setupUSB_button = gtk.Button('_Create bootable USB')
             
             self.pbaUnlockReboot = gtk.Button("_Unlock and Reboot")
+            self.pbaUnlockReboot.set_flags(gtk.CAN_DEFAULT)
             self.pbaUnlockOnly = gtk.Button("_Unlock only")
             self.pbaUSB_button = gtk.Button('_Unlock with USB')
             
-            self.unlockFull_button = gtk.Button('_Full Unlock')
-            self.unlockPartial_button = gtk.Button('_Partial Unlock')
+            self.revertOnly_button = gtk.Button('_Revert Drive')
+            self.revertOnly_button.set_flags(gtk.CAN_DEFAULT)
+            self.disableLock_button = gtk.Button('_Disable Lock')
+            self.disableLock_button.set_flags(gtk.CAN_DEFAULT)
             
-            self.go_button_revert_user_confirm = gtk.Button('_Revert with Password')
+            self.go_button_revert_user_confirm = gtk.Button('_Revert and Erase')
+            self.go_button_revert_user_confirm.set_flags(gtk.CAN_DEFAULT)
             self.go_button_revert_psid_confirm = gtk.Button('_Revert with PSID')
             
+            self.lockEnable_button = gtk.Button('_Enable Lock')
+            self.lockEnable_button.set_flags(gtk.CAN_DEFAULT)
             self.lock_button = gtk.Button('_Lock Drive')
+            self.lock_button.set_flags(gtk.CAN_DEFAULT)
             
             self.op_label = gtk.Label('Main')
             self.op_label.set_alignment(0,0.5)
@@ -388,7 +409,7 @@ class LockApp(gtk.Window):
             self.op_instr.set_alignment(0,0.5)
             
             self.go_button_cancel.connect('clicked', self.returnToMain)
-            self.go_button_revert_user_confirm.connect('clicked', runop.run_revertUser, self)
+            self.go_button_revert_user_confirm.connect('clicked', runop.run_revertErase, self)
             self.go_button_revert_psid_confirm.connect('clicked', runop.run_revertPSID, self)
             self.go_button_changePW_confirm.connect('clicked', runop.run_changePW, self)
             self.setup_next.connect('clicked', runop.run_setupFull, self, 0)
@@ -406,10 +427,11 @@ class LockApp(gtk.Window):
             self.pbaUnlockOnly.connect("clicked", runop.run_unlockPBA, self, False)
             self.pbaUSB_button.connect("clicked", runop.run_unlockUSB, self)
             
-            self.lock_button.connect('clicked', runop.run_lockset, self)
+            self.lockEnable_button.connect('clicked', runop.run_lockEnable, self)
+            self.lock_button.connect('clicked', runop.run_lockDrive, self)
             
-            self.unlockFull_button.connect('clicked', runop.run_unlockFull, self)
-            self.unlockPartial_button.connect('clicked', runop.run_unlockPartial, self)
+            self.revertOnly_button.connect('clicked', runop.run_revertKeep, self)
+            self.disableLock_button.connect('clicked', runop.run_disableLock, self)
             
             self.viewLog.connect('clicked', runop.openLog, self)
 
@@ -505,11 +527,6 @@ class LockApp(gtk.Window):
             self.check_box_pass.show()
             self.checkbox_box.pack_start(self.check_box_pass, expand, fill, padding)
             
-            self.eraseData_check = gtk.CheckButton("Erase the drive's data")
-            self.eraseData_check.set_active(False)
-            self.eraseData_check.show()
-            self.checkbox_box.pack_start(self.eraseData_check, expand, fill, padding)
-            
             check_align = gtk.Alignment(1,0,0,0)
             check_align.add(self.checkbox_box)
             
@@ -524,9 +541,10 @@ class LockApp(gtk.Window):
             self.buttonBox.pack_start(self.setupPWOnly, False, False, padding)
             self.buttonBox.pack_start(self.updatePBA_button, False, False, padding)
             self.buttonBox.pack_start(self.pbaUSB_button, False, False, padding)
+            self.buttonBox.pack_start(self.lockEnable_button, False, False, padding)
             self.buttonBox.pack_start(self.lock_button, False, False, padding)
-            self.buttonBox.pack_start(self.unlockFull_button, False, False, padding)
-            self.buttonBox.pack_start(self.unlockPartial_button, False, False, padding)
+            self.buttonBox.pack_start(self.revertOnly_button, False, False, padding)
+            self.buttonBox.pack_start(self.disableLock_button, False, False, padding)
             self.buttonBox.pack_start(self.viewLog, False, False, padding)
             self.buttonBox.pack_start(self.setupUSB_button, False, False, padding)
             self.buttonBox.pack_start(self.setupUserPW, False, False, padding)
@@ -570,15 +588,15 @@ class LockApp(gtk.Window):
                 self.updateM.set_sensitive(False)
                 self.readLog.set_sensitive(False)
                 self.setupFull.set_sensitive(False)
-                self.setupPW.set_sensitive(False)
+                #self.setupPW.set_sensitive(False)
                 self.updatePBA.set_sensitive(False)
                 self.changePassword.set_sensitive(False)
                 self.revertPW.set_sensitive(False)
                 self.revertPSID.set_sensitive(False)
                 self.unlock1.set_sensitive(False)
-                self.lockMI.set_sensitive(False) 
-                self.unlockFull.set_sensitive(False)
-                self.unlockPartial.set_sensitive(False)
+                self.lockMI.set_sensitive(False)
+                self.lockD.set_sensitive(False)
+                self.disableLock.set_sensitive(False)
                 self.unlockMulti.set_sensitive(False)
                 self.setupUSB.set_sensitive(False)
                 self.setupUser.set_sensitive(False)
@@ -881,6 +899,7 @@ class LockApp(gtk.Window):
         
     def entry_check_box_pass(self, widget, checkbox):
         b_entry_checkbox = checkbox.get_active()
+        pass_show = False
         if b_entry_checkbox:
             pass_show = True
         else:
@@ -909,8 +928,8 @@ class LockApp(gtk.Window):
                     if drive != 'C' and os.path.isdir('%s:\\' % drive):
                         self.drive_list.append(drive + ':')
             elif dev_os == 'Linux':
-                txt = os.popen(self.prefix + 'mount -l').read()
-                dev_regex = '/dev/sd[b-z][1-9]?\son\s(/[A-z/]*)\stype'
+                txt = os.popen(self.prefix + 'mount').read()
+                dev_regex = '/dev/sd[b-z][1-9]?\s*on\s*(\S+)\s*type'
                 self.drive_list = re.findall(dev_regex, txt)
             model = self.drive_menu.get_model()
             
@@ -1328,15 +1347,24 @@ class LockApp(gtk.Window):
     def exitapp(self, *args):
         exit(0)
 
-    def reboot(self, *args): #add this as an option after pba
+    def reboot(self, *args):
         if self.ostype == 0 :
-            status =  os.system("shutdown -r 0")
+            status =  os.system("shutdown -r -t 0")
         elif self.ostype == 1 :
             status =  os.system(self.prefix + "reboot now")
         elif self.ostype == 2 :
             status =  os.system(self.prefix + "reboot now")    
         exit(0)
             
+    def shutdown(self, *args):
+        if self.ostype == 0 :
+            status =  os.system("shutdown -s -t 0")
+        elif self.ostype == 1 :
+            status =  os.system(self.prefix + "poweroff")
+        elif self.ostype == 2 :
+            status =  os.system(self.prefix + "poweroff")    
+        exit(0)
+    
     def changed_cb(self, entry):
         act_idx = self.dev_select.get_active()
         if self.view_state == 0:
@@ -1469,7 +1497,11 @@ class LockApp(gtk.Window):
             self.op_instr.show()
             
             self.box_pass.show()
+            self.pass_entry.set_activates_default(True)
+            self.pass_entry.grab_focus()
+            
             self.viewLog.show()
+            self.set_default(self.viewLog)
             
             self.check_box_pass.show()
             
@@ -1617,7 +1649,6 @@ class LockApp(gtk.Window):
             
         if len(self.setup_list) > 0:
             self.dev_select.set_active(0)
-            self.auth_menu.set_active(1)
             self.op_instr.show()
             self.setupUserPW.show()
             
@@ -1651,9 +1682,13 @@ class LockApp(gtk.Window):
             self.dev_select.set_active(0)
             self.op_instr.show()
             self.updatePBA_button.show()
+            self.set_default(self.updatePBA_button)
             
             self.pass_label.set_text('Enter Admin Password')
             self.box_pass.show()
+            self.pass_entry.set_activates_default(True)
+            self.pass_entry.grab_focus()
+            
             self.check_box_pass.show()
             
             self.query(1)
@@ -1715,8 +1750,8 @@ class LockApp(gtk.Window):
             mod_regex = 'DeviceID=.+([1-9]|1[0-5])\s*\nModel=(.*)\r'
             self.usb_list = re.findall(mod_regex, txt)
         elif dev_os == 'Linux':
-            txt = os.popen('mount -l').read()
-            dev_regex = '(/dev/sd[b-z][1-9]?)\son\s(/[A-z/]*)\s+type'
+            txt = os.popen('mount').read()
+            dev_regex = '(/dev/sd[b-z][1-9]?)\s*on\s*(\S+)\s*type'
             self.usb_list = re.findall(dev_regex, txt)
         model = self.usb_menu.get_model()
         
@@ -1741,7 +1776,7 @@ class LockApp(gtk.Window):
         else:
             self.naDevices_instr.show()
         
-    def revert_user_prompt(self, *args):
+    def revert_erase_prompt(self, *args):
         self.hideAll()
         self.op_label.set_text('Revert with Password')
         self.op_instr.set_text('\nRevert with Password reverts the drive\'s LockingSP.\nThis resets the drive\'s password and disables locking.\nEnter the drive\'s password and choose whether or not to erase all data.')
@@ -1760,10 +1795,14 @@ class LockApp(gtk.Window):
             
             self.pass_label.set_text('Enter Admin Password')
             self.box_pass.show()
+            self.pass_entry.set_activates_default(True)
+            self.pass_entry.grab_focus()
+            
             self.go_button_revert_user_confirm.show()
+            self.set_default(self.go_button_revert_user_confirm)
             
             self.check_box_pass.show()
-            self.eraseData_check.show()
+            #self.eraseData_check.show()
             self.query(1)  
         else:
             self.naDevices_instr.show()
@@ -1808,8 +1847,12 @@ class LockApp(gtk.Window):
             self.op_instr.show()
 
             self.box_pass.show()
+            self.pass_entry.set_activates_default(True)
+            self.pass_entry.grab_focus()
+            
             self.pbaUnlockReboot.show()
             self.pbaUnlockOnly.show()
+            self.set_default(self.pbaUnlockReboot)
             
             self.check_box_pass.show()
         
@@ -1823,10 +1866,10 @@ class LockApp(gtk.Window):
         if len(self.locked_list) > 1:
             self.select_instr.show()
                   
-    def unlockFull_prompt(self, *args):
+    def revert_keep_prompt(self, *args):
         self.hideAll()
-        self.op_label.set_text('Full Unlock')
-        self.op_instr.set_text('\nFully unlocking a drive disables locking and resets the drive password.\nEnter the password and press \'Full Unlock\'.')
+        self.op_label.set_text('Revert Only')
+        self.op_instr.set_text('\nReverting a drive disables locking and resets the drive password.\nEnter the password and press \'Revert Drive\'.')
         self.go_button_cancel.show()
         
         if self.view_state != 2:
@@ -1842,7 +1885,11 @@ class LockApp(gtk.Window):
 
             self.pass_label.set_text('Enter Admin Password')
             self.box_pass.show()
-            self.unlockFull_button.show()
+            self.pass_entry.set_activates_default(True)
+            self.pass_entry.grab_focus()
+            
+            self.revertOnly_button.show()
+            self.set_default(self.revertOnly_button)
             
             self.check_box_pass.show()
             
@@ -1850,10 +1897,10 @@ class LockApp(gtk.Window):
         else:
             self.naDevices_instr.show()
             
-    def unlockPartial_prompt(self, *args):
+    def disableLock_prompt(self, *args):
         self.hideAll()
-        self.op_label.set_text('Partial Unlock')
-        self.op_instr.set_text('\nPartially unlocking the drive disables locking, but keeps the set up password.\nEnter the password and press \'Partial Unlock\'.')
+        self.op_label.set_text('Disable Lock')
+        self.op_instr.set_text('\nDisabling the lock stops the drive from locking itself when it shuts down, but keeps the set up password.\nEnter the password and press \'Disable Lock\'.')
         self.go_button_cancel.show()
         
         if self.view_state != 2:
@@ -1869,7 +1916,11 @@ class LockApp(gtk.Window):
 
             self.pass_label.set_text('Enter Admin Password')
             self.box_pass.show()
-            self.unlockPartial_button.show()
+            self.pass_entry.set_activates_default(True)
+            self.pass_entry.grab_focus()
+            
+            self.disableLock_button.show()
+            self.set_default(self.disableLock_button)
             
             self.check_box_pass.show()
             
@@ -1898,10 +1949,42 @@ class LockApp(gtk.Window):
         else:
             self.naDevices_instr.show()
 
+    def lockEnable_prompt(self, *args):
+        self.hideAll()
+        self.op_label.set_text('Lock')
+        self.op_instr.set_text('\nThis operation enables locking on a drive.\nEnter the selected drive\'s password and press \'Enable Lock\'.')
+        
+        self.go_button_cancel.show()
+        
+        if self.view_state != 3:
+            self.view_state = 3
+            self.changeList()
+		
+        if len(self.unlocked_list) > 1:
+            self.select_instr.show()
+            
+        if len(self.unlocked_list) > 0:
+            self.dev_select.set_active(0)
+            self.op_instr.show()
+            self.lockEnable_button.show()
+            self.set_default(self.lockEnable_button)
+            
+            self.pass_label.set_text('Enter Admin Password')
+            self.box_pass.show()
+            self.pass_entry.set_activates_default(True)
+            self.pass_entry.grab_focus()
+            
+            self.check_box_pass.show()
+            
+            self.query(1)
+            
+        else:
+            self.naDevices_instr.show()
+            
     def lock_prompt(self, *args):
         self.hideAll()
         self.op_label.set_text('Lock')
-        self.op_instr.set_text('\nThis operation enables locking on a drive and locks it immediately.\nEnter the selected drive\'s password and press \'Lock Device\'.')
+        self.op_instr.set_text('\nThis operation enables locking on a drive.\nEnter the selected drive\'s password and press \'Enable Lock\'.')
         
         self.go_button_cancel.show()
         
@@ -1916,9 +1999,13 @@ class LockApp(gtk.Window):
             self.dev_select.set_active(0)
             self.op_instr.show()
             self.lock_button.show()
+            self.set_default(self.lock_button)
             
             self.pass_label.set_text('Enter Admin Password')
             self.box_pass.show()
+            self.pass_entry.set_activates_default(True)
+            self.pass_entry.grab_focus()
+            
             self.check_box_pass.show()
             
             self.query(1)
@@ -1947,7 +2034,7 @@ class LockApp(gtk.Window):
         self.pass_entry.set_text("")
         self.new_pass_entry.set_text("")
         self.confirm_pass_entry.set_text("")
-        self.eraseData_check.set_active(False)
+        #self.eraseData_check.set_active(False)
         self.check_box_pass.set_active(False)
         
         self.box_pass.hide()
@@ -1965,11 +2052,12 @@ class LockApp(gtk.Window):
         self.setupUSB_button.hide()
         self.setupUserPW.hide()
         
-        self.unlockFull_button.hide()
-        self.unlockPartial_button.hide()
+        self.revertOnly_button.hide()
+        self.disableLock_button.hide()
         self.viewLog.hide()
         self.pbaUSB_button.hide()
         self.lock_button.hide()
+        self.lockEnable_button.hide()
         
         self.box_newpass.hide()
         self.box_newpass_confirm.hide()
@@ -1984,11 +2072,14 @@ class LockApp(gtk.Window):
         self.setup_next.hide()
         
         self.check_box_pass.hide()
-        self.eraseData_check.hide()
+        #self.eraseData_check.hide()
         
         self.auth_menu.set_active(0)
         
         self.waitSpin.hide()
+        
+        self.pass_entry.set_activates_default(False)
+        self.set_default(None)
         
     def start_spin(self, *args):
         self.op_instr.hide()
@@ -2028,9 +2119,10 @@ class LockApp(gtk.Window):
         self.setupPWOnly.set_sensitive(False)
         self.updatePBA_button.set_sensitive(False)
         self.pbaUSB_button.set_sensitive(False)
+        self.lockEnable_button.set_sensitive(False)
         self.lock_button.set_sensitive(False)
-        self.unlockFull_button.set_sensitive(False)
-        self.unlockPartial_button.set_sensitive(False)
+        self.revertOnly_button.set_sensitive(False)
+        self.disableLock_button.set_sensitive(False)
         self.viewLog.set_sensitive(False)
         
         self.box_auth.set_sensitive(False)
@@ -2068,9 +2160,10 @@ class LockApp(gtk.Window):
         self.setupPWOnly.set_sensitive(True)
         self.updatePBA_button.set_sensitive(True)
         self.pbaUSB_button.set_sensitive(True)
+        self.lockEnable_button.set_sensitive(True)
         self.lock_button.set_sensitive(True)
-        self.unlockFull_button.set_sensitive(True)
-        self.unlockPartial_button.set_sensitive(True)
+        self.revertOnly_button.set_sensitive(True)
+        self.disableLock_button.set_sensitive(True)
         self.viewLog.set_sensitive(True)
         
         self.box_pass.set_sensitive(True)
