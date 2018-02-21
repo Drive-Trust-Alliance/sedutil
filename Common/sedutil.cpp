@@ -119,7 +119,7 @@ int hashvalidate(char * password, char *devname)
 	LOG(D1) << "start hashing random password";
 	DtaHashPwd(hash, password, d);
 	printf("hashed password : ");
-	for (int i = 2; i < (int)(hash.size() - 2); i++) printf("%02X",hash.at(i));
+	for (int i = 2; i < (int)(hash.size()); i++) printf("%02X",hash.at(i));
 	printf("\n");
 	return 0;
 }
@@ -988,7 +988,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-        printf("Fidelity Lock Version : 0.2.5.%s.%s 20180129-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.2.6.%s.%s 20180220-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:
