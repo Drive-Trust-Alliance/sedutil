@@ -57,17 +57,17 @@ from random import randint
 import string
 import sys
 
-try:
+#try:
     # Use PyCrypto (if available).
-    from Crypto.Hash import HMAC, SHA as SHA1
-except ImportError:
+#    from Crypto.Hash import HMAC, SHA as SHA1
+#except ImportError:
     # PyCrypto not available.  Use the Python standard library.
-    import hmac as HMAC
-    try:
-        from hashlib import sha1 as SHA1
-    except ImportError:
-        # hashlib not available.  Use the old sha module.
-        import sha as SHA1
+import hmac as HMAC
+try:
+    from hashlib import sha1 as SHA1
+except ImportError:
+    # hashlib not available.  Use the old sha module.
+    import sha as SHA1
 
 #
 # Python 2.1 thru 3.2 compatibility
