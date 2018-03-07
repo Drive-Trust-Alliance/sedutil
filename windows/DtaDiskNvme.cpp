@@ -31,76 +31,91 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaEndianFixup.h"
 #include "DtaStructures.h"
 #include "DtaHexDump.h"
-//#include "nvme.h"
+#include "nvme.h"
 //#include "nvmeIoctl.h"
 
-DWORD GetDSN(HANDLE hDev, char * strDSN);
-DWORD GetDSN(HANDLE hDev, char * strDSN)
+///////////////////////////////////////////////////////////////////////////////////////
+// issue STORAGE_QUERY
+
+typedef struct _STORAGE_PROPERTY_QUERYA {
+
+	//
+	// ID of the property being retrieved
+	//
+
+	STORAGE_PROPERTY_ID PropertyId;
+
+	//
+	// Flags indicating the type of query being performed
+	//
+
+	STORAGE_QUERY_TYPE QueryType;
+
+	//
+	// Space for additional parameters if necessary
+	//
+
+	//BYTE  AdditionalParameters[1]; // JERRY this additional byte cause DeviceIoControl fail
+
+} STORAGE_PROPERTY_QUERYA, *PSTORAGE_PROPERTY_QUERYA;
+
+
+	typedef struct {
+		STORAGE_PROPERTY_QUERYA Query;
+		STORAGE_PROTOCOL_SPECIFIC_DATA ProtocolSpecific;
+		BYTE Buffer[IO_BUFFER_LENGTH];
+	} StorageQueryWithBuffer, * PStorageQueryWithBuffer;
+
+DWORD GetIDFY(HANDLE hDev, PStorageQueryWithBuffer Qry);
+DWORD GetIDFY(HANDLE hDev, PStorageQueryWithBuffer Qry)
 {
+	LOG(D1) << "Enter GetIDFY";
 	DWORD dwRet = NO_ERROR;
-	// Set the input data structure
-	STORAGE_PROPERTY_QUERY storagePropertyQuery;
-	ZeroMemory(&storagePropertyQuery, sizeof(STORAGE_PROPERTY_QUERY));
-	storagePropertyQuery.PropertyId = StorageDeviceProperty;
-	storagePropertyQuery.QueryType = PropertyStandardQuery;
-
-	// Get the necessary output buffer size
-	STORAGE_DESCRIPTOR_HEADER storageDescriptorHeader = { 0 };
-	DWORD dwBytesReturned = 0;
-	if (!DeviceIoControl(hDev, IOCTL_STORAGE_QUERY_PROPERTY,
-		&storagePropertyQuery, sizeof(STORAGE_PROPERTY_QUERY),
-		&storageDescriptorHeader, sizeof(STORAGE_DESCRIPTOR_HEADER),
-		&dwBytesReturned, NULL))
-	{
-		dwRet = GetLastError();
-		LOG(E) << "IOCTL_STORAGE_QUERY_PROPERTY error";
-		//CloseHandle(hDev);
-		return dwRet;
+	BOOL bRet = 0;
+	LOG(D1) << "sizeof(enum) " << sizeof(STORAGE_QUERY_TYPE);
+	LOG(D1) << "sizeof(STORAGE_PROPERTY_QUERY) " << sizeof(STORAGE_PROPERTY_QUERY);
+	LOG(D1) << "sizeof(STORAGE_PROPERTY_QUERYA) " << sizeof(STORAGE_PROPERTY_QUERYA);
+	LOG(D1) << "sizeof(STORAGE_PROTOCOL_SPECIFIC_DATA) " << sizeof(STORAGE_PROTOCOL_SPECIFIC_DATA);
+	LOG(D1) << "sizeof(StorageQueryWithBuffer) " << sizeof(StorageQueryWithBuffer);
+	memset(Qry, 0,sizeof(StorageQueryWithBuffer));
+	
+	LOG (D1) << "NVMeDataTypeIdentify";	
+	Qry->ProtocolSpecific.ProtocolType = ProtocolTypeNvme;
+	Qry->ProtocolSpecific.DataType = NVMeDataTypeIdentify;
+	Qry->ProtocolSpecific.ProtocolDataOffset = sizeof(STORAGE_PROTOCOL_SPECIFIC_DATA);
+	Qry->ProtocolSpecific.ProtocolDataLength  = IO_BUFFER_LENGTH;
+	Qry->Query.PropertyId = StorageAdapterProtocolSpecificProperty;
+	Qry->Query.QueryType = PropertyStandardQuery;
+	IFLOG(D4) {
+		LOG(I) << "Qry data before DeviceIoControl";
+		DtaHexDump(Qry, 128);
 	}
-
-	// Alloc the output buffer
-	const DWORD dwOutBufferSize = storageDescriptorHeader.Size;
-	BYTE* pOutBuffer = new BYTE[dwOutBufferSize];
-	ZeroMemory(pOutBuffer, dwOutBufferSize);
-
-	// Get the storage device descriptor
-	if (!DeviceIoControl(hDev, IOCTL_STORAGE_QUERY_PROPERTY,
-		&storagePropertyQuery, sizeof(STORAGE_PROPERTY_QUERY),
-		pOutBuffer, dwOutBufferSize,
-		&dwBytesReturned, NULL))
+	// bRet = nonzero if ok, else 0
+	DWORD dwReturned;
+	bRet = DeviceIoControl(hDev, IOCTL_STORAGE_QUERY_PROPERTY,
+		Qry, sizeof(StorageQueryWithBuffer), Qry, sizeof(StorageQueryWithBuffer), &dwReturned, NULL);
+	if (bRet)
 	{
-		dwRet = GetLastError();
-		delete[]pOutBuffer;
-		//CloseHandle(hDev);
-		LOG(E) << "IOCTL_STORAGE_QUERY_PROPERTY error";
-		return dwRet;
-	}
-
-	// Now, the output buffer points to a STORAGE_DEVICE_DESCRIPTOR structure
-	// followed by additional info like vendor ID, product ID, serial number, and so on.
-	STORAGE_DEVICE_DESCRIPTOR* pDeviceDescriptor = (STORAGE_DEVICE_DESCRIPTOR*)pOutBuffer;
-	const DWORD dwSerialNumberOffset = pDeviceDescriptor->SerialNumberOffset;
-	char * p = strDSN;
-	if (dwSerialNumberOffset != 0)
-	{
-		// Finally, get the serial number
-		for (int i=0; i< 20; i++)
-			*(p + i)  = *(pOutBuffer + dwSerialNumberOffset+i);
 		IFLOG(D4) {
-			LOG(I) << "Drive Series Number :";
-			DtaHexDump(strDSN, 20);
+			//dumphex(&Qry , sizeof(Qry));
+			printf("DeviceIoControl IOCTL_STORAGE_QUERY_PROPERTY OK\n");
+			DtaHexDump(&Qry, 128);
 		}
 	}
-	else {
-		IFLOG(D4)
-			LOG(E) << "no series number found";
+	else
+	{
+		dwRet = GetLastError();
+		IFLOG(D4) {
+			LOG(E) << "IOCTL Fail IOCTL_STORAGE_QUERY_PROPERTY error" << "error code = " << dwRet;
+			DtaHexDump(&Qry, 128);
+		}
+		return dwRet;
 	}
-
-	// Do cleanup and return
-	delete[]pOutBuffer;
-	//CloseHandle(hDev);
+	LOG(D1) << "Exit GetIDFY";
 	return dwRet;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////
 
 using namespace std;
 DtaDiskNVME::DtaDiskNVME() { LOG(D1) << "DtaDiskNVME Constructor"; };
@@ -254,44 +269,56 @@ void DtaDiskNVME::identify(OPAL_DiskInfo& disk_info)
     LOG(D1) << "Entering DtaDiskNVME::identify()";
 	vector<uint8_t> nullz(4096, 0x00);
     void * identifyResp = NULL;
-	identifyResp = _aligned_malloc(IO_BUFFER_LENGTH, IO_BUFFER_ALIGNMENT);
+	/* NVME identify response
+
+	4096-byte ADMIN_IDENTIFY_CONTROLLER
+
+	*/
+
+#ifdef IDENTIFY_RESPONSE 
+#undef IDENTIFY_RESPONSE 
+#endif
+
+#define IDENTIFY_RESPONSE ADMIN_IDENTIFY_CONTROLLER
+
+	identifyResp = _aligned_malloc(sizeof(StorageQueryWithBuffer), IO_BUFFER_ALIGNMENT);
     if (NULL == identifyResp) return;
     memset(identifyResp, 0, IO_BUFFER_LENGTH);
-    uint8_t iorc = sendCmd(IDENTIFY, 0x00, 0x0000, identifyResp, IO_BUFFER_LENGTH);
-	LOG(D1) << "iorc=" << hex <<  iorc << " disk_info.devType=" << disk_info.devType;
-    // TODO: figure out why iorc = 4
-    if ((0x00 != iorc) && (0x04 != iorc)) {
-        LOG(D1) << "IDENTIFY Failed " << (uint16_t) iorc;
-    }
-	if (!(memcmp(identifyResp, nullz.data(), 512))) {
-		disk_info.devType = DEVICE_TYPE_OTHER;
+	StorageQueryWithBuffer * Q; 
+	///////////////////////////////////////////////////////////////
+	Q = (StorageQueryWithBuffer *)identifyResp; // Q point to the alloc buffer
+	int s = GetIDFY(hDev, (StorageQueryWithBuffer *)identifyResp);
+	if (!s) {
+		IFLOG(D4) {
+			LOG(I) << "Nvme IDFY OK";
+			LOG(I) << "Q";
+			DtaHexDump(identifyResp, 128);
+			LOG(I) << "Q->ProtocolSpecific ";
+			DtaHexDump(&(Q->ProtocolSpecific), 128);
+
+			DtaHexDump(&(Q->Query), 128);
+			LOG(I) << "Q->Buffer ";
+			DtaHexDump(Q->Buffer, 128);
+		}
+	}
+	else {
+		LOG(D4) << "GetIDFY fail, no device info";
 		return;
 	}
-	CScsiCmdInquiry_StandardData * id = (CScsiCmdInquiry_StandardData *) identifyResp;
-    disk_info.devType = DEVICE_TYPE_NVME;
-	char * strDSN = (char *) malloc(20);
-	memset(strDSN, 0x41,20);
 	
-	if (GetDSN(hDev, strDSN)) {
-		LOG(D1) << "GetDSN error";
-		return; // error 
-	}
+	ADMIN_IDENTIFY_CONTROLLER * id = (ADMIN_IDENTIFY_CONTROLLER *)Q->Buffer;
+	disk_info.devType = DEVICE_TYPE_NVME;
 	for (int i = 0; i < sizeof(disk_info.serialNum); i += 1) {
-		disk_info.serialNum[i] = strDSN[i];
+		disk_info.serialNum[i] = id->serialNum[i];
 	}
-
 	for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 1) {
-		disk_info.firmwareRev[i] = id->m_ProductRevisionLevel[i]; 
+		disk_info.firmwareRev[i] = id->firmwareRev[i];
 	}
-	memset(disk_info.modelNum, 0x20, sizeof(disk_info.modelNum));
-	for (int i = 0; i < sizeof(id->m_T10VendorId); i += 1) {
-		disk_info.modelNum[i] = id->m_T10VendorId[i]; 
-	}
-	for (int i = 0; i < sizeof(id->m_ProductId); i += 1) {
-		disk_info.modelNum[i + sizeof(id->m_T10VendorId)] = id->m_ProductId[i]; 
+	for (int i = 0; i < sizeof(disk_info.modelNum); i += 1) {
+		disk_info.modelNum[i] = id->modelNum[i];
 	}
 	_aligned_free(identifyResp);
-    return;
+	return;
 }
 
 /** Close the filehandle so this object can be delete. */
@@ -301,3 +328,4 @@ DtaDiskNVME::~DtaDiskNVME()
     CloseHandle(hDev);
     _aligned_free(scsiPointer);
 }
+
