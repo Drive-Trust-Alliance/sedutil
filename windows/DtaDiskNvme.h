@@ -21,6 +21,66 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include "DtaDiskType.h"
 /** Device specific implementation of disk access functions. */
+
+typedef struct _SDWA {
+	SCSI_PASS_THROUGH_DIRECT scsiDetails;
+	WORD filler;
+	char sensebytes[32];
+} SDWA;
+
+
+//CScsiCmdInquiry_StandardData NVME_INQUIRY_DATA;
+
+
+typedef struct _CScsiCmdInquiry_StandardData {
+	uint8_t        m_PeripheralDeviceType : 5;        //  0
+	uint8_t        m_PeripheralQualifier : 3;
+	uint8_t        m_Reserved_1 : 6;        //  1
+	uint8_t        m_LUCong : 1;
+	uint8_t        m_RMB : 1;
+	uint8_t         m_Version;                              //  2
+	uint8_t        m_ResponseDataFormat : 4;        //  3
+	uint8_t        m_HiSup : 1;
+	uint8_t        m_NormACA : 1;
+	uint8_t        m_Reserved_2 : 1;
+	uint8_t        m_Reserved_3 : 1;
+	uint8_t         m_AdditionalLength;                     //  4
+	uint8_t        m_Protect : 1;        //  5
+	uint8_t        m_Reserved_4 : 2;
+	uint8_t        m_3PC : 1;
+	uint8_t        m_TPGS : 2;
+	uint8_t        m_ACC : 1;
+	uint8_t        m_SCCS : 1;
+	uint8_t        m_ADDR16 : 1;        //  6
+	uint8_t        m_Reserved_5 : 2;
+	uint8_t        m_Obsolete_1 : 1;
+	uint8_t        m_MultiP : 1;
+	uint8_t        m_VS1 : 1;
+	uint8_t        m_EncServ : 1;
+	uint8_t        m_Obsolete_2 : 1;
+	uint8_t        m_VS2 : 1;        //  7
+	uint8_t        m_CmdQue : 1;
+	uint8_t        m_Reserved_6 : 1;
+	uint8_t        m_Obsolete_3 : 1;
+	uint8_t        m_Sync : 1;
+	uint8_t        m_WBus16 : 1;
+	uint8_t        m_Reserved_7 : 1;
+	uint8_t        m_Obsolete_4 : 1;
+	uint8_t         m_T10VendorId[8];                       //  8
+	uint8_t         m_ProductId[16];                        // 16
+	uint8_t         m_ProductRevisionLevel[4];              // 32 4->40
+} CScsiCmdInquiry_StandardData;                                  // 36
+
+/*
+typedef struct _NVME_INQUIRY_DATA {
+	uint8_t fill1[20];
+	char ProductSerial[20];
+	uint8_t fill2[6];
+	char ProductRev[8];
+	char ProductID[40];
+} NVME_INQUIRY_DATA;
+*/
+
 class DtaDiskNVME : public DtaDiskType {
 public:
 	DtaDiskNVME();
@@ -46,8 +106,7 @@ public:
 	/** OS specific routine to send an NVME identify to the device */
 	void identify(OPAL_DiskInfo& disk_info);
 private:
-	
-	void * nvmePointer; /**< pointer ro NVME_PASSTHROUGH_DIRECT structure */
+	void * scsiPointer; /**< pointer to SDWB structure */
 	HANDLE hDev; /**< Windows device handle */
 	uint8_t isOpen = FALSE;
 };
