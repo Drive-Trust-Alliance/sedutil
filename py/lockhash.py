@@ -11,7 +11,9 @@ def hash_pass(plaintext, salt, msid):
     if plaintext == msid: #don't hash MSID
         return plaintext
     pw_trim = re.sub('\s', '', plaintext)
+    plaintext = ''
     pw = hash_pbkdf2(pw_trim, salt)
+    pw_trim = ''
     return pw
 
 def testsedutil(testSet):
