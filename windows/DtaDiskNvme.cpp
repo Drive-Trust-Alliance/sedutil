@@ -98,7 +98,7 @@ DWORD GetIDFY(HANDLE hDev, PStorageQueryWithBuffer Qry)
 	{
 		IFLOG(D4) {
 			//dumphex(&Qry , sizeof(Qry));
-			printf("DeviceIoControl IOCTL_STORAGE_QUERY_PROPERTY OK\n");
+			LOG(I) << "DeviceIoControl IOCTL_STORAGE_QUERY_PROPERTY OK";
 			DtaHexDump(&Qry, 128);
 		}
 	}
