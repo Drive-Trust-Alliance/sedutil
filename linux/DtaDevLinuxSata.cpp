@@ -247,21 +247,26 @@ uint8_t DtaDevLinuxSata::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t 
     memset(&sg, 0, sizeof (sg));
 
   
+	LOG(D4) << "sizeof(unsigned)=" << sizeof(unsigned) << " sizeof(uint8_t)=" << sizeof(uint8_t) << " sizeof(uint16_t)=" << sizeof(uint16_t);
+
         // initialize SCSI CDB
         switch(cmd)
-        {
+        {/* JERRY 
         default:
         {
             return 0xff;
         }
+	*/
         case IF_RECV:
         {
             auto * p = (CScsiCmdSecurityProtocolIn *) cdb;
             p->m_Opcode = p->OPCODE;
             p->m_SecurityProtocol = protocol;
             p->m_SecurityProtocolSpecific = htons(comID);
-            p->m_INC_512 = 1;
-            p->m_AllocationLength = htonl(bufferlen/512);
+            //p->m_INC_512 = 1;
+            //p->m_AllocationLength = htonl(bufferlen/512);
+            p->m_INC_512 = 0;
+            p->m_AllocationLength = htonl(bufferlen);
             break;
         }
         case IF_SEND:
@@ -270,15 +275,25 @@ uint8_t DtaDevLinuxSata::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t 
             p->m_Opcode = p->OPCODE;
             p->m_SecurityProtocol = protocol;
             p->m_SecurityProtocolSpecific = htons(comID);
-            p->m_INC_512 = 1;
-            p->m_TransferLength = htonl(bufferlen/512);
+            //p->m_INC_512 = 1;
+            //p->m_TransferLength = htonl(bufferlen/512);
+            p->m_INC_512 = 0;
+            p->m_TransferLength = htonl(bufferlen);
             break;
+        }
+        case IDENTIFY:
+        {
+	    return 0xff;
+	}
+        default:
+        {
+            return 0xff;
         }
         }
 
         // fill out SCSI Generic structure
         sg.interface_id = 'S';
-        sg.dxfer_direction = cmd == IF_RECV ? SG_DXFER_FROM_DEV : SG_DXFER_TO_DEV;
+        sg.dxfer_direction = (cmd == IF_RECV) ? SG_DXFER_FROM_DEV : SG_DXFER_TO_DEV;
         sg.cmd_len = sizeof (cdb);
         sg.mx_sb_len = sizeof (sense);
         sg.iovec_count = 0;
@@ -293,7 +308,7 @@ uint8_t DtaDevLinuxSata::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t 
 
         // execute I/O
         if (ioctl(fd, SG_IO, &sg) < 0) {
-            LOG(D4) << "cdb after ";
+            LOG(D4) << "cdb after ioctl(fd, SG_IO, &sg) cmd( " << cmd ;
             IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
             LOG(D4) << "sense after ";
             IFLOG(D4) DtaHexDump(sense, sizeof (sense));
@@ -303,7 +318,7 @@ uint8_t DtaDevLinuxSata::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t 
         // check for successful target completion
         if (sg.masked_status != GOOD)
         {
-            LOG(D4) << "cdb after ";
+            LOG(D4) << "cdb after sg.masked_status != GOOD cmd " << cmd;
             IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
             LOG(D4) << "sense after ";
             IFLOG(D4) DtaHexDump(sense, sizeof (sense));
@@ -311,7 +326,7 @@ uint8_t DtaDevLinuxSata::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t 
         }
 
         // success
-        return 0x00;
+        return 0;
     }
     
 static void safecopy(uint8_t * dst, size_t dstsize, uint8_t * src, size_t srcsize)
@@ -356,7 +371,7 @@ void DtaDevLinuxSata::identify_SAS(OPAL_DiskInfo *disk_info)
 
     // execute I/O
     if (ioctl(fd, SG_IO, &sg) < 0) {
-        LOG(D4) << "cdb after ";
+        LOG(D4) << "cdb after ioctl(fd, SG_IO, &sg)";
         IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
         LOG(D4) << "sense after ";
         IFLOG(D4) DtaHexDump(sense, sizeof (sense));
@@ -368,7 +383,7 @@ void DtaDevLinuxSata::identify_SAS(OPAL_DiskInfo *disk_info)
     // check for successful target completion
     if (sg.masked_status != GOOD)
     {
-        LOG(D4) << "cdb after ";
+        LOG(D4) << "cdb after sg.masked_status != GOOD";
         IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
         LOG(D4) << "sense after ";
         IFLOG(D4) DtaHexDump(sense, sizeof (sense));
@@ -381,14 +396,17 @@ void DtaDevLinuxSata::identify_SAS(OPAL_DiskInfo *disk_info)
     auto resp = (CScsiCmdInquiry_StandardData *) buffer;
  
     // make sure SCSI target is disk
-    if (sg.dxfer_len - sg.resid != sizeof(CScsiCmdInquiry_StandardData)
-        || resp->m_PeripheralDeviceType != 0x0)
+    if (((sg.dxfer_len - sg.resid) < sizeof(CScsiCmdInquiry_StandardData)) // some drive return more than sizeof(CScsiCmdInquiry_StandardData)
+        || (resp->m_PeripheralDeviceType != 0x0))
     {
-        LOG(D4) << "cdb after ";
+        LOG(D4) << "cdb after sg.dxfer_len - sg.resid != sizeof(CScsiCmdInquiry_StandardData || resp->m_PeripheralDeviceType != 0x0";
         IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
         LOG(D4) << "sense after ";
         IFLOG(D4) DtaHexDump(sense, sizeof (sense));
         disk_info->devType = DEVICE_TYPE_OTHER;
+	LOG(D4) << "sg.dxfer_len=" << sg.dxfer_len << " sg.resid=" << sg.resid <<
+			 " sizeof(CScsiCmdInquiry_StandardData)=" << sizeof(CScsiCmdInquiry_StandardData) << 
+			" resp->m_PeripheralDeviceType=" << resp->m_PeripheralDeviceType;
         free(buffer);
         return;
     }
