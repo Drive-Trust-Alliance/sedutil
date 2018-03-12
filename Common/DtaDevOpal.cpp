@@ -1659,15 +1659,11 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 
 uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len, char * buffer, entry_t * pent, char * userid) // add event ID and write audit log to Data Store
 {
-        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-        return 0;
-        LOG(D1) << "DtaDevOpal::auditlogwr() isn't supported in Linux";
-        #else
 	audit_t * ptr;
 	entry_t * ptrent;
 	vector <entry_t> entryA;
 	uint8_t lastRC;
-	SYSTEMTIME st, lt;
+
 	uint32_t MAX_ENTRY;
 
 	MAX_ENTRY = 1000; // default size
@@ -1688,6 +1684,24 @@ uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len,
 	if (!memcmp(pent, zero, 8))
 	{
 		LOG(D1) << "passing empty entry";
+		// linux 
+        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+		time_t rawtime;
+  		struct tm * lt;
+  		/* get current timeinfo */
+  		time ( &rawtime );
+  		lt = localtime ( &rawtime );
+		//entry_t ent; passing from caller
+		pent->yy = (uint8_t)(lt->tm_year + 1900 - 2000);
+		pent->mm = (uint8_t)lt->tm_mon + 1;
+		pent->dd = (uint8_t)lt->tm_mday;
+		pent->hh = (uint8_t)lt->tm_hour;
+		pent->min = (uint8_t)lt->tm_min;
+		pent->sec = (uint8_t)lt->tm_sec;
+		//pent->event = ID;
+	#else
+		// windows
+		SYSTEMTIME st, lt;
 		GetSystemTime(&st);
 		GetLocalTime(&lt);
 		//entry_t ent; passing from caller
@@ -1698,6 +1712,9 @@ uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len,
 		pent->min = (uint8_t)lt.wMinute;
 		pent->sec = (uint8_t)lt.wSecond;
 		//pent->event = ID;
+	#endif
+
+
 	} // if empty entry past, fill up the entry with system time
 	// otherwise, past entry already has time stamp and eventID
 	entryA.insert(entryA.begin(), *pent); // push_back -> insert
@@ -1749,15 +1766,10 @@ uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len,
 		LOG(E) << "write data store Error";
 		return lastRC;
 	}
-	#endif
 }
 
 uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len, char * buffer, char * userid) // read audit log to Data Store
 {
-        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-        LOG(D1) << "DtaDevOpal::auditlogrd() isn't supported in Linux";
-	return 0;
-        #else
 	LOG(D1) << "entering DtaDevOpal::auditlogrd";
 	//uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, char * buffer)
 	uint8_t lastRC;
@@ -1797,7 +1809,6 @@ uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len,
 		LOG(E) << "read data store Error";
 		return lastRC;
 	}
-	#endif
 }
 
 uint16_t genchksum(char * buffer)
@@ -1843,10 +1854,6 @@ uint16_t gethdrsize() {
 uint8_t DtaDevOpal::auditRec(char * password, entry_t * pent, char * userid)
 {
 	
-        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-        LOG(D1) << "DtaDevOpal::auditRec() isn't supported in Linux";
-        return 0;
-        #else
 	char * buffer;
 	uint8_t lastRC;
 
@@ -1878,8 +1885,23 @@ uint8_t DtaDevOpal::auditRec(char * password, entry_t * pent, char * userid)
 	//printf("***** lastRC = %d ; ptr->header.num_entry= %d*****\n", lastRC, ptr->header.num_entry);
 	if ((lastRC = (uint8_t)memcmp(ptr->header.signature, str1, strlen(str1))) !=0)
 	{
-		SYSTEMTIME st, lt;
 		LOG(D1) << "Invalid Audit signature : lastRC = " << lastRC << " or num_entry is zero : " << hex << ptr->header.num_entry;
+        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+		time_t rawtime;
+  		struct tm * lt;
+  		/* get current timeinfo */
+  		time ( &rawtime );
+  		lt = localtime ( &rawtime );
+		//entry_t ent; passing from caller
+		hdrtmp.date_created.yy = (uint8_t)((lt->tm_year+1900-2000) & 0xff);
+		hdrtmp.date_created.mm = (uint8_t)lt->tm_mon+1;
+		hdrtmp.date_created.dd = (uint8_t)lt->tm_mday;
+		hdrtmp.date_created.hh = (uint8_t)lt->tm_hour;
+		hdrtmp.date_created.min = (uint8_t)lt->tm_min;
+		hdrtmp.date_created.sec = (uint8_t)lt->tm_sec;
+		//pent->event = ID;
+	#else
+		SYSTEMTIME st, lt;
 		GetSystemTime(&st);
 		GetLocalTime(&lt);
 		//entry_t ent;
@@ -1889,7 +1911,7 @@ uint8_t DtaDevOpal::auditRec(char * password, entry_t * pent, char * userid)
 		hdrtmp.date_created.hh = (uint8_t)lt.wHour;
 		hdrtmp.date_created.min = (uint8_t)lt.wMinute;
 		hdrtmp.date_created.sec = (uint8_t)lt.wSecond;
-			
+	#endif	
 		memset(buffer, 0, MAX_ENTRY * 8 + gethdrsize());
 		memcpy(buffer, (char *)&hdrtmp, gethdrsize());
 		wrtchksum(buffer, genchksum(buffer)); 
@@ -1922,15 +1944,10 @@ uint8_t DtaDevOpal::auditRec(char * password, entry_t * pent, char * userid)
 		LOG(D1) << "audit write success";
 		return 0;
 	}
-	#endif
 }
 
 uint8_t DtaDevOpal::auditErase(char * password, char * userid)
 {
-        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-        LOG(D1) << "DtaDevOpal::auditErase() isn't supported in Linux";
-	return 0;
-        #else
 	char * buffer;
 	uint8_t lastRC;
 	audit_hdr hdr;
@@ -1949,15 +1966,10 @@ uint8_t DtaDevOpal::auditErase(char * password, char * userid)
 	*/
 	lastRC = DataWrite(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buffer,userid); 
 	return lastRC;
-	#endif
 }
 
 uint8_t DtaDevOpal::auditRead(char * password, char * userid)
 {
-        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-        LOG(D1) << "DtaDevOpal::auditread() isn't supported in Linux";
-	return 0;
-        #else
 	char * buffer;
 	uint8_t lastRC;
 	uint32_t MAX_ENTRY;
@@ -1971,26 +1983,13 @@ uint8_t DtaDevOpal::auditRead(char * password, char * userid)
 	memset(buffer, 0, (MAX_ENTRY * 8) + gethdrsize());
 	lastRC = auditlogrd(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buffer,userid);
 	return lastRC;
-	#endif
 }
 
 uint8_t DtaDevOpal::auditWrite(char * password, char * idstr, char * userid)
 {
-        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-        LOG(D1) << "DtaDevOpal::auditWrite() isn't supported in Linux";
-	return 0;
-        #else
-	//char * buffer;
 	uint8_t lastRC;
-
-	//buffer = (char *)malloc(8 * MAX_ENTRY + gethdrsize());
-	//memset(buffer, 0, (MAX_ENTRY * 8) + gethdrsize());
-	// proc char * id
-	// 
-
 	entry_t ent;
 	memset(&ent, 0, sizeof(entry_t));
-
 	char t[2];
 	memcpy(t, idstr, 2);
 	ent.event = (uint8_t)atoi(t);
@@ -2010,7 +2009,6 @@ uint8_t DtaDevOpal::auditWrite(char * password, char * idstr, char * userid)
 
 	lastRC = auditRec(password, &ent, userid);
 	return lastRC;
-	#endif
 }
 
 uint8_t DtaDevOpal::activate(char * password)
