@@ -32,221 +32,235 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaStructures.h"
 #include "DtaHexDump.h"
 #include "nvme.h"
-#include "nvmeIoctl.h"
+//#include "nvmeIoctl.h"
+
+///////////////////////////////////////////////////////////////////////////////////////
+// issue STORAGE_QUERY
+
+typedef struct _STORAGE_PROPERTY_QUERYA {
+
+	//
+	// ID of the property being retrieved
+	//
+
+	STORAGE_PROPERTY_ID PropertyId;
+
+	//
+	// Flags indicating the type of query being performed
+	//
+
+	STORAGE_QUERY_TYPE QueryType;
+
+	//
+	// Space for additional parameters if necessary
+	//
+
+	//BYTE  AdditionalParameters[1]; // JERRY this additional byte cause DeviceIoControl fail
+
+} STORAGE_PROPERTY_QUERYA, *PSTORAGE_PROPERTY_QUERYA;
+
+
+	typedef struct {
+		STORAGE_PROPERTY_QUERYA Query;
+		STORAGE_PROTOCOL_SPECIFIC_DATA ProtocolSpecific;
+		BYTE Buffer[IO_BUFFER_LENGTH];
+	} StorageQueryWithBuffer, * PStorageQueryWithBuffer;
+
+DWORD GetIDFY(HANDLE hDev, PStorageQueryWithBuffer Qry);
+DWORD GetIDFY(HANDLE hDev, PStorageQueryWithBuffer Qry)
+{
+	LOG(D1) << "Enter GetIDFY";
+	DWORD dwRet = NO_ERROR;
+	BOOL bRet = 0;
+	LOG(D1) << "sizeof(enum) " << sizeof(STORAGE_QUERY_TYPE);
+	LOG(D1) << "sizeof(STORAGE_PROPERTY_QUERY) " << sizeof(STORAGE_PROPERTY_QUERY);
+	LOG(D1) << "sizeof(STORAGE_PROPERTY_QUERYA) " << sizeof(STORAGE_PROPERTY_QUERYA);
+	LOG(D1) << "sizeof(STORAGE_PROTOCOL_SPECIFIC_DATA) " << sizeof(STORAGE_PROTOCOL_SPECIFIC_DATA);
+	LOG(D1) << "sizeof(StorageQueryWithBuffer) " << sizeof(StorageQueryWithBuffer);
+	memset(Qry, 0,sizeof(StorageQueryWithBuffer));
+	
+	LOG (D1) << "NVMeDataTypeIdentify";	
+	Qry->ProtocolSpecific.ProtocolType = ProtocolTypeNvme;
+	Qry->ProtocolSpecific.DataType = NVMeDataTypeIdentify;
+	Qry->ProtocolSpecific.ProtocolDataOffset = sizeof(STORAGE_PROTOCOL_SPECIFIC_DATA);
+	Qry->ProtocolSpecific.ProtocolDataLength  = IO_BUFFER_LENGTH;
+	Qry->Query.PropertyId = StorageAdapterProtocolSpecificProperty;
+	Qry->Query.QueryType = PropertyStandardQuery;
+	IFLOG(D4) {
+		LOG(I) << "Qry data before DeviceIoControl";
+		DtaHexDump(Qry, 128);
+	}
+	// bRet = nonzero if ok, else 0
+	DWORD dwReturned;
+	bRet = DeviceIoControl(hDev, IOCTL_STORAGE_QUERY_PROPERTY,
+		Qry, sizeof(StorageQueryWithBuffer), Qry, sizeof(StorageQueryWithBuffer), &dwReturned, NULL);
+	if (bRet)
+	{
+		IFLOG(D4) {
+			//dumphex(&Qry , sizeof(Qry));
+			LOG(I) << "DeviceIoControl IOCTL_STORAGE_QUERY_PROPERTY OK";
+			DtaHexDump(&Qry, 128);
+		}
+	}
+	else
+	{
+		dwRet = GetLastError();
+		IFLOG(D4) {
+			LOG(E) << "IOCTL Fail IOCTL_STORAGE_QUERY_PROPERTY error" << "error code = " << dwRet;
+			DtaHexDump(&Qry, 128);
+		}
+		return dwRet;
+	}
+	LOG(D1) << "Exit GetIDFY";
+	return dwRet;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+
 using namespace std;
 DtaDiskNVME::DtaDiskNVME() { LOG(D1) << "DtaDiskNVME Constructor"; };
+
 void DtaDiskNVME::init(const char * devref)
-{/*
- 	UCHAR                   myIoctlBuf[sizeof(NVME_PASS_THROUGH_IOCTL) +
-	   	                               sizeof(ADMIN_IDENTIFY_CONTROLLER)];
-
-    PNVME_PASS_THROUGH_IOCTL     pMyIoctl = (PNVME_PASS_THROUGH_IOCTL)myIoctlBuf;
-
-	SDWB * scsi =
-	(SDWB *) _aligned_malloc((sizeof (SDWB)), 4096);
-	scsiPointer = (void *) scsi;
- */
-	// didn't allocate memory for iocontrol, why blue screen after iocontrol
-	// same as original code 
-	PNVME_PASS_THROUGH_IOCTL nvme = (PNVME_PASS_THROUGH_IOCTL) _aligned_malloc((sizeof(NVME_PASS_THROUGH_IOCTL)+ IO_BUFFER_LENGTH), IO_BUFFER_ALIGNMENT);
+{
 	LOG(D1) << "Creating DtaDiskNVME::DtaDiskNVME() " << devref;
-	nvmePointer = (void *)nvme;
+	//DtaHexDump((void *)devref, 23);
+	SDWA * scsi =
+		(SDWA *)_aligned_malloc((sizeof(SDWA)), 4096);
+	scsiPointer = (void *)scsi;
+	hDev = CreateFile(devref,
+		GENERIC_WRITE | GENERIC_READ,
+		FILE_SHARE_WRITE | FILE_SHARE_READ,
+		NULL,
+		OPEN_EXISTING,
+		0,
+		NULL);
 
-	// convert \\.\PhysicalDriveXX to ScsiXX
-	LPCTSTR	pszFormat = "%s%d:";
-	TCHAR str2[64] ;
-	LPTSTR pszTxt = "\\\\.\\Scsi";
-	int scsiPort = int(devref[17]) - 0x30;
-	//DtaHexDump(pszTxt, 64);
-	wsprintf(str2, pszFormat, pszTxt, scsiPort); // ":" append to str2 make it work ?
-	//LOG(D1) << "after wsprintf" << endl;
-	//DtaHexDump(str2, 64); 
-	//LOG(D1) << "str2=" << str2 << endl;
-
-
-	LOG(D1) << "devref : " << devref << endl;
-	LOG(D1) << "size of devref : " << sizeof(devref) << " size str2 : " << sizeof(str2) ;
-	LOG(D1) << "new SCSI string  : " << str2 << endl ;
-	//DtaHexDump(str2, 64);
-	
-    hDev = CreateFile(str2,
-                      GENERIC_WRITE | GENERIC_READ,
-                      FILE_SHARE_WRITE | FILE_SHARE_READ,
-                      NULL,
-                      OPEN_EXISTING,
-					  FILE_ATTRIBUTE_NORMAL,  // 0,
-                      NULL);
-	
 	if (INVALID_HANDLE_VALUE == hDev) {
-		LOG(D) << "Open SCSI port fail. hDev = " << hex << hDev << endl;
+		LOG(D1) << "Open Nvme fail. hDev = " << hex << hDev << endl;
 		return;
 	}
     else {
-		LOG(D) << "Open SCSI port OK. hDev = " << hex << hDev << endl;
+		LOG(D1) << "Open Nvme OK. hDev = " << hex << hDev << endl;
         isOpen = TRUE;
 	}
+	// seems to be system vol series number NOT IDFY command series number
+	//  Drive Series Number :0025_385B_61B0_02FA.
 }
+
 uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                         void * buffer, uint16_t bufferlen)
 {
-	PNVMe_COMMAND  pCmd;
-	DWORD dw;
-	BOOL b;
-	NVME_PASS_THROUGH_IOCTL * nvme = (NVME_PASS_THROUGH_IOCTL *)nvmePointer;
-	//PADMIN_SECURITY_RECEIVE_COMMAND_DW10 dw10;
-	//PADMIN_SECURITY_RECEIVE_COMMAND_DW11 dw11;
-
     LOG(D1) << "Entering DtaDiskNVME::sendCmd";
     DWORD bytesReturned = 0; // data returned
     if (!isOpen) {
         LOG(D1) << "Device open failed";
 		return DTAERROR_OPEN_ERR; //disk open failed so this will too
     }
-    /*
-     * Initialize the NVME_PASS_THROUGH_DIRECT structures
-     * per windows DOC with the special sauce from the
-     * NVME Command set reference (protocol and comID)
-     */
-	
-	//NVME_PASS_THROUGH_IOCTL * nvme = (NVME_PASS_THROUGH_IOCTL *) nvmePointer;
-	memset(nvme, 0, sizeof (NVME_PASS_THROUGH_IOCTL)+ IO_BUFFER_LENGTH);
+	SDWA * scsi = (SDWA *)scsiPointer;
+	memset(scsi, 0, sizeof(SDWA));
+	// same for every command
+	scsi->scsiDetails.DataBuffer = buffer;
+	scsi->scsiDetails.DataTransferLength = bufferlen;
+	scsi->scsiDetails.Length = sizeof(SCSI_PASS_THROUGH_DIRECT);
+	scsi->scsiDetails.TimeOutValue = 20;
+	scsi->scsiDetails.SenseInfoLength = 32;
+	scsi->scsiDetails.SenseInfoOffset = offsetof(SDWA, sensebytes);
+	scsi->scsiDetails.ScsiStatus = 0;
+	scsi->scsiDetails.PathId = 0;
+	scsi->scsiDetails.TargetId = 0;
+	scsi->scsiDetails.Lun = 0;
 
-    ///////////////////////////////////////////////////////////////////////
-	nvme->SrbIoCtrl.ControlCode = (ULONG)NVME_PASS_THROUGH_SRB_IO_CODE;
-	memcpy(nvme->SrbIoCtrl.Signature, NVME_SIG_STR, sizeof(NVME_SIG_STR));
-	nvme->SrbIoCtrl.HeaderLength = (ULONG) sizeof(SRB_IO_CONTROL);
-	nvme->SrbIoCtrl.Timeout = 30;
-	nvme->SrbIoCtrl.Length = sizeof(NVME_PASS_THROUGH_IOCTL) - sizeof(SRB_IO_CONTROL);
-
-	// Set up the NVMe pass through IOCTL buffer
-	// memcpy(&(pMyIoctl->NVMeCmd), &nvmeCmd, sizeof(nvmeCmd));
-	//(nvme->DataBuffer) = buffer;  // void * buffer , nvme->DataBuffer[0]
-	// DataBuffer must follow DataBuffer[0] location.
-	// after IOCTRL we can move DataBuffer to buffer where the caller's buffer 
-
-	pCmd = (PNVMe_COMMAND)nvme->NVMeCmd; //PNVMe_COMMAND
 
 	if (IF_RECV == cmd) {
-		LOG(D1) << "cmd = Security Receive" << endl;
-		pCmd->CDW0.OPC = ADMIN_SECURITY_RECEIVE;
-		nvme->Direction = NVME_FROM_DEV_TO_HOST;
-		//pCmd->NSID = 1; // NSID
-		//dw10 = (PADMIN_SECURITY_RECEIVE_COMMAND_DW10)&(pCmd->CDW10);
-		//dw10->SECP = 1; // Protocol located LSB3
-		//dw10->SPSP = 1; // only for level 0 discovery ; comID 2-byte 
-						// data pointer to data buffer pMyIoctl->DataBuffer shall be at RPR0
-		pCmd->PRP1 = (ULONGLONG)(nvme->DataBuffer); // set the return data buffer pointer in CDW command
-		pCmd->CDW9 = bufferlen;
-		pCmd->CDW10 = protocol << 24 | comID << 8;
-		pCmd->CDW11 = bufferlen;
-		//pCmd->PRP1 = (ULONGLONG)buffer; //cdw6,7
-		memset(nvme->DataBuffer, 0x55, 4096);
-		nvme->DataBufferLen = 0; // ????? maybe it doesn't matter for data in command, but for data out, it should be the length of the data out ????
-
+		LOG(D1) << "cmd = Security Receive";
+		scsi->scsiDetails.DataIn = SCSI_IOCTL_DATA_IN;
+		//memset(scsi.scsiDetails.Cdb, 0x00, sizeof(scsi.scsiDetails.Cdb));
+		scsi->scsiDetails.CdbLength = 12;
+		scsi->scsiDetails.Cdb[0] = 0xa2; // 0xa2 or 0xb5;
+		scsi->scsiDetails.Cdb[1] = protocol;
+		scsi->scsiDetails.Cdb[2] = (comID >> 8) & 0xff;
+		scsi->scsiDetails.Cdb[3] = comID & 0xff;
+		scsi->scsiDetails.Cdb[6] = 0; //  (bufferlen >> 24) & 0xff;
+		scsi->scsiDetails.Cdb[7] = 0; // (bufferlen >> 16) & 0xff; 
+		scsi->scsiDetails.Cdb[8] = (bufferlen >> 8) & 0xff;
+		scsi->scsiDetails.Cdb[9] = bufferlen & 0xff;
+		scsi->scsiDetails.Cdb[10] = 0;
+		scsi->scsiDetails.Cdb[11] = 0;
 	}
 	else if (IDENTIFY == cmd) {
-		/* IDENTIFY only need program 3 place
-		pCmd->CDW0.OPC = ADMIN_IDENTIFY;
-		dw10 = (PADMIN_IDENTIFY_COMMAND_DW10)&(pCmd->CDW10);
-		dw10->CNS = 1;
-		*/
 		//===============================
-		LOG(D1) << "cmd = IDENTIFY" << endl;
-		pCmd->CDW0.OPC = ADMIN_IDENTIFY;
-		nvme->Direction = NVME_FROM_DEV_TO_HOST;
-		//pCmd->NSID = 1; // cdw1 is nsid, 1=identify ????? 
-		pCmd->CDW10 = 1; // controller name space 
-		//pCmd->PRP1 = (ULONGLONG)(nvme->DataBuffer); // set the return data buffer pointer in CDW command // JERRY
-		memset(nvme->DataBuffer, 0x55, 4096);
-		nvme->DataBufferLen = 0; // 4096;NG // 0 NG; // ????? maybe it doesn't matter for data in command, but for data out, it should be the length of the data out ????
-
+		LOG(D1) << "cmd = IDENTIFY";
+		//printf("pagecode = %02Xh\n", pagecode);
+		scsi->scsiDetails.DataIn = SCSI_IOCTL_DATA_IN;
+		scsi->scsiDetails.CdbLength = 6;
+		scsi->scsiDetails.Cdb[0] = 0x12; // 0xa2 or 0xa5;
+		scsi->scsiDetails.Cdb[1] = 0; // evpd;
+		scsi->scsiDetails.Cdb[2] = 0; // pagecode; //  
+		scsi->scsiDetails.Cdb[3] = (bufferlen >> 8) & 0xff;
+		scsi->scsiDetails.Cdb[4] = bufferlen & 0xff;
 	}
 	else {
 		// security send command
-		LOG(D1) << "cmd = Security Send" << endl;
-		pCmd->CDW0.OPC = ADMIN_SECURITY_SEND;
-		nvme->Direction = NVME_FROM_HOST_TO_DEV;
-		pCmd->PRP1 = (ULONGLONG)(nvme->DataBuffer); // set the data buffer pointer in CDW command
-		pCmd->CDW9 = bufferlen; // 0x800;ok, try bufferlen // see which bufferlen work // bufferlen;
-		pCmd->CDW10 = protocol << 24 | comID << 8;
-		pCmd->CDW11 = bufferlen; //  0x800 ok; // bufferlen;
-		memcpy(nvme->DataBuffer, buffer, bufferlen); //0x800 ok ); // move data from caller's buffer to deviceiocontrol buffer ???? temp 4096 may change to 8192
-		nvme->DataBufferLen = bufferlen ; // ????? maybe it doesn't matter for data in command, but for data out, it should be the length of the data out ????
+		LOG(D1) << "cmd = Security Send" ;
+		scsi->scsiDetails.DataIn = SCSI_IOCTL_DATA_OUT;
+		scsi->scsiDetails.CdbLength = 12;
+		scsi->scsiDetails.Cdb[0] = 0xb5; // 0xa2 or 0xb5;
+		scsi->scsiDetails.Cdb[1] = protocol;
+		scsi->scsiDetails.Cdb[2] = (comID >> 8) & 0xff;
+		scsi->scsiDetails.Cdb[3] = comID & 0xff;
+		scsi->scsiDetails.Cdb[6] = 0; //  (bufferlen >> 24) & 0xff;
+		scsi->scsiDetails.Cdb[7] = 0; // (bufferlen >> 16) & 0xff; 
+		scsi->scsiDetails.Cdb[8] = (bufferlen >> 8) & 0xff;
+		scsi->scsiDetails.Cdb[9] = bufferlen & 0xff;
+		scsi->scsiDetails.Cdb[10] = 0;
+		scsi->scsiDetails.Cdb[11] = 0;
 	}
-	
-	nvme->QueueId = 0; // Admin queue
-	//nvme->DataBufferLen = 0; // ????? maybe it doesn't matter for data in command, but for data out, it should be the length of the data out ????
-	nvme->ReturnBufferLen = sizeof(NVME_PASS_THROUGH_IOCTL) + bufferlen ;  //sizeof(ADMIN_IDENTIFY_CONTROLLER)
-		
-	nvme->VendorSpecific[0] = (DWORD)0;
-	nvme->VendorSpecific[1] = (DWORD)0;
-	LOG(D1) << "*****Dump NVMe command buffer*****" << endl;
-	IFLOG(D4) DtaHexDump(pCmd, sizeof(nvme->NVMeCmd));
-	//LOG(D1) << "b4 memset DataBuffer" << endl;
-	//getchar();//ok
-	
-	//////////////////////////////////////////////////////////////////////
 
-	//LOG(D1) << "after memset DataBuffer" << endl;
-	//getchar(); //ok
-    //LOG(D4) << "nvme before";
-    //IFLOG(D4) hexDump(nvme, sizeof (NVME_PASS_THROUGH_DIRECT));
+	DWORD n = 0;
+	int status = DeviceIoControl(hDev,
+		IOCTL_SCSI_PASS_THROUGH_DIRECT,
+		scsi, sizeof(SDWA),
+		scsi, sizeof(SDWA),
+		&n,
+		(LPOVERLAPPED)NULL);
+
 	/*
-		b = DeviceIoControl(hand,
-		IOCTL_SCSI_MINIPORT,
-		pMyIoctl,
-		sizeof(myIoctlBuf), 
-		pMyIoctl,
-		sizeof(myIoctlBuf),
-		&dwlen,
-		NULL);
+	If the operation completes successfully, the return value is nonzero
 	*/
-    b = DeviceIoControl(hDev, // device to be queried
-					IOCTL_SCSI_MINIPORT, // operation to perform
-                    nvme,  sizeof (NVME_PASS_THROUGH_IOCTL)+ IO_BUFFER_LENGTH, //bufferlen+
-                    nvme,  sizeof (NVME_PASS_THROUGH_IOCTL)+ IO_BUFFER_LENGTH, //bufferlen,
-                    &bytesReturned, // # bytes returned
-                    (LPOVERLAPPED) NULL); // synchronous I/O
-	LOG(D1) << "after iocontrol" << endl; // dead here 
-	if (FALSE == b) {
-		switch (cmd) {
-			case IDENTIFY:
-				LOG(D1) << "IdentifyController: NL_IOCTL_IDENTIFY: FAIL\n";
-				break;
-			case IF_RECV :
-				LOG(D1) << "Security Receive Command FAIL\n";
-				break;
-			default: 
-				LOG(D1) << "Security Send Command FAIL\n";
+	if (status)
+	{
+		LOG(D1) << "DeviceIoControl return non-zero status OK " << status;
+		//if (scsi->scsiDetails.ScsiStatus) {
+			// it only make sense to look sense info if scsi get error
+			//printf("scsi->scsiDetails.ScsiStatus = %d and sense info : \n", scsi->scsiDetails.ScsiStatus);
+			//DtaHexDump(scsi->sensebytes, 32);
+		//}
+	}
+	else
+	{
+		IFLOG(D1) {
+			printf("*************************************************\n");
+			printf("***** DeviceIoControl return zero status NG *****\n");
+			printf("*************************************************\n");
 		}
-		dw = GetLastError();
-		LOG(D1) << "Did find err " << dw << endl;
+		DWORD err = 0;
+		err = GetLastError();
+		LOG(D1) << "GetLastError " <<  err;
 		return DTAERROR_COMMAND_ERROR;
 	}
-	else {
-		switch (cmd) {
-			case IDENTIFY:
-				LOG(D1) << "IdentifyController: NL_IOCTL_IDENTIFY: SUCCESS!!!\n";
-				LOG(D1) << "IDENTIFY Data Buffer nvme->DataBuffer: " << endl;
-				IFLOG(D4) DtaHexDump(nvme->DataBuffer, 64); //DEBUG
-				
-				memcpy(buffer, nvme->DataBuffer, 4096); // move data to caller's buffer ??? 
-				LOG(D1) << "IDENTIFY Data Buffer after move to caller buffer: " << endl;
-				IFLOG(D4) DtaHexDump(buffer, 64); //DEBUG
-				//DtaHexDump(buffer, 1024); //DEBUG
-				break;
-			case IF_RECV:
-				LOG(D1) << "Security Receive Command SUCCESS!!!\n";
-				memcpy(buffer, nvme->DataBuffer, 4096*15);
-				break;
-			default:
-				LOG(D1) << "Security Send Command SUCCESS!!!\n";
-		}
-		return 0;
+	IFLOG(D4) {
+		printf("cdb : after DeviceIoControl\n");
+		DtaHexDump(scsi->scsiDetails.Cdb, 16);
+
+		printf("SDBW buffer content : after DeviceIoControl \n");
+		DtaHexDump(scsi, sizeof(SDWA));
+
+		printf("data buffer content : after DeviceIoControl ; returned data length = %ld \n", n);
+		DtaHexDump(scsi->scsiDetails.DataBuffer, 256);
 	}
-
-
+	return 0;
 }
+
 
 /** adds the IDENTIFY information to the disk_info structure */
 
@@ -255,35 +269,6 @@ void DtaDiskNVME::identify(OPAL_DiskInfo& disk_info)
     LOG(D1) << "Entering DtaDiskNVME::identify()";
 	vector<uint8_t> nullz(4096, 0x00);
     void * identifyResp = NULL;
-/*
-// redefined in COnstants.h to multiple of 4096
-#ifdef IO_BUFFER_LENGTH
-#undef IO_BUFFER_LENGTH
-#endif
-
-#ifdef IO_BUFFER_ALIGNMENT
-#undef IO_BUFFER_ALIGNMENT
-#endif
-
-#define IO_BUFFER_LENGTH 4096
-#define IO_BUFFER_ALIGNMENT 4096
-*/
-
-	/*
-	** Response returned by ATA Identify //
-	typedef struct _IDENTIFY_RESPONSE {
-	uint8_t reserved0;
-	uint8_t reserved1 : 7;
-	uint8_t devType : 1;
-	uint8_t reserved2[18];
-	uint8_t serialNum[20];
-	uint8_t reserved3[6];
-	uint8_t firmwareRev[8];
-	uint8_t modelNum[40];
-	} IDENTIFY_RESPONSE;
-
-	*/
-
 	/* NVME identify response
 
 	4096-byte ADMIN_IDENTIFY_CONTROLLER
@@ -296,48 +281,44 @@ void DtaDiskNVME::identify(OPAL_DiskInfo& disk_info)
 
 #define IDENTIFY_RESPONSE ADMIN_IDENTIFY_CONTROLLER
 
-	/* short discription of struct 
-	* Identify Controller Data Structure, Section 5.11, Figure 65 
-	typedef struct _ADMIN_IDENTIFY_CONTROLLER
-	{
-		USHORT  VID;
-		USHORT  SSVID;
-		UCHAR   SN[20];
-		UCHAR   MN[40];
-		UCHAR   FR[8];
-		UCHAR   RAB;
-		.......
-	}
-	*/
-
-	identifyResp = _aligned_malloc(IO_BUFFER_LENGTH, IO_BUFFER_ALIGNMENT);
+	identifyResp = _aligned_malloc(sizeof(StorageQueryWithBuffer), IO_BUFFER_ALIGNMENT);
     if (NULL == identifyResp) return;
     memset(identifyResp, 0, IO_BUFFER_LENGTH);
-    uint8_t iorc = sendCmd(IDENTIFY, 0x00, 0x0000, identifyResp, IO_BUFFER_LENGTH);
-	LOG(D1) << "iorc=" << hex <<  iorc << " disk_info.devType=" << disk_info.devType << endl;
-    // TODO: figure out why iorc = 4
-    if ((0x00 != iorc) && (0x04 != iorc)) {
-        LOG(D1) << "IDENTIFY Failed " << (uint16_t) iorc;
-        //ALIGNED_FREE(identifyResp);
-        //return;
-    }
-	if (!(memcmp(identifyResp, nullz.data(), 512))) {
-		disk_info.devType = DEVICE_TYPE_OTHER;
+	StorageQueryWithBuffer * Q; 
+	///////////////////////////////////////////////////////////////
+	Q = (StorageQueryWithBuffer *)identifyResp; // Q point to the alloc buffer
+	int s = GetIDFY(hDev, (StorageQueryWithBuffer *)identifyResp);
+	if (!s) {
+		IFLOG(D4) {
+			LOG(I) << "Nvme IDFY OK";
+			LOG(I) << "Q";
+			DtaHexDump(identifyResp, 128);
+			LOG(I) << "Q->ProtocolSpecific ";
+			DtaHexDump(&(Q->ProtocolSpecific), 128);
+
+			DtaHexDump(&(Q->Query), 128);
+			LOG(I) << "Q->Buffer ";
+			DtaHexDump(Q->Buffer, 128);
+		}
+	}
+	else {
+		LOG(D4) << "GetIDFY fail, no device info";
 		return;
 	}
-	ADMIN_IDENTIFY_CONTROLLER * id = (ADMIN_IDENTIFY_CONTROLLER *) identifyResp;
-    disk_info.devType = DEVICE_TYPE_NVME;
-    for (int i = 0; i < sizeof (disk_info.serialNum); i += 1) {
+	
+	ADMIN_IDENTIFY_CONTROLLER * id = (ADMIN_IDENTIFY_CONTROLLER *)Q->Buffer;
+	disk_info.devType = DEVICE_TYPE_NVME;
+	for (int i = 0; i < sizeof(disk_info.serialNum); i += 1) {
 		disk_info.serialNum[i] = id->serialNum[i];
-     }
-    for (int i = 0; i < sizeof (disk_info.firmwareRev); i += 1) {
+	}
+	for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 1) {
 		disk_info.firmwareRev[i] = id->firmwareRev[i];
-    }
-    for (int i = 0; i < sizeof (disk_info.modelNum); i += 1) {
+	}
+	for (int i = 0; i < sizeof(disk_info.modelNum); i += 1) {
 		disk_info.modelNum[i] = id->modelNum[i];
-    }
+	}
 	_aligned_free(identifyResp);
-    return;
+	return;
 }
 
 /** Close the filehandle so this object can be delete. */
@@ -345,5 +326,6 @@ DtaDiskNVME::~DtaDiskNVME()
 {
     LOG(D1) << "Destroying DtaDiskNVME";
     CloseHandle(hDev);
-    _aligned_free(nvmePointer);
+    _aligned_free(scsiPointer);
 }
+

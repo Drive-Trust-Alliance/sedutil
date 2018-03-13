@@ -129,10 +129,10 @@ void DtaDev::discovery0()
 	d0Response = (void *)((uintptr_t)d0Response & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
 	memset(d0Response, 0, IO_BUFFER_LENGTH);
     if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, IO_BUFFER_LENGTH)) != 0) {
-        LOG(D) << "Send D0 request to device failed " << (uint16_t)lastRC;
+        LOG(D1) << "Send D0 request to device failed " << (uint16_t)lastRC;
         return;
     }
-	else { LOG(D) << "Send D0 request to device OK " << (uint16_t)lastRC; }
+	else { LOG(D1) << "Send D0 request to device OK " << (uint16_t)lastRC; }
 
     epos = cpos = (uint8_t *) d0Response;
     hdr = (Discovery0Header *) d0Response;

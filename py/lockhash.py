@@ -11,23 +11,26 @@ def hash_pass(plaintext, salt, msid):
     if plaintext == msid: #don't hash MSID
         return plaintext
     pw_trim = re.sub('\s', '', plaintext)
+    plaintext = ''
     pw = hash_pbkdf2(pw_trim, salt)
+    pw_trim = ''
     return pw
 
 def testsedutil(testSet):
-    passed = 1;
-
+    failed = 0;
+    out = ''
     for i in range(len(testSet)):
         tuple = testSet[i]
         actual = hash_pbkdf2(testSet[i][2], testSet[i][3], testSet[i][1], testSet[i][0])
         expected = testSet[i][4]
+        out = out + 'Password ' + testSet[i][2] + ' Salt ' + testSet[i][3] + ' Iterations ' + str(testSet[i][1]) + ' Length ' + str(testSet[i][0]) + '\n'
+        out = out + 'Expected Result: ' + expected + '\nActual Result  : ' + actual + '\n'
         if actual != expected:
-            passed = 0
-
-    return passed
+            failed = 1
+    res = [failed, out]
+    return res
 
 def testPBKDF2():
-    passed = 1
     testSet = [
         ( 20, 1, "password", "salt", "0c60c80f961f0e71f3a9b524af6012062fe037a6"),
         ( 20, 2, "password", "salt", "ea6c014dc72d6f8ccd1ed92ace1d41f0d8de8957"),
@@ -35,8 +38,5 @@ def testPBKDF2():
         ( 25, 4096, "passwordPASSWORDpassword", "saltSALTsaltSALTsaltSALTsaltSALTsalt",
             "3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038")]
 
-    passed = testsedutil(testSet) and passed
-    if (passed):
-        return 0
-    else:
-        return 1
+    result = testsedutil(testSet)
+    return result

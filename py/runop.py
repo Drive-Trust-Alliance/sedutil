@@ -34,6 +34,15 @@ def finddev(ui):
     ui.unlocked_list = []
     ui.nonsetup_list = []
     ui.tcg_list = []
+    
+    vendor_new = []
+    salt_new = []
+    sn_new = []
+    msid_new = []
+    pba_new = []
+    admin_new = []
+    user_new = []
+    
     for index in range(len(names)): #index=0(window) 1(Linux) 2(OSX)
     
         m = re.search(names[index] + ".*", txt)
@@ -70,30 +79,57 @@ def finddev(ui):
                                 ui.opal_ver_list.append("Opallite")
                             elif md.group(1) == 'P':
                                 ui.opal_ver_list.append("Pyrrite")
+                            elif md.group(1) == 'R':
+                                ui.opal_ver_list.append("Ruby")
                             else:
                                 ui.opal_ver_list.append(md.group(1))
-                        ui.vendor_list.append(md.group(2))
+                        #ui.vendor_list.append(md.group(2))
+                        vendor_new.append(md.group(2))
                         ui.series_list.append(md.group(3))
-                        ui.salt_list.append(md.group(4).ljust(20))
-                        ui.sn_list.append(md.group(4).replace(' ',''))
+                        #ui.salt_list.append(md.group(4).ljust(20))
+                        salt_new.append(md.group(4).ljust(20))
+                        #ui.sn_list.append(md.group(4).replace(' ',''))
+                        sn_new.append(md.group(4).replace(' ',''))
                         
     if ui.devs_list != []:
         for i in range(len(ui.devs_list)):
             queryText = os.popen(ui.prefix + 'sedutil-cli --query ' + ui.devs_list[i]).read()
             
-            txt_msid = os.popen(ui.prefix + "sedutil-cli --printDefaultPassword " + ui.devs_list[i] ).read()
-            
-            
+            old_idx = -1
+            for j in range(len(ui.vendor_list)):
+                if ui.vendor_list[j] == vendor_new[i] and ui.sn_list[j] == sn_new[i] and ui.salt_list[j] == salt_new[i]:
+                    old_idx = j
+                    
             msid = 'N/A'
-            if txt_msid != '' :
-                regex_msid = 'MSID:\s*([A-z0-9]*)'
-                mm = re.search(regex_msid, txt_msid)
-                if mm:
-                    msid = mm.group(1)
+                    
+            if old_idx >= 0:
+                msid = ui.msid_list[old_idx]
+                msid_new.append(ui.msid_list[old_idx])
+                #pba_new.append(ui.pba_list[old_idx])
+                admin_new.append(ui.admin_list[old_idx])
+                user_new.append(ui.user_list[old_idx])
+            else:
+                txt_msid = os.popen(ui.prefix + "sedutil-cli --printDefaultPassword " + ui.devs_list[i] ).read()
+                
+                if txt_msid != '' :
+                    regex_msid = 'MSID:\s*([A-z0-9]*)'
+                    mm = re.search(regex_msid, txt_msid)
+                    if mm:
+                        msid = mm.group(1)
+                
+                msid_new.append(msid)
             
-            ui.msid_list.append(msid)
+                #pba_new.append("N/A")
+                admin_new.append('')
+                user_new.append('')
             
-            ui.pba_list.append("N/A")
+            txt_MBRSup = "MBR shadowing Not Supported = N"
+            txt_BSID = "BlockSID"
+            txt_BSID_enabled = "BlockSID_BlockSIDState = 0x001"
+            
+            isSup = re.search(txt_MBRSup, queryText)
+            hasBlockSID = re.search(txt_BSID, queryText)
+            isBlockSID = re.search(txt_BSID_enabled, queryText)
             
             txt_TCG = "Locked = "
             txt_L = "Locked = Y"
@@ -121,13 +157,37 @@ def finddev(ui):
                     ui.tcg_list.append(i)
                     ui.lockstatus_list.append("Unlocked")
                     ui.setupstatus_list.append("No")
+                    
+                if isSup and old_idx < 0:
+                    pba_new.append("N/A")
+                elif old_idx >= 0:
+                    pba_new.append(ui.pba_list[old_idx])
+                else:
+                    pba_new.append("Not Supported")
+                    
+                if hasBlockSID and isBlockSID:
+                    ui.blockSID_list.append("Enabled")
+                elif hasBlockSID:
+                    ui.blockSID_list.append("Disabled")
+                else:
+                    ui.blockSID_list.append("Not Supported")
             else:
                 ui.lockstatus_list.append("N/A")
                 ui.setupstatus_list.append("N/A")
+                pba_new.append("N/A")
+                ui.blockSID_list.append("N/A")
+        
         print ("devs_list: ",  ui.devs_list)
         print ("vendor_list: ", ui.vendor_list)
         print ("opal_ver_list: ", ui.opal_ver_list)
         print ("sn_list: ", ui.sn_list)	
+    ui.msid_list = msid_new
+    ui.vendor_list = vendor_new
+    ui.salt_list = salt_new
+    ui.sn_list = sn_new
+    ui.pba_list = pba_new
+    ui.admin_list = admin_new
+    ui.user_list = user_new
 
 def run_setupFull(button, ui, mode):
     index = ui.dev_select.get_active()
@@ -148,13 +208,15 @@ def run_setupFull(button, ui, mode):
         message1.set_markup("Warning: If you lose your password, all data will be lost. Do you want to proceed?")
         res1 = message1.run()
         if res1 == gtk.RESPONSE_OK:
+            message1.destroy()
             message2 = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK_CANCEL)
             message2.set_markup("Final Warning: If you lose your password, all data will be lost. Are you sure you want to proceed?")
             res2 = message2.run()
             if res2 == gtk.RESPONSE_OK:
                 message2.destroy()
-                message1.destroy()
                 password = lockhash.hash_pass(ui.new_pass_entry.get_text(), ui.salt_list[ui.nonsetup_list[index]], ui.dev_msid.get_text())
+                ui.new_pass_entry.set_text('')
+                ui.confirm_pass_entry.set_text('')
                 ui.start_spin()
                 ui.wait_instr.show()
                 
@@ -206,13 +268,14 @@ def run_setupFull(button, ui, mode):
                         ui.go_button_cancel.show()
                     else : 
                         ui.setupstatus_list[ui.nonsetup_list[index]] = "Yes"
+                        ui.admin_list[ui.nonsetup_list[index]] = password
                         if ui.VERSION == 3 and ui.pass_sav.get_active():
                             passSaveUSB(ui)
                         if mode == 1:
                             status5 =  os.system(ui.prefix + "sedutil-cli -n -t --enableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
                             status6 =  os.system(ui.prefix + "sedutil-cli -n -t --setLockingrange " + ui.LKRNG + " LK " + password + " " + ui.devname )
                             status7 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRDone on " + password + " " + ui.devname )
-                        ui.query(1)
+                        ui.query(None,1)
                         ui.msg_ok("Password for " + ui.devname + " set up successfully.")
                         if mode == 0:
                             ui.setup_prompt2()
@@ -224,15 +287,39 @@ def run_setupFull(button, ui, mode):
                 t1 = threading.Thread(target=t1_run, args=())
                 t1.start()
                 start_time = time.time()
-                t2 = threading.Thread(target=timeout_track, args=(ui, 10.0, start_time, t1))
+                t2 = threading.Thread(target=timeout_track, args=(ui, 15.0, start_time, t1))
                 t2.start()
+            else:
+                message2.destroy()
+        else:
+            message1.destroy()
+            
+def run_setupPBA(button, ui):
+    if ui.mbr_radio.get_active():
+        run_pbaWrite(None, ui, 1)
+    elif ui.usb_radio.get_active():
+        run_setupUSB(None, ui)
+    elif ui.skip_radio.get_active():
+        message1 = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK_CANCEL)
+        if ui.dev_pbaVer.get_text() == 'N/A':
+            message1.set_markup("Warning: If you do not have the Preboot Image set up or another drive that can unlock this drive, you will not be able to unlock the drive.  Are you sure you want to proceed?")
+        else:
+            message1.set_markup("Warning: If you do not have a bootable USB set up to unlock the drive then you will not be able to unlock the drive.  Are you sure you want to proceed?")
+        res1 = message1.run()
+        message1.destroy()
+        if res1 == gtk.RESPONSE_OK:
+            ui.setup_finish()
 
 def run_pbaWrite(button, ui, mode):
     status = -1
     password = ""
     index = ui.dev_select.get_active()
-    if mode == 0: #update, add usb check
+    if mode == 0:
+        dev_idx = ui.setup_list[index]
         ui.devname = ui.devs_list[ui.setup_list[index]]
+        #if len(ui.admin_list[dev_idx]) == 64:
+        #    password = ui.admin_list[dev_idx]
+        #else:
         if ui.VERSION == 3 and ui.check_pass_rd.get_active():
             password = passReadUSB(ui, ui.dev_vendor.get_text(), ui.dev_sn.get_text())
             if password == None or password == 'x':
@@ -240,9 +327,11 @@ def run_pbaWrite(button, ui, mode):
                 return
         else:
             password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[ui.setup_list[index]], ui.dev_msid.get_text())
+            ui.pass_entry.set_text('')
     else:
+        password = ui.admin_list[ui.nonsetup_list[index]]
         ui.devname = ui.devs_list[ui.nonsetup_list[index]]
-        password = lockhash.hash_pass(ui.new_pass_entry.get_text(), ui.salt_list[ui.nonsetup_list[index]], ui.dev_msid.get_text())
+        #password = lockhash.hash_pass(ui.new_pass_entry.get_text(), ui.salt_list[ui.nonsetup_list[index]], ui.dev_msid.get_text())
     ui.start_spin()
     ui.pba_wait_instr.show()
     
@@ -262,8 +351,7 @@ def run_pbaWrite(button, ui, mode):
             
             ui.op_instr.show()
             if mode == 1:
-                ui.setupLockOnly.show()
-                ui.setupLockPBA.show()
+                ui.setupSelect.show()
             else:
                 ui.box_pass.show()
                 ui.check_box_pass.show()
@@ -276,10 +364,15 @@ def run_pbaWrite(button, ui, mode):
             pba_regex = 'PBA image version\s*:\s*(.+)'
             m1 = re.search(pba_regex, p)
             if m1:
+                if mode == 0:
+                    ui.admin_list[dev_idx] = password
                 pba_ver = m1.group(1)
                 ui.msg_ok("PBA image " + pba_ver + " written to " + ui.devname + " successfully.")
                 if mode == 0:
                     ui.pba_list[ui.setup_list[index]] = pba_ver
+                    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                    timeStr = timeStr[2:]
+                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
                 else:
                     ui.pba_list[ui.nonsetup_list[index]] = pba_ver
             if mode == 1:
@@ -296,15 +389,23 @@ def run_pbaWrite(button, ui, mode):
 def run_changePW(button, ui):
     index = ui.dev_select.get_active()
     old_hash = ""
+    
     if ui.VERSION % 2 == 1 and ui.check_pass_rd.get_active():
         old_hash = passReadUSB(ui, ui.dev_vendor.get_text(), ui.dev_sn.get_text())
         if old_hash == None or old_hash == 'x':
             ui.msg_err('No password found for the drive.')
             return
+    #elif ui.auth_menu.get_active() == 0 and len(ui.admin_list[ui.setup_list[index]]) == 64:
+    #    old_hash = ui.admin_list[ui.setup_list[index]]
+    #elif ui.auth_menu.get_active() == 0 and len(ui.user_list[ui.setup_list[index]]) == 64:
+    #    old_hash = ui.user_list[ui.setup_list[index]]
     else:
         old_pass = ui.pass_entry.get_text()
+        ui.pass_entry.set_text('')
         old_trim = re.sub('\s', '', old_pass)
+        old_pass = ''
         old_hash = lockhash.hash_pass(old_trim, ui.salt_list[ui.setup_list[index]], ui.dev_msid.get_text())
+        old_trim = ''
     new_pass = ui.new_pass_entry.get_text()
     new_pass_confirm = ui.confirm_pass_entry.get_text()
     
@@ -320,6 +421,8 @@ def run_changePW(button, ui):
         index = ui.dev_select.get_active()
         ui.devname = ui.devs_list[ui.setup_list[index]]
         new_hash = lockhash.hash_pass(ui.new_pass_entry.get_text(), ui.salt_list[ui.setup_list[index]], ui.dev_msid.get_text())
+        ui.new_pass_entry.set_text('')
+        ui.confirm_pass_entry.set_text('')
         ui.start_spin()
         ui.wait_instr.show()
         level = ui.auth_menu.get_active()
@@ -347,6 +450,10 @@ def run_changePW(button, ui):
                 else:
                     ui.msg_err("Error: Something went wrong. Error code: " + str(status))
             else :
+                if level == 0:
+                    ui.admin_list[ui.setup_list[index]] = new_hash
+                else:
+                    ui.user_list[ui.setup_list[index]] = new_hash
                 if ui.VERSION % 2 == 1 and ui.pass_sav.get_active():
                     passSaveUSB(ui)
                 t1.join()
@@ -354,11 +461,14 @@ def run_changePW(button, ui):
                 if ui.VERSION % 2 == 1 and level == 1:
                     timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
                     timeStr = timeStr[2:]
-                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t -u --auditwrite 10" + timeStr + " " + new_hash + " User1 " + ui.devname)
+                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t -u --auditwrite 03" + timeStr + " " + new_hash + " User1 " + ui.devname)
                     timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
                     timeStr = timeStr[2:]
-                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t -u --auditwrite 11" + timeStr + " " + new_hash + " User1 " + ui.devname)
+                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t -u --auditwrite 12" + timeStr + " " + new_hash + " User1 " + ui.devname)
                 elif ui.VERSION != 1:
+                    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                    timeStr = timeStr[2:]
+                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + new_hash + " Admin1 " + ui.devname)
                     timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
                     timeStr = timeStr[2:]
                     statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 10" + timeStr + " " + new_hash + " Admin1 " + ui.devname)
@@ -381,43 +491,47 @@ def run_changePW(button, ui):
         t1 = threading.Thread(target=t1_run, args=())
         t1.start()
         start_time = time.time()
-        t2 = threading.Thread(target=timeout_track, args=(ui, 10.0, start_time, t1))
+        t2 = threading.Thread(target=timeout_track, args=(ui, 15.0, start_time, t1))
         t2.start()
 
 def run_revertErase(button, ui):
     message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK_CANCEL)
     message.set_markup("Warning : Revert with password erase all data. Do you want to proceed?")
     res = message.run()
-    print message.get_widget_for_response(gtk.RESPONSE_OK)
-    print gtk.RESPONSE_OK
     if res == gtk.RESPONSE_OK :
+        message.destroy()
         messageA = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK_CANCEL)
         messageA.set_markup("Warning Warning Warning : Revert with password erase all data. Do you really want to proceed?")
         resA = messageA.run()
 
         if resA == gtk.RESPONSE_OK : 
             messageA.destroy()
-            message.destroy()
+            
             ui.start_spin()
             ui.wait_instr.show()
             password = ""
             index = ui.dev_select.get_active()
+            
             if ui.VERSION % 2 == 1 and ui.check_pass_rd.get_active():
                 password = passReadUSB(ui, ui.dev_vendor.get_text(), ui.dev_sn.get_text())
                 if password == None or password == 'x':
                     ui.msg_err('No password found for the drive.')
                     return
             else:
+                #if len(ui.admin_list[ui.setup_list[index]]) == 64:
+                #    password = ui.admin_list[ui.setup_list[index]]
+                #else:
                 password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[ui.setup_list[index]], ui.dev_msid.get_text())
+                ui.pass_entry.set_text('')
             def t1_run():
                 if password == None or password == 'x':
                     gobject.idle_add(cleanup, 0, 1)
                 else:
-                    
                     ui.devname = ui.devs_list[ui.setup_list[index]]
                     timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
                     timeStr = timeStr[2:]
                     if ui.VERSION != 1:
+                        statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
                         statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 15" + timeStr + " " + password + " Admin1 " + ui.devname)
                     status = os.system(ui.prefix + "sedutil-cli -n -t --revertTPer " + password + " " + ui.devname)
                     gobject.idle_add(cleanup, status)
@@ -435,37 +549,33 @@ def run_revertErase(button, ui):
                 else :
                     index = ui.dev_select.get_active()
                     dev_msid = ui.msid_list[ui.setup_list[index]]
-                    
+                    ui.admin_list[ui.setup_list[index]] = ''
+                    ui.user_list[ui.setup_list[index]] = ''
                     status = os.system(ui.prefix + "sedutil-cli -n -t --activate " + dev_msid + " " + ui.devname)
-                    
-                    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                    timeStr = timeStr[2:]
-                    statusAE = os.system(ui.prefix + "sedutil-cli -n -t --auditerase " + dev_msid + " Admin1 " + ui.devname)
-                    
                     if ui.VERSION != 1:
+                        statusAE = os.system(ui.prefix + "sedutil-cli -n -t --auditerase " + dev_msid + " Admin1 " + ui.devname)
                         timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
                         timeStr = timeStr[2:]
                         statusAW1 = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 05" + timeStr + " " + dev_msid + " Admin1 " + ui.devname)
-                        
-                        timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                        timeStr = timeStr[2:]
                         statusAW2 = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 08" + timeStr + " " + dev_msid + " Admin1 " + ui.devname)
-                        
-                        timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                        timeStr = timeStr[2:]
                         statusAW3 = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 01" + timeStr + " " + dev_msid + " Admin1 " + ui.devname)
                     ui.msg_ok("Device " + ui.devname + " successfully reverted with password.")
                     index = ui.dev_select.get_active()
-                    ui.query(1)
+                    ui.query(None,1)
                     ui.lockstatus_list[ui.setup_list[index]] = "Unlocked"
                     ui.setupstatus_list[ui.setup_list[index]] = "No"
+                    ui.pba_list[ui.setup_list[index]] = 'N/A'
                     ui.updateDevs(ui.setup_list[index],[4])
                     ui.returnToMain()
             t1 = threading.Thread(target=t1_run, args=())
             t1.start()
             start_time = time.time()
-            t2 = threading.Thread(target=timeout_track, args=(ui, 10.0, start_time, t1))
+            t2 = threading.Thread(target=timeout_track, args=(ui, 15.0, start_time, t1))
             t2.start()
+        else:
+            messageA.destroy()
+    else:
+        message.destroy()
         
 
 def run_revertPSID(button, ui):
@@ -475,13 +585,14 @@ def run_revertPSID(button, ui):
     print message.get_widget_for_response(gtk.RESPONSE_OK)
     print gtk.RESPONSE_OK
     if res == gtk.RESPONSE_OK :
+        message.destroy()
         messageA = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK_CANCEL)
         messageA.set_markup("Warning Warning Warning : Revert with PSID erase all data. Do you really want to proceed?")
         resA = messageA.run()
 
         if resA == gtk.RESPONSE_OK :
             messageA.destroy()
-            message.destroy()
+            
             ui.start_spin()
             ui.wait_instr.show()
             index = ui.dev_select.get_active()
@@ -517,71 +628,78 @@ def run_revertPSID(button, ui):
                         statusAW2 = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 01" + timeStr + " " + dev_msid + " Admin1 " + ui.devname)
                     ui.msg_ok("Device " + ui.devname + " successfully reverted with PSID.")
                     index = ui.dev_select.get_active()
-                    ui.query(1)
+                    ui.query(None,1)
                     ui.lockstatus_list[ui.tcg_list[index]] = "Unlocked"
                     ui.setupstatus_list[ui.tcg_list[index]] = "No"
+                    ui.admin_list[ui.tcg_list[index]] = ''
+                    ui.user_list[ui.tcg_list[index]] = ''
+                    ui.pba_list[ui.tcg_list[index]] = 'N/A'
                     ui.updateDevs(ui.tcg_list[index],[4])
                     ui.returnToMain()
             
             t1 = threading.Thread(target=t1_run, args=())
             t1.start()
             start_time = time.time()
-            t2 = threading.Thread(target=timeout_track, args=(ui, 10.0, start_time, t1))
+            t2 = threading.Thread(target=timeout_track, args=(ui, 15.0, start_time, t1))
             t2.start()
-
-def run_lockEnable(button, ui):
-    index = ui.dev_select.get_active()
-    ui.devname = ui.devs_list[ui.unlocked_list[index]]
-    ui.start_spin()
-    ui.wait_instr.show()
-    password = ""
-    if ui.VERSION == 3 and ui.check_pass_rd.get_active():
-        password = passReadUSB(ui, ui.dev_vendor.get_text(), ui.dev_sn.get_text())
-        if password == None or password == 'x':
-            ui.msg_err('No password found for the drive.')
-            return
-    else:
-        password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[ui.unlocked_list[index]], ui.dev_msid.get_text())
-    def t1_run():
-        
-        if password == None or password == 'x':
-            gobject.idle_add(cleanup, 1)
         else:
-            status1 =  os.system(ui.prefix + "sedutil-cli -n -t --enableLockingRange " + ui.LKRNG + " " 
-                    + password + " " + ui.devname )
-            status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRDone on " + password + " " + ui.devname )
-            status3 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable on " + password + " " + ui.devname )
-            status = status1 | status2 | status3
-            gobject.idle_add(cleanup, status)
-        
-    def cleanup(status):
-        ui.stop_spin()
-        t1.join()
-        if (status) != 0 :
-            ui.msg_err("Error while attempting to lock " + ui.devname + '.')
-        else :
-            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-            timeStr = timeStr[2:]
-            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
-            ui.msg_ok("Locking enabled on drive " + ui.devname + ".") 
-            
-            if ui.pba_list[ui.unlocked_list[index]] == 'N/A':
-                p = os.popen(ui.prefix + "sedutil-cli -n -t --pbaValid " + password + " " + ui.devname).read()
-                pba_regex = 'PBA image version\s*:\s*(.+)'
-                m1 = re.search(pba_regex, p)
-                if m1:
-                    pba_ver = m1.group(1)
-                    ui.pba_list[ui.unlocked_list[index]] = pba_ver
-            
-            ui.query(1)
-            
-            ui.returnToMain()
+            messageA.destroy()
+    else:
+        message.destroy()
 
-    t1 = threading.Thread(target=t1_run, args=())
-    t1.start()
-    start_time = time.time()
-    t2 = threading.Thread(target=timeout_track, args=(ui, 10.0, start_time, t1))
-    t2.start()
+#def run_lockEnable(button, ui):
+#    index = ui.dev_select.get_active()
+#    ui.devname = ui.devs_list[ui.unlocked_list[index]]
+#    ui.start_spin()
+#    ui.wait_instr.show()
+#    password = ""
+#    if ui.VERSION == 3 and ui.check_pass_rd.get_active():
+#        password = passReadUSB(ui, ui.dev_vendor.get_text(), ui.dev_sn.get_text())
+#        if password == None or password == 'x':
+#            ui.msg_err('No password found for the drive.')
+#            return
+#    else:
+#        password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[ui.unlocked_list[index]], ui.dev_msid.get_text())
+#    def t1_run():
+#        
+#        if password == None or password == 'x':
+#            gobject.idle_add(cleanup, 1)
+#        else:
+#            status1 =  os.system(ui.prefix + "sedutil-cli -n -t --enableLockingRange " + ui.LKRNG + " " 
+#                    + password + " " + ui.devname )
+#            status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRDone on " + password + " " + ui.devname )
+#            status3 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable on " + password + " " + ui.devname )
+#            status = status1 | status2 | status3
+#            gobject.idle_add(cleanup, status)
+#        
+#    def cleanup(status):
+#        ui.stop_spin()
+#        t1.join()
+#        if (status) != 0 :
+#            ui.msg_err("Error while attempting to lock " + ui.devname + '.')
+#        else :
+#            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+#            timeStr = timeStr[2:]
+#            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
+#            ui.msg_ok("Locking enabled on drive " + ui.devname + ".") 
+#            
+#            if ui.pba_list[ui.unlocked_list[index]] == 'N/A':
+#                p = os.popen(ui.prefix + "sedutil-cli -n -t --pbaValid " + password + " " + ui.devname).read()
+#                pba_regex = 'PBA image version\s*:\s*(.+)'
+#                m1 = re.search(pba_regex, p)
+#                if m1:
+#                    pba_ver = m1.group(1)
+#                    ui.pba_list[ui.unlocked_list[index]] = pba_ver
+#            
+#            ui.query(None,1)
+#            
+#            ui.returnToMain()
+#
+#    t1 = threading.Thread(target=t1_run, args=())
+#    t1.start()
+#    start_time = time.time()
+#    t2 = threading.Thread(target=timeout_track, args=(ui, 15.0, start_time, t1))
+#    t2.start()
     
 def run_lockDrive(button, ui):
     index = ui.dev_select.get_active()
@@ -594,8 +712,11 @@ def run_lockDrive(button, ui):
         if password == None or password == 'x':
             ui.msg_err('No password found for the drive.')
             return
+    #elif len(ui.admin_list[ui.unlocked_list[index]]) == 64:
+    #    password = ui.admin_list[ui.unlocked_list[index]]
     else:
         password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[ui.unlocked_list[index]], ui.dev_msid.get_text())
+        ui.pass_entry.set_text('')
     def t1_run():
         
         if password == None or password == 'x':
@@ -620,11 +741,13 @@ def run_lockDrive(button, ui):
         if (status) != 0 :
             ui.msg_err("Error while attempting to lock " + ui.devname + '.')
         else :
+            if len(ui.admin_list[ui.unlocked_list[index]]) != 64:
+                ui.admin_list[ui.unlocked_list[index]] = password
             timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             timeStr = timeStr[2:]
             statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
             if mode == 1:
-                ui.msg_ok("Drive " + ui.devname + "locked successfully.") 
+                ui.msg_ok("Drive " + ui.devname + " locked successfully.") 
                 ui.lockstatus_list[ui.unlocked_list[index]] = "Locked"
             else:
                 ui.msg_ok("Locking enabled on drive " + ui.devname + " but not locked. Power cycle the drive to lock the drive.") 
@@ -637,7 +760,7 @@ def run_lockDrive(button, ui):
                     pba_ver = m1.group(1)
                     ui.pba_list[ui.unlocked_list[index]] = pba_ver
             
-            ui.query(1)
+            ui.query(None,1)
             if mode == 1:
                 ui.updateDevs(ui.unlocked_list[index],[1,2])
             ui.returnToMain()
@@ -645,7 +768,7 @@ def run_lockDrive(button, ui):
     t1 = threading.Thread(target=t1_run, args=())
     t1.start()
     start_time = time.time()
-    t2 = threading.Thread(target=timeout_track, args=(ui, 10.0, start_time, t1))
+    t2 = threading.Thread(target=timeout_track, args=(ui, 15.0, start_time, t1))
     t2.start()
 
 def run_unlockPBA(button, ui, reboot):
@@ -658,8 +781,13 @@ def run_unlockPBA(button, ui, reboot):
         if password == None or password == 'x':
             ui.msg_err('No password found for the drive.')
             return
+    #elif ui.auth_menu.get_active() == 0 and len(ui.admin_list[ui.locked_list[index]]) == 64:
+    #    password = ui.admin_list[ui.locked_list[index]]
+    #elif ui.auth_menu.get_active() == 1 and len(ui.user_list[ui.locked_list[index]]) == 64:
+    #    password = ui.user_list[ui.locked_list[index]]
     else:
         password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[ui.locked_list[index]], ui.dev_msid.get_text())
+        ui.pass_entry.set_text('')
     ui.start_spin()
     ui.wait_instr.show()
     def t1_run():
@@ -684,13 +812,17 @@ def run_unlockPBA(button, ui, reboot):
             timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             timeStr = timeStr[2:]
             if ui.VERSION == 3 and ui.auth_menu.get_active() == 1:
-                statusAW = os.system(ui.prefix + "sedutil-cli -n -t -u --auditwrite 02" + timeStr + " " + password + " User1 " + ui.devname)
+                statusAW = os.system(ui.prefix + "sedutil-cli -n -t -u --auditwrite 03" + timeStr + " " + password + " User1 " + ui.devname)
             elif ui.VERSION != 1:
                 statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
 
             if reboot:
                 ui.reboot()
             else:
+                if ui.auth_menu.get_active() == 0 and len(ui.admin_list[ui.locked_list[index]]) != 64:
+                    ui.admin_list[ui.locked_list[index]] = password
+                elif ui.auth_menu.get_active() == 1 and len(ui.user_list[ui.locked_list[index]]) != 64:
+                    ui.user_list[ui.locked_list[index]] = password
                 ui.msg_ok(ui.devname + " preboot unlocked successfully.")
                 if ui.auth_menu.get_active() != 1 and ui.pba_list[ui.locked_list[index]] == 'N/A':
                     p = os.popen(ui.prefix + "sedutil-cli -n -t --pbaValid " + password + " " + ui.devname).read()
@@ -700,7 +832,7 @@ def run_unlockPBA(button, ui, reboot):
                         pba_ver = m1.group(1)
                         ui.pba_list[ui.locked_list[index]] = pba_ver
                 
-                ui.query(1)
+                ui.query(None,1)
                 ui.lockstatus_list[ui.locked_list[index]] = "Unlocked"
                 
                 ui.updateDevs(ui.locked_list[index],[2,3])
@@ -709,7 +841,7 @@ def run_unlockPBA(button, ui, reboot):
     t1 = threading.Thread(target=t1_run, args=())
     t1.start()
     start_time = time.time()
-    t2 = threading.Thread(target=timeout_track, args=(ui, 10.0, start_time, t1))
+    t2 = threading.Thread(target=timeout_track, args=(ui, 15.0, start_time, t1))
     t2.start()
 
 def run_revertKeep(button, ui):
@@ -718,14 +850,17 @@ def run_revertKeep(button, ui):
     ui.start_spin()
     ui.wait_instr.show()
     password = ''
+    dev_msid = ui.dev_msid.get_text()
     if ui.VERSION % 2 == 1 and ui.check_pass_rd.get_active():
         password = passReadUSB(ui, ui.dev_vendor.get_text(), ui.dev_sn.get_text())
         if password == None or password == 'x':
             ui.msg_err('No password found for the drive.')
             return
+    #elif len(ui.admin_list[ui.setup_list[index]]) == 64:
+    #    password = ui.admin_list[ui.setup_list[index]]
     else:
-        password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[ui.setup_list[index]], ui.dev_msid.get_text())
-    
+        password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[ui.setup_list[index]], dev_msid)
+        ui.pass_entry.set_text('')
     def t1_run():
         if password == None or password == 'x':
             gobject.idle_add(cleanup, 1, 0)
@@ -733,13 +868,28 @@ def run_revertKeep(button, ui):
         timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
         timeStr = timeStr[2:]
         statusAW = -1
+        
         if ui.VERSION != 1:
+            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
             statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 13" + timeStr + " " + password + " Admin1 " + ui.devname)
         if statusAW == 0 or ui.VERSION == 1:
             status1 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRdone on " + password + " " + ui.devname )
             status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setLockingRange " + ui.LKRNG + " " 
                     + ui.LKATTR + " " + password + " " + ui.devname)
             status = os.system(ui.prefix + "sedutil-cli -n -t --revertnoerase " + password + " " + ui.devname)
+            if status == ui.NOT_AUTHORIZED :
+                ui.msg_err("Error: Invalid password, try again.")
+            elif status == ui.AUTHORITY_LOCKED_OUT :
+                ui.msg_err("Error: Locked out due to multiple failed attempts.  Please reboot and try again.")
+            else :
+                p0 = os.popen(ui.prefix + "sedutil-cli --query " + ui.devname).read()
+                txtLE = "LockingEnabled = N"
+                le_check = re.search(txtLE, p0)
+                if le_check:
+                    index = ui.dev_select.get_active()
+                    status = os.system(ui.prefix + "sedutil-cli -n -t --revertTPer " + password + " " + ui.devname)
+                    if status == 0:
+                        status = os.system(ui.prefix + "sedutil-cli -n -t --activate " + dev_msid + " " + ui.devname)
             gobject.idle_add(cleanup, status)
         else:
             gobject.idle_add(cleanup, statusAW)
@@ -747,101 +897,95 @@ def run_revertKeep(button, ui):
     def cleanup(status):
         ui.stop_spin()
         t1.join()
-        if status == ui.NOT_AUTHORIZED :
-            ui.msg_err("Error: Invalid password, try again.")
-        elif status == ui.AUTHORITY_LOCKED_OUT :
-            ui.msg_err("Error: Locked out due to multiple failed attempts.  Please reboot and try again.")
-        else :
-            p0 = os.popen(ui.prefix + "sedutil-cli --query " + ui.devname).read()
-            txtLE = "LockingEnabled = N"
-            le_check = re.search(txtLE, p0)
-            if le_check:
-                index = ui.dev_select.get_active()
-                dev_msid = ui.msid_list[ui.setup_list[index]]
-                p1 = os.system(ui.prefix + "sedutil-cli -n -t --revertTPer " + password + " " + ui.devname)
-                status = os.system(ui.prefix + "sedutil-cli -n -t --activate " + dev_msid + " " + ui.devname)
-                if ui.VERSION != 1:
-                    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                    timeStr = timeStr[2:]
-                    statusAW1 = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 04" + timeStr + " " + dev_msid + " Admin1 " + ui.devname)
-                    
-                    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                    timeStr = timeStr[2:]
-                    statusAW2 = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 01" + timeStr + " " + dev_msid + " Admin1 " + ui.devname)
-                ui.msg_ok("Device " + ui.devname + " successfully reverted with password.")
-                index = ui.dev_select.get_active()
-                ui.query(1)
-                ui.lockstatus_list[ui.setup_list[index]] = "Unlocked"
-                ui.setupstatus_list[ui.setup_list[index]] = "No"
-                ui.updateDevs(ui.setup_list[index],[4])
-                ui.returnToMain()
-            else:
-                ui.msg_err("Error: Revert failed.")
+        if status == 0:
+            if ui.VERSION != 1:
+                timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                timeStr = timeStr[2:]
+                
+                statusAW1 = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 04" + timeStr + " " + dev_msid + " Admin1 " + ui.devname)
+                
+                timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                timeStr = timeStr[2:]
+                statusAW2 = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 01" + timeStr + " " + dev_msid + " Admin1 " + ui.devname)
+            ui.msg_ok("Device " + ui.devname + " successfully reverted with password.")
+            index = ui.dev_select.get_active()
+            ui.query(None,1)
+            ui.lockstatus_list[ui.setup_list[index]] = "Unlocked"
+            ui.setupstatus_list[ui.setup_list[index]] = "No"
+            ui.admin_list[ui.setup_list[index]] = ''
+            ui.user_list[ui.setup_list[index]] = ''
+            ui.pba_list[ui.setup_list[index]] = 'N/A'
+            ui.updateDevs(ui.setup_list[index],[4])
+            ui.returnToMain()
+        else:
+            ui.msg_err("Error: Revert failed.")
     t1 = threading.Thread(target=t1_run, args=())
     t1.start()
     start_time = time.time()
     t2 = threading.Thread(target=timeout_track, args=(ui, 15.0, start_time, t1))
     t2.start()
 
-def run_disableLock(button, ui):
-    index = ui.dev_select.get_active()
-    ui.devname = ui.devs_list[ui.setup_list[index]]
-    password = ""
-    if ui.VERSION == 3 and ui.check_pass_rd.get_active():
-        password = passReadUSB(ui, ui.dev_vendor.get_text(), ui.dev_sn.get_text())
-        if password == None or password == 'x':
-            ui.msg_err('No password found for the drive.')
-            return
-    else:
-        password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[ui.setup_list[index]], ui.dev_msid.get_text())
-    ui.start_spin()
-    ui.wait_instr.show()
-    
-    def t1_run():
-        if password == None or password == 'x':
-            gobject.idle_add(cleanup, 1)
-        else:
-            status1 =  os.system(ui.prefix + "sedutil-cli -n -t --disableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
-            status3 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable off " + password + " " + ui.devname )
-            gobject.idle_add(cleanup, status1 | status2)
-    
-    def cleanup(status):
-        ui.stop_spin()
-        t1.join()
-        if status != 0 :
-            ui.msg_err("Error: Partial unlock failed")
-            ui.op_instr.show()
-            ui.box_pass.show()
-            ui.check_box_pass.show()
-            ui.unlockPartial_button.show()
-            ui.go_button_cancel.show()
-        else :
-            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-            timeStr = timeStr[2:]
-            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
-            ui.msg_ok("Partial unlock completed")
-            
-            if ui.pba_list[ui.setup_list[index]] == 'N/A':
-                p = os.popen(ui.prefix + "sedutil-cli -n -t --pbaValid " + password + " " + ui.devname).read()
-                pba_regex = 'PBA image version\s*:\s*(.+)'
-                m1 = re.search(pba_regex, p)
-                if m1:
-                    pba_ver = m1.group(1)
-                    ui.pba_list[ui.setup_list[index]] = pba_ver
-            
-            ui.query(1)
-            if ui.setup_list[index] in ui.locked_list:
-                ui.lockstatus_list[ui.setup_list[index]] = "Unlocked"
-                ui.updateDevs(ui.setup_list[index],[2,3])
-            ui.returnToMain()
-            
-    t1 = threading.Thread(target=t1_run, args=())
-    t1.start()
-    start_time = time.time()
-    t2 = threading.Thread(target=timeout_track, args=(ui, 10.0, start_time, t1))
-    t2.start()
+#def run_disableLock(button, ui):
+#    index = ui.dev_select.get_active()
+#    ui.devname = ui.devs_list[ui.setup_list[index]]
+#    password = ""
+#    if ui.VERSION == 3 and ui.check_pass_rd.get_active():
+#        password = passReadUSB(ui, ui.dev_vendor.get_text(), ui.dev_sn.get_text())
+#        if password == None or password == 'x':
+#            ui.msg_err('No password found for the drive.')
+#            return
+#    else:
+#        password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[ui.setup_list[index]], ui.dev_msid.get_text())
+#    ui.start_spin()
+#    ui.wait_instr.show()
+#    
+#    def t1_run():
+#        if password == None or password == 'x':
+#            gobject.idle_add(cleanup, 1)
+#        else:
+#            status1 =  os.system(ui.prefix + "sedutil-cli -n -t --disableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
+#            status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable off " + password + " " + ui.devname )
+#            gobject.idle_add(cleanup, status1 | status2)
+#    
+#    def cleanup(status):
+#        ui.stop_spin()
+#        t1.join()
+#        if status != 0 :
+#            ui.msg_err("Error: Partial unlock failed")
+#            ui.op_instr.show()
+#            ui.box_pass.show()
+#            ui.check_box_pass.show()
+#            ui.unlockPartial_button.show()
+#            ui.go_button_cancel.show()
+#        else :
+#            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+#            timeStr = timeStr[2:]
+#            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
+#            ui.msg_ok("Partial unlock completed")
+#            
+#            if ui.pba_list[ui.setup_list[index]] == 'N/A':
+#                p = os.popen(ui.prefix + "sedutil-cli -n -t --pbaValid " + password + " " + ui.devname).read()
+#                pba_regex = 'PBA image version\s*:\s*(.+)'
+#                m1 = re.search(pba_regex, p)
+#                if m1:
+#                    pba_ver = m1.group(1)
+#                    ui.pba_list[ui.setup_list[index]] = pba_ver
+#            
+#            ui.query(None,1)
+#            if ui.setup_list[index] in ui.locked_list:
+#                ui.lockstatus_list[ui.setup_list[index]] = "Unlocked"
+#                ui.updateDevs(ui.setup_list[index],[2,3])
+#            ui.returnToMain()
+#            
+#    t1 = threading.Thread(target=t1_run, args=())
+#    t1.start()
+#    start_time = time.time()
+#    t2 = threading.Thread(target=timeout_track, args=(ui, 15.0, start_time, t1))
+#    t2.start()
 
-def run_unlockUSB(button, ui):
+def run_unlockUSB(button, ui, mode, msg):
+    if msg:
+        msg.destroy()
     folder_list = []
     dev_os = platform.system()
     if dev_os == 'Windows':
@@ -853,22 +997,38 @@ def run_unlockUSB(button, ui):
         txt = os.popen(ui.prefix + 'mount').read()
         dev_regex = '/dev/sd[b-z][1-9]?\s*on\s*(\S+)\s*type'
         drive_list = re.findall(dev_regex, txt)
+        txt2 = os.popen(ui.prefix + 'blkid').read()
+        dev_regex2 = '(/dev/sd[b-z][1-9]?.+)'
+        all_list = re.findall(dev_regex2, txt2)
+        r1 = '/dev/sd[b-z][1-9]?'
+        r2 = 'TYPE="([a-z]+)"'
+        for a in all_list:
+            m1 = re.search(r1,a)
+            m2 = re.search(r2,a)
+            dev_a = m1.group(0)
+            type_a = m2.group(1)
+            if dev_a not in drive_list:
+                s = os.system(ui.prefix + 'mount -t ' + type_a + ' ' + dev_a)
+        txt = os.popen(ui.prefix + 'mount').read()
+        dev_regex = '/dev/sd[b-z][1-9]?\s*on\s*(\S+)\s*type'
+        drive_list = re.findall(dev_regex, txt)
         for d in drive_list:
             if os.path.isdir('%s/FidelityLock' % d):
                 folder_list.append(d)
     if len(folder_list) == 0:
-        msg_err('No password files found, check to make sure the USB is properly inserted.')
+        ui.msg_err('No password files found, check to make sure the USB is mounted.')
     else:
         ui.start_spin()
         ui.wait_instr.show()
         def t1_run():
             dev_unlocked = []
+            dev_failed = []
             for i in ui.locked_list:
                 pw = passReadUSB(ui, ui.vendor_list[i], ui.sn_list[i])
                 if pw == None:
-                    ui.msg_err('No password found.')
-                    break
-                elif pw != 'x':
+                    ui.auth_menu.set_active(1)
+                    pw = passReadUSB(ui, ui.vendor_list[i], ui.sn_list[i])
+                if pw != 'x':
                     ui.LKATTR = "RW"
                     ui.LKRNG = "0"
                     status1 = ''
@@ -885,7 +1045,10 @@ def run_unlockUSB(button, ui):
                         timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
                         timeStr = timeStr[2:]
                         if ui.VERSION != 1:
-                            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + pw + " Admin1 " + ui.devs_list[i])
+                            if ui.auth_menu.get_active() == 0:
+                                statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + pw + " Admin1 " + ui.devs_list[i])
+                            else:
+                                statusAW = os.system(ui.prefix + "sedutil-cli -n -t -u --auditwrite 03" + timeStr + " " + pw + " User1 " + ui.devs_list[i])
                         dev_unlocked.append(i)
                         
                         if ui.auth_menu.get_active() != 1 and ui.pba_list[i] == 'N/A':
@@ -895,22 +1058,41 @@ def run_unlockUSB(button, ui):
                             if m1:
                                 pba_ver = m1.group(1)
                                 ui.pba_list[i] = pba_ver
-                        
-            gobject.idle_add(cleanup, dev_unlocked)
+                    else:
+                        dev_failed.append(i)
+                ui.auth_menu.set_active(0)
+            gobject.idle_add(cleanup, dev_unlocked, mode)
             
-        def cleanup(dev_unlocked):
+        def cleanup(dev_unlocked, mode):
             if len(dev_unlocked) == 0:
                 ui.msg_err('No drives were unlocked.')
+                return 0
+            elif mode == 0:
+                if len(dev_failed) == 0:
+                    txt = 'The following drives were unlocked: '
+                    for j in range(len(dev_unlocked) - 1):
+                        txt = txt + ui.devs_list[dev_unlocked[j]] + ', '
+                    txt = txt + ui.devs_list[dev_unlocked[len(dev_unlocked) - 1]]
+                    ui.msg_ok(txt)
+                    for i in dev_unlocked:
+                        ui.lockstatus_list[i] = "Unlocked"
+                        ui.updateDevs(i,[2,3])
+                    ui.returnToMain()
+                else:
+                    txt = 'The following drives were not successfully unlocked: '
+                    for i in range(len(dev_failed) - 1):
+                        txt = txt + ui.devs_list[dev_failed[i]] + ', '
+                    txt = txt + ui.devs_list[dev_failed[len(dev_failed) - 1]] + '\n'
+                    txt = 'The following drives were unlocked: '
+                    for j in range(len(dev_unlocked) - 1):
+                        txt = txt + ui.devs_list[dev_unlocked[j]] + ', '
+                    txt = txt + ui.devs_list[dev_unlocked[len(dev_unlocked) - 1]]
+                    ui.msg_err(txt)
+                    for i in dev_unlocked:
+                        ui.lockstatus_list[i] = "Unlocked"
+                        ui.updateDevs(i,[2,3])
             else:
-                txt = 'The following drives were unlocked: '
-                for j in range(len(dev_unlocked) - 1):
-                    txt = txt + ui.devs_list[dev_unlocked[j]] + ','
-                txt = txt + dev_unlocked[len(dev_unlocked) - 1]
-                ui.msg_ok(txt)
-                for i in dev_unlocked:
-                    ui.lockstatus_list[i] = "Unlocked"
-                    ui.updateDevs(i,[2,3])
-                ui.returnToMain()
+                ui.reboot()
                 
         t1 = threading.Thread(target=t1_run, args=())
         t1.start()
@@ -929,6 +1111,21 @@ def passReadUSB(ui, model, sn, *args):
                 if os.path.isdir('%s:\\FidelityLock' % drive):
                     folder_list.append(drive)
     elif dev_os == 'Linux':
+        txt = os.popen(ui.prefix + 'mount').read()
+        dev_regex = '/dev/sd[b-z][1-9]?\s*on\s*(\S+)\s*type'
+        drive_list = re.findall(dev_regex, txt)
+        txt2 = os.popen(ui.prefix + 'blkid').read()
+        dev_regex2 = '(/dev/sd[b-z][1-9]?.+)'
+        all_list = re.findall(dev_regex2, txt2)
+        r1 = '/dev/sd[b-z][1-9]?'
+        r2 = 'TYPE="([a-z]+)"'
+        for a in all_list:
+            m1 = re.search(r1,a)
+            m2 = re.search(r2,a)
+            dev_a = m1.group(0)
+            type_a = m2.group(1)
+            if dev_a not in drive_list:
+                s = os.system(ui.prefix + 'mount -t ' + type_a + ' ' + dev_a)
         txt = os.popen(ui.prefix + 'mount').read()
         dev_regex = '/dev/sd[b-z][1-9]?\s*on\s*(\S+)\s*type'
         drive_list = re.findall(dev_regex, txt)
@@ -992,12 +1189,16 @@ def passSaveUSB(ui, *args):
                 if ui.auth_menu.get_active_text() != e[1]:
                     f.write('\n' + e[0])
             f.write('\n\nTimestamp: ' + timestamp + '\n' + ui.auth_menu.get_active_text() + ': ' + lockhash.hash_pass(ui.new_pass_entry.get_text(), salt, ui.dev_msid.get_text()))
+            ui.new_pass_entry.set_text('')
+            ui.confirm_pass_entry.set_text('')
             f.truncate()
             f.close()
         else:
             f = open(path, 'w')
             f.write('Model Number: ' + ui.dev_vendor.get_text() + '\nSerial Number: ' + ui.dev_sn.get_text() + '\n')
             f.write('\nTimestamp: ' + timestamp + '\n' + ui.auth_menu.get_active_text() + ': ' + lockhash.hash_pass(ui.new_pass_entry.get_text(), salt, ui.dev_msid.get_text()))
+            ui.new_pass_entry.set_text('')
+            ui.confirm_pass_entry.set_text('')
             f.close()
 
 def run_setupUser(button, ui):
@@ -1022,10 +1223,14 @@ def run_setupUser(button, ui):
             if password_a == None or password_a == 'x':
                 ui.msg_err('No password found for the drive.')
                 return
+        #elif len(ui.admin_list[ui.setup_list[index]]) == 64:
+        #    password_a = ui.admin_list[ui.setup_list[index]]
         else:
             password_a = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[ui.setup_list[index]], ui.dev_msid.get_text())
+            ui.pass_entry.set_text('')
         password_u = lockhash.hash_pass(ui.new_pass_entry.get_text(), ui.salt_list[ui.setup_list[index]], ui.dev_msid.get_text())
-        
+        ui.new_pass_entry.set_text('')
+        ui.confirm_pass_entry.set_text('')
         ui.start_spin()
         ui.wait_instr.show()
         
@@ -1048,17 +1253,23 @@ def run_setupUser(button, ui):
                 ui.check_box_pass.show()
                 ui.go_button_cancel.show()
             else : 
-                if ui.VERSION == 3 and ui.pass_sav.get_active():
-                    ui.auth_menu.set_active(1)
-                    passSaveUSB(ui)
-                ui.query(1)
+                if ui.VERSION == 3:
+                    if ui.pass_sav.get_active():
+                        ui.auth_menu.set_active(1)
+                        passSaveUSB(ui)
+                    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                    timeStr = timeStr[2:]
+                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password_a + " Admin1 " + ui.devname)
+                    statusAW1 = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 12" + timeStr + " " + password_a + " Admin1 " + ui.devname)
+                ui.query(None,1)
+                ui.user_list[ui.setup_list[index]] = password_u
                 ui.msg_ok("User Password for " + ui.devname + " set up successfully.")
                 ui.returnToMain()
                     
         t1 = threading.Thread(target=t1_run, args=())
         t1.start()
         start_time = time.time()
-        t2 = threading.Thread(target=timeout_track, args=(ui, 10.0, start_time, t1))
+        t2 = threading.Thread(target=timeout_track, args=(ui, 15.0, start_time, t1))
         t2.start()
         
 def run_setupUSB(button, ui, *args):
@@ -1097,39 +1308,32 @@ def run_setupUSB(button, ui, *args):
         
 
 def openLog(button, ui, *args):
-    columns = ["Level", "Date and Time", "Event ID", "Event Description"]
-    ui.auditEntries = []
-    ui.errorEntries = []
-    ui.warnerrEntries = []
-
-    logWin = gtk.Window()
-    logWin.set_border_width(10)
-    logWin.set_default_size(500, 500)
-    logWin.set_title("Audit Log")
-    if os.path.isfile('icon.jpg'):
-        logWin.set_icon_from_file('icon.jpg')
-    vbox = gtk.VBox()
-    logWin.add(vbox)
-    
-    ui.listStore = gtk.ListStore(str, str, int, str)
-    
     index = ui.dev_select.get_active()
-    ui.devname = ui.devs_list[index]
+    ui.devname = ui.devs_list[ui.tcg_list[index]]
     password = ""
     if ui.VERSION == 3 and ui.check_pass_rd.get_active():
         password = passReadUSB(ui, ui.dev_vendor.get_text(), ui.dev_sn.get_text())
         if password == None or password == 'x':
             ui.msg_err('No password found for the drive.')
             return
+    #elif ui.auth_menu.get_active() == 0 and len(ui.admin_list[ui.tcg_list[index]]) == 64:
+    #    password = ui.admin_list[ui.tcg_list[index]]
+    #elif ui.auth_menu.get_active() == 1 and len(ui.user_list[ui.tcg_list[index]]) == 64:
+    #    password = ui.user_list[ui.tcg_list[index]]
     else:
         password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[ui.tcg_list[index]], ui.dev_msid.get_text())
+        ui.pass_entry.set_text('')
     txt = ""
     if ui.VERSION == 3:
         auth_level = ui.auth_menu.get_active()
+        timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        timeStr = timeStr[2:]
         if auth_level == 0:
             txt = os.popen(ui.prefix + "sedutil-cli -n -t -u --auditread " + password + " Admin1 " + ui.devname ).read()
+            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 02" + timeStr + " " + password + " Admin1 " + ui.devname)
         else:
             txt = os.popen(ui.prefix + "sedutil-cli -n -t -u --auditread " + password + " User1 " + ui.devname ).read()
+            statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 03" + timeStr + " " + password + " User1 " + ui.devname)
     else:
         txt = os.popen(ui.prefix + "sedutil-cli -n -t --auditread " + password + " Admin1 " + ui.devname ).read()
     print txt
@@ -1138,6 +1342,26 @@ def openLog(button, ui, *args):
     if txt == "Invalid Audit Signature or No Audit Entry log\n" or not a:
         ui.msg_err("Invalid Audit Signature or No Audit Entry Log or Read Error")
     else:
+        if ui.auth_menu.get_active() == 0 and len(ui.admin_list[ui.tcg_list[index]]) != 64:
+            ui.admin_list[ui.tcg_list[index]] = password
+        elif ui.auth_menu.get_active() == 1 and len(ui.user_list[ui.tcg_list[index]]) != 64:
+            ui.user_list[ui.tcg_list[index]] = password
+        columns = ["Level", "Date and Time", "Event ID", "Event Description"]
+        ui.auditEntries = []
+        ui.errorEntries = []
+        ui.warnerrEntries = []
+
+        logWin = gtk.Window()
+        logWin.set_border_width(10)
+        logWin.set_default_size(500, 500)
+        logWin.set_title("Audit Log")
+        if os.path.isfile('icon.jpg'):
+            logWin.set_icon_from_file('icon.jpg')
+        vbox = gtk.VBox()
+        logWin.add(vbox)
+        
+        ui.listStore = gtk.ListStore(str, str, int, str)
+    
         numEntries = int(a.group(1))
         logList = a.group(2).split('\n')
         auditRegex = "([0-9]+/[0-9]+/[0-9]+\s+[0-9]+:[0-9]+:[0-9]+)\s+([0-9]+)"
@@ -1160,42 +1384,47 @@ def openLog(button, ui, *args):
         for i in range(len(ui.auditEntries)):
             ui.listStore.append(ui.auditEntries[i])
     
-    treeView = gtk.TreeView(model=ui.listStore)
-    
-    for i in range(len(columns)):
-        cell = gtk.CellRendererText()
-        col = gtk.TreeViewColumn(columns[i], cell, text=i)
-        if i < 3:
-            col.set_sort_column_id(gtk.SORT_DESCENDING)
-            col.set_sort_indicator(True)
-        treeView.append_column(col)
-    
-    vbox.pack_start(treeView)
-    
-    halign = gtk.Alignment(1,0,0,0)
-    filter_box = gtk.HBox(False, 0)
-    
-    ui.viewAll_button = gtk.Button('View all entries')
-    ui.viewAll_button.connect("clicked", filterLog, ui, ui.auditEntries, 0)
-    ui.viewAll_button.set_sensitive(False)
-    filter_box.pack_start(ui.viewAll_button, False, False, 5)
-    
-    ui.viewWarnErr_button = gtk.Button('View Warnings & Errors')
-    ui.viewWarnErr_button.connect("clicked", filterLog, ui, ui.warnerrEntries, 1)
-    filter_box.pack_start(ui.viewWarnErr_button, False, False, 5)
-    
-    ui.viewErr_button = gtk.Button('View Errors')
-    ui.viewErr_button.connect("clicked", filterLog, ui, ui.errorEntries, 2)
-    filter_box.pack_start(ui.viewErr_button, False, False, 5)
-    
-    #ui.eraseLog_button = gtk.Button('Erase the device\'s entire log')
-    #ui.eraseLog_button.connect("clicked", eraseLog, ui)
-    #filter_box.pack_start(ui.eraseLog_button, False, False, 5)
-    
-    halign.add(filter_box)
-    vbox.pack_start(halign, False, False, 0)
-    
-    logWin.show_all()
+        treeView = gtk.TreeView(model=ui.listStore)
+        
+        
+        for i in range(len(columns)):
+            cell = gtk.CellRendererText()
+            col = gtk.TreeViewColumn(columns[i], cell, text=i)
+            if i < 3:
+                col.set_sort_column_id(gtk.SORT_DESCENDING)
+                col.set_sort_indicator(True)
+            treeView.append_column(col)
+            
+        scrolledWin = gtk.ScrolledWindow()
+        scrolledWin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        scrolledWin.add_with_viewport(treeView)
+        
+        vbox.pack_start(scrolledWin)
+        
+        halign = gtk.Alignment(1,0,0,0)
+        filter_box = gtk.HBox(False, 0)
+        
+        ui.viewAll_button = gtk.Button('View all entries')
+        ui.viewAll_button.connect("clicked", filterLog, ui, ui.auditEntries, 0)
+        ui.viewAll_button.set_sensitive(False)
+        filter_box.pack_start(ui.viewAll_button, False, False, 5)
+        
+        ui.viewWarnErr_button = gtk.Button('View Warnings & Errors')
+        ui.viewWarnErr_button.connect("clicked", filterLog, ui, ui.warnerrEntries, 1)
+        filter_box.pack_start(ui.viewWarnErr_button, False, False, 5)
+        
+        ui.viewErr_button = gtk.Button('View Errors')
+        ui.viewErr_button.connect("clicked", filterLog, ui, ui.errorEntries, 2)
+        filter_box.pack_start(ui.viewErr_button, False, False, 5)
+        
+        #ui.eraseLog_button = gtk.Button('Erase the device\'s entire log')
+        #ui.eraseLog_button.connect("clicked", eraseLog, ui)
+        #filter_box.pack_start(ui.eraseLog_button, False, False, 5)
+        
+        halign.add(filter_box)
+        vbox.pack_start(halign, False, False, 0)
+        
+        logWin.show_all()
     
 def filterLog(button, ui, entries, mode):
     ui.listStore.clear()

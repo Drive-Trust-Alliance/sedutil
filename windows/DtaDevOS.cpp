@@ -92,12 +92,16 @@ void DtaDevOS::init(const char * devref)
 		LOG(D1) << "Return from DtaDiskATA bus type case";
 		break;
 	case BusTypeUsb:
+		LOG(D1) << "Enter USB bus type case";
 		disk = new DtaDiskUSB();
 		break;
 	case BusTypeNvme:
 		LOG(D1) << "Enter Nvme bus type case";
 		disk = new DtaDiskNVME();
-		LOG(D1) << "Return from DtaDiskNVME";
+		break;
+	case BusTypeRAID:
+		LOG(D1) << "Enter RAID bus type case";
+		disk = new DtaDiskUSB();
 		break;
 	default:
 		return;
