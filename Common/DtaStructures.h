@@ -421,7 +421,8 @@ public:
     uint16_t        m_AllocationLength;                     //  3
     uint8_t         m_Control;                              //  5
 } ;                                  //  6
-/*
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#else
 ////////////////////////////////////////////////////////////////////////////////
 class CScsiCmdInquiry_StandardData
 ////////////////////////////////////////////////////////////////////////////////
@@ -464,8 +465,7 @@ public:
     uint8_t         m_ProductId[16];                        // 16
     uint8_t         m_ProductRevisionLevel[4];              // 32
 };                                  // 36
-*/
-
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 class CScsiCmdSecurityProtocolIn
