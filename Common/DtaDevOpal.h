@@ -252,7 +252,12 @@ public:
          * Specific to the SSC that the device supports
          * @param password the password that is to be assigned to the SSC master entities 
          */
+		 // create an hiden user UserN disk_info.OPAL20_numUsers
+	void DtaDevOpal::gethuser(char * buf);
+	uint8_t setLockonReset(uint8_t lockingrange, bool enable, char * password);
+	uint8_t setuphuser(char * password);
 	uint8_t initialSetup(char * password);
+
 	//uint8_t initialsetup(char * password);
 	/** User command to prepare the drive for Single User Mode and rekey a SUM locking range.
          * @param lockingrange locking range number to enable

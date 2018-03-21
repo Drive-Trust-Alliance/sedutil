@@ -224,6 +224,8 @@ typedef enum _OPAL_TOKEN {
 	STARTCOLUMN = 0x03,
 	ENDCOLUMN = 0x04,
 	VALUES = 0x01,
+	LOCKONRESETCOLUMN = 0x09,
+	LOCKONRESETVALUE = 0x03,
 	// authority table
 	PIN = 0x03,
 	// locking tokens
