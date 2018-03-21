@@ -189,7 +189,7 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
     if (ioctl(fd, HDIO_GET_IDENTITY, buffer) < 0) {
         LOG(D1) << "Identify failed " << strerror(errno);
         disk_info.devType = DEVICE_TYPE_OTHER;
-        identify_SAS(&disk_info);
+        //identify_SAS(&disk_info);// JERRY temp out, if SATA identify fail, that it is.
         return;
     }
 
