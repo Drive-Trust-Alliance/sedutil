@@ -25,6 +25,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #else
 #include <Windows.h>
 #include "compressapi-8.1.h"
+#include "sedsize.h" 
 #endif
 #include <stdio.h>
 #include <iostream>
@@ -40,7 +41,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaSession.h"
 #include "DtaHexDump.h"
 #include <signal.h>
-#include "sedsize.h" 
+
 
 using namespace std;
 
@@ -66,7 +67,7 @@ void DtaDevOpal::init(const char * devref)
 
 void DtaDevOpal::gethuser(char * buf)
 {	string hUser = "User" + to_string(disk_info.OPAL20_numUsers);
-	for (int ii = 0; ii < hUser.size(); ii++)
+	for (int ii = 0; ii < (int)hUser.size(); ii++)
 		buf[ii] = hUser.at(ii);
 }
 
@@ -134,19 +135,13 @@ void DtaDevOpal::gethuser(char * buf)
 		delete rekey;
 		delete session;
 		LOG(I) << "LockOnReset LockingRange : " << (uint16_t)lockingrange << " *** " << endl;
-		LOG(D1) << "Exiting DtaDevOpal::SetLockonReset()"; // D1->I
+		LOG(D1) << "Exiting DtaDevOpal::SetLockonReset()";
 		return 0;
 }
 uint8_t DtaDevOpal::initialSetup(char * password)
 {
 	LOG(D1) << "Entering initialSetup()";
 	uint8_t lastRC;
-	//////////////////////////////////////////
-	LOG(I) << "setuphuser()";
-	setuphuser(password);
-	return 0;
-
-	///////////////////////////////////////////
 
 	if ((lastRC = takeOwnership(password)) != 0) {
 		LOG(E) << "Initial setup failed - unable to take ownership";
@@ -193,9 +188,13 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 	enableUser(true, password, buf); // true : enable user; false: disable user
 	enableUserRead(true, password, buf);
 	char p1[64] = "F0iD2eli81Ty"; //20->12 "pFa0isDs2ewloir81Tdy";
+	#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+	strcat(p1, getSerialNum());
+	#else
 	strcat_s(p1, getSerialNum());
-	LOG(I) << p1;
-	DtaHexDump(p1, 80);
+	#endif
+	//LOG(I) << p1;
+	//DtaHexDump(p1, 80);
 	// setpassword has flag -n -t from GUI
 	if (no_hash_passwords) { // do it only when -n is set
 		bool saved_flag = no_hash_passwords;
@@ -205,16 +204,18 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 		vector <uint8_t> hash;
 		DtaHashPwd(hash, (char *)p1, this);
 		memset(p1, 0, 64);
-		LOG(I) << "setuphuser() : after hash p1, User9 new hashed password = ";
-		for (int ii = 0; ii < (hash.size() -2); ii += 1) { // first 2 byte of hash vector is header
-			p1[ii] = hash.at(ii+2);
-		}
-		for (int ii = 0; ii < (hash.size() - 2); ii += 1) { // first 2 byte of hash vector is header
-			printf("%02X", hash[ii+2]); // JERRY 
-		}
-		printf("\n");
-		LOG(I) << "setuphuser() : new hash size = " << (uint16_t)hash.size(); 
-		DtaHexDump(p1, 80);
+		/* if (0) { // should never reveal the hashed password 
+			LOG(I) << "setuphuser() : after hash p1, User9 new hashed password = ";
+			for (int ii = 0; ii < (int)(hash.size() -2); ii += 1) { // first 2 byte of hash vector is header
+				p1[ii] = hash.at(ii+2);
+			}
+			for (int ii = 0; ii < (int)(hash.size() - 2); ii += 1) { // first 2 byte of hash vector is header
+				printf("%02X", hash[ii+2]);
+			}
+			printf("\n");
+		} */
+		//LOG(I) << "setuphuser() : new hash size = " << (uint16_t)hash.size(); 
+		//DtaHexDump(p1, 80);
 		translate_req = saved_t_flag;
 		no_hash_passwords = saved_flag ;
 	}
