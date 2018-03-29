@@ -917,12 +917,12 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 	//auditRec(newpassword, memcmp(userid, "Admin", 5) ? (uint8_t)evt_PasswordChangedUser: (uint8_t)evt_PasswordChangedAdmin);
 	if (!memcmp(userid, "Admin", 5)) { // if admin
 		LOG(D1) << "Admin try set password ";
-		if ((lastRC = setLockonReset(0, TRUE, password)) != 0) { // enable LOCKING RANGE 0 LOCKonRESET 
+		if ((lastRC = setLockonReset(0, TRUE, newpassword)) != 0) { // enable LOCKING RANGE 0 LOCKonRESET 
 			LOG(E) << "failed - unable to set LOCKONRESET";
 			//delete session;
 			return lastRC;
 		}
-		setuphuser(password);
+		setuphuser(newpassword);
 	}
 	//else {
 	//	LOG(I) << "User try set password ";
