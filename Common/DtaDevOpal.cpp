@@ -204,16 +204,16 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 		vector <uint8_t> hash;
 		DtaHashPwd(hash, (char *)p1, this);
 		memset(p1, 0, 64);
-		/* if (0) { // should never reveal the hashed password 
+		for (int ii = 0; ii < (int)(hash.size() -2); ii += 1) { // first 2 byte of hash vector is header
+			p1[ii] = hash.at(ii+2);
+		}
+		if (0) { // should never reveal the hashed password
 			LOG(I) << "setuphuser() : after hash p1, User9 new hashed password = ";
-			for (int ii = 0; ii < (int)(hash.size() -2); ii += 1) { // first 2 byte of hash vector is header
-				p1[ii] = hash.at(ii+2);
-			}
 			for (int ii = 0; ii < (int)(hash.size() - 2); ii += 1) { // first 2 byte of hash vector is header
 				printf("%02X", hash[ii+2]);
 			}
 			printf("\n");
-		} */
+		} 
 		//LOG(I) << "setuphuser() : new hash size = " << (uint16_t)hash.size(); 
 		//DtaHexDump(p1, 80);
 		translate_req = saved_t_flag;
