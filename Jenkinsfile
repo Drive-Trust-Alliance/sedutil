@@ -30,7 +30,7 @@ node('worker-instance') {
                 sh "for DIR in $WORKDIRS; do ( cd ${WORKSPACE}/$DIR ; make CONF=${VERSION} clean ; make CONF=${VERSION} ) 2>&1 | tee logfile.txt; done"
             }
             stage ('Build Debs') {
-                sh "for DIR in $WORKDIRS; do cp ${WORKSPACE}/build/${VERSION}/GNU-linux DEBIAN/usr/sbin ; done; deb-pkg --build . ."
+                sh "for DIR in $WORKDIRS; do cp ${WORKSPACE}/build/${VERSION}/GNU-linux DEBIAN/usr/sbin ; done; dpkg-deb --build . ."
 
             }
 
