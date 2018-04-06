@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -22,6 +22,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <iomanip>
 #include "DtaHashPwd.h"
 #include "DtaLexicon.h"
+#include "DtaOptions.h"
 #include "DtaDev.h"
 #include "log.h"
 

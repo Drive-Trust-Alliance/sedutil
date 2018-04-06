@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -17,8 +17,10 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
-/** Length of the IO buffers used */
-#define IO_BUFFER_LENGTH 2048
+ /** MAX Length of input the IO buffers used */
+#define MAX_BUFFER_LENGTH 61440
+/** Length of input the IO buffers used */
+#define MIN_BUFFER_LENGTH 2048
 /** Alignment of the IO buffers.
 * generic align on 1k boundary probably not needed
 * but when things weren't working this was one of the 

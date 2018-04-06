@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -21,6 +21,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaStructures.h"
 #include "DtaLexicon.h"
 #include <vector>
+#include "DtaOptions.h"
 #include "DtaResponse.h"
 class DtaCommand;
 class DtaSession;
@@ -61,6 +62,8 @@ public:
 	char *getModelNum();
 	/** Returns the Serial Number reported by the Identify command */
 	char *getSerialNum();
+	/* What type of disk attachment is used */
+	DTA_DEVICE_TYPE getDevType();
 	/** displays the information returned by the Discovery 0 reply */
 	virtual void puke();
 
@@ -92,7 +95,7 @@ public:
 	 * @param bufferlen length of the input/output buffer
 	 */
 	virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-		void * buffer, uint16_t bufferlen) = 0;
+		void * buffer, uint32_t bufferlen) = 0;
 	/** OS specific command to Wait for specified number of milliseconds
 	 * @param milliseconds  number of milliseconds to wait
 	 */
@@ -210,7 +213,7 @@ public:
 	 * @param password password of locking sp administrative authority
 	 * @param userid  the user to be enabled
 	 */
-	virtual uint8_t enableUser(char * password, char * userid) = 0;
+	virtual uint8_t enableUser(char * password, char * userid, OPAL_TOKEN status = OPAL_TOKEN::OPAL_TRUE) = 0;
 	/** Enable locking on the device
 	 * @param password password of the admin sp SID authority
 	 */
@@ -281,6 +284,7 @@ public:
 	/** return the communications ID to be used for sessions to this device */
 	virtual uint16_t comID() = 0;
 	bool no_hash_passwords; /** disables hashing of passwords */
+	sedutiloutput output_format; /** standard, readable, JSON */
 protected:
 	const char * dev;   /**< character string representing the device in the OS lexicon */
 	uint8_t isOpen = FALSE;  /**< The device has been opened */
@@ -288,5 +292,7 @@ protected:
 	DtaResponse response;   /**< shared response object */
 	DtaResponse propertiesResponse;  /**< response fron properties exchange */
 	DtaSession *session;  /**< shared session object pointer */
-	uint8_t discovery0buffer[IO_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT];
+	uint8_t discovery0buffer[MIN_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT];
+	uint32_t tperMaxPacket = 2048;
+	uint32_t tperMaxToken = 1950;
 };

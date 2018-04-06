@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -21,9 +21,42 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include "GetPassPhrase.h"
 #include <string>
-#include <ncurses.h>
+#include <termios.h>
+#include <stdio.h>
 using namespace std;
 
+static struct termios tiosold, tiosnew;
+/* Initialize new terminal i/o settings */
+void initTermios(int echo) 
+{
+  tcgetattr(0, &tiosold); /* grab old terminal i/o settings */
+  tiosnew = tiosold; /* make new settings same as old settings */
+  tiosnew.c_lflag &= ~ICANON; /* disable buffered i/o */
+  tiosnew.c_lflag &= echo ? ECHO : ~ECHO; /* set echo mode */
+  tcsetattr(0, TCSANOW, &tiosnew); /* use these new terminal i/o settings now */
+}
+
+/* Restore old terminal i/o settings */
+void resetTermios(void) 
+{
+  tcsetattr(0, TCSANOW, &tiosold);
+}
+
+/* Read 1 character - echo defines echo mode */
+char getch_(int echo=0) 
+{
+  char ch;
+  initTermios(echo);
+  ch = getchar();
+  resetTermios();
+  return ch;
+}
+
+/* Read 1 character without echo */
+char getch(void) 
+{
+  return getch_(0);
+}
 
 string GetPassPhrase(const char *prompt, bool show_asterisk)
 {
@@ -32,17 +65,16 @@ string GetPassPhrase(const char *prompt, bool show_asterisk)
   string password;
   unsigned char ch=0;
   LOG(D4) << "Enter GetPassPhrase" << endl;
-  mvprintw(4,2,prompt);
-  noecho(); // Disable echoing
-  while((ch=getch())!=RETURN)
+  printf("\n\n%s",prompt);
+  while((ch=getch_())!=RETURN)
     {
-      LOG(I) << "key value" << (uint16_t) ch << endl;
+//      LOG(I) << "key value" << (uint16_t) ch << endl;
        if(ch==BACKSPACE)
          {
             if(password.length()!=0)
               {
                  if(show_asterisk)
-                 printw("\b \b");
+                 printf("\b \b");
                  password.resize(password.length()-1);
               }
          }
@@ -50,10 +82,13 @@ string GetPassPhrase(const char *prompt, bool show_asterisk)
          {
              password+=ch;
              if(show_asterisk)
-                 printw("*");
+                 printf("*");
          }
     }
 
-  echo();
   return password;
 }
+
+
+
+

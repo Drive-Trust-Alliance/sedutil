@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -27,6 +27,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <fstream>
 #include<iomanip>
+#include "DtaOptions.h"
 #include "DtaDevGeneric.h"
 #include "DtaHashPwd.h"
 #include "DtaEndianFixup.h"
@@ -81,7 +82,7 @@ uint8NOCODE(setupLockingRange_SUM, uint8_t lockingrange, uint64_t start,
 	uint64_t length, char * password)
 uint8NOCODE(rekeyLockingRange, uint8_t lockingrange, char * password)
 uint8NOCODE(setBandsEnabled, int16_t lockingrange, char * password)
-uint8NOCODE(enableUser,char * password, char * userid)
+uint8NOCODE(enableUser,char * password, char * userid, OPAL_TOKEN status)
 uint8NOCODE(revertTPer,char * password, uint8_t PSID, uint8_t AdminSP)
 uint8NOCODE(eraseLockingRange,uint8_t lockingrange, char * password)
 uint8NOCODE(printDefaultPassword);

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -127,10 +127,11 @@ public:
          * @param password the password of the Locking SP administrative authority 
          * @param userid Character name of the user to be enabled
          */
-	uint8_t enableUser(char * password, char * userid);
+	uint8_t enableUser(char * password, char * userid, OPAL_TOKEN status = OPAL_TOKEN::OPAL_TRUE);
         /** Primitive to set the MBRDone flag.
          * @param state 0 or 1  
          * @param Admin1Password Locking SP authority with access to flag
+		 * @param status true or false to enable/disable
          */
 	uint8_t setMBRDone(uint8_t state, char * Admin1Password);
           /** Primitive to set the MBREnable flag.
@@ -230,7 +231,6 @@ public:
          * @param password the password that is to be assigned to the SSC master entities 
          */
 	uint8_t initialSetup(char * password);
-	uint8_t initialsetup(char * password);
 	/** User command to prepare the drive for Single User Mode and rekey a SUM locking range.
          * @param lockingrange locking range number to enable
          * @param start LBA to start locking range

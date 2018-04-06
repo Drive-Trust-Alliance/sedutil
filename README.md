@@ -1,6 +1,6 @@
 ![alt tag](https://avatars0.githubusercontent.com/u/13870012?v=3&s=200)
 
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -27,7 +27,7 @@ standard on bios machines.
 You must be administrator/root to run the host managment program
 
 In Linux libata.allow_tpm must be set to 1. Either via adding libata.allow_tpm=1 to the kernel flags at boot time 
-or changing the contents of /sys/module/libata/parameters/allow_tpm to a from a "0" to a "1" on a running system.
+or changing the contents of /sys/module/libata/parameters/allow_tpm from a "0" to a "1" on a running system.
 
 ***** sleep (S3) is not supported.
 
@@ -36,3 +36,5 @@ Source code is available on GitHub at https://github.com/Drive-Trust-Alliance/se
 Linux and Windows executables are available at https://github.com/Drive-Trust-Alliance/sedutil/wiki/Executable-Distributions
 
 If you are looking for the PSID revert function see linux/PSIDRevert_LINUX.txt or win32/PSIDRevert_WINDOWS.txt
+
+PLEASE SEE CONTRIBUTING if you would like to make a code contribution.

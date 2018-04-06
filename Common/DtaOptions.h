@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -17,6 +17,17 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
+
+#ifndef _DTAOPTIONS_H
+#define	_DTAOPTIONS_H
+
+/** Output modes */
+typedef enum _sedutiloutput {
+	sedutilNormal,
+	sedutilReadable,
+	sedutilJSON
+} sedutiloutput;
+
 /** Structure representing the command line issued to the program */
 typedef struct _DTA_OPTIONS {
     uint8_t password;   /**< password supplied */
@@ -32,6 +43,7 @@ typedef struct _DTA_OPTIONS {
 	uint8_t lrlength;		/** the length in blocks of a lockingrange */
 
 	bool no_hash_passwords; /** global parameter, disables hashing of passwords */
+	sedutiloutput output_format;
 } DTA_OPTIONS;
 /** Print a usage message */
 void usage();
@@ -115,3 +127,5 @@ i++;
 /** set the argc value for this parameter in the options structure */
 #define OPTION_IS(option_field) \
 				opts->option_field = ++i; 
+
+#endif /* _DTAOPTIONS_H */

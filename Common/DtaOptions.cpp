@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -23,13 +23,14 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "Version.h"
 void usage()
 {
-    printf("sedutil v%s Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>\n", GIT_VERSION);
+    printf("sedutil v%s Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>\n", GIT_VERSION);
     printf("a utility to manage self encrypting drives that conform\n");
     printf("to the Trusted Computing Group OPAL 2.0 SSC specification\n");
     printf("General Usage:                     (see readme for extended commandset)\n");
     printf("sedutil-cli <-v> <-n> <action> <options> <device>\n");
     printf("-v (optional)                       increase verbosity, one to five v's\n");
     printf("-n (optional)                       no password hashing. Passwords will be sent in clear text!\n");
+    printf("-l (optional)                       log style output to stderr only\n");
     printf("actions \n");
     printf("--scan \n");
     printf("                                Scans the devices on the system \n");
@@ -109,6 +110,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
     uint16_t loggingLevel = 2;
 	uint8_t baseOptions = 2; // program and option
     CLog::Level() = CLog::FromInt(loggingLevel);
+    RCLog::Level() = RCLog::FromInt(loggingLevel);
     if (2 > argc) {
         usage();
 		return DTAERROR_INVALID_COMMAND;
@@ -132,6 +134,11 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			opts->no_hash_passwords = true;
 			LOG(D) << "Password hashing is disabled";
                 }
+		else if (!strcmp("-l", argv[i])) {
+			baseOptions += 1;
+			opts->output_format = sedutilNormal;
+			outputFormat = sedutilNormal;
+		}
 		else if (!(('-' == argv[i][0]) && ('-' == argv[i][1])) && 
 			(0 == opts->action))
 		{

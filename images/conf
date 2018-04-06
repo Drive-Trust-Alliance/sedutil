@@ -1,8 +1,6 @@
 #!/bin/bash
 #  Setup versions for image components
 #  This script should be sourced by the other scripts
-TINYCORE=Core-6.4.1.iso
 SYSLINUX=syslinux-6.03
-TCDISTRO=http://distro.ibiblio.org/tinycorelinux/6.x/x86/
 BUILDROOT=git://git.buildroot.net/buildroot
-BUILDROOT_TAG=2015.11
+BUILDROOT_TAG=2017.05.1

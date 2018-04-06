@@ -1,120 +1,122 @@
 Begin TestSuite.cmd
-MINGW64_NT-10.0 Desktop-Z170A 2.4.0(0.292/5/3) 2016-01-05 14:13 x86_64 Msys
-testing PROG Mon, Feb 15, 2016 1:59:46 PM
-sedutil v1.11-3-g920c6e7-dirty Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+MINGW64_NT-10.0 Desktop-Z170A 2.8.0(0.309/5/3) 2017-05-19 13:17 x86_64 Msys
+testing CLI/x64/Release/sedutil-cli.exe Mon, Aug 21, 2017 4:54:26 PM
+sedutil v1.15-23-gf95710e Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 Scanning for Opal compliant disks
-\\.\PhysicalDrive0  2  Crucial_CT250MX200SSD1                   MU02    
+\\.\PhysicalDrive0  2  Crucial_CT250MX200SSD1                   MU04    
 \\.\PhysicalDrive1 12  Samsung SSD 850 EVO 500GB                EMT01B6Q
 \\.\PhysicalDrive2  2  ST500LT025-1DH142                        0001SDM7
+\\.\PhysicalDrive3 12  Samsung SSD 850 EVO 250GB                EMT01B6Q
+\\.\PhysicalDrive4 No  Samsung SSD 960 EVO 250GB                2B7QCXE7
 No more disks present ending scan
 Perform the initial setup
-- 13:59:47.000 INFO: takeOwnership complete
-- 13:59:49.984 INFO: Locking SP Activate Complete
-- 13:59:50.687 INFO: LockingRange0 disabled 
-- 13:59:50.062 INFO: LockingRange0 set to RW
-- 13:59:51.531 INFO: MBRDone set on 
-- 13:59:51.937 INFO: MBRDone set on 
-- 13:59:51.312 INFO: MBREnable set on 
-- 13:59:51.312 INFO: Initial setup of TPer complete on \\.\PhysicalDrive2
+takeOwnership complete
+Locking SP Activate Complete
+LockingRange0 disabled 
+LockingRange0 set to RW
+MBRDone set on 
+MBRDone set on 
+MBREnable set on 
+Initial setup of TPer complete on \\.\PhysicalDrive2
     Locked = N, LockingEnabled = Y, LockingSupported = Y, MBRDone = Y, MBREnabled = Y, MediaEncrypt = Y
 change the LSP Admin1 password
-- 13:59:52.000 INFO: Admin1 password changed
-- 13:59:53.000 INFO: LockingRange0 enabled ReadLocking,WriteLocking
-- 13:59:53.000 INFO: Locking Range Configuration for \\.\PhysicalDrive2
-- 13:59:53.062 INFO: LR0 Begin 0 for 0
-- 13:59:53.062 INFO:             RLKEna = Y  WLKEna = Y  RLocked = N  WLocked = N 
-- 13:59:53.093 INFO: LR1 Begin 0 for 0
-- 13:59:53.093 INFO:             RLKEna = N  WLKEna = N  RLocked = N  WLocked = N 
+Admin1 password changed
+LockingRange0 enabled ReadLocking,WriteLocking
+Locking Range Configuration for \\.\PhysicalDrive2
+LR0 Begin 0 for 0
+            RLKEna = Y  WLKEna = Y  RLocked = N  WLocked = N 
+LR1 Begin 0 for 0
+            RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
 test readlocking
-- 13:59:54.000 INFO: LockingRange0 set to RO
-- 13:59:55.000 INFO: Locking Range Configuration for \\.\PhysicalDrive2
-- 13:59:55.062 INFO: LR0 Begin 0 for 0
-- 13:59:55.062 INFO:             RLKEna = Y  WLKEna = Y  RLocked = N  WLocked = Y 
-- 13:59:55.078 INFO: LR1 Begin 0 for 0
-- 13:59:55.078 INFO:             RLKEna = N  WLKEna = N  RLocked = N  WLocked = N 
+LockingRange0 set to RO
+Locking Range Configuration for \\.\PhysicalDrive2
+LR0 Begin 0 for 0
+            RLKEna = Y  WLKEna = Y  RLocked = N  WLocked = Y 
+LR1 Begin 0 for 0
+            RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
 test write locking
-- 13:59:56.000 INFO: LockingRange0 set to RW
-- 13:59:56.000 INFO: Locking Range Configuration for \\.\PhysicalDrive2
-- 13:59:56.062 INFO: LR0 Begin 0 for 0
-- 13:59:56.062 INFO:             RLKEna = Y  WLKEna = Y  RLocked = N  WLocked = N 
-- 13:59:56.078 INFO: LR1 Begin 0 for 0
-- 13:59:56.078 INFO:             RLKEna = N  WLKEna = N  RLocked = N  WLocked = N 
+LockingRange0 set to RW
+Locking Range Configuration for \\.\PhysicalDrive2
+LR0 Begin 0 for 0
+            RLKEna = Y  WLKEna = Y  RLocked = N  WLocked = N 
+LR1 Begin 0 for 0
+            RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
 set LockingRange 0 LK
-- 13:59:58.000 INFO: LockingRange0 set to LK
-- 13:59:58.000 INFO: Locking Range Configuration for \\.\PhysicalDrive2
-- 13:59:58.047 INFO: LR0 Begin 0 for 0
-- 13:59:58.047 INFO:             RLKEna = Y  WLKEna = Y  RLocked = Y  WLocked = Y 
-- 13:59:58.078 INFO: LR1 Begin 0 for 0
-- 13:59:58.078 INFO:             RLKEna = N  WLKEna = N  RLocked = N  WLocked = N 
+LockingRange0 set to LK
+Locking Range Configuration for \\.\PhysicalDrive2
+LR0 Begin 0 for 0
+            RLKEna = Y  WLKEna = Y  RLocked = Y  WLocked = Y 
+LR1 Begin 0 for 0
+            RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
 disable locking on the global range
-- 13:59:59.000 INFO: LockingRange0 disabled 
-- 14:00:00.000 INFO: Locking Range Configuration for \\.\PhysicalDrive2
-- 14:00:00.047 INFO: LR0 Begin 0 for 0
-- 14:00:00.047 INFO:             RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
-- 14:00:00.078 INFO: LR1 Begin 0 for 0
-- 14:00:00.078 INFO:             RLKEna = N  WLKEna = N  RLocked = N  WLocked = N 
+LockingRange0 disabled 
+Locking Range Configuration for \\.\PhysicalDrive2
+LR0 Begin 0 for 0
+            RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
+LR1 Begin 0 for 0
+            RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
 test locking on lockingrange1
-- 14:00:02.000 INFO: LockingRange1 reKeyed 
-- 14:00:02.000 INFO: LockingRange1 starting block 0 for 2048 blocks configured as unlocked range
-- 14:00:02.000 INFO: Locking Range Configuration for \\.\PhysicalDrive2
-- 14:00:03.016 INFO: LR0 Begin 0 for 0
-- 14:00:03.016 INFO:             RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
-- 14:00:03.047 INFO: LR1 Begin 0 for 2048
-- 14:00:03.047 INFO:             RLKEna = N  WLKEna = N  RLocked = N  WLocked = N 
+LockingRange1 reKeyed 
+LockingRange1 starting block 0 for 2048 blocks configured as unlocked range
+Locking Range Configuration for \\.\PhysicalDrive2
+LR0 Begin 0 for 0
+            RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
+LR1 Begin 0 for 2048
+            RLKEna = N  WLKEna = N  RLocked = N  WLocked = N 
 Readonly locking on lockingrange1
-- 14:00:04.000 INFO: LockingRange1 enabled WriteLocking
-- 14:00:04.000 INFO: Locking Range Configuration for \\.\PhysicalDrive2
-- 14:00:04.063 INFO: LR0 Begin 0 for 0
-- 14:00:04.063 INFO:             RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
-- 14:00:04.079 INFO: LR1 Begin 0 for 2048
-- 14:00:04.079 INFO:             RLKEna = N  WLKEna = Y  RLocked = N  WLocked = N 
+LockingRange1 enabled WriteLocking
+Locking Range Configuration for \\.\PhysicalDrive2
+LR0 Begin 0 for 0
+            RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
+LR1 Begin 0 for 2048
+            RLKEna = N  WLKEna = Y  RLocked = N  WLocked = N 
 enable locking on lockingrange 1
-- 14:00:06.000 INFO: LockingRange1 enabled ReadLocking,WriteLocking
-- 14:00:06.000 INFO: Locking Range Configuration for \\.\PhysicalDrive2
-- 14:00:06.062 INFO: LR0 Begin 0 for 0
-- 14:00:06.062 INFO:             RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
-- 14:00:06.093 INFO: LR1 Begin 0 for 2048
-- 14:00:06.093 INFO:             RLKEna = Y  WLKEna = Y  RLocked = N  WLocked = N 
+LockingRange1 enabled ReadLocking,WriteLocking
+Locking Range Configuration for \\.\PhysicalDrive2
+LR0 Begin 0 for 0
+            RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
+LR1 Begin 0 for 2048
+            RLKEna = Y  WLKEna = Y  RLocked = N  WLocked = N 
 RO locking on lockingrange 1
-- 14:00:08.000 INFO: LockingRange1 set to RO
-- 14:00:08.000 INFO: Locking Range Configuration for \\.\PhysicalDrive2
-- 14:00:08.047 INFO: LR0 Begin 0 for 0
-- 14:00:08.047 INFO:             RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
-- 14:00:08.078 INFO: LR1 Begin 0 for 2048
-- 14:00:08.078 INFO:             RLKEna = Y  WLKEna = Y  RLocked = N  WLocked = Y 
+LockingRange1 set to RO
+Locking Range Configuration for \\.\PhysicalDrive2
+LR0 Begin 0 for 0
+            RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
+LR1 Begin 0 for 2048
+            RLKEna = Y  WLKEna = Y  RLocked = N  WLocked = Y 
 RW locking on lockingrange 1
-- 14:00:09.000 INFO: LockingRange1 set to RW
-- 14:00:10.000 INFO: Locking Range Configuration for \\.\PhysicalDrive2
-- 14:00:10.047 INFO: LR0 Begin 0 for 0
-- 14:00:10.047 INFO:             RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
-- 14:00:10.078 INFO: LR1 Begin 0 for 2048
-- 14:00:10.078 INFO:             RLKEna = Y  WLKEna = Y  RLocked = N  WLocked = N 
+LockingRange1 set to RW
+Locking Range Configuration for \\.\PhysicalDrive2
+LR0 Begin 0 for 0
+            RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
+LR1 Begin 0 for 2048
+            RLKEna = Y  WLKEna = Y  RLocked = N  WLocked = N 
 LK locking on lockingrange 1
-- 14:00:11.000 INFO: LockingRange1 set to LK
-- 14:00:11.000 INFO: Locking Range Configuration for \\.\PhysicalDrive2
-- 14:00:11.063 INFO: LR0 Begin 0 for 0
-- 14:00:11.063 INFO:             RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
-- 14:00:11.079 INFO: LR1 Begin 0 for 2048
-- 14:00:11.079 INFO:             RLKEna = Y  WLKEna = Y  RLocked = Y  WLocked = Y 
+LockingRange1 set to LK
+Locking Range Configuration for \\.\PhysicalDrive2
+LR0 Begin 0 for 0
+            RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
+LR1 Begin 0 for 2048
+            RLKEna = Y  WLKEna = Y  RLocked = Y  WLocked = Y 
 test locking on lockingrange15
-- 14:00:14.000 INFO: LockingRange15 reKeyed 
-- 14:00:14.000 INFO: LockingRange15 starting block 2048 for 204800 blocks configured as unlocked range
-- 14:00:15.657 INFO: LR14 Begin 0 for 0
-- 14:00:15.657 INFO:             RLKEna = N  WLKEna = N  RLocked = N  WLocked = N 
-- 14:00:15.688 INFO: LR15 Begin 2048 for 204800
-- 14:00:15.688 INFO:             RLKEna = N  WLKEna = N  RLocked = N  WLocked = N 
+LockingRange15 reKeyed 
+LockingRange15 starting block 2048 for 204800 blocks configured as unlocked range
+LR14 Begin 0 for 0
+            RLKEna = N  WLKEna = N  RLocked = Y  WLocked = Y 
+LR15 Begin 2048 for 204800
+            RLKEna = N  WLKEna = N  RLocked = N  WLocked = N 
 unset MBRDone
-- 14:00:15.000 INFO: MBRDone set off 
+MBRDone set off 
     Locked = Y, LockingEnabled = Y, LockingSupported = Y, MBRDone = N, MBREnabled = Y, MediaEncrypt = Y
 disable mbr shadowing
-- 14:00:16.000 INFO: MBRDone set on 
-- 14:00:16.406 INFO: MBREnable set off 
+MBRDone set on 
+MBREnable set off 
     Locked = Y, LockingEnabled = Y, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
 resetting device
-- 14:00:19.000 INFO: Revert LockingSP complete
+Revert LockingSP complete
     Locked = N, LockingEnabled = N, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
-- 14:00:22.000 INFO: revertTper completed successfully
+revertTper completed successfully
     Locked = N, LockingEnabled = N, LockingSupported = Y, MBRDone = N, MBREnabled = N, MediaEncrypt = Y
 
 PKCS #5 PBKDF2 validation suite running ... 

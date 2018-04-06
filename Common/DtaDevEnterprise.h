@@ -1,5 +1,6 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2017 Spectra Logic Corporation
 
 This file is part of sedutil.
 
@@ -22,6 +23,7 @@ class DtaCommand;
 class DtaSession;
 
 #include "os.h"
+#include "DtaOptions.h"
 #include "DtaDev.h"
 #include "DtaDevOS.h"
 #include "DtaStructures.h"
@@ -106,7 +108,7 @@ public:
         /** get the UID or CPIN ID of a user from their character name*/
 	uint8_t getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData);
         /** Enable a Bandmaster Not functional */
-	uint8_t enableUser(char * password, char * userid);
+	uint8_t enableUser(char * password, char * userid, OPAL_TOKEN status = OPAL_TOKEN::OPAL_TRUE);
          /** Primitive to set the MBRDone flag.
          * @param state 0 or 1  
          * @param Admin1Password Locking SP authority with access to flag
@@ -206,6 +208,6 @@ public:
 protected:
 	uint8_t getDefaultPassword();
 private:
-    uint16_t getMaxRanges(char * password);
-    uint16_t getMaxRangesOpal(char * password);
+    uint8_t getMaxRanges(char * password, uint16_t *maxRanges);
+    uint8_t getMaxRangesOpal(char * password, uint16_t *maxRanges);
 };

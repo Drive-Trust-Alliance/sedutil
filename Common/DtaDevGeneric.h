@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -157,7 +157,7 @@ public:
          * @param password password of locking sp administrative authority
          * @param userid  the user to be enabled
          */
-	 uint8_t enableUser(char * password, char * userid) ;
+	 uint8_t enableUser(char * password, char * userid, OPAL_TOKEN status = OPAL_TOKEN::OPAL_TRUE) ;
           /** Enable locking on the device
          * @param password password of the admin sp SID authority
          */

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -595,7 +595,7 @@ uint8_t DtaDevOpal::setBandsEnabled(int16_t lockingrange, char * password)
 }
 uint8_t DtaDevOpal::revertLockingSP(char * password, uint8_t keep)
 {
-	LOG(D1) << "Entering revert DtaDevOpal::revertLockingSP() keep = " << (uint16_t) keep;
+	LOG(D1) << "Entering DtaDevOpal::revertLockingSP() keep = " << (uint16_t) keep;
 	uint8_t lastRC;
 	vector<uint8_t> keepGlobalLocking;
 	keepGlobalLocking.push_back(0x83);
@@ -616,6 +616,7 @@ uint8_t DtaDevOpal::revertLockingSP(char * password, uint8_t keep)
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete cmd;
 		delete session;
+                LOG(E) << "Start session failed";
 		return lastRC;
 	}
 	cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
@@ -629,6 +630,7 @@ uint8_t DtaDevOpal::revertLockingSP(char * password, uint8_t keep)
 	cmd->addToken(OPAL_TOKEN::ENDLIST);
 	cmd->complete();
 	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+                LOG(E) << "Command failed";
 		delete cmd;
 		delete session;
 		return lastRC;
@@ -637,7 +639,7 @@ uint8_t DtaDevOpal::revertLockingSP(char * password, uint8_t keep)
 	LOG(I) << "Revert LockingSP complete";
 	session->expectAbort();
 	delete session;
-	LOG(D1) << "Exiting revert DtaDev:LockingSP()";
+	LOG(D1) << "Exiting DtaDevOpal::revertLockingSP()";
 	return 0;
 }
 uint8_t DtaDevOpal::eraseLockingRange(uint8_t lockingrange, char * password)
@@ -833,6 +835,7 @@ uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 	char * Admin1Password)
 {
 	uint8_t lastRC;
+	uint8_t archiveuser = 0;
 	OPAL_TOKEN readlocked, writelocked;
 	const char *msg;
 
@@ -842,11 +845,15 @@ uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 		readlocked = writelocked = OPAL_TOKEN::OPAL_FALSE;
 		msg = "RW";
 		break;
+	case OPAL_LOCKINGSTATE::ARCHIVEUNLOCKED:
+		archiveuser = 1;
 	case OPAL_LOCKINGSTATE::READONLY:
 		readlocked = OPAL_TOKEN::OPAL_FALSE;
 		writelocked = OPAL_TOKEN::OPAL_TRUE;
 		msg = "RO";
 		break;
+	case OPAL_LOCKINGSTATE::ARCHIVELOCKED:
+		archiveuser = 1;
 	case OPAL_LOCKINGSTATE::LOCKED:
 		readlocked = writelocked = OPAL_TOKEN::OPAL_TRUE;
 		msg = "LK";
@@ -889,10 +896,12 @@ uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 	set->addToken(OPAL_TOKEN::READLOCKED);
 	set->addToken(readlocked);
 	set->addToken(OPAL_TOKEN::ENDNAME);
-	set->addToken(OPAL_TOKEN::STARTNAME);
-	set->addToken(OPAL_TOKEN::WRITELOCKED);
-	set->addToken(writelocked);
-	set->addToken(OPAL_TOKEN::ENDNAME);
+	if (!archiveuser) {
+		set->addToken(OPAL_TOKEN::STARTNAME);
+		set->addToken(OPAL_TOKEN::WRITELOCKED);
+		set->addToken(writelocked);
+		set->addToken(OPAL_TOKEN::ENDNAME);
+	}
 	set->addToken(OPAL_TOKEN::ENDLIST);
 	set->addToken(OPAL_TOKEN::ENDNAME);
 	set->addToken(OPAL_TOKEN::ENDLIST);
@@ -1042,7 +1051,7 @@ uint8_t DtaDevOpal::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
 	return 0;
 }
 
-uint8_t DtaDevOpal::enableUser(char * password, char * userid)
+uint8_t DtaDevOpal::enableUser(char * password, char * userid, OPAL_TOKEN status)
 {
 	LOG(D1) << "Entering DtaDevOpal::enableUser";
 	uint8_t lastRC;
@@ -1062,7 +1071,7 @@ uint8_t DtaDevOpal::enableUser(char * password, char * userid)
 		delete session;
 		return lastRC;
 	}
-	if ((lastRC = setTable(userUID, (OPAL_TOKEN)0x05, OPAL_TOKEN::OPAL_TRUE)) != 0) {
+	if ((lastRC = setTable(userUID, (OPAL_TOKEN)0x05, status)) != 0) {
 		LOG(E) << "Unable to enable user " << userid;
 		delete session;
 		return lastRC;
@@ -1116,29 +1125,22 @@ uint8_t DtaDevOpal::revertTPer(char * password, uint8_t PSID, uint8_t AdminSP)
 uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	LOG(D1) << "Entering DtaDevOpal::loadPBAimage()" << filename << " " << dev;
 	uint8_t lastRC;
-	uint64_t fivepercent = 0;
-	int complete = 4;
-	typedef struct { uint8_t  i : 2; } spinnertik;
-	spinnertik spinnertick;
-	spinnertick.i = 0;
-	char star[] = "*";
-	char spinner[] = "|/-\\";
-	char progress_bar[] = "   [                     ]";
-	uint32_t blockSize = 1950;
+	uint32_t blockSize;
 	uint32_t filepos = 0;
+	uint32_t eofpos;
 	ifstream pbafile;
-	vector <uint8_t> buffer(1950,0x00), lengthtoken;
-	lengthtoken.clear();
-	lengthtoken.push_back(0xd7);
-	lengthtoken.push_back(0x9e);
+	(MAX_BUFFER_LENGTH > tperMaxPacket) ? blockSize = tperMaxPacket : blockSize = MAX_BUFFER_LENGTH;
+	if (blockSize > (tperMaxToken - 4)) blockSize = tperMaxToken - 4;
+	vector <uint8_t> buffer, lengthtoken;
+	blockSize -= sizeof(OPALHeader) + 50;  // packet overhead
+	buffer.resize(blockSize);
 	pbafile.open(filename, ios::in | ios::binary);
 	if (!pbafile) {
 		LOG(E) << "Unable to open PBA image file " << filename;
 		return DTAERROR_OPEN_ERR;
 	}
 	pbafile.seekg(0, pbafile.end);
-	fivepercent = (uint64_t)((pbafile.tellg() / 20) / blockSize) * blockSize;
-	if (0 == fivepercent) fivepercent++;
+	eofpos = (uint32_t) pbafile.tellg(); 
 	pbafile.seekg(0, pbafile.beg);
 
 	DtaCommand *cmd = new DtaCommand();
@@ -1159,28 +1161,19 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 		return lastRC;
 	}
 	LOG(I) << "Writing PBA to " << dev;
+	
 	while (!pbafile.eof()) {
+		if (eofpos == filepos) break;
+		if ((eofpos - filepos) < blockSize) {
+			blockSize = eofpos - filepos; // handle a short last block
+			buffer.resize(blockSize);
+		}
+		lengthtoken.clear();
+		lengthtoken.push_back(0xe2);
+		lengthtoken.push_back((uint8_t) ((blockSize >> 16) & 0x000000ff));
+		lengthtoken.push_back((uint8_t)((blockSize >> 8) & 0x000000ff));
+		lengthtoken.push_back((uint8_t)(blockSize & 0x000000ff));
 		pbafile.read((char *)buffer.data(), blockSize);
-		if (!(filepos % fivepercent)) {
-			progress_bar[complete++] = star[0];
-			delete session;
-			session = new DtaSession(this);
-			if (NULL == session) {
-				LOG(E) << "Unable to create session object ";
-				return DTAERROR_OBJECT_CREATE_FAILED;
-			}
-			if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
-				delete cmd;
-				delete session;
-				pbafile.close();
-				return lastRC;
-			}
-		}
-		if (!(filepos % (blockSize * 5))) {
-			progress_bar[1] = spinner[spinnertick.i++];
-			printf("\r%s %i", progress_bar,filepos);
-			fflush(stdout);
-		}
 		cmd->reset(OPAL_UID::OPAL_MBR, OPAL_METHOD::SET);
 		cmd->addToken(OPAL_TOKEN::STARTLIST);
 		cmd->addToken(OPAL_TOKEN::STARTNAME);
@@ -1201,8 +1194,9 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 			return lastRC;
 		}
 		filepos += blockSize;
+		cout << filepos << " of " << eofpos << " " << (uint16_t) (((float)filepos/(float)eofpos) * 100) << "% blk=" << blockSize << " \r";
 	}
-	printf("\r%s %i bytes written \n", progress_bar, filepos);
+	cout << "\n";
 	delete cmd;
 	delete session;
 	pbafile.close();
@@ -1574,15 +1568,15 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
     LOG(D3) << endl << "Dumping command buffer";
     IFLOG(D3) DtaHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
-    if((lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH)) != 0) {
+    if((lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), cmd->outputBufferSize())) != 0) {
 		LOG(E) << "Command failed on send " << (uint16_t) lastRC;
         return lastRC;
     }
     hdr = (OPALHeader *) cmd->getRespBuffer();
     do {
         osmsSleep(25);
-        memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
-        lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
+        memset(cmd->getRespBuffer(), 0, MIN_BUFFER_LENGTH);
+        lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), MIN_BUFFER_LENGTH);
 
     }
     while ((0 != hdr->cp.outstandingData) && (0 == hdr->cp.minTransfer));
@@ -1650,6 +1644,22 @@ uint8_t DtaDevOpal::properties()
 	}
 	disk_info.Properties = 1;
 	delete props;
+	for (uint32_t i = 0; i < propertiesResponse.getTokenCount(); i++) {
+		if (OPAL_TOKEN::STARTNAME == propertiesResponse.tokenIs(i)) {
+			if (OPAL_TOKEN::DTA_TOKENID_BYTESTRING != propertiesResponse.tokenIs(i + 1))
+				break;
+			else
+				if(!strcasecmp("MaxComPacketSize",propertiesResponse.getString(i + 1).c_str()))
+					tperMaxPacket = propertiesResponse.getUint32(i + 2);
+				else
+					if (!strcasecmp("MaxIndTokenSize", propertiesResponse.getString(i + 1).c_str())) {
+						tperMaxToken = propertiesResponse.getUint32(i + 2);
+						break;
+					}
+
+			i += 2;
+		}
+	}
 	LOG(D1) << "Leaving DtaDevOpal::properties()";
 	return 0;
 }
