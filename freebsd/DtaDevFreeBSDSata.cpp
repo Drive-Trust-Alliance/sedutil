@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2016 Alexander Motin <mav@FreeBSD.org>
+This software is Copyright 2016-2018 Alexander Motin <mav@FreeBSD.org>
 
 This file is part of sedutil.
 
@@ -58,7 +58,7 @@ bool DtaDevFreeBSDSata::init(const char * devref)
 
 /** Send an ioctl to the device using pass through. */
 uint8_t DtaDevFreeBSDSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                         void * buffer, uint16_t bufferlen)
+                         void * buffer, uint32_t bufferlen)
 {
 	union ccb ccb;
 

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2016 Alexander Motin <mav@FreeBSD.org>
+This software is Copyright 2016-2018 Alexander Motin <mav@FreeBSD.org>
 
 This file is part of sedutil.
 
@@ -46,7 +46,9 @@ public:
      * @param bufferlen length of the input/output buffer
      */
     uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-            void * buffer, uint16_t bufferlen);
+            void * buffer, uint32_t bufferlen);
+    /** A static class to scan for supported drives */
+    static int diskScan();
 protected:
     /** OS specific command to Wait for specified number of milliseconds 
      * @param ms  number of milliseconds to wait

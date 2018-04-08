@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2016 Alexander Motin <mav@FreeBSD.org>
+This software is Copyright 2016-2018 Alexander Motin <mav@FreeBSD.org>
 This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
@@ -49,7 +49,7 @@ public:
      * @param bufferlen length of the input/output buffer
      */
     uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-            void * buffer, uint16_t bufferlen);
+            void * buffer, uint32_t bufferlen);
     void identify(OPAL_DiskInfo& disk_info);
     struct cam_device *camdev;
     int isSAS; /* The device is sas */

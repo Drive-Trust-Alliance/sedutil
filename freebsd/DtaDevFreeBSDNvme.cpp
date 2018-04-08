@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2016 Alexander Motin <mav@FreeBSD.org>
+This software is Copyright 2016-2018 Alexander Motin <mav@FreeBSD.org>
 
 This file is part of sedutil.
 
@@ -49,7 +49,7 @@ bool DtaDevFreeBSDNvme::init(const char * devref)
 
 /** Send an ioctl to the device using nvme admin commands. */
 uint8_t DtaDevFreeBSDNvme::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                         void * buffer, uint16_t bufferlen)
+                         void * buffer, uint32_t bufferlen)
 {
 	struct nvme_pt_command	pt;
 	int err;
@@ -59,10 +59,18 @@ uint8_t DtaDevFreeBSDNvme::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t co
 	memset(&pt, 0, sizeof(pt));
 	if (IF_RECV == cmd) {
 		LOG(D3) << "Security Receive Command";
+#if __FreeBSD_version >= 1200058
+		pt.cmd.opc_fuse = NVME_CMD_SET_OPC(NVME_OPC_SECURITY_RECEIVE);
+#else
 		pt.cmd.opc = NVME_OPC_SECURITY_RECEIVE;
+#endif
 	} else {
 		LOG(D3) << "Security Send Command";
+#if __FreeBSD_version >= 1200058
+		pt.cmd.opc_fuse = NVME_CMD_SET_OPC(NVME_OPC_SECURITY_SEND);
+#else
 		pt.cmd.opc = NVME_OPC_SECURITY_SEND;
+#endif
 	}
 	pt.cmd.cdw10 = protocol << 24 | comID << 8;
 	pt.cmd.cdw11 = bufferlen;
@@ -85,7 +93,11 @@ void DtaDevFreeBSDNvme::identify(OPAL_DiskInfo& disk_info)
 	struct nvme_controller_data cdata;
 
 	memset(&pt, 0, sizeof(pt));
+#if __FreeBSD_version >= 1200058
+	pt.cmd.opc_fuse = NVME_CMD_SET_OPC(NVME_OPC_IDENTIFY);
+#else
 	pt.cmd.opc = NVME_OPC_IDENTIFY;
+#endif
 	pt.cmd.cdw10 = 1;
 	pt.buf = &cdata;
 	pt.len = sizeof(cdata);

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2016 Alexander Motin <mav@FreeBSD.org>
+This software is Copyright 2016-2018 Alexander Motin <mav@FreeBSD.org>
 
 This file is part of sedutil.
 

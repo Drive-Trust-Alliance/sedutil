@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2016 Alexander Motin <mav@FreeBSD.org>
+This software is Copyright 2016-2018 Alexander Motin <mav@FreeBSD.org>
 This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
@@ -21,6 +21,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <dirent.h>
+#include <fnmatch.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <stdio.h>
@@ -33,6 +35,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaHexDump.h"
 #include "DtaDevFreeBSDNvme.h"
 #include "DtaDevFreeBSDSata.h"
+#include "DtaDevGeneric.h"
 
 using namespace std;
 
@@ -86,7 +89,7 @@ void DtaDevOS::init(const char * devref)
 }
 
 uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-	void * buffer, uint16_t bufferlen)
+	void * buffer, uint32_t bufferlen)
 {
 	if (!isOpen) return 0xfe; //disk open failed so this will too
 
@@ -115,6 +118,54 @@ void DtaDevOS::osmsSleep(uint32_t ms)
 {
 	usleep(ms * 1000); //convert to microseconds
 	return;
+}
+
+int  DtaDevOS::diskScan()
+{
+	DIR *dir;
+	struct dirent *dirent;
+	DtaDev * d;
+	char devname[25];
+	vector<string> devices;
+	string tempstring;
+
+	LOG(D1) << "Entering DtaDevOS:diskScan ";
+	dir = opendir("/dev");
+	if (dir != NULL) {
+		while ((dirent=readdir(dir)) != NULL) {
+			if (fnmatch("da[0-9]", dirent->d_name, 0) == 0 ||
+			    fnmatch("da[0-9][0-9]", dirent->d_name, 0) == 0 ||
+			    fnmatch("da[0-9][0-9][0-9]", dirent->d_name, 0) == 0 ||
+			    fnmatch("ada[0-9]", dirent->d_name, 0) == 0 ||
+			    fnmatch("ada[0-9][0-9]", dirent->d_name, 0) == 0 ||
+			    fnmatch("ada[0-9][0-9][0-9]", dirent->d_name, 0) == 0 ||
+			    fnmatch("nvme[0-9]",dirent->d_name, 0) == 0 ||
+			    fnmatch("nvme[0-9][0-9]",dirent->d_name, 0) == 0 ||
+			    fnmatch("nvme[0-9][0-9][0-9]",dirent->d_name,0) == 0) {
+				tempstring = dirent->d_name;
+				devices.push_back(tempstring);
+			}
+		}
+		closedir(dir);
+	}
+	std::sort(devices.begin(), devices.end());
+	printf("Scanning for Opal compliant disks\n");
+	for (int i = 0; i < devices.size(); i++) {
+		snprintf(devname, 23, "/dev/%s", devices[i].c_str());
+		printf("%-10s", devname);
+		d = new DtaDevGeneric(devname);
+		if (d->isAnySSC())
+			printf(" %s%s%s ", (d->isOpal1() ? "1" : " "),
+			    (d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
+		else
+			printf("%s", " No  ");
+
+		printf("%s %s\n", d->getModelNum(), d->getFirmwareRev());
+		delete d;
+	}
+	printf("No more disks present ending scan\n");
+	LOG(D1) << "Exiting DtaDevOS::scanDisk ";
+	return 0;
 }
 
 /** Close the device reference so this object can be delete. */
