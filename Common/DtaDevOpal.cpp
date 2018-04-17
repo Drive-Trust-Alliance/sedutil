@@ -61,7 +61,7 @@ void DtaDevOpal::init(const char * devref)
 	if((lastRC = properties()) != 0) { LOG(E) << "Properties exchange failed";}
 }
 
-// create an hiden user UserN disk_info.OPAL20_numUsers
+// create an audit user UserN disk_info.OPAL20_numUsers
 //char * DtaDevOpal::gethuser(void);
 
 
@@ -198,7 +198,7 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 	// setpassword has flag -n -t from GUI
 	if (no_hash_passwords) { // do it only when -n is set
 		bool saved_flag = no_hash_passwords;
-		no_hash_passwords = false; // want to hash hidden user password
+		no_hash_passwords = false; // want to hash audit user password
 		bool saved_t_flag = translate_req;
 		translate_req = false; // do not want to do translate user password
 		vector <uint8_t> hash;
@@ -1312,8 +1312,16 @@ OPAL_UID getUIDtoken(char * userid)
 	// translate UserN AdminN into <int8_t 
 	vector<uint8_t> auth;
 	uint8_t id;
+	uint8_t sl;
 	if (!memcmp("User", userid, 4)) {// UserI UID
-		id = (uint8_t)(OPAL_UID::OPAL_USER1_UID) + atoi(&userid[4]) -1; 
+		sl = strnlen(userid, 6);
+		if (sl == 5) {
+			id = (uint8_t)(OPAL_UID::OPAL_USER1_UID) + atoi(&userid[4]) - 1;
+		}
+		else if (sl == 6)
+		{
+			id = (uint8_t)(OPAL_UID::OPAL_USER1_UID) + (atoi(&userid[4]) * 10) + (atoi(&userid[4]) - 1);
+		}
 		IFLOG(D4) printf("UserN=%s enum=%d\n", userid, id);
 		return  (OPAL_UID)id; 
 	}
@@ -1337,7 +1345,13 @@ vector<uint8_t> getUID(char * userid, vector<uint8_t> &auth2, vector<uint8_t> &a
 
 	
 	if (!memcmp("User", userid, 4)) {// UserI UID
-		id = (uint8_t)atoi(&userid[4]); // (uint8_t)atoi(argv[opts.dsnum])
+		if (strnlen(userid, 6) == 5) {
+			id = (uint8_t)atoi(&userid[4]); // (uint8_t)atoi(argv[opts.dsnum])
+		}
+		else if (strnlen(userid, 6) == 6) {
+			id = ((uint8_t)atoi(&userid[4]) * 10) + (atoi(&userid[5]));
+		}
+
 		IFLOG(D4) printf("UserN : %s\n", userid);
 		for (int i = 0; i < 7; i++) {
 			auth.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
@@ -1350,7 +1364,6 @@ vector<uint8_t> getUID(char * userid, vector<uint8_t> &auth2, vector<uint8_t> &a
 		id = (uint8_t)atoi(&userid[5]);
 		for (int i = 0; i < 7; i++) {
 			auth.push_back(OPALUID[OPAL_UID::OPAL_ADMIN1_UID][i]);
-			
 			auth2.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
 			auth3.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID+(hu-1)][i]);
 		}
@@ -1374,7 +1387,7 @@ uint8_t DtaDevOpal::userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * use
 
 	// translate UserN AdminN into <int8_t>
 	vector<uint8_t> auth, auth2, auth3;
-	auth = getUID(userid, auth2, auth3, disk_info.OPAL20_numUsers); // always add hidden user to auth3. hidden user is added first, the following userid will preserve the hidden userid
+	auth = getUID(userid, auth2, auth3, disk_info.OPAL20_numUsers); // always add audit user to auth3. audit user is added first, the following userid will preserve the audit userid
 	LOG(D4) << "auth";  IFLOG(D4) { for (int i = 0; i < 9; i++) printf("%02X, ", auth[i]);  printf("\n"); }
 	LOG(D4) << "auth2"; IFLOG(D4) { for (int i = 0; i < 9; i++) printf("%02X, ", auth2[i]);  printf("\n"); }
 	LOG(D4) << "auth3"; IFLOG(D4) { for (int i = 0; i < 9; i++) printf("%02X, ", auth3[i]);  printf("\n"); }
@@ -1406,10 +1419,10 @@ uint8_t DtaDevOpal::userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * use
 	cmd->addToken(mbrstate ? OPAL_TOKEN::VALUES : OPAL_TOKEN::WHERE);
 	cmd->addToken(OPAL_TOKEN::ENDNAME);
 	//
-	// always add this hidden use, if request user id is not hidden id
+	// always add this audit use, if request user id is not audit id
 	// !memcmp("User", userid, 4) 
 	if (1) { // ((uint8_t)atoi(&userid[4]) != disk_info.OPAL20_numUsers) { 
-		LOG(D1) << "addition hidden user added ";
+		LOG(D1) << "addition audit user added ";
 		//
 		cmd->addToken(OPAL_TOKEN::STARTNAME);
 		cmd->addToken(OPAL_UID::OPAL_HALF_UID_AUTHORITY_OBJ_REF, 4);
@@ -1428,10 +1441,10 @@ uint8_t DtaDevOpal::userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * use
 		//cmd->addToken(OPAL_TOKEN::ENDNAME); // can only add even number of user ?????
 	}
 	else {
-		LOG(I) << "no addition hidden user added ";
+		LOG(I) << "no addition audit user added ";
 	}
 	//
-	// above is hidden user 
+	// above is audit user 
 	//
 	//
 
