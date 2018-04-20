@@ -10,10 +10,9 @@ def hash_pbkdf2(plaintext, salt, iterations = 75000, bytes = 32):
 def hash_pass(plaintext, salt, msid):
     if plaintext == msid: #don't hash MSID
         return plaintext
-    pw_trim = re.sub('\s', '', plaintext)
-    plaintext = ''
-    pw = hash_pbkdf2(pw_trim, salt)
-    pw_trim = ''
+    #pw_trim = re.sub('\s', '', plaintext)
+    #del plaintext
+    pw = hash_pbkdf2(plaintext, salt)
     return pw
 
 def testsedutil(testSet):
