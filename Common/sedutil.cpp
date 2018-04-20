@@ -30,7 +30,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "Version.h"
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 #include "sedsize.h" 
+#if (!WINDOWS7)
 #include "compressapi-8.1.h"
+#endif
 #include <iostream>
 #include <fstream>
 #include <Stdafx.h>
@@ -248,6 +250,7 @@ int reloadvol(HANDLE &vol_handle)
 // retry zero out error
 BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 {
+#if (!WINDOWS7)
 	HANDLE vol_handle;
 	int status;
 	DWORD   n;
@@ -297,6 +300,7 @@ BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 	CloseHandle(vol_handle);
 	if (Bufferzero != NULL) free(Bufferzero);
 	//Sleep(1000);
+#endif
 	return true;
 }
 #endif
@@ -304,11 +308,11 @@ BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 
 int diskUSBwrite(char *devname, char * USBname)
 {
-#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-	LOG(D1) << "createUSB() isn't supported in Linux";
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || (WINDOWS7)
+	LOG(D1) << "createUSB() isn't supported in Linux, Windows 7";
 	return 0;
-#endif
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#else
+//#elif (defined(WIN32) || defined(_WIN32) || defined(__WIN32__) ) && (!WINDOWS7)
 	HANDLE vol_handle;
 	int status;
 	long sect;

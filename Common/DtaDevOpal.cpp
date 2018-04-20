@@ -861,7 +861,12 @@ uint8_t DtaDevOpal::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<u
 		userData.push_back(0x00);
 		userData.push_back(0x03);
 		userData.push_back(0x00);
-		userData.push_back(atoi(&userid[4]) &0xff );
+		if (strnlen(userid, 6) == 5) {
+			userData.push_back(atoi(&userid[4]) & 0xff);
+		}
+		if (strnlen(userid, 6) == 6) {
+			userData.push_back((atoi(&userid[4]) * 10)  + atoi(&userid[5]) & 0xff);
+		}
 	} 
 	else {
 		if (!memcmp("Admin", userid, 5)) {
@@ -3152,7 +3157,7 @@ uint8_t DtaDevOpal::createUSB(char * filename) {
 
 
 uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
-        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+    #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || (WINDOWS7)
         LOG(D1) << "DtaDevOpal::loadPBAimage() isn't supported in Linux";
 	return 0;
         #else

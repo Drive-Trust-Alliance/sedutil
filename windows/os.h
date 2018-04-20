@@ -19,6 +19,7 @@ along with sedutil.If not, see <http://www.gnu.org/licenses/>.
 *C : E********************************************************************** */
 
 #pragma once
+#define WINDOWS7 0 // 0 if for windows 8.1 or above ; 1 only for windows 7
 
 #include <WinSDKVer.h>
 #define _WIN32_WINNT _WIN32_WINNT_WINXP
