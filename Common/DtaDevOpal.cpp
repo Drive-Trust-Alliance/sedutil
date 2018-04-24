@@ -857,16 +857,11 @@ uint8_t DtaDevOpal::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<u
 		userData.push_back(0x0b);
 	else
 		userData.push_back(0x09);
-	if (!memcmp("User", userid, 4)) {
+	if (!memcmp("User", userid, 4)) { 
 		userData.push_back(0x00);
 		userData.push_back(0x03);
 		userData.push_back(0x00);
-		if (strnlen(userid, 6) == 5) {
-			userData.push_back(atoi(&userid[4]) & 0xff);
-		}
-		if (strnlen(userid, 6) == 6) {
-			userData.push_back((atoi(&userid[4]) * 10)  + atoi(&userid[5]) & 0xff);
-		}
+		userData.push_back(atoi(&userid[4]) & 0xff);
 	} 
 	else {
 		if (!memcmp("Admin", userid, 5)) {
@@ -1325,7 +1320,8 @@ OPAL_UID getUIDtoken(char * userid)
 		}
 		else if (sl == 6)
 		{
-			id = (uint8_t)(OPAL_UID::OPAL_USER1_UID) + (atoi(&userid[4]) * 10) + (atoi(&userid[4]) - 1);
+			//id = (uint8_t)(OPAL_UID::OPAL_USER1_UID) + (atoi(&userid[4]) * 10) + (atoi(&userid[4]) - 1);
+			id = (uint8_t)(OPAL_UID::OPAL_USER1_UID) + (atoi(&userid[4]) -1);
 		}
 		IFLOG(D4) printf("UserN=%s enum=%d\n", userid, id);
 		return  (OPAL_UID)id; 
@@ -1354,15 +1350,18 @@ vector<uint8_t> getUID(char * userid, vector<uint8_t> &auth2, vector<uint8_t> &a
 			id = (uint8_t)atoi(&userid[4]); // (uint8_t)atoi(argv[opts.dsnum])
 		}
 		else if (strnlen(userid, 6) == 6) {
-			id = ((uint8_t)atoi(&userid[4]) * 10) + (atoi(&userid[5]));
+			id = ((uint8_t)atoi(&userid[4]));
 		}
 
-		IFLOG(D4) printf("UserN : %s\n", userid);
+		IFLOG(D4) printf("UserN : %s traslated id = %d\n", userid,id);
 		for (int i = 0; i < 7; i++) {
 			auth.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
-			auth3.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID + (hu - 1)][i]);
 			auth2.push_back(OPALUID[OPAL_UID::OPAL_ADMIN1_UID][i]);
+			auth3.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID + (hu - 1)][i]);
+			//auth3.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]); // first 7-byte is all the same as OPAL_USER1_UID, the only difference is the 8th byte 
 		}
+		auth.push_back(id);
+		auth2.push_back(1); // always admin1 or user1 
 	}
 	else { // "Admin"
 		IFLOG(D4) printf("AdminN %s\n", userid); 
@@ -1371,11 +1370,14 @@ vector<uint8_t> getUID(char * userid, vector<uint8_t> &auth2, vector<uint8_t> &a
 			auth.push_back(OPALUID[OPAL_UID::OPAL_ADMIN1_UID][i]);
 			auth2.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
 			auth3.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID+(hu-1)][i]);
+			//auth3.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
 		}
+		auth.push_back(id); // AdminN 
+		auth2.push_back(1); // always admin1
 	}
-	auth.push_back(id);
-	auth2.push_back(1); // always admin1
-	auth3.push_back(hu);
+	//auth.push_back(id);
+	//auth2.push_back(1); // always admin1 or user1 
+	auth3.push_back(hu); // always audit user 
 	return auth;
 }
 
