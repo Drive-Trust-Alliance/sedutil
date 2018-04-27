@@ -3039,8 +3039,8 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 	}
 	uint32_t MandatoryWriteGranularity = response.getUint32(4);
 	printf("MandatoryWriteGranularity 0x%X\n", MandatoryWriteGranularity);
-	uint32_t RecommandedAccessGranularity = response.getUint32(8);
-	printf("RecommandedAccessGranularity 0x%X\n", RecommandedAccessGranularity);
+	uint32_t RecommendedAccessGranularity = response.getUint32(8);
+	printf("RecommendedAccessGranularity 0x%X\n", RecommendedAccessGranularity);
 
 	//
 	// adminN userN enabled state
