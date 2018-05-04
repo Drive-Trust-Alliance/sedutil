@@ -2994,13 +2994,6 @@ uint8_t DtaDevOpal::getMBRsize(char * password, uint32_t * msize)
 	return 0;
 }
 
-
-
-
-
-
-
-
 uint8_t DtaDevOpal::getMBRsize(char * password)
 {
 	LOG(D1) << "Entering DtaDevOpal::getMBRsize()";
@@ -3126,8 +3119,42 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 	free(gudid);
 
 	*/
-
 	delete session;
+	////////////////////////////////////////////////////////////////////////
+
+/*
+	uint32_t n;
+	OPAL_TOKEN tkn;
+	uint16_t col1,col2;
+
+	col1 = 5; // TryLimit column
+	col2 = 6; // Tries colume
+	lastRC = getTryLimit(col1,col2,password);
+	if (lastRC) {
+		LOG(E) << "unable to read TryLimit";
+		return lastRC;
+	}
+
+	n = response.getTokenCount();
+	printf("OPAL_TOKEN count is %d\n", n);
+
+	for (uint32_t i = 0; i < n; i++)
+	{
+		tkn = response.tokenIs(i);
+		printf("OPAL_TOKEN %i is %d(%02Xh)\n", i, tkn, tkn);
+	}
+
+	uint8_t trLmt = response.getUint8(4);
+	uint8_t tys = response.getUint8(8);
+	fprintf(stdout, "TryLimit: %d ;  trys: %d\n",trLmt, tys );
+*/	
+
+	getTryLimit(5, 6, password); // list all TryLimit Tries
+
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	//delete session;
 	// 
 	//srand((uint16_t)time(NULL));
 	//auditRec(password, 1 + rand() % evt_lastID); // for testing purpose
@@ -3711,9 +3738,119 @@ uint8_t DtaDevOpal::getDefaultPassword()
 	LOG(D1) << "Exiting getDefaultPassword()";
 	return 0;
 }
+/////////////////////////////////////////////////////
+// get TryLimit and Tries
+
+uint8_t DtaDevOpal::getTryLimit(uint16_t col1,uint16_t col2, char * password)
+{
+	LOG(D1) << "Entering DtaDevOpal::getTryLimit()";
+	uint8_t lastRC;
+	vector<uint8_t> hash;
+	vector<uint8_t> table;
+	//uint32_t n;
+	//OPAL_TOKEN tkn;
+	char * s; 
+	uint8_t trLmt ;
+	uint8_t tys;
+
+	session = new DtaSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	//if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID)) != 0) {
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+		LOG(E) << "Unable to start Unauthenticated session " << dev;
+		delete session;
+		return lastRC;
+	}
+
+	uint8_t lmt; 
+	// print TryLimit and Tries for OPAL_C_PIN_ADMIN
+	for (uint8_t u = 0; u < 3; u ++) // u=0=>admin  u=1 => user u=2 SID ---> DBG start u=2
+	{ // A1
+		s = "Admin";
+		switch (u) {
+		case 0 :
+			lmt = disk_info.OPAL20_numAdmins;
+			s = "Admin";
+			break;
+		case 1 :
+			lmt = disk_info.OPAL20_numUsers; 
+			s = "User";
+			break;
+		case 2 :
+			lmt = 1; 
+			s = "SID";
+			break;
+		}
+		for (uint16_t admin = 1; admin <= lmt; admin++)
+		{ 
+			if (u == 2) {
+				delete session;
+				session = new DtaSession(this);
+				if (NULL == session) {
+					LOG(E) << "Unable to create session object ";
+					return DTAERROR_OBJECT_CREATE_FAILED;
+				}
+				//if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID)) != 0) {
+				//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+				if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, OPAL_UID::OPAL_SID_UID)) != 0) { // for SID TryLimit, it need to start its own session 
+					LOG(E) << "Unable to start Unauthenticated session " << dev;
+					delete session;
+					return lastRC;
+				}
+			}
+			//printf("C_PIN_%s%d start column = %d ; end column = %d\n", s, admin, col1, col2);
+			table.clear();
+			table.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+
+			for (int i = 0; i < 7; i++) { //A3
+				switch (u)
+				{ 
+				case 0 :
+					table.push_back(OPALUID[(OPAL_UID::OPAL_C_PIN_ADMIN1)][i]); //OPAL_C_PIN_SID->NG OPAL_C_PIN_ADMIN1->NG
+					break;
+				case 1 :
+					table.push_back(OPALUID[(OPAL_UID::OPAL_C_PIN_USER1)][i]);
+					break;
+				case 2 :
+					table.push_back(OPALUID[(OPAL_UID::OPAL_C_PIN_SID)][i]); //OPAL_C_PIN_SID->NG OPAL_C_PIN_ADMIN1->NG
+					break;
+				}
+			} 
+			if (u < 2 ) table.push_back(admin); else table.push_back(OPALUID[(OPAL_UID::OPAL_C_PIN_SID)][7]);
+			if ((lastRC = getTable(table, col1, col2)) != 0) { // TryLimit, TryLimit
+				delete session;
+				return lastRC;
+			}
+		/*
+		n = response.getTokenCount();
+		printf("OPAL_TOKEN count is %d\n", n);
+
+		for (uint32_t i = 0; i < n; i++)
+		{
+			tkn = response.tokenIs(i);
+			printf("OPAL_TOKEN %i is %d(%02Xh)\n", i, tkn, tkn);
+		}
+		*/
+			trLmt = response.getUint8(4);
+			tys = response.getUint8(8);
+			if (u < 2)
+				fprintf(stdout, "%s%d TryLimit = %d : Tries = %d\n", s, admin, trLmt, tys);
+			else
+				fprintf(stdout, "%s TryLimit = %d : Tries = %d\n", s, trLmt, tys);
+		} 
+	} 
+
+	delete session;
+	LOG(D1) << "Exiting getTryLimit()";
+	return 0;
+}
+
 uint8_t DtaDevOpal::printDefaultPassword()
 {
-    const uint8_t rc = getDefaultPassword();
+    /*const*/ uint8_t rc = getDefaultPassword();
 	if (rc) {
 		LOG(E) << "unable to read MSID password";
 		return rc;
@@ -3722,6 +3859,7 @@ uint8_t DtaDevOpal::printDefaultPassword()
     fprintf(stdout, "MSID: %s\n", (char *)defaultPassword.c_str());
     return 0;
 }
+
 uint8_t DtaDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
 	uint8_t hasholdpwd, uint8_t hashnewpwd)
 {

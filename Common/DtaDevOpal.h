@@ -330,6 +330,7 @@ protected:
 		char * password, char * msg = (char *) "New Value Set");
 
 	uint8_t getDefaultPassword();
+	uint8_t getTryLimit(uint16_t col1, uint16_t col2, char * pass);
 	typedef struct lrStatus
 	{
 		uint8_t command_status; //return code of locking range query command
