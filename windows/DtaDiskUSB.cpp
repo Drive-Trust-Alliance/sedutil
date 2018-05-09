@@ -135,7 +135,7 @@ void DtaDiskUSB::identify(OPAL_DiskInfo& disk_info)
     uint8_t iorc = sendCmd(IDENTIFY, 0x00, 0x0000, identifyResp, IO_BUFFER_LENGTH);
 
     if (0x00 != iorc) {
-        LOG(D) << "IDENTIFY Failed " << (uint16_t) iorc;
+        LOG(D) << "USB IDENTIFY Failed " << (uint16_t) iorc;
     }
 	if (!(memcmp(identifyResp, nullz.data(), 512))) {
 		disk_info.devType = DEVICE_TYPE_OTHER;

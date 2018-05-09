@@ -193,8 +193,8 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 	#else
 	strcat_s(p1, getSerialNum());
 	#endif
-	//LOG(I) << p1;
-	//DtaHexDump(p1, 80);
+	LOG(I) << p1;  // JERRY 
+	DtaHexDump(p1, 80); // JERRY 
 	// setpassword has flag -n -t from GUI
 	if (no_hash_passwords) { // do it only when -n is set
 		bool saved_flag = no_hash_passwords;
@@ -1306,23 +1306,14 @@ uint8_t DtaDevOpal::enableUser(uint8_t mbrstate, char * password, char * userid)
 	return 0;
 }
 
-
+/*
 OPAL_UID getUIDtoken(char * userid)
 {
 	// translate UserN AdminN into <int8_t 
-	vector<uint8_t> auth;
 	uint8_t id;
-	uint8_t sl;
+
 	if (!memcmp("User", userid, 4)) {// UserI UID
-		sl = strnlen(userid, 6);
-		if (sl == 5) {
-			id = (uint8_t)(OPAL_UID::OPAL_USER1_UID) + atoi(&userid[4]) - 1;
-		}
-		else if (sl == 6)
-		{
-			//id = (uint8_t)(OPAL_UID::OPAL_USER1_UID) + (atoi(&userid[4]) * 10) + (atoi(&userid[4]) - 1);
-			id = (uint8_t)(OPAL_UID::OPAL_USER1_UID) + (atoi(&userid[4]) -1);
-		}
+		id = (uint8_t)(OPAL_UID::OPAL_USER1_UID) + atoi(&userid[4]) - 1;
 		IFLOG(D4) printf("UserN=%s enum=%d\n", userid, id);
 		return  (OPAL_UID)id; 
 	}
@@ -1333,6 +1324,7 @@ OPAL_UID getUIDtoken(char * userid)
 		return  (OPAL_UID)id;
 	}
 }
+*/
 
 vector<uint8_t> getUID(char * userid, vector<uint8_t> &auth2, vector<uint8_t> &auth3, uint8_t hu)
 {
@@ -1598,14 +1590,9 @@ uint8_t DtaDevOpal::pbaValid(char * password)
 {
 	// check if boot sector exist 55AA(offset 510-511)  FAT16(
 	// get PBA version offset 512 to (up to 32 bytes)
-	#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-	LOG(D1) << "DtaDevOpal::pbaValid() isn't supported in Linux";
-	return 0;
-	#else
-	
 	uint8_t lastRC;
+	uint8_t pbaver[512];	
 	uint8_t boot[512];
-	uint8_t pbaver[512];
 	uint8_t bootsig[2] = { 0x55,0xAA };
 	uint8_t pat[16] = { 0xEB,0x3C, 0x90, 0x6D,  0x6B, 0x66, 0x73, 0x2E,  0x66, 0x61, 0x74, };
 	lastRC = MBRRead(password, 512, 512, (char *)pbaver);
@@ -1613,6 +1600,17 @@ uint8_t DtaDevOpal::pbaValid(char * password)
 		LOG(D1) << "MBRRead error";
 		return lastRC;
 	}
+	//#if 1 // defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+	LOG(I) << "DtaDevOpal::pbaValid() show license level only in Linux";
+	/*IFLOG(D4) */ DtaHexDump(pbaver+128, 32);
+	printf("PBA image license level :");
+	for (uint8_t i = 0; i < 32; i++) {
+		printf("%02X", pbaver [ 128 + i]);
+	}
+	printf(":\n");
+	//return 0;
+	//#else
+
 	IFLOG(D4) DtaHexDump(pbaver, 64);
 	printf("PBA image version : %s", (char *)pbaver);
 
@@ -1653,7 +1651,7 @@ uint8_t DtaDevOpal::pbaValid(char * password)
 	printf("audit log version : %d.%d", phdr->ver_major, phdr->ver_minor);
 	*/
 	return 0;
-	#endif
+	//#endif
 }
 
 
@@ -3342,6 +3340,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	char * firmware = getFirmwareRev();
 	char * sernum = getSerialNum();
 	vector<uint8_t> hash;
+
 	IFLOG(D1) printf("model : %s ", model);
 	IFLOG(D1) printf("firmware : %s ", firmware);
 	IFLOG(D1) printf("serial : %s\n", sernum);
@@ -3351,12 +3350,12 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	LOG(D1) << "end hashing";
 	IFLOG(D1) printf("hashed size = %zd\n", hash.size());
 	IFLOG(D1) printf("hashed serial number is ");
-	IFLOG(D1)
+	IFLOG(D1) // should never expose the hashed series , need to comment out when release
 	for (int i = 0; i < hash.size(); i++)
 	{
 		printf("%02X", hash.at(i));
 	}
-	printf("\n");
+	printf("\n"); // end of IFLOG(D1)
 	// try dump decompressed buffer of sector 0 , 1 
 	//DtaHexDump(DecompressedBuffer + 512, 512);
 	// write 32-byte date into buffer 
@@ -3368,13 +3367,56 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	hash.clear();
 	LOG(D1) << "start hashing";
 	char mbrstr[16] = "FidelityLockMBR";
-	IFLOG(D4) DtaHashPwd(hash, mbrstr, this);
+	DtaHashPwd(hash, mbrstr, this); // why IFLOG(D4)
 	for (int i = 2; i < hash.size(); i++)
 	{
 		DecompressedBuffer[512 + 96 + i - 2] = hash.at(i);
 	}
 
-	IFLOG(D4) DtaHexDump(DecompressedBuffer + 512, 512);
+	// write license level 
+	hash.clear();
+	LOG(D1) << "start hashing license level";
+	// 	if (!memcmp("Admin", userid, 5)) {
+	char lic_level[16];
+	if (!memcmp("0:", LicenseLevel, 2)) { // correct feature set
+		switch (atoi(&LicenseLevel[2]))
+		{
+		case 1:
+			memcpy(lic_level, "FidelityFree    ",16);
+			break;
+		case 2:
+			memcpy(lic_level, "FidelityStandard", 16);
+			break;
+		case 4:
+			memcpy(lic_level, "FidelityPRO5    ", 16);
+			break;
+		case 8:
+			memcpy(lic_level, "FidelityPRO25   ", 16);
+			break;
+		case 16:
+			memcpy(lic_level, "FidelityPRO100  ", 16);
+			break;
+		case 32:
+			memcpy(lic_level, "FidelityPROUnlimt", 16);
+			break;
+		default:
+			memcpy(lic_level, "                ", 16);
+			break;
+		}
+	}
+	else {
+		memcpy(lic_level, "                ", 16);
+	}
+	//IFLOG(D4) 
+	//	for (uint8_t i = 0; i < 16; i++) { printf("%02X", lic_level[i]); };
+	DtaHashPwd(hash, lic_level, this);
+	for (int i = 2; i < hash.size(); i++)
+	{
+		DecompressedBuffer[512 + 128 + i - 2] = hash.at(i);
+	}
+	IFLOG(D4)  // remove hexdump when release 
+		DtaHexDump(DecompressedBuffer + 512, 512);
+
 	no_hash_passwords = saved_flag;
 
 	if (0 == fivepercent) fivepercent++;
@@ -3795,7 +3837,9 @@ uint8_t DtaDevOpal::getTryLimit(uint16_t col1,uint16_t col2, char * password)
 				}
 				//if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID)) != 0) {
 				//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+
 				if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, OPAL_UID::OPAL_SID_UID)) != 0) { // for SID TryLimit, it need to start its own session 
+				// OPAL_SID_UID 
 					LOG(E) << "Unable to start Unauthenticated session " << dev;
 					delete session;
 					return lastRC;

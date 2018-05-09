@@ -306,7 +306,7 @@ BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 #endif
 
 
-int diskUSBwrite(char *devname, char * USBname)
+int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 {
 #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || (WINDOWS7)
 	LOG(D1) << "createUSB() isn't supported in Linux, Windows 7";
@@ -339,7 +339,7 @@ int diskUSBwrite(char *devname, char * USBname)
 	// write hashed series num to decompressed image buffer
 
 	char * filename = "sedutil-cli.exe";
-	LOG(D1) << "Entering createUSB()" << filename << " " << USBname;
+	LOG(D1) << "Entering createUSB() " << USBname;
 	//uint8_t lastRC;
 	uint64_t fivepercent = 0;
 	uint64_t imgsize;
@@ -460,43 +460,82 @@ int diskUSBwrite(char *devname, char * USBname)
 		char * model = d->getModelNum();
 		char * firmware = d->getFirmwareRev();
 		char * sernum = d->getSerialNum();
-		vector<uint8_t> hash;
+
 		IFLOG(D1) printf("model : %s ", model);
 		IFLOG(D1) printf("firmware : %s ", firmware);
 		IFLOG(D1) printf("serial : %s\n", sernum);
+		
 		bool saved_flag = d->no_hash_passwords;
 		d->no_hash_passwords = false;
+		vector<uint8_t> hash;
 		hash.clear();
-		LOG(D1) << "start hashing ser";
 		DtaHashPwd(hash, sernum, d);
-		LOG(D1) << "end hashing ser";
-		IFLOG(D1) printf("hashed size = %zd\n", hash.size());
-		IFLOG(D1) printf("hashed serial number is ");
-		IFLOG(D1)
-		for (int i = 0; i < hash.size(); i++)
-		{
-			printf("%02X", hash.at(i));
+		if (0) {
+			printf("hashed size = %zd\n", hash.size());
+			printf("hashed serial number is ");
+			for (int i = 0; i < hash.size(); i++) { printf("%02X", hash.at(i)); } 	printf("\n");
 		}
-		printf("\n");
-	// try dump decompressed buffer of sector 0 , 1 
+
 	IFLOG(D4) DtaHexDump(DecompressedBuffer+512,512);
-	// write 32-byte date into buffer 
-	for (int i = 2; i < hash.size(); i++)
-	{
-		DecompressedBuffer[512+64+i-2] = hash.at(i);
-	}
+	 
+	for (int i = 2; i < hash.size(); i++) {	DecompressedBuffer[512+64+i-2] = hash.at(i); 	}
 	hash.clear();
-	LOG(D1) << "start hashing usb";
 	char usbstr[16] = "FidelityLockUSB";
 	DtaHashPwd(hash,usbstr, d);
-	LOG(D1) << "end hashing usb";
 	for (int i = 2; i < hash.size(); i++)
 	{
 		DecompressedBuffer[512 + 96 + i - 2] = hash.at(i);
 	}
-	IFLOG(D4) DtaHexDump(DecompressedBuffer + 512, 512);
-	d->no_hash_passwords = saved_flag ; // restore no_hash_password flag
+ 
+	// write license level on window only
+	char lic_level[18];
+	memset(lic_level, 0, 18);
+	hash.clear();
+	if (!memcmp("0:", LicenseLevel, 2)) { // correct feature set
+		switch (atoi(&LicenseLevel[2]))
+		{
+		case 1:
+			memcpy(lic_level, "FidelityFree    ", 16);
+			break;
+		case 2:
+			memcpy(lic_level, "FidelityStandard", 16);
+			break;
+		case 4:
+			memcpy(lic_level, "FidelityPRO5    ", 16);
+			break;
+		case 8:
+			memcpy(lic_level, "FidelityPRO25   ", 16);
+			break;
+		case 16:
+			memcpy(lic_level, "FidelityPRO100  ", 16);
+			break;
+		case 32:
+			memcpy(lic_level, "FidelityPROUnlimt", 16);
+			break;
+		default:
+			memcpy(lic_level, "                ", 16);
+			break;
+		}
+	}
+	else {
+		memcpy(lic_level, "                ", 16);
+		printf("no license = %s\n", lic_level);
+		delete u;
+		delete d;
+		return DTAERROR_CREATE_USB;
+	}
+	//IFLOG(D4)
+	//	for (uint8_t i = 0; i < 16; i++) { printf("%02X", lic_level[i]); } printf("\n");
+	DtaHashPwd(hash, lic_level, d);
+	for (int i = 2; i < hash.size(); i++)
+	{
+		DecompressedBuffer[512 + 128 + i - 2] = hash.at(i);
+	}
 
+	//IFLOG(D4)  // remove hexdump when release
+	//	DtaHexDump(DecompressedBuffer + 512, 512);
+
+	d->no_hash_passwords = saved_flag ; // restore no_hash_password flag
 	// no zero write does it work ????  --> Nope, require to zero out first ,   why ?????
 	vol_handle = INVALID_HANDLE_VALUE;
 	status = createvol(vol_handle, USBname); 
@@ -654,7 +693,7 @@ int main(int argc, char * argv[])
 			printf("License Major Version = %ld \n", majver);
 			printf("License Minor Version = %ld \n", minver);
 			printf("License Version = %s \n", (char *)ver);
-			if (0) {
+			if (0) { // some how m_lv return empty string for the following 
 				_bstr_t company = m_lv->getcompany();
 				printf("Company = %s\n", (char *)company);
 				_bstr_t ckey = m_lv->getcomputerkey();
@@ -718,7 +757,7 @@ int main(int argc, char * argv[])
 	if ((opts.action != sedutiloption::scan) && 
 		(opts.action != sedutiloption::validatePBKDF2) &&
 		(opts.action != sedutiloption::version) &&
-		(opts.action != sedutiloption::createUSB) &&
+		//(opts.action != sedutiloption::createUSB) &&
 		(opts.action != sedutiloption::hashvalidation) &&
 		(opts.action != sedutiloption::isValidSED)) {
 		if (opts.device > (argc - 1)) opts.device = 0;
@@ -755,7 +794,15 @@ int main(int argc, char * argv[])
 		d->no_hash_passwords = opts.no_hash_passwords;
 		d->usermodeON = opts.usermode;
 		d->translate_req = opts.translate_req;
+		// only for window
 	}
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+		d->LicenseLevel = (char *) malloc(16);
+		memset((void *)(d->LicenseLevel), 0,16);
+		memcpy((char *) d->LicenseLevel, _com_util::ConvertBSTRToString( m_lv->getf2s()),3) ;
+		//LOG(I) << "m_lv->getf2s()=" << m_lv->getf2s();
+		//LOG(I) << "d->LicenseLevel="  << d->LicenseLevel;
+#endif
     switch (opts.action) {
  	case sedutiloption::initialSetup:
 		LOG(D) << "Performing initial setup to use sedutil on drive " << argv[opts.device];
@@ -814,9 +861,9 @@ int main(int argc, char * argv[])
 		break;
 
 	case sedutiloption::createUSB:
-		LOG(D) << "create bootable USB drive " << argv[opts.pbafile] << " to " << opts.device;
+		LOG(D) << "create bootable USB drive " << argv[opts.pbafile] << " to " << argv[opts.device];
 		//return d->createUSB(argv[opts.pbafile]);
-		return diskUSBwrite(argv[opts.device], argv[opts.devusb]);
+		return diskUSBwrite(argv[opts.device], argv[opts.devusb], _com_util::ConvertBSTRToString(m_lv->getf2s()));
 		break;
     #endif
 
@@ -825,7 +872,7 @@ int main(int argc, char * argv[])
 		return d->getMBRsize(argv[opts.password]);
 		break;
 	case sedutiloption::loadPBAimage:
-        LOG(D) << "Loading PBA image " << argv[opts.pbafile] << " to " << opts.device;
+        LOG(D) << "Loading PBA image " << argv[opts.pbafile] << " to " << argv[opts.device];
         return d->loadPBA(argv[opts.password], argv[opts.pbafile]);
 		break;
 	case sedutiloption::setLockingRange:
@@ -992,7 +1039,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-        printf("Fidelity Lock Version : 0.2.9.%s.%s 20180423-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.3.0.%s.%s 20180508-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:

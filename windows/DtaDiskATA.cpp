@@ -116,7 +116,7 @@ void DtaDiskATA::identify(OPAL_DiskInfo& disk_info)
     uint8_t iorc = sendCmd(IDENTIFY, 0x00, 0x0000, identifyResp, IO_BUFFER_LENGTH);
     // TODO: figure out why iorc = 4
     if ((0x00 != iorc) && (0x04 != iorc)) {
-        LOG(D) << "IDENTIFY Failed " << (uint16_t) iorc;
+        LOG(D) << "SATA IDENTIFY Failed " << (uint16_t) iorc;
         //ALIGNED_FREE(identifyResp);
         //return;
     }
