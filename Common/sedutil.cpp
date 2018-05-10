@@ -795,14 +795,15 @@ int main(int argc, char * argv[])
 		d->usermodeON = opts.usermode;
 		d->translate_req = opts.translate_req;
 		// only for window
-	}
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 		d->LicenseLevel = (char *) malloc(16);
 		memset((void *)(d->LicenseLevel), 0,16);
 		memcpy((char *) d->LicenseLevel, _com_util::ConvertBSTRToString( m_lv->getf2s()),3) ;
 		//LOG(I) << "m_lv->getf2s()=" << m_lv->getf2s();
 		//LOG(I) << "d->LicenseLevel="  << d->LicenseLevel;
-#endif
+#endif	
+	}
+
     switch (opts.action) {
  	case sedutiloption::initialSetup:
 		LOG(D) << "Performing initial setup to use sedutil on drive " << argv[opts.device];
@@ -1039,7 +1040,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-        printf("Fidelity Lock Version : 0.3.0.%s.%s 20180508-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.3.0.%s.%s 20180509-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:
