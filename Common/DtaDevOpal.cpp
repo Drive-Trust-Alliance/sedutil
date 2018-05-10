@@ -1590,6 +1590,10 @@ uint8_t DtaDevOpal::pbaValid(char * password)
 {
 	// check if boot sector exist 55AA(offset 510-511)  FAT16(
 	// get PBA version offset 512 to (up to 32 bytes)
+	#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+	LOG(D1) << "DtaDevOpal::pbaValid() isn't supported in Linux";
+	return 0;
+	#else
 	uint8_t lastRC;
 	uint8_t pbaver[512];	
 	uint8_t boot[512];
@@ -1600,7 +1604,7 @@ uint8_t DtaDevOpal::pbaValid(char * password)
 		LOG(D1) << "MBRRead error";
 		return lastRC;
 	}
-	//#if 1 // defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+
 	LOG(I) << "DtaDevOpal::pbaValid() show license level only in Linux";
 	/*IFLOG(D4) */ DtaHexDump(pbaver+128, 32);
 	printf("PBA image license level :");
@@ -1608,8 +1612,7 @@ uint8_t DtaDevOpal::pbaValid(char * password)
 		printf("%02X", pbaver [ 128 + i]);
 	}
 	printf(":\n");
-	//return 0;
-	//#else
+
 
 	IFLOG(D4) DtaHexDump(pbaver, 64);
 	printf("PBA image version : %s", (char *)pbaver);
@@ -1651,7 +1654,7 @@ uint8_t DtaDevOpal::pbaValid(char * password)
 	printf("audit log version : %d.%d", phdr->ver_major, phdr->ver_minor);
 	*/
 	return 0;
-	//#endif
+	#endif
 }
 
 
@@ -3791,7 +3794,7 @@ uint8_t DtaDevOpal::getTryLimit(uint16_t col1,uint16_t col2, char * password)
 	vector<uint8_t> table;
 	//uint32_t n;
 	//OPAL_TOKEN tkn;
-	char * s; 
+	char s[16];
 	uint8_t trLmt ;
 	uint8_t tys;
 
@@ -3810,20 +3813,36 @@ uint8_t DtaDevOpal::getTryLimit(uint16_t col1,uint16_t col2, char * password)
 	uint8_t lmt; 
 	// print TryLimit and Tries for OPAL_C_PIN_ADMIN
 	for (uint8_t u = 0; u < 3; u ++) // u=0=>admin  u=1 => user u=2 SID ---> DBG start u=2
-	{ // A1
-		s = "Admin";
+	{ 
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+		strcpy_s(s,"Admin");
+#else
+		strcpy(s, "Admin");
+#endif
 		switch (u) {
 		case 0 :
 			lmt = disk_info.OPAL20_numAdmins;
-			s = "Admin";
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+			strcpy_s(s,"Admin");
+#else
+			strcpy(s, "Admin");
+#endif
 			break;
 		case 1 :
 			lmt = disk_info.OPAL20_numUsers; 
-			s = "User";
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+			strcpy_s(s, "User");
+#else
+			strcpy(s, "User");
+#endif
 			break;
 		case 2 :
 			lmt = 1; 
-			s = "SID";
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+			strcpy_s(s, "SID");
+#else
+			strcpy(s, "SID");
+#endif
 			break;
 		}
 		for (uint16_t admin = 1; admin <= lmt; admin++)
