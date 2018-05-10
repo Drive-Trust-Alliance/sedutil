@@ -304,10 +304,12 @@ public:
 	bool no_hash_passwords; /** disables hashing of passwords */
 	bool usermodeON = FALSE;
 	bool translate_req = FALSE;
+	const char * LicenseLevel;
 protected:
 	const char * dev;   /**< character string representing the device in the OS lexicon */
 	uint8_t isOpen = FALSE;  /**< The device has been opened */
 	uint8_t isNVME = FALSE;  /**< This device is NVME */
+
 	OPAL_DiskInfo disk_info;  /**< Structure containing info from identify and discovery 0 */
 	DtaResponse response;   /**< shared response object */
 	DtaResponse propertiesResponse;  /**< response fron properties exchange */
