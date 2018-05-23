@@ -503,13 +503,13 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 		case 4:
 			memcpy(lic_level, "FidelityPRO5    ", 16);
 			break;
-		case 8:
+		case 16:
 			memcpy(lic_level, "FidelityPRO25   ", 16);
 			break;
-		case 16:
+		case 32:
 			memcpy(lic_level, "FidelityPRO100  ", 16);
 			break;
-		case 32:
+		case 64:
 			memcpy(lic_level, "FidelityPROUnlimt", 16);
 			break;
 		default:
@@ -1040,7 +1040,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-        printf("Fidelity Lock Version : 0.3.0.%s.%s 20180509-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.3.0.%s.%s 20180523-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:

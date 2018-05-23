@@ -3393,13 +3393,13 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 		case 4:
 			memcpy(lic_level, "FidelityPRO5    ", 16);
 			break;
-		case 8:
+		case 16:
 			memcpy(lic_level, "FidelityPRO25   ", 16);
 			break;
-		case 16:
+		case 32:
 			memcpy(lic_level, "FidelityPRO100  ", 16);
 			break;
-		case 32:
+		case 64:
 			memcpy(lic_level, "FidelityPROUnlimt", 16);
 			break;
 		default:

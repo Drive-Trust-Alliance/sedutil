@@ -103,6 +103,10 @@ void DtaDevOS::init(const char * devref)
 		LOG(D1) << "Enter RAID bus type case";
 		disk = new DtaDiskUSB();
 		break;
+	case BusTypeSas:
+		LOG(D1) << "Enter Sas bus type case";
+		disk = new DtaDiskUSB();
+		break;
 	default:
 		return;
 	}
