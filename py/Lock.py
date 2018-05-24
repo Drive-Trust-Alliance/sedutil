@@ -169,6 +169,7 @@ class LockApp(gtk.Window):
     op_prompt = 0
     NOT_AUTHORIZED = 256
     AUTHORITY_LOCKED_OUT = 4608
+    SP_BUSY = 3
     
     def __init__(self):
         runop.findos(self)
@@ -201,7 +202,6 @@ class LockApp(gtk.Window):
             res = lockhash.testPBKDF2()
             status = res[0]
             hash_v = os.popen(self.prefix + 'sedutil-cli --validatePBKDF2').read()
-            valid_pass = 'passed'
             f = re.search(res[1], hash_v)
             
             if status != 0 or not f:
@@ -212,15 +212,19 @@ class LockApp(gtk.Window):
         
             gtk.Window.__init__(self)
             if self.VERSION == 0:
-                self.set_title('Fidelity Lock Disk Drive Security Manager - Demo version')
+                self.set_title('Fidelity Lock Disk Drive Security Manager - Demo')
             elif self.VERSION == 1:
-                self.set_title('Fidelity Lock Disk Drive Security Manager - PBA version')
+                self.set_title('Fidelity Lock Disk Drive Security Manager - PBA')
             elif self.VERSION == 2:
-                self.set_title('Fidelity Lock Disk Drive Security Manager - Standard version')
+                self.set_title('Fidelity Lock Disk Drive Security Manager - Standard')
+            elif self.MAX_DEV == 5:
+                self.set_title('Fidelity Lock Disk Drive Security Manager - Premium5')
+            elif self.MAX_DEV == 25:
+                self.set_title('Fidelity Lock Disk Drive Security Manager - Premium25')
+            elif self.MAX_DEV == 100:
+                self.set_title('Fidelity Lock Disk Drive Security Manager - Premium100')
             else:
-                self.set_title('Fidelity Lock Disk Drive Security Manager - Premium version')
-                
-            
+                self.set_title('Fidelity Lock Disk Drive Security Manager - PremiumUnlimited')
                 
             if os.path.isfile('icon.jpg'):
                 self.set_icon_from_file('icon.jpg')
@@ -677,64 +681,11 @@ class LockApp(gtk.Window):
             
             dev_os = platform.system()
             
+            pba_devlist = []
+            
             pba_devname = None
             
-            if self.VERSION == 1 and dev_os == 'Linux':
-                lic_file_regex = 'hash-(sd[a-z][0-9]*|nvme[0-9]*)-lic.txt'
-                #get list of files in /tmp/h.d/ and compare regex to file names
-                dir_files = os.listdir('/tmp/h.d/')
-                for fn in dir_files:
-                    m = re.match(lic_file_regex, fn)
-                    if m:
-                        pba_devname = m.group(1)
-                #valid = True
-                if pba_devname != None:
-                    valid = False
-                    lic_file = '/tmp/h.d/hash-' + pba_devname + '-lic.txt'
-                    if os.path.isfile(lic_file):
-                        f = open(lic_file)
-                        f_info = f.read().lower()
-                        f.close()
-                        reg_z = '0{64}'
-                        m1 = re.match(reg_z, f_info)
-                        
-                        if len(f_info) == 64 and not m1:
-                            levels = ["FidelityLockFree", "FidelityStandard", "FidelityPRO5    ", "FidelityPRO25   ","FidelityPRO100  ", "FidelityPROUnlim"]
-                            for i in range(len(self.devs_list)):
-                                salt = self.salt_list[i]
-                                for lic in levels:
-                                    f_curr = lockhash.hash_pbkdf2(lic, salt)
-                                    if f_curr == f_info:
-                                        valid = True
-                                        if lic == "FidelityLockFree":
-                                            self.PBA_VERSION = 0
-                                            self.MAX_DEV = sys.maxint
-                                        elif lic == "FidelityStandard":
-                                            self.PBA_VERSION = 1
-                                            self.MAX_DEV = 5
-                                        elif lic == "FidelityPRO5    ":
-                                            self.PBA_VERSION = 2
-                                            self.MAX_DEV = 5
-                                        elif lic == "FidelityPRO25   ":
-                                            self.PBA_VERSION = 3
-                                            self.MAX_DEV = 25
-                                        elif lic == "FidelityPRO100  ":
-                                            self.PBA_VERSION = 4
-                                            self.MAX_DEV = 100
-                                        elif lic == "FidelityPROUnlim":
-                                            self.PBA_VERSION = 5
-                                            self.MAX_DEV = sys.maxint
-                                        break
-                        elif m1:
-                            valid = True
-                    if not valid:
-                        self.msg_err('Invalid boot')
-                        #self.shutdown()
-                        self.exitapp()
-                #else:
-                #    self.msg_err('Invalid boot')
-                #    #self.shutdown()
-                #    self.exitapp()
+            pba_devidx = -1
                 
             self.run_scan()
             
@@ -750,6 +701,80 @@ class LockApp(gtk.Window):
             if len(self.devs_list) == 0:
                 self.msg_err('No drives detected, try running this application with Administrator.')
                 self.exitapp()
+                
+            if self.VERSION == 1 and dev_os == 'Linux':
+                lic_file_regex = 'hash-(sd[a-z][0-9]*|nvme[0-9]n[0-9])-lic.txt'
+                #get list of files in /tmp/h.d/ and compare regex to file names
+                dir_files = os.listdir('/tmp/h.d/')
+                for fn in dir_files:
+                    m = re.match(lic_file_regex, fn)
+                    if m:
+                        lic_file = '/tmp/h.d/hash-' + m.group(1) + '-lic.txt'
+                        f = open(lic_file)
+                        f_info = f.read().lower()
+                        f.close()
+                        reg_z = '0{64}'
+                        m1 = re.match(reg_z, f_info)
+                        if not m1:
+                            pba_devlist.append(m.group(1))
+                #valid = True
+                print pba_devlist
+                if len(pba_devlist) > 0:
+                    valid = False
+                    for i in pba_devlist:
+                        lic_file = '/tmp/h.d/hash-' + i + '-lic.txt'
+                        if os.path.isfile(lic_file):
+                            f = open(lic_file)
+                            f_info = f.read().lower()
+                            f.close()
+                            
+                            if len(f_info) == 64:
+                                levels = ["FidelityLockFree", "FidelityStandard", "FidelityPRO5    ", "FidelityPRO25   ","FidelityPRO100  ", "FidelityPROUnlim"]
+                                for j in range(len(self.devs_list)):
+                                    salt = self.salt_list[j]
+                                    for lic in levels:
+                                        f_curr = lockhash.hash_pbkdf2(lic, salt)
+                                        if f_curr == f_info:
+                                            valid = True
+                                            if lic == "FidelityLockFree":
+                                                self.PBA_VERSION = 0
+                                                self.MAX_DEV = sys.maxint
+                                            elif lic == "FidelityStandard":
+                                                self.PBA_VERSION = 1
+                                                self.MAX_DEV = 5
+                                            elif lic == "FidelityPRO5    ":
+                                                self.PBA_VERSION = 2
+                                                self.MAX_DEV = 5
+                                            elif lic == "FidelityPRO25   ":
+                                                self.PBA_VERSION = 3
+                                                self.MAX_DEV = 25
+                                            elif lic == "FidelityPRO100  ":
+                                                self.PBA_VERSION = 4
+                                                self.MAX_DEV = 100
+                                            elif lic == "FidelityPROUnlim":
+                                                self.PBA_VERSION = 5
+                                                self.MAX_DEV = sys.maxint
+                                            pba_devname = i
+                                            pba_devidx = j
+                                            print lic
+                                            break
+                                    if pba_devname != None:
+                                        break
+                                if pba_devname != None:
+                                    break
+                            #elif m1:
+                                
+                                #valid = True
+                                
+                    if not valid:
+                        self.msg_err('Invalid boot')
+                        #self.shutdown()
+                        self.exitapp()
+                #else:
+                #    self.msg_err('Invalid boot')
+                #    #self.shutdown()
+                #    self.exitapp()
+                
             pwd_test = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(16))
             salt_test = self.salt_list[0]
             dev_test = self.devs_list[0]
@@ -760,34 +785,37 @@ class LockApp(gtk.Window):
             hash_res = lockhash.hash_pbkdf2(pwd_test, salt_test)
             if sedutil_res != hash_res:
                 self.msg_err('Hash validation failed')
+                self.exitapp()
             
-            if self.VERSION == 1 and dev_os == 'Linux':
-                bus_file = '/tmp/h.d/hash-' + pba_devname + '-bus.txt'
-                ser_file = '/tmp/h.d/hash-' + pba_devname + '-ser.txt'
-                
-                if os.path.isfile(bus_file) and os.path.isfile(ser_file): #if USB boot
-                    b = open(bus_file)
-                    s = open(ser_file)
-                    b_info = b.read().lower()
-                    s_info = s.read().lower()
-                    b.close()
-                    s.close()
-                    reg_z = '0{64}'
-                    m1 = re.match(reg_z, b_info)
-                    m2 = re.match(reg_z, s_info)
-                    if len(b_info) == 64 and len(s_info) == 64 and not (m1 and m2):
-                        present = False
-                        bus = 'FidelityLockUSB'
-                        self.usb_boot = True
-                        for i in range(len(self.devs_list)):
-                            salt = self.salt_list[i]
-                            b_curr = lockhash.hash_pbkdf2(bus, salt)
-                            s_curr = lockhash.hash_pbkdf2(salt, salt)
-                            if b_curr == b_info and s_curr == s_info:
-                                present = True
-                        if not present:
-                            self.msg_err('Invalid bootable USB')
-                            self.exitapp()
+            if self.VERSION == 1 and dev_os == 'Linux' and pba_devname != None:
+                #bus_file = '/tmp/h.d/hash-' + pba_devname + '-bus.txt'
+                #ser_file = '/tmp/h.d/hash-' + pba_devname + '-ser.txt'
+                #if os.path.isfile(bus_file) and os.path.isfile(ser_file):
+                #    b = open(bus_file)
+                #    s = open(ser_file)
+                #    b_info = b.read().lower()
+                #    s_info = s.read().lower()
+                #    b.close()
+                #    s.close()
+                #    reg_z = '0{64}'
+                #    m1 = re.match(reg_z, b_info)
+                #    m2 = re.match(reg_z, s_info)
+                #    if len(b_info) == 64 and len(s_info) == 64 and not (m1 and m2):
+                #        present = False
+                #        bus_list = ['FidelityLockUSB', 'FidelityLockMBR']
+                #        salt = self.salt_list[pba_devidx]
+                #        s_curr = lockhash.hash_pbkdf2(salt, salt)
+                #        if s_curr == s_info:
+                #            print 'valid ser'
+                #            for bus in bus_list:
+                #                b_curr = lockhash.hash_pbkdf2(bus, salt)
+                #                if b_curr == b_info:
+                #                    present = True
+                #                    print 'valid bus'
+                #                    break
+                #        if not present:
+                #            self.msg_err('Invalid boot')
+                #            self.exitapp()
                 folder_list = []
                 txt = os.popen(self.prefix + 'mount').read()
                 dev_regex = '/dev/sd[a-z][1-9]?\s*on\s*(\S+)\s*type'
@@ -1220,7 +1248,6 @@ class LockApp(gtk.Window):
         self.treeview.append_column(self.tvcolumn[3])
         
         self.scrolledWin_grid = gtk.ScrolledWindow()
-        #self.scrolledWin_grid.add(self.selectAll_check)
         self.scrolledWin_grid.add(self.treeview)
         self.vbox.pack_start(self.selectAll_check, False, False, 0)
         self.vbox.pack_start(self.scrolledWin_grid, True, True, 0)
@@ -1275,9 +1302,13 @@ class LockApp(gtk.Window):
             if self.check_both:
                 self.pass_sav.set_active(True)
                 self.box_drive.hide()
-            self.pass_sav.set_sensitive(False)
+            self.check_box_pass.set_active(False)
+            self.check_box_pass.set_sensitive(False)
+            if self.op_prompt != 6:
+                self.pass_sav.set_sensitive(False)
         else:
             self.pass_sav.set_sensitive(True)
+            self.check_box_pass.set_sensitive(True)
             if self.check_both:
                 self.pass_sav.set_active(False)
             
@@ -1439,95 +1470,102 @@ class LockApp(gtk.Window):
             statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 10" + timeStr + " " + hash_pwd + " User" + self.user_list[self.tcg_list[index]] + " " + self.devname)
             self.msg_err('Audit Log could not be retrieved. Retry limit has been reached.  Please power cycle your drive to try again.')
             return
-        auditFullRegex = 'Total Number of Audit Entries\s*:\s*([0-9]+)\n((?:.+\n?)+)'
-        a = re.search(auditFullRegex, txt)
-        if txt == "Invalid Audit Signature or No Audit Entry log\n" or not a:
-            
-            self.msg_err("Invalid Audit Signature or No Audit Entry Log or Read Error")
+        elif statusAW == self.SP_BUSY:
+            self.msg_err('SP_BUSY')
+            return
+        elif statusAW != 0:
+            self.msg_err('An unknown error has occurred.')
+            return
         else:
-            if (self.VERSION == 3 or (self.VERSION == 1 and self.PBA_VERSION != 1)) and self.pass_sav.get_active():
-                print "openLog passSaveUSB " + password + " "  + self.auth_menu.get_active_text()
-                runop.passSaveUSB(self, password, self.drive_menu.get_active_text(), self.dev_vendor.get_text(), self.dev_sn.get_text())
-            columns = ["Level", "Date and Time", "Event ID", "Event Description"]
-            self.auditEntries = []
-            self.errorEntries = []
-            self.warnerrEntries = []
-
-            logWin = gtk.Window()
-            logWin.set_border_width(10)
-            logWin.set_default_size(500, 500)
-            logWin.set_title("Audit Log")
-            if os.path.isfile('icon.jpg'):
-                logWin.set_icon_from_file('icon.jpg')
-            vbox = gtk.VBox()
-            logWin.add(vbox)
-            
-            self.listStore = gtk.ListStore(str, str, int, str)
-        
-            numEntries = int(a.group(1))
-            logList = a.group(2).split('\n')
-            auditRegex = "([0-9]+/[0-9]+/[0-9]+\s+[0-9]+:[0-9]+:[0-9]+)\s+([0-9]+)"
-            pattern = re.compile(auditRegex)
-            
-            for i in range(numEntries):
-                m = pattern.match(logList[i])
-                dateTime = m.group(1)
-                eventID = int(m.group(2))
-                eventDes = self.eventDescriptions[eventID]
-                eventLevel = "Information"
-                if eventID == 4 or eventID == 6 or eventID == 27 or eventID == 28 or eventID == 29:
-                    eventLevel = "Error"
-                    self.errorEntries.append((eventLevel, dateTime, eventID, eventDes))
-                    self.warnerrEntries.append((eventLevel, dateTime, eventID, eventDes))
-                elif eventID == 7 or eventID == 20 or eventID == 21 or eventID == 22:
-                    eventLevel = "Warning"
-                    self.warnerrEntries.append((eventLevel, dateTime, eventID, eventDes))
-                self.auditEntries.append((eventLevel, dateTime, eventID, eventDes))
-            for i in range(len(self.auditEntries)):
-                self.listStore.append(self.auditEntries[i])
-        
-            treeView = gtk.TreeView(model=self.listStore)
-            
-            
-            for i in range(len(columns)):
-                cell = gtk.CellRendererText()
-                col = gtk.TreeViewColumn(columns[i], cell, text=i)
-                if i < 3:
-                    col.set_sort_column_id(gtk.SORT_DESCENDING)
-                    col.set_sort_indicator(True)
-                treeView.append_column(col)
+            auditFullRegex = 'Total Number of Audit Entries\s*:\s*([0-9]+)\n((?:.+\n?)+)'
+            a = re.search(auditFullRegex, txt)
+            if txt == "Invalid Audit Signature or No Audit Entry log\n" or not a:
                 
-            scrolledWin = gtk.ScrolledWindow()
-            scrolledWin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-            scrolledWin.add_with_viewport(treeView)
+                self.msg_err("Invalid Audit Signature or No Audit Entry Log or Read Error")
+            else:
+                if (self.VERSION == 3 or (self.VERSION == 1 and self.PBA_VERSION != 1)) and self.pass_sav.get_active():
+                    print "openLog passSaveUSB " + password + " "  + self.auth_menu.get_active_text()
+                    runop.passSaveUSB(self, password, self.drive_menu.get_active_text(), self.dev_vendor.get_text(), self.dev_sn.get_text())
+                columns = ["Level", "Date and Time", "Event ID", "Event Description"]
+                self.auditEntries = []
+                self.errorEntries = []
+                self.warnerrEntries = []
+
+                logWin = gtk.Window()
+                logWin.set_border_width(10)
+                logWin.set_default_size(500, 500)
+                logWin.set_title("Audit Log")
+                if os.path.isfile('icon.jpg'):
+                    logWin.set_icon_from_file('icon.jpg')
+                vbox = gtk.VBox()
+                logWin.add(vbox)
+                
+                self.listStore = gtk.ListStore(str, str, int, str)
             
-            vbox.pack_start(scrolledWin)
+                numEntries = int(a.group(1))
+                logList = a.group(2).split('\n')
+                auditRegex = "([0-9]+/[0-9]+/[0-9]+\s+[0-9]+:[0-9]+:[0-9]+)\s+([0-9]+)"
+                pattern = re.compile(auditRegex)
+                
+                for i in range(numEntries):
+                    m = pattern.match(logList[i])
+                    dateTime = m.group(1)
+                    eventID = int(m.group(2))
+                    eventDes = self.eventDescriptions[eventID]
+                    eventLevel = "Information"
+                    if eventID == 4 or eventID == 6 or eventID == 27 or eventID == 28 or eventID == 29:
+                        eventLevel = "Error"
+                        self.errorEntries.append((eventLevel, dateTime, eventID, eventDes))
+                        self.warnerrEntries.append((eventLevel, dateTime, eventID, eventDes))
+                    elif eventID == 7 or eventID == 20 or eventID == 21 or eventID == 22:
+                        eventLevel = "Warning"
+                        self.warnerrEntries.append((eventLevel, dateTime, eventID, eventDes))
+                    self.auditEntries.append((eventLevel, dateTime, eventID, eventDes))
+                for i in range(len(self.auditEntries)):
+                    self.listStore.append(self.auditEntries[i])
             
-            halign = gtk.Alignment(1,0,0,0)
-            filter_box = gtk.HBox(False, 0)
-            
-            self.saveLog_button = gtk.Button('Save as CSV file')
-            self.saveLog_button.connect('clicked', self.saveToCSV)
-            filter_box.pack_start(self.saveLog_button, False, False, 5)
-            
-            self.viewAll_button = gtk.Button('View all entries')
-            self.viewAll_button.connect("clicked", runop.filterLog, self, self.auditEntries, 0)
-            self.viewAll_button.set_sensitive(False)
-            filter_box.pack_start(self.viewAll_button, False, False, 5)
-            
-            self.viewWarnErr_button = gtk.Button('View Warnings & Errors')
-            self.viewWarnErr_button.connect("clicked", runop.filterLog, self, self.warnerrEntries, 1)
-            filter_box.pack_start(self.viewWarnErr_button, False, False, 5)
-            
-            self.viewErr_button = gtk.Button('View Errors')
-            self.viewErr_button.connect("clicked", runop.filterLog, self, self.errorEntries, 2)
-            filter_box.pack_start(self.viewErr_button, False, False, 5)
-            
-            halign.add(filter_box)
-            vbox.pack_start(halign, False, False, 0)
-            
-            logWin.show_all()
-            self.returnToMain()
+                treeView = gtk.TreeView(model=self.listStore)
+                
+                
+                for i in range(len(columns)):
+                    cell = gtk.CellRendererText()
+                    col = gtk.TreeViewColumn(columns[i], cell, text=i)
+                    if i < 3:
+                        col.set_sort_column_id(gtk.SORT_DESCENDING)
+                        col.set_sort_indicator(True)
+                    treeView.append_column(col)
+                    
+                scrolledWin = gtk.ScrolledWindow()
+                scrolledWin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+                scrolledWin.add_with_viewport(treeView)
+                
+                vbox.pack_start(scrolledWin)
+                
+                halign = gtk.Alignment(1,0,0,0)
+                filter_box = gtk.HBox(False, 0)
+                
+                self.saveLog_button = gtk.Button('Save as CSV file')
+                self.saveLog_button.connect('clicked', self.saveToCSV)
+                filter_box.pack_start(self.saveLog_button, False, False, 5)
+                
+                self.viewAll_button = gtk.Button('View all entries')
+                self.viewAll_button.connect("clicked", runop.filterLog, self, self.auditEntries, 0)
+                self.viewAll_button.set_sensitive(False)
+                filter_box.pack_start(self.viewAll_button, False, False, 5)
+                
+                self.viewWarnErr_button = gtk.Button('View Warnings & Errors')
+                self.viewWarnErr_button.connect("clicked", runop.filterLog, self, self.warnerrEntries, 1)
+                filter_box.pack_start(self.viewWarnErr_button, False, False, 5)
+                
+                self.viewErr_button = gtk.Button('View Errors')
+                self.viewErr_button.connect("clicked", runop.filterLog, self, self.errorEntries, 2)
+                filter_box.pack_start(self.viewErr_button, False, False, 5)
+                
+                halign.add(filter_box)
+                vbox.pack_start(halign, False, False, 0)
+                
+                logWin.show_all()
+                self.returnToMain()
             
     
         
@@ -1740,7 +1778,7 @@ class LockApp(gtk.Window):
             regex_ver = 'Fidelity Lock Version\s*:\s*.*'
             m = re.search(regex_ver, txtVersion)
             ver_parse = m.group()
-            queryTextList.append(ver_parse + "\nGUI Version 0.08\n\nDevice information\n")
+            queryTextList.append(ver_parse + "\nGUI Version 0.08.1\n\nDevice information\n")
             
             queryTextList.append("Model: " + self.dev_vendor.get_text() + "\n")
             queryTextList.append("Serial Number: " + self.dev_sn.get_text() + "\n")
@@ -1905,6 +1943,8 @@ class LockApp(gtk.Window):
                         self.msg_err('Error: Retry limit has been reached, please power cycle your drive to try again.')
                     else:
                         self.msg_err('Error: Invalid password')
+                elif rc == self.SP_BUSY:
+                    self.msg_err('SP_BUSY')
                 else:
                     self.msg_err("Error: Failed to retrieve additional information.")
                 return
@@ -1923,6 +1963,9 @@ class LockApp(gtk.Window):
                     else:
                         self.msg_err("Error: Invalid password")
                     return
+                elif statusAW == self.SP_BUSY:
+                    self.msg_err('SP_BUSY')
+                    return
                 elif statusAW != 0:
                     self.msg_err("Error: Failed to retrieve the information.")
                     return
@@ -1936,6 +1979,9 @@ class LockApp(gtk.Window):
                         self.msg_err("Error: Retry limit reached, please power cycle your drive to try again.")
                     else:
                         self.msg_err("Error: Invalid password")
+                    return
+                elif statusAW == self.SP_BUSY:
+                    self.msg_err('SP_BUSY')
                     return
                 elif statusAW != 0:
                     self.msg_err("Error: Failed to retrieve the information.")
@@ -2062,7 +2108,7 @@ class LockApp(gtk.Window):
         self.box_pass.pack_start(self.pass_entry, False, False, padding)
         
  
-        if self.VERSION == 3 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+        if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
             self.check_pass_rd = gtk.CheckButton("Read password from USB")
             self.check_pass_rd.connect("toggled", self.check_passRead)
             self.check_pass_rd.show()
@@ -2090,7 +2136,7 @@ class LockApp(gtk.Window):
         self.new_pass_entry.set_width_chars(27)
         self.box_newpass.pack_start(self.new_pass_entry, False, False, padding)
  
-        if self.VERSION == 3 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+        if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
             self.pass_sav = gtk.CheckButton("Save to USB")
             self.pass_sav.connect("clicked", self.showDrive)
             self.pass_sav.show()
@@ -2138,7 +2184,7 @@ class LockApp(gtk.Window):
             self.check_box_pass.show()
             
             self.query(None,1)
-            if self.VERSION == 3 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
                 self.box_auth.show()
       
     def msg_err(self, msg):
@@ -2395,6 +2441,7 @@ class LockApp(gtk.Window):
             self.op_instr.show()
             self.removeUser_button.show()
             
+            self.pass_label.set_text('Enter Admin Password')
             self.box_pass.show()
             self.box_newpass.show()
             self.new_pass_label.hide()
@@ -2431,7 +2478,8 @@ class LockApp(gtk.Window):
             self.updatePBA_button.show()
             self.set_default(self.updatePBA_button)
             
-            self.pass_label.set_text('Enter Admin Password')
+            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                self.pass_label.set_text('Enter Admin Password')
             self.box_pass.show()
             self.pass_entry.set_activates_default(True)
             self.pass_entry.grab_focus()
@@ -2486,7 +2534,7 @@ class LockApp(gtk.Window):
             
             self.check_box_pass.show()
             
-            if self.VERSION == 3 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
                 self.box_auth.show()
             
             self.query(None,1)
@@ -2500,7 +2548,7 @@ class LockApp(gtk.Window):
         self.pbaver_box.show()
         self.cancel_button.show()
         self.op_label.set_text('Set up USB')
-        self.op_instr.set_text('This will write the bootable image to a USB drive.  You can then use the USB drive to unlock the selected drive.')
+        self.op_instr.set_text('This will write the bootable image to a USB drive.  You can then use the USB drive to unlock the selected drive.\nWARNING: Setting up the USB will erase its contents, use an empty USB.')
         
         self.op_prompt = 5
         
@@ -2513,60 +2561,61 @@ class LockApp(gtk.Window):
         if len(self.setup_list) > 0:
             self.dev_select.set_active(0)
             self.query(None,1)
+            if len(self.setup_list) > 1:
+                self.select_instr.show()
             
-        if len(self.setup_list) > 1:
-            self.select_instr.show()
+            self.usb_list = []
+            dev_os = platform.system()
+            if dev_os == 'Windows':
+                txt = os.popen(self.prefix + 'wmic diskdrive list brief /format:list').read()
+                mod_regex = 'DeviceID=.+([1-9]|1[0-5])\s*\nModel=(.*)\r'
+                self.usb_list = re.findall(mod_regex, txt)
+            elif dev_os == 'Linux':
+                txt = os.popen(self.prefix + 'mount').read()
+                dev_regex = '/dev/sd[a-z][1-9]?\s*on\s*(\S+)\s*type'
+                drive_list = re.findall(dev_regex, txt)
+                
+                txt2 = os.popen(self.prefix + 'blkid').read()
+                dev_regex2 = '(/dev/sd[a-z][1-9]?.+)'
+                all_list = re.findall(dev_regex2, txt2)
+                r1 = '/dev/sd[a-z][1-9]?'
+                r2 = 'TYPE="([a-z]+)"'
+                for a in all_list:
+                    m1 = re.search(r1,a)
+                    m2 = re.search(r2,a)
+                    dev_a = m1.group(0)
+                    type_a = m2.group(1)
+                    if dev_a not in drive_list:
+                        s = os.system(self.prefix + 'mount -t ' + type_a + ' ' + dev_a)
+                        drive_list.append(dev_a)
+                txt3 = os.popen('mount').read()
+                dev_regex3 = '(/dev/sd[a-z][1-9]?)\s*on\s*(\S+)\s*type'
+                self.usb_list = re.findall(dev_regex3, txt3)
+            model = self.usb_menu.get_model()
             
-        self.usb_list = []
-        dev_os = platform.system()
-        if dev_os == 'Windows':
-            txt = os.popen(self.prefix + 'wmic diskdrive list brief /format:list').read()
-            mod_regex = 'DeviceID=.+([1-9]|1[0-5])\s*\nModel=(.*)\r'
-            self.usb_list = re.findall(mod_regex, txt)
-        elif dev_os == 'Linux':
-            txt = os.popen(self.prefix + 'mount').read()
-            dev_regex = '/dev/sd[a-z][1-9]?\s*on\s*(\S+)\s*type'
-            drive_list = re.findall(dev_regex, txt)
+            iter = gtk.TreeIter
+            for row in model:
+                model.remove(row.iter)
             
-            txt2 = os.popen(self.prefix + 'blkid').read()
-            dev_regex2 = '(/dev/sd[a-z][1-9]?.+)'
-            all_list = re.findall(dev_regex2, txt2)
-            r1 = '/dev/sd[a-z][1-9]?'
-            r2 = 'TYPE="([a-z]+)"'
-            for a in all_list:
-                m1 = re.search(r1,a)
-                m2 = re.search(r2,a)
-                dev_a = m1.group(0)
-                type_a = m2.group(1)
-                if dev_a not in drive_list:
-                    s = os.system(self.prefix + 'mount -t ' + type_a + ' ' + dev_a)
-                    drive_list.append(dev_a)
-            txt3 = os.popen('mount').read()
-            dev_regex3 = '(/dev/sd[a-z][1-9]?)\s*on\s*(\S+)\s*type'
-            self.usb_list = re.findall(dev_regex3, txt3)
-        model = self.usb_menu.get_model()
-        
-        iter = gtk.TreeIter
-        for row in model:
-            model.remove(row.iter)
-        
-        length = len(self.usb_list)
-        
-        if length > 0:
+            length = len(self.usb_list)
             
-            for d in self.usb_list:
-                if dev_os == 'Windows':
-                    self.usb_menu.append(d[1])
-                elif dev_os == 'Linux':
-                    self.usb_menu.append(d[0])
-            self.box_pbausb.show()
-            self.usb_menu.set_active(0)
-            self.op_instr.show()
-            self.setupUSB_button.show()
-            
-            self.box_newpass.show()
-            self.new_pass_label.hide()
-            self.new_pass_entry.hide()
+            if length > 0:
+                
+                for d in self.usb_list:
+                    if dev_os == 'Windows':
+                        self.usb_menu.append(d[1])
+                    elif dev_os == 'Linux':
+                        self.usb_menu.append(d[0])
+                self.box_pbausb.show()
+                self.usb_menu.set_active(0)
+                self.op_instr.show()
+                self.setupUSB_button.show()
+                
+                self.box_newpass.show()
+                self.new_pass_label.hide()
+                self.new_pass_entry.hide()
+            else:
+                self.naDevices_instr.show()
         
         else:
             self.naDevices_instr.show()
@@ -2599,7 +2648,8 @@ class LockApp(gtk.Window):
             self.dev_select.set_active(0)
             self.op_instr.show()
             
-            self.pass_label.set_text('Enter Admin Password')
+            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                self.pass_label.set_text('Enter Admin Password')
             self.box_pass.show()
             self.box_revert_agree.show()
             self.pass_entry.set_activates_default(True)
@@ -2609,7 +2659,7 @@ class LockApp(gtk.Window):
             self.set_default(self.revertUser_button)
             
             self.check_box_pass.show()
-            #self.eraseData_check.show()
+            
             self.query(None,1)  
         else:
             self.naDevices_instr.show()
@@ -2690,7 +2740,7 @@ class LockApp(gtk.Window):
             self.check_box_pass.show()
         
             self.query(None,1)
-            if self.VERSION == 3 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
                 self.box_auth.show()
         else:
             self.naDevices_instr.show()
@@ -2727,7 +2777,8 @@ class LockApp(gtk.Window):
             self.dev_select.set_active(0)
             self.op_instr.show()
 
-            self.pass_label.set_text('Enter Admin Password')
+            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                self.pass_label.set_text('Enter Admin Password')
             self.box_pass.show()
             self.pass_entry.set_activates_default(True)
             self.pass_entry.grab_focus()
@@ -2792,7 +2843,8 @@ class LockApp(gtk.Window):
             self.lock_button.show()
             self.set_default(self.lock_button)
             
-            self.pass_label.set_text('Enter Admin Password')
+            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                self.pass_label.set_text('Enter Admin Password')
             self.box_pass.show()
             self.pass_entry.set_activates_default(True)
             self.pass_entry.grab_focus()
@@ -2888,10 +2940,11 @@ class LockApp(gtk.Window):
         self.check_exclusive = False
         self.check_both = False
         
-        self.pass_sav.set_sensitive(True)
-        self.pass_sav.set_active(False)
-        self.check_pass_rd.set_sensitive(True)
-        self.check_pass_rd.set_active(False)
+        if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+            self.pass_sav.set_sensitive(True)
+            self.pass_sav.set_active(False)
+            self.check_pass_rd.set_sensitive(True)
+            self.check_pass_rd.set_active(False)
         
         self.waitSpin.hide()
         
@@ -3010,7 +3063,7 @@ class LockApp(gtk.Window):
         if self.VERSION != 1:
             self.lockM.set_sensitive(False)
             self.setupM.set_sensitive(False)
-            if self.VERSION == 3 and self.MAX_DEV == sys.maxint:
+            if self.VERSION != 3 or self.MAX_DEV != sys.maxint:
                 self.upgradeM.set_sensitive(False)
         
         self.cancel_button.set_sensitive(False)
@@ -3054,7 +3107,7 @@ class LockApp(gtk.Window):
         if self.VERSION != 1:
             self.lockM.set_sensitive(True)
             self.setupM.set_sensitive(True)
-            if self.VERSION == 3 and self.MAX_DEV == sys.maxint:
+            if self.VERSION != 3 or self.MAX_DEV != sys.maxint:
                 self.upgradeM.set_sensitive(True)
         
         self.cancel_button.set_sensitive(True)
