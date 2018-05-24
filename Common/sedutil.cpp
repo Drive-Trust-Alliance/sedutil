@@ -559,6 +559,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	{
 		delete u;
 		delete d;
+		LOG(E) << "Wipe USB error" << USBname;
 		return DTAERROR_CREATE_USB;
 	}
 
