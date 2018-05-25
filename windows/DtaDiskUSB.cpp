@@ -144,20 +144,48 @@ void DtaDiskUSB::identify(OPAL_DiskInfo& disk_info)
 	}
 	USB_INQUIRY_DATA * id = (USB_INQUIRY_DATA *) identifyResp;
     disk_info.devType = DEVICE_TYPE_USB;
+	uint8_t non_ascii = 0;
     for (int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
         disk_info.serialNum[i] = id->ProductSerial[i + 1];
         disk_info.serialNum[i + 1] = id->ProductSerial[i];
+		if (!isprint(disk_info.serialNum[i])) { non_ascii = 1; ; break; };
+		if (!isprint(disk_info.serialNum[i+1])) { non_ascii = 1; ; break; };
     }
+	if (non_ascii) {
+		for (int i = 0; i < sizeof(disk_info.serialNum); i += 1) {
+			disk_info.serialNum[i] = ' ';
+		}
+	}
 	//memcpy(disk_info.serialNum, id->ProductSerial, sizeof(disk_info.serialNum));
+	non_ascii = 0;
     for (int i = 0; i < sizeof (disk_info.firmwareRev); i += 2) {
         disk_info.firmwareRev[i] = id->ProductRev[i + 1];
         disk_info.firmwareRev[i + 1] = id->ProductRev[i];
+		if (!isprint(disk_info.firmwareRev[i])) { non_ascii = 1; ; break; }
+		if (!isprint(disk_info.firmwareRev[i + 1])) { non_ascii = 1; ; break; }
     }
+	if (non_ascii) {
+		for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 1) {
+			disk_info.firmwareRev[i] = ' ';
+		}
+	}
 	//memcpy(disk_info.firmwareRev, id->ProductRev, sizeof(disk_info.firmwareRev));
+	non_ascii = 0;
     for (int i = 0; i < sizeof (disk_info.modelNum); i += 2) {
         disk_info.modelNum[i] = id->ProductID[i + 1];
         disk_info.modelNum[i + 1] = id->ProductID[i];
+		if (!isprint(disk_info.modelNum[i])) { non_ascii = 1; ; break; };
+		if (!isprint(disk_info.modelNum[i + 1])) { non_ascii = 1; ; break; };
     }
+	if (non_ascii) {
+		for (int i = 0; i < sizeof(disk_info.modelNum); i += 1) {
+			disk_info.modelNum[i] = ' ';
+		}
+	}
+
+	//DtaHexDump(disk_info.serialNum, sizeof(disk_info.serialNum));
+	//DtaHexDump(disk_info.firmwareRev, sizeof(disk_info.firmwareRev));
+	//DtaHexDump(disk_info.modelNum, sizeof(disk_info.modelNum));
 	//memcpy(disk_info.modelNum, id->ProductID, sizeof(disk_info.modelNum));
 	_aligned_free(identifyResp);
     return;

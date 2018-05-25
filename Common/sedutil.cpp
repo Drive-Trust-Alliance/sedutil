@@ -79,7 +79,7 @@ int diskScan(char * devskip)
 				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
 			else
 				printf("%s", " No  ");
-			cout << d->getModelNum() << ":" << d->getFirmwareRev() << ":" << d->getSerialNum() << std::endl;
+			cout << d->getModelNum() << ":" << d->getFirmwareRev() << ":" << d->getSerialNum() << std::endl; // GUI not work if no endl?
 			if (MAX_DISKS == (i+j)) {
 				LOG(I) << MAX_DISKS << " disks, really?";
 				delete d;
@@ -151,6 +151,8 @@ int createvol(HANDLE &vol_handle, char * USBname)
 	vol_handle = CreateFile(USBname, GENERIC_READ | GENERIC_WRITE,
 		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
 		OPEN_EXISTING,
+		//FILE_ATTRIBUTE_NORMAL, // rufus use this attribute, defined in winnt.h Sam result
+		// WinBase.h 
 		FILE_FLAG_NO_BUFFERING | FILE_FLAG_RANDOM_ACCESS | FILE_FLAG_WRITE_THROUGH, // add write through
 		NULL);
 
@@ -240,7 +242,9 @@ int reloadvol(HANDLE &vol_handle)
 {
 	DWORD n;
 	DeviceIoControl(vol_handle, IOCTL_STORAGE_EJECT_MEDIA, NULL, 0, NULL, 0, &n, NULL);
+	Sleep(500); // Seems to be 
 	unlockvol(vol_handle);
+	Sleep(500);
 	DeviceIoControl(vol_handle, IOCTL_STORAGE_LOAD_MEDIA, NULL, 0, NULL, 0, &n, NULL);
 	FlushFileBuffers(vol_handle);
 	return 0;
@@ -285,7 +289,8 @@ BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 
 	memset(Bufferzero, 0, DecompressedBufferSize);
 	LOG(D1) << "zero out image area";
-	if (!WriteFile(vol_handle, Bufferzero, (DWORD)DecompressedBufferSize, &n, NULL))
+	//if (!WriteFile(vol_handle, Bufferzero, (DWORD)DecompressedBufferSize, &n, NULL))
+	if (!WriteFile(vol_handle, Bufferzero, (DWORD)(128*512), &n, NULL)) // 128 sector is reruired to wipe mbr/gpt
 	{
 		int err = GetLastError();
 		IFLOG(D1) printf("zero out image error %d\n", err);
@@ -329,7 +334,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 
 	u = new DtaDevGeneric(USBname);
 	if (u->isPresent())
-		printf("Find USB drive %s\n", USBname);
+		printf("Find USB  Drive %s\n", USBname);
 	else {
 		printf("No USB drive %s\n", USBname);
 		delete u;
@@ -598,6 +603,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 		return DTAERROR_CREATE_USB;
 	}
 	//printf("write image data to USB %ld OK; close handle %zd\n", n, (int64_t)vol_handle);
+	LOG(I) << "Write image to USB OK";
 	if (DecompressedBuffer != NULL) free(DecompressedBuffer);
 	reloadvol(vol_handle);
 	CloseHandle(vol_handle);
@@ -1041,7 +1047,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-        printf("Fidelity Lock Version : 0.3.0.%s.%s 20180523-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.3.1.%s.%s 20180525-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:

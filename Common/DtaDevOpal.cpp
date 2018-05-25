@@ -3380,7 +3380,8 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	hash.clear();
 	LOG(D1) << "start hashing license level";
 	// 	if (!memcmp("Admin", userid, 5)) {
-	char lic_level[16];
+	char lic_level[18];
+	memset(lic_level, 0, 18);
 	if (!memcmp("0:", LicenseLevel, 2)) { // correct feature set
 		switch (atoi(&LicenseLevel[2]))
 		{

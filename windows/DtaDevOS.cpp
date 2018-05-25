@@ -38,9 +38,9 @@ using namespace std;
 DtaDevOS::DtaDevOS() { LOG(D1) << "Entering DtaDevOS Constructor"; };
 void DtaDevOS::init(const char * devref)
 {
-    LOG(D1) << "Creating DtaDevOS::DtaDevOS() " << devref;
-    dev = devref;
-    memset(&disk_info, 0, sizeof (OPAL_DiskInfo));
+	LOG(D1) << "Creating DtaDevOS::DtaDevOS() " << devref;
+	dev = devref;
+	memset(&disk_info, 0, sizeof(OPAL_DiskInfo));
 	/*  Open the drive to see if we have access */
 	ATA_PASS_THROUGH_DIRECT * ata =
 		(ATA_PASS_THROUGH_DIRECT *)_aligned_malloc(sizeof(ATA_PASS_THROUGH_DIRECT), 8);
@@ -81,6 +81,8 @@ void DtaDevOS::init(const char * devref)
 		_In_(DWORD)        sizeof(STORAGE_DEVICE_DESCRIPTOR),		// size of output buffer
 		_Out_opt_(LPDWORD)      &BytesReturned,						// number of bytes returned
 		_Inout_opt_(LPOVERLAPPED) NULL)) {
+		cout << endl;
+		//LOG(E) << "Can not determine the device type";
 		return;
 	}
 	LOG(D1) << "descriptor.BusType = " << descriptor.BusType << "\n";
@@ -112,10 +114,40 @@ void DtaDevOS::init(const char * devref)
 	}
 	LOG(D1) << "Before Entering disk->init";
 	disk->init(dev);
-	LOG(D1) << "Before Entering identify(disk_info";
-    identify(disk_info);
+	LOG(D1) << "Before Entering identify(disk_info)";
+
+	uint8_t geometry[256];
+	uint32_t disksz;
+	PDISK_GEOMETRY_EX DiskGeometry = (PDISK_GEOMETRY_EX)(void*)geometry; // defined in winioctl.h
+																		 // double check if it is a usb thumb drive, ignore discovery0()
+	if (!DeviceIoControl(hDev, IOCTL_DISK_GET_DRIVE_GEOMETRY_EX,
+		NULL, 0, geometry, sizeof(geometry), &BytesReturned, NULL))
+	{
+		return;
+	}
+	/*
+	printf("Disk size = %I64d\n", DiskGeometry->DiskSize.QuadPart);
+	printf("Disk byte per sector = %ld\n",DiskGeometry->Geometry.BytesPerSector);
+	printf("Disk sector per track = %ld\n", DiskGeometry->Geometry.SectorsPerTrack);
+	printf("Disk track per cylinder = %ld\n", DiskGeometry->Geometry.TracksPerCylinder);
+	printf("Disk media type = %ld\n", DiskGeometry->Geometry.MediaType);
+	//LARGE_INTEGER ??
+	printf("Disk total cylinder = %ld\n", DiskGeometry->Geometry.Cylinders);
+	//printf("Calculate the disk size (MB) = %ld\n", disksz);
+	*/
+	disksz = (DiskGeometry->Geometry.Cylinders.LowPart *
+		DiskGeometry->Geometry.TracksPerCylinder *
+		DiskGeometry->Geometry.SectorsPerTrack) / 2000; // size in MB
+	if (disksz > (32 * 1000)) { // only > 32GB consider as SSD otherwise treat it as usb thumb
+		identify(disk_info);
+	}
+
 	LOG(D1) << "Before Entering disk->init";
-	if (DEVICE_TYPE_OTHER != disk_info.devType) discovery0();
+	if (DEVICE_TYPE_OTHER != disk_info.devType)
+	{
+		if (disksz > (32 * 1000)) // only > 32GB consider as SSD otherwise treat it as usb thumb
+			discovery0();
+	}
 }
 
 uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
