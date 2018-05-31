@@ -1826,6 +1826,7 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	delete session;
 	return lastRC;
 	}
+	/* temp out due to MX300 limitation
 	LOG(D1) << "Start transaction";
 	cmd->reset();
 	cmd->addToken(OPAL_TOKEN::STARTTRANSACTON);
@@ -1839,7 +1840,7 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	delete cmd;
 	delete session;
 	return lastRC;
-	}
+	}*/ 
 	LOG(D1) << "Writing to data store 0" << dev;
 
 	cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::SET);
@@ -1863,6 +1864,7 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	LOG(D1) << "***** command buffer of write data store buffer:";
 	IFLOG(D4) cmd->dumpCommand();
 	
+	/* temp out due to MX300 limitation
 	// end write
 	LOG(D1) << "end transaction";
 	cmd->reset();
@@ -1873,7 +1875,7 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	delete cmd;
 	delete session;
 	return lastRC;
-	}
+	}*/
 
 	delete cmd;
 	delete session;
@@ -2432,6 +2434,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * filename, uint8_t dsn
 		delete session;
 		return lastRC;
 	}
+	/* temp out due to MX300 limitation
 	LOG(D1) << "Start transaction";
 	cmd->reset();
 	cmd->addToken(OPAL_TOKEN::STARTTRANSACTON);
@@ -2441,7 +2444,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * filename, uint8_t dsn
 		delete cmd;
 		delete session;
 		return lastRC;
-	}
+	} */
 	// 3 boundary
 	// (1) eof (2) len (3) data store size
 	while (!datafile.eof()  && filepos < (len) ) {
@@ -2494,37 +2497,24 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * filename, uint8_t dsn
 
 		LOG(D1) << "Writing to data store" << hex << dsnum << " of " << dev;
 		//printf(" ***** dsnum = %d *****\n", dsnum);
-		switch (dsnum)
-		{
-		case 0:
-		case 1:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::SET);
-			break;
-		case 2:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE2, OPAL_METHOD::SET);
-			break;
-		case 3:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE3, OPAL_METHOD::SET);
-			break;
-		case 4:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE4, OPAL_METHOD::SET);
-			break;
-		case 5:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE5, OPAL_METHOD::SET);
-			break;
-		case 6:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE6, OPAL_METHOD::SET);
-			break;
-		case 7:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE7, OPAL_METHOD::SET);
-			break;
-		case 8:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE8, OPAL_METHOD::SET);
-			break;
-		case 9:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE9, OPAL_METHOD::SET);
-			break;
+		vector<uint8_t> DstoreUid;
+		DstoreUid.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+		for (uint8_t i = 0; i<7; i++) {
+			DstoreUid.push_back(OPALUID[OPAL_UID::OPAL_DATA_STORE][i]);
 		}
+		if (dsnum < 2)
+			DstoreUid.push_back(0);
+		else
+			DstoreUid.push_back(dsnum);
+		//printf("DstoreUid= ");
+		//for (uint8_t i = 0; i < 8; i++) {
+		//	printf("%02X ", DstoreUid.at(i));
+		//} printf("\n");
+
+		cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::SET);
+		if (dsnum > 1)
+			cmd->changeInvokingUid(DstoreUid);
+
 		cmd->addToken(OPAL_TOKEN::STARTLIST);
 		cmd->addToken(OPAL_TOKEN::STARTNAME);
 		cmd->addToken(OPAL_TOKEN::WHERE);
@@ -2553,7 +2543,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * filename, uint8_t dsn
 		filepos += newSize;
 	}
 	printf("\r%s %i bytes written \n", progress_bar, filepos);
-
+	/* temp out due to MX300 limitation
 	LOG(D1) << "end transaction";
 	cmd->reset();
 	cmd->addToken(OPAL_TOKEN::ENDTRANSACTON);
@@ -2563,7 +2553,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * filename, uint8_t dsn
 		delete cmd;
 		delete session;
 		return lastRC;
-	}
+	}*/
 	datafile.close();
 	delete cmd;
 	delete session;
@@ -2652,7 +2642,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * filename, uint8_t dsnu
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // JERRY TEST User 1 
 		delete cmd;
 		delete session;
-		LOG(E) << "DataStore Read Error";
+		LOG(E) << "DataStore Read Unable to start session Error";
 		datafile.close();
 		free(buffer);
 		return lastRC;
@@ -2681,37 +2671,24 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * filename, uint8_t dsnu
 		memset(buffer, 0, blockSize);
 
 		LOG(D1) << "***** start read data store";
-		switch (dsnum)
-		{
-		case 0:
-		case 1:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::GET);
-			break;
-		case 2:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE2, OPAL_METHOD::GET);
-			break;
-		case 3:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE3, OPAL_METHOD::GET);
-			break;
-		case 4:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE4, OPAL_METHOD::GET);
-			break;
-		case 5:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE5, OPAL_METHOD::GET);
-			break;
-		case 6:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE6, OPAL_METHOD::GET);
-			break;
-		case 7:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE7, OPAL_METHOD::GET);
-			break;
-		case 8:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE8, OPAL_METHOD::GET);
-			break;
-		case 9:
-			cmd->reset(OPAL_UID::OPAL_DATA_STORE9, OPAL_METHOD::GET);
-			break;
+		vector<uint8_t> DstoreUid, getUid;
+		DstoreUid.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+		for (uint8_t i=0;i<7;i++) {
+			DstoreUid.push_back(OPALUID[OPAL_UID::OPAL_DATA_STORE][i]);
 		}
+		if (dsnum < 2)
+			DstoreUid.push_back(0);
+		else
+			DstoreUid.push_back(dsnum);
+		//printf("DstoreUid= ");
+		//for (uint8_t i = 0; i < 8; i++) {
+		//	printf("%02X ", DstoreUid.at(i));
+		//} printf("\n");
+
+		cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::GET);
+		if (dsnum > 1)
+			cmd->changeInvokingUid(DstoreUid);
+
 		cmd->addToken(OPAL_TOKEN::STARTLIST);
 		cmd->addToken(OPAL_TOKEN::STARTLIST);
 		cmd->addToken(OPAL_TOKEN::STARTNAME);
@@ -2725,6 +2702,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * filename, uint8_t dsnu
 		cmd->addToken(OPAL_TOKEN::ENDLIST);
 		cmd->addToken(OPAL_TOKEN::ENDLIST);
 		cmd->complete();
+
 		LOG(D1) << "***** send read data store command ";
 		if ((lastRC = session->sendCommand(cmd, response)) != 0) {
 			delete cmd;
