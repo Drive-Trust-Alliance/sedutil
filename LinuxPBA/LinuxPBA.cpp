@@ -25,6 +25,7 @@ This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.co
 #include "log.h"
 #include "GetPassPhrase.h"
 #include "UnlockSEDs.h"
+#include "Network.h"
 
 using namespace std;
 
@@ -37,6 +38,8 @@ int main(int argc, char** argv) {
     LOG(D4) << "Legacy PBA start" << endl;
 //    system ("tput clear");
     printf("DTA LINUX Pre Boot Authorization \n");
+    string phy = GetMACAddress();
+    mvprintw(11,15, "P: %s ", (char *)phy.c_str());
     string p = GetPassPhrase("Please enter pass-phrase to unlock OPAL drives: ");
     UnlockSEDs((char *)p.c_str());
     if (strcmp(p.c_str(), "debug")) {
