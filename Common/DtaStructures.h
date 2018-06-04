@@ -365,6 +365,7 @@ typedef struct _OPAL_DiskInfo {
     uint16_t OPALITE_numcomIDs;
     uint8_t OPALITE_initialPIN;
     uint8_t OPALITE_revertedPIN;
+	uint8_t PYRITE_version;
     uint16_t PYRITE_basecomID;
     uint16_t PYRITE_numcomIDs;
     uint8_t PYRITE_initialPIN;

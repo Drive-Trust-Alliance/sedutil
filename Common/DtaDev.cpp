@@ -225,6 +225,7 @@ void DtaDev::discovery0()
         case FC_PYRITE: /* PYRITE */
             disk_info.PYRITE= 1;
 			disk_info.ANY_OPAL_SSC = 1;
+			disk_info.PYRITE_version = body->opalv200.version;
 		    disk_info.PYRITE_basecomID = SWAP16(body->opalv200.baseCommID);
             disk_info.PYRITE_initialPIN = body->opalv200.initialPIN;
             disk_info.PYRITE_revertedPIN = body->opalv200.revertedPIN;
@@ -356,7 +357,7 @@ void DtaDev::puke()
 		cout << std::endl;
 	}
 	if (disk_info.PYRITE) {
-		cout << "PYRITE function (" << HEXON(4) << FC_PYRITE << ")" << HEXOFF << std::endl;
+		cout << "PYRITE " << (int)disk_info.PYRITE_version << " function (" << HEXON(4) << FC_PYRITE << ")" << HEXOFF << std::endl;
 		cout << "    Base comID = " << HEXON(4) << disk_info.PYRITE_basecomID << HEXOFF;
 		cout << ", Initial PIN = " << HEXON(2) << disk_info.PYRITE_initialPIN << HEXOFF;
 		cout << ", Reverted PIN = " << HEXON(2) << disk_info.PYRITE_revertedPIN << HEXOFF;

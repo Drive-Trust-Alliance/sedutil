@@ -3422,6 +3422,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 		pbafile.close();
 		return lastRC;
 	}
+	/* 
 	LOG(D1) << "Start transaction";
 	cmd->reset();
 	cmd->addToken(OPAL_TOKEN::STARTTRANSACTON);
@@ -3432,7 +3433,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 		delete session;
 		pbafile.close();
 		return lastRC;
-	}
+	} */
 	LOG(I) << "Writing PBA to " << dev;
 	
 	while (!pbafile.eof() || (filepos <= DecompressedBufferSize)) {
@@ -3507,7 +3508,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	} // end of while 
 
 	printf("\r%s %i(%I64d) bytes written \n", progress_bar, filepos, DecompressedBufferSize);
-	LOG(D1) << "end transaction";
+/*	LOG(D1) << "end transaction";
 	cmd->reset();
 	cmd->addToken(OPAL_TOKEN::ENDTRANSACTON);
 	cmd->addToken(OPAL_TOKEN::WHERE);
@@ -3517,7 +3518,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 		delete session;
 		pbafile.close();
 		return lastRC;
-	}
+	} */
 	delete cmd;
 	delete session;
 	pbafile.close();
