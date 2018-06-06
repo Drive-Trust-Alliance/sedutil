@@ -675,7 +675,6 @@ class LockApp(gtk.Window):
             self.box_dev.show()
             self.pbaver_box.show()
             
-            self.select_box.show()
             self.main_instr.show()
             self.op_label.show()
             
@@ -1302,8 +1301,9 @@ class LockApp(gtk.Window):
             if self.check_both:
                 self.pass_sav.set_active(True)
                 self.box_drive.hide()
-            self.check_box_pass.set_active(False)
-            self.check_box_pass.set_sensitive(False)
+            if self.op_prompt != 4 and self.op_prompt != 6:
+                self.check_box_pass.set_active(False)
+                self.check_box_pass.set_sensitive(False)
             if self.op_prompt != 6:
                 self.pass_sav.set_sensitive(False)
         else:
@@ -1427,6 +1427,14 @@ class LockApp(gtk.Window):
             password = lockhash.hash_pass(self.pass_entry.get_text(), self.salt_list[self.tcg_list[index]], self.dev_msid.get_text())
             self.pass_entry.get_buffer().delete_text(0,-1)
             print 'Typed password: ' + password
+        if self.VERSION % 2 == 1 and self.pass_sav.get_active():
+            drive = self.drive_menu.get_active_text()
+            dev_os = platform.system()
+            if dev_os == 'Windows':
+                drive = drive + '\\'
+            if not os.path.isdir(drive):
+                self.msg_err('Selected USB not detected')
+                return
         txt = ""
         timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
         timeStr = timeStr[2:]
@@ -1778,7 +1786,7 @@ class LockApp(gtk.Window):
             regex_ver = 'Fidelity Lock Version\s*:\s*.*'
             m = re.search(regex_ver, txtVersion)
             ver_parse = m.group()
-            queryTextList.append(ver_parse + "\nGUI Version 0.08.1\n\nDevice information\n")
+            queryTextList.append(ver_parse + "\nGUI Version 0.09\n\nDevice information\n")
             
             queryTextList.append("Model: " + self.dev_vendor.get_text() + "\n")
             queryTextList.append("Serial Number: " + self.dev_sn.get_text() + "\n")
@@ -2228,9 +2236,6 @@ class LockApp(gtk.Window):
         start = True
         liststr = ''
         for index in indices:
-            #status2 =  os.system(ui.prefix + "sedutil-cli -n -t --enableLockingRange " + ui.LKRNG + " " + password + " " + ui.devname )
-            #status3 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable on " + password + " " + ui.devname )
-            #status4 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRdone on " + password + " " + ui.devname )
             if start:
                 start = False
                 liststr = liststr + ', '
@@ -2319,12 +2324,12 @@ class LockApp(gtk.Window):
         length = len(list_s)
     
         for i in list_s:
-            self.dev_select.append(self.devs_list[self.nonsetup_list[i]])
+            self.dev_select.append(self.devs_list[i])
             self.sel_list.append(i)
         self.dev_select.set_active(0)
         self.view_state = 6
         if length == 1:
-            self.dev_single.set_text(self.devs_list[self.nonsetup_list[list_s[0]]])
+            self.dev_single.set_text(self.devs_list[list_s[0]])
             
         if length <= 1:
             self.dev_single.show()
