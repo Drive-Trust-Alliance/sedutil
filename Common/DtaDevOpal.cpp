@@ -41,11 +41,12 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaSession.h"
 #include "DtaHexDump.h"
 #include <signal.h>
+//#include "ob.h"
 
+
+void setlic(char * lic_level, const char * LicenseLevel);
 
 using namespace std;
-
-
 
 DtaDevOpal::DtaDevOpal()
 {
@@ -3347,7 +3348,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 
 	hash.clear();
 	LOG(D1) << "start hashing";
-	char mbrstr[16] = "FidelityLockMBR";
+	char mbrstr[16] = { 'F','i','d','e','l','i','t','y','L','o','c','k','M', 'B', 'R', }; // "FidelityLockMBR";
 	DtaHashPwd(hash, mbrstr, this); // why IFLOG(D4)
 	for (int i = 2; i < hash.size(); i++)
 	{
@@ -3356,41 +3357,94 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 
 	// write license level 
 	hash.clear();
-	LOG(D1) << "start hashing license level";
-	// 	if (!memcmp("Admin", userid, 5)) {
+	//LOG(D1) << "start hashing license level";
+	uint8_t idx[16];
+	char st1[16];
+	//uint32_t sd = Seed;
+	/*
+	char sbnk[] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', };
+	char sfree[16] = { 'F'^idx[0],'i'^idx[1],'d'^idx[2],'e'^idx[3],'l'^idx[4],'i'^idx[5],'t'^idx[6],'y'^idx[7],'F'^idx[8],'r'^idx[9],'e'^idx[10],'e'^idx[11],' '^idx[12], ' '^idx[13], ' '^idx[14], ' '^idx[15], };
+	char sstd[16] = { 'F'^idx[0],'i'^idx[1],'d'^idx[2],'e'^idx[3],'l'^idx[4],'i'^idx[5],'t'^idx[6],'y'^idx[7],'S'^idx[8],'t'^idx[9],'a'^idx[10],'n'^idx[11],'d'^idx[12], 'a'^idx[13], 'r'^idx[14], 'd'^idx[15], };
+	char s5[16] = { 'F'^idx[0],'i'^idx[1],'d'^idx[2],'e'^idx[3],'l'^idx[4],'i'^idx[5],'t'^idx[6],'y'^idx[7],'P'^idx[8],'R'^idx[9],'O'^idx[10],'5'^idx[11],' '^idx[12], ' '^idx[13], ' '^idx[14], ' '^idx[15], };
+	char s25[16] = { 'F'^idx[0],'i'^idx[1],'d'^idx[2],'e'^idx[3],'l'^idx[4],'i'^idx[5],'t'^idx[6],'y'^idx[7],'P'^idx[8],'R'^idx[9],'O'^idx[10],'2'^idx[11],'5'^idx[12], ' '^idx[13], ' '^idx[14], ' '^idx[15], };
+	char s100[16] = { 'F'^idx[0],'i'^idx[1],'d'^idx[2],'e'^idx[3],'l'^idx[4],'i'^idx[5],'t'^idx[6],'y'^idx[7],'P'^idx[8],'R'^idx[9],'O'^idx[10],'1'^idx[11],'0'^idx[12], '0'^idx[13], ' '^idx[14], ' '^idx[15], };
+	char sunlmt[17] = { 'F'^idx[0],'i'^idx[1],'d'^idx[2],'e'^idx[3],'l'^idx[4],'i'^idx[5],'t'^idx[6],'y'^idx[7],'P'^idx[8],'R'^idx[9],'O'^idx[10],'U'^idx[11],'n'^idx[12], 'l'^idx[13], 'i'^idx[14], 'm'^idx[15],'t'^idx[16] };
+	*/
+
+	//memset(idx, 16, 0);
+	//printf("idx[] = ");
+	//for (int i = 0; i < 16; i++) {
+	//	idx[i] = sd + i;
+	//	printf("%02X", idx[i]);
+	//}
+	//printf("\n");
+	//memset(st1, 16, 0);
+
+	char sbnk[16] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', };
 	char lic_level[18];
 	memset(lic_level, 0, 18);
+
+	if (!memcmp("0:", LicenseLevel, 2)) { // correct feature set
+		setlic(lic_level, LicenseLevel);
+	}
+	else {
+		memcpy(lic_level, sbnk, 16);
+		printf("no license = %s\n", lic_level);
+	}
+
+	/*
 	if (!memcmp("0:", LicenseLevel, 2)) { // correct feature set
 		switch (atoi(&LicenseLevel[2]))
 		{
 		case 1:
-			memcpy(lic_level, "FidelityFree    ",16);
+			//memcpy(lic_level, "FidelityFree    ", 16);
+			ob.rstor(st1, sfree);
+			memcpy(lic_level, st1, 16);
 			break;
 		case 2:
-			memcpy(lic_level, "FidelityStandard", 16);
+			//memcpy(lic_level, "FidelityStandard", 16);
+			//memcpy(lic_level, sstd, 16);
+			ob.rstor(st1, sstd);
+			memcpy(lic_level, st1, 16);
 			break;
 		case 4:
-			memcpy(lic_level, "FidelityPRO5    ", 16);
+			//memcpy(lic_level, "FidelityPRO5    ", 16);
+			//memcpy(lic_level, s5, 16);
+			ob.rstor(st1, s5);
+			memcpy(lic_level, st1, 16);
 			break;
 		case 16:
-			memcpy(lic_level, "FidelityPRO25   ", 16);
+			//memcpy(lic_level, "FidelityPRO25   ", 16);
+			//memcpy(lic_level, s25, 16);
+			ob.rstor(st1, s25);
+			memcpy(lic_level, st1, 16);
 			break;
 		case 32:
-			memcpy(lic_level, "FidelityPRO100  ", 16);
+			//memcpy(lic_level, "FidelityPRO100  ", 16);
+			//memcpy(lic_level, s100, 16);
+			ob.rstor(st1, s100);
+			memcpy(lic_level, st1, 16);
 			break;
 		case 64:
-			memcpy(lic_level, "FidelityPROUnlimt", 16);
+			//memcpy(lic_level, "FidelityPROUnlimt", 16);
+			//memcpy(lic_level, sunlmt, 16);
+			ob.rstor(st1, sunlmt);
+			memcpy(lic_level, st1, 16);
 			break;
 		default:
-			memcpy(lic_level, "                ", 16);
+			//memcpy(lic_level, "                ", 16);
+			memcpy(lic_level, sbnk, 16);
 			break;
 		}
 	}
 	else {
-		memcpy(lic_level, "                ", 16);
+		//memcpy(lic_level, "                ", 16);
+		memcpy(lic_level, sbnk, 16);
 	}
+	*/
 	//IFLOG(D4) 
 	//	for (uint8_t i = 0; i < 16; i++) { printf("%02X", lic_level[i]); };
+	hash.clear();
 	DtaHashPwd(hash, lic_level, this);
 	for (int i = 2; i < hash.size(); i++)
 	{

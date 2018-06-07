@@ -29,7 +29,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevEnterprise.h"
 #include "Version.h"
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-#include "sedsize.h" 
+#include "sedsize.h"
 #if (!WINDOWS7)
 #include "compressapi-8.1.h"
 #endif
@@ -40,6 +40,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaHexDump.h"
 //#include <msclr\marshal_cppstd.h>
 #endif
+#include "ob.h"
+
+void setlic(char * lic_level, const char * LicenseLevel);
 
 using namespace std;
 
@@ -108,6 +111,22 @@ int diskScan(char * devskip)
 	return 0;
 }
 
+void setlic(char * lic_level, const char * LicenseLevel)
+{
+char sbnk[16] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', };
+obfs ob;
+
+if (!memcmp("0:", LicenseLevel, 2)) { // correct feature set
+	ob.lic(atoi(&LicenseLevel[2]), lic_level);
+}
+else {
+	memcpy(lic_level, sbnk, 16);
+	printf("no license = %s\n", lic_level);
+	//delete u;
+	//delete d;
+	//return DTAERROR_CREATE_USB;
+}
+}
 
 int hashvalidate(char * password, char *devname)
 {
@@ -242,9 +261,9 @@ int reloadvol(HANDLE &vol_handle)
 {
 	DWORD n;
 	DeviceIoControl(vol_handle, IOCTL_STORAGE_EJECT_MEDIA, NULL, 0, NULL, 0, &n, NULL);
-	Sleep(500); // Seems to be 
+	Sleep(1000); // Seems to be 
 	unlockvol(vol_handle);
-	Sleep(500);
+	Sleep(1000);
 	DeviceIoControl(vol_handle, IOCTL_STORAGE_LOAD_MEDIA, NULL, 0, NULL, 0, &n, NULL);
 	FlushFileBuffers(vol_handle);
 	return 0;
@@ -309,7 +328,6 @@ BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 	return true;
 }
 #endif
-
 
 int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 {
@@ -485,7 +503,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	 
 	for (int i = 2; i < hash.size(); i++) {	DecompressedBuffer[512+64+i-2] = hash.at(i); 	}
 	hash.clear();
-	char usbstr[16] = "FidelityLockUSB";
+	char usbstr[16] = { 'F','i','d','e','l','i','t','y','L','o','c','k','U', 'S', 'B', };//"FidelityLockUSB";
 	DtaHashPwd(hash,usbstr, d);
 	for (int i = 2; i < hash.size(); i++)
 	{
@@ -493,37 +511,19 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	}
  
 	// write license level on window only
+	//uint8_t idx[16];
+	//char st1[16];
+	//uint32_t sd = getseed();
+
+	char sbnk[16] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', };
 	char lic_level[18];
 	memset(lic_level, 0, 18);
-	hash.clear();
+
 	if (!memcmp("0:", LicenseLevel, 2)) { // correct feature set
-		switch (atoi(&LicenseLevel[2]))
-		{
-		case 1:
-			memcpy(lic_level, "FidelityFree    ", 16);
-			break;
-		case 2:
-			memcpy(lic_level, "FidelityStandard", 16);
-			break;
-		case 4:
-			memcpy(lic_level, "FidelityPRO5    ", 16);
-			break;
-		case 16:
-			memcpy(lic_level, "FidelityPRO25   ", 16);
-			break;
-		case 32:
-			memcpy(lic_level, "FidelityPRO100  ", 16);
-			break;
-		case 64:
-			memcpy(lic_level, "FidelityPROUnlimt", 16);
-			break;
-		default:
-			memcpy(lic_level, "                ", 16);
-			break;
-		}
+		setlic(lic_level, LicenseLevel);
 	}
 	else {
-		memcpy(lic_level, "                ", 16);
+		memcpy(lic_level, sbnk, 16);
 		printf("no license = %s\n", lic_level);
 		delete u;
 		delete d;
@@ -531,6 +531,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	}
 	//IFLOG(D4)
 	//	for (uint8_t i = 0; i < 16; i++) { printf("%02X", lic_level[i]); } printf("\n");
+	hash.clear();
 	DtaHashPwd(hash, lic_level, d);
 	for (int i = 2; i < hash.size(); i++)
 	{
@@ -555,7 +556,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 
 	// zero out file system, retry once, seems to OK
 	BOOL res;
-	for (int cnt = 0; cnt < 2; cnt += 1)
+	for (int cnt = 0; cnt < 3; cnt += 1)
 	{
 		if ((res = zeromem(DecompressedBufferSize,USBname))) //    DecompressedBufferSize))
 			break;
@@ -591,10 +592,15 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 		delete d;
 		return DTAERROR_CREATE_USB;
 	}
+	int retry_cnt;
+	retry_cnt = 0;
+	again:
 	if (!WriteFile(vol_handle, DecompressedBuffer, (DWORD)DecompressedBufferSize, &n, NULL))
 	{
+		if (retry_cnt < 3) { retry_cnt++;  goto again; }
 		int err = GetLastError();
 		//printf("write image data to USB error %d\n", err);
+		LOG(I) << "Write image to USB error";
 		unlockvol(vol_handle);
 		CloseHandle(vol_handle);
 		if (DecompressedBuffer != NULL) free(DecompressedBuffer);
@@ -810,6 +816,9 @@ int main(int argc, char * argv[])
 		//LOG(I) << "d->LicenseLevel="  << d->LicenseLevel;
 #endif	
 	}
+
+	obfs ob;
+
 
     switch (opts.action) {
  	case sedutiloption::initialSetup:
@@ -1047,7 +1056,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-        printf("Fidelity Lock Version : 0.3.2.%s.%s 20180604-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.3.2.%s.%s 20180607-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:
