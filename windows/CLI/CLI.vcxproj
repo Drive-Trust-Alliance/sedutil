@@ -39,6 +39,7 @@
     <ClInclude Include="..\..\Common\DtaSession.h" />
     <ClInclude Include="..\..\Common\DtaStructures.h" />
     <ClInclude Include="..\..\common\log.h" />
+    <ClInclude Include="..\..\Common\ob.h" />
     <ClInclude Include="..\..\Common\pbkdf2\bitops.h" />
     <ClInclude Include="..\..\Common\pbkdf2\blockwise.h" />
     <ClInclude Include="..\..\Common\pbkdf2\chash.h" />
@@ -74,6 +75,7 @@
     <ClCompile Include="..\..\Common\DtaOptions.cpp" />
     <ClCompile Include="..\..\Common\DtaResponse.cpp" />
     <ClCompile Include="..\..\Common\DtaSession.cpp" />
+    <ClCompile Include="..\..\Common\ob.cpp" />
     <ClCompile Include="..\..\Common\pbkdf2\blockwise.c" />
     <ClCompile Include="..\..\Common\pbkdf2\chash.c" />
     <ClCompile Include="..\..\Common\pbkdf2\hmac.c" />
@@ -213,6 +215,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ShowProgress>NotSet</ShowProgress>
     </Link>
     <PreBuildEvent>
       <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
