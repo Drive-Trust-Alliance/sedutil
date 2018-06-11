@@ -115,13 +115,23 @@ LicenseValidator::LicenseValidator(void)
 			// by the Protect Your App Wizard.
 			// If you are using the QlmLicenseWizard, you must set the StoreKeysLocation to EStoreKeysTo_ERegistry
 			// To load the settings from the XML file, call the license.LoadSettings function.
+			char pdt[] = { '{','2','4','E','A','A','3','C','1','-','3','D','D','7','-','4','0','E','0','-','A','E','A','3','-','D','2','0','A','A','1','7','A','6','0','0','5','}', NULL };
+			char pkey[] = { 'A','5','9','J','i','p','0','l','t','7','3','X','i','g','=','=',NULL };
+			char enckey[] = { '{', '3','e','3','0','0','e','9','3','-','6','b','2','1','-','4','1','a','5','-','a','a','7','a','-','7','a','0','3','d','b','c','6','a','4','4','9' ,'}' ,NULL }; // ,
+			char url[] = { 'h','t','t','p','s',':','/','/','q','u','i','c','k','l','i','c','e','n','s','e','m','a','n','a','g','e','r','.','c','o','m','/','f','i','d','e','l','i','t','y','h','e','i','g','h','t','/','q','l','m','l','i','c','e','n','s','e','s','e','r','v','e','r','/','q','l','m','s','e','r','v','i','c','e','.','a','s','m','x',NULL };
+			char rsakey[] = { '<','R','S','A','K','e','y','V','a','l','u','e','>','<','M','o','d','u','l','u','s','>','u','Z','s','y','s','/','3','0','c','2','w','f','P','4','y','w','q','/','P','a','x','m','z','t','c','/','+','p','8','v','C','g','M','z','x','H','p','g','u','P','3','A','M','O','t','b','U','F','M','W','C','8','R','D','h','j','d','z','Q','E','5','A','u','N','X','C','h','V','n','p','9','I','A','s','4','M','N','K','W','M','o','V','w','f','V','L','y','D','X','V','l','V','P','a','F','K','T','P','I','b','D','m','U','M','t','z','/','8','t','0','C','4','T','O','X','c','O','T','M','M','E','P','m','v','K','v','g','8','n','o','l','H','W','f','d','x','J','e','F','5','j','f','O','d','D','l','/','3','T','N','t','g','A','T','k','S','U','D','i','T','1','l','t','L','R','6','M','a','G','9','s','=','<','/','M','o','d','u','l','u','s','>','<','E','x','p','o','n','e','n','t','>','A','Q','A','B','<','/','E','x','p','o','n','e','n','t','>','<','/','R','S','A','K','e','y','V','a','l','u','e','>', NULL };
 
-			license->DefineProduct (1, _bstr_t("Demo"), 1, 0, _bstr_t("DemoKey"), _bstr_t("{24EAA3C1-3DD7-40E0-AEA3-D20AA17A6005}"));
+			//license->DefineProduct (1, _bstr_t("Demo"), 1, 0, _bstr_t("DemoKey"), _bstr_t("{24EAA3C1-3DD7-40E0-AEA3-D20AA17A6005}"));
+			license->DefineProduct(1, _bstr_t("Demo"), 1, 0, _bstr_t("DemoKey"), _bstr_t(pdt));
 			license->LicenseEngineLibrary = ELicenseEngineLibrary_DotNet;
-			license->PublicKey = _bstr_t("A59Jip0lt73Xig==");
-			license->CommunicationEncryptionKey = _bstr_t("{3e300e93-6b21-41a5-aa7a-7a03dbc6a449}");
-			license->DefaultWebServiceUrl = _bstr_t("https://quicklicensemanager.com/fidelityheight/qlmlicenseserver/qlmservice.asmx");
-			rsaPublicKey = CComBSTR ("<RSAKeyValue><Modulus>uZsys/30c2wfP4ywq/Paxmztc/+p8vCgMzxHpguP3AMOtbUFMWC8RDhjdzQE5AuNXChVnp9IAs4MNKWMoVwfVLyDXVlVPaFKTPIbDmUMtz/8t0C4TOXcOTMMEPmvKvg8nolHWfdxJeF5jfOdDl/3TNtgATkSUDiT1ltLR6MaG9s=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>");
+			//license->PublicKey = _bstr_t("A59Jip0lt73Xig==");
+			license->PublicKey = _bstr_t(pkey);
+			//license->CommunicationEncryptionKey = _bstr_t("{3e300e93-6b21-41a5-aa7a-7a03dbc6a449}");
+			license->CommunicationEncryptionKey = _bstr_t(enckey);
+			//license->DefaultWebServiceUrl = _bstr_t("https://quicklicensemanager.com/fidelityheight/qlmlicenseserver/qlmservice.asmx");
+			license->DefaultWebServiceUrl = _bstr_t(url);
+			//rsaPublicKey = CComBSTR ("<RSAKeyValue><Modulus>uZsys/30c2wfP4ywq/Paxmztc/+p8vCgMzxHpguP3AMOtbUFMWC8RDhjdzQE5AuNXChVnp9IAs4MNKWMoVwfVLyDXVlVPaFKTPIbDmUMtz/8t0C4TOXcOTMMEPmvKvg8nolHWfdxJeF5jfOdDl/3TNtgATkSUDiT1ltLR6MaG9s=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>");
+			rsaPublicKey = CComBSTR(rsakey);
 			license->StoreKeysLocation = EStoreKeysTo_ERegistry;
 			checkIfLicenseIsRevoked= false;
 			checkIfComputerIsRegistered= false;

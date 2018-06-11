@@ -817,9 +817,6 @@ int main(int argc, char * argv[])
 #endif	
 	}
 
-	obfs ob;
-
-
     switch (opts.action) {
  	case sedutiloption::initialSetup:
 		LOG(D) << "Performing initial setup to use sedutil on drive " << argv[opts.device];
@@ -1056,7 +1053,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-        printf("Fidelity Lock Version : 0.3.2.%s.%s 20180607-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.3.2.%s.%s 20180611-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:

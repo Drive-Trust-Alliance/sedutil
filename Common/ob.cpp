@@ -20,32 +20,31 @@ obfs::~obfs()
 
 void obfs::rstor(char * st1, char * sf)
 {
-	char st2[17] = "FidelityPRO5    "; // array size is 17-byte but actual content is 16-byte
-	if (0) {
-	printf("supposed text in hex : ");
-	for (int i = 0; i < 16; i++) {
-		printf("%02X", st2[i] & 0xff);
-	}
-	
-	printf("\n");
-	}
+
+	//char st2[17] = "FidelityPRO5    "; // array size is 17-byte but actual content is 16-byte
+	//printf("supposed text in hex : ");
+	//for (int i = 0; i < 16; i++) {
+	//	printf("%02X", st2[i] & 0xff);
+	//}	
+	//printf("\n");
+
 	// restore to original text
 	for (int i = 0; i < 16; i++) {
 		st1[i] = ((sf[i] & 0xff) ^ (Seed + i));
 	}
-	if (0) {
-		printf("restore text in hex : ");
-		for (int i = 0; i < 16; i++) {
-			printf("%02X", st1[i] & 0xff);
-		}
-		printf("\n");
-		printf("restore text in char : \"");
-
-		for (int i = 0; i < 16; i++) {
-			printf("%C", st1[i] & 0xff);
-		}
-		printf("\"\n");
-	}
+	//if (0) {
+	//	printf("restore text in hex : ");
+	//	for (int i = 0; i < 16; i++) {
+	//		printf("%02X", st1[i] & 0xff);
+	//	}
+	//	printf("\n");
+	//	printf("restore text in char : \"");
+	//
+	//	for (int i = 0; i < 16; i++) {
+	//		printf("%C", st1[i] & 0xff);
+	//	}
+	//	printf("\"\n");
+	//}
 
 }
 
