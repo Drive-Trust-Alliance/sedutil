@@ -3392,56 +3392,6 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 		printf("no license = %s\n", lic_level);
 	}
 
-	/*
-	if (!memcmp("0:", LicenseLevel, 2)) { // correct feature set
-		switch (atoi(&LicenseLevel[2]))
-		{
-		case 1:
-			//memcpy(lic_level, "FidelityFree    ", 16);
-			ob.rstor(st1, sfree);
-			memcpy(lic_level, st1, 16);
-			break;
-		case 2:
-			//memcpy(lic_level, "FidelityStandard", 16);
-			//memcpy(lic_level, sstd, 16);
-			ob.rstor(st1, sstd);
-			memcpy(lic_level, st1, 16);
-			break;
-		case 4:
-			//memcpy(lic_level, "FidelityPRO5    ", 16);
-			//memcpy(lic_level, s5, 16);
-			ob.rstor(st1, s5);
-			memcpy(lic_level, st1, 16);
-			break;
-		case 16:
-			//memcpy(lic_level, "FidelityPRO25   ", 16);
-			//memcpy(lic_level, s25, 16);
-			ob.rstor(st1, s25);
-			memcpy(lic_level, st1, 16);
-			break;
-		case 32:
-			//memcpy(lic_level, "FidelityPRO100  ", 16);
-			//memcpy(lic_level, s100, 16);
-			ob.rstor(st1, s100);
-			memcpy(lic_level, st1, 16);
-			break;
-		case 64:
-			//memcpy(lic_level, "FidelityPROUnlimt", 16);
-			//memcpy(lic_level, sunlmt, 16);
-			ob.rstor(st1, sunlmt);
-			memcpy(lic_level, st1, 16);
-			break;
-		default:
-			//memcpy(lic_level, "                ", 16);
-			memcpy(lic_level, sbnk, 16);
-			break;
-		}
-	}
-	else {
-		//memcpy(lic_level, "                ", 16);
-		memcpy(lic_level, sbnk, 16);
-	}
-	*/
 	//IFLOG(D4) 
 	//	for (uint8_t i = 0; i < 16; i++) { printf("%02X", lic_level[i]); };
 	hash.clear();
