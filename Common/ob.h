@@ -16,7 +16,7 @@ public:
 	~obfs();
 	void rstor(char * st1, char * sf);
 	void lic(int lev, char * lic_level);
-	void obfs::setaudpass(char * pass);
+	void setaudpass(char * pass);
 	//uint32_t getseed();
 	char sfree[16]  =  { 'F' ^ Seed,'i'^(Seed+1),'d'^(Seed+2),'e'^(Seed+3),'l'^(Seed+4),'i'^(Seed+5),'t'^(Seed+6),'y'^(Seed+7),'F'^(Seed+8),'r'^(Seed+9),'e'^(Seed+10),'e'^(Seed+11),' '^(Seed+12), ' '^(Seed+13), ' '^(Seed+14), ' '^(Seed+15), };
 	char sstd[16]   =  { 'F' ^ Seed,'i' ^ (Seed + 1),'d' ^ (Seed + 2),'e' ^ (Seed + 3),'l' ^ (Seed + 4),'i' ^ (Seed + 5),'t' ^ (Seed + 6),'y' ^ (Seed + 7),'S' ^ (Seed + 8),'t' ^ (Seed + 9),'a' ^ (Seed + 10),'n' ^ (Seed + 11),'d' ^ (Seed + 12), 'a' ^ (Seed + 13), 'r' ^ (Seed + 14), 'd' ^ (Seed + 15), };
