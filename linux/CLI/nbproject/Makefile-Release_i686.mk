@@ -48,6 +48,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/7a2a93ab/DtaOptions.o \
 	${OBJECTDIR}/_ext/7a2a93ab/DtaResponse.o \
 	${OBJECTDIR}/_ext/7a2a93ab/DtaSession.o \
+        ${OBJECTDIR}/_ext/7a2a93ab/ob.o \
 	${OBJECTDIR}/_ext/cdbdd37b/blockwise.o \
 	${OBJECTDIR}/_ext/cdbdd37b/chash.o \
 	${OBJECTDIR}/_ext/cdbdd37b/hmac.o \
@@ -63,7 +64,7 @@ OBJECTFILES= \
 CFLAGS=-m32 -Wall
 
 # CC Compiler Flags
-CCFLAGS=-m32 -Wall
+CCFLAGS=-m32 -Wno-no-narrowing
 CXXFLAGS=-m32 -Wall
 
 # Fortran Compiler Flags
@@ -147,6 +148,11 @@ ${OBJECTDIR}/_ext/7a2a93ab/DtaSession.o: ../../Common/DtaSession.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/7a2a93ab
 	${RM} "$@.d"
 	$(COMPILE.cc) -Werror -I.. -I../../Common -I../../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7a2a93ab/DtaSession.o ../../Common/DtaSession.cpp
+
+${OBJECTDIR}/_ext/7a2a93ab/ob.o: ../../Common/ob.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/7a2a93ab
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Wno-error -Wno-narrow -I.. -I../../Common -I../../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7a2a93ab/ob.o ../../Common/ob.cpp
 
 ${OBJECTDIR}/_ext/cdbdd37b/blockwise.o: ../../Common/pbkdf2/blockwise.c 
 	${MKDIR} -p ${OBJECTDIR}/_ext/cdbdd37b
