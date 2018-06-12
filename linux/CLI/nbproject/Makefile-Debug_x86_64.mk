@@ -65,7 +65,7 @@ CFLAGS=-m64 -Wall
 
 # CC Compiler Flags
 CCFLAGS=-m64 -Wno-narrowing
-CXXFLAGS=-m64 -W no-narrowing
+CXXFLAGS=-m64 -Wno-narrowing
 
 # Fortran Compiler Flags
 FFLAGS=-Wall
