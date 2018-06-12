@@ -111,21 +111,26 @@ int diskScan(char * devskip)
 	return 0;
 }
 
+void auditpass(char * apass);
+void auditpass(char * apass)
+{
+	obfs ob;
+	ob.setaudpass(apass);
+}
+
+
 void setlic(char * lic_level, const char * LicenseLevel)
 {
-char sbnk[16] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', };
-obfs ob;
+    char sbnk[16] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', };
+    obfs ob;
 
-if (!memcmp("0:", LicenseLevel, 2)) { // correct feature set
-	ob.lic(atoi(&LicenseLevel[2]), lic_level);
-}
-else {
-	memcpy(lic_level, sbnk, 16);
-	printf("no license = %s\n", lic_level);
-	//delete u;
-	//delete d;
-	//return DTAERROR_CREATE_USB;
-}
+    if (!memcmp("0:", LicenseLevel, 2)) { // correct feature set
+	    ob.lic(atoi(&LicenseLevel[2]), lic_level);
+    }
+    else {
+	    memcpy(lic_level, sbnk, 16);
+	    printf("no license = %s\n", lic_level);
+    }
 }
 
 int hashvalidate(char * password, char *devname)
@@ -1053,7 +1058,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-        printf("Fidelity Lock Version : 0.3.2.%s.%s 20180611-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.3.3.%s.%s 20180612-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:

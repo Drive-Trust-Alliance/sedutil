@@ -97,7 +97,10 @@ void obfs::lic(int lev, char * lic_level)
 	}
 }
 
-
+void obfs::setaudpass(char * apass)
+{
+	rstor(apass, audit);
+}
 //uint32_t obfs::getseed()
 //{
 //	return (Seed & 0xff);
