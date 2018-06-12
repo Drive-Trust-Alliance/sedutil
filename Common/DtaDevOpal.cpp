@@ -45,6 +45,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 
 void setlic(char * lic_level, const char * LicenseLevel);
+void auditpass(char * apass);
 
 using namespace std;
 
@@ -188,7 +189,11 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 	gethuser(buf);
 	enableUser(true, password, buf); // true : enable user; false: disable user
 	enableUserRead(true, password, buf);
-	char p1[64] = "F0iD2eli81Ty"; //20->12 "pFa0isDs2ewloir81Tdy";
+	//char p1[64] = "F0iD2eli81Ty"; //20->12 "pFa0isDs2ewloir81Tdy";
+	char p1[64]; // = { 'F','0','i','D','2','e','l','i','8','1','T','y',NULL };
+	memset(p1, 0, 64); // zero out pass 
+	auditpass(p1);
+
 	#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
 	strcat(p1, getSerialNum());
 	#else
