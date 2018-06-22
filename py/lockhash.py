@@ -2,6 +2,22 @@ import hashlib
 import pbkdf2
 import re
 
+def convert(num):
+    if num:
+        return chr(num % 256) + convert(num // 256)
+    else:
+        return ''
+        
+def get_val(input):
+    if input == 0:
+        return convert(37549468393802268844761886790)
+    else:
+        return [convert(134778767330889818343107709416847468870),
+            convert(133516696771073529497692148323911493958),
+            convert(42702100953497539105770872562006649158),
+            convert(42702102616360496875857926820255263046),
+            convert(42702426738463857721441676939831306566),
+            convert(145433241952439177690100336922345105734)]
 
 def hash_pbkdf2(plaintext, salt, iterations = 75000, bytes = 32):
     pwhash = pbkdf2.PBKDF2(plaintext, salt, iterations).hexread(bytes)
