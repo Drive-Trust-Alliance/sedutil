@@ -1,7 +1,11 @@
 #include "pyextob.h"
 
 #ifdef PYEXTOB
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 #include "..\License\include.h"
+#else
+#include "include.h"
+#endif
 #endif
 
 #include "ob.h"
@@ -96,9 +100,6 @@ PyObject* ob_function1(PyObject* self, PyObject* args)
 	obfs ob;
 	ob.lic(i, rstr); 
 	return PyString_FromStringAndSize(rstr,16);
-
-error:
-	return 0;
 }
 
 
