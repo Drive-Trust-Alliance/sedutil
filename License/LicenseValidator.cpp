@@ -1,4 +1,11 @@
+#include "pyextlic.h"
+
+#ifdef PYEXTLIC
+#include "include.h"
+#include <atlstr.h>  //To use CString, include the atlstr.h header.
+#else
 #include "StdAfx.h"
+#endif
 #include "LicenseValidator.h"
 #include <Shlobj.h>
 #include <fstream>
@@ -48,22 +55,20 @@ LicenseValidator::LicenseValidator(void)
 			if (hCtx == INVALID_HANDLE_VALUE)
 			{
 				// Ensure that the QlmLicenseLib.dll.manifest exists in the same folder as QlmLicenseLib.dll
-				throw "The QLM license DLL is not properly registered.";
-
+				throw "The QLM license DLL is not properly registered. invalid HANDLE";
 			}
-
+			
 			ULONG_PTR cookie;
 			if (::ActivateActCtx(hCtx, &cookie) == FALSE)
 			{
-				throw "The QLM license DLL is not properly registered.";
-
+				throw "The QLM license DLL is not properly registered. invalid cookie.";
 			}
-
+			
 			hr = license.CreateInstance(__uuidof(QlmLicense));
 
 			if (FAILED(hr))
 			{
-				throw "The QLM license DLL is not properly registered.";
+				throw "The QLM license DLL is not properly registered. invlaid luuid";
 			}
 			else
 			{
@@ -1088,42 +1093,106 @@ void LicenseValidator::UnpublishAnalyticsToServer()
 	}
 }
 */
-/*
-CString LicenseValidator::GetProductVersion()
-{
-	CString version;
 
+#ifdef PYEXTLIC
+PyObject* lic_function1(PyObject* self, PyObject* args)
+{
+	//if (!PyArg_ParseTuple(args, "i", &i))
+	//{
+	//	return 0;
+	//};
+	LicenseValidator *m_lv;
+	//Initialize COM
+	CoInitialize(NULL);
+	CString computerName;
 	try
 	{
-		_TCHAR szModPath[MAX_PATH];
-		szModPath[0] = '\0';
-		GetModuleFileName(NULL, szModPath, sizeof(szModPath));
-		DWORD dwHandle;
-		DWORD dwSize = GetFileVersionInfoSize(szModPath, &dwHandle);
+		m_lv = new LicenseValidator();
 
-		if (dwSize > 0)
+		m_lv->SetCustomData1(_T("C++"));
+		m_lv->SetCustomData2(_T("Desktop"));
+		m_lv->SetCustomData3(_T("QlmLicenseWizardVC_NoMFC"));
+
+		computerName = m_lv->GetComputerName();
+		LicenseBinding licenseBinding = LicenseBinding_ComputerName;
+
+		bool needsActivation = false;
+		CString returnMsg("");
+		// bool ValidateLicenseAtStartup(CString computerID, LicenseBinding licenseBinding, bool &needsActivation, CString &returnMsg);
+		if (m_lv->ValidateLicenseAtStartup(licenseBinding, needsActivation, returnMsg) == FALSE)
 		{
-			BYTE* pVersionInfo = new BYTE[dwSize];
-			if (GetFileVersionInfo(szModPath, dwHandle, dwSize, pVersionInfo))
-			{
-				UINT uiSize;
-				VS_FIXEDFILEINFO* pFileInfo;
-				if (VerQueryValue(pVersionInfo, _T("\\"), (LPVOID*)&pFileInfo, &uiSize))
-				{
-					int major = (pFileInfo->dwFileVersionMS >> 16) & 0xffff;
-					int minor = (pFileInfo->dwFileVersionMS) & 0xffff;
+			// no valid license 
+			//char url[250] = "https://fidelityl.test.onfastspring.com/"; // old 
+			char url[250] = "https://fidelityheight.test.onfastspring.com/"; // new 12/1/2017
+			printf("No valid license of Fidelity Lock found, please register to get demo license or buy basic/premium license\n");
+			ShellExecute(0, 0, url, 0, 0, SW_SHOWNORMAL);
+			return 0;
+		}
+		else
+		{
+			if (0) {
+				printf("Valid Fidelity Lock License found %s \n", (char*)m_lv->getf2s());
+				// printf("License will expire  in %f \n", m_lv->getexpire());
 
-					version.Format(_T("%d.%d"), major, minor);
-				}
+				long licmodel = m_lv->getlicmodel();
+				long lictype = m_lv->getlictype();
+				long feat = m_lv->getfeature();
+				long nlic = m_lv->getnlic();
+				long nday = m_lv->getdaylft();
+				printf("License Model = %ld \n", licmodel);
+				printf("License Type = %ld \n", lictype);
+				printf("Features = %ld \n", feat);
+				printf("Number of License = %ld \n", nlic);
+				printf("Number of Day Left = %ld \n", nday);
+
+				bool eval = m_lv->IsEvaluation();
+				bool licexpired = m_lv->EvaluationExpired();
+				int rem = m_lv->EvaluationRemainingDays();
+				printf("License is evaluation = %ld \n", eval);
+				printf("License Evaluation Remaining Days = %d \n", rem);
+				printf("License is expired = %d \n", licexpired);
+
+				SYSTEMTIME lt;
+				VariantTimeToSystemTime(m_lv->getexpire(), &lt);
+				printf("License Expire date : %d/%d/%d %d:%d:%d\n", lt.wYear, lt.wMonth, lt.wDay, lt.wHour, lt.wMinute, lt.wSecond);
 			}
-
-			delete[] pVersionInfo;
+			// additional lic info 
+			long majver = m_lv->getmajorversion();
+			long minver = m_lv->getminorversion();
+			_bstr_t ver = m_lv->getversion();
+			long prodid = m_lv->getproductid();
+			DATE relsdate = m_lv->getreleasedate();
+			if (0) {
+				printf("Product Release Date = %f \n", relsdate);
+				printf("Product ID = %ld \n", prodid);
+				printf("License Major Version = %ld \n", majver);
+				printf("License Minor Version = %ld \n", minver);
+				printf("License Version = %s \n", (char *)ver);
+			}
+			return PyString_FromString((char*)m_lv->getf2s());
 		}
 	}
-	catch (...)
+	catch (char *error)
 	{
+		printf("License Error : %s\n", error);
+		ExitProcess(0);
 	}
-
-	return version;
 }
-*/
+
+
+PyMethodDef licMethods[] =
+{
+	{ "get_lic",(PyCFunction)lic_function1,METH_VARARGS,0 },
+	{ 0,0,0,0 }  
+};
+
+
+PyMODINIT_FUNC
+initlic(void)
+{
+	PyObject *m;
+	m = Py_InitModule("lic", licMethods); // array of exported function 
+	if (m == NULL)
+		return;
+}
+#endif

@@ -4,7 +4,7 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////
 //Use Compile-Time as seed
 
-#define Seed (((__TIME__[7] - '0') * 1  + (__TIME__[6] - '0') * 10  + \
+#define SeedFL (((__TIME__[7] - '0') * 1  + (__TIME__[6] - '0') * 10  + \
               (__TIME__[4] - '0') * 60   + (__TIME__[3] - '0') * 600 + \
               (__TIME__[1] - '0') * 3600 + (__TIME__[0] - '0') * 36000) & 0xff)
 ////////////////////////////////////////////////////////////////////
@@ -18,14 +18,13 @@ public:
 	void lic(int lev, char * lic_level);
 	void setaudpass(char * pass);
 	//uint32_t getseed();
-	char sfree[16]  =  { 'F' ^ Seed,'i'^(Seed+1),'d'^(Seed+2),'e'^(Seed+3),'l'^(Seed+4),'i'^(Seed+5),'t'^(Seed+6),'y'^(Seed+7),'F'^(Seed+8),'r'^(Seed+9),'e'^(Seed+10),'e'^(Seed+11),' '^(Seed+12), ' '^(Seed+13), ' '^(Seed+14), ' '^(Seed+15), };
-	char sstd[16]   =  { 'F' ^ Seed,'i' ^ (Seed + 1),'d' ^ (Seed + 2),'e' ^ (Seed + 3),'l' ^ (Seed + 4),'i' ^ (Seed + 5),'t' ^ (Seed + 6),'y' ^ (Seed + 7),'S' ^ (Seed + 8),'t' ^ (Seed + 9),'a' ^ (Seed + 10),'n' ^ (Seed + 11),'d' ^ (Seed + 12), 'a' ^ (Seed + 13), 'r' ^ (Seed + 14), 'd' ^ (Seed + 15), };
-	char s5[16]     =  { 'F' ^ Seed,'i' ^ (Seed + 1),'d' ^ (Seed + 2),'e' ^ (Seed + 3),'l' ^ (Seed + 4),'i' ^ (Seed + 5),'t' ^ (Seed + 6),'y' ^ (Seed + 7),'P' ^ (Seed + 8),'R' ^ (Seed + 9),'O' ^ (Seed + 10),'5' ^ (Seed + 11),' ' ^ (Seed + 12), ' ' ^ (Seed + 13), ' ' ^ (Seed + 14), ' ' ^ (Seed + 15), };
-	char s25[16]    =  { 'F' ^ Seed,'i' ^ (Seed + 1),'d' ^ (Seed + 2),'e' ^ (Seed + 3),'l' ^ (Seed + 4),'i' ^ (Seed + 5),'t' ^ (Seed + 6),'y' ^ (Seed + 7),'P' ^ (Seed + 8),'R' ^ (Seed + 9),'O' ^ (Seed + 10),'2' ^ (Seed + 11),'5' ^ (Seed + 12), ' ' ^ (Seed + 13), ' ' ^ (Seed + 14), ' ' ^ (Seed + 15), };
-	char s100[16]   =  { 'F' ^ Seed,'i' ^ (Seed + 1),'d' ^ (Seed + 2),'e' ^ (Seed + 3),'l' ^ (Seed + 4),'i' ^ (Seed + 5),'t' ^ (Seed + 6),'y' ^ (Seed + 7),'P' ^ (Seed + 8),'R' ^ (Seed + 9),'O' ^ (Seed + 10),'1' ^ (Seed + 11),'0' ^ (Seed + 12), '0' ^ (Seed + 13), ' ' ^ (Seed + 14), ' ' ^ (Seed + 15), };
-	char sunlmt[17] =  { 'F' ^ Seed,'i' ^ (Seed + 1),'d' ^ (Seed + 2),'e' ^ (Seed + 3),'l' ^ (Seed + 4),'i' ^ (Seed + 5),'t' ^ (Seed + 6),'y' ^ (Seed + 7),'P' ^ (Seed + 8),'R' ^ (Seed + 9),'O' ^ (Seed + 10),'U' ^ (Seed + 11),'n' ^ (Seed + 12), 'l' ^ (Seed + 13), 'i' ^ (Seed + 14), 'm' ^ (Seed + 15), 't'};
-	//	char sunlmt[17] =  { 'F' ^ Seed,'i','d','e','l','i','t','y' ^																		,'P','R','O','U','n' ^ (Seed + 12), 'l' ^ (Seed + 13), 'i' ^ (Seed + 14), 'm' ^ (Seed + 15), 't'};
-	char audit[16] = { 'F' ^ Seed,'0' ^ (Seed + 1),'i' ^ (Seed + 2),'D' ^ (Seed + 3),'2' ^ (Seed + 4),'e' ^ (Seed + 5),'l' ^ (Seed + 6),'i' ^ (Seed + 7),'8' ^ (Seed + 8),'1' ^ (Seed + 9),'T' ^ (Seed + 10),'y' ^ (Seed + 11), 0 ^ (Seed + 12), 0 ^ (Seed + 13), 0 ^ (Seed + 14), 0 ^ (Seed + 15), };
-}; 
+	char sfree[16]  = { 'F' ^ SeedFL,'i' ^ (SeedFL + 1),'d' ^ (SeedFL + 2),'e' ^ (SeedFL + 3),'l' ^ (SeedFL + 4),'i' ^ (SeedFL + 5),'t' ^ (SeedFL + 6),'y' ^ (SeedFL + 7),'F' ^ (SeedFL + 8),'r' ^ (SeedFL + 9),'e' ^ (SeedFL + 10),'e' ^ (SeedFL + 11),' ' ^ (SeedFL + 12), ' ' ^ (SeedFL + 13), ' ' ^ (SeedFL + 14), ' ' ^ (SeedFL + 15), };
+	char sstd[16]   = { 'F' ^ SeedFL,'i' ^ (SeedFL + 1),'d' ^ (SeedFL + 2),'e' ^ (SeedFL + 3),'l' ^ (SeedFL + 4),'i' ^ (SeedFL + 5),'t' ^ (SeedFL + 6),'y' ^ (SeedFL + 7),'S' ^ (SeedFL + 8),'t' ^ (SeedFL + 9),'a' ^ (SeedFL + 10),'n' ^ (SeedFL + 11),'d' ^ (SeedFL + 12), 'a' ^ (SeedFL + 13), 'r' ^ (SeedFL + 14), 'd' ^ (SeedFL + 15), };
+	char s5[16]     = { 'F' ^ SeedFL,'i' ^ (SeedFL + 1),'d' ^ (SeedFL + 2),'e' ^ (SeedFL + 3),'l' ^ (SeedFL + 4),'i' ^ (SeedFL + 5),'t' ^ (SeedFL + 6),'y' ^ (SeedFL + 7),'P' ^ (SeedFL + 8),'R' ^ (SeedFL + 9),'O' ^ (SeedFL + 10),'5' ^ (SeedFL + 11),' ' ^ (SeedFL + 12), ' ' ^ (SeedFL + 13), ' ' ^ (SeedFL + 14), ' ' ^ (SeedFL + 15), };
+	char s25[16]    = { 'F' ^ SeedFL,'i' ^ (SeedFL + 1),'d' ^ (SeedFL + 2),'e' ^ (SeedFL + 3),'l' ^ (SeedFL + 4),'i' ^ (SeedFL + 5),'t' ^ (SeedFL + 6),'y' ^ (SeedFL + 7),'P' ^ (SeedFL + 8),'R' ^ (SeedFL + 9),'O' ^ (SeedFL + 10),'2' ^ (SeedFL + 11),'5' ^ (SeedFL + 12), ' ' ^ (SeedFL + 13), ' ' ^ (SeedFL + 14), ' ' ^ (SeedFL + 15), };
+	char s100[16]   = { 'F' ^ SeedFL,'i' ^ (SeedFL + 1),'d' ^ (SeedFL + 2),'e' ^ (SeedFL + 3),'l' ^ (SeedFL + 4),'i' ^ (SeedFL + 5),'t' ^ (SeedFL + 6),'y' ^ (SeedFL + 7),'P' ^ (SeedFL + 8),'R' ^ (SeedFL + 9),'O' ^ (SeedFL + 10),'1' ^ (SeedFL + 11),'0' ^ (SeedFL + 12), '0' ^ (SeedFL + 13), ' ' ^ (SeedFL + 14), ' ' ^ (SeedFL + 15), };
+	char sunlmt[17] = { 'F' ^ SeedFL,'i' ^ (SeedFL + 1),'d' ^ (SeedFL + 2),'e' ^ (SeedFL + 3),'l' ^ (SeedFL + 4),'i' ^ (SeedFL + 5),'t' ^ (SeedFL + 6),'y' ^ (SeedFL + 7),'P' ^ (SeedFL + 8),'R' ^ (SeedFL + 9),'O' ^ (SeedFL + 10),'U' ^ (SeedFL + 11),'n' ^ (SeedFL + 12), 'l' ^ (SeedFL + 13), 'i' ^ (SeedFL + 14), 'm' ^ (SeedFL + 15), 't' };
+	char audit[16]  = { 'F' ^ SeedFL,'0' ^ (SeedFL + 1),'i' ^ (SeedFL + 2),'D' ^ (SeedFL + 3),'2' ^ (SeedFL + 4),'e' ^ (SeedFL + 5),'l' ^ (SeedFL + 6),'i' ^ (SeedFL + 7),'8' ^ (SeedFL + 8),'1' ^ (SeedFL + 9),'T' ^ (SeedFL + 10),'y' ^ (SeedFL + 11), 0 ^ (SeedFL + 12), 0 ^ (SeedFL + 13), 0 ^ (SeedFL + 14), 0 ^ (SeedFL + 15), };
+};
 
 

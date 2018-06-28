@@ -50,6 +50,7 @@
     <ClInclude Include="..\..\Common\pbkdf2\tassert.h" />
     <ClInclude Include="..\..\Common\sedsize.h" />
     <ClInclude Include="..\..\License\LicenseValidator.h" />
+    <ClInclude Include="..\..\License\PyExt.h" />
     <ClInclude Include="..\..\License\stdafx.h" />
     <ClInclude Include="..\DtaDevOS.h" />
     <ClInclude Include="..\DtaDiskATA.h" />
@@ -188,7 +189,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h</Command>
+      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
+</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Create version header from git --version dirty</Message>
@@ -252,7 +254,8 @@ copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h</Command>
+      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
+</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Create version header from git --version dirty</Message>

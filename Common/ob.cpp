@@ -1,13 +1,11 @@
+#include "pyextob.h"
+
+#ifdef PYEXTOB
+#include "..\License\include.h"
+#endif
 
 #include "ob.h"
 #include <stdio.h>
-
-////////////////////////////////////////////////////////////////////
-//Use Compile-Time as seed
-//#define Seed ((__TIME__[7] - '0') * 1  + (__TIME__[6] - '0') * 10  + \
-//              (__TIME__[4] - '0') * 60   + (__TIME__[3] - '0') * 600 + \
-//              (__TIME__[1] - '0') * 3600 + (__TIME__[0] - '0') * 36000)
-////////////////////////////////////////////////////////////////////
 
 obfs::obfs()
 {
@@ -30,7 +28,7 @@ void obfs::rstor(char * st1, char * sf)
 
 	// restore to original text
 	for (int i = 0; i < 16; i++) {
-		st1[i] = ((sf[i] & 0xff) ^ (Seed + i));
+		st1[i] = ((sf[i] & 0xff) ^ (SeedFL + i));
 	}
 	//if (0) {
 	//	printf("restore text in hex : ");
@@ -54,44 +52,25 @@ void obfs::lic(int lev, char * lic_level)
 	switch (lev)
 	{
 	case 1:
-		//memcpy(lic_level, "FidelityFree    ", 16);
 		rstor(lic_level, sfree);
-		//memcpy(lic_level, st1, 16);
 		break;
 	case 2:
-		//memcpy(lic_level, "FidelityStandard", 16);
-		//memcpy(lic_level, sstd, 16);
 		rstor(lic_level, sstd);
-		//memcpy(lic_level, st1, 16);
 		break;
 	case 4:
-		//memcpy(lic_level, "FidelityPRO5    ", 16);
-		//memcpy(lic_level, s5, 16);
 		rstor(lic_level, s5);
-		//memcpy(lic_level, st1, 16);
 		break;
 	case 16:
-		//memcpy(lic_level, "FidelityPRO25   ", 16);
-		//memcpy(lic_level, s25, 16);
 		rstor(lic_level, s25);
-		//memcpy(lic_level, st1, 16);
 		break;
 	case 32:
-		//memcpy(lic_level, "FidelityPRO100  ", 16);
-		//memcpy(lic_level, s100, 16);
 		rstor(lic_level, s100);
-		//memcpy(lic_level, st1, 16);
 		break;
 	case 64:
-		//memcpy(lic_level, "FidelityPROUnlimt", 16);
-		//memcpy(lic_level, sunlmt, 16);
 		rstor(lic_level, sunlmt);
-		//memcpy(lic_level, st1, 16);
 		break;
 	default:
-		//memcpy(lic_level, "                ", 16);
-		//memcpy(lic_level, sbnk, 16);
-		for (int i=0;i<16; i++)
+		for (int i = 0; i<16; i++)
 			lic_level[i] = ' ';
 		break;
 	}
@@ -101,7 +80,42 @@ void obfs::setaudpass(char * apass)
 {
 	rstor(apass, audit);
 }
-//uint32_t obfs::getseed()
-//{
-//	return (Seed & 0xff);
-//}
+
+
+#ifdef PYEXTOB
+PyObject* ob_function1(PyObject* self, PyObject* args)
+{
+	int i;
+	char rstr[16]; 
+
+	if (!PyArg_ParseTuple(args, "i", &i))
+	{
+		//goto error; // why use go to 
+		return 0;
+	};
+	obfs ob;
+	ob.lic(i, rstr); 
+	return PyString_FromStringAndSize(rstr,16);
+
+error:
+	return 0;
+}
+
+
+PyMethodDef SpamMethods[] =
+{
+	{ "get_str",(PyCFunction)ob_function1,METH_VARARGS,0 },
+	{ 0,0,0,0 }  // leave it empty for now
+};
+
+
+PyMODINIT_FUNC
+initob(void)
+{
+	PyObject *m;
+
+	m = Py_InitModule("ob", SpamMethods); // array of exported function 
+	if (m == NULL)
+		return;
+}
+#endif

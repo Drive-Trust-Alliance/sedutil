@@ -141,6 +141,9 @@
     <ClInclude Include="..\..\Common\ob.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\License\PyExt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\sedutil.cpp">
