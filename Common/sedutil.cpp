@@ -857,14 +857,14 @@ int main(int argc, char * argv[])
 		LOG(D) << "get manufacture life cycle state";
 		return d->getmfgstate();
 		break;
+	case sedutiloption::activate:
+		LOG(D) << "activate LockingSP with MSID";
+		return d->activate(argv[opts.password]);
+		break;
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 	case sedutiloption::pbaValid:
 		LOG(D) << "PBA image validation";
 		return d->pbaValid(argv[opts.password]);
-		break;
-	case sedutiloption::activate:
-		LOG(D) << "activate LockingSP with MSID";
-		return d->activate(argv[opts.password]);
 		break;
 	case sedutiloption::DataStoreWrite:
 		LOG(D) << "Write to Data Store";
@@ -1058,7 +1058,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-        printf("Fidelity Lock Version : 0.3.4.%s.%s 20180618-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.3.5.%s.%s 20180627-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:
