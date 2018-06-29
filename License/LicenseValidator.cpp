@@ -1188,10 +1188,10 @@ PyMethodDef licMethods[] =
 
 
 PyMODINIT_FUNC
-initlic(void)
+initPyExtLic(void)
 {
 	PyObject *m;
-	m = Py_InitModule("lic", licMethods); // array of exported function 
+	m = Py_InitModule("PyExtLic", licMethods); // array of exported function 
 	if (m == NULL)
 		return;
 }

@@ -103,7 +103,7 @@ PyObject* ob_function1(PyObject* self, PyObject* args)
 }
 
 
-PyMethodDef SpamMethods[] =
+PyMethodDef obMethods[] =
 {
 	{ "get_str",(PyCFunction)ob_function1,METH_VARARGS,0 },
 	{ 0,0,0,0 }  // leave it empty for now
@@ -111,11 +111,11 @@ PyMethodDef SpamMethods[] =
 
 
 PyMODINIT_FUNC
-initob(void)
+initPyExtOb(void)
 {
 	PyObject *m;
 
-	m = Py_InitModule("ob", SpamMethods); // array of exported function 
+	m = Py_InitModule("PyExtOb", obMethods); // array of exported function 
 	if (m == NULL)
 		return;
 }
