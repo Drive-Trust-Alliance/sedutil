@@ -897,7 +897,7 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	char * buf = (char *)malloc(20);
-	int idx;
+	int idx=0;
 	memset(buf, 0, 20);
 	gethuser(buf);
 	if (  memcmp(userid , buf,5) ) idx = disk_info.OPAL20_numUsers -1 ;
