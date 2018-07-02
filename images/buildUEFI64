@@ -3,7 +3,7 @@ set -x
 # Build a custom UEFI linux based PBA image
 ## define releases for tools
 . conf
-VERSIONINFO=`git describe --dirty`  || VERSIONINFO=tarball
+VERSIONINFO=$(git describe --dirty)  || VERSIONINFO=tarball
 BUILDTYPE=UEFI64
 BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 
@@ -17,14 +17,14 @@ BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 [  -f buildroot/syslinux.cfg ] || { echo " prereqs are not available "; exit 1; }
   
 # Start fresh
-sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE}
+sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE} || exit 1
 # make an image file
 dd if=/dev/zero of=${BUILDIMG} bs=1M count=32
 (echo "n";echo "";echo "";echo "";echo "ef00";echo w;echo Y) | gdisk ${BUILDIMG}
-LOOPDEV=`sudo losetup --show -f -o 1048576 ${BUILDIMG}`
-sudo mkfs.vfat $LOOPDEV -n ${BUILDTYPE}
+LOOPDEV=$(sudo losetup --show -f -o 1048576 ${BUILDIMG})
+sudo mkfs.vfat "$LOOPDEV" -n ${BUILDTYPE}
 sudo mkdir image
-sudo mount $LOOPDEV image
+sudo mount "$LOOPDEV" image
 sudo chmod 777 image
 sudo mkdir -p image/EFI/boot
 sudo cp ../scratch/${SYSLINUX}/efi64/efi/syslinux.efi image/EFI/boot/bootx64.efi
@@ -33,5 +33,5 @@ sudo cp ../scratch/buildroot/64bit/images/bzImage image/EFI/boot/
 sudo cp ../scratch/buildroot/64bit/images/rootfs.cpio.xz image/EFI/boot/
 sudo cp ../buildroot/syslinux.cfg image/EFI/boot/
 sudo umount image
-sudo losetup -d $LOOPDEV
+sudo losetup -d "$LOOPDEV"
 gzip ${BUILDIMG}
