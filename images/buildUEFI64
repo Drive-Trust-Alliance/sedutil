@@ -87,6 +87,7 @@ create_image() {
     sudo install ${VERBOSE+-v} -D -- "$EFI_FILE" "${TARGET_DIR}/$BOOTLOADER_FILE"
     # shellcheck disable=SC2086
     sudo install ${VERBOSE+-v} -D -- $IMAGE_FILES "$TARGET_DIR"
+    sync
     gzip -k ${VERBOSE+-v} "$BUILDIMG"
 }
 
