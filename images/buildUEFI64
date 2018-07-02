@@ -12,11 +12,11 @@ BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 ## check that everything is available
 EFI_FILE="scratch/${SYSLINUX}/efi64/efi/syslinux.efi"
 IMAGE_FILES="scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64
-scratch/buildroot/64bit/images/bzImage
-scratch/buildroot/64bit/images/rootfs.cpio.xz
-scratch/buildroot/64bit/target/sbin/linuxpba
-scratch/buildroot/64bit/target/sbin/sedutil-cli
-buildroot/syslinux.cfg"
+    scratch/buildroot/64bit/images/bzImage
+    scratch/buildroot/64bit/images/rootfs.cpio.xz
+    scratch/buildroot/64bit/target/sbin/linuxpba
+    scratch/buildroot/64bit/target/sbin/sedutil-cli
+    buildroot/syslinux.cfg"
 for f in $EFI_FILE $IMAGE_FILES; do
     if [ ! -f "$f" ]; then
         echo " prereqs are not available "
