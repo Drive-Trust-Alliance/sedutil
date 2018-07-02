@@ -4,10 +4,10 @@
 set -eu ${TRACE+-x}
 
 ## User configuration #########################################################
-BOOTLOADER_DIR=EFI/Microsoft/Boot
-BOOTLOADER_FILE=bootmgfw.efi
-#BOOTLOADER_DIR=EFI/boot
-#BOOTLOADER_FILE=bootx64.efi
+#BOOTLOADER_DIR=EFI/Microsoft/Boot
+#BOOTLOADER_FILE=bootmgfw.efi
+BOOTLOADER_DIR=EFI/boot
+BOOTLOADER_FILE=bootx64.efi
 
 ## Internal configuration #####################################################
 . ./conf
