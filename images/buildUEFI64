@@ -45,6 +45,8 @@ DESCRIPTION:
     Build a custom UEFI linux based PBA image
 
 USAGE:
+    $0 [-h] [-d <dir>] [-n <name>]
+
     -h	This help
     -d	Bootloader directory. Default: EFI/boot
     -n	Bootloader name. Default: bootx64.efi
