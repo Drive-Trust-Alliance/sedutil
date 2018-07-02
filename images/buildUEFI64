@@ -12,9 +12,22 @@ BOOTLOADER_FILE=bootmgfw.efi
 . ./conf
 VERSIONINFO=$(git describe --dirty || echo tarball)
 BUILDTYPE=UEFI64
-BUILDIMG=$BUILDTYPE/${BUILDTYPE}-${VERSIONINFO}.img
+BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 IMAGE_DIR=$BUILDTYPE/image
 TARGET_DIR=$IMAGE_DIR/$BOOTLOADER_DIR
+
+# exit handlers
+rm_temporaries() {
+    rm -rf -- "$BUILDTYPE" "$BUILDIMG"
+}
+
+detach_lo_device() {
+    sudo losetup --detach "$LOOPDEV"
+}
+
+unmount_image() {
+    sudo umount -- "$IMAGE_DIR"
+}
 
 ## check that everything is available
 EFI_FILE="scratch/${SYSLINUX}/efi64/efi/syslinux.efi"
@@ -31,19 +44,17 @@ for f in $EFI_FILE $IMAGE_FILES; do
     fi
 done
 
-# Start fresh
-rm -rf -- "${BUILDTYPE}"
-mkdir -- "${BUILDTYPE}"
-
 # make an image file
+mkdir -- "${BUILDTYPE}"
+trap 'rm_temporaries' EXIT
 truncate -s32M "$BUILDIMG"
 sgdisk -n0:0:0 -t0:ef00 "$BUILDIMG"
 LOOPDEV=$(sudo losetup --partscan --show --find "$BUILDIMG")
-trap 'sudo losetup --detach "$LOOPDEV"' EXIT
+trap 'detach_lo_device; rm_temporaries' EXIT
 sudo mkfs.vfat -n "$BUILDTYPE" -- "${LOOPDEV}p1"
 mkdir -- "$IMAGE_DIR"
 sudo mount -- "${LOOPDEV}p1" "$IMAGE_DIR"
-trap 'sudo umount -- "${BUILDTYPE}/image"; sudo losetup --detach "$LOOPDEV"' EXIT
+trap 'unmount_image; detach_lo_device; rm_temporaries' EXIT
 sudo mkdir -p -- "$TARGET_DIR"
 sudo cp "$EFI_FILE" "${TARGET_DIR}/$BOOTLOADER_FILE"
 # shellcheck disable=SC2086
