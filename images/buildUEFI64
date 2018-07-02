@@ -1,6 +1,8 @@
 #!/bin/bash
-set -xe
 # Build a custom UEFI linux based PBA image
+
+set -xe
+
 ## define releases for tools
 . conf
 VERSIONINFO=$(git describe --dirty || echo tarball)
