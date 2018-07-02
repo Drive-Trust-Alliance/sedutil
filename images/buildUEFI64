@@ -37,7 +37,7 @@ mkdir -- "${BUILDTYPE}"
 # make an image file
 truncate -s32M "$BUILDIMG"
 sgdisk -n0:0:0 -t0:ef00 "$BUILDIMG"
-LOOPDEV=$(sudo losetup --partscan --show -f "$BUILDIMG")
+LOOPDEV=$(sudo losetup --partscan --show --find "$BUILDIMG")
 trap 'sudo losetup -d $LOOPDEV' EXIT
 sudo mkfs.vfat "${LOOPDEV}p1" -n ${BUILDTYPE}
 mkdir -- "$IMAGE_DIR"
