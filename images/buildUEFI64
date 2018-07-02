@@ -10,13 +10,19 @@ BUILDTYPE=UEFI64
 BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 
 ## check that everything is available
-[  -f scratch/${SYSLINUX}/efi64/efi/syslinux.efi ] || { echo " prereqs are not available "; exit 1; }
-[  -f scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64 ] || { echo " prereqs are not available "; exit 1; }
-[  -f scratch/buildroot/64bit/images/bzImage ] || { echo " prereqs are not available "; exit 1; }
-[  -f scratch/buildroot/64bit/images/rootfs.cpio.xz ] || { echo " prereqs are not available "; exit 1; }
-[  -f scratch/buildroot/64bit/target/sbin/linuxpba  ] || { echo " prereqs are not available "; exit 1; }
-[  -f scratch/buildroot/64bit/target/sbin/sedutil-cli  ] || { echo " prereqs are not available "; exit 1; }
-[  -f buildroot/syslinux.cfg ] || { echo " prereqs are not available "; exit 1; }
+EFI_FILE="scratch/${SYSLINUX}/efi64/efi/syslinux.efi"
+IMAGE_FILES="scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64
+scratch/buildroot/64bit/images/bzImage
+scratch/buildroot/64bit/images/rootfs.cpio.xz
+scratch/buildroot/64bit/target/sbin/linuxpba
+scratch/buildroot/64bit/target/sbin/sedutil-cli
+buildroot/syslinux.cfg"
+for f in $EFI_FILE $IMAGE_FILES; do
+    if [ ! -f "$f" ]; then
+        echo " prereqs are not available "
+        exit 1
+    fi
+done
   
 # Start fresh
 sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE} || exit 1
