@@ -39,5 +39,6 @@ sudo mount "${LOOPDEV}p1" "${BUILDTYPE}/image"
 trap 'sudo umount ${BUILDTYPE}/image; sudo losetup -d $LOOPDEV' EXIT
 sudo mkdir -p -- "${BUILDTYPE}/image/EFI/boot"
 sudo cp "$EFI_FILE" "${BUILDTYPE}/image/EFI/boot/bootx64.efi"
-sudo cp $IMAGE_FILES "${BUILDTYPE}/image/EFI/boot/"
+# shellcheck disable=SC2086
+sudo cp -- $IMAGE_FILES "${BUILDTYPE}/image/EFI/boot/"
 gzip "${BUILDTYPE}/$BUILDIMG"
