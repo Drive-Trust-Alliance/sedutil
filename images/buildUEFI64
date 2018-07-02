@@ -10,7 +10,7 @@ BOOTLOADER_DIR=EFI/boot
 . ./conf
 VERSIONINFO=$(git describe --dirty || echo tarball)
 BUILDTYPE=UEFI64
-BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
+BUILDIMG=$BUILDTYPE/${BUILDTYPE}-${VERSIONINFO}.img
 IMAGE_DIR=$BUILDTYPE/image
 TARGET_DIR=$IMAGE_DIR/$BOOTLOADER_DIR
 
@@ -34,9 +34,9 @@ rm -rf -- "${BUILDTYPE}"
 mkdir -- "${BUILDTYPE}"
 
 # make an image file
-truncate -s32M "${BUILDTYPE}/$BUILDIMG"
-sgdisk -n0:0:0 -t0:ef00 "${BUILDTYPE}/$BUILDIMG"
-LOOPDEV=$(sudo losetup --partscan --show -f "${BUILDTYPE}/$BUILDIMG")
+truncate -s32M "$BUILDIMG"
+sgdisk -n0:0:0 -t0:ef00 "$BUILDIMG"
+LOOPDEV=$(sudo losetup --partscan --show -f "$BUILDIMG")
 trap 'sudo losetup -d $LOOPDEV' EXIT
 sudo mkfs.vfat "${LOOPDEV}p1" -n ${BUILDTYPE}
 mkdir -- "$IMAGE_DIR"
@@ -46,4 +46,4 @@ sudo mkdir -p -- "$TARGET_DIR"
 sudo cp "$EFI_FILE" "${TARGET_DIR}/bootx64.efi"
 # shellcheck disable=SC2086
 sudo cp -- $IMAGE_FILES "$TARGET_DIR"
-gzip "${BUILDTYPE}/$BUILDIMG"
+gzip "$BUILDIMG"
