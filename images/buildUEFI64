@@ -4,7 +4,8 @@
 set -xe
 
 # user configuration
-BOOTLOADER_DIR=EFI/boot
+BOOTLOADER_DIR=EFI/Microsoft/Boot
+#BOOTLOADER_DIR=EFI/boot
 
 ## define releases for tools
 . ./conf
