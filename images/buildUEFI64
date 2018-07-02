@@ -26,6 +26,7 @@ done
 
 # Start fresh
 sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE} || exit 1
+
 # make an image file
 dd if=/dev/zero of="$BUILDIMG" bs=1M count=32
 (echo "n";echo "";echo "";echo "";echo "ef00";echo w;echo Y) | gdisk "$BUILDIMG"
