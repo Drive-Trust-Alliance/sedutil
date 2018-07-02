@@ -31,9 +31,11 @@ sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE} || exit 1
 dd if=/dev/zero of="$BUILDIMG" bs=1M count=32
 sgdisk -n0:0:0 -t0:ef00 "$BUILDIMG"
 LOOPDEV=$(sudo losetup --show -f -o 1048576 "$BUILDIMG")
+trap 'sudo losetup -d $LOOPDEV' EXIT
 sudo mkfs.vfat "$LOOPDEV" -n ${BUILDTYPE}
 sudo mkdir image
 sudo mount "$LOOPDEV" image
+trap 'sudo umount image; sudo losetup -d $LOOPDEV' EXIT
 sudo chmod 777 image
 sudo mkdir -p image/EFI/boot
 sudo cp ../scratch/${SYSLINUX}/efi64/efi/syslinux.efi image/EFI/boot/bootx64.efi
@@ -41,6 +43,4 @@ sudo cp ../scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64 image/EFI
 sudo cp ../scratch/buildroot/64bit/images/bzImage image/EFI/boot/
 sudo cp ../scratch/buildroot/64bit/images/rootfs.cpio.xz image/EFI/boot/
 sudo cp ../buildroot/syslinux.cfg image/EFI/boot/
-sudo umount image
-sudo losetup -d "$LOOPDEV"
 gzip "$BUILDIMG"
