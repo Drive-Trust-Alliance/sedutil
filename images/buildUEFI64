@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -xe
 # Build a custom UEFI linux based PBA image
 ## define releases for tools
 . conf
