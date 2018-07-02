@@ -38,11 +38,11 @@ mkdir -- "${BUILDTYPE}"
 truncate -s32M "$BUILDIMG"
 sgdisk -n0:0:0 -t0:ef00 "$BUILDIMG"
 LOOPDEV=$(sudo losetup --partscan --show --find "$BUILDIMG")
-trap 'sudo losetup -d $LOOPDEV' EXIT
-sudo mkfs.vfat "${LOOPDEV}p1" -n ${BUILDTYPE}
+trap 'sudo losetup --detach "$LOOPDEV"' EXIT
+sudo mkfs.vfat -n "$BUILDTYPE" -- "${LOOPDEV}p1"
 mkdir -- "$IMAGE_DIR"
-sudo mount "${LOOPDEV}p1" "$IMAGE_DIR"
-trap 'sudo umount ${BUILDTYPE}/image; sudo losetup -d $LOOPDEV' EXIT
+sudo mount -- "${LOOPDEV}p1" "$IMAGE_DIR"
+trap 'sudo umount -- "${BUILDTYPE}/image"; sudo losetup --detach "$LOOPDEV"' EXIT
 sudo mkdir -p -- "$TARGET_DIR"
 sudo cp "$EFI_FILE" "${TARGET_DIR}/bootx64.efi"
 # shellcheck disable=SC2086
