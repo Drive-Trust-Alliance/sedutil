@@ -12,7 +12,7 @@ BOOTLOADER_FILE=bootmgfw.efi
 . ./conf
 VERSIONINFO=$(git describe --dirty --broken --tags --always || echo tarball)
 BUILDTYPE=UEFI64
-BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
+BUILDIMG=${BUILDTYPE}-$(printf '%s' "$VERSIONINFO" | tr '/' '-').img
 IMAGE_DIR=$BUILDTYPE/image
 TARGET_DIR=$IMAGE_DIR/$BOOTLOADER_DIR
 
