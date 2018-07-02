@@ -23,7 +23,7 @@ for f in $EFI_FILE $IMAGE_FILES; do
         exit 1
     fi
 done
-  
+
 # Start fresh
 sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE} || exit 1
 # make an image file
