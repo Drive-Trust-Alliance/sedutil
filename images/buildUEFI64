@@ -3,11 +3,16 @@
 
 set -xe
 
+# user configuration
+BOOTLOADER_DIR=EFI/boot
+
 ## define releases for tools
 . ./conf
 VERSIONINFO=$(git describe --dirty || echo tarball)
 BUILDTYPE=UEFI64
 BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
+IMAGE_DIR=$BUILDTYPE/image
+TARGET_DIR=$IMAGE_DIR/$BOOTLOADER_DIR
 
 ## check that everything is available
 EFI_FILE="scratch/${SYSLINUX}/efi64/efi/syslinux.efi"
@@ -34,11 +39,11 @@ sgdisk -n0:0:0 -t0:ef00 "${BUILDTYPE}/$BUILDIMG"
 LOOPDEV=$(sudo losetup --partscan --show -f "${BUILDTYPE}/$BUILDIMG")
 trap 'sudo losetup -d $LOOPDEV' EXIT
 sudo mkfs.vfat "${LOOPDEV}p1" -n ${BUILDTYPE}
-mkdir -- "${BUILDTYPE}/image"
-sudo mount "${LOOPDEV}p1" "${BUILDTYPE}/image"
+mkdir -- "$IMAGE_DIR"
+sudo mount "${LOOPDEV}p1" "$IMAGE_DIR"
 trap 'sudo umount ${BUILDTYPE}/image; sudo losetup -d $LOOPDEV' EXIT
-sudo mkdir -p -- "${BUILDTYPE}/image/EFI/boot"
-sudo cp "$EFI_FILE" "${BUILDTYPE}/image/EFI/boot/bootx64.efi"
+sudo mkdir -p -- "$TARGET_DIR"
+sudo cp "$EFI_FILE" "${TARGET_DIR}/bootx64.efi"
 # shellcheck disable=SC2086
-sudo cp -- $IMAGE_FILES "${BUILDTYPE}/image/EFI/boot/"
+sudo cp -- $IMAGE_FILES "$TARGET_DIR"
 gzip "${BUILDTYPE}/$BUILDIMG"
