@@ -3,7 +3,7 @@ set -xe
 # Build a custom UEFI linux based PBA image
 ## define releases for tools
 . conf
-VERSIONINFO=$(git describe --dirty)  || VERSIONINFO=tarball
+VERSIONINFO=$(git describe --dirty || echo tarball)
 BUILDTYPE=UEFI64
 BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 
@@ -19,9 +19,9 @@ BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 # Start fresh
 sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE} || exit 1
 # make an image file
-dd if=/dev/zero of=${BUILDIMG} bs=1M count=32
-(echo "n";echo "";echo "";echo "";echo "ef00";echo w;echo Y) | gdisk ${BUILDIMG}
-LOOPDEV=$(sudo losetup --show -f -o 1048576 ${BUILDIMG})
+dd if=/dev/zero of="$BUILDIMG" bs=1M count=32
+(echo "n";echo "";echo "";echo "";echo "ef00";echo w;echo Y) | gdisk "$BUILDIMG"
+LOOPDEV=$(sudo losetup --show -f -o 1048576 "$BUILDIMG")
 sudo mkfs.vfat "$LOOPDEV" -n ${BUILDTYPE}
 sudo mkdir image
 sudo mount "$LOOPDEV" image
@@ -34,4 +34,4 @@ sudo cp ../scratch/buildroot/64bit/images/rootfs.cpio.xz image/EFI/boot/
 sudo cp ../buildroot/syslinux.cfg image/EFI/boot/
 sudo umount image
 sudo losetup -d "$LOOPDEV"
-gzip ${BUILDIMG}
+gzip "$BUILDIMG"
