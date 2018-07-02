@@ -26,15 +26,15 @@ IMAGE_FILES="scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64
 
 ## Exit handlers ##############################################################
 rm_temporaries() {
-    rm -rf -- "$BUILDTYPE" "$BUILDIMG"
+    rm ${VERBOSE+-v} -rf -- "$BUILDTYPE" "$BUILDIMG"
 }
 
 detach_lo_device() {
-    sudo losetup --detach "$LOOPDEV"
+    sudo losetup ${VERBOSE+-v} --detach "$LOOPDEV"
 }
 
 unmount_image() {
-    sudo umount -- "$IMAGE_DIR"
+    sudo umount ${VERBOSE+-v} -- "$IMAGE_DIR"
 }
 
 ## Main #######################################################################
@@ -48,20 +48,20 @@ check_availability() {
 }
 
 create_image() {
-    mkdir -- "$BUILDTYPE"
+    mkdir ${VERBOSE+-v} -- "$BUILDTYPE"
     trap 'rm_temporaries' EXIT
     truncate -s32M "$BUILDIMG"
     sgdisk -n0:0:0 -t0:ef00 "$BUILDIMG"
-    LOOPDEV=$(sudo losetup --partscan --show --find "$BUILDIMG")
+    LOOPDEV=$(sudo losetup ${VERBOSE+-v} --partscan --show --find "$BUILDIMG")
     trap 'detach_lo_device; rm_temporaries' EXIT
-    sudo mkfs.vfat -n "$BUILDTYPE" -- "${LOOPDEV}p1"
-    mkdir -- "$IMAGE_DIR"
-    sudo mount -- "${LOOPDEV}p1" "$IMAGE_DIR"
+    sudo mkfs.vfat ${VERBOSE+-v} -n "$BUILDTYPE" -- "${LOOPDEV}p1"
+    mkdir ${VERBOSE+-v} -- "$IMAGE_DIR"
+    sudo mount ${VERBOSE+-v} -- "${LOOPDEV}p1" "$IMAGE_DIR"
     trap 'unmount_image; detach_lo_device; rm_temporaries' EXIT
-    sudo install -D -- "$EFI_FILE" "${TARGET_DIR}/$BOOTLOADER_FILE"
+    sudo install ${VERBOSE+-v} -D -- "$EFI_FILE" "${TARGET_DIR}/$BOOTLOADER_FILE"
     # shellcheck disable=SC2086
-    sudo install -D -- $IMAGE_FILES "$TARGET_DIR"
-    gzip "$BUILDIMG"
+    sudo install ${VERBOSE+-v} -D -- $IMAGE_FILES "$TARGET_DIR"
+    gzip ${VERBOSE+-v} "$BUILDIMG"
 }
 
 main() {
