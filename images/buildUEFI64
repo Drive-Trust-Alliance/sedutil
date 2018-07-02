@@ -37,6 +37,31 @@ unmount_image() {
     sudo umount ${VERBOSE+-v} -- "$IMAGE_DIR"
 }
 
+## Argument parsing ###########################################################
+print_help() {
+    cat <<EOT
+DESCRIPTION:
+    Build a custom UEFI linux based PBA image
+
+USAGE:
+    -h	This help
+
+    Set following environment variables to any value in order to control this script:
+
+    VERBOSE	Run every command in verbose mode (if available)
+    TRACE	Print each executed statement
+EOT
+}
+
+parse_argv() {
+    while getopts h name; do
+        case $name in
+            h) print_help; exit 0;;
+            *) echo 'Unhandled argument' >&2; exit 1
+        esac
+    done
+}
+
 ## Main #######################################################################
 check_availability() {
     for f in $EFI_FILE $IMAGE_FILES; do
@@ -65,8 +90,9 @@ create_image() {
 }
 
 main() {
+    parse_argv "$@"
     check_availability
     create_image
 }
 
-main
+main "$@"
