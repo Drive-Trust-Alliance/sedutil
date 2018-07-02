@@ -46,6 +46,11 @@ DESCRIPTION:
 
 USAGE:
     -h	This help
+    -d	Bootloader directory. Default: EFI/boot
+    -n	Bootloader name. Default: bootx64.efi
+
+    To be able to boot on some variants of hardware change
+    bootloader direcory to 'EFI/Microsoft/Boot' and name to 'bootmgfw.efi'
 
     Set following environment variables to any value in order to control this script:
 
@@ -55,9 +60,11 @@ EOT
 }
 
 parse_argv() {
-    while getopts h name; do
+    while getopts hd:n: name; do
         case $name in
             h) print_help; exit 0;;
+            d) BOOTLOADER_DIR=$OPTARG ;;
+            n) BOOTLOADER_FILE=$OPTARG ;;
             *) echo 'Unhandled argument' >&2; exit 1
         esac
     done
