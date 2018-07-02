@@ -3,12 +3,12 @@
 
 set -xe
 
-# user configuration
+## User configuration #########################################################
 BOOTLOADER_DIR=EFI/Microsoft/Boot
 BOOTLOADER_FILE=bootmgfw.efi
 #BOOTLOADER_DIR=EFI/boot
 
-## define releases for tools
+## Internal configuration #####################################################
 . ./conf
 VERSIONINFO=$(git describe --dirty || echo tarball)
 BUILDTYPE=UEFI64
@@ -16,7 +16,15 @@ BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 IMAGE_DIR=$BUILDTYPE/image
 TARGET_DIR=$IMAGE_DIR/$BOOTLOADER_DIR
 
-# exit handlers
+EFI_FILE="scratch/${SYSLINUX}/efi64/efi/syslinux.efi"
+IMAGE_FILES="scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64
+    scratch/buildroot/64bit/images/bzImage
+    scratch/buildroot/64bit/images/rootfs.cpio.xz
+    scratch/buildroot/64bit/target/sbin/linuxpba
+    scratch/buildroot/64bit/target/sbin/sedutil-cli
+    buildroot/syslinux.cfg"
+
+## Exit handlers ##############################################################
 rm_temporaries() {
     rm -rf -- "$BUILDTYPE" "$BUILDIMG"
 }
@@ -29,34 +37,37 @@ unmount_image() {
     sudo umount -- "$IMAGE_DIR"
 }
 
-## check that everything is available
-EFI_FILE="scratch/${SYSLINUX}/efi64/efi/syslinux.efi"
-IMAGE_FILES="scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64
-    scratch/buildroot/64bit/images/bzImage
-    scratch/buildroot/64bit/images/rootfs.cpio.xz
-    scratch/buildroot/64bit/target/sbin/linuxpba
-    scratch/buildroot/64bit/target/sbin/sedutil-cli
-    buildroot/syslinux.cfg"
-for f in $EFI_FILE $IMAGE_FILES; do
-    if [ ! -f "$f" ]; then
-        echo " prereqs are not available "
-        exit 1
-    fi
-done
+## Main #######################################################################
+check_availability() {
+    for f in $EFI_FILE $IMAGE_FILES; do
+        if [ ! -f "$f" ]; then
+            echo " prereqs are not available "
+            exit 1
+        fi
+    done
+}
 
-# make an image file
-mkdir -- "${BUILDTYPE}"
-trap 'rm_temporaries' EXIT
-truncate -s32M "$BUILDIMG"
-sgdisk -n0:0:0 -t0:ef00 "$BUILDIMG"
-LOOPDEV=$(sudo losetup --partscan --show --find "$BUILDIMG")
-trap 'detach_lo_device; rm_temporaries' EXIT
-sudo mkfs.vfat -n "$BUILDTYPE" -- "${LOOPDEV}p1"
-mkdir -- "$IMAGE_DIR"
-sudo mount -- "${LOOPDEV}p1" "$IMAGE_DIR"
-trap 'unmount_image; detach_lo_device; rm_temporaries' EXIT
-sudo mkdir -p -- "$TARGET_DIR"
-sudo cp "$EFI_FILE" "${TARGET_DIR}/$BOOTLOADER_FILE"
-# shellcheck disable=SC2086
-sudo cp -- $IMAGE_FILES "$TARGET_DIR"
-gzip "$BUILDIMG"
+create_image() {
+    mkdir -- "$BUILDTYPE"
+    trap 'rm_temporaries' EXIT
+    truncate -s32M "$BUILDIMG"
+    sgdisk -n0:0:0 -t0:ef00 "$BUILDIMG"
+    LOOPDEV=$(sudo losetup --partscan --show --find "$BUILDIMG")
+    trap 'detach_lo_device; rm_temporaries' EXIT
+    sudo mkfs.vfat -n "$BUILDTYPE" -- "${LOOPDEV}p1"
+    mkdir -- "$IMAGE_DIR"
+    sudo mount -- "${LOOPDEV}p1" "$IMAGE_DIR"
+    trap 'unmount_image; detach_lo_device; rm_temporaries' EXIT
+    sudo mkdir -p -- "$TARGET_DIR"
+    sudo cp "$EFI_FILE" "${TARGET_DIR}/$BOOTLOADER_FILE"
+    # shellcheck disable=SC2086
+    sudo cp -- $IMAGE_FILES "$TARGET_DIR"
+    gzip "$BUILDIMG"
+}
+
+main() {
+    check_availability
+    create_image
+}
+
+main
