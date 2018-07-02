@@ -25,7 +25,7 @@ for f in $EFI_FILE $IMAGE_FILES; do
 done
 
 # Start fresh
-sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE} || exit 1
+rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE} || exit 1
 
 # make an image file
 dd if=/dev/zero of="$BUILDIMG" bs=1M count=32
@@ -33,7 +33,7 @@ sgdisk -n0:0:0 -t0:ef00 "$BUILDIMG"
 LOOPDEV=$(sudo losetup --show -f -o 1048576 "$BUILDIMG")
 trap 'sudo losetup -d $LOOPDEV' EXIT
 sudo mkfs.vfat "$LOOPDEV" -n ${BUILDTYPE}
-sudo mkdir image
+mkdir image
 sudo mount "$LOOPDEV" image
 trap 'sudo umount image; sudo losetup -d $LOOPDEV' EXIT
 sudo chmod 777 image
