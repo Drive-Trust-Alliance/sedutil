@@ -25,21 +25,19 @@ for f in $EFI_FILE $IMAGE_FILES; do
 done
 
 # Start fresh
-rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE} || exit 1
+rm -rf -- "${BUILDTYPE}"
+mkdir -- "${BUILDTYPE}"
 
 # make an image file
-truncate -s32M "$BUILDIMG"
-sgdisk -n0:0:0 -t0:ef00 "$BUILDIMG"
-LOOPDEV=$(sudo losetup --partscan --show -f "$BUILDIMG")
+truncate -s32M "${BUILDTYPE}/$BUILDIMG"
+sgdisk -n0:0:0 -t0:ef00 "${BUILDTYPE}/$BUILDIMG"
+LOOPDEV=$(sudo losetup --partscan --show -f "${BUILDTYPE}/$BUILDIMG")
 trap 'sudo losetup -d $LOOPDEV' EXIT
 sudo mkfs.vfat "${LOOPDEV}p1" -n ${BUILDTYPE}
-mkdir image
-sudo mount "${LOOPDEV}p1" image
-trap 'sudo umount image; sudo losetup -d $LOOPDEV' EXIT
-sudo mkdir -p image/EFI/boot
-sudo cp ../scratch/${SYSLINUX}/efi64/efi/syslinux.efi image/EFI/boot/bootx64.efi
-sudo cp ../scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64 image/EFI/boot/
-sudo cp ../scratch/buildroot/64bit/images/bzImage image/EFI/boot/
-sudo cp ../scratch/buildroot/64bit/images/rootfs.cpio.xz image/EFI/boot/
-sudo cp ../buildroot/syslinux.cfg image/EFI/boot/
-gzip "$BUILDIMG"
+mkdir -- "${BUILDTYPE}/image"
+sudo mount "${LOOPDEV}p1" "${BUILDTYPE}/image"
+trap 'sudo umount ${BUILDTYPE}/image; sudo losetup -d $LOOPDEV' EXIT
+sudo mkdir -p -- "${BUILDTYPE}/image/EFI/boot"
+sudo cp "$EFI_FILE" "${BUILDTYPE}/image/EFI/boot/bootx64.efi"
+sudo cp $IMAGE_FILES "${BUILDTYPE}/image/EFI/boot/"
+gzip "${BUILDTYPE}/$BUILDIMG"
