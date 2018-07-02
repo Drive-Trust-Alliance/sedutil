@@ -36,7 +36,6 @@ sudo mkfs.vfat "${LOOPDEV}p1" -n ${BUILDTYPE}
 mkdir image
 sudo mount "${LOOPDEV}p1" image
 trap 'sudo umount image; sudo losetup -d $LOOPDEV' EXIT
-sudo chmod 777 image
 sudo mkdir -p image/EFI/boot
 sudo cp ../scratch/${SYSLINUX}/efi64/efi/syslinux.efi image/EFI/boot/bootx64.efi
 sudo cp ../scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64 image/EFI/boot/
