@@ -10,7 +10,7 @@ BOOTLOADER_FILE=bootmgfw.efi
 
 ## Internal configuration #####################################################
 . ./conf
-VERSIONINFO=$(git describe --dirty || echo tarball)
+VERSIONINFO=$(git describe --dirty --broken --tags --always || echo tarball)
 BUILDTYPE=UEFI64
 BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 IMAGE_DIR=$BUILDTYPE/image
