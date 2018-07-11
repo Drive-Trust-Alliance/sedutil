@@ -55,6 +55,19 @@ DtaDevOpal::DtaDevOpal()
 
 DtaDevOpal::~DtaDevOpal()
 {
+	#if 0
+	LOG(I) << "Exit DtaDevOpal()";
+	if (adj_host == 1)
+	{
+		LOG(I) << "adj_host == 1, readjust host propeties back to smaller packet size";
+		adj_host = 0;
+		properties();
+	}
+	else {
+		LOG(I) << "adj_host == 0, no need readjust host propeties back to smaller packet size";
+	}
+	LOG(I) << "Exit DtaDevOpal()";
+	#endif
 }
 void DtaDevOpal::init(const char * devref)
 {
@@ -3187,7 +3200,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	char star[] = "*";
 	char spinner[] = "|/-\\";
 	char progress_bar[] = "   [                     ]";
-	uint32_t blockSize = 57344 ; // 57344=512*112=E000h 1950=0x79E;
+	uint32_t blockSize; // = 16384; // 57344; // 57344=512*112=E000h 1950=0x79E;  16384=512*32=0x4000
 	uint32_t filepos = 0;
 	uint64_t sz;
 	ifstream pbafile;
@@ -3205,14 +3218,20 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	vector <uint8_t> buffer; // 0 buffer  (57344, 0x00),
 	vector <uint8_t> lengthtoken;
 
+	adj_host_prop(1);
+	if (adj_host == 1)
+		blockSize = 57344; // 57344=512*112=E000h 1950=0x79E;  16384=512*32=0x4000
+	else
+		blockSize = 16384;
 	lengthtoken.clear();
 	lengthtoken.push_back(0xe2); // E2 is byte string which mean the followind data is byte-stream, but for read, there is no byte string so it should be E0
 	lengthtoken.push_back(0x00);
-	lengthtoken.push_back(0xE0);
-	lengthtoken.push_back(0x00);
+	lengthtoken.push_back((uint8_t)(blockSize >> 8)); // (0xE0); // 
+	lengthtoken.push_back((uint8_t)(blockSize & 0xFF));// (0x00); // 
 	if (embed == 0) {
 		pbafile.open(filename, ios::in | ios::binary);
 		if (!pbafile) {
+			adj_host_prop(2); // reset host properties to smaller size
 			LOG(E) << "Unable to open PBA image file " << filename;
 			return DTAERROR_OPEN_ERR;
 		}
@@ -3235,17 +3254,19 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 			CompressedBuffer = (PBYTE)malloc(CompressedBufferSize);
 			if (!CompressedBuffer)
 			{
+				adj_host_prop(2); // reset host properties to smaller size
 				LOG(E) << "Cannot allocate memory for compressed buffer.";
 				return DTAERROR_OPEN_ERR;
 			}
 			pbafile.read((char *)CompressedBuffer, CompressedBufferSize); // read all img data
             
-			Success = CreateDecompressor(
+			Success = CreateDecompressor( // nozero = OK; 0 : NG
 				COMPRESS_ALGORITHM_XPRESS_HUFF, //  Compression Algorithm
 				NULL,                           //  Optional allocation routine
 				&Decompressor);                 //  Handle
 			if (!Success)
 			{
+				
 				LOG(E) << "Cannot create a decompressor: " << GetLastError();
 				goto done;
 			}
@@ -3270,6 +3291,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 					//printf("DecompressedBufferSize=%I64d \n", DecompressedBufferSize);
 					goto done;
 				}
+			}
 				DecompressedBuffer = (PBYTE)malloc(DecompressedBufferSize);
 				if (!DecompressedBuffer)
 				{
@@ -3282,7 +3304,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 					goto done;
 				} 
 				memset(DecompressedBuffer, 0, DecompressedBufferSize);
-			}
+
 			//  Decompress data 
 			Success = Decompress(
 				Decompressor,               //  Decompressor handle
@@ -3318,6 +3340,13 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 				free(CompressedBuffer);
 			}
 		} // end cmprss
+
+		if (!Success || !somebuf)
+		{
+			adj_host_prop(2); // reset host properties to smaller size
+			return DTAERROR_OPEN_ERR;
+		}
+
 		fivepercent = (uint64_t)((DecompressedBufferSize / 20) / blockSize) * blockSize;
 	}
 	// embedded info to MBR
@@ -3365,25 +3394,6 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	//LOG(D1) << "start hashing license level";
 	uint8_t idx[16];
 	char st1[16];
-	//uint32_t sd = Seed;
-	/*
-	char sbnk[] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', };
-	char sfree[16] = { 'F'^idx[0],'i'^idx[1],'d'^idx[2],'e'^idx[3],'l'^idx[4],'i'^idx[5],'t'^idx[6],'y'^idx[7],'F'^idx[8],'r'^idx[9],'e'^idx[10],'e'^idx[11],' '^idx[12], ' '^idx[13], ' '^idx[14], ' '^idx[15], };
-	char sstd[16] = { 'F'^idx[0],'i'^idx[1],'d'^idx[2],'e'^idx[3],'l'^idx[4],'i'^idx[5],'t'^idx[6],'y'^idx[7],'S'^idx[8],'t'^idx[9],'a'^idx[10],'n'^idx[11],'d'^idx[12], 'a'^idx[13], 'r'^idx[14], 'd'^idx[15], };
-	char s5[16] = { 'F'^idx[0],'i'^idx[1],'d'^idx[2],'e'^idx[3],'l'^idx[4],'i'^idx[5],'t'^idx[6],'y'^idx[7],'P'^idx[8],'R'^idx[9],'O'^idx[10],'5'^idx[11],' '^idx[12], ' '^idx[13], ' '^idx[14], ' '^idx[15], };
-	char s25[16] = { 'F'^idx[0],'i'^idx[1],'d'^idx[2],'e'^idx[3],'l'^idx[4],'i'^idx[5],'t'^idx[6],'y'^idx[7],'P'^idx[8],'R'^idx[9],'O'^idx[10],'2'^idx[11],'5'^idx[12], ' '^idx[13], ' '^idx[14], ' '^idx[15], };
-	char s100[16] = { 'F'^idx[0],'i'^idx[1],'d'^idx[2],'e'^idx[3],'l'^idx[4],'i'^idx[5],'t'^idx[6],'y'^idx[7],'P'^idx[8],'R'^idx[9],'O'^idx[10],'1'^idx[11],'0'^idx[12], '0'^idx[13], ' '^idx[14], ' '^idx[15], };
-	char sunlmt[17] = { 'F'^idx[0],'i'^idx[1],'d'^idx[2],'e'^idx[3],'l'^idx[4],'i'^idx[5],'t'^idx[6],'y'^idx[7],'P'^idx[8],'R'^idx[9],'O'^idx[10],'U'^idx[11],'n'^idx[12], 'l'^idx[13], 'i'^idx[14], 'm'^idx[15],'t'^idx[16] };
-	*/
-
-	//memset(idx, 16, 0);
-	//printf("idx[] = ");
-	//for (int i = 0; i < 16; i++) {
-	//	idx[i] = sd + i;
-	//	printf("%02X", idx[i]);
-	//}
-	//printf("\n");
-	//memset(st1, 16, 0);
 
 	char sbnk[16] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', };
 	char lic_level[18];
@@ -3417,18 +3427,21 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
 		LOG(E) << "Unable to create command object ";
+		adj_host_prop(2); // reset host properties to smaller size
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 
 	session = new DtaSession(this);
 	if (NULL == session) {
 		LOG(E) << "Unable to create session object ";
+		adj_host_prop(2); // reset host properties to smaller size
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete cmd;
 		delete session;
 		pbafile.close();
+		adj_host_prop(2); // reset host properties to smaller size
 		return lastRC;
 	}
 	/* 
@@ -3462,6 +3475,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 						if (!somebuf)
 						{
 							LOG(E) << "Cannot allocate memory for last block buffer.";
+							adj_host_prop(2); // reset host properties to smaller size
 							return DTAERROR_OPEN_ERR;
 						}
 						memset(somebuf, 0, blockSize);
@@ -3507,8 +3521,10 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 			delete cmd;
 			delete session;
 			pbafile.close();
+			adj_host_prop(2); // reset host properties to smaller size
 			return lastRC;
 		}
+
 		filepos += blockSize;
 		if (filepos > DecompressedBufferSize)
 		{
@@ -3526,6 +3542,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 		delete cmd;
 		delete session;
 		pbafile.close();
+		adj_host_prop(2); // reset host properties to smaller size
 		return lastRC;
 	} */
 	delete cmd;
@@ -3538,7 +3555,9 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 
 	}
         #endif
+	adj_host_prop(2); // reset host properties to smaller size
 	LOG(D1) << "Exiting DtaDevOpal::loadPBAimage()";
+
 	return 0;
 }
 
@@ -4037,7 +4056,14 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
     LOG(D3) << endl << "Dumping command buffer";
     IFLOG(D3) DtaHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
 	LOG(D1) << "Entering DtaDevOpal::exec sendCmd(IF_SEND, IO_BUFFER_LENGTH)";
-    if((lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH)) != 0) {
+    //if((lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH)) != 0) {
+	#if 0
+	if (adj_host == 1) {
+		LOG(I) << "adj_host = 1, use Host_sz_MaxComPacketSize";
+		printf("Host_sz_MaxComPacketSize = %ld\n", Host_sz_MaxComPacketSize);
+	}
+	#endif
+	if ((lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), (adj_host == 1)? Host_sz_MaxComPacketSize : IO_BUFFER_LENGTH)) != 0) { // JERRY
 		LOG(E) << "Command failed on send " << (uint16_t) lastRC;
         return lastRC;
     }
@@ -4061,40 +4087,36 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 }
 
 
-uint8_t DtaDevOpal::properties()
+	
+void DtaDevOpal::set_prop(DtaCommand *props ,uint16_t sz_MaxComPacketSize, uint16_t sz_MaxResponseComPacketSize, uint16_t sz_MaxPacketSize, uint16_t sz_MaxIndTokenSize)
 {
-	LOG(D1) << "Entering DtaDevOpal::properties()";
-	uint8_t lastRC;
-	session = new DtaSession(this);  // use the session IO without starting a session
-	if (NULL == session) {
-		LOG(E) << "Unable to create session object ";
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	DtaCommand *props = new DtaCommand(OPAL_UID::OPAL_SMUID_UID, OPAL_METHOD::PROPERTIES);
-	if (NULL == props) {
-		LOG(E) << "Unable to create command object ";
-		delete session;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
 	props->addToken(OPAL_TOKEN::STARTLIST);
 	props->addToken(OPAL_TOKEN::STARTNAME);
 	props->addToken(OPAL_TOKEN::HOSTPROPERTIES);
 	props->addToken(OPAL_TOKEN::STARTLIST);
 	props->addToken(OPAL_TOKEN::STARTNAME);
 	props->addToken("MaxComPacketSize");
-	props->addToken(61440);
+
+	props->addToken(sz_MaxComPacketSize);
+	//props->addToken(61440);
 	props->addToken(OPAL_TOKEN::ENDNAME);
 	props->addToken(OPAL_TOKEN::STARTNAME);
 	props->addToken("MaxResponseComPacketSize");
-	props->addToken(61440);
+
+	props->addToken(sz_MaxResponseComPacketSize);
+	//props->addToken(61440);
 	props->addToken(OPAL_TOKEN::ENDNAME);
 	props->addToken(OPAL_TOKEN::STARTNAME);
 	props->addToken("MaxPacketSize");
-	props->addToken(61420);
+
+	props->addToken(sz_MaxPacketSize);
+	//props->addToken(61420);
 	props->addToken(OPAL_TOKEN::ENDNAME);
 	props->addToken(OPAL_TOKEN::STARTNAME);
 	props->addToken("MaxIndTokenSize");
-	props->addToken(61384);
+	
+	props->addToken(sz_MaxIndTokenSize);
+	//props->addToken(61384);
 	props->addToken(OPAL_TOKEN::ENDNAME);
 	props->addToken(OPAL_TOKEN::STARTNAME);
 	props->addToken("MaxPackets");
@@ -4112,6 +4134,45 @@ uint8_t DtaDevOpal::properties()
 	props->addToken(OPAL_TOKEN::ENDNAME);
 	props->addToken(OPAL_TOKEN::ENDLIST);
 	props->complete();
+}
+
+uint8_t DtaDevOpal::properties()
+{
+	uint16_t sz_MaxComPacketSize; // = 17408; // 61440;
+	uint16_t sz_MaxResponseComPacketSize; // = 17108; //  61440;
+	uint16_t sz_MaxPacketSize; // = 17180; // 61440;
+	uint16_t sz_MaxIndTokenSize; // = 16384; // 61384;
+
+	LOG(D1) << "Entering DtaDevOpal::properties()";
+	uint8_t lastRC;
+	session = new DtaSession(this);  // use the session IO without starting a session
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	DtaCommand *props = new DtaCommand(OPAL_UID::OPAL_SMUID_UID, OPAL_METHOD::PROPERTIES);
+	if (NULL == props) {
+		LOG(E) << "Unable to create command object ";
+		delete session;
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	if (adj_host == 1) {
+		sz_MaxComPacketSize = 61440;
+		sz_MaxResponseComPacketSize = 61440;
+		sz_MaxPacketSize = 61440;
+		sz_MaxIndTokenSize = 61384;
+		adj_io_buffer_length = 61440;
+	}
+	else {
+		sz_MaxComPacketSize = 17408; 
+		sz_MaxResponseComPacketSize = 17108; 
+		sz_MaxPacketSize = 17180; 
+		sz_MaxIndTokenSize = 16384;
+		adj_io_buffer_length = 17408;
+	}
+	set_prop(props, sz_MaxComPacketSize, sz_MaxResponseComPacketSize, sz_MaxPacketSize, sz_MaxIndTokenSize);
+
+	props->complete();
 	if ((lastRC = session->sendCommand(props, propertiesResponse)) != 0) {
 		delete props;
 		return lastRC;
@@ -4121,23 +4182,121 @@ uint8_t DtaDevOpal::properties()
 	LOG(D1) << "Leaving DtaDevOpal::properties()";
 	return 0;
 }
+
+// fill  property 
+void DtaDevOpal::fill_prop(uint8_t show)
+{
+		if (show) cout << std::endl << "TPer Properties: ";
+		uint8_t tper_flag;
+		tper_flag = 1;
+		for (uint32_t i = 0; i < propertiesResponse.getTokenCount(); i++) {
+			if (OPAL_TOKEN::STARTNAME == propertiesResponse.tokenIs(i)) {
+				if (OPAL_TOKEN::DTA_TOKENID_BYTESTRING != propertiesResponse.tokenIs(i + 1))
+				{
+					if (show) cout << std::endl << "Host Properties: " << std::endl;
+					tper_flag = 0;
+				}
+				else //
+				{//
+					if (show) cout << "  " << propertiesResponse.getString(i + 1) << " = " << propertiesResponse.getUint64(i + 2);
+
+					if (!memcmp((propertiesResponse.getString(i + 1)).c_str(), "MaxComPacketSize", sizeof("MaxComPacketSize"))) {
+						//LOG(I) << "match MaxComPacketSize";
+						if (tper_flag) { // Tper size
+							//LOG(I) << "Tper";
+							Tper_sz_MaxComPacketSize = propertiesResponse.getUint64(i + 2);
+						}
+						else { // Host size
+							//LOG(I) << "Host";
+							Host_sz_MaxComPacketSize = propertiesResponse.getUint64(i + 2);
+						}
+					}
+					else if (!memcmp((propertiesResponse.getString(i + 1)).c_str(), "MaxResponseComPacketSize", sizeof("MaxResponseComPacketSize"))) {
+						//LOG(I) << "match MaxResponseComPacketSize";
+						if (tper_flag) { // Tper size
+							//LOG(I) << "Tper";
+							Tper_sz_MaxResponseComPacketSize = propertiesResponse.getUint64(i + 2);
+						}
+						else { // Host size
+							//LOG(I) << "Host";
+							Host_sz_MaxResponseComPacketSize = propertiesResponse.getUint64(i + 2);
+						}
+					}
+					else if (!memcmp((propertiesResponse.getString(i + 1)).c_str(), "MaxPacketSize", sizeof("MaxPacketSize"))) {
+						//LOG(I) << "match MaxPacketSize";
+						if (tper_flag) { // Tper size
+							//LOG(I) << "Tper";
+							Tper_sz_MaxPacketSize = propertiesResponse.getUint64(i + 2);
+						}
+						else { // Host size
+							//LOG(I) << "Host";
+							Host_sz_MaxPacketSize = propertiesResponse.getUint64(i + 2);
+						}
+					}
+					else if (!memcmp((propertiesResponse.getString(i + 1)).c_str(), "MaxIndTokenSize", sizeof("MaxIndTokenSize"))) {
+						//LOG(I) << "match MaxIndTokenSize";
+						if (tper_flag) { // Tper size
+							//LOG(I) << "Tper";
+							Tper_sz_MaxIndTokenSize = propertiesResponse.getUint64(i + 2);
+						}
+						else { // Host size
+							//LOG(I) << "Host";
+							Host_sz_MaxIndTokenSize = propertiesResponse.getUint64(i + 2);
+						}
+					}
+				} // 
+				i += 2;
+			}
+			if (show) if (!(i % 6)) cout << std::endl;
+		}
+		#if 0
+			printf("Tper_sz_MaxComPacketSize=%ld\n", Tper_sz_MaxComPacketSize);
+			printf("Tper_sz_MaxResponseComPacketSize=%ld\n", Tper_sz_MaxResponseComPacketSize);
+			printf("Tper_sz_MaxPacketSize=%ld\n", Tper_sz_MaxPacketSize);
+			printf("Tper_sz_MaxIndTokenSize=%ld\n", Tper_sz_MaxIndTokenSize);
+			printf("Host_sz_MaxComPacketSize=%ld\n", Host_sz_MaxComPacketSize);
+			printf("Host_sz_MaxResponseComPacketSize=%ld\n", Host_sz_MaxResponseComPacketSize);
+			printf("Host_sz_MaxPacketSize=%ld\n", Host_sz_MaxPacketSize);
+			printf("Host_sz_MaxIndTokenSize=%ld\n", Host_sz_MaxIndTokenSize);
+		#endif
+}
+
+
 void DtaDevOpal::puke()
 {
 	LOG(D1) << "Entering DtaDevOpal::puke()";
 	DtaDev::puke();
 	if (disk_info.Properties) {
-		cout << std::endl << "TPer Properties: ";
-		for (uint32_t i = 0; i < propertiesResponse.getTokenCount(); i++) {
-			if (OPAL_TOKEN::STARTNAME == propertiesResponse.tokenIs(i)) {
-				if (OPAL_TOKEN::DTA_TOKENID_BYTESTRING != propertiesResponse.tokenIs(i + 1))
-					cout << std::endl << "Host Properties: " << std::endl;
-				else
-					cout << "  " << propertiesResponse.getString(i + 1) << " = " << propertiesResponse.getUint64(i + 2);
-				i += 2;
-			}
-			if (!(i % 6)) cout << std::endl;
+		fill_prop(TRUE); // fill and display Tper Host property
+	} // diskinfo.propery
+}
+
+// adjust host property 
+//act :0
+//act :1 : adjust host property if MaxComPacket > 64 K 
+//act :2 : reset host property ; regardless if it has been adjust
+void DtaDevOpal::adj_host_prop(uint8_t act)
+{
+	//LOG(I) << "Enter adj_host_prop";
+	fill_prop(FALSE); // JERRY 
+	//printf("act =  %d\n", act);
+	switch (act) {
+	case 0 :
+	case 1 :
+		if (Tper_sz_MaxComPacketSize > 64 * 1024) {
+			//LOG(I) << "adj_host set to 1";
+			adj_host = 1;
+			properties();
 		}
-	}
+		break;
+	case 2 :
+		//LOG(I) << "adj_host set to 0";
+		adj_host = 0;
+		properties();
+		break;
+	} // switch 
+	fill_prop(FALSE); // JERRY must re-stuff the host property because properties() only exchange property with Tper but not set host_sz_Maxxxxxxxx
+	//LOG(I) << "Exit adj_host_prop";
 }
 
 uint8_t DtaDevOpal::objDump(char *sp, char * auth, char *pass,

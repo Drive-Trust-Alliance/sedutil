@@ -51,6 +51,8 @@ public:
 	void init(const char * devref);
         /** Notify the device of the host properties and receive the
          * properties of the device as a reply */
+	void set_prop(DtaCommand * props, uint16_t sz_MaxComPacketSize, uint16_t sz_MaxResponseComPacketSize, uint16_t sz_MaxPacketSize, uint16_t sz_MaxIndTokenSize);
+	void fill_prop(uint8_t show); // show = TRUE, print property  ; show = 0; fill property variable but no print 
 	uint8_t properties();
          /** Send a command to the device and wait for the response
          * @param cmd the MswdCommand object containg the command
@@ -266,10 +268,12 @@ public:
          * @param Admin1Password admin1 password for TPer
          * @param password User password to set for locking range
          */
-        uint8_t setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password);
-          /** Displays the identify and discovery 0 information */
+    uint8_t setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password);
+    /** Displays the identify and discovery 0 information */
+	void adj_host_prop(uint8_t act);
 	void puke();
-         /** Dumps an object for diagnostic purposes
+	
+	/** Dumps an object for diagnostic purposes
          * @param sp index into the OPALUID table for the SP the object is in
          * @param auth the authority ti use for the dump
          * @param pass the password for the suthority

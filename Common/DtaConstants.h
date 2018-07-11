@@ -18,7 +18,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 /** Length of the IO buffers used */
-#define IO_BUFFER_LENGTH 61440
+#define IO_BUFFER_LENGTH 17408
+#define IO_BUFFER_LENGTH_HI 61440
+#define IO_BUFFER_LENGTH_LO 17408 
 /** Alignment of the IO buffers.
 * generic align on 1k boundary probably not needed
 * but when things weren't working this was one of the 
