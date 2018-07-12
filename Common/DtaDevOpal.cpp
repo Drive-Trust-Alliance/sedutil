@@ -2366,7 +2366,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * filename, uint8_t dsn
 	char star[] = "*";
 	char spinner[] = "|/-\\";
 	char progress_bar[] = "   [                     ]";
-	uint32_t blockSize = 57344; // 57344=512*112=E000h 1950=0x79E;
+	uint32_t blockSize = 16384;  // 57344; // 57344=512*112=E000h 1950=0x79E;
 	uint32_t filepos = 0;
 	uint64_t imgsize;
 	uint32_t newSize;
@@ -2602,7 +2602,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * filename, uint8_t dsnu
 	char star[] = "*";
 	char spinner[] = "|/-\\";
 	char progress_bar[] = "   [                     ]";
-	uint32_t blockSize = 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
+	uint32_t blockSize = 16384; // 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
 	uint32_t filepos = 0;
 	uint32_t newSize;
 
@@ -2689,7 +2689,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * filename, uint8_t dsnu
 		//printf("newSize=%d filepos=%d\n", newSize,filepos); 
 		memset(buffer, 0, blockSize);
 
-		LOG(D1) << "***** start read data store";
+		LOG(D1) << "***** start read datastore";
 		vector<uint8_t> DstoreUid, getUid;
 		DstoreUid.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
 		for (uint8_t i=0;i<7;i++) {
@@ -2792,7 +2792,7 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 	char star[] = "*";
 	char spinner[] = "|/-\\";
 	char progress_bar[] = "   [                     ]";
-	uint32_t blockSize = 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
+	uint32_t blockSize = 16384;  // 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
 	uint32_t filepos = 0;
 	uint32_t newSize;
 	uint32_t maxMBRSize;
@@ -2902,7 +2902,7 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 		if ((lastRC = session->sendCommand(cmd, response)) != 0) {
 			delete cmd;
 			delete session;
-			LOG(E) << "DataStore Read Error";
+			LOG(E) << "MBR Read Error";
 			datafile.close();
 			free(buffer);
 			return lastRC;
@@ -2917,7 +2917,7 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 		LOG(D1) << "***** end of send Read MBR command ";
 
 		if (lastRC) {
-			LOG(E) << "DataStore Read Error";
+			LOG(E) << "MBR Read Error";
 			datafile.close();
 			free(buffer);
 			delete cmd;
