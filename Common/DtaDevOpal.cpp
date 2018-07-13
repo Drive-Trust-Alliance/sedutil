@@ -2355,7 +2355,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * filename, uint8_t dsn
 	LOG(D1) << "Entering DtaDevOpal::DataStoreWrite()";
 
 	ifstream datafile;
-	vector <uint8_t> bufferA(57344, 0x00); // (8192, 0x66); // 0 buffer  (57344, 0x00),
+	vector <uint8_t> bufferA(16384, 0x00); // (8192, 0x66); // 0 buffer  (57344, 0x00),
 	vector <uint8_t> lengthtoken;
 	uint8_t lastRC;
 	uint64_t fivepercent = 0;
