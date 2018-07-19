@@ -814,9 +814,10 @@ int main(int argc, char * argv[])
 		d->translate_req = opts.translate_req;
 		// only for window
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-		d->LicenseLevel = (char *) malloc(16);
-		memset((void *)(d->LicenseLevel), 0,16);
-		memcpy((char *) d->LicenseLevel, _com_util::ConvertBSTRToString( m_lv->getf2s()),3) ;
+		//d->LicenseLevel = (char *) malloc(32);
+		memset((void *)(d->LicenseLevel), 0,32);
+		string tmp_str = _com_util::ConvertBSTRToString(m_lv->getf2s());
+		memcpy((char*)(d->LicenseLevel), tmp_str.c_str(),tmp_str.size()) ; //(_com_util::ConvertBSTRToString(m_lv->getf2s()), 3)).c_str();
 		//LOG(I) << "m_lv->getf2s()=" << m_lv->getf2s();
 		//LOG(I) << "d->LicenseLevel="  << d->LicenseLevel;
 #endif	
@@ -1058,7 +1059,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-        printf("Fidelity Lock Version : 0.3.6.%s.%s 20180716-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.3.7.%s.%s 20180719-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:
