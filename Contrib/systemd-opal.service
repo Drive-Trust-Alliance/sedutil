@@ -10,4 +10,4 @@ ConditionFileIsExecutable=/usr/sbin/linuxpba
 Type=oneshot
 TimeoutSec=180
 RemainAfterExit=yes
-ExecStart=/usr/sbin/dmidecode -s system-serial-number | /bin/egrep -v '^#' | /usr/sbin/linuxpba 2>/tmp/linuxpba.debug
+ExecStart=/bin/sh -c "/usr/sbin/dmidecode -s system-serial-number | /bin/egrep -v '^#' | /usr/sbin/linuxpba 2>/tmp/linuxpba.debug"
