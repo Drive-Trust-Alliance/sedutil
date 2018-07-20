@@ -17,9 +17,14 @@ do
 	( cd $WRKDIR; make CONF=${VERSION} clean ) || /bin/true
 done
 
+rm -rf *.deb
 rm -rf ${PKGDIR} || /bin/true
+
+mkdir ${PKGDIR}
 mkdir -p ${PKGDIR}/${EXEDIR} || /bin/true
 mkdir -p ${PKGDIR}/${USR_SYSTEMD} || /bin/true
+
+cp -rp DEBIAN ${PKGDIR}
 
 for DIR in $WORKDIRS
 do
@@ -34,4 +39,13 @@ done
 cp Contrib/${OPAL_UNIT} ${PKGDIR}/${USR_SYSTEMD}
 chmod 0664 ${PKGDIR}/${USR_SYSTEMD}/${OPAL_UNIT}
 
-dpkg-deb --build . .
+dpkg-deb --build ${PKGDIR} 
+
+set -- `dpkg-deb --info debian.deb  | egrep 'Package|Version|Architecture' | tr -d ' ' | tr ':' '='`
+for var
+do
+  eval $var
+done
+
+mv debian.deb ${Package}_${Version}_${Architecture}.deb
+
