@@ -39,6 +39,8 @@ done
 cp Contrib/${OPAL_UNIT} ${PKGDIR}/${USR_SYSTEMD}
 chmod 0664 ${PKGDIR}/${USR_SYSTEMD}/${OPAL_UNIT}
 
+sudo find ${PKGDIR} -exec chown 0:0 {} \;
+
 dpkg-deb --build ${PKGDIR} 
 
 set -- `dpkg-deb --info debian.deb  | egrep 'Package|Version|Architecture' | tr -d ' ' | tr ':' '='`
