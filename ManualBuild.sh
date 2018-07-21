@@ -37,7 +37,7 @@ do
 done
 
 cp Contrib/${OPAL_UNIT} ${PKGDIR}/${USR_SYSTEMD}
-chmod 0664 ${PKGDIR}/${USR_SYSTEMD}/${OPAL_UNIT}
+chmod 0644 ${PKGDIR}/${USR_SYSTEMD}/${OPAL_UNIT}
 
 sudo find ${PKGDIR} -exec chown 0:0 {} \;
 

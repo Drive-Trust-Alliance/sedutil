@@ -13,4 +13,4 @@ RemainAfterExit=yes
 ExecStart=/bin/sh -c "/usr/sbin/dmidecode -s system-serial-number | /bin/egrep -v '^#' | /usr/sbin/linuxpba 2>/tmp/linuxpba.debug"
 
 [Install]
-WantedBy=systemd-fs-pre.target
+WantedBy=multi-user.target
