@@ -4,7 +4,7 @@ WORKSPACE=`pwd`
 
 WORKDIRS="${WORKSPACE}/LinuxPBA ${WORKSPACE}/linux/CLI"
 VERSION="Release_x86_64"
-OPAL_UNIT=systemd-opal.service
+OPAL_UNIT=sed-opal.service
 EXEDIR=/usr/sbin
 USR_SYSTEMD=/etc/systemd/system
 PKGDIR=debian
