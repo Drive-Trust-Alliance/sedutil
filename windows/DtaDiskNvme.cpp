@@ -151,7 +151,7 @@ uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                         void * buffer, uint16_t bufferlen)
 {
     LOG(D1) << "Entering DtaDiskNVME::sendCmd";
-    DWORD bytesReturned = 0; // data returned
+    //DWORD bytesReturned = 0; // data returned
     if (!isOpen) {
         LOG(D1) << "Device open failed";
 		return DTAERROR_OPEN_ERR; //disk open failed so this will too
