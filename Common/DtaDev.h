@@ -304,7 +304,7 @@ public:
 	bool no_hash_passwords; /** disables hashing of passwords */
 	bool usermodeON = FALSE;
 	bool translate_req = FALSE;
-	const char * LicenseLevel;
+	char LicenseLevel[32];
 protected:
 	const char * dev;   /**< character string representing the device in the OS lexicon */
 	uint8_t isOpen = FALSE;  /**< The device has been opened */

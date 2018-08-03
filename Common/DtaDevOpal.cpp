@@ -20,6 +20,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 /** Device class for Opal 2.0 SSC
  * also supports the Opal 1.0 SSC
  */
+
+#pragma warning(disable: 4224) //C2224: conversion from int to char , possible loss of data
+#pragma warning(disable: 4244) //C4244: 'argument' : conversion from 'uint16_t' to 'uint8_t', possible loss of data
+
 #include "os.h"
 #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
 #else
@@ -408,15 +412,15 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 	}
 	// JERRY dump raw token info 
 	uint32_t tc = response.getTokenCount();
-	if (0) {
-		printf("***** getTokenCount()=%ld\n", (long)tc);
-		for (uint32_t i = 0; i < tc; i++) {
-			printf("token %ld = ", (long)i);
-			for (uint32_t j = 0; j < response.getRawToken(i).size(); j++)
-				printf("%02X ", response.getRawToken(i)[j]);
-			cout << endl;
-		}
-	}
+	//if (0) {
+	//	printf("***** getTokenCount()=%ld\n", (long)tc);
+	//	for (uint32_t i = 0; i < tc; i++) {
+	//		printf("token %ld = ", (long)i);
+	//		for (uint32_t j = 0; j < response.getRawToken(i).size(); j++)
+	//			printf("%02X ", response.getRawToken(i)[j]);
+	//		cout << endl;
+	//	}
+	//}
 
 	// JERRY
 	if (response.tokenIs(4) != _OPAL_TOKEN::DTA_TOKENID_UINT) {
@@ -429,26 +433,26 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 	for (uint32_t i = 0; i < numRanges; i++){
 		if(0 != i) LR[8] = i & 0xff;
 		// JERRY 
-		if (0) {
-			for (uint8_t k = 0; k < LR.size(); k++) printf("%02X ", LR[k]);
-			cout << endl;
-		}
+		//if (0) {
+		//	for (uint8_t k = 0; k < LR.size(); k++) printf("%02X ", LR[k]);
+		//	cout << endl;
+		//}
 		// JERRY
 		if ((lastRC = getTable(LR, _OPAL_TOKEN::RANGESTART, _OPAL_TOKEN::WRITELOCKED)) != 0) {
 			delete session;
 			return lastRC;
 		}
 		// JERRY dump raw token info 
-		uint32_t tc = response.getTokenCount();
-		if (0) {
-			printf("***** getTokenCount()=%ld\n", (long)tc);
-			for (uint32_t i = 0; i < tc; i++) {
-				printf("token %ld = ", (long)i);
-				for (uint32_t j = 0; j < response.getRawToken(i).size(); j++)
-					printf("%02X ", response.getRawToken(i)[j]);
-				cout << endl;
-			}
-		}
+		tc = response.getTokenCount();
+		//if (0) {
+		//	printf("***** getTokenCount()=%ld\n", (long)tc);
+		//	for (uint32_t i = 0; i < tc; i++) {
+		//		printf("token %ld = ", (long)i);
+		//		for (uint32_t j = 0; j < response.getRawToken(i).size(); j++)
+		//			printf("%02X ", response.getRawToken(i)[j]);
+		//		cout << endl;
+		//	}
+		//}
 		if (tc != 34) { // why ?????
 			cout << endl;
 			LOG(E) << "token count is wrong. Exit loop";
@@ -1350,7 +1354,7 @@ vector<uint8_t> getUID(char * userid, vector<uint8_t> &auth2, vector<uint8_t> &a
 	// translate UserN AdminN into <int8_t 
 	vector<uint8_t> auth;
 	;
-	uint8_t id;
+	uint8_t id = 1;
 	auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
 	auth2.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
 	auth3.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
@@ -3206,14 +3210,15 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	ifstream pbafile;
 	// for decompression
 	PBYTE DecompressedBuffer = NULL;
-	uint64_t DecompressedBufferSize = NULL;
+	//uint64_t DecompressedBufferSize = NULL;
+	SIZE_T DecompressedBufferSize = NULL;
 	PBYTE CompressedBuffer = NULL;
 	uint64_t CompressedBufferSize = 0;
 	DECOMPRESSOR_HANDLE Decompressor = NULL;
 	DecompressedBuffer = NULL;
 	BOOL Success;
 	SIZE_T  DecompressedDataSize;
-	void * somebuf;
+	void * somebuf = NULL;
 
 	vector <uint8_t> buffer; // 0 buffer  (57344, 0x00),
 	vector <uint8_t> lengthtoken;
@@ -3367,7 +3372,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	IFLOG(D1) printf("hashed size = %zd\n", hash.size());
 	IFLOG(D1) printf("hashed serial number is ");
 	IFLOG(D1) // should never expose the hashed series , need to comment out when release
-	for (int i = 0; i < hash.size(); i++)
+	for (uint8_t i = 0; i < hash.size(); i++)
 	{
 		printf("%02X", hash.at(i));
 	}
@@ -3375,7 +3380,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	// try dump decompressed buffer of sector 0 , 1 
 	//DtaHexDump(DecompressedBuffer + 512, 512);
 	// write 32-byte date into buffer 
-	for (int i = 2; i < hash.size(); i++)
+	for (uint8_t i = 2; i < hash.size(); i++)
 	{
 		DecompressedBuffer[512 + 64 + i - 2] = hash.at(i);
 	}
@@ -3384,7 +3389,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	LOG(D1) << "start hashing";
 	char mbrstr[16] = { 'F','i','d','e','l','i','t','y','L','o','c','k','M', 'B', 'R', }; // "FidelityLockMBR";
 	DtaHashPwd(hash, mbrstr, this); // why IFLOG(D4)
-	for (int i = 2; i < hash.size(); i++)
+	for (uint8_t i = 2; i < hash.size(); i++)
 	{
 		DecompressedBuffer[512 + 96 + i - 2] = hash.at(i);
 	}
@@ -3392,8 +3397,8 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	// write license level 
 	hash.clear();
 	//LOG(D1) << "start hashing license level";
-	uint8_t idx[16];
-	char st1[16];
+	//uint8_t idx[16];
+	//char st1[16];
 
 	char sbnk[16] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', };
 	char lic_level[18];
@@ -3411,7 +3416,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	//	for (uint8_t i = 0; i < 16; i++) { printf("%02X", lic_level[i]); };
 	hash.clear();
 	DtaHashPwd(hash, lic_level, this);
-	for (int i = 2; i < hash.size(); i++)
+	for (uint8_t i = 2; i < hash.size(); i++)
 	{
 		DecompressedBuffer[512 + 128 + i - 2] = hash.at(i);
 	}

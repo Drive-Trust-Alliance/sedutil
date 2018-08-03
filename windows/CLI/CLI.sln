@@ -5,9 +5,11 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CLI", "CLI.vcxproj", "{267E9D28-7245-4182-9740-F386F4299E83}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PyExt", "..\..\PyExt\PyExt.vcxproj", "{206A726C-26C0-4079-86E5-5DA67C459F20}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PyExtLic", "..\..\PyExt\PyExt.vcxproj", "{206A726C-26C0-4079-86E5-5DA67C459F20}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ob", "..\..\ob\ob.vcxproj", "{DDBCC318-9407-478B-949D-54148286A4E1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PyExtOb", "..\..\ob\ob.vcxproj", "{DDBCC318-9407-478B-949D-54148286A4E1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PyExtUtil", "PyExtUtil\PyExtUtil.vcxproj", "{A930BFC5-3AF6-416C-81A9-F2CE8C4500B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,14 @@ Global
 		{DDBCC318-9407-478B-949D-54148286A4E1}.Release|x64.Build.0 = Release|x64
 		{DDBCC318-9407-478B-949D-54148286A4E1}.Release|x86.ActiveCfg = Release|Win32
 		{DDBCC318-9407-478B-949D-54148286A4E1}.Release|x86.Build.0 = Release|Win32
+		{A930BFC5-3AF6-416C-81A9-F2CE8C4500B5}.Debug|x64.ActiveCfg = Debug|x64
+		{A930BFC5-3AF6-416C-81A9-F2CE8C4500B5}.Debug|x64.Build.0 = Debug|x64
+		{A930BFC5-3AF6-416C-81A9-F2CE8C4500B5}.Debug|x86.ActiveCfg = Debug|Win32
+		{A930BFC5-3AF6-416C-81A9-F2CE8C4500B5}.Debug|x86.Build.0 = Debug|Win32
+		{A930BFC5-3AF6-416C-81A9-F2CE8C4500B5}.Release|x64.ActiveCfg = Release|x64
+		{A930BFC5-3AF6-416C-81A9-F2CE8C4500B5}.Release|x64.Build.0 = Release|x64
+		{A930BFC5-3AF6-416C-81A9-F2CE8C4500B5}.Release|x86.ActiveCfg = Release|Win32
+		{A930BFC5-3AF6-416C-81A9-F2CE8C4500B5}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

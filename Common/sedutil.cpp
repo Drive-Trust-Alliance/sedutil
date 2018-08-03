@@ -18,6 +18,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
 
+#pragma warning(disable: 4224) //C2224: conversion from int to char , possible loss of data
+#pragma warning(disable: 4244) //C4244: 'argument' : conversion from 'uint16_t' to 'uint8_t', possible loss of data
+
+
 #include <iostream>
 #include "os.h"
 #include "DtaHashPwd.h"
@@ -35,8 +39,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 #include <iostream>
 #include <fstream>
-#include <Stdafx.h>
-#include <LicenseValidator.h>
+#include <..\License\Stdafx.h>
+#include <..\License\LicenseValidator.h>
 #include "DtaHexDump.h"
 //#include <msclr\marshal_cppstd.h>
 #endif
@@ -182,11 +186,11 @@ int createvol(HANDLE &vol_handle, char * USBname)
 
 	if (vol_handle == INVALID_HANDLE_VALUE)
 	{
-		IFLOG(D1) printf("CreateFile error \n");
+		LOG(D1) << "CreateFile error \n";
 		return false;
 	}
 	else {
-		IFLOG(D1) printf("CreateFile(%s,..) OK , vol_handle = %zd\n", USBname, (int64_t)vol_handle);
+		LOG(D1) << "CreateFile(" << USBname << ",..) OK , vol_handle = " << vol_handle;
 	}
 	return true;
 }
@@ -323,7 +327,7 @@ BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 		return false;
 	}
 	LOG(D1) << "zero out image area OK";
-	IFLOG(D1) printf("close vol_handle %zd\n", (int64_t)vol_handle);
+	LOG(D1) << "close vol_handle " << vol_handle;
 	reloadvol(vol_handle);
 	unlockvol(vol_handle);
 	CloseHandle(vol_handle);
@@ -366,16 +370,17 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 
 	// write hashed series num to decompressed image buffer
 
-	char * filename = "sedutil-cli.exe";
+	//char * filename = "sedutil-cli.exe";
 	LOG(D1) << "Entering createUSB() " << USBname;
 	//uint8_t lastRC;
-	uint64_t fivepercent = 0;
+	//uint64_t fivepercent = 0;
 	uint64_t imgsize;
-	int complete = 4;
+	//int complete = 4;
 	ifstream pbafile;
 	// for decompression
 	PBYTE DecompressedBuffer = NULL;
-	uint64_t DecompressedBufferSize = NULL;
+	// uint64_t DecompressedBufferSize = NULL; // uint64_t ok  x64 but NG on x86
+	SIZE_T DecompressedBufferSize = NULL;
 	PBYTE CompressedBuffer = NULL;
 	uint64_t CompressedBufferSize = 0;
 	DECOMPRESSOR_HANDLE Decompressor = NULL;
@@ -498,19 +503,19 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 		vector<uint8_t> hash;
 		hash.clear();
 		DtaHashPwd(hash, sernum, d);
-		if (0) {
-			printf("hashed size = %zd\n", hash.size());
-			printf("hashed serial number is ");
-			for (int i = 0; i < hash.size(); i++) { printf("%02X", hash.at(i)); } 	printf("\n");
-		}
+		//if (0) {
+		//	printf("hashed size = %zd\n", hash.size());
+		//	printf("hashed serial number is ");
+		//	for (int i = 0; i < hash.size(); i++) { printf("%02X", hash.at(i)); } 	printf("\n");
+		//}
 
 	IFLOG(D4) DtaHexDump(DecompressedBuffer+512,512);
 	 
-	for (int i = 2; i < hash.size(); i++) {	DecompressedBuffer[512+64+i-2] = hash.at(i); 	}
+	for (uint8_t i = 2; i < hash.size(); i++) {	DecompressedBuffer[512+64+i-2] = hash.at(i); 	}
 	hash.clear();
 	char usbstr[16] = { 'F','i','d','e','l','i','t','y','L','o','c','k','U', 'S', 'B', };//"FidelityLockUSB";
 	DtaHashPwd(hash,usbstr, d);
-	for (int i = 2; i < hash.size(); i++)
+	for (uint8_t i = 2; i < hash.size(); i++)
 	{
 		DecompressedBuffer[512 + 96 + i - 2] = hash.at(i);
 	}
@@ -538,7 +543,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	//	for (uint8_t i = 0; i < 16; i++) { printf("%02X", lic_level[i]); } printf("\n");
 	hash.clear();
 	DtaHashPwd(hash, lic_level, d);
-	for (int i = 2; i < hash.size(); i++)
+	for (uint8_t i = 2; i < hash.size(); i++)
 	{
 		DecompressedBuffer[512 + 128 + i - 2] = hash.at(i);
 	}
@@ -603,7 +608,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	if (!WriteFile(vol_handle, DecompressedBuffer, (DWORD)DecompressedBufferSize, &n, NULL))
 	{
 		if (retry_cnt < 3) { retry_cnt++;  goto again; }
-		int err = GetLastError();
+		//int err = GetLastError();
 		//printf("write image data to USB error %d\n", err);
 		LOG(I) << "Write image to USB error";
 		unlockvol(vol_handle);
@@ -814,11 +819,16 @@ int main(int argc, char * argv[])
 		d->translate_req = opts.translate_req;
 		// only for window
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-		d->LicenseLevel = (char *) malloc(16);
-		memset((void *)(d->LicenseLevel), 0,16);
-		memcpy((char *) d->LicenseLevel, _com_util::ConvertBSTRToString( m_lv->getf2s()),3) ;
+		//d->LicenseLevel = (char *) malloc(32);
+		memset((void *)(d->LicenseLevel), 0,32);
+		string tmp_str = _com_util::ConvertBSTRToString(m_lv->getf2s());
+		memcpy((char*)(d->LicenseLevel), tmp_str.c_str(),tmp_str.size()) ; //(_com_util::ConvertBSTRToString(m_lv->getf2s()), 3)).c_str();
+		//LOG(I) << "tmp_str.size()=" << tmp_str.size();
 		//LOG(I) << "m_lv->getf2s()=" << m_lv->getf2s();
+		//LOG(I) << "sizeof(m_lv->getf2s())=" << sizeof(m_lv->getf2s());
 		//LOG(I) << "d->LicenseLevel="  << d->LicenseLevel;
+		//LOG(I) << "_com_util::ConvertBSTRToString( m_lv->getf2s())=" << _com_util::ConvertBSTRToString(m_lv->getf2s());
+		//LOG(I) << "tmp_str = " << tmp_str;
 #endif	
 	}
 
@@ -1058,7 +1068,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-        printf("Fidelity Lock Version : 0.3.6.%s.%s 20180711-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.3.8.%s.%s 20180724-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:
