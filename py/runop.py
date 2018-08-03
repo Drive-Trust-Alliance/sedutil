@@ -25,6 +25,7 @@ def findos(ui):
     
 def finddev(ui):
     txt = os.popen(ui.prefix + 'sedutil-cli --scan n').read()
+    
     print txt
  
     names = ['PhysicalDrive[0-9]', '/dev/sd[a-z]', '/dev/nvme[0-9]',  '/dev/disk[0-9]']
@@ -32,7 +33,6 @@ def finddev(ui):
     ui.devs_list = []
     ui.locked_list = []
     ui.setup_list = []
-    ui.unlocked_list = []
     ui.nonsetup_list = []
     ui.tcg_list = []
     
@@ -68,18 +68,6 @@ def finddev(ui):
     
     tcg_count = 0
     
-    drive_dict = {}
-    dev_os = platform.system()
-    if dev_os == 'Windows':
-        for drive in ascii_uppercase:
-            if os.path.isdir('%s:\\' % drive):
-                t_x = os.popen("powershell -NoProfile -NoExit -Command Get-Disk (Get-Partition -DriveLetter '" + drive + "').DiskNumber").read()
-                disknum_regex = '\n([0-9]+)'
-                m = re.search(disknum_regex, t_x)
-                if m:
-                    m_dev = '\\\\.\\PhysicalDrive' + m.group(1)
-                    drive_dict[m_dev] = drive
-    
     
     for index in range(len(names)): #index=0(window) 1(Linux) 2(OSX)
     
@@ -108,6 +96,7 @@ def finddev(ui):
                     if md:
                         if md.group(1) == 'No':
                             ui.opal_ver_list.append("None")
+                            ui.encsup_list.append('N/A')
                             ui.devs_list.append(ui.devname)
                             if drive_dict.has_key(ui.devname):
                                 ui.label_list.append(' (' + drive_dict[ui.devname] + ':)')
@@ -117,10 +106,10 @@ def finddev(ui):
                             tcg_count = tcg_count + 1
                             if tcg_count <= ui.MAX_DEV:
                                 ui.devs_list.append(ui.devname)
-                                if drive_dict.has_key(ui.devname):
-                                    ui.label_list.append(' (' + drive_dict[ui.devname] + ':)')
-                                else:
-                                    ui.label_list.append('')
+                                #if drive_dict.has_key(ui.devname):
+                                #    ui.label_list.append(' (' + drive_dict[ui.devname] + ':)')
+                                #else:
+                                ui.label_list.append('')
                                 if md.group(1) == 'P':
                                     ui.opal_ver_list.append("Pyrite")
                                     ui.encsup_list.append("Not Supported")
@@ -149,7 +138,7 @@ def finddev(ui):
                         ui.salt_list.append('N/A')
                         ui.sn_list.append('N/A')
                         ui.encsup_list.append('N/A')
-                        
+
     if ui.devs_list != []:
         ui.lockstatus_list = [None] * len(ui.devs_list)
         ui.setupstatus_list = [None] * len(ui.devs_list)
@@ -161,11 +150,12 @@ def finddev(ui):
         locked_new = [None] * len(ui.devs_list)
         setup_new = [None] * len(ui.devs_list)
         TCG_new = [None] * len(ui.devs_list)
+        not_sure = [None] * len(ui.devs_list)
         
         #for i in range(len(ui.devs_list)):
-        def t_run(i, thread_list, vendor_old, salt_old, pba_old, msid_old, locked_new, setup_new, TCG_new):
+        def t_run(i, thread_list, vendor_old, salt_old, pba_old, msid_old, locked_new, setup_new, TCG_new, not_sure):
             queryText = os.popen(ui.prefix + 'sedutil-cli --query ' + ui.devs_list[i]).read()
-            
+
             if ui.opal_ver_list[i] == 'Pyrite':
                 p1 = 'PYRITE 1 function'
                 p2 = 'PYRITE 2 function'
@@ -181,7 +171,7 @@ def finddev(ui):
                 if ui.vendor_list[i] == vendor_old[j] and ui.salt_list[i] == salt_old[j]:
                     old_idx = j
                     
-            msid = 'N/A'
+            
             
             txt_TCG = "Locked = "
             isTCG = re.search(txt_TCG, queryText)
@@ -189,16 +179,6 @@ def finddev(ui):
                 m_user = None
                 if old_idx >= 0:
                     ui.msid_list[i] = msid_old[old_idx]
-                else:
-                    txt_msid = os.popen(ui.prefix + "sedutil-cli --printDefaultPassword " + ui.devs_list[i] ).read()
-                    
-                    if txt_msid != '' :
-                        regex_msid = 'MSID:\s*([A-z0-9]*)'
-                        mm = re.search(regex_msid, txt_msid)
-                        if mm:
-                            msid = mm.group(1)
-                    
-                    ui.msid_list[i] = msid
                 
                 regex_users = "Locking Users = ([0-9]+)"
                 m_user = re.search(regex_users, queryText)
@@ -214,38 +194,31 @@ def finddev(ui):
                 
                 
                 txt_L = "Locked = Y"
-                txt_S = "LockingEnabled = Y"
-                #msidText = os.popen(ui.prefix + 'sedutil-cli -n -t --getmbrsize ' + msid + ' ' + ui.devs_list[i]).read()
-                #m = re.search('Shadow', msidText)
-                pwd = lockhash.get_val() + ui.salt_list[i]
-                
-                hash_pwd = lockhash.hash_pass(pwd, ui.salt_list[i], ui.msid_list[i])
-                timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                timeStr = timeStr[2:]
-                auditText = os.popen(ui.prefix + 'sedutil-cli -n -t -u --auditread ' + hash_pwd + ' User' + m_user.group(1) + ' ' + ui.devs_list[i]).read()
-                m = re.search('Fidelity Audit Log', auditText)
+                txt_NS = "LockingEnabled = N"
+
                 
                 isLocked = re.search(txt_L, queryText)
-                isSetup = (re.search(txt_S, queryText) != None) and m
+                isNotSetup = re.search(txt_NS, queryText)
             
                 if isLocked:
                     locked_new[i] = True
                     setup_new[i] = True
                     TCG_new[i] = True
+                    not_sure[i] = False
                     ui.lockstatus_list[i] = 'Locked'
                     ui.setupstatus_list[i] = 'Yes'
-                elif isSetup:
-                    locked_new[i] = False
-                    setup_new[i] = True
-                    TCG_new[i] = True
-                    ui.lockstatus_list[i] = 'Unlocked'
-                    ui.setupstatus_list[i] = 'Yes'
-                else:
+                elif isNotSetup:
                     locked_new[i] = False
                     setup_new[i] = False
                     TCG_new[i] = True
+                    not_sure[i] = False
                     ui.lockstatus_list[i] = 'Unlocked'
                     ui.setupstatus_list[i] = 'No'
+                else:
+                    locked_new[i] = False
+                    TCG_new[i] = True
+                    not_sure[i] = True
+                    ui.lockstatus_list[i] = 'Unlocked'
                     
                 if isSup and old_idx < 0:
                     ui.pba_list[i] = "N/A"
@@ -261,6 +234,18 @@ def finddev(ui):
                 else:
                     ui.blockSID_list[i] = "Not Supported"
                     
+            else:
+                ui.msid_list[i] = 'N/A'
+                ui.blockSID_list[i] = 'N/A'
+                ui.pba_list[i] = 'N/A'
+                ui.user_list[i] = 'N/A'
+                ui.lockstatus_list[i] = 'N/A'
+                ui.setupstatus_list[i] = 'N/A'
+                
+                locked_new[i] = False
+                setup_new[i] = False
+                TCG_new[i] = False
+                not_sure[i] = False
             #gobject.idle_add(cleanup, i, thread_list)
         
         #def cleanup(i, thread_list):
@@ -271,7 +256,7 @@ def finddev(ui):
         
         count = 0
         for d in ui.devs_list:
-            thread_list[count] = threading.Thread(target=t_run, args=(count, thread_list, vendor_old, salt_old, pba_old, msid_old, locked_new, setup_new, TCG_new))
+            thread_list[count] = threading.Thread(target=t_run, args=(count, thread_list, vendor_old, salt_old, pba_old, msid_old, locked_new, setup_new, TCG_new, not_sure))
             thread_list[count].start()
             count = count + 1
             
@@ -286,11 +271,12 @@ def finddev(ui):
                 ui.setup_list.append(i)
                 ui.tcg_list.append(i)
             elif setup_new[i]:
-                ui.unlocked_list.append(i)
                 ui.setup_list.append(i)
                 ui.tcg_list.append(i)
-            elif TCG_new[i]:
+            elif TCG_new[i] and not not_sure[i]:
                 ui.nonsetup_list.append(i)
+                ui.tcg_list.append(i)
+            elif TCG_new[i]:
                 ui.tcg_list.append(i)
         if tcg_count > ui.MAX_DEV:
             ui.msg_err('' + str(tcg_count) + ' TCG drives were detected but your license only supports ' + str(ui.MAX_DEV) + ' TCG drives.  Only the first ' + str(ui.MAX_DEV) + ' TCG drives are listed.')
@@ -306,6 +292,7 @@ def finddev(ui):
         ui.vendor_list = []
         ui.series_list = []
         ui.pba_list = []
+        ui.encsup_list = []
         ui.msg_err('No drives detected.')
 
 def run_setupFull(button, ui):
@@ -331,7 +318,7 @@ def run_setupFull(button, ui):
     elif ui.bad_pw.has_key(pw_trim):
         ui.msg_err("This password is on the blacklist of bad passwords, please enter a stronger password.")
         return
-    elif pw_trim != pw_trim_confirm:
+    elif pw != pw_confirm:
         ui.msg_err("The entered passwords do not match.")
         return
     elif ui.VERSION % 2 == 1 and ui.pass_sav.get_active():
@@ -342,6 +329,7 @@ def run_setupFull(button, ui):
         if not os.path.isdir(drive):
             ui.msg_err('Selected USB not detected')
             return
+    #if no USB detected and premium version, return
     
     if not ui.warned:
         message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_YES_NO, parent = ui)
@@ -354,10 +342,11 @@ def run_setupFull(button, ui):
             ui.new_pass_entry.get_buffer().delete_text(0,-1)
             ui.confirm_pass_entry.get_buffer().delete_text(0,-1)
             ui.op_instr.set_text('Re-enter and re-confirm the password to verify.')
-            ui.dev_single.show()
-            ui.label_dev2.show()
-            ui.dev_select.hide()
-            ui.label_dev.hide()
+            #ui.dev_single.set_text(ui.dev_select.get_active_text())
+            #ui.dev_single.show()
+            #ui.label_dev2.show()
+            #ui.dev_select.hide()
+            #ui.label_dev.hide()
         else:
             message.destroy()
         return
@@ -395,7 +384,8 @@ def run_setupFull(button, ui):
             
         def t1_run(e, i, thread_list, result_list, status_list, count):
             dev = ui.devs_list[i]
-            password = lockhash.hash_pass(ui.new_pass_entry.get_text(), ui.salt_list[i], ui.msid_list[i])
+            pw_trim = re.sub('\s','',ui.new_pass_entry.get_text())
+            password = lockhash.hash_pass(pw_trim, ui.salt_list[i], ui.msid_list[i])
             if not e.isSet():
                 queryText = os.popen(ui.prefix + 'sedutil-cli --query ' + dev).read()
                 if not e.isSet():
@@ -455,7 +445,7 @@ def run_setupFull(button, ui):
             
         
         def cleanup1(i, status, password, thread_list, result_list, status_list, count):
-            
+            status_list[count] = status
             if status != 0:
                 result_list[count] = 1
             else :
@@ -482,7 +472,7 @@ def run_setupFull(button, ui):
             thread_list[count].start()
             count = count + 1
         
-        t2 = threading.Thread(target=timeout_track, args=(ui, 30.0 * len(selected_list), start_time, thread_list, result_list, e_to, selected_list, status_list, setupFull_cleanup, -1))
+        t2 = threading.Thread(target=timeout_track, args=(ui, 60.0 * len(selected_list), start_time, thread_list, result_list, e_to, selected_list, status_list, setupFull_cleanup, -1))
         t2.start()
             
     else:
@@ -504,25 +494,15 @@ def run_setupPBA(button, ui):
         if res1 == gtk.RESPONSE_OK:
             ui.setup_finish()
 
-def run_pbaWrite(button, ui, mode):
+def run_pbaWrite(button, ui, mode):#adapt to handle
     status = -1
     password = ""
-    index = ui.dev_select.get_active()
+    
     dev_idx = -1
     if mode == 0:
         if ui.pass_sav.get_active() and len(ui.drive_list) == 0:
             ui.msg_err('No USB selected for Save to USB.')
             return
-        dev_idx = index
-        ui.devname = ui.devs_list[dev_idx]
-        if ui.VERSION == 3 and ui.check_pass_rd.get_active():
-            password = passReadUSB(ui, ui.dev_vendor.get_text(), ui.dev_sn.get_text())
-            if password == None or password == 'x':
-                ui.msg_err('No password found for the drive.')
-                return
-        else:
-            password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[dev_idx], ui.dev_msid.get_text())
-            ui.pass_entry.get_buffer().delete_text(0,-1)
         if ui.VERSION % 2 == 1 and ui.pass_sav.get_active():
             drive = ui.drive_menu.get_active_text()
             dev_os = platform.system()
@@ -531,90 +511,112 @@ def run_pbaWrite(button, ui, mode):
             if not os.path.isdir(drive):
                 ui.msg_err('Selected USB could not be detected')
                 return
+        
+    selected_list = []
+    if ui.toggleSingle_radio.get_active():
+        dev_idx = ui.dev_select.get_active()
+        if mode == 0:
+            selected_list = [dev_idx]
+        else:
+            selected_list = [ui.sel_list[index]]
     else:
-        dev_idx = ui.nonsetup_list[ui.sel_list[index]]
-        ui.devname = ui.devs_list[ui.sel_list[index]]
-        password = lockhash.hash_pass(ui.new_pass_entry.get_text(), ui.salt_list[dev_idx], ui.msid_list[dev_idx])
+        index = 0
+        selected_list = []
+        iter = ui.liststore.get_iter_first()
+        while iter != None:
+            selected = ui.liststore.get_value(iter, 0)
+            if selected:
+                if mode == 0:
+                    selected_list.append(ui.setup_list[index])
+                else:
+                    selected_list.append(ui.mbr_list[index])
+            iter = ui.liststore.iter_next(iter)
+            index = index + 1
+        if len(selected_list) == 0:
+            ui.msg_err('No drives selected.')
+            return
+        
+        #password = lockhash.hash_pass(ui.new_pass_entry.get_text(), ui.salt_list[dev_idx], ui.msid_list[dev_idx])
     ui.start_spin()
     ui.pba_wait_instr.show()
     
-    def t1_run():
-        if password != None:
-            ui.process = subprocess.Popen( [ui.prefix + "sedutil-cli", "-n", "-t", "--loadpbaimage", password, "n", ui.devname] )
+    def t1_run(e_to, i, thread_list, result_list, status_list, count, mode):
+        password = None
+        if mode == 0 and ui.VERSION == 3 and ui.check_pass_rd.get_active():
+            password = passReadUSB(ui, ui.vendor_list[i], ui.sn_list[i])
+        elif mode == 0:
+            pw_trim = re.sub('\s','',ui.pass_entry.get_text())
+            password = lockhash.hash_pass(pw_trim, ui.salt_list[i], ui.msid_list[i])
+        else:
+            pw_trim = re.sub('\s','',ui.new_pass_entry.get_text())
+            password = lockhash.hash_pass(pw_trim, ui.salt_list[i], ui.msid_list[i])
+        
+        if password != None and password != 'x':
+            ui.process = subprocess.Popen( [ui.prefix + "sedutil-cli", "-n", "-t", "--loadpbaimage", password, "n", ui.devs_list[i]] )
             ui.process.communicate()
             rc = ui.process.returncode
-            gobject.idle_add(cleanup, rc)
+            if rc == 0:
+                status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable on " + password + " " + ui.devs_list[i] )
+                status1 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRDone on " + password + " " + ui.devs_list[i] )
+                p = os.popen(ui.prefix + "sedutil-cli -n -t --pbaValid " +  password + " " + ui.devs_list[i]).read()
+                pba_regex = 'PBA image version\s*:\s*(\S+)'
+                m1 = re.search(pba_regex, p)
+                if m1:
+                    if ui.VERSION % 2 == 1 and mode == 0 and ui.pass_sav.get_active():
+                        passSaveUSB(ui, password, ui.drive_menu.get_active_text(), ui.dev_vendor.get_text(), ui.dev_sn.get_text())
+                        timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                        timeStr = timeStr[2:]
+                        statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 18" + timeStr + " " + password + " Admin1 " + ui.devs_list[i])
+                    pba_ver = m1.group(1)
+                    #ui.msg_ok("Preboot image " + pba_ver + " written to " + ui.devname + " successfully.")
+                    if mode == 0:
+                        ui.pba_list[dev_idx] = pba_ver
+                        timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                        timeStr = timeStr[2:]
+                        statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 03" + timeStr + " " + password + " Admin1 " + ui.devs_list[i])
+                        statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 08" + timeStr + " " + password + " Admin1 " + ui.devs_list[i])
+                    else:
+                        ui.pba_list[dev_idx] = pba_ver
+            gobject.idle_add(cleanup, rc, i, thread_list, result_list, status_list, count, mode)
         else:
-            gobject.idle_add(cleanup, 1)
+            gobject.idle_add(cleanup, -1, i, thread_list, result_list, status_list, count, mode)
         
         
-    def cleanup(status):
+    def cleanup(status, dev_idx, thread_list, result_list, status_list, count, mode):
         ui.stop_spin()
-        t1.join()
-        index = ui.dev_select.get_active()
-        if mode == 0:
-            dev_idx = index
-        else:
-            dev_idx = ui.nonsetup_list[ui.sel_list[index]]
-            #print dev_idx
+        thread_list[count].join()
+        status_list[count] = status
         if status != 0 :
-            dev_idx = -1
             if status == ui.NOT_AUTHORIZED or status == ui.AUTHORITY_LOCKED_OUT:
                 pwd = lockhash.get_val() + ui.salt_list[dev_idx]
                 hash_pwd = lockhash.hash_pass(pwd, ui.salt_list[dev_idx], ui.msid_list[dev_idx])
                 timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
                 timeStr = timeStr[2:]
-                statusAW = os.system(ui.prefix + "sedutil-cli -n -t -u --auditwrite 04" + timeStr + " " + hash_pwd + " User" + ui.user_list[dev_idx] + " " + ui.devname)
+                statusAW = os.system(ui.prefix + "sedutil-cli -n -t -u --auditwrite 04" + timeStr + " " + hash_pwd + " User" + ui.user_list[dev_idx] + " " + ui.devs_list[dev_idx])
                 if status == ui.AUTHORITY_LOCKED_OUT:
-                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t -u --auditwrite 10" + timeStr + " " + hash_pwd + " User" + ui.user_list[dev_idx] + " " + ui.devname)
-                    ui.msg_err("Error: Writing preboot image to " + ui.devname + " failed. Retry limit reached, please power cycle your drive to try again.")
-                else:
-                    ui.msg_err("Error: Writing preboot image to " + ui.devname + " failed. Invalid password.")
-            elif status == ui.SP_BUSY:
-                ui.msg_err('SP_BUSY')
-            else:
-                ui.msg_err("Error: Writing preboot image to " + ui.devname + " failed.")
-            
-            ui.op_instr.show()
-            if mode == 1:
-                ui.setupSelect.show()
-            else:
-                ui.box_pass.show()
-                ui.check_box_pass.show()
-                ui.updatePBA_button.show()
-                ui.cancel_button.show()
+                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t -u --auditwrite 10" + timeStr + " " + hash_pwd + " User" + ui.user_list[dev_idx] + " " + ui.devs_list[dev_idx])
+            result_list[count] = 1
         else :
-            status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable on " + password + " " + ui.devname )
-            status1 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRDone on " + password + " " + ui.devname )
-            p = os.popen(ui.prefix + "sedutil-cli -n -t --pbaValid " +  password + " " + ui.devname).read()
-            pba_regex = 'PBA image version\s*:\s*(\S+)'
-            m1 = re.search(pba_regex, p)
-            if m1:
-                if ui.VERSION % 2 == 1 and mode == 0 and ui.pass_sav.get_active():
-                    passSaveUSB(ui, password, ui.drive_menu.get_active_text(), ui.dev_vendor.get_text(), ui.dev_sn.get_text())
-                    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                    timeStr = timeStr[2:]
-                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 18" + timeStr + " " + password + " Admin1 " + ui.devname)
-                pba_ver = m1.group(1)
-                ui.msg_ok("Preboot image " + pba_ver + " written to " + ui.devname + " successfully.")
-                if mode == 0:
-                    ui.pba_list[dev_idx] = pba_ver
-                    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                    timeStr = timeStr[2:]
-                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 03" + timeStr + " " + password + " Admin1 " + ui.devname)
-                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 08" + timeStr + " " + password + " Admin1 " + ui.devname)
-                else:
-                    ui.pba_list[dev_idx] = pba_ver
-            if mode == 1:
-                ui.setup_finish()
-            else:
-                ui.returnToMain()
+            result_list[count] = 0
+            
+            #if mode == 1:
+            #    ui.setup_finish()
+            #else:
+            #    ui.returnToMain()
+        thread_list[count].join()
     
-    e = threading.Event()
-    t1 = threading.Thread(target=t1_run, args=())
-    t1.start()
+    e_to = threading.Event()
     start_time = time.time()
-    t2 = threading.Thread(target=timeout_track, args=(ui, 600.0, start_time, [t1], None, e, None, None, timeout_cleanup, -1))
+    thread_list = [None] * len(selected_list)
+    result_list = [None] * len(selected_list)
+    status_list = [None] * len(selected_list)
+    count = 0
+    for i in selected_list:
+        thread_list[count] = threading.Thread(target=t1_run, args=(e_to, i, thread_list, result_list, status_list, count, mode))
+        thread_list[count].start()
+        count = count + 1
+        
+    t2 = threading.Thread(target=timeout_track, args=(ui, 600.0*len(selected_list), start_time, thread_list, result_list, e_to, selected_list, status_list, pbaWrite_cleanup, mode))
     t2.start()
 
 def run_changePW(button, ui):
@@ -650,7 +652,7 @@ def run_changePW(button, ui):
     elif ui.bad_pw.has_key(pw_trim):
         ui.msg_err("The new password is on the blacklist of weak passwords, please enter a stronger password.")
         return
-    elif pw_trim != pw_trim_confirm:
+    elif new_pass != new_pass_confirm:
         ui.msg_err("The new entered passwords do not match.")
         return
     elif ui.VERSION % 2 == 1 and ui.pass_sav.get_active():
@@ -688,7 +690,8 @@ def run_changePW(button, ui):
                     noUSB = True
             if not e.isSet() and not noPW:
                 if old_hash != None and old_hash != 'x':
-                    new_hash = lockhash.hash_pass(ui.new_pass_entry.get_text(), ui.salt_list[index], ui.msid_list[index])
+                    pw_new_trim = re.sub('\s','',ui.new_pass_entry.get_text())
+                    new_hash = lockhash.hash_pass(pw_new_trim, ui.salt_list[index], ui.msid_list[index])
                     if not e.isSet():
                         if ui.VERSION % 2 == 1 and level == 1:
                             status = os.system(ui.prefix + "sedutil-cli -n -t -u --setpassword " + old_hash + " User1 " + new_hash + " " + dev)
@@ -697,19 +700,19 @@ def run_changePW(button, ui):
                             else:
                                 status_final = status
                         else:
-                            status1 = os.system(ui.prefix + "sedutil-cli -n -t --setSIDPassword " + old_hash + " " + new_hash + " " + dev)
+                            status1 = os.system(ui.prefix + "sedutil-cli -n -t --setAdmin1Pwd " + old_hash + " " + new_hash + " " + dev)
                             status_final = status1
                             if e.isSet() and status == 0:
-                                status1 = os.system(ui.prefix + "sedutil-cli -n -t --setSIDPassword " + new_hash + " " + old_hash + " " + dev)
+                                status1 = os.system(ui.prefix + "sedutil-cli -n -t --setAdmin1Pwd " + new_hash + " " + old_hash + " " + dev)
                             elif status1 == 0:
-                                status2 = os.system(ui.prefix + "sedutil-cli -n -t --setAdmin1Pwd " + old_hash + " " + new_hash + " " + dev)
+                                status2 = os.system(ui.prefix + "sedutil-cli -n -t --setSIDPassword " + old_hash + " " + new_hash + " " + dev)
                                 status_final = status2
                                 if e.isSet():
                                     if status2 == 0:
                                         status2 = os.system(ui.prefix + "sedutil-cli -n -t --setAdmin1Pwd " + new_hash + " " + old_hash + " " + dev)
                                         status1 = os.system(ui.prefix + "sedutil-cli -n -t --setSIDPassword " + new_hash + " " + old_hash + " " + dev)
-                                if status2 == ui.AUTHORITY_LOCKED_OUT or status2 == ui.NOT_AUTHORIZED:
-                                    status1 = os.system(ui.prefix + "sedutil-cli -n -t --setSIDPassword " + new_hash + " " + old_hash + " " + dev)
+                                elif status2 == ui.AUTHORITY_LOCKED_OUT or status2 == ui.NOT_AUTHORIZED:
+                                    status1 = os.system(ui.prefix + "sedutil-cli -n -t --setAdmin1Pwd " + new_hash + " " + old_hash + " " + dev)
                                 elif status2 == 0:
                                     if ui.VERSION % 2 == 1 and ui.pass_sav.get_active():
                                         passSaveUSB(ui, new_hash, ui.drive_menu.get_active_text(), ui.vendor_list[index], ui.sn_list[index])
@@ -777,15 +780,9 @@ def run_changePW(button, ui):
         thread_list[count].start()
         count = count + 1
         
-    t2 = threading.Thread(target=timeout_track, args=(ui, 30.0*len(selected_list), start_time, thread_list, result_list, e_to, selected_list, status_list, changePW_cleanup, -1))
+    t2 = threading.Thread(target=timeout_track, args=(ui, 60.0*len(selected_list), start_time, thread_list, result_list, e_to, selected_list, status_list, changePW_cleanup, -1))
     t2.start()
     
-    #ui.confirm_pass_entry.get_buffer().delete_text(0,-1)
-    #gobject.idle_add(cleanup, result_list, e_to, selected_list)
-    
-    
-    
-
 def run_setupUSB(button, ui, *args):
     message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_YES_NO, parent = ui)
     message.set_markup("Warning: You will lose any files you have on the USB. Do you want to proceed?")
@@ -960,7 +957,7 @@ def run_setupUser(button, ui):
     elif ui.bad_pw.has_key(pw_u_trim):
         ui.msg_err("This password is on the blacklist of bad passwords, please enter a stronger password.")
         return
-    elif pw_u_trim != pw_u_trim_confirm:
+    elif pw_u != pw_u_confirm:
         ui.msg_err("The entered passwords do not match.")
         return
     
@@ -981,7 +978,8 @@ def run_setupUser(button, ui):
                 noPW = True
             ui.pass_usb = ''
         else:
-            password_a = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[index], ui.dev_msid.get_text())
+            pw_trim = re.sub('\s', '', ui.pass_entry.get_text())
+            password_a = lockhash.hash_pass(pw_trim, ui.salt_list[index], ui.dev_msid.get_text())
         if ui.VERSION % 2 == 1 and ui.pass_sav.get_active():
             drive = ''
             if ui.pass_usb != '':
@@ -998,7 +996,9 @@ def run_setupUser(button, ui):
             notify_TO = True
             gobject.idle_add(cleanup, -1, notify_TO, noPW, noUSB)
         elif not noPW and not noUSB:
-            password_u = lockhash.hash_pass(ui.new_pass_entry.get_text(), ui.salt_list[index], ui.dev_msid.get_text())
+            new_pw = ui.new_pass_entry.get_text()
+            new_pw_trim = re.sub('\s', '', new_pw)
+            password_u = lockhash.hash_pass(new_pw_trim, ui.salt_list[index], ui.dev_msid.get_text())
             if e.isSet():
                 notify_TO = True
                 gobject.idle_add(cleanup, -1, notify_TO, noPW, noUSB)
@@ -1079,7 +1079,7 @@ def run_setupUser(button, ui):
     t1 = threading.Thread(target=t1_run, args=(e,))
     t1.start()
     start_time = time.time()
-    t2 = threading.Thread(target=timeout_track, args=(ui, 30.0, start_time, [t1], None, e, None, None, timeout_cleanup, -1))
+    t2 = threading.Thread(target=timeout_track, args=(ui, 60.0, start_time, [t1], None, e, None, None, timeout_cleanup, -1))
     t2.start()
         
 def run_removeUser(button, ui):
@@ -1145,6 +1145,8 @@ def run_removeUser(button, ui):
                 statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 03" + timeStr + " " + password_a + " Admin1 " + ui.devname)
                 statusAW1 = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 10" + timeStr + " " + password_a + " Admin1 " + ui.devname)
                 rc = 0
+            else:
+                rc = None
         gobject.idle_add(cleanup, rc, notify_TO, no_pw)
     
     def cleanup(status, op_to, no_pw):
@@ -1181,7 +1183,7 @@ def run_removeUser(button, ui):
     t1 = threading.Thread(target=t1_run, args=(e,))
     t1.start()
     start_time = time.time()
-    t2 = threading.Thread(target=timeout_track, args=(ui, 30.0, start_time, [t1], None, e, None, None, timeout_cleanup, -1))
+    t2 = threading.Thread(target=timeout_track, args=(ui, 60.0, start_time, [t1], None, e, None, None, timeout_cleanup, -1))
     t2.start()
         
 def run_unlockPBA(button, ui, reboot):
@@ -1227,7 +1229,8 @@ def run_unlockPBA(button, ui, reboot):
             if password == None or password == 'x':
                 noPW = True
         else:
-            password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[i], ui.msid_list[i])
+            pw_trim = re.sub('\s','',ui.pass_entry.get_text())
+            password = lockhash.hash_pass(pw_trim, ui.salt_list[i], ui.msid_list[i])
         #print dev + ' ' + password
         if not e.isSet() and not noPW:
             if ui.VERSION % 2 == 1 and ui.auth_menu.get_active() == 1:
@@ -1335,11 +1338,9 @@ def run_unlockPBA(button, ui, reboot):
         thread_list[count].start()
         count = count + 1
     
-    t2 = threading.Thread(target=timeout_track, args=(ui, 30.0*len(selected_list), start_time, thread_list, result_list, e_to, selected_list, status_list, unlockPBA_cleanup, reboot))
+    t2 = threading.Thread(target=timeout_track, args=(ui, 60.0*len(selected_list), start_time, thread_list, result_list, e_to, selected_list, status_list, unlockPBA_cleanup, reboot))
     t2.start()
         
-        
-    
 def run_unlockUSB(button, ui, mode, msg):
     if msg:
         msg.destroy()
@@ -1458,131 +1459,8 @@ def run_unlockUSB(button, ui, mode, msg):
             thread_list[count].start()
             count = count + 1
         
-        t2 = threading.Thread(target=timeout_track, args=(ui, 30.0*len(ui.locked_list), start_time, thread_list, result_list, e_to, ui.locked_list, status_list, unlockUSB_cleanup, mode))
+        t2 = threading.Thread(target=timeout_track, args=(ui, 60.0*len(ui.locked_list), start_time, thread_list, result_list, e_to, ui.locked_list, status_list, unlockUSB_cleanup, mode))
         t2.start()
-        
-        
-def run_lockDrive(button, ui):
-    if ui.pass_sav.get_active() and len(ui.drive_list) == 0:
-        ui.msg_err('No USB selected for Save to USB.')
-        return
-    selected_list = []
-    
-    if ui.toggleSingle_radio.get_active():
-        index = ui.dev_select.get_active()
-        selected_list = [index]
-    else:
-        index = 0
-        iter = ui.liststore.get_iter_first()
-        while iter != None:
-            selected = ui.liststore.get_value(iter, 0)
-            if selected:
-                selected_list.append(ui.unlocked_list[index])
-            iter = ui.liststore.iter_next(iter)
-            index = index + 1
-        if len(selected_list) == 0:
-            ui.msg_err('No drives selected.')
-            return
-    
-    if ui.main_idx in selected_list:
-        ui.msg_err('If you want to lock the active drive, power cycle your system.')
-        return
-    
-    password = ""
-    if ui.VERSION % 2 == 1 and ui.pass_sav.get_active():
-        drive = ui.drive_menu.get_active_text()
-        dev_os = platform.system()
-        if dev_os == 'Windows':
-            drive = drive + '\\'
-        if not os.path.isdir(drive):
-            ui.msg_err('Selected USB not detected')
-            return
-    ui.start_spin()
-    ui.wait_instr.show()
-    
-    def t1_run(e, index, thread_list, result_list, status_list, count):
-        notify_TO = False
-        
-        dev = ui.devs_list[index]
-        
-        noPW = False
-        
-        status_final = -1
-        
-        if ui.VERSION == 3 and ui.check_pass_rd.get_active():
-            password = passReadUSB(ui, ui.vendor_list[index], ui.sn_list[index])
-            if password == None or password == 'x':
-                noPW = True
-        else:
-            password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[index], ui.msid_list[index])
-
-        
-        
-        if not e.isSet() and not noPW:
-            status1 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBRDone on " + password + " " + dev )
-            if status1 != 0:
-                if status1 == ui.NOT_AUTHORIZED or status1 == ui.AUTHORITY_LOCKED_OUT:
-                    pwd = lockhash.get_val() + salt_list[index]
-                    hash_pwd = lockhash.hash_pass(pwd, ui.salt_list[index], ui.msid_list[index])
-                    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                    timeStr = timeStr[2:]
-                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t -u --auditwrite 04" + timeStr + " " + hash_pwd + " User" + ui.user_list[index] + " " + dev)
-                    if status == ui.AUTHORITY_LOCKED_OUT:
-                        statusAW = os.system(ui.prefix + "sedutil-cli -n -t -u --auditwrite 10" + timeStr + " " + hash_pwd + " User" + ui.user_list[index] + " " + dev)
-                status_final = status1
-            else:
-                status2 =  os.system(ui.prefix + "sedutil-cli -n -t --setMBREnable on " + password + " " + dev )
-                if not e.isSet():
-                    status3 =  os.system(ui.prefix + "sedutil-cli -n -t --setLockingrange " + ui.LKRNG + " LK "
-                            + password + " " + dev )
-                    status_final = status1 | status2 | status3
-                    if ui.VERSION % 2 == 1 and ui.pass_sav.get_active():
-                        #print "lockDrive passSaveUSB " + password + " " + ui.auth_menu.get_active_text()
-                        passSaveUSB(ui, password, ui.drive_menu.get_active_text(), ui.dev_vendor.get_text(), ui.dev_sn.get_text())
-                        timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                        timeStr = timeStr[2:]
-                        statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 18" + timeStr + " " + password + " Admin1 " + dev)
-                    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                    timeStr = timeStr[2:]
-                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 03" + timeStr + " " + password + " Admin1 " + dev)
-                    
-                    statusAW = os.system(ui.prefix + "sedutil-cli -n -t --auditwrite 17" + timeStr + " " + password + " Admin1 " + dev)
-                    
-                    if ui.pba_list[index] == 'N/A':
-                        p = os.popen(ui.prefix + "sedutil-cli -n -t --pbaValid " + password + " " + dev).read()
-                        pba_regex = 'PBA image version\s*:\s*(\S+)'
-                        m1 = re.search(pba_regex, p)
-                        if m1:
-                            pba_ver = m1.group(1)
-                            ui.pba_list[index] = pba_ver
-        gobject.idle_add(cleanup1, index, status_final, thread_list, result_list, status_list, count, noPW)
-        
-        
-
-    def cleanup1(i, status, thread_list, result_list, status_list, count, no_pw):
-        if status != 0 or no_pw:
-            result_list[count] = 1
-        else :
-            result_list[count] = 0
-        status_list[count] = status
-        thread_list[count].join()
-        
-                
-    e_to = threading.Event()
-    start_time = time.time()
-    
-    
-    thread_list = [None] * len(selected_list)
-    result_list = [None] * len(selected_list)
-    status_list = [None] * len(selected_list)
-    count = 0
-    for i in selected_list:
-        thread_list[count] = threading.Thread(target=t1_run, args=(e_to, i, thread_list, result_list, status_list, count))
-        thread_list[count].start()
-        count = count + 1
-    
-    t2 = threading.Thread(target=timeout_track, args=(ui, 30.0*len(selected_list), start_time, thread_list, result_list, e_to, selected_list, status_list, lock_cleanup, -1))
-    t2.start()
 
 def run_revertKeep(button, ui):
     selected_list = []
@@ -1624,7 +1502,8 @@ def run_revertKeep(button, ui):
             if password == None or password == 'x':
                 noPW = True
         else:
-            password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[index], dev_msid)
+            pw_trim = re.sub('\s','',ui.pass_entry.get_text())
+            password = lockhash.hash_pass(pw_trim, ui.salt_list[index], dev_msid)
         if not e.isSet() and not noPW:
             timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             timeStr = timeStr[2:]
@@ -1703,11 +1582,8 @@ def run_revertKeep(button, ui):
         thread_list[count].start()
         count = count + 1
         
-    t2 = threading.Thread(target=timeout_track, args=(ui, 30.0*len(selected_list), start_time, thread_list, result_list, e_to, selected_list, status_list, revertKeep_cleanup, -1))
+    t2 = threading.Thread(target=timeout_track, args=(ui, 60.0*len(selected_list), start_time, thread_list, result_list, e_to, selected_list, status_list, revertKeep_cleanup, -1))
     t2.start()
-        
-        
-
         
 def run_revertErase(button, ui):
     text_a = ui.revert_agree_entry.get_text()
@@ -1725,10 +1601,10 @@ def run_revertErase(button, ui):
             ui.pass_entry.get_buffer().delete_text(0,-1)
             ui.revert_agree_entry.get_buffer().delete_text(0,-1)
             ui.op_instr.set_text('Re-enter the password to verify that you want to erase data for the drive(s).')
-            ui.dev_single.show()
-            ui.label_dev2.show()
-            ui.dev_select.hide()
-            ui.label_dev.hide()
+            #ui.dev_single.show()
+            #ui.label_dev2.show()
+            #ui.dev_select.hide()
+            #ui.label_dev.hide()
         else:
             message.destroy()
             
@@ -1777,7 +1653,8 @@ def run_revertErase(button, ui):
                     if password == None or password == 'x':
                         noPW = True
                 else:
-                    password = lockhash.hash_pass(ui.pass_entry.get_text(), ui.salt_list[index], ui.msid_list[index])
+                    pw_trim = re.sub('\s','',ui.pass_entry.get_text())
+                    password = lockhash.hash_pass(pw_trim, ui.salt_list[index], ui.msid_list[index])
                 if not e.isSet() and not noPW:
                     ui.devname = ui.devs_list[index]
                     timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
@@ -1833,7 +1710,7 @@ def run_revertErase(button, ui):
                 thread_list[count].start()
                 count = count + 1
                 
-            t2 = threading.Thread(target=timeout_track, args=(ui, 30.0*len(selected_list), start_time, thread_list, result_list, e_to, selected_list, status_list, revertErase_cleanup, -1))
+            t2 = threading.Thread(target=timeout_track, args=(ui, 60.0*len(selected_list), start_time, thread_list, result_list, e_to, selected_list, status_list, revertErase_cleanup, -1))
             t2.start()
             
                 
@@ -1841,7 +1718,6 @@ def run_revertErase(button, ui):
         else:
             messageA.destroy()
         
-
 def run_revertPSID(button, ui):
     text_a = ui.revert_agree_entry.get_text()
     if text_a.lower() != 'i agree':
@@ -1860,10 +1736,10 @@ def run_revertPSID(button, ui):
             ui.revert_psid_entry.get_buffer().delete_text(0,-1)
             ui.revert_agree_entry.get_buffer().delete_text(0,-1)
             ui.op_instr.set_text('Re-enter ' + ui.devname + '\'s PSID and type \'I agree\' to verify that you want to erase this drive\'s data.')
-            ui.dev_single.show()
-            ui.label_dev2.show()
-            ui.dev_select.hide()
-            ui.label_dev.hide()
+            #ui.dev_single.show()
+            #ui.label_dev2.show()
+            #ui.dev_select.hide()
+            #ui.label_dev.hide()
         else:
             message.destroy()
     else:
@@ -1924,7 +1800,7 @@ def run_revertPSID(button, ui):
             t1 = threading.Thread(target=t1_run, args=())
             t1.start()
             start_time = time.time()
-            t2 = threading.Thread(target=timeout_track, args=(ui, 30.0, start_time, [t1], None, e, None, None, timeout_cleanup, -1))
+            t2 = threading.Thread(target=timeout_track, args=(ui, 60.0, start_time, [t1], None, e, None, None, timeout_cleanup, -1))
             t2.start()
         else:
             message.destroy()
@@ -2026,14 +1902,6 @@ def passSaveUSB(ui, hashed_pwd, drive, mnum, snum, *args):
             ui.confirm_pass_entry.get_buffer().delete_text(0,-1)
             f.close()
     
-def filterLog(button, ui, entries, mode):
-    ui.listStore.clear()
-    for i in range(len(entries)):
-        ui.listStore.append(entries[i])
-    ui.viewAll_button.set_sensitive(mode != 0)
-    ui.viewWarnErr_button.set_sensitive(mode != 1)
-    ui.viewErr_button.set_sensitive(mode != 2)
-        
 def timeout_track(ui, max_time, start_time, op_threads, res_list, e, selected_list, status_list, cleanup_func, val):
     done = False
     d = [0] * len(op_threads)
@@ -2104,6 +1972,7 @@ def setupFull_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
                 else:
                     start_p = False
                 list_p = list_p + ui.devs_list[selected_list[y]]
+                ui.updateDevs(selected_list[y],[2,3])
             else:
                 if not start_f:
                     list_f = list_f + ', '
@@ -2132,11 +2001,92 @@ def setupFull_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
             else:
                 start = False
             liststr = liststr + ui.devs_list[d]
+            ui.updateDevs(d,[2,3])
         ui.msg_ok('Password successfully set up for ' + liststr + '.')
         
         ui.setup_prompt2(selected_list)
 
-
+def pbaWrite_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selected_list, status_list, mode):
+    curr_time = time.time()
+    elapsed_time = curr_time - start_time
+    if elapsed_time >= max_time:
+        e_to.set()
+        for op_thread in op_threads:
+            if op_thread.isAlive():
+                if ui.process != None:
+                    ui.process.terminate()
+                    ui.process = None
+                op_thread.join(0.0)
+    
+    
+    ui.stop_spin()
+    if e_to.isSet():
+        ui.msg_err('Operation timed out.')
+            
+    #print res_list
+    res_sum = sum(res_list)
+    
+    if res_sum != 0:
+        start_f = True
+        start_p = True
+        start_alo = True
+        list_f = ''
+        list_p = ''
+        list_alo = ''
+        count = 0
+        for y in selected_list:
+            ui.devname = ui.devs_list[y]
+            if res_list[count] == 0:
+                ui.query(None,1)
+                if not start_p:
+                    list_p = list_p + ', '
+                else:
+                    start_p = False
+                list_p = list_p + ui.devs_list[y]
+            else:
+                if not start_f:
+                    list_f = list_f + ', '
+                else:
+                    start_f = False
+                list_f = list_f + ui.devs_list[y]
+                if status_list[count] == ui.AUTHORITY_LOCKED_OUT:
+                    if not start_alo:
+                        list_alo = list_alo + ', '
+                    else:
+                        start_alo = False
+                    list_alo = list_alo + ui.devs_list[y]
+            count = count + 1
+        if res_sum == len(res_list):
+            if list_alo == '':
+                ui.msg_err('Preboot image write failed for ' + list_f + '.')
+            else:
+                ui.msg_err('Preboot image write failed for ' + list_f + '. Retry limit reached for ' + list_alo + '.')
+        else:
+            if list_alo == '':
+                ui.msg_err('Preboot image successfully written for ' + list_p + ', but failed for ' + list_f + '.')
+            else:
+                ui.msg_err('Preboot image successfully written for ' + list_p + ', but failed for ' + list_f + '. Retry limit reached for ' + list_alo + '.')
+        if mode == 1:
+            ui.setup_prompt2(selected_list)
+        else:
+            ui.updatePBA_prompt()
+    else:
+        start = True
+        liststr = ''
+        for d in selected_list:
+            ui.devname = ui.devs_list[d]
+            ui.query(None,1)
+            if not start:
+                liststr = liststr + ', '
+            else:
+                start = False
+            liststr = liststr + ui.devs_list[d]
+        ui.msg_ok('Preboot image successfully written for ' + liststr + '.')
+        if mode == 1:
+            ui.setup_finish()
+        else:
+            ui.returnToMain()
+        
 def changePW_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selected_list, status_list, val):
     curr_time = time.time()
     elapsed_time = curr_time - start_time
@@ -2160,8 +2110,10 @@ def changePW_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selec
     if res_sum != 0:
         start_f = True
         start_p = True
+        start_alo = True
         list_f = ''
         list_p = ''
+        list_alo = ''
         count = 0
         for y in selected_list:
             ui.devname = ui.devs_list[y]
@@ -2178,11 +2130,23 @@ def changePW_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selec
                 else:
                     start_f = False
                 list_f = list_f + ui.devs_list[y]
+                if status_list[count] == ui.AUTHORITY_LOCKED_OUT:
+                    if not start_alo:
+                        list_alo = list_alo + ', '
+                    else:
+                        start_alo = False
+                    list_alo = list_alo + ui.devs_list[y]
             count = count + 1
         if res_sum == len(res_list):
-            ui.msg_err('Password change failed for ' + list_f + '.')
+            if list_alo == '':
+                ui.msg_err('Password change failed for ' + list_f + '.')
+            else:
+                ui.msg_err('Password change failed for ' + list_f + '. Retry limit reached for ' + list_alo + '.')
         else:
-            ui.msg_err('Password successfully changed for ' + list_p + ', but failed for ' + list_f + '.')
+            if list_alo == '':
+                ui.msg_err('Password successfully changed for ' + list_p + ', but failed for ' + list_f + '.')
+            else:
+                ui.msg_err('Password successfully changed for ' + list_p + ', but failed for ' + list_f + '. Retry limit reached for ' + list_alo + '.')
         ui.changePW_prompt()
     else:
         start = True
@@ -2221,8 +2185,10 @@ def unlockPBA_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
     if res_sum != 0:
         start_f = True
         start_p = True
+        start_alo = True
         list_f = ''
         list_p = ''
+        list_alo = ''
         count = 0
         for y in selected_list:
             ui.devname = ui.devs_list[y]
@@ -2235,21 +2201,30 @@ def unlockPBA_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
                 list_p = list_p + ui.devs_list[y]
                 ui.lockstatus_list[y] = "Unlocked"
                 
-                #if y in ui.usrsup_list:
-                #    ui.updateDevs(y,[2,3,6])
-                #else:
-                ui.updateDevs(y,[2,3])
+                ui.updateDevs(y,[2])
             else:
                 if not start_f:
                     list_f = list_f + ', '
                 else:
                     start_f = False
                 list_f = list_f + ui.devs_list[y]
+                if status_list[count] == ui.AUTHORITY_LOCKED_OUT:
+                    if not start_alo:
+                        list_alo = list_alo + ', '
+                    else:
+                        start_alo = False
+                    list_alo = list_alo + ui.devs_list[y]
             count = count + 1
         if res_sum == len(res_list):
-            ui.msg_err('Failed to unlock ' + list_f + '.')
+            if list_alo == '':
+                ui.msg_err('Failed to unlock ' + list_f + '.')
+            else:
+                ui.msg_err('Failed to unlock ' + list_f + '. Retry limit reached for ' + list_alo + '.')
         else:
-            ui.msg_err(list_p + 'successfully unlocked, but failed to unlock' + list_f + '.')
+            if list_alo == '':
+                ui.msg_err(list_p + 'successfully unlocked, but failed to unlock' + list_f + '.')
+            else:
+                ui.msg_err(list_p + 'successfully unlocked, but failed to unlock' + list_f + '. Retry limit reached for ' + list_alo + '.')
         ui.unlock_prompt(ui)
     else:
         if reboot:
@@ -2266,10 +2241,7 @@ def unlockPBA_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
                     start = False
                 liststr = liststr + ui.devs_list[d]
                 ui.lockstatus_list[d] = "Unlocked"
-                #if d in ui.usrsup_list:
-                #    ui.updateDevs(d,[2,3,6])
-                #else:
-                ui.updateDevs(d,[2,3])
+                ui.updateDevs(d,[2])
             ui.msg_ok(liststr + ' successfully unlocked.')
             
             ui.returnToMain()
@@ -2297,8 +2269,10 @@ def unlockUSB_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
     if res_sum != 0:
         start_f = True
         start_p = True
+        start_alo = True
         list_f = ''
         list_p = ''
+        list_alo = ''
         idx = 0
         for y in ui.locked_list:
             ui.devname = ui.devs_list[y]
@@ -2310,114 +2284,35 @@ def unlockUSB_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
                     start_p = False
                 list_p = list_p + ui.devs_list[y]
                 ui.lockstatus_list[y] = "Unlocked"
-                #if y in ui.usrsup_list:
-                #    ui.updateDevs(y,[2,3,6])
-                #else:
-                ui.updateDevs(y,[2,3])
+                ui.updateDevs(y,[2])
             else:
                 if not start_f:
                     list_f = list_f + ', '
                 else:
                     start_f = False
                 list_f = list_f + ui.devs_list[ui.locked_list[y]]
+                if status_list[idx] == ui.AUTHORITY_LOCKED_OUT:
+                    if not start_alo:
+                        list_alo = list_alo + ', '
+                    else:
+                        start_alo = False
+                    list_alo = list_alo + ui.devs_list[y]
             idx = idx + 1
         if res_sum == len(res_list):
-            ui.msg_err('Failed to unlock ' + list_f + '.')
+            if list_alo == '':
+                ui.msg_err('Failed to unlock ' + list_f + '.')
+            else:
+                ui.msg_err('Failed to unlock ' + list_f + '. Retry limit reached for ' + list_alo + '.')
         else:
-            ui.msg_err(list_p + 'successfully unlocked, but failed to unlock' + list_f + '.')
+            if list_alo == '':
+                ui.msg_err(list_p + 'successfully unlocked, but failed to unlock' + list_f + '.')
+            else:
+                ui.msg_err(list_p + 'successfully unlocked, but failed to unlock' + list_f + '. Retry limit reached for ' + list_alo + '.')
         ui.unlock_prompt(ui)
     else:
         #if mode == 0:
         ui.reboot()
-        #else:
-        #    start = True
-        #    liststr = ''
-        #    for d in ui.locked_list:
-        #        ui.devname = ui.devs_list[d]
-        #        ui.query(None,1)
-        #        if not start:
-        #            liststr = liststr + ', '
-        #        else:
-        #            start = False
-        #        liststr = liststr + ui.devs_list[d]
-        #        ui.lockstatus_list[d] = "Unlocked"
-        #        #if d in ui.usrsup_list:
-        #        #    ui.updateDevs(d,[2,3,6])
-        #        #else:
-        #        ui.updateDevs(d,[2,3])
-        #    ui.msg_ok(liststr + ' successfully unlocked.')
-        #    
-        #    ui.returnToMain()
-            
-def lock_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selected_list, status_list, val):
-    curr_time = time.time()
-    elapsed_time = curr_time - start_time
-    if elapsed_time >= max_time:
-        e_to.set()
-        for op_thread in op_threads:
-            if op_thread.isAlive():
-                if ui.process != None:
-                    ui.process.terminate()
-                    ui.process = None
-                op_thread.join(0.0)
-    
-    ui.stop_spin()
-    
-    if e_to.isSet():
-        ui.msg_err('Operation timed out.')
-    
-    #print res_list
-    res_sum = sum(res_list)
-    
-    
-    
-    if res_sum != 0:
-        start_f = True
-        start_p = True
-        list_f = ''
-        list_p = ''
-        count = 0
-        for y in selected_list:
-            ui.devname = ui.devs_list[y]
-            if res_list[count] == 0:
-                ui.query(None,1)
-                if not start_p:
-                    list_p = list_p + ', '
-                else:
-                    start_p = False
-                list_p = list_p + ui.devs_list[y]
-                ui.lockstatus_list[y] = "Locked"
-                ui.updateDevs(y,[1,2])
-            else:
-                if not start_f:
-                    list_f = list_f + ', '
-                else:
-                    start_f = False
-                list_f = list_f + ui.devs_list[y]
-            count = count + 1
-        if res_sum == len(res_list):
-            ui.msg_err('Failed to lock ' + list_f + '.')
-        else:
-            ui.msg_err('Successfully locked ' + list_p + ', but failed for' + list_f + '.')
-        ui.revert_keep_prompt(ui)
-    else:
-        start = True
-        liststr = ''
-        for d in selected_list:
-            ui.devname = ui.devs_list[d]
-            ui.query(None,1)
-            if not start:
-                liststr = liststr + ', '
-            else:
-                start = False
-            liststr = liststr + ui.devs_list[d]
-            ui.lockstatus_list[d] = "Locked"
-            ui.updateDevs(d,[1,2])
-        ui.msg_ok('Successfully locked ' + liststr + '.')
-    
-        ui.returnToMain()
 
-            
 def revertKeep_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selected_list, status_list, val):
     curr_time = time.time()
     elapsed_time = curr_time - start_time
@@ -2440,8 +2335,10 @@ def revertKeep_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sel
     if res_sum != 0:
         start_f = True
         start_p = True
+        start_alo = True
         list_f = ''
         list_p = ''
+        list_alo = ''
         count = 0
         for y in selected_list:
             ui.devname = ui.devs_list[y]
@@ -2462,11 +2359,23 @@ def revertKeep_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sel
                 else:
                     start_f = False
                 list_f = list_f + ui.devs_list[y]
+                if status_list[count] == ui.AUTHORITY_LOCKED_OUT:
+                    if not start_alo:
+                        list_alo = list_alo + ', '
+                    else:
+                        start_alo = False
+                    list_alo = list_alo + ui.devs_list[y]
             count = count + 1
         if res_sum == len(res_list):
-            ui.msg_err('Failed to remove lock for ' + list_f + '.')
+            if list_alo == '':
+                ui.msg_err('Failed to remove lock for ' + list_f + '.')
+            else:
+                ui.msg_err('Failed to remove lock for ' + list_f + '. Retry limit reached for ' + list_alo + '.')
         else:
-            ui.msg_err('Successfully removed lock for ' + list_p + ', but failed for' + list_f + '.')
+            if list_alo == '':
+                ui.msg_err('Successfully removed lock for ' + list_p + ', but failed for' + list_f + '.')
+            else:
+                ui.msg_err('Successfully removed lock for ' + list_p + ', but failed for' + list_f + '. Retry limit reached for ' + list_alo + '.')
         ui.revert_keep_prompt(ui)
     else:
         start = True
@@ -2509,8 +2418,10 @@ def revertErase_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, se
     if res_sum != 0:
         start_f = True
         start_p = True
+        start_alo = True
         list_f = ''
         list_p = ''
+        list_alo = ''
         count = 0
         for y in selected_list:
             ui.devname = ui.devs_list[y]
@@ -2531,11 +2442,23 @@ def revertErase_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, se
                 else:
                     start_f = False
                 list_f = list_f + ui.devs_list[y]
+                if status_list[count] == ui.AUTHORITY_LOCKED_OUT:
+                    if not start_alo:
+                        list_alo = list_alo + ', '
+                    else:
+                        start_alo = False
+                    list_alo = list_alo + ui.devs_list[y]
             count = count + 1
         if res_sum == len(res_list):
-            ui.msg_err('Failed to remove lock for ' + list_f + '.')
+            if list_alo == '':
+                ui.msg_err('Failed to remove lock for ' + list_f + '.')
+            else:
+                ui.msg_err('Failed to remove lock for ' + list_f + '. Retry limit reached for ' + list_alo + '.')
         else:
-            ui.msg_err('Successfully removed lock for ' + list_p + ', but failed for' + list_f + '.')
+            if list_alo == '':
+                ui.msg_err('Successfully removed lock for ' + list_p + ', but failed for' + list_f + '.')
+            else:
+                ui.msg_err('Successfully removed lock for ' + list_p + ', but failed for' + list_f + '. Retry limit reached for ' + list_alo + '.')
         ui.revert_keep_prompt(ui)
     else:
         start = True
