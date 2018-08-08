@@ -122,12 +122,23 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
     if (IF_RECV == cmd) {
         cdb[1] = 4 << 1; // PIO DATA IN
         cdb[2] = 0x0E; // T_DIR = 1, BYTE_BLOCK = 1, Length in Sector Count
+        cdb[4] = bufferlen / 512; // Sector count / transfer length (512b blocks)
         sg.dxfer_direction = SG_DXFER_FROM_DEV;
+        sg.dxfer_len = IO_BUFFER_LENGTH;
+    } 
+    else if (IDENTIFY == cmd) {
+        cdb[1] = 4 << 1; // PIO DATA IN
+        cdb[2] = 0x0E; // T_DIR = 1, BYTE_BLOCK = 1, Length in Sector Count
+        cdb[4] = 1; // Sector count / transfer length (512b blocks)
+        sg.dxfer_direction = SG_DXFER_FROM_DEV;
+        sg.dxfer_len = 512; // if not exactly 512-byte, exteremly long timeout, 2 - 3 minutes
     }
     else {
         cdb[1] = 5 << 1; // PIO DATA OUT
         cdb[2] = 0x06; // T_DIR = 0, BYTE_BLOCK = 1, Length in Sector Count
+        cdb[4] = bufferlen / 512; // Sector count / transfer length (512b blocks)
         sg.dxfer_direction = SG_DXFER_TO_DEV;
+        sg.dxfer_len = IO_BUFFER_LENGTH;
     }
     cdb[3] = protocol; // ATA features / TRUSTED S/R security protocol
     cdb[4] = bufferlen / 512; // Sector count / transfer length (512b blocks)
@@ -147,7 +158,7 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
     sg.cmd_len = sizeof (cdb);
     sg.mx_sb_len = sizeof (sense);
     sg.iovec_count = 0;
-    sg.dxfer_len = IO_BUFFER_LENGTH;
+
     sg.dxferp = buffer;
     sg.cmdp = cdb;
     sg.sbp = sense;
@@ -156,25 +167,25 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
     sg.pack_id = 0;
     sg.usr_ptr = NULL;
     //    LOG(D4) << "cdb before ";
-    //    IFLOG(D4) hexDump(cdb, sizeof (cdb));
+    //    IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
     //    LOG(D4) << "sg before ";
-    //    IFLOG(D4) hexDump(&sg, sizeof (sg));
+    //    IFLOG(D4) DtaHexDump(&sg, sizeof (sg));
     /*
      * Do the IO
      */
     if (ioctl(fd, SG_IO, &sg) < 0) {
-        LOG(D4) << "cdb after ";
-        IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
-        LOG(D4) << "sense after ";
-        IFLOG(D4) DtaHexDump(sense, sizeof (sense));
+    //    LOG(D4) << "cdb after ";
+    //    IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
+    //    LOG(D4) << "sense after ";
+    //    IFLOG(D4) DtaHexDump(sense, sizeof (sense));
         return 0xff;
     }
     //    LOG(D4) << "cdb after ";
-    //    IFLOG(D4) hexDump(cdb, sizeof (cdb));
+    //    IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
     //    LOG(D4) << "sg after ";
-    //    IFLOG(D4) hexDump(&sg, sizeof (sg));
+    //    IFLOG(D4) DtaHexDump(&sg, sizeof (sg));
     //    LOG(D4) << "sense after ";
-    //    IFLOG(D4) hexDump(sense, sizeof (sense));
+    //    IFLOG(D4) DtaHexDump(sense, sizeof (sense));
     if (!((0x00 == sense[0]) && (0x00 == sense[1])))
         if (!((0x72 == sense[0]) && (0x0b == sense[1]))) return 0xff; // not ATA response
     return (sense[11]);
@@ -183,15 +194,27 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
 void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
 {
     LOG(D4) << "Entering DtaDevLinuxSata::identify()";
+    uint8_t bus_sas = 0;
     vector<uint8_t> nullz(512, 0x00);
     uint8_t * buffer = (uint8_t *) memalign(IO_BUFFER_ALIGNMENT, IO_BUFFER_LENGTH);
     memset(buffer, 0, IO_BUFFER_LENGTH);
+
+    // how about not to use native sata identify ioctl
+    /*
     if (ioctl(fd, HDIO_GET_IDENTITY, buffer) < 0) {
         LOG(D1) << "Identify failed " << strerror(errno);
         disk_info.devType = DEVICE_TYPE_OTHER;
-        //identify_SAS(&disk_info);// JERRY temp out, if SATA identify fail, that it is.
+        sendCmd(IDENTIFY, 0, 0, buffer, IO_BUFFER_LENGTH);
+        bus_sas =1;
+     }
+     */
+
+    uint8_t result;
+    result = sendCmd(IDENTIFY, 0, 0, buffer, IO_BUFFER_LENGTH);
+    if (result) {
         return;
     }
+    bus_sas = TRUE;
 
     ifstream kopts;
     kopts.open("/sys/module/libata/parameters/allow_tpm", ios::in);
@@ -210,26 +233,29 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
         disk_info.devType = DEVICE_TYPE_OTHER;
         return;
     }
-    IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) buffer;
-//    disk_info->devType = id->devType;
-    disk_info.devType = DEVICE_TYPE_ATA;
-    memcpy(disk_info.serialNum, id->serialNum, sizeof (disk_info.serialNum));
-    memcpy(disk_info.firmwareRev, id->firmwareRev, sizeof (disk_info.firmwareRev));
-    memcpy(disk_info.modelNum, id->modelNum, sizeof (disk_info.modelNum));
-    // looks like linux does the byte flipping for you
-    //    for (int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
-    //        disk_info.serialNum[i] = id->serialNum[i + 1];
-    //        disk_info.serialNum[i + 1] = id->serialNum[i];
-    //    }
-    //    for (int i = 0; i < sizeof (disk_info.firmwareRev); i += 2) {
-    //        disk_info.firmwareRev[i] = id->firmwareRev[i + 1];
-    //        disk_info.firmwareRev[i + 1] = id->firmwareRev[i];
-    //    }
-    //    for (int i = 0; i < sizeof (disk_info.modelNum); i += 2) {
-    //        disk_info.modelNum[i] = id->modelNum[i + 1];
-    //        disk_info.modelNum[i + 1] = id->modelNum[i];
-    //    }
 
+    IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) buffer;
+    if (!bus_sas) {
+        disk_info.devType = DEVICE_TYPE_ATA;
+        memcpy(disk_info.serialNum, id->serialNum, sizeof (disk_info.serialNum));
+        memcpy(disk_info.firmwareRev, id->firmwareRev, sizeof (disk_info.firmwareRev));
+        memcpy(disk_info.modelNum, id->modelNum, sizeof (disk_info.modelNum));
+    } else {
+        disk_info.devType = DEVICE_TYPE_ATA;
+        // looks like linux does the byte flipping for you, but not for device on SAS 
+        for (int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
+            disk_info.serialNum[i] = id->serialNum[i + 1];
+            disk_info.serialNum[i + 1] = id->serialNum[i];
+        }
+        for (int i = 0; i < sizeof (disk_info.firmwareRev); i += 2) {
+            disk_info.firmwareRev[i] = id->firmwareRev[i + 1];
+            disk_info.firmwareRev[i + 1] = id->firmwareRev[i];
+        }
+        for (int i = 0; i < sizeof (disk_info.modelNum); i += 2) {
+            disk_info.modelNum[i] = id->modelNum[i + 1];
+            disk_info.modelNum[i + 1] = id->modelNum[i];
+        }
+    }
     free(buffer);
     return;
 }
