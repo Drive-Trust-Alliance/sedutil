@@ -23,6 +23,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma warning(disable: 4224) //C2224: conversion from int to char , possible loss of data
 #pragma warning(disable: 4244) //C4244: 'argument' : conversion from 'uint16_t' to 'uint8_t', possible loss of data
+#pragma warning(disable: 4996)
 
 #include "os.h"
 #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
@@ -3208,6 +3209,8 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	uint32_t filepos = 0;
 	uint64_t sz;
 	ifstream pbafile;
+	ofstream progfile;
+	char progbuf[50];
 	// for decompression
 	PBYTE DecompressedBuffer = NULL;
 	//uint64_t DecompressedBufferSize = NULL;
@@ -3244,7 +3247,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 		fivepercent = (uint64_t)((pbafile.tellg() / 20) / blockSize) * blockSize;
 	}
 	else {
-		const char * fname[] = { "sedutil-cli.exe" }; // , "..\\rc\\sedutil.exe", "..\\rc\\UEFI.img"	};
+		const char * fname[] = { "sedutil-cli.exe" , "prog"}; // , "..\\rc\\sedutil.exe", "..\\rc\\UEFI.img"	};
 		#include "sedsize.h" 
 		pbafile.open(fname[0], ios::in | ios::binary);
 		pbafile.seekg(0, pbafile.end);
@@ -3253,7 +3256,6 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 		pbafile.seekg(sedsize);
 		//LOG(I) << "read pointer=" << pbafile.tellg();
 		int comprss = 1;
-
 		if (comprss) { 
 			CompressedBufferSize = imgsize - sedsize;
 			CompressedBuffer = (PBYTE)malloc(CompressedBufferSize);
@@ -3367,7 +3369,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	IFLOG(D1) printf("serial : %s\n", sernum);
 	hash.clear();
 	LOG(D1) << "start hashing";
-	DtaHashPwd(hash, sernum, this);
+	DtaHashPwd(hash, sernum, this,1000);
 	LOG(D1) << "end hashing";
 	IFLOG(D1) printf("hashed size = %zd\n", hash.size());
 	IFLOG(D1) printf("hashed serial number is ");
@@ -3388,7 +3390,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	hash.clear();
 	LOG(D1) << "start hashing";
 	char mbrstr[16] = { 'F','i','d','e','l','i','t','y','L','o','c','k','M', 'B', 'R', }; // "FidelityLockMBR";
-	DtaHashPwd(hash, mbrstr, this); // why IFLOG(D4)
+	DtaHashPwd(hash, mbrstr, this,1000); // why IFLOG(D4)
 	for (uint8_t i = 2; i < hash.size(); i++)
 	{
 		DecompressedBuffer[512 + 96 + i - 2] = hash.at(i);
@@ -3415,7 +3417,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	//IFLOG(D4) 
 	//	for (uint8_t i = 0; i < 16; i++) { printf("%02X", lic_level[i]); };
 	hash.clear();
-	DtaHashPwd(hash, lic_level, this);
+	DtaHashPwd(hash, lic_level, this,1000);
 	for (uint8_t i = 2; i < hash.size(); i++)
 	{
 		DecompressedBuffer[512 + 128 + i - 2] = hash.at(i);
@@ -3461,6 +3463,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 		pbafile.close();
 		return lastRC;
 	} */
+
 	LOG(I) << "Writing PBA to " << dev;
 	
 	while (!pbafile.eof() || (filepos <= DecompressedBufferSize)) {
@@ -3508,6 +3511,12 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 			progress_bar[1] = spinner[spinnertick.i++];
 			printf("\r%s %i(%I64d)", progress_bar,filepos, DecompressedBufferSize);
 			fflush(stdout);
+			// open progress output file
+			progfile.open(sernum, ios::out);
+			memset(progbuf, 0,50);
+			sprintf(progbuf,"\r%i(%I64d)", filepos, DecompressedBufferSize);
+			progfile.write(progbuf, strlen(progbuf));
+			progfile.close();
 		}
 		cmd->reset(OPAL_UID::OPAL_MBR, OPAL_METHOD::SET);
 		cmd->addToken(OPAL_TOKEN::STARTLIST);
@@ -3538,6 +3547,13 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	} // end of while 
 
 	printf("\r%s %i(%I64d) bytes written \n", progress_bar, filepos, DecompressedBufferSize);
+	// open progress output file
+	progfile.open(sernum, ios::out);
+	memset(progbuf, 0, 50);
+	sprintf(progbuf, "\r%i(%I64d) Complete PBA write", filepos, DecompressedBufferSize);
+	progfile.write(progbuf, strlen(progbuf));
+	progfile.close();
+
 /*	LOG(D1) << "end transaction";
 	cmd->reset();
 	cmd->addToken(OPAL_TOKEN::ENDTRANSACTON);

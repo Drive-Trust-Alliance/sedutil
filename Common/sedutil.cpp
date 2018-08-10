@@ -502,7 +502,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 		d->no_hash_passwords = false;
 		vector<uint8_t> hash;
 		hash.clear();
-		DtaHashPwd(hash, sernum, d);
+		DtaHashPwd(hash, sernum, d,1000);
 		//if (0) {
 		//	printf("hashed size = %zd\n", hash.size());
 		//	printf("hashed serial number is ");
@@ -514,7 +514,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	for (uint8_t i = 2; i < hash.size(); i++) {	DecompressedBuffer[512+64+i-2] = hash.at(i); 	}
 	hash.clear();
 	char usbstr[16] = { 'F','i','d','e','l','i','t','y','L','o','c','k','U', 'S', 'B', };//"FidelityLockUSB";
-	DtaHashPwd(hash,usbstr, d);
+	DtaHashPwd(hash,usbstr, d,1000);
 	for (uint8_t i = 2; i < hash.size(); i++)
 	{
 		DecompressedBuffer[512 + 96 + i - 2] = hash.at(i);
@@ -542,7 +542,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	//IFLOG(D4)
 	//	for (uint8_t i = 0; i < 16; i++) { printf("%02X", lic_level[i]); } printf("\n");
 	hash.clear();
-	DtaHashPwd(hash, lic_level, d);
+	DtaHashPwd(hash, lic_level, d,1000);
 	for (uint8_t i = 2; i < hash.size(); i++)
 	{
 		DecompressedBuffer[512 + 128 + i - 2] = hash.at(i);
@@ -1068,7 +1068,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-        printf("Fidelity Lock Version : 0.3.8.%s.%s 20180724-A001\n", st1.c_str(),GIT_VERSION);
+        printf("Fidelity Lock Version : 0.3.8.%s.%s 20180810-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:
