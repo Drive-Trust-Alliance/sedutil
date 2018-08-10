@@ -1,3 +1,10 @@
+@REM Author : Jerry Hwang
+@REM Organization : Fidelity Height
+@REM Date : 8/9/2018
+@REM Revision History :
+@REM 1.0 : 01/02/2018 initial version
+@REM 1.1 : 08/09/2018 generate sedutil-cli.exe if %1 is not all 
+
 @echo off
 @REM build Release Debug x86 x64 
 @REM UEFI %1 %2 
@@ -8,7 +15,8 @@
 if "%1"=="" (
     set P1=x64
 	set P2=Debug
-	goto exec64
+	call :exec64
+	goto end
 )
 
 if "%1"=="all" (
@@ -81,12 +89,28 @@ goto exec
 :exec64
 @copy ..\windows\CLI\%P1%\%P2%\sedutil-cli.exe sedutil_%P1%_%P2%.exe
 @copy /b  sedutil_%P1%_%P2%.exe + UEFI64.zip sedutil-cli_%P1%_%P2%.exe
+if "%1"=="all" ( goto end ) 
+if "%1"=="" (
+@copy sedutil-cli_%P1%_%P2%.exe sedutil-cli.exe
+@copy sedutil_%P1%_%P2%.exe sedutil.exe
+goto end
+)
+if "%1"=="x64" (
+@copy sedutil-cli_%P1%_%P2%.exe sedutil-cli.exe
+@copy sedutil_%P1%_%P2%.exe sedutil.exe
+goto end
+)
 goto end
 
 :exec86
 @echo %P1% %P2% %P3%
 @copy ..\windows\CLI\%P3%\%P2%\sedutil-cli.exe sedutil_%P1%_%P2%.exe
 @copy /b  sedutil_%P1%_%P2%.exe + UEFI64.zip sedutil-cli_%P1%_%P2%.exe
+if "%1"=="x86" (
+@copy sedutil-cli_%P1%_%P2%.exe sedutil-cli.exe
+@copy sedutil_%P1%_%P2%.exe sedutil.exe
+goto end
+)
 goto end
 :exit 
 

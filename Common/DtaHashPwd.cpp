@@ -128,7 +128,7 @@ vector<uint8_t> hex2data(char * password)
 }
 
 
-void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d)
+void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int iter)
 {
     LOG(D1) << " Entered DtaHashPwd";
     char *serNum;
@@ -153,8 +153,10 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d)
     serNum = d->getSerialNum();
     vector<uint8_t> salt(serNum, serNum + 20);
     //	vector<uint8_t> salt(DEFAULTSALT);
-
-    DtaHashPassword(hash, password, salt);
+	if (iter==75000)
+		DtaHashPassword(hash, password, salt);
+	else
+		DtaHashPassword(hash, password, salt,iter);
 #if false
 	printf("serNum=%s\n", serNum);
 	printf("serNum as data =");

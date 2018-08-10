@@ -32,7 +32,7 @@ using namespace std;
  * @param password The password to be hashed
  * @param device the device where the password is to be used
  */
-void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * device);
+void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * device, unsigned int iter = 75000);
 /** Hash a passwor using the PBDKF2<SHA1> function 
  *
  * @param hash Field where hash returned
