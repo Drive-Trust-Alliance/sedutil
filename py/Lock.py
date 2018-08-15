@@ -127,6 +127,8 @@ class LockApp(gtk.Window):
     
     scanning = False
     view_state = 0
+    if VERSION == 1:
+        view_state = 1
     op_prompt = 0
     NOT_AUTHORIZED = 1
     AUTHORITY_LOCKED_OUT = 18
@@ -192,13 +194,13 @@ class LockApp(gtk.Window):
             else:
                 self.set_title('Fidelity Lock Disk Drive Security Manager - PremiumUnlimited')
                 
-            if os.path.isfile('icon.jpg'):
-                self.set_icon_from_file('icon.jpg')
+            if os.path.isfile('icon.ico'):
+                self.set_icon_from_file('icon.ico')
 
             height = 550
             width = 575
-            if platform.system() == 'Linux':
-                width = 625
+            if platform.system() == 'Linux' and self.VERSION == 1:
+                width = 700
                 
             self.set_size_request(width, height)
             
@@ -206,7 +208,7 @@ class LockApp(gtk.Window):
 
             self.connect('destroy', gtk.main_quit)
             
-            self.connect('delete_event', self.destroy_main)
+            self.connect('delete_event', self.exitapp)
             
             homogeneous = False
             spacing = 0
@@ -225,7 +227,7 @@ class LockApp(gtk.Window):
             self.navM = gtk.MenuItem("Main")
             self.navM.set_submenu(self.navMenu)
             self.backToMain = gtk.MenuItem("Home")
-            self.backToMain.connect("activate", self.returnToMain)
+            self.backToMain.connect("activate", self.returnToMain, False)
             self.backToMain.set_tooltip_text('Return to home view')
             self.navMenu.append(self.backToMain)
             self.exitApp = gtk.MenuItem("Exit")
@@ -301,7 +303,7 @@ class LockApp(gtk.Window):
                     self.setupMenu.append(self.removeUser)
                 
                 self.mngPower = gtk.MenuItem("Power Settings")
-                self.mngPower.connect("activate", self.mngPower_prompt)
+                self.mngPower.connect("activate", self.mngPower_prompt, 1)
                 self.mngPower.set_tooltip_text('Manage system power settings')
                 self.setupMenu.append(self.mngPower)
                 
@@ -428,7 +430,7 @@ class LockApp(gtk.Window):
             self.selectMulti_instr.set_alignment(0,0.5)
             top_box.pack_start(self.selectMulti_instr, False, False, 0)
             
-            self.main_instr = gtk.Label('Select an operation from the menu bar above.  Below are all detected drives.')
+            self.main_instr = gtk.Label('Select an operation from the menu bar above.')
             self.main_instr.set_alignment(0,0.5)
             top_box.pack_start(self.main_instr, False, False, 0)
             
@@ -454,7 +456,7 @@ class LockApp(gtk.Window):
             self.na_instr = gtk.Label('')
             self.na_instr.set_alignment(0,0.5)
             
-            self.cancel_button.connect('clicked', self.returnToMain)
+            self.cancel_button.connect('clicked', self.returnToMain, False)
             self.revertUser_button.connect('clicked', runop.run_revertErase, self)
             self.revertPSID_button.connect('clicked', runop.run_revertPSID, self)
             self.changePW_button.connect('clicked', runop.run_changePW, self)
@@ -479,10 +481,14 @@ class LockApp(gtk.Window):
             
             self.display_grid()
             
-            self.wait_instr = gtk.Label('This may take a few seconds...')
-            self.pba_wait_instr = gtk.Label('Please wait, writing the preboot image will take a few minutes...\nDo not turn off your computer while setup is ongoing.')
+            self.wait_instr = gtk.Label('Please wait, this will take up to a minute...')
+            self.multi_wait_instr = gtk.Label('Please wait, this will take up to a minute per drive...')
+            self.pba_wait_instr = gtk.Label('Please wait, writing the preboot image to a drive will take up to 10 minutes...\nDo not turn off your computer while setup is ongoing.')
+            self.load_instr = gtk.Label('Loading drive information...')
             self.vbox.pack_start(self.wait_instr, False, False, 5)
+            self.vbox.pack_start(self.multi_wait_instr, False, False, 5)
             self.vbox.pack_start(self.pba_wait_instr, False, False, 5)
+            self.vbox.pack_start(self.load_instr, False, False, 5)
             
             self.waitSpin = gtk.Spinner()
             self.vbox.pack_start(self.waitSpin, False, False, 5)
@@ -595,17 +601,17 @@ class LockApp(gtk.Window):
             self.new_pass_dialog()
             
             self.mbr_radio = gtk.RadioButton(None, 'Write Preboot Image to Shadow MBR')
-            self.usb_radio = gtk.RadioButton(self.mbr_radio, 'Write Preboot Image to USB')
+            #self.usb_radio = gtk.RadioButton(self.mbr_radio, 'Write Preboot Image to USB')
             self.skip_radio = gtk.RadioButton(self.mbr_radio, 'I already have another drive or USB for unlocking this drive')
             self.mbr_radio.connect('toggled', self.hideUSB)
-            self.usb_radio.connect('toggled', self.showUSB)
+            #self.usb_radio.connect('toggled', self.showUSB)
             self.skip_radio.connect('toggled', self.hideUSB)
             
             halign = gtk.Alignment(1,0,0,0)
             halign.add(self.buttonBox)
             self.vbox.pack_end(halign, False, False, padding)
             self.vbox.pack_end(self.skip_radio, False)
-            self.vbox.pack_end(self.usb_radio, False)
+            #self.vbox.pack_end(self.usb_radio, False)
             self.vbox.pack_end(self.mbr_radio, False)
             self.vbox.pack_end(self.box_drive, False)
             self.vbox.pack_end(self.box_revert_agree, False)
@@ -649,6 +655,8 @@ class LockApp(gtk.Window):
             print self.setup_list
             print self.nonsetup_list
             print self.tcg_list
+            
+            
             
             if len(self.devs_list) == 0:
                 self.msg_err('No drives detected, try running this application with Administrator.')
@@ -700,7 +708,8 @@ class LockApp(gtk.Window):
                                         print count
                                         for j in self.locked_list:
                                             salt = self.salt_list[j]
-                                            f_curr = lockhash.hash_pbkdf2(lic, salt)
+                                            #f_curr = lockhash.hash_pbkdf2(lic, salt)
+                                            f_curr = lockhash.hash_sig(lic, salt)
                                             if f_curr == f_info:
                                                 valid = True
                                                 if count == 0:
@@ -820,8 +829,8 @@ class LockApp(gtk.Window):
                         if res == gtk.RESPONSE_CANCEL :
                             cancel = True
                             gobject.source_remove(timer)
-                        else:
-                            gobject.source_remove(timer)
+                        #else:
+                        #    gobject.source_remove(timer)
                         message.destroy()
                         timer = 0
                                 
@@ -834,6 +843,7 @@ class LockApp(gtk.Window):
                 msg = 'You are running the demo version, with most capabilities disabled.  To unlock additional capabilities, upgrade your license.'
                 demo_msg.set_markup(msg)
                 demo_msg.run()
+                demo_msg.destroy()
             if self.VERSION == 1:
                 self.unlock_prompt()
                 
@@ -843,7 +853,9 @@ class LockApp(gtk.Window):
             if dev_os == 'Windows':
                 verified = powerset.verify_power()
                 if 0 in self.setup_list and not verified:
-                    self.mngPower_prompt()
+                    self.mngPower_prompt(0)
+                    
+            
             
         else:
             self.msg_err('No valid license of Fidelity Lock found, please register to get demo license or buy basic/premium license')
@@ -1204,6 +1216,7 @@ class LockApp(gtk.Window):
             self.check_box_pass.set_sensitive(True)
             if self.check_both:
                 self.pass_sav.set_active(False)
+                
             
     def showDrive(self, checkbox):
         b_entry_checkbox = checkbox.get_active()
@@ -1213,7 +1226,7 @@ class LockApp(gtk.Window):
                 dev_os = platform.system()
                 if dev_os == 'Windows':
                     for drive in string.ascii_uppercase:
-                        if drive != 'C' and os.path.isdir('%s:\\' % drive):
+                        if drive != 'C' and os.path.isdir('%s:\\' % drive) and drive not in self.label_list:
                             self.drive_list.append(drive + ':')
                 elif dev_os == 'Linux':
                     txt = os.popen(self.prefix + 'mount').read()
@@ -1234,6 +1247,7 @@ class LockApp(gtk.Window):
                         elif dev_os == 'Linux':
                             self.drive_menu.append(d)
                     self.drive_menu.set_active(0)
+                
                 self.drive_label.show()
                 self.drive_menu.show()
             else:
@@ -1259,8 +1273,8 @@ class LockApp(gtk.Window):
         
         tcgWin.destroy()
         
-    def mngPower_prompt(self, *args):
-        dialog = dialogs.SetPowerDialog(self)
+    def mngPower_prompt(self, mode):
+        dialog = dialogs.SetPowerDialog(self, mode)
         res = dialog.run()
         
         if res == gtk.RESPONSE_APPLY:
@@ -1355,9 +1369,12 @@ class LockApp(gtk.Window):
                 
                 logWin.destroy()
                 
-                self.returnToMain()
+                self.returnToMain(False)
             
     def run_scan(self, *args):
+        self.start_spin()
+        self.load_instr.show()
+        self.disable_menu()
         if self.firstscan or self.VERSION != 1:
             if self.firstscan == False:
                 model = self.dev_select.get_model()
@@ -1372,22 +1389,9 @@ class LockApp(gtk.Window):
                     self.lockstatus_list = []
                     self.setupstatus_list = []
             
-            #move this part to after finish
-            #self.main_drive = ''
-            #self.main_idx = -1
-            #dev_os = platform.system()
-            #if dev_os == 'Windows':
-            #    txt = os.popen("powershell -NoProfile -NoExit -Command Get-Disk (Get-Partition -DriveLetter 'C').DiskNumber").read()
-            #    disknum_regex = '\n([0-9]+)'
-            #    m = re.search(disknum_regex, txt)
-            #    self.main_drive = '\\\\.\\PhysicalDrive' + m.group(1)
-            
             runop.finddev(self)
             
-            #spawn thread here, start off just doing hashvalidation and powershell
             def t_run():
-                self.main_drive = ''
-                self.main_idx = -1
                 drive_dict = {}
                 dev_os = platform.system()
                 if dev_os == 'Windows':
@@ -1398,10 +1402,10 @@ class LockApp(gtk.Window):
                             m = re.search(disknum_regex, t_x)
                             if m:
                                 m_dev = '\\\\.\\PhysicalDrive' + m.group(1)
-                                drive_dict[m_dev] = drive
-                                if drive == 'C':
-                                    self.main_drive = m_dev
-                                    self.devs_list.index(self.main_drive)
+                                if m_dev in self.devs_list:
+                                    drive_dict[m_dev] = drive
+                    
+                
                 pwd_test = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(16))
                 salt_test = self.salt_list[0]
                 dev_test = self.devs_list[0]
@@ -1411,14 +1415,97 @@ class LockApp(gtk.Window):
                 sedutil_res = sedutil_match.group(1).lower()
                 hash_res = lockhash.hash_pbkdf2(pwd_test, salt_test)
                 
-                gobject.idle_add(cleanup, sedutil_res, hash_res)
+                gobject.idle_add(cleanup, sedutil_res, hash_res, drive_dict)
                 
                 
-            def cleanup(sedutil_res, hash_res):
+            def cleanup(sedutil_res, hash_res, drive_dict):
                 if sedutil_res != hash_res:
                     self.msg_err('Hash validation failed')
                     self.exitapp()
-            
+                dev_os = platform.system()
+                if dev_os == 'Windows':
+                    for dev in self.devs_list:
+                        if drive_dict.has_key(dev):
+                            self.label_list.append(drive_dict[dev])
+                        else:
+                            self.label_list.append(None)
+                elif dev_os == 'Linux':
+                    self.label_list = [None] * len(self.devs_list)
+                model = self.dev_select.get_model()
+        
+                iter = gtk.TreeIter
+                for row in model:
+                    model.remove(row.iter)
+                for i in range(len(self.devs_list)):
+                    if self.label_list[i] != None:
+                        self.dev_select.append(self.devs_list[i] + ' (' + self.label_list[i] + ':)')
+                    else:
+                        self.dev_select.append(self.devs_list[i])
+                
+                self.dev_select.set_active(0)
+                
+                length = len(self.devs_list)
+        
+                if length > 0:
+                    self.dev_vendor.set_text(self.vendor_list[0])
+                    self.dev_sn.set_text(self.sn_list[0])
+                    self.dev_series.set_text(self.series_list[0])
+                    if self.msid_list[0] != None:
+                        self.dev_msid.set_text(self.msid_list[0])
+                    else:
+                        self.dev_msid.set_text('Loading...')
+                    self.dev_status.set_text(self.lockstatus_list[0])
+                    if self.setupstatus_list[0] != None:
+                        self.dev_setup.set_text(self.setupstatus_list[0])
+                    else:
+                        self.dev_setup.set_text('Loading...')
+                    self.dev_pbaVer.set_text(self.pba_list[0])
+                    
+                self.stop_spin()
+                self.load_instr.hide()
+                self.enable_menu()
+                
+                
+                if self.firstscan:
+                    numTCG = len(self.tcg_list)
+                    if numTCG == 0:
+                        self.noTCG_instr.show()
+                    else:
+                        self.noTCG_instr.hide()
+                    self.firstscan = False
+                    if self.VERSION == 1:
+                        self.unlock_prompt()
+                else:
+                    self.msg_ok('Rescan complete')
+                    if self.op_prompt == 0:
+                        numTCG = len(self.tcg_list)
+                        if numTCG == 0:
+                            self.noTCG_instr.show()
+                        else:
+                            self.noTCG_instr.hide()
+                    if self.op_prompt == 1:
+                        self.openLog_prompt()
+                    elif self.op_prompt == 2:
+                        self.setup_prompt1()
+                    elif self.op_prompt == 3:
+                        self.updatePBA_prompt()
+                    elif self.op_prompt == 4:
+                        self.changePW_prompt()
+                    elif self.op_prompt == 5:
+                        self.setupUSB_prompt()
+                    elif self.op_prompt == 6:
+                        self.setupUser_prompt()
+                    elif self.op_prompt == 7:
+                        self.unlock_prompt()
+                    elif self.op_prompt == 9:
+                        self.revert_keep_prompt()
+                    elif self.op_prompt == 10:
+                        self.revert_erase_prompt()
+                    elif self.op_prompt == 11:
+                        self.revert_psid_prompt()
+                    elif self.op_prompt == 12:
+                        self.removeUser_prompt()
+                
             t = threading.Thread(target=t_run, args=())
             t.start()
             
@@ -1441,6 +1528,7 @@ class LockApp(gtk.Window):
                 act_idx = self.dev_select.get_active()
                 if i == act_idx:
                     self.dev_setup.set_text(self.setupstatus_list[i])
+                    
                     
             def t2_run(i):
                 msid = 'N/A'
@@ -1466,9 +1554,6 @@ class LockApp(gtk.Window):
                 if i in self.tcg_list and self.msid_list[i] == None:
                     t2 = threading.Thread(target=t2_run, args=(i,))
                     t2.start()
-            
-            #if self.main_drive != '':
-            #    self.main_idx = self.devs_list.index(self.main_drive)
                 
         else:
             valid_list = [0] * len(self.devs_list)
@@ -1503,9 +1588,7 @@ class LockApp(gtk.Window):
                         locked_new.append(i)
                         setup_new.append(i)
                         tcg_new.append(i)
-                        #if only User1 available, don't add to usrsup_list
-                        #if self.user_list[i] != '1':
-                        #    self.usrsup_list.append(i)
+                        
                         lockstatus_new.append("Locked")
                         setupstatus_new.append("Yes")
                     elif isSetup:
@@ -1526,59 +1609,19 @@ class LockApp(gtk.Window):
             self.lockstatus_list = lockstatus_new
             self.setupstatus_list = setupstatus_new
         
-        length = 0
-        index = -1
-        #if self.view_state == 0:
-        length = len(self.devs_list)
-        index = 0
-        for idx in range(length) :
-            self.dev_select.append( self.devs_list[idx] + self.label_list[idx])
+            self.stop_spin()
+            self.load_instr.hide()
+            self.enable_menu()
         
-        if length > 0:
-            self.dev_select.set_active(0)
-            #self.dev_single.set_text(self.devs_list[index] + self.label_list[index])
-            self.dev_vendor.set_text(self.vendor_list[index])
-            self.dev_sn.set_text(self.sn_list[index])
-            self.dev_series.set_text(self.series_list[index])
-            if self.msid_list[index] != None:
-                self.dev_msid.set_text(self.msid_list[index])
-            else:
-                self.dev_msid.set_text('Loading...')
-            self.dev_status.set_text(self.lockstatus_list[index])
-            if self.setupstatus_list[index] != None:
-                self.dev_setup.set_text(self.setupstatus_list[index])
-            else:
-                self.dev_setup.set_text('Loading...')
-            self.dev_pbaVer.set_text(self.pba_list[index])
-        
-        numTCG = len(self.tcg_list)
-        
-        if numTCG == 0:
-            self.noTCG_instr.show()
-        else:
-            self.noTCG_instr.hide()
-        if length > 0:
-            self.scanning = True
-            self.query(None,1)
-            self.scanning = False
-            self.dev_select.set_active(0)
-        
-        #if length <= 1:
-        #    self.dev_select.hide()
-        #    self.label_dev.hide()
-        #    self.dev_single.show()
-        #    self.label_dev2.show()
-        #else:
-        #    self.dev_single.hide()
-        #    self.label_dev2.hide()
-        #    self.dev_select.show()
-        #    self.label_dev.show()
-                
+            if self.op_prompt == 0:
+                numTCG = len(self.tcg_list)
+                if numTCG == 0:
+                    self.noTCG_instr.show()
+                else:
+                    self.noTCG_instr.hide()
+            
         
             
-        if self.firstscan:
-            self.firstscan = False
-        else:
             self.msg_ok('Rescan complete')
             if self.op_prompt == 1:
                 self.openLog_prompt()
@@ -1594,8 +1637,6 @@ class LockApp(gtk.Window):
                 self.setupUser_prompt()
             elif self.op_prompt == 7:
                 self.unlock_prompt()
-            elif self.op_prompt == 8:
-                self.lock_prompt()
             elif self.op_prompt == 9:
                 self.revert_keep_prompt()
             elif self.op_prompt == 10:
@@ -1645,7 +1686,7 @@ class LockApp(gtk.Window):
                 regex_ver = 'Fidelity Lock Version\s*:\s*.*'
                 m = re.search(regex_ver, txtVersion)
                 ver_parse = m.group()
-                queryTextList.append(ver_parse + "\nGUI Version 0.10.3\n\nDrive information\n")
+                queryTextList.append(ver_parse + "\nGUI Version 0.11.0\n\nDrive information\n")
                 
                 queryTextList.append("Model: " + self.dev_vendor.get_text() + "\n")
                 queryTextList.append("Serial Number: " + self.dev_sn.get_text() + "\n")
@@ -1796,7 +1837,8 @@ class LockApp(gtk.Window):
             if act_idx in self.locked_list:
                 self.na_instr.hide()
                 self.op_instr.show()
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
             else:
                 self.op_instr.hide()
                 self.disable_entries_buttons()
@@ -1809,7 +1851,8 @@ class LockApp(gtk.Window):
             if act_idx in self.setup_list:
                 self.na_instr.hide()
                 self.op_instr.show()
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
             else:
                 self.op_instr.hide()
                 self.disable_entries_buttons()
@@ -1822,7 +1865,8 @@ class LockApp(gtk.Window):
             if act_idx in self.nonsetup_list:
                 self.na_instr.hide()
                 self.op_instr.show()
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
             else:
                 self.op_instr.hide()
                 self.disable_entries_buttons()
@@ -1835,7 +1879,8 @@ class LockApp(gtk.Window):
             if act_idx in self.tcg_list:
                 self.na_instr.hide()
                 self.op_instr.show()
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
             else:
                 self.op_instr.hide()
                 self.disable_entries_buttons()
@@ -1843,7 +1888,8 @@ class LockApp(gtk.Window):
                 self.na_instr.show()
         elif self.view_state == 7:
             index = self.sel_list[act_idx]
-            self.enable_entries_buttons()
+            if self.VERSION != 0:
+                self.enable_entries_buttons()
             #switch radio buttons if applicable
             if self.pba_list[index] == 'Not Supported': #change to get rid of usb radio, disable mbr_radio
                 #self.mbr_radio.hide()
@@ -2003,7 +2049,8 @@ class LockApp(gtk.Window):
             if curr_idx in self.tcg_list:
                 self.op_instr.show()
                 
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
             
             else:
                 self.na_instr.show()
@@ -2029,7 +2076,7 @@ class LockApp(gtk.Window):
         if dev_os == 'Windows':
             verified = powerset.verify_power()
             if 0 in self.sel_list and not verified:
-                self.mngPower_prompt()
+                self.mngPower_prompt(0)
         
         start = True
         liststr = ''
@@ -2044,9 +2091,9 @@ class LockApp(gtk.Window):
             self.msg_ok('Drives ' + liststr + ' have been setup successfully.')
         else:
             self.msg_ok(liststr + ' has been setup successfully.')
-        self.returnToMain()
+        self.returnToMain(True)
 
-    def returnToMain(self, *args):
+    def returnToMain(self, reset, *args):
         self.hideAll()
         self.select_box.show()
         self.box_dev.show()
@@ -2057,32 +2104,28 @@ class LockApp(gtk.Window):
         
         if self.view_state != 0:
             self.view_state = 0
-        model = self.dev_select.get_model()
-        
-        iter = gtk.TreeIter
-        for row in model:
-            model.remove(row.iter)
         
         length = 0
-        
+            
         length = len(self.devs_list)
-        for i in range(length):
-            self.dev_select.append(self.devs_list[i] + self.label_list[i])
-        #if length >= 1:
-        #    self.dev_single.set_text(self.devs_list[0] + self.label_list[0])
         
-        if len(self.devs_list) > 0:
-            self.dev_select.set_active(0)
+        if reset:
+            model = self.dev_select.get_model()
+            
+            iter = gtk.TreeIter
+            for row in model:
+                model.remove(row.iter)
+            
+            
+            for i in range(length):
+                self.dev_select.append(self.devs_list[i] + ' (' + self.label_list[i] + ':)')
+            
+            if len(self.devs_list) > 0:
+                self.dev_select.set_active(0)
             
         self.query(None,1)
 
-        #if length <= 1:
-        #    self.dev_single.show()
-        #    self.label_dev2.show()
-        #    self.dev_select.hide()
-        #    self.label_dev.hide()
         if length == 0:
-            #self.dev_single.set_text('None')
             self.dev_vendor.set_text('N/A')
             self.dev_sn.set_text('N/A')
             self.dev_msid.set_text('N/A')
@@ -2093,11 +2136,12 @@ class LockApp(gtk.Window):
             self.dev_blockSID.set_text('N/A')
             self.dev_enc.set_text('N/A')
             self.dev_pbaVer.set_text('N/A')
-        #else:
-        #    self.dev_single.hide()
-        #    self.label_dev2.hide()
-        #    self.dev_select.show()
-        #    self.label_dev.show()
+            
+        numTCG = len(self.tcg_list)
+        if numTCG == 0:
+            self.noTCG_instr.show()
+        else:
+            self.noTCG_instr.hide()
             
     def setup_prompt1(self, *args):
         self.hideAll()
@@ -2133,7 +2177,49 @@ class LockApp(gtk.Window):
             self.drive_label.hide()
             self.usb_menu.hide()
             #else:
-                #refresh the usb_menu contents
+            #    self.pass_sav.set_active(True)
+            #    self.pass_sav.set_sensitive(False)
+            #    self.usb_list = []
+            #    dev_os = platform.system()
+            #    if dev_os == 'Windows':
+            #        txt = os.popen(self.prefix + 'wmic diskdrive list brief /format:list').read()
+            #        mod_regex = 'DeviceID=.+([1-9]|1[0-5])\s*\nModel=(.*)\r'
+            #        self.usb_list = re.findall(mod_regex, txt)
+            #    elif dev_os == 'Linux':
+            #        txt = os.popen(self.prefix + 'mount').read()
+            #        dev_regex = '/dev/sd[a-z][1-9]?\s*on\s*(\S+)\s*type'
+            #        drive_list = re.findall(dev_regex, txt)
+            #        txt2 = os.popen(self.prefix + 'blkid').read()
+            #        dev_regex2 = '(/dev/sd[a-z][1-9]?.+)'
+            #        all_list = re.findall(dev_regex2, txt2)
+            #        r1 = '/dev/sd[a-z][1-9]?'
+            #        r2 = 'TYPE="([a-z]+)"'
+            #        for a in all_list:
+            #            m1 = re.search(r1,a)
+            #            m2 = re.search(r2,a)
+            #            dev_a = m1.group(0)
+            #            type_a = m2.group(1)
+            #            if dev_a not in drive_list:
+            #                s = os.system(self.prefix + 'mount -t ' + type_a + ' ' + dev_a)
+            #                drive_list.append(dev_a)
+            #        txt3 = os.popen('mount').read()
+            #        dev_regex3 = '(/dev/sd[a-z][1-9]?)\s*on\s*(\S+)\s*type'
+            #        self.usb_list = re.findall(dev_regex3, txt3)
+            #    model = self.usb_menu.get_model()
+            #    
+            #    iter = gtk.TreeIter
+            #    for row in model:
+            #        model.remove(row.iter)
+            #    
+            #    length = len(self.usb_list)
+            #    
+            #    if length > 0:
+            #        for d in self.usb_list:
+            #            if dev_os == 'Windows':
+            #                self.usb_menu.append(d[1])
+            #            elif dev_os == 'Linux':
+            #                self.usb_menu.append(d[0])
+            #        self.usb_menu.set_active(0)
             
             self.box_newpass_confirm.show()
             self.setup_next.show()
@@ -2142,7 +2228,8 @@ class LockApp(gtk.Window):
             
             if curr_idx in self.nonsetup_list:
                 self.op_instr.show()
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
                 
             else:
                 if curr_idx in self.tcg_list:
@@ -2156,7 +2243,8 @@ class LockApp(gtk.Window):
         
     def setup_prompt2(self, list_s):
         self.na_instr.hide()
-        self.enable_entries_buttons()
+        if self.VERSION != 0:
+            self.enable_entries_buttons()
         self.navM.set_sensitive(False)
         self.devM.set_sensitive(False)
         self.setupM.set_sensitive(False)
@@ -2177,7 +2265,7 @@ class LockApp(gtk.Window):
         length = len(list_s)
         self.mbr_list = []
         for i in list_s:
-            self.dev_select.append(self.devs_list[i] + self.label_list[i])
+            self.dev_select.append(self.devs_list[i] + ' (' + self.label_list[i] + ':)')
             self.sel_list.append(i)
             if self.pba_list[i] != 'Not Supported':
                 self.mbr_list.append(i)
@@ -2288,7 +2376,8 @@ class LockApp(gtk.Window):
             
             if curr_idx in self.setup_list:
                 self.op_instr.show()
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
             else:
                 if curr_idx in self.tcg_list:
                     self.na_instr.set_text('This drive has not been set up.')
@@ -2335,7 +2424,8 @@ class LockApp(gtk.Window):
             
             if curr_idx in self.setup_list:
                 self.op_instr.show()
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
             else:
                 if curr_idx in self.tcg_list:
                     self.na_instr.set_text('This drive has not been set up.')
@@ -2394,7 +2484,8 @@ class LockApp(gtk.Window):
             
             if curr_idx in self.setup_list:
                 self.op_instr.show()
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
             else:
                 if curr_idx in self.tcg_list:
                     self.na_instr.set_text('This drive has not been set up.')
@@ -2452,7 +2543,8 @@ class LockApp(gtk.Window):
                 
             if curr_idx in self.setup_list:
                 self.op_instr.show()
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
             else:
                 if curr_idx in self.tcg_list:
                     self.na_instr.set_text('This drive has not been set up.')
@@ -2519,33 +2611,43 @@ class LockApp(gtk.Window):
             length = len(self.usb_list)
             
             if length > 0:
+                count = 0
                 for d in self.usb_list:
                     if dev_os == 'Windows':
-                        self.usb_menu.append(d[1])
+                        mod = '\\\\.\\PhysicalDrive' + d[0]
+                        if mod not in self.devs_list:
+                            self.usb_menu.append(d[1])
+                            count = count + 1
                     elif dev_os == 'Linux':
-                        self.usb_menu.append(d[0])
-                self.usb_menu.set_active(0)
-                
-                self.setupUSB_button.show()
-                
-                self.box_newpass.show()
-                self.new_pass_label.hide()
-                self.new_pass_entry.hide()
-                
-                self.box_drive.show()
-                self.drive_label.show()
-                self.drive_menu.hide()
-                self.usb_menu.show()
-                if curr_idx in self.setup_list:
-                    self.op_instr.show()
-                    self.enable_entries_buttons()
-                else:
-                    if curr_idx in self.tcg_list:
-                        self.na_instr.set_text('This drive has not been set up.')
+                        if d[0] not in self.devs_list:
+                            self.usb_menu.append(d[0])
+                            count = count + 1
+                if count > 0:
+                    self.usb_menu.set_active(0)
+                    
+                    self.setupUSB_button.show()
+                    
+                    self.box_newpass.show()
+                    self.new_pass_label.hide()
+                    self.new_pass_entry.hide()
+                    
+                    self.box_drive.show()
+                    self.drive_label.show()
+                    self.drive_menu.hide()
+                    self.usb_menu.show()
+                    if curr_idx in self.setup_list:
+                        self.op_instr.show()
+                        if self.VERSION != 0:
+                            self.enable_entries_buttons()
                     else:
-                        self.na_instr.set_text('This drive is not a TCG drive.')
-                    self.na_instr.show()
-                    self.disable_entries_buttons()
+                        if curr_idx in self.tcg_list:
+                            self.na_instr.set_text('This drive has not been set up.')
+                        else:
+                            self.na_instr.set_text('This drive is not a TCG drive.')
+                        self.na_instr.show()
+                        self.disable_entries_buttons()
+                else:
+                    self.naDevices_instr.show()
             else:
                 self.naDevices_instr.show()
         
@@ -2597,7 +2699,8 @@ class LockApp(gtk.Window):
             
             if curr_idx in self.setup_list:
                 self.op_instr.show()
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
                 
             else:
                 if curr_idx in self.tcg_list:
@@ -2633,7 +2736,8 @@ class LockApp(gtk.Window):
             self.revert_psid_entry.set_text("")
             if curr_idx in self.tcg_list:
                 self.op_instr.show()
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
                 
             else:
                 self.na_instr.set_text('This drive is not a TCG drive.')
@@ -2696,7 +2800,8 @@ class LockApp(gtk.Window):
                 self.box_auth.show()
             if curr_idx in self.locked_list:
                 self.op_instr.show()
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
             else:
                 if curr_idx in self.tcg_list:
                     self.na_instr.set_text('This drive is not locked.')
@@ -2757,7 +2862,8 @@ class LockApp(gtk.Window):
             self.check_box_pass.show()
             if curr_idx in self.setup_list:
                 self.op_instr.show()
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
                 
             else:
                 if curr_idx in self.tcg_list:
@@ -2789,7 +2895,9 @@ class LockApp(gtk.Window):
         self.selectMulti_instr.hide()
         self.naDevices_instr.hide()
         self.main_instr.hide()
+        self.noTCG_instr.hide()
         self.wait_instr.hide()
+        self.multi_wait_instr.hide()
         self.pba_wait_instr.hide()
         self.op_instr.hide()
         self.na_instr.hide()
@@ -2828,7 +2936,7 @@ class LockApp(gtk.Window):
         self.confirm_pass_label.set_text('Confirm New Password')
         
         self.mbr_radio.hide()
-        self.usb_radio.hide()
+        #self.usb_radio.hide()
         self.skip_radio.hide()
         
         self.box_drive.hide()
@@ -2878,6 +2986,7 @@ class LockApp(gtk.Window):
         self.op_instr.show()
         self.pba_wait_instr.hide()
         self.wait_instr.hide()
+        self.multi_wait_instr.hide()
         
     def mode_toggled(self, button, res):
         if res == 0:
@@ -2893,7 +3002,8 @@ class LockApp(gtk.Window):
                 self.select_instr.show()
             idx = self.dev_select.get_active()
             if (self.view_state == 1 and idx in self.locked_list) or (self.view_state == 4 and idx in self.nonsetup_list) or (self.view_state == 2 and idx in self.setup_list) or self.view_state == 7:
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
                 self.op_instr.show()
             else:
                 self.disable_entries_buttons()
@@ -2914,21 +3024,24 @@ class LockApp(gtk.Window):
                 self.selectAll_check.show()
                 for i in self.locked_list:
                     self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
                 self.op_instr.show()
                 self.selectMulti_instr.show()
             elif self.view_state == 2 and len(self.setup_list) > 0:
                 self.selectAll_check.show()
                 for i in self.setup_list:
                     self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
                 self.op_instr.show()
                 self.selectMulti_instr.show()
             elif self.view_state == 4 and len(self.nonsetup_list) > 0:
                 self.selectAll_check.show()
                 for i in self.nonsetup_list:
                     self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
                 self.op_instr.show()
                 self.selectMulti_instr.show()
             #add for setup_prompt2
@@ -2936,7 +3049,8 @@ class LockApp(gtk.Window):
                 self.selectAll_check.show()
                 for i in self.mbr_list: #switch to self.mbr_list
                     self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
-                self.enable_entries_buttons()
+                if self.VERSION != 0:
+                    self.enable_entries_buttons()
                 self.op_instr.show()
                 self.selectMulti_instr.show()
             else:
@@ -3000,7 +3114,8 @@ class LockApp(gtk.Window):
         self.revertM.set_sensitive(False)
         self.helpM.set_sensitive(False)
         self.unlockM.set_sensitive(False)
-        self.select_box.set_sensitive(False)
+        #self.select_box.set_sensitive(False)
+        self.dev_select.set_sensitive(False)
         self.scrolledWin_grid.set_sensitive(False)
         self.selectAll_check.set_sensitive(False)
         if self.VERSION != 1:
@@ -3018,10 +3133,10 @@ class LockApp(gtk.Window):
         self.buttonBox.set_sensitive(False)
         
         self.mbr_radio.set_sensitive(False)
-        self.usb_radio.set_sensitive(False)
         self.skip_radio.set_sensitive(False)
         
-        self.box_auth.set_sensitive(False)
+        self.check_box_pass.set_active(False)
+        
         self.box_pass.set_sensitive(False)
         self.box_newpass.set_sensitive(False)
         self.box_newpass_confirm.set_sensitive(False)
@@ -3038,7 +3153,7 @@ class LockApp(gtk.Window):
         self.helpM.set_sensitive(True)
         self.unlockM.set_sensitive(True)
         
-        self.select_box.set_sensitive(True)
+        self.dev_select.set_sensitive(True)
         self.scrolledWin_grid.set_sensitive(True)
         self.selectAll_check.set_sensitive(True)
         if self.VERSION != 1:
@@ -3049,14 +3164,15 @@ class LockApp(gtk.Window):
         self.toggleMulti_radio.set_sensitive(True)
         self.toggleSingle_radio.set_sensitive(True)
         
-        self.enable_entries_buttons()
+        if self.VERSION != 0:
+            self.enable_entries_buttons()
         
     def enable_entries_buttons(self, *args):
         
         self.buttonBox.set_sensitive(True)
         
         self.mbr_radio.set_sensitive(True)
-        self.usb_radio.set_sensitive(True)
+        #self.usb_radio.set_sensitive(True)
         self.skip_radio.set_sensitive(True)
         
         self.box_pass.set_sensitive(True)
