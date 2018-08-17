@@ -139,7 +139,7 @@ def set_power(ui):
         h_val = '300'
     
     s = os.popen('powercfg -x monitor-timeout-ac ' + m_val)
-    s = os.popen('powercfg -x monitor-timeout-ac ' + m_val)
+    s = os.popen('powercfg -x monitor-timeout-dc ' + m_val)
 
     s = os.popen("powercfg -x standby-timeout-ac 0")
     s = os.popen("powercfg -x standby-timeout-dc 0")
