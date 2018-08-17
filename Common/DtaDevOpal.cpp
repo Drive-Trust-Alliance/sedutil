@@ -918,7 +918,7 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 	int idx=0;
 	memset(buf, 0, 20);
 	gethuser(buf);
-	if (  memcmp(userid , buf,5) ) idx = disk_info.OPAL20_numUsers -1 ;
+	if (!memcmp(userid , buf,5)) idx = disk_info.OPAL20_numUsers -1 ;
 	// if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? (OPAL_UID)(OPAL_USER1_UID + idx) : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // ok work : JERRY can user set its own password ?????
 		delete session;

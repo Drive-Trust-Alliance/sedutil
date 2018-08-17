@@ -153,10 +153,12 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
     serNum = d->getSerialNum();
     vector<uint8_t> salt(serNum, serNum + 20);
     //	vector<uint8_t> salt(DEFAULTSALT);
-	if (iter==75000)
+	if (iter == 75000) {
 		DtaHashPassword(hash, password, salt);
-	else
-		DtaHashPassword(hash, password, salt,iter);
+	}
+	else {
+		DtaHashPassword(hash, password, salt, iter);
+	}
 #if false
 	printf("serNum=%s\n", serNum);
 	printf("serNum as data =");
@@ -172,7 +174,6 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
 		printf("%02x", hash[i]);
 	printf("\n");
 #endif	
-    LOG(D1) << " Exit DtaHashPwd"; // log for hash timing
 }
 
 struct PBKDF_TestTuple

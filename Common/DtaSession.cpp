@@ -45,7 +45,7 @@ DtaSession::start(OPAL_UID SP)
 uint8_t 
 DtaSession::start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority)
 {
-	LOG(D1) << "Entering DtaSession::startSession ";
+	LOG(D1) << "Entering DtaSession::startSession OPl_UID";
 	vector<uint8_t> auth;
 	auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
 	for (int i = 0; i < 8; i++) {
@@ -56,7 +56,7 @@ DtaSession::start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority)
 uint8_t
 DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority)
 {
-    LOG(D1) << "Entering DtaSession::startSession ";
+    LOG(D1) << "Entering DtaSession::startSession vector";
 	vector<uint8_t> hash;
     DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {

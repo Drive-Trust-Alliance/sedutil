@@ -37,7 +37,6 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #if (!WINDOWS7)
 #include "compressapi-8.1.h"
 #endif
-#include <iostream>
 #include <fstream>
 #include <..\License\Stdafx.h>
 #include <..\License\LicenseValidator.h>
@@ -55,6 +54,7 @@ int diskScan(char * devskip)
 	char devname[25];
 	int i = 0;
 	int j = 0;
+
 	#ifdef DEVICEMASKN
 	bool f_sda_end = FALSE;
 	bool f_nvme_first = FALSE;
@@ -62,13 +62,42 @@ int diskScan(char * devskip)
 	DtaDev * d;
 	LOG(D1) << "Creating diskList";
 	printf("\nScanning for Opal compliant disks\n");
+
+	char fn[20] = "fidelitydisk.txt";
+	char buf[10];
+	int mdisk = 0;
+	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+	int r = system("diskpart /s list.txt | findstr /R /C:\"Disk [0-9].\" | find /c /v \"\" > fidelitydisk.txt ");
+	ifstream fs ;
+
+	fs.open("fidelitydisk.txt", ios::in | ios::out | ios::binary);
+        //          ios::in | ios::out | ios::binary
+	if (!fs) {
+		LOG(E) << "Unable to open " << fn ;
+		//return DTAERROR_OPEN_ERR;
+	}
+	fs.read(buf,9);
+        fs.close();
+
+	#else
+	int r = system("fdisk -l | grep 'Disk /dev/sd\\|Disk /dev/nvme' | sudo wc -l > fidelitydisk.txt ");
+	FILE * file;
+	file = fopen(fn,"r");
+	fgets(buf, 9, file);
+	fclose(file);
 	
-	while (TRUE) {
+#endif
+	int ndisk = atoi(buf);
+	//printf ("ndisk=%d mdisk=%d\n", ndisk, mdisk);
+
+	while (TRUE && (mdisk <= ndisk)) {
+	//printf ("ndisk=%d mdisk=%d\n", ndisk, mdisk);
 		DEVICEMASK;
 		if (!strcasecmp(devname,devskip)) 
 		{
 			LOG(D1) << "Find skipped device " << devskip;
 			i += 1; 
+			mdisk += 1;
 			DEVICEMASK;
 		}
 		#ifdef DEVICEMASKN
@@ -80,6 +109,7 @@ int diskScan(char * devskip)
 		//sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i)  Windows
 		d = new DtaDevGeneric(devname);
 		if (d->isPresent()) {
+			mdisk +=1 ;
 			printf("%s", devname);
 			if (d->isAnySSC())
 				printf(" %s%s%s ", (d->isOpal1() ? "1" : " "),
@@ -98,7 +128,8 @@ int diskScan(char * devskip)
 			if (!f_sda_end) { f_sda_end = TRUE; f_nvme_first = TRUE;}
 			else 
 			#endif
-				break;
+				if (mdisk >= ndisk)
+				    break;
 		}
 		delete d;
 		#ifdef DEVICEMASKN
@@ -110,8 +141,7 @@ int diskScan(char * devskip)
 		#endif
 			i += 1;
 	}
-	delete d;
-	printf("No more disks present ending scan\n");
+	//if (d) delete d;
 	return 0;
 }
 
@@ -1068,7 +1098,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-	printf("Fidelity Lock Version : 0.3.9.%s.%s 20180810-A001\n", st1.c_str(),GIT_VERSION);
+	printf("Fidelity Lock Version : 0.3.9.%s.%s 20180816-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:
