@@ -67,6 +67,7 @@ int diskScan(char * devskip)
 	char buf[10];
 	int mdisk = 0;
 	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+	system("echo list\ disk > list.txt");
 	int r = system("diskpart /s list.txt | findstr /R /C:\"Disk [0-9].\" | find /c /v \"\" > fidelitydisk.txt ");
 	ifstream fs ;
 

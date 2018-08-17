@@ -29,8 +29,8 @@ class QueryDialog(gtk.Window):
         scrolledWin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         
         self.set_default_size(400, 500)
-        if os.path.isfile('icon.jpg'):
-            self.set_icon_from_file('icon.jpg')
+        if os.path.isfile('icon.ico'):
+            self.set_icon_from_file('icon.ico')
         
         queryVbox = gtk.VBox(False,0)
         
@@ -109,7 +109,9 @@ class QueryDialog(gtk.Window):
         user = parent.user_list[index]
         
         devpass = lockhash.hash_pass(self.queryPass.get_text(), salt, parent.dev_msid.get_text())
-        level = self.authQuery.get_active()
+        level = 0
+        if parent.VERSION % 3 == 0:
+            level = self.authQuery.get_active()
         m3 = ''
         if level == 0:
             f0 = os.popen(parent.prefix + "sedutil-cli -n -t --getmbrsize " + devpass + " " + parent.devname)
@@ -275,8 +277,8 @@ class AuditDialog(gtk.Dialog):
         self.set_border_width(10)
         self.set_default_size(500, 500)
         
-        if os.path.isfile('icon.jpg'):
-            self.set_icon_from_file('icon.jpg')
+        if os.path.isfile('icon.ico'):
+            self.set_icon_from_file('icon.ico')
         vbox = self.get_content_area()
         
         self.listStore = gtk.ListStore(str, str, int, str)
@@ -396,8 +398,8 @@ class OpalDialog(gtk.Dialog):
         gtk.Dialog.__init__(self, 'TCG Drives', parent, 0, (gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE))
         self.set_border_width(10)
         self.set_default_size(500, 500)
-        if os.path.isfile('icon.jpg'):
-            self.set_icon_from_file('icon.jpg')
+        if os.path.isfile('icon.ico'):
+            self.set_icon_from_file('icon.ico')
         vbox = self.get_content_area()
         lsOpal = gtk.ListStore(str, str, str, str)
         tcgEntries = []
@@ -430,8 +432,8 @@ class AboutDialog(gtk.Dialog):
         self.set_default_size(250, 250)
         
         self.set_border_width(10)
-        if os.path.isfile('icon.jpg'):
-            self.set_icon_from_file('icon.jpg')
+        if os.path.isfile('icon.ico'):
+            self.set_icon_from_file('icon.ico')
 
 
         box = self.get_content_area()
@@ -451,16 +453,20 @@ class AboutDialog(gtk.Dialog):
         self.show_all()
     
 class SetPowerDialog(gtk.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, mode):
         gtk.Dialog.__init__(self, 'Power Settings', parent, 0, (gtk.STOCK_APPLY, gtk.RESPONSE_APPLY))
         
         self.set_default_size(250, 250)
         
         self.set_border_width(10)
-        if os.path.isfile('icon.jpg'):
-            self.set_icon_from_file('icon.jpg')
+        if os.path.isfile('icon.ico'):
+            self.set_icon_from_file('icon.ico')
         vbox = self.get_content_area()
-        pwr_instr = gtk.Label('Your power settings need to be changed.\nSleep will be disabled and Hibernate will be used instead.')
+        pwr_instr = None
+        if mode == 0:
+            pwr_instr = gtk.Label('Your power settings need to be changed.\nSleep will be disabled and Hibernate will be used instead.')
+        else:
+            pwr_instr = gtk.Label('Modify your power settings.')
         screen_label = gtk.Label('Turn off screen after')
         self.screen_menu = None
         hib_label = gtk.Label('Hibernate PC after')

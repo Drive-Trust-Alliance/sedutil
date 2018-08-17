@@ -22,6 +22,10 @@ def hash_pass(plaintext, salt, msid):
     #del plaintext
     pw = hash_pbkdf2(plaintext, salt)
     return pw
+    
+def hash_sig(plaintext, salt):
+    sig = hash_pbkdf2(plaintext, salt, 1000)
+    return sig
 
 def testsedutil(testSet):
     failed = 0;
