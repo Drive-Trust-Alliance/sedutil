@@ -123,6 +123,8 @@ sudo ../../../../syslinux-4.05-pre1/extlinux/extlinux --install image # ok
 sudo cp -av --no-preserve=mode,ownership ../../../clone-pure64/boot image/
 sudo cp -av --no-preserve=mode,ownership ../../../clone-pure64/EFI  image/
 
+sudo cp -pv --no-preserve=mode,ownership ../../../clone-pure64/autorun.* image/
+
 # no more cde directory
 # sudo cp -a ../../../clone-pure64/cde  image/
 for f in Xprogs aterm
