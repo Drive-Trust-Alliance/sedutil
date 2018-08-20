@@ -65,7 +65,11 @@ int diskScan(char * devskip)
 
 	char fn[20] = "fidelitydisk.txt";
 	char buf[10];
+	int ndisk=0;
+	int nvmedisk=0;
 	int mdisk = 0;
+	int mnvmedisk = 0; 
+
 	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 	system("echo list\ disk > list.txt");
 	int r = system("diskpart /s list.txt | findstr /R /C:\"Disk [0-9].\" | find /c /v \"\" > fidelitydisk.txt ");
@@ -79,20 +83,26 @@ int diskScan(char * devskip)
 	}
 	fs.read(buf,9);
         fs.close();
+	ndisk = atoi(buf);
 
 	#else
-	int r = system("fdisk -l | grep 'Disk /dev/sd\\|Disk /dev/nvme' | sudo wc -l > fidelitydisk.txt ");
+	int r = system("fdisk -l | grep 'Disk /dev/sd' | sudo wc -l > disksda.txt ");
+	r = system("fdisk -l | grep 'Disk /dev/nvme' | sudo wc -l > disknvme.txt ");
 	FILE * file;
-	file = fopen(fn,"r");
+	file = fopen("disknvme.txt","r");
 	fgets(buf, 9, file);
 	fclose(file);
-	
-#endif
-	int ndisk = atoi(buf);
-	//printf ("ndisk=%d mdisk=%d\n", ndisk, mdisk);
-
-	while (TRUE && (mdisk <= ndisk)) {
-	//printf ("ndisk=%d mdisk=%d\n", ndisk, mdisk);
+	nvmedisk= atoi(buf); // number of nvme disk on system
+        memset(buf,0,10);
+        file = fopen("disksda.txt","r");
+	fgets(buf, 9, file);
+	fclose(file);
+	ndisk = atoi(buf); // number of sdx disk on system 
+	#endif
+	int lpc = 0;
+	while (TRUE && ((mdisk + mnvmedisk) <= (ndisk + nvmedisk)) && (lpc < 256)) {
+		lpc++;
+		//printf ("ndisk=%d mdisk=%d  lpc=%d nvmedisk=%d mnvmedisk=%d\n", ndisk, mdisk,lpc,nvmedisk, mnvmedisk);
 		DEVICEMASK;
 		if (!strcasecmp(devname,devskip)) 
 		{
@@ -102,15 +112,25 @@ int diskScan(char * devskip)
 			DEVICEMASK;
 		}
 		#ifdef DEVICEMASKN
-		if (f_sda_end )
+		//printf("f_sda_end = %d\n",f_sda_end);
+		if (f_sda_end ) {
 			DEVICEMASKN;
+			//printf(" sda end ; start scan nvme %s \n", devname);
+		}
 		#endif
 		//snprintf(devname,23,"/dev/nvme%i",i); //Linux nvme
 		//snprintf(devname,23,"/dev/sd%c",(char) 0x61+i) Linux
 		//sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i)  Windows
 		d = new DtaDevGeneric(devname);
 		if (d->isPresent()) {
-			mdisk +=1 ;
+		#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+			mdisk += 1;
+		#else
+			if (!memcmp(devname,"/dev/sd",7))
+				{mdisk +=1 ;}
+			else 
+				{mnvmedisk+=1;}
+		#endif	
 			printf("%s", devname);
 			if (d->isAnySSC())
 				printf(" %s%s%s ", (d->isOpal1() ? "1" : " "),
@@ -126,23 +146,46 @@ int diskScan(char * devskip)
 		}
 		else {
 			#ifdef DEVICEMASKN
-			if (!f_sda_end) { f_sda_end = TRUE; f_nvme_first = TRUE;}
-			else 
+			if (mdisk < ndisk) {
+				goto here;
+			}
+
+			if (!f_sda_end) { 
+				f_sda_end = TRUE; f_nvme_first = TRUE;
+				//printf("set f_sda_end from FALSE to TRUE\n");
+				goto here;
+			}
+			if (mnvmedisk < nvmedisk) {
+				j+=1;
+				delete d;
+				continue;
+			}
+			else {
+				delete d;
+				break;
+			}
 			#endif
-				if (mdisk >= ndisk)
-				    break;
+			#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+			if ((mdisk >= ndisk)) {
+				delete d;
+				break;
+			}
+			#endif
 		}
+		here:
 		delete d;
 		#ifdef DEVICEMASKN
 		if (f_sda_end) {
+			//printf("f_sda_end is TRUE\n");
 			if (f_nvme_first) { j = 0; f_nvme_first = FALSE;}
 			else	j += 1;
 		}
 		else 
 		#endif
-			i += 1;
+			i += 1; ; // printf("i=%d\n", i);
 	}
 	//if (d) delete d;
+	//printf ("out of while loop ; ndisk=%d mdisk=%d  lpc=%d nvmedisk=%d mnvmedisk=%d\n", ndisk, mdisk,lpc,nvmedisk, mnvmedisk);
 	return 0;
 }
 
@@ -1099,7 +1142,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-	printf("Fidelity Lock Version : 0.3.9.%s.%s 20180817-A001\n", st1.c_str(),GIT_VERSION);
+	printf("Fidelity Lock Version : 0.3.9.%s.%s 20180820-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:
