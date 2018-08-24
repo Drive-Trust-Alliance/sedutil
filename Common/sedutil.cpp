@@ -1142,7 +1142,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-	printf("Fidelity Lock Version : 0.3.9.%s.%s 20180820-A001\n", st1.c_str(),GIT_VERSION);
+	printf("Fidelity Lock Version : 0.4.0.%s.%s 20180824-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:

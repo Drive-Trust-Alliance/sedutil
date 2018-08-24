@@ -1771,7 +1771,7 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 		//LOG(I) << "audit data read password" << password; // JERRY
 		//for (int i = 0; i < auth.size(); i++) printf("%02", auth.at(i)); printf("\n"); // JERRY
 
-		if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth) != 0)) { // JERRY OPAL_UID::OPAL_ADMIN1_UID ->OK getUID() --> OK too; getUIDtoken-->NG ????
+		if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth)) != 0) { // JERRY OPAL_UID::OPAL_ADMIN1_UID ->OK getUID() --> OK too; getUIDtoken-->NG ????
 			delete cmd;
 			delete session;
 			return lastRC;
