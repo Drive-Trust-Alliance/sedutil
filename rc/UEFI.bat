@@ -12,6 +12,22 @@
 @REM %2 is release or Debug
 @REM if %1 is all then build all configuration 
 
+if "%1"=="/\?" (
+	@echo "usage : %0 x64/x86 Release/Debug" 
+	goto end
+)
+if "%1"=="/help" (
+	@echo "usage : %0 x64/x86 Release/Debug" 
+	goto end
+)
+if "%1"=="-h" (
+	@echo "usage : %0 x64/x86 Release/Debug" 
+	goto end
+)
+if "%1"=="--help" (
+	@echo "usage : %0 x64/x86 Release/Debug" 
+	goto end
+)
 if "%1"=="" (
     set P1=x64
 	set P2=Debug
