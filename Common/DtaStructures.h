@@ -358,25 +358,30 @@ typedef struct _OPAL_DiskInfo {
     uint16_t OPAL20_numcomIDs;
     uint8_t OPAL20_initialPIN;
     uint8_t OPAL20_revertedPIN;
+	uint8_t OPAL20_version;
     uint16_t OPAL20_numAdmins;
     uint16_t OPAL20_numUsers;
     uint8_t OPAL20_rangeCrossing;
+	uint8_t OPALITE_version;
     uint16_t OPALITE_basecomID;
     uint16_t OPALITE_numcomIDs;
     uint8_t OPALITE_initialPIN;
     uint8_t OPALITE_revertedPIN;
+
 	uint8_t PYRITE_version;
     uint16_t PYRITE_basecomID;
     uint16_t PYRITE_numcomIDs;
     uint8_t PYRITE_initialPIN;
     uint8_t PYRITE_revertedPIN;
 	//
+	uint8_t RUBY_version;
 	uint16_t RUBY_basecomID;
 	uint16_t RUBY_numcomIDs;
 	uint16_t RUBY_numAdmins;
 	uint16_t RUBY_numUsers;
 	uint8_t RUBY_initialPIN;
 	uint8_t RUBY_revertedPIN;
+
 
 	//
 	uint8_t BlockSID_BlockSIDState : 1;

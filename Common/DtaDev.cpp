@@ -213,6 +213,7 @@ void DtaDev::discovery0()
             disk_info.OPAL20_numAdmins = SWAP16(body->opalv200.numlockingAdminAuth);
             disk_info.OPAL20_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
             disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
+			disk_info.OPAL20_version = body->opalv200.version;
             break;
         case FC_OPALITE: /* OPALITE */
             disk_info.OPALITE = 1;
@@ -221,6 +222,7 @@ void DtaDev::discovery0()
             disk_info.OPALITE_initialPIN = body->opalv200.initialPIN;
             disk_info.OPALITE_revertedPIN = body->opalv200.revertedPIN;
             disk_info.OPALITE_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+			disk_info.OPALITE_version = body->opalv200.version;
             break;
         case FC_PYRITE: /* PYRITE */
             disk_info.PYRITE= 1;
@@ -234,6 +236,7 @@ void DtaDev::discovery0()
 		case FC_RUBY: /* RUBY */
 			disk_info.RUBY = 1;
 			disk_info.ANY_OPAL_SSC = 1;
+			disk_info.RUBY_version = body->opalv200.version;
 			disk_info.RUBY_basecomID = SWAP16(body->opalv200.baseCommID);
 			disk_info.RUBY_initialPIN = body->opalv200.initialPIN;
 			disk_info.RUBY_revertedPIN = body->opalv200.revertedPIN;
@@ -337,7 +340,7 @@ void DtaDev::puke()
 	}
 
 	if (disk_info.OPAL20) {
-		cout << "OPAL 2.0 function (" << HEXON(4) << FC_OPALV200 << ")" << HEXOFF << std::endl;
+		cout << "OPAL 2." << ((disk_info.OPAL20_version -1) & 0xf) << " function (" << HEXON(4) << FC_OPALV200 << ")" << HEXOFF << std::endl;
 		cout << "    Base comID = " << HEXON(4) << disk_info.OPAL20_basecomID << HEXOFF;
 		cout << ", Initial PIN = " << HEXON(2) << disk_info.OPAL20_initialPIN << HEXOFF;
 		cout << ", Reverted PIN = " << HEXON(2) << disk_info.OPAL20_revertedPIN << HEXOFF;
@@ -349,7 +352,7 @@ void DtaDev::puke()
 		cout << std::endl;
 	}
 	if (disk_info.OPALITE) {
-		cout << "OPALITE function (" << HEXON(4) << FC_OPALITE << ")" << HEXOFF << std::endl;
+		cout << "OPALITE 1." << ((disk_info.OPALITE_version & 0xf) - 1) << " function (" << HEXON(4) << FC_OPALITE << ")" << HEXOFF << std::endl;
 		cout << "    Base comID = " << HEXON(4) << disk_info.OPALITE_basecomID << HEXOFF;
 		cout << ", Initial PIN = " << HEXON(2) << disk_info.OPALITE_initialPIN << HEXOFF;
 		cout << ", Reverted PIN = " << HEXON(2) << disk_info.OPALITE_revertedPIN << HEXOFF;
@@ -357,7 +360,7 @@ void DtaDev::puke()
 		cout << std::endl;
 	}
 	if (disk_info.PYRITE) {
-		cout << "PYRITE " << (int)disk_info.PYRITE_version << " function (" << HEXON(4) << FC_PYRITE << ")" << HEXOFF << std::endl;
+		cout << "PYRITE 1." << ((disk_info.PYRITE_version & 0xf) -1) << " function (" << HEXON(4) << FC_PYRITE << ")" << HEXOFF << std::endl;
 		cout << "    Base comID = " << HEXON(4) << disk_info.PYRITE_basecomID << HEXOFF;
 		cout << ", Initial PIN = " << HEXON(2) << disk_info.PYRITE_initialPIN << HEXOFF;
 		cout << ", Reverted PIN = " << HEXON(2) << disk_info.PYRITE_revertedPIN << HEXOFF;
