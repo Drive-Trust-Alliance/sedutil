@@ -33,6 +33,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevEnterprise.h"
 #include "Version.h"
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#define WRITE_RETRIES 3
 #include "sedsize.h"
 #if (!WINDOWS7)
 #include "compressapi-8.1.h"
@@ -272,21 +273,33 @@ int createvol(HANDLE &vol_handle, char * USBname)
 int lockvol( HANDLE &vol_handle)
 {
 	DWORD   n;
+	//if (DeviceIoControl(hDrive, FSCTL_ALLOW_EXTENDED_DASD_IO, NULL, 0, NULL, 0, &size, NULL))
+	if (!DeviceIoControl(vol_handle, FSCTL_ALLOW_EXTENDED_DASD_IO,
+		NULL, 0, NULL, 0, &n, NULL))
+	{
+		DWORD err = GetLastError();
+		IFLOG(D1) printf("FSCTL_ALLOW_EXTENDED_DASD_IO error %d\n", err);
+		//return false; let it fall through to see if lock vol has error
+	}
+	else {
+		IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_ALLOW_EXTENDED_DASD_IO...) OK\n");
+	}
+	//
 	if (!DeviceIoControl(vol_handle, FSCTL_DISMOUNT_VOLUME,
 		NULL, 0, NULL, 0, &n, NULL))
 	{
 		DWORD err = GetLastError();
 		IFLOG(D1) printf("FSCTL_DISMOUNT_VOLUME error %d\n", err);
-		return false;
+		//return false; let it fall through to see if lock vol has error
 	}
 	else {
 		IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_DISMOUNT_VOLUME...) OK\n");
 	}
 
 	// lock volume
-	DWORD status;
-	if (!DeviceIoControl(vol_handle, FSCTL_LOCK_VOLUME,
-		NULL, 0, NULL, 0, &status, NULL))
+	DWORD status; // successfully, the return value is nonzero
+	if (!(status = DeviceIoControl(vol_handle, FSCTL_LOCK_VOLUME,
+		NULL, 0, NULL, 0, &n, NULL)))
 	{
 		// error handling; not sure if retrying is useful
 		// lock vol fail ; probably ok if there is no file system exist
@@ -296,16 +309,16 @@ int lockvol( HANDLE &vol_handle)
 	else {
 		IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_LOCK_VOLUME,...) OK\n");
 	}
-	return true;
+	return status;
 }
 
 // unlock FSCTL_UNLOCK_VOLUME
 // lock volume
 int unlockvol(HANDLE &vol_handle)
 {
-	DWORD status;
+	DWORD n; // successfully, the return value is nonzero
 	if (!DeviceIoControl(vol_handle, FSCTL_UNLOCK_VOLUME,
-		NULL, 0, NULL, 0, &status, NULL))
+		NULL, 0, NULL, 0, &n, NULL))
 	{
 		// error handling; not sure if retrying is useful
 		// lock vol fail ; probably ok if there is no file system exist
@@ -361,6 +374,7 @@ BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 	int status;
 	DWORD   n;
 	long sect;
+	int lp;
 
 	vol_handle = INVALID_HANDLE_VALUE;
 	status = createvol(vol_handle, USBname);
@@ -369,7 +383,15 @@ BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 		return false;
 	}
 	reloadvol(vol_handle);
-	status = lockvol(vol_handle);
+
+	for (lp = 0; lp < 10;lp++) { // 3 Ok 
+		status = lockvol(vol_handle); // error return false
+		if (status) break;
+		Sleep(100);
+	}
+	if ((!status) && (lp >= 10)) {
+		//LOG(E) << "zeromem can not lock volume in 1 seconds";
+	}
 
 	sect = 0;
 	status = setfp(vol_handle, sect);
@@ -402,6 +424,7 @@ BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 	}
 	LOG(D1) << "zero out image area OK";
 	LOG(D1) << "close vol_handle " << vol_handle;
+	FlushFileBuffers(vol_handle);
 	reloadvol(vol_handle);
 	unlockvol(vol_handle);
 	CloseHandle(vol_handle);
@@ -421,6 +444,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 //#elif (defined(WIN32) || defined(_WIN32) || defined(__WIN32__) ) && (!WINDOWS7)
 	HANDLE vol_handle;
 	int status;
+	int lp;
 	long sect;
 	DWORD n;
 	DtaDev * d, * u;
@@ -642,7 +666,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	BOOL res;
 	for (int cnt = 0; cnt < 3; cnt += 1)
 	{
-		if ((res = zeromem(DecompressedBufferSize,USBname))) //    DecompressedBufferSize))
+		if ((res = zeromem(DecompressedBufferSize,USBname))) // error return false , and stay in loop
 			break;
 	}
 	if (!res) // zero twice fail 
@@ -663,7 +687,15 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 		return DTAERROR_CREATE_USB;
 	}
 	reloadvol(vol_handle);
-	status = lockvol(vol_handle);
+	//status = lockvol(vol_handle);
+	for (lp = 0; lp < 10; lp++) { // 
+		status = lockvol(vol_handle); // error return false
+		if (status) break; // break loop if succeess
+		Sleep(500);
+	}
+	if ((!status) && (lp >= 10)) {
+		LOG(E) << "write PBA can not lock volume in 5 seconds";
+	}
 	sect = 0;
 	status = setfp(vol_handle, sect);
 	if (!status)
@@ -679,12 +711,15 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	int retry_cnt;
 	retry_cnt = 0;
 	again:
+	//	if (!WriteFileWithRetry(f_handle, syslinux_adv, 2 * ADV_SIZE,
+	// &bytes_written, WRITE_RETRIES)) // rufus --> NG
 	if (!WriteFile(vol_handle, DecompressedBuffer, (DWORD)DecompressedBufferSize, &n, NULL))
 	{
-		if (retry_cnt < 3) { retry_cnt++;  goto again; }
+		if (retry_cnt < 6) { retry_cnt++; Sleep(200*retry_cnt);   goto again; }
 		//int err = GetLastError();
 		//printf("write image data to USB error %d\n", err);
 		LOG(I) << "Write image to USB error";
+		FlushFileBuffers(vol_handle);
 		unlockvol(vol_handle);
 		CloseHandle(vol_handle);
 		if (DecompressedBuffer != NULL) free(DecompressedBuffer);
@@ -695,6 +730,13 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	//printf("write image data to USB %ld OK; close handle %zd\n", n, (int64_t)vol_handle);
 	LOG(I) << "Write image to USB OK";
 	if (DecompressedBuffer != NULL) free(DecompressedBuffer);
+	/*
+	if (!FlushFileBuffers(f_handle)) {
+		uprintf("FlushFileBuffers failed");
+		goto out;
+	}
+	*/
+	FlushFileBuffers(vol_handle);
 	reloadvol(vol_handle);
 	CloseHandle(vol_handle);
 	delete d;
@@ -763,33 +805,37 @@ int main(int argc, char * argv[])
 			long feat = m_lv->getfeature();
 			long nlic = m_lv->getnlic();
 			long nday = m_lv->getdaylft();
+			/*
 			printf("License Model = %ld \n", licmodel);
 			printf("License Type = %ld \n",lictype);
 			printf("Features = %ld \n", feat);
 			printf("Number of License = %ld \n",nlic );
 			printf("Number of Day Left = %ld \n", nday);
-			
+			*/
 			bool eval = m_lv->IsEvaluation();
 			bool licexpired =  m_lv->EvaluationExpired();
 			int rem = m_lv->EvaluationRemainingDays();
+			/*
 			printf("License is evaluation = %ld \n",eval );
 			printf("License Evaluation Remaining Days = %d \n", rem);
 			printf("License is expired = %d \n", licexpired);
-
+			*/
 			SYSTEMTIME lt;
 			VariantTimeToSystemTime(m_lv->getexpire(), &lt);
-			printf("License Expire date : %d/%d/%d %d:%d:%d\n", lt.wYear, lt.wMonth,lt.wDay,lt.wHour,lt.wMinute,lt.wSecond);
+			//printf("License Expire date : %d/%d/%d %d:%d:%d\n", lt.wYear, lt.wMonth,lt.wDay,lt.wHour,lt.wMinute,lt.wSecond);
 			// additional lic info 
 			long majver = m_lv->getmajorversion(); 
 			long minver = m_lv->getminorversion(); 
 			_bstr_t ver = m_lv->getversion(); 
 			long prodid = m_lv->getproductid();
 			DATE relsdate = m_lv->getreleasedate();
+			/*
 			printf("Product Release Date = %f \n", relsdate);
 			printf("Product ID = %ld \n", prodid);
 			printf("License Major Version = %ld \n", majver);
 			printf("License Minor Version = %ld \n", minver);
 			printf("License Version = %s \n", (char *)ver);
+			*/
 			if (0) { // some how m_lv return empty string for the following 
 				_bstr_t company = m_lv->getcompany();
 				printf("Company = %s\n", (char *)company);
@@ -1142,7 +1188,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-	printf("Fidelity Lock Version : 0.4.0.%s.%s 20180824-A001\n", st1.c_str(),GIT_VERSION);
+	printf("Fidelity Lock Version : 0.4.0.%s.%s 20180830-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:
