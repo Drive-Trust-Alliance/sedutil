@@ -265,9 +265,9 @@ class AuditDialog(gtk.Dialog):
                               29: 'Attempt to remove lock and erase data using PSID failed'})
 
     def __init__(self, parent, a):
-        if (parent.VERSION == 3 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and parent.pass_sav.get_active():
+        #if (parent.VERSION == 3 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and parent.pass_sav.get_active():
             #print "openLog passSaveUSB " + password + " "  + self.auth_menu.get_active_text()
-            runop.passSaveUSB(self, password, parent.drive_menu.get_active_text(), parent.dev_vendor.get_text(), parent.dev_sn.get_text())
+            #runop.passSaveUSB(self, password, parent.drive_menu.get_active_text(), parent.dev_vendor.get_text(), parent.dev_sn.get_text())
         columns = ["Level", "Date and Time", "Event ID", "Event Description"]
         self.auditEntries = []
         self.errorEntries = []

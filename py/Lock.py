@@ -18,6 +18,7 @@ import runop
 import random
 import csv
 import dialogs
+import ctypes
 
 from string import ascii_uppercase
 
@@ -105,6 +106,8 @@ class LockApp(gtk.Window):
     user_list = []
     
     label_list = []
+    
+    process_list = []
     
     process = None
     
@@ -485,10 +488,12 @@ class LockApp(gtk.Window):
             self.multi_wait_instr = gtk.Label('Please wait, this will take up to a minute per drive...')
             self.pba_wait_instr = gtk.Label('Please wait, writing the preboot image to a drive will take up to 10 minutes...\nDo not turn off your computer while setup is ongoing.')
             self.load_instr = gtk.Label('Loading drive information...')
+            self.progress_bar = gtk.ProgressBar()
             self.vbox.pack_start(self.wait_instr, False, False, 5)
             self.vbox.pack_start(self.multi_wait_instr, False, False, 5)
             self.vbox.pack_start(self.pba_wait_instr, False, False, 5)
             self.vbox.pack_start(self.load_instr, False, False, 5)
+            self.vbox.pack_start(self.progress_bar, False, False, 5)
             
             self.waitSpin = gtk.Spinner()
             self.vbox.pack_start(self.waitSpin, False, False, 5)
@@ -682,7 +687,6 @@ class LockApp(gtk.Window):
                                 pba_devlist.append(m.group(1))
                     #valid = True
                     print pba_devlist
-                    print datetime.datetime.now()
                     if len(pba_devlist) > 0:
                         valid = False
                         #list of 0's of len(self.devs_list)
@@ -705,7 +709,6 @@ class LockApp(gtk.Window):
                                         levels.append(PyExtOb.get_str(L))
                                     count = 0
                                     for lic in levels:
-                                        print count
                                         for j in self.locked_list:
                                             salt = self.salt_list[j]
                                             #f_curr = lockhash.hash_pbkdf2(lic, salt)
@@ -742,8 +745,6 @@ class LockApp(gtk.Window):
 
                         if sum(ver_list) > 0:
                             valid = True
-                            print 'valid'
-                            print datetime.datetime.now()
                                 
                         if not valid:
                             self.msg_err('Invalid boot')
@@ -785,22 +786,43 @@ class LockApp(gtk.Window):
                         #            self.msg_err('Invalid boot')
                         #            self.exitapp()
                         folder_list = []
-                        txt = os.popen(self.prefix + 'mount').read()
-                        dev_regex = '/dev/sd[a-z][1-9]?\s*on\s*(\S+)\s*type'
-                        drive_list = re.findall(dev_regex, txt)
-                        txt2 = os.popen(self.prefix + 'blkid').read()
-                        dev_regex2 = '(/dev/sd[a-z][1-9]?.+)'
-                        all_list = re.findall(dev_regex2, txt2)
-                        r1 = '/dev/sd[a-z][1-9]?'
-                        r2 = 'TYPE="([a-z]+)"'
-                        for a in all_list:
-                            m1 = re.search(r1,a)
-                            m2 = re.search(r2,a)
-                            if m1 != None and m2 != None:
-                                dev_a = m1.group(0)
-                                type_a = m2.group(1)
-                                if dev_a not in drive_list:
-                                    s = os.system(self.prefix + 'mount -t ' + type_a + ' ' + dev_a)
+                        
+                        txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d\" \" -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do\necho $DLIST\ndone ").read()
+                        
+                        txt_regex = 'sd[a-z]'
+                        list_u = re.findall(txt_regex,txt)
+                        print list_u
+                        for u in list_u:
+                            print u
+                            txt1 = os.popen(self.prefix + 'mount').read()
+                            m = re.search(u,txt1)
+                            if not m:
+                                txt2 = os.popen(self.prefix + 'blkid').read()
+                                rgx = u + '.+'
+                                m1 = re.search(rgx,txt2)
+                                if m1:
+                                    r2 = 'TYPE="([a-z]+)"'
+                                    txt3 = m1.group(0)
+                                    m2 = re.search(r2,txt3)
+                                    type_a = m2.group(1)
+                                    s = os.system(self.prefix + 'mount -t ' + type_a + ' /dev/' + u + '1')
+                        
+                        #txt = os.popen(self.prefix + 'mount').read()
+                        #dev_regex = '/dev/sd[a-z][1-9]?\s*on\s*(\S+)\s*type'
+                        #drive_list = re.findall(dev_regex, txt)
+                        #txt2 = os.popen(self.prefix + 'blkid').read()
+                        #dev_regex2 = '(/dev/sd[a-z][1-9]?.+)'
+                        #all_list = re.findall(dev_regex2, txt2)
+                        #r1 = '/dev/sd[a-z][1-9]?'
+                        #r2 = 'TYPE="([a-z]+)"'
+                        #for a in all_list:
+                        #    m1 = re.search(r1,a)
+                        #    m2 = re.search(r2,a)
+                        #    if m1 != None and m2 != None:
+                        #        dev_a = m1.group(0)
+                        #        type_a = m2.group(1)
+                        #        if dev_a not in drive_list:
+                        #            s = os.system(self.prefix + 'mount -t ' + type_a + ' ' + dev_a)
                         txt = os.popen(self.prefix + 'mount').read()
                         dev_regex = '/dev/sd[a-z][1-9]?\s*on\s*(\S+)\s*type'
                         drive_list = re.findall(dev_regex, txt)
@@ -815,7 +837,6 @@ class LockApp(gtk.Window):
                                     fp = i0 + '/FidelityLock/' + self.vendor_list[i] + '_' + self.sn_list[i] + '.psw'
                                     if os.path.isfile(fp):
                                         present = True
-                    print datetime.datetime.now()
                     gobject.idle_add(cleanup, present)
                         
                 def cleanup(present):
@@ -845,6 +866,8 @@ class LockApp(gtk.Window):
                 demo_msg.run()
                 demo_msg.destroy()
             if self.VERSION == 1:
+                if len(self.locked_list) > 0:
+                    self.dev_select.set_active(self.locked_list[0])
                 self.unlock_prompt()
                 
             
@@ -1273,7 +1296,7 @@ class LockApp(gtk.Window):
         
         tcgWin.destroy()
         
-    def mngPower_prompt(self, mode):
+    def mngPower_prompt(self, button, mode):
         dialog = dialogs.SetPowerDialog(self, mode)
         res = dialog.run()
         
@@ -1287,6 +1310,7 @@ class LockApp(gtk.Window):
         self.devname = self.devs_list[self.tcg_list[index]]
         #print "Selected drive: " + self.devname
         password = ""
+        drive = ''
         if (self.VERSION == 3 or (self.VERSION == 1 and self.PBA_VERSION != 1)) and self.check_pass_rd.get_active():
             password = runop.passReadUSB(self, self.dev_vendor.get_text(), self.dev_sn.get_text())
             if password == None or password == 'x':
@@ -1294,7 +1318,8 @@ class LockApp(gtk.Window):
                 return
             #print 'USB password: ' + password
         else:
-            password = lockhash.hash_pass(self.pass_entry.get_text(), self.salt_list[self.tcg_list[index]], self.dev_msid.get_text())
+            pw = re.sub('\s', '', self.pass_entry.get_text())
+            password = lockhash.hash_pass(pw, self.salt_list[self.tcg_list[index]], self.dev_msid.get_text())
             self.pass_entry.get_buffer().delete_text(0,-1)
             #print 'Typed password: ' + password
         if self.VERSION % 2 == 1 and self.pass_sav.get_active():
@@ -1325,7 +1350,7 @@ class LockApp(gtk.Window):
             statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 03" + timeStr + " " + password + " Admin1 " + self.devname)
             if statusAW == 0:
                 txt = os.popen(self.prefix + "sedutil-cli -n -t --auditread " + password + " Admin1 " + self.devname ).read()
-        print statusAW
+        
         if statusAW == self.NOT_AUTHORIZED:
             pwd = lockhash.get_val() + self.salt_list[self.tcg_list[index]]
             hash_pwd = lockhash.hash_pass(pwd, self.salt_list[self.tcg_list[index]], self.msid_list[self.tcg_list[index]])
@@ -1356,6 +1381,14 @@ class LockApp(gtk.Window):
             self.msg_err('Audit Log could not be retrieved.')
             return
         else:
+            if self.VERSION % 2 == 1 and self.pass_sav.get_active() and drive != '':
+                runop.passSaveUSB(self, password, self.drive_menu.get_active_text(), self.dev_vendor.get_text(), self.dev_sn.get_text())
+                timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                timeStr = timeStr[2:]
+                if self.auth_menu.get_active() == 0:
+                    statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 18" + timeStr + " " + password + " Admin1 " + self.devname)
+                else:
+                    statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 18" + timeStr + " " + password + " User1 " + self.devname)
             auditFullRegex = 'Total Number of Audit Entries\s*:\s*([0-9]+)\n((?:.+\n?)+)'
             a = re.search(auditFullRegex, txt)
             if txt == "Invalid Audit Signature or No Audit Entry log\n" or not a:
@@ -1369,7 +1402,7 @@ class LockApp(gtk.Window):
                 
                 logWin.destroy()
                 
-                self.returnToMain(False)
+                self.returnToMain(None, False)
             
     def run_scan(self, *args):
         self.start_spin()
@@ -1392,19 +1425,6 @@ class LockApp(gtk.Window):
             runop.finddev(self)
             
             def t_run():
-                drive_dict = {}
-                dev_os = platform.system()
-                if dev_os == 'Windows':
-                    for drive in ascii_uppercase:
-                        if os.path.isdir('%s:\\' % drive):
-                            t_x = os.popen("powershell -NoProfile -NoExit -Command Get-Disk (Get-Partition -DriveLetter '" + drive + "').DiskNumber").read()
-                            disknum_regex = '\n([0-9]+)'
-                            m = re.search(disknum_regex, t_x)
-                            if m:
-                                m_dev = '\\\\.\\PhysicalDrive' + m.group(1)
-                                if m_dev in self.devs_list:
-                                    drive_dict[m_dev] = drive
-                    
                 
                 pwd_test = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(16))
                 salt_test = self.salt_list[0]
@@ -1415,13 +1435,111 @@ class LockApp(gtk.Window):
                 sedutil_res = sedutil_match.group(1).lower()
                 hash_res = lockhash.hash_pbkdf2(pwd_test, salt_test)
                 
-                gobject.idle_add(cleanup, sedutil_res, hash_res, drive_dict)
+                gobject.idle_add(cleanup, sedutil_res, hash_res)
                 
                 
-            def cleanup(sedutil_res, hash_res, drive_dict):
+            def cleanup(sedutil_res, hash_res):
                 if sedutil_res != hash_res:
                     self.msg_err('Hash validation failed')
                     self.exitapp()
+                
+                
+            t = threading.Thread(target=t_run, args=())
+            t.start()
+            
+            def t1_run(i):
+                pwd = lockhash.get_val() + self.salt_list[i]
+                hash_pwd = lockhash.hash_pass(pwd, self.salt_list[i], self.msid_list[i])
+                auditText = os.popen(self.prefix + 'sedutil-cli -n -t -u --auditread ' + hash_pwd + ' User' + self.user_list[i] + ' ' + self.devs_list[i]).read()
+                m = re.search('Fidelity Audit Log', auditText)
+                gobject.idle_add(cleanup1, i, m)
+            
+            def cleanup1(i, m):
+                if m:
+                    self.setupstatus_list[i] = 'Yes'
+                    if i not in self.setup_list:
+                        self.setup_list.append(i)
+                        self.setup_list.sort()
+                else:
+                    self.setupstatus_list[i] = 'No'
+                    if i not in self.nonsetup_list:
+                        self.nonsetup_list.append(i)
+                        self.nonsetup_list.sort()
+                act_idx = self.dev_select.get_active()
+                if i == act_idx:
+                    self.dev_setup.set_text(self.setupstatus_list[i])
+                    
+                    
+            def t2_run(i):
+                msid = 'N/A'
+                txt_msid = os.popen(self.prefix + "sedutil-cli --printDefaultPassword " + self.devs_list[i] ).read()
+                if txt_msid != '' :
+                    regex_msid = 'MSID:\s*([A-z0-9]*)'
+                    mm = re.search(regex_msid, txt_msid)
+                    if mm:
+                        msid = mm.group(1)
+                gobject.idle_add(cleanup2, i, msid)
+                
+            
+            def cleanup2(i, msid):
+                self.msid_list[i] = msid
+                act_idx = self.dev_select.get_active()
+                if i == act_idx:
+                    self.dev_msid.set_text(msid)
+            
+            for i in range(len(self.devs_list)):
+                if self.setupstatus_list[i] == None:
+                    t1 = threading.Thread(target=t1_run, args=(i,))
+                    t1.start()
+                if i in self.tcg_list and self.msid_list[i] == None:
+                    t2 = threading.Thread(target=t2_run, args=(i,))
+                    t2.start()
+                    
+            def t3_run(): #adapt for parallel
+                drive_dict = {}
+                dev_os = platform.system()
+                if dev_os == 'Windows':
+                    for dev in self.devs_list:
+                        num_re = '[0-9]+'
+                        m = re.search(num_re, dev)
+                        if m:
+                            p = subprocess.Popen(["diskpart"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+                            res1 = p.stdin.write('select disk ' + m.group(0) + '\n')
+                            res1 = p.stdin.write('detail disk\n')
+                            res1 = p.stdin.write('exit\n')
+
+                            output = p.communicate()[0]
+                            
+                            vol_re = 'Volume [0-9]+\s+([A-Z])\s+'
+
+                            list_v = re.findall(vol_re, output)
+                            
+                            list_l = ''
+                            start = True
+                            
+                            if len(list_v) > 0:
+                                list_l = '('
+                            kernel32 = ctypes.windll.kernel32
+                            
+                            for x in list_v:
+                                if not start:
+                                    list_l = list_l + ', '
+                                else:
+                                    start = False
+                                buf_name = ctypes.create_unicode_buffer(1024)
+                                buf_fsn = ctypes.create_unicode_buffer(1024)
+                                sn = None
+                                mcl = None
+                                fsf = None
+                                rc = kernel32.GetVolumeInformationW(ctypes.c_wchar_p(x + ":"), buf_name, ctypes.sizeof(buf_name), sn, mcl, fsf, buf_fsn, ctypes.sizeof(buf_fsn))
+                                
+                                list_l = list_l + buf_name.value + '(' + x + ':)'
+                            if len(list_v) > 0:
+                                list_l = list_l + ')'
+                            drive_dict[dev] = list_l
+                gobject.idle_add(cleanup3, drive_dict)
+            
+            def cleanup3(drive_dict):
                 dev_os = platform.system()
                 if dev_os == 'Windows':
                     for dev in self.devs_list:
@@ -1438,7 +1556,7 @@ class LockApp(gtk.Window):
                     model.remove(row.iter)
                 for i in range(len(self.devs_list)):
                     if self.label_list[i] != None:
-                        self.dev_select.append(self.devs_list[i] + ' (' + self.label_list[i] + ':)')
+                        self.dev_select.append(self.devs_list[i] + ' ' + self.label_list[i])
                     else:
                         self.dev_select.append(self.devs_list[i])
                 
@@ -1474,6 +1592,8 @@ class LockApp(gtk.Window):
                         self.noTCG_instr.hide()
                     self.firstscan = False
                     if self.VERSION == 1:
+                        if len(self.locked_list) > 0:
+                            self.dev_select.set_active(self.locked_list[0])
                         self.unlock_prompt()
                 else:
                     self.msg_ok('Rescan complete')
@@ -1505,56 +1625,9 @@ class LockApp(gtk.Window):
                         self.revert_psid_prompt()
                     elif self.op_prompt == 12:
                         self.removeUser_prompt()
-                
-            t = threading.Thread(target=t_run, args=())
-            t.start()
-            
-            def t1_run(i):
-                pwd = lockhash.get_val() + self.salt_list[i]
-                hash_pwd = lockhash.hash_pass(pwd, self.salt_list[i], self.msid_list[i])
-                auditText = os.popen(self.prefix + 'sedutil-cli -n -t -u --auditread ' + hash_pwd + ' User' + self.user_list[i] + ' ' + self.devs_list[i]).read()
-                m = re.search('Fidelity Audit Log', auditText)
-                gobject.idle_add(cleanup1, i, m)
-            
-            def cleanup1(i, m):
-                if m:
-                    self.setupstatus_list[i] = 'Yes'
-                    self.setup_list.append(i)
-                    self.setup_list.sort()
-                else:
-                    self.setupstatus_list[i] = 'No'
-                    self.nonsetup_list.append(i)
-                    self.nonsetup_list.sort()
-                act_idx = self.dev_select.get_active()
-                if i == act_idx:
-                    self.dev_setup.set_text(self.setupstatus_list[i])
-                    
-                    
-            def t2_run(i):
-                msid = 'N/A'
-                txt_msid = os.popen(self.prefix + "sedutil-cli --printDefaultPassword " + self.devs_list[i] ).read()
-                if txt_msid != '' :
-                    regex_msid = 'MSID:\s*([A-z0-9]*)'
-                    mm = re.search(regex_msid, txt_msid)
-                    if mm:
-                        msid = mm.group(1)
-                gobject.idle_add(cleanup2, i, msid)
-                
-            
-            def cleanup2(i, msid):
-                self.msid_list[i] = msid
-                act_idx = self.dev_select.get_active()
-                if i == act_idx:
-                    self.dev_msid.set_text(msid)
-            
-            for i in range(len(self.devs_list)):
-                if self.setupstatus_list[i] == None:
-                    t1 = threading.Thread(target=t1_run, args=(i,))
-                    t1.start()
-                if i in self.tcg_list and self.msid_list[i] == None:
-                    t2 = threading.Thread(target=t2_run, args=(i,))
-                    t2.start()
-                
+            t3 = threading.Thread(target=t3_run, args=())
+            t3.start()
+                        
         else:
             valid_list = [0] * len(self.devs_list)
             locked_new = []
@@ -1569,6 +1642,7 @@ class LockApp(gtk.Window):
                 txt_TCG = "Locked = "
                 isTCG = re.search(txt_TCG, queryText)
                 if isTCG:
+                    tcg_new.append(i)
                     valid_list[i] = 1
                     
                     txt_L = "Locked = Y"
@@ -1587,24 +1661,29 @@ class LockApp(gtk.Window):
                     if isLocked:
                         locked_new.append(i)
                         setup_new.append(i)
-                        tcg_new.append(i)
+                        #tcg_new.append(i)
                         
                         lockstatus_new.append("Locked")
                         setupstatus_new.append("Yes")
                     elif isSetup:
                         setup_new.append(i)
-                        tcg_new.append(i)
+                        #tcg_new.append(i)
                         lockstatus_new.append("Unlocked")
                         setupstatus_new.append("Yes")
                     else:
                         nonsetup_new.append(i)
-                        tcg_new.append(i)
+                        #tcg_new.append(i)
                         lockstatus_new.append("Unlocked")
                         setupstatus_new.append("No")
             self.locked_list = locked_new
             self.setup_list = setup_new
             self.nonsetup_list = nonsetup_new
             self.tcg_list = tcg_new
+            print self.devs_list
+            print self.locked_list
+            print self.setup_list
+            print self.nonsetup_list
+            print self.tcg_list
             
             self.lockstatus_list = lockstatus_new
             self.setupstatus_list = setupstatus_new
@@ -1686,7 +1765,7 @@ class LockApp(gtk.Window):
                 regex_ver = 'Fidelity Lock Version\s*:\s*.*'
                 m = re.search(regex_ver, txtVersion)
                 ver_parse = m.group()
-                queryTextList.append(ver_parse + "\nGUI Version 0.11.0\n\nDrive information\n")
+                queryTextList.append(ver_parse + "\nGUI Version 0.12.0\n\nDrive information\n")
                 
                 queryTextList.append("Model: " + self.dev_vendor.get_text() + "\n")
                 queryTextList.append("Serial Number: " + self.dev_sn.get_text() + "\n")
@@ -1862,7 +1941,7 @@ class LockApp(gtk.Window):
                     self.na_instr.set_text('This drive is not a TCG drive.')
                 self.na_instr.show()
         elif self.view_state == 4:
-            if act_idx in self.nonsetup_list:
+            if act_idx in self.nonsetup_list and (self.VERSION != 3 or len(self.usb_list) != 0):
                 self.na_instr.hide()
                 self.op_instr.show()
                 if self.VERSION != 0:
@@ -1870,8 +1949,10 @@ class LockApp(gtk.Window):
             else:
                 self.op_instr.hide()
                 self.disable_entries_buttons()
-                if act_idx in self.tcg_list:
+                if act_idx in self.setup_list:
                     self.na_instr.set_text('This drive is already set up.')
+                elif act_idx in self.nonsetup_list:
+                    self.na_instr.set_text('No USB detected.')
                 else:
                     self.na_instr.set_text('This drive is not a TCG drive.')
                 self.na_instr.show()
@@ -2048,7 +2129,7 @@ class LockApp(gtk.Window):
             
             if curr_idx in self.tcg_list:
                 self.op_instr.show()
-                
+                self.na_instr.hide()
                 if self.VERSION != 0:
                     self.enable_entries_buttons()
             
@@ -2091,9 +2172,9 @@ class LockApp(gtk.Window):
             self.msg_ok('Drives ' + liststr + ' have been setup successfully.')
         else:
             self.msg_ok(liststr + ' has been setup successfully.')
-        self.returnToMain(True)
+        self.returnToMain(None, True)
 
-    def returnToMain(self, reset, *args):
+    def returnToMain(self, button, reset, *args):
         self.hideAll()
         self.select_box.show()
         self.box_dev.show()
@@ -2118,7 +2199,10 @@ class LockApp(gtk.Window):
             
             
             for i in range(length):
-                self.dev_select.append(self.devs_list[i] + ' (' + self.label_list[i] + ':)')
+                if self.label_list[i] != None:
+                    self.dev_select.append(self.devs_list[i] + ' ' + self.label_list[i])
+                else:
+                    self.dev_select.append(self.devs_list[i])
             
             if len(self.devs_list) > 0:
                 self.dev_select.set_active(0)
@@ -2176,64 +2260,108 @@ class LockApp(gtk.Window):
             #if self.VERSION != 3:
             self.drive_label.hide()
             self.usb_menu.hide()
-            #else:
-            #    self.pass_sav.set_active(True)
-            #    self.pass_sav.set_sensitive(False)
-            #    self.usb_list = []
-            #    dev_os = platform.system()
-            #    if dev_os == 'Windows':
-            #        txt = os.popen(self.prefix + 'wmic diskdrive list brief /format:list').read()
-            #        mod_regex = 'DeviceID=.+([1-9]|1[0-5])\s*\nModel=(.*)\r'
-            #        self.usb_list = re.findall(mod_regex, txt)
-            #    elif dev_os == 'Linux':
-            #        txt = os.popen(self.prefix + 'mount').read()
-            #        dev_regex = '/dev/sd[a-z][1-9]?\s*on\s*(\S+)\s*type'
-            #        drive_list = re.findall(dev_regex, txt)
-            #        txt2 = os.popen(self.prefix + 'blkid').read()
-            #        dev_regex2 = '(/dev/sd[a-z][1-9]?.+)'
-            #        all_list = re.findall(dev_regex2, txt2)
-            #        r1 = '/dev/sd[a-z][1-9]?'
-            #        r2 = 'TYPE="([a-z]+)"'
-            #        for a in all_list:
-            #            m1 = re.search(r1,a)
-            #            m2 = re.search(r2,a)
-            #            dev_a = m1.group(0)
-            #            type_a = m2.group(1)
-            #            if dev_a not in drive_list:
-            #                s = os.system(self.prefix + 'mount -t ' + type_a + ' ' + dev_a)
-            #                drive_list.append(dev_a)
-            #        txt3 = os.popen('mount').read()
-            #        dev_regex3 = '(/dev/sd[a-z][1-9]?)\s*on\s*(\S+)\s*type'
-            #        self.usb_list = re.findall(dev_regex3, txt3)
-            #    model = self.usb_menu.get_model()
-            #    
-            #    iter = gtk.TreeIter
-            #    for row in model:
-            #        model.remove(row.iter)
-            #    
-            #    length = len(self.usb_list)
-            #    
-            #    if length > 0:
-            #        for d in self.usb_list:
-            #            if dev_os == 'Windows':
-            #                self.usb_menu.append(d[1])
-            #            elif dev_os == 'Linux':
-            #                self.usb_menu.append(d[0])
-            #        self.usb_menu.set_active(0)
+            
+            count = 0
+            
+            if self.VERSION == 3:
+                
+                self.pass_sav.set_active(True)
+                self.pass_sav.set_sensitive(False)
+                self.usb_list = []
+                dev_os = platform.system()
+                if dev_os == 'Windows':
+                    txt = os.popen(self.prefix + 'wmic diskdrive list brief /format:list').read()
+                    mod_regex = 'DeviceID=.+([1-9]|1[0-5])\s*\nModel=(.*)\r'
+                    self.usb_list = re.findall(mod_regex, txt)
+                elif dev_os == 'Linux':
+                    txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d" " -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do echo $DLIST done ").read() + '1'
+                    txt_regex = '/dev/sd[a-z]'
+                    list_u = re.findall(txt_regex,txt)
+                    for u in list_u:
+                        txt1 = os.popen(self.prefix + 'mount').read()
+                        m = re.search(u,txt1)
+                        if not m:
+                            txt2 = os.popen(self.prefix + 'blkid').read()
+                            rgx = u + '.+'
+                            m1 = re.search(rgx,txt2)
+                            if m1:
+                                r2 = 'TYPE="([a-z]+)"'
+                                txt3 = m1.group(0)
+                                m2 = re.search(r2,txt3)
+                                type_a = m2.group(1)
+                                s = os.system(self.prefix + 'mount -t ' + type_a + ' ' + u + '1')
+                    #txt = os.popen(self.prefix + 'mount').read()
+                    #dev_regex = '/dev/sd[a-z][1-9]?\s*on\s*(\S+)\s*type'
+                    #drive_list = re.findall(dev_regex, txt)
+                    #txt2 = os.popen(self.prefix + 'blkid').read()
+                    #dev_regex2 = '(/dev/sd[a-z][1-9]?.+)'
+                    #all_list = re.findall(dev_regex2, txt2)
+                    #r1 = '/dev/sd[a-z][1-9]?'
+                    #r2 = 'TYPE="([a-z]+)"'
+                    #for a in all_list:
+                    #    m1 = re.search(r1,a)
+                    #    m2 = re.search(r2,a)
+                    #    dev_a = m1.group(0)
+                    #    type_a = m2.group(1)
+                    #    if dev_a not in drive_list:
+                    #        s = os.system(self.prefix + 'mount -t ' + type_a + ' ' + dev_a)
+                    #        drive_list.append(dev_a)
+                    txt3 = os.popen('mount').read()
+                    dev_regex3 = '(/dev/sd[a-z][1-9]?)\s*on\s*(\S+)\s*type'
+                    self.usb_list = re.findall(dev_regex3, txt3)
+                model = self.usb_menu.get_model()
+                
+                iter = gtk.TreeIter
+                for row in model:
+                    model.remove(row.iter)
+                
+                length = len(self.usb_list)
+                
+                if length > 0:
+                    count = 0
+                    usb_final = []
+                    for d in self.usb_list:
+                        if dev_os == 'Windows':
+                            mod = '\\\\.\\PhysicalDrive' + d[0]
+                            if mod not in self.devs_list:
+                                self.usb_menu.append(d[1])
+                                usb_final.append(d)
+                                count = count + 1
+                        elif dev_os == 'Linux':
+                            if d[0] not in self.devs_list:
+                                self.usb_menu.append(d[0])
+                                usb_final.append(d)
+                                count = count + 1
+                    self.usb_list = usb_final
+                    #
+                    #for d in self.usb_list:
+                    #    if dev_os == 'Windows':
+                    #        self.usb_menu.append(d[1])
+                    #    elif dev_os == 'Linux':
+                    #        self.usb_menu.append(d[0])
+                    if count > 0:
+                        self.usb_menu.set_active(0)
+                self.usb_menu.show()
+                self.drive_label.show()
+                self.drive_menu.hide()
             
             self.box_newpass_confirm.show()
             self.setup_next.show()
             
             self.check_box_pass.show()
             
-            if curr_idx in self.nonsetup_list:
+            if curr_idx in self.nonsetup_list and count > 0:
                 self.op_instr.show()
+                self.na_instr.hide()
                 if self.VERSION != 0:
                     self.enable_entries_buttons()
                 
             else:
                 if curr_idx in self.tcg_list:
-                    self.na_instr.set_text('This drive has already been set up.')
+                    if count > 0:
+                        self.na_instr.set_text('This drive has already been set up.')
+                    else:
+                        self.na_instr.set_text('No USB detected.')
                 else:
                     self.na_instr.set_text('This drive is not a TCG drive.')
                 self.na_instr.show()
@@ -2243,6 +2371,7 @@ class LockApp(gtk.Window):
         
     def setup_prompt2(self, list_s):
         self.na_instr.hide()
+        self.progress_bar.hide()
         if self.VERSION != 0:
             self.enable_entries_buttons()
         self.navM.set_sensitive(False)
@@ -2264,24 +2393,19 @@ class LockApp(gtk.Window):
     
         length = len(list_s)
         self.mbr_list = []
+        self.sel_list = []
         for i in list_s:
-            self.dev_select.append(self.devs_list[i] + ' (' + self.label_list[i] + ':)')
+            if self.label_list[i] != None:
+                self.dev_select.append(self.devs_list[i] + ' ' + self.label_list[i])
+            else:
+                self.dev_select.append(self.devs_list[i])
             self.sel_list.append(i)
             if self.pba_list[i] != 'Not Supported':
                 self.mbr_list.append(i)
         
         self.dev_select.set_active(0)
         
-        #if length == 1:
-        #    self.dev_single.set_text(self.devs_list[list_s[0]] + self.label_list[list_s[0]])
-            
-        #if length <= 1:
-        #    self.dev_single.show()
-        #    self.label_dev2.show()
-        #    self.dev_select.hide()
-        #    self.label_dev.hide()
         if length == 0:
-            #self.dev_single.set_text('None')
             self.dev_vendor.set_text('N/A')
             self.dev_sn.set_text('N/A')
             self.dev_msid.set_text('N/A')
@@ -2292,11 +2416,6 @@ class LockApp(gtk.Window):
             self.dev_blockSID.set_text('N/A')
             self.dev_enc.set_text('N/A')
             self.dev_pbaVer.set_text('N/A')
-        #else:
-        #    self.dev_single.hide()
-        #    self.label_dev2.hide()
-        #    self.dev_select.show()
-        #    self.label_dev.show()
         
         self.toggleSingle_radio.set_active(True)
         #self.toggleSingle_radio.hide()
@@ -2331,6 +2450,7 @@ class LockApp(gtk.Window):
             self.mbr_radio.set_active(True)
             self.op_instr.set_text('The Preboot image is used to unlock the drive for use.\nTo write the image to the shadow MBR, press \'Write Preboot Image\'.')
             self.op_instr.show()
+            self.na_instr.hide()
         self.skip_radio.show()
         
     
@@ -2376,6 +2496,7 @@ class LockApp(gtk.Window):
             
             if curr_idx in self.setup_list:
                 self.op_instr.show()
+                self.na_instr.hide()
                 if self.VERSION != 0:
                     self.enable_entries_buttons()
             else:
@@ -2424,6 +2545,7 @@ class LockApp(gtk.Window):
             
             if curr_idx in self.setup_list:
                 self.op_instr.show()
+                self.na_instr.hide()
                 if self.VERSION != 0:
                     self.enable_entries_buttons()
             else:
@@ -2484,6 +2606,7 @@ class LockApp(gtk.Window):
             
             if curr_idx in self.setup_list:
                 self.op_instr.show()
+                self.na_instr.hide()
                 if self.VERSION != 0:
                     self.enable_entries_buttons()
             else:
@@ -2543,6 +2666,7 @@ class LockApp(gtk.Window):
                 
             if curr_idx in self.setup_list:
                 self.op_instr.show()
+                self.na_instr.hide()
                 if self.VERSION != 0:
                     self.enable_entries_buttons()
             else:
@@ -2583,22 +2707,40 @@ class LockApp(gtk.Window):
                 mod_regex = 'DeviceID=.+([1-9]|1[0-5])\s*\nModel=(.*)\r'
                 self.usb_list = re.findall(mod_regex, txt)
             elif dev_os == 'Linux':
-                txt = os.popen(self.prefix + 'mount').read()
-                dev_regex = '/dev/sd[a-z][1-9]?\s*on\s*(\S+)\s*type'
-                drive_list = re.findall(dev_regex, txt)
-                txt2 = os.popen(self.prefix + 'blkid').read()
-                dev_regex2 = '(/dev/sd[a-z][1-9]?.+)'
-                all_list = re.findall(dev_regex2, txt2)
-                r1 = '/dev/sd[a-z][1-9]?'
-                r2 = 'TYPE="([a-z]+)"'
-                for a in all_list:
-                    m1 = re.search(r1,a)
-                    m2 = re.search(r2,a)
-                    dev_a = m1.group(0)
-                    type_a = m2.group(1)
-                    if dev_a not in drive_list:
-                        s = os.system(self.prefix + 'mount -t ' + type_a + ' ' + dev_a)
-                        drive_list.append(dev_a)
+                txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d" " -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do echo $DLIST done ").read() + '1'
+                txt_regex = 'sd[a-z]'
+                list_u = re.findall(txt_regex,txt)
+                print list_u
+                for u in list_u:
+                    print u
+                    txt1 = os.popen(self.prefix + 'mount').read()
+                    m = re.search(u,txt1)
+                    if not m:
+                        txt2 = os.popen(self.prefix + 'blkid').read()
+                        rgx = u + '.+'
+                        m1 = re.search(rgx,txt2)
+                        if m1:
+                            r2 = 'TYPE="([a-z]+)"'
+                            txt3 = m1.group(0)
+                            m2 = re.search(r2,txt3)
+                            type_a = m2.group(1)
+                            s = os.system(self.prefix + 'mount -t ' + type_a + ' /dev/' + u + '1')
+                #txt = os.popen(self.prefix + 'mount').read()
+                #dev_regex = '/dev/sd[a-z][1-9]?\s*on\s*(\S+)\s*type'
+                #drive_list = re.findall(dev_regex, txt)
+                #txt2 = os.popen(self.prefix + 'blkid').read()
+                #dev_regex2 = '(/dev/sd[a-z][1-9]?.+)'
+                #all_list = re.findall(dev_regex2, txt2)
+                #r1 = '/dev/sd[a-z][1-9]?'
+                #r2 = 'TYPE="([a-z]+)"'
+                #for a in all_list:
+                #    m1 = re.search(r1,a)
+                #    m2 = re.search(r2,a)
+                #    dev_a = m1.group(0)
+                #    type_a = m2.group(1)
+                #    if dev_a not in drive_list:
+                #        s = os.system(self.prefix + 'mount -t ' + type_a + ' ' + dev_a)
+                #        drive_list.append(dev_a)
                 txt3 = os.popen('mount').read()
                 dev_regex3 = '(/dev/sd[a-z][1-9]?)\s*on\s*(\S+)\s*type'
                 self.usb_list = re.findall(dev_regex3, txt3)
@@ -2637,6 +2779,7 @@ class LockApp(gtk.Window):
                     self.usb_menu.show()
                     if curr_idx in self.setup_list:
                         self.op_instr.show()
+                        self.na_instr.hide()
                         if self.VERSION != 0:
                             self.enable_entries_buttons()
                     else:
@@ -2699,6 +2842,7 @@ class LockApp(gtk.Window):
             
             if curr_idx in self.setup_list:
                 self.op_instr.show()
+                self.na_instr.hide()
                 if self.VERSION != 0:
                     self.enable_entries_buttons()
                 
@@ -2736,6 +2880,7 @@ class LockApp(gtk.Window):
             self.revert_psid_entry.set_text("")
             if curr_idx in self.tcg_list:
                 self.op_instr.show()
+                self.na_instr.hide()
                 if self.VERSION != 0:
                     self.enable_entries_buttons()
                 
@@ -2800,6 +2945,7 @@ class LockApp(gtk.Window):
                 self.box_auth.show()
             if curr_idx in self.locked_list:
                 self.op_instr.show()
+                self.na_instr.hide()
                 if self.VERSION != 0:
                     self.enable_entries_buttons()
             else:
@@ -2862,6 +3008,7 @@ class LockApp(gtk.Window):
             self.check_box_pass.show()
             if curr_idx in self.setup_list:
                 self.op_instr.show()
+                self.na_instr.hide()
                 if self.VERSION != 0:
                     self.enable_entries_buttons()
                 
@@ -2901,6 +3048,8 @@ class LockApp(gtk.Window):
         self.pba_wait_instr.hide()
         self.op_instr.hide()
         self.na_instr.hide()
+        
+        self.progress_bar.hide()
     
         self.pass_entry.set_text("")
         self.new_pass_entry.set_text("")
@@ -3001,10 +3150,11 @@ class LockApp(gtk.Window):
             if len(self.devs_list) > 1:
                 self.select_instr.show()
             idx = self.dev_select.get_active()
-            if (self.view_state == 1 and idx in self.locked_list) or (self.view_state == 4 and idx in self.nonsetup_list) or (self.view_state == 2 and idx in self.setup_list) or self.view_state == 7:
+            if (self.view_state == 1 and idx in self.locked_list) or (self.view_state == 4 and idx in self.nonsetup_list and (self.VERSION != 3 or len(self.usb_list) != 0)) or (self.view_state == 2 and idx in self.setup_list) or self.view_state == 7:
                 if self.VERSION != 0:
                     self.enable_entries_buttons()
                 self.op_instr.show()
+                self.na_instr.hide()
             else:
                 self.disable_entries_buttons()
                 self.na_instr.show()
@@ -3027,6 +3177,7 @@ class LockApp(gtk.Window):
                 if self.VERSION != 0:
                     self.enable_entries_buttons()
                 self.op_instr.show()
+                self.na_instr.hide()
                 self.selectMulti_instr.show()
             elif self.view_state == 2 and len(self.setup_list) > 0:
                 self.selectAll_check.show()
@@ -3035,14 +3186,19 @@ class LockApp(gtk.Window):
                 if self.VERSION != 0:
                     self.enable_entries_buttons()
                 self.op_instr.show()
+                self.na_instr.hide()
                 self.selectMulti_instr.show()
             elif self.view_state == 4 and len(self.nonsetup_list) > 0:
                 self.selectAll_check.show()
                 for i in self.nonsetup_list:
                     self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
-                if self.VERSION != 0:
+                if self.VERSION != 0 and (self.VERSION != 3 or len(self.usb_list) != 0):
                     self.enable_entries_buttons()
-                self.op_instr.show()
+                    self.op_instr.show()
+                    self.na_instr.hide()
+                else:
+                    self.disable_entries_buttons()
+                    self.na_instr.show()
                 self.selectMulti_instr.show()
             #add for setup_prompt2
             elif self.view_state == 7 and len(self.mbr_list) > 0: #switch to self.mbr_list
@@ -3052,6 +3208,7 @@ class LockApp(gtk.Window):
                 if self.VERSION != 0:
                     self.enable_entries_buttons()
                 self.op_instr.show()
+                self.na_instr.hide()
                 self.selectMulti_instr.show()
             else:
                 self.disable_entries_buttons()
@@ -3068,23 +3225,41 @@ class LockApp(gtk.Window):
             mod_regex = 'DeviceID=.+([1-9]|1[0-5])\s*\nModel=(.*)\r'
             self.usb_list = re.findall(mod_regex, txt)
         elif dev_os == 'Linux':
-            txt = os.popen(self.prefix + 'mount').read()
-            dev_regex = '/dev/sd[a-z][1-9]?\s*on\s*(\S+)\s*type'
-            drive_list = re.findall(dev_regex, txt)
-            
-            txt2 = os.popen(self.prefix + 'blkid').read()
-            dev_regex2 = '(/dev/sd[a-z][1-9]?.+)'
-            all_list = re.findall(dev_regex2, txt2)
-            r1 = '/dev/sd[a-z][1-9]?'
-            r2 = 'TYPE="([a-z]+)"'
-            for a in all_list:
-                m1 = re.search(r1,a)
-                m2 = re.search(r2,a)
-                dev_a = m1.group(0)
-                type_a = m2.group(1)
-                if dev_a not in drive_list:
-                    s = os.system(self.prefix + 'mount -t ' + type_a + ' ' + dev_a)
-                    drive_list.append(dev_a)
+            txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d" " -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do echo $DLIST done ").read() + '1'
+            txt_regex = 'sd[a-z]'
+            list_u = re.findall(txt_regex,txt)
+            print list_u
+            for u in list_u:
+                print u
+                txt1 = os.popen(self.prefix + 'mount').read()
+                m = re.search(u,txt1)
+                if not m:
+                    txt2 = os.popen(self.prefix + 'blkid').read()
+                    rgx = u + '.+'
+                    m1 = re.search(rgx,txt2)
+                    if m1:
+                        r2 = 'TYPE="([a-z]+)"'
+                        txt3 = m1.group(0)
+                        m2 = re.search(r2,txt3)
+                        type_a = m2.group(1)
+                        s = os.system(self.prefix + 'mount -t ' + type_a + ' /dev/' + u + '1')
+            #txt = os.popen(self.prefix + 'mount').read()
+            #dev_regex = '/dev/sd[a-z][1-9]?\s*on\s*(\S+)\s*type'
+            #drive_list = re.findall(dev_regex, txt)
+            #
+            #txt2 = os.popen(self.prefix + 'blkid').read()
+            #dev_regex2 = '(/dev/sd[a-z][1-9]?.+)'
+            #all_list = re.findall(dev_regex2, txt2)
+            #r1 = '/dev/sd[a-z][1-9]?'
+            #r2 = 'TYPE="([a-z]+)"'
+            #for a in all_list:
+            #    m1 = re.search(r1,a)
+            #    m2 = re.search(r2,a)
+            #    dev_a = m1.group(0)
+            #    type_a = m2.group(1)
+            #    if dev_a not in drive_list:
+            #        s = os.system(self.prefix + 'mount -t ' + type_a + ' ' + dev_a)
+            #        drive_list.append(dev_a)
             txt3 = os.popen('mount').read()
             dev_regex3 = '(/dev/sd[a-z][1-9]?)\s*on\s*(\S+)\s*type'
             self.usb_list = re.findall(dev_regex3, txt3)
