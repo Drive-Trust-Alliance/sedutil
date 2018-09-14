@@ -432,7 +432,7 @@ def run_setupFull(button, ui):
                     ui.msg_err('Selected USB could not be found.')
                     return
             elif dev_os == 'Linux': #replace with Jerry's script
-                txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d" " -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do echo $DLIST done ").read() + '1'
+                txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d\" \" -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do\necho $DLIST\ndone ").read()
                 txt_regex = 'sd[a-z]'
                 list_u = re.findall(txt_regex,txt)
                 print list_u
@@ -1012,7 +1012,7 @@ def run_setupUSB(button, ui, *args):
                 ui.msg_err('Selected USB could not be found.')
                 return
         elif dev_os == 'Linux':
-            txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d" " -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do echo $DLIST done ").read() + '1'
+            txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d\" \" -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do\necho $DLIST\ndone ").read()
             txt_regex = 'sd[a-z]'
             list_u = re.findall(txt_regex,txt)
             print list_u
@@ -2612,7 +2612,7 @@ def unlockUSB_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
                     list_f = list_f + ', '
                 else:
                     start_f = False
-                list_f = list_f + ui.devs_list[ui.locked_list[y]]
+                list_f = list_f + ui.devs_list[y]
                 if status_list[idx] == ui.AUTHORITY_LOCKED_OUT:
                     if not start_alo:
                         list_alo = list_alo + ', '

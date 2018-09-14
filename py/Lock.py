@@ -1307,7 +1307,7 @@ class LockApp(gtk.Window):
         
     def openLog(self, button, *args):
         index = self.dev_select.get_active()
-        self.devname = self.devs_list[self.tcg_list[index]]
+        self.devname = self.devs_list[index]
         #print "Selected drive: " + self.devname
         password = ""
         drive = ''
@@ -1319,7 +1319,7 @@ class LockApp(gtk.Window):
             #print 'USB password: ' + password
         else:
             pw = re.sub('\s', '', self.pass_entry.get_text())
-            password = lockhash.hash_pass(pw, self.salt_list[self.tcg_list[index]], self.dev_msid.get_text())
+            password = lockhash.hash_pass(pw, self.salt_list[index], self.dev_msid.get_text())
             self.pass_entry.get_buffer().delete_text(0,-1)
             #print 'Typed password: ' + password
         if self.VERSION % 2 == 1 and self.pass_sav.get_active():
@@ -1352,26 +1352,26 @@ class LockApp(gtk.Window):
                 txt = os.popen(self.prefix + "sedutil-cli -n -t --auditread " + password + " Admin1 " + self.devname ).read()
         
         if statusAW == self.NOT_AUTHORIZED:
-            pwd = lockhash.get_val() + self.salt_list[self.tcg_list[index]]
-            hash_pwd = lockhash.hash_pass(pwd, self.salt_list[self.tcg_list[index]], self.msid_list[self.tcg_list[index]])
+            pwd = lockhash.get_val() + self.salt_list[index]
+            hash_pwd = lockhash.hash_pass(pwd, self.salt_list[index], self.msid_list[index])
             timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             timeStr = timeStr[2:]
             if auth_level == 0:
-                statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 04" + timeStr + " " + hash_pwd + " User" + self.user_list[self.tcg_list[index]] + " " + self.devname)
+                statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 04" + timeStr + " " + hash_pwd + " User" + self.user_list[index] + " " + self.devname)
             else:
-                statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 06" + timeStr + " " + hash_pwd + " User" + self.user_list[self.tcg_list[index]] + " " + self.devname)
+                statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 06" + timeStr + " " + hash_pwd + " User" + self.user_list[index] + " " + self.devname)
             self.msg_err('Audit Log could not be retrieved. Invalid password.')
             return
         elif statusAW == self.AUTHORITY_LOCKED_OUT:
-            pwd = lockhash.get_val() + self.salt_list[self.tcg_list[index]]
-            hash_pwd = lockhash.hash_pass(pwd, self.salt_list[self.tcg_list[index]], self.msid_list[self.tcg_list[index]])
+            pwd = lockhash.get_val() + self.salt_list[index]
+            hash_pwd = lockhash.hash_pass(pwd, self.salt_list[index], self.msid_list[index])
             timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             timeStr = timeStr[2:]
             if auth_level == 0:
-                statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 04" + timeStr + " " + hash_pwd + " User" + self.user_list[self.tcg_list[index]] + " " + self.devname)
+                statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 04" + timeStr + " " + hash_pwd + " User" + self.user_list[index] + " " + self.devname)
             else:
-                statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 06" + timeStr + " " + hash_pwd + " User" + self.user_list[self.tcg_list[index]] + " " + self.devname)
-            statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 10" + timeStr + " " + hash_pwd + " User" + self.user_list[self.tcg_list[index]] + " " + self.devname)
+                statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 06" + timeStr + " " + hash_pwd + " User" + self.user_list[index] + " " + self.devname)
+            statusAW = os.system(self.prefix + "sedutil-cli -n -t --auditwrite 10" + timeStr + " " + hash_pwd + " User" + self.user_list[index] + " " + self.devname)
             self.msg_err('Audit Log could not be retrieved. Retry limit has been reached.  Please power cycle your drive to try again.')
             return
         elif statusAW == self.SP_BUSY:
@@ -1765,7 +1765,7 @@ class LockApp(gtk.Window):
                 regex_ver = 'Fidelity Lock Version\s*:\s*.*'
                 m = re.search(regex_ver, txtVersion)
                 ver_parse = m.group()
-                queryTextList.append(ver_parse + "\nGUI Version 0.12.0\n\nDrive information\n")
+                queryTextList.append(ver_parse + "\nGUI Version 0.12.1\n\nDrive information\n")
                 
                 queryTextList.append("Model: " + self.dev_vendor.get_text() + "\n")
                 queryTextList.append("Serial Number: " + self.dev_sn.get_text() + "\n")
@@ -2150,9 +2150,6 @@ class LockApp(gtk.Window):
         message.destroy()
         
     def setup_finish(self, *args):
-        #indices = []
-        #for i in self.sel_list:
-        #    indices.append(self.nonsetup_list[i])
         dev_os = platform.system()
         if dev_os == 'Windows':
             verified = powerset.verify_power()
@@ -2274,7 +2271,7 @@ class LockApp(gtk.Window):
                     mod_regex = 'DeviceID=.+([1-9]|1[0-5])\s*\nModel=(.*)\r'
                     self.usb_list = re.findall(mod_regex, txt)
                 elif dev_os == 'Linux':
-                    txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d" " -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do echo $DLIST done ").read() + '1'
+                    txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d\" \" -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do\necho $DLIST\ndone ").read()
                     txt_regex = '/dev/sd[a-z]'
                     list_u = re.findall(txt_regex,txt)
                     for u in list_u:
@@ -2707,7 +2704,7 @@ class LockApp(gtk.Window):
                 mod_regex = 'DeviceID=.+([1-9]|1[0-5])\s*\nModel=(.*)\r'
                 self.usb_list = re.findall(mod_regex, txt)
             elif dev_os == 'Linux':
-                txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d" " -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do echo $DLIST done ").read() + '1'
+                txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d\" \" -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do\necho $DLIST\ndone ").read()
                 txt_regex = 'sd[a-z]'
                 list_u = re.findall(txt_regex,txt)
                 print list_u
@@ -3225,7 +3222,7 @@ class LockApp(gtk.Window):
             mod_regex = 'DeviceID=.+([1-9]|1[0-5])\s*\nModel=(.*)\r'
             self.usb_list = re.findall(mod_regex, txt)
         elif dev_os == 'Linux':
-            txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d" " -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do echo $DLIST done ").read() + '1'
+            txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d\" \" -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do\necho $DLIST\ndone ").read()
             txt_regex = 'sd[a-z]'
             list_u = re.findall(txt_regex,txt)
             print list_u
