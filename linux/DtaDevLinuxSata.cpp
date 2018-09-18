@@ -89,7 +89,7 @@ bool DtaDevLinuxSata::init(const char * devref)
 
 /** Send an ioctl to the device using pass through. */
 uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                         void * buffer, uint16_t bufferlen)
+                         void * buffer, uint32_t bufferlen)
 {
     if(isSAS) {
         return(sendCmd_SAS(cmd, protocol, comID, buffer, bufferlen));
@@ -261,7 +261,7 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
 }
 /** Send an ioctl to the device using pass through. */
 uint8_t DtaDevLinuxSata::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                         void * buffer, uint16_t bufferlen)
+                         void * buffer, uint32_t bufferlen)
 {
     sg_io_hdr_t sg;
     uint8_t sense[32]; // how big should this be??
