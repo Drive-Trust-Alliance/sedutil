@@ -53,8 +53,7 @@ void DtaDiskUSB::init(const char * devref)
         isOpen = TRUE;
 }
 
-uint8_t DtaDiskUSB::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                        void * buffer, uint16_t bufferlen)
+uint8_t DtaDiskUSB::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, void * buffer, uint32_t bufferlen)
 {
 	LOG(D1) << "Entering DtaDiskUSB::sendCmd";
     DWORD bytesReturned = 0; // data returned

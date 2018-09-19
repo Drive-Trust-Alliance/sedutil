@@ -147,8 +147,7 @@ void DtaDiskNVME::init(const char * devref)
 	//  Drive Series Number :0025_385B_61B0_02FA.
 }
 
-uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                        void * buffer, uint16_t bufferlen)
+uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, void * buffer, uint32_t bufferlen)
 {
     LOG(D1) << "Entering DtaDiskNVME::sendCmd";
     //DWORD bytesReturned = 0; // data returned
