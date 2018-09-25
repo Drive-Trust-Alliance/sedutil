@@ -341,6 +341,7 @@ inline std::string NowTime() {
 
 #else
 
+#include <time.h>
 #include <sys/time.h>
 
 inline std::string NowTime() {
