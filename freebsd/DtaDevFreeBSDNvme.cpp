@@ -59,14 +59,14 @@ uint8_t DtaDevFreeBSDNvme::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t co
 	memset(&pt, 0, sizeof(pt));
 	if (IF_RECV == cmd) {
 		LOG(D3) << "Security Receive Command";
-#if __FreeBSD_version >= 1200058
+#if __FreeBSD_version >= 1200058 && __FreeBSD_version < 1200081
 		pt.cmd.opc_fuse = NVME_CMD_SET_OPC(NVME_OPC_SECURITY_RECEIVE);
 #else
 		pt.cmd.opc = NVME_OPC_SECURITY_RECEIVE;
 #endif
 	} else {
 		LOG(D3) << "Security Send Command";
-#if __FreeBSD_version >= 1200058
+#if __FreeBSD_version >= 1200058 && __FreeBSD_version < 1200081
 		pt.cmd.opc_fuse = NVME_CMD_SET_OPC(NVME_OPC_SECURITY_SEND);
 #else
 		pt.cmd.opc = NVME_OPC_SECURITY_SEND;
@@ -93,7 +93,7 @@ void DtaDevFreeBSDNvme::identify(OPAL_DiskInfo& disk_info)
 	struct nvme_controller_data cdata;
 
 	memset(&pt, 0, sizeof(pt));
-#if __FreeBSD_version >= 1200058
+#if __FreeBSD_version >= 1200058 && __FreeBSD_version < 1200081
 	pt.cmd.opc_fuse = NVME_CMD_SET_OPC(NVME_OPC_IDENTIFY);
 #else
 	pt.cmd.opc = NVME_OPC_IDENTIFY;
