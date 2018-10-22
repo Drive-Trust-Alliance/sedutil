@@ -1,0 +1,145 @@
+#!/bin/bash
+set -x
+# Build a custom UEFI linux based PBA image
+# 
+## define releases for tools
+. conf
+VERSIONINFO=`git describe --dirty` || VERSIONINFO=downloaded
+BUILDTYPE=$1
+PASSWORDONLY=$2
+PLATFORM="x86_64"
+IMGDIR="util"   # old "sedutil"
+
+if [ "$PASSWORDONLY" == "Passwordonly" ] ; then
+	BUILDIMG=UEFI64${1}-${VERSIONINFO}-${PASSWORDONLY}.img
+elif [ "$PASSWORDONLY" == "" ] ; then
+	BUILDIMG=UEFI64${1}-${VERSIONINFO}.img
+else
+	echo "You must select Passwordonly or blank"
+	exit	
+fi
+
+if [ "$BUILDTYPE" == "Debug" ] || [ "$BUILDTYPE" == "Release" ] ; then
+            echo "Building " $BUILDTYPE "image"
+	else
+	    echo "You must select Debug|Release"
+	    exit		
+fi
+
+cd ../../sedutil-tcz/
+
+rm lock.desktop
+if [ "$PASSWORDONLY" == "Passwordonly" ] ; then
+cp lock.desktop.original lock.desktop
+echo "***** B4 rmicon_x64"
+#read VAR
+./rmicon_x64
+echo "***** after rmicon_x64"
+#read VAR
+cp  Xprogs.tcz ../clone-pure64/cde/optional/
+#cp  wifi.tcz ../clone-pure64/cde/optional/
+else
+#sed s/--Passwordonly// lock.desktop.original > lock.desktop
+sed s/--pba// lock.desktop.original > lock.desktop
+fi
+./mktcz ${BUILDTYPE} ${PLATFORM}
+
+cp sedutil.tcz ../clone-pure64/misc1
+cp -av sedutil ../clone-pure64/misc1
+cp -v sedutil.tcz ../clone-pure64/cde/optional/
+# read VAR
+# now we have new XProg.tcz and sedutil.tcz in place 
+# extract file system from corepure64.gz , add cde/* into /tmp/tce
+# and repack corepure64.gz
+sudo rm -rf pure64
+mkdir -p pure64
+cd pure64
+#cp -pv ../../clone-pure64/boot6.4.1/vmlinuz64 ../../clone-pure64/boot/
+#zcat ../../clone-pure64/boot6.4.1/corepure64.gz | sudo cpio -i -d -H newc
+cp -pv ../../clone-pure64/boot9/vmlinuz64 ../../clone-pure64/boot/ 
+zcat ../../clone-pure64/boot9/corepure64.gz | sudo cpio -i -d -H newc
+sudo cp ../../clone-pure64/misc1/tce-setup usr/bin/tc-setup
+mkdir -p tmp/tce
+mkdir -p tmp/h.d
+cp -av ../../clone-pure64/cde/* tmp/tce/ # 2> /dev/null
+sudo find . | sudo cpio -o -H newc | gzip -9 > ../../clone-pure64/boot/corepure64.gz
+cd ../
+# return to sedutil-tcz
+
+cd ../${IMGDIR}/images   
+# Start fresh
+sudo rm -rf UEFI64${BUILDTYPE} ; mkdir UEFI64${BUILDTYPE} ; cd UEFI64${BUILDTYPE}
+# make an image file
+dd if=/dev/zero of=${BUILDIMG}Y bs=1M count=80 # fr 67->85->68 72ok , 68 ok tmp to 80 for debug
+
+# n: new partiotion; how many partion? default 1; 
+# 1st sector(34-20466): default 2048; 
+# last sector(2048-20466) : default 20466
+# hex code or GUID : default 8300(linux system)  
+# 
+(echo o;echo n;echo p;echo 1;echo "";echo "";echo a;echo t;echo e;echo w) | fdisk ${BUILDIMG}Y
+#
+#
+
+# create first 2 sector of image with version info after boot sector
+# merge mbr.bin with newly created partition table
+# boot loader 0-1BDh 446-byte ; 1BE-1FD partition table 64-byte; signatur 1FE-1FF 2-byte
+# syslinux look at sectore 32776 of /dev/sda for its 2nd stage ccccc
+##### mbr.bin only has 440-nyte with wc -c command
+cp ../../../../syslinux-6.04-pre1/bios/mbr/mbr.bin .
+
+dd if=${BUILDIMG}Y of=part skip=$((`cat mbr.bin | wc -c`)) bs=1 count=$((512 - `cat mbr.bin | wc -c`)) 
+
+
+git describe > f2
+#output (512 - n) byte of zero 
+dd if=/dev/zero of=f3 bs=1 count=$((512 - `git describe | wc -c`))
+##### iflag=skip_bytes skip=1024 seemd to make UEFI unbootable ?????
+#dd if=${BUILDIMG}Y iflag=skip_bytes skip=1024  of=${BUILDIMG}X
+dd if=${BUILDIMG}Y skip=1024  of=${BUILDIMG}X
+cat mbr.bin part f2 f3 ${BUILDIMG}X > ${BUILDIMG}
+
+
+# -o offset in bytes; 2048 sector=1048576 bytes; 34 sector= 17408
+# --show print device name after setup (with -f)
+# --find find first unused device
+LOOPDEV=`sudo losetup --show -f -o 1048576 ${BUILDIMG}`
+sudo mkfs.vfat -F 16 $LOOPDEV -n UEFI64${BUILDTYPE}
+sudo mkdir -p image
+sudo mount $LOOPDEV image
+# original script for extlinux
+### sudo mkdir -p image/boot/extlinux
+### sudo ../scratch/${SYSLINUX}/bios/extlinux/extlinux --install image/boot/extlinux
+### sudo cp ../scratch/buildroot/PBA32/images/bzImage  image/boot/extlinux/
+### sudo cp ../scratch/buildroot/PBA32/images/rootfs.cpio.xz image/boot/extlinux/
+### sudo cp ../buildroot/syslinux.cfg image/boot/extlinux/extlinux.conf
+
+#####  syslinux does not seems to boot properly, go back to isolinux
+sudo mkdir -p image/boot/isolinux
+sudo cp -p --no-preserve=mode,ownership ../../../clone-pure64/isolinuxroot/*  image/
+#### move under boot #sudo cp -av --no-preserve=mode,ownership ../../../clone-pure64/isolinux image/boot/
+
+#sudo syslinux -m -a image  # NG
+#sudo ../../../../syslinux-6.04-pre1/extlinux/extlinux --install image # boot error can not find .c32 file
+sudo ../../../../syslinux-4.05-pre1/extlinux/extlinux --install image # ok
+
+sudo cp -av --no-preserve=mode,ownership ../../../clone-pure64/boot image/
+sudo cp -av --no-preserve=mode,ownership ../../../clone-pure64/EFI  image/
+
+sudo cp -pv --no-preserve=mode,ownership ../../../clone-pure64/autorun.* image/
+
+# no more cde directory
+# sudo cp -a ../../../clone-pure64/cde  image/
+for f in Xprogs aterm
+do 
+sudo rm -v image/cde/optional/$f-original.tcz
+done
+# sudo cp -av ../../../clone-pure64/misc1  image/
+#chmod -R 777 image/cde
+echo "check final used disk image size"
+sudo du -h image ; sudo du image
+echo "Last check before umount"
+###################
+sudo umount image
+sudo losetup -d $LOOPDEV
+#gzip ${BUILDIMG}
