@@ -238,9 +238,9 @@ uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, v
 	else
 	{
 		IFLOG(D1) {
-			printf("*************************************************\n");
-			printf("***** DeviceIoControl return zero status NG *****\n");
-			printf("*************************************************\n");
+			//printf("*************************************************\n");
+			//printf("***** DeviceIoControl return zero status NG *****\n");
+			//printf("*************************************************\n");
 		}
 		DWORD err = 0;
 		err = GetLastError();
@@ -248,13 +248,13 @@ uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, v
 		return DTAERROR_COMMAND_ERROR;
 	}
 	IFLOG(D4) {
-		printf("cdb : after DeviceIoControl\n");
+		//printf("cdb : after DeviceIoControl\n");
 		DtaHexDump(scsi->scsiDetails.Cdb, 16);
 
-		printf("SDBW buffer content : after DeviceIoControl \n");
+		//printf("SDBW buffer content : after DeviceIoControl \n");
 		DtaHexDump(scsi, sizeof(SDWA));
 
-		printf("data buffer content : after DeviceIoControl ; returned data length = %ld \n", n);
+		//printf("data buffer content : after DeviceIoControl ; returned data length = %ld \n", n);
 		DtaHexDump(scsi->scsiDetails.DataBuffer, 256);
 	}
 	return 0;
