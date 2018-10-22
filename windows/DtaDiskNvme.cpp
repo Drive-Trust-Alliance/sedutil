@@ -147,8 +147,7 @@ void DtaDiskNVME::init(const char * devref)
 	//  Drive Series Number :0025_385B_61B0_02FA.
 }
 
-uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                        void * buffer, uint16_t bufferlen)
+uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, void * buffer, uint32_t bufferlen)
 {
     LOG(D1) << "Entering DtaDiskNVME::sendCmd";
     //DWORD bytesReturned = 0; // data returned
@@ -239,9 +238,9 @@ uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 	else
 	{
 		IFLOG(D1) {
-			printf("*************************************************\n");
-			printf("***** DeviceIoControl return zero status NG *****\n");
-			printf("*************************************************\n");
+			//printf("*************************************************\n");
+			//printf("***** DeviceIoControl return zero status NG *****\n");
+			//printf("*************************************************\n");
 		}
 		DWORD err = 0;
 		err = GetLastError();
@@ -249,13 +248,13 @@ uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 		return DTAERROR_COMMAND_ERROR;
 	}
 	IFLOG(D4) {
-		printf("cdb : after DeviceIoControl\n");
+		//printf("cdb : after DeviceIoControl\n");
 		DtaHexDump(scsi->scsiDetails.Cdb, 16);
 
-		printf("SDBW buffer content : after DeviceIoControl \n");
+		//printf("SDBW buffer content : after DeviceIoControl \n");
 		DtaHexDump(scsi, sizeof(SDWA));
 
-		printf("data buffer content : after DeviceIoControl ; returned data length = %ld \n", n);
+		//printf("data buffer content : after DeviceIoControl ; returned data length = %ld \n", n);
 		DtaHexDump(scsi->scsiDetails.DataBuffer, 256);
 	}
 	return 0;

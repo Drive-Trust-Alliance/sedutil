@@ -87,8 +87,8 @@ int diskScan(char * devskip)
 	ndisk = atoi(buf);
 
 	#else
-	int r = system("fdisk -l | grep 'Disk /dev/sd' | sudo wc -l > disksda.txt ");
-	r = system("fdisk -l | grep 'Disk /dev/nvme' | sudo wc -l > disknvme.txt ");
+	int r = system("fdisk -l | grep 'Disk /dev/sd.*:' | sudo wc -l > disksda.txt ");
+	r = system("fdisk -l | grep 'Disk /dev/nvme.*' | sudo wc -l > disknvme.txt ");
 	FILE * file;
 	file = fopen("disknvme.txt","r");
 	fgets(buf, 9, file);
@@ -278,22 +278,22 @@ int lockvol( HANDLE &vol_handle)
 		NULL, 0, NULL, 0, &n, NULL))
 	{
 		DWORD err = GetLastError();
-		IFLOG(D1) printf("FSCTL_ALLOW_EXTENDED_DASD_IO error %d\n", err);
+		//IFLOG(D1) printf("FSCTL_ALLOW_EXTENDED_DASD_IO error %d\n", err);
 		//return false; let it fall through to see if lock vol has error
 	}
 	else {
-		IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_ALLOW_EXTENDED_DASD_IO...) OK\n");
+		//IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_ALLOW_EXTENDED_DASD_IO...) OK\n");
 	}
 	//
 	if (!DeviceIoControl(vol_handle, FSCTL_DISMOUNT_VOLUME,
 		NULL, 0, NULL, 0, &n, NULL))
 	{
 		DWORD err = GetLastError();
-		IFLOG(D1) printf("FSCTL_DISMOUNT_VOLUME error %d\n", err);
+		//IFLOG(D1) printf("FSCTL_DISMOUNT_VOLUME error %d\n", err);
 		//return false; let it fall through to see if lock vol has error
 	}
 	else {
-		IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_DISMOUNT_VOLUME...) OK\n");
+		//IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_DISMOUNT_VOLUME...) OK\n");
 	}
 
 	// lock volume
@@ -303,11 +303,11 @@ int lockvol( HANDLE &vol_handle)
 	{
 		// error handling; not sure if retrying is useful
 		// lock vol fail ; probably ok if there is no file system exist
-		IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_LOCK_VOLUME,...) error\n");
-		IFLOG(D1) printf("error = %d \n", GetLastError());
+		//IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_LOCK_VOLUME,...) error\n");
+		//IFLOG(D1) printf("error = %d \n", GetLastError());
 	}
 	else {
-		IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_LOCK_VOLUME,...) OK\n");
+		//IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_LOCK_VOLUME,...) OK\n");
 	}
 	return status;
 }
@@ -322,11 +322,11 @@ int unlockvol(HANDLE &vol_handle)
 	{
 		// error handling; not sure if retrying is useful
 		// lock vol fail ; probably ok if there is no file system exist
-		IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_UNLOCK_VOLUME,...) error\n");
-		IFLOG(D1) printf("error = %d \n", GetLastError());
+		//IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_UNLOCK_VOLUME,...) error\n");
+		//IFLOG(D1) printf("error = %d \n", GetLastError());
 	}
 	else {
-		IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_UNLOCK_VOLUME,...) OK\n");
+		//IFLOG(D1) printf("DeviceIoControl(vol_handle, FSCTL_UNLOCK_VOLUME,...) OK\n");
 	}
 	return true;
 }
@@ -344,11 +344,11 @@ int setfp(HANDLE &vol_handle,long sect)
 	{
 		//errormsg("HWWrite: error %d seeking drive %x sector %ld:  %s",
 		//	err, drive, sect, w32errtxt(err));
-		IFLOG(D1) printf("SetFilePointe error %d\n", err);
+		//IFLOG(D1) printf("SetFilePointe error %d\n", err);
 		return false;
 	}
 	else {
-		IFLOG(D1) printf("SetFilePointer(vol_handle, lopart, &hipart, FILE_BEGIN) OK\n");
+		//IFLOG(D1) printf("SetFilePointer(vol_handle, lopart, &hipart, FILE_BEGIN) OK\n");
 		return true;
 	}
 
@@ -417,7 +417,7 @@ BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 	if (!WriteFile(vol_handle, Bufferzero, (DWORD)(128*512), &n, NULL)) // 128 sector is reruired to wipe mbr/gpt
 	{
 		int err = GetLastError();
-		IFLOG(D1) printf("zero out image error %d\n", err);
+		//IFLOG(D1) printf("zero out image error %d\n", err);
 		unlockvol(vol_handle);
 		CloseHandle(vol_handle);
 		return false;
@@ -972,7 +972,7 @@ int main(int argc, char * argv[])
 		break;
 	case sedutiloption::auditWrite:
 		LOG(D) << "audit log write";
-		printf("argv[opts.eventid]=%s\n", argv[opts.eventid]);
+		//printf("argv[opts.eventid]=%s\n", argv[opts.eventid]);
 		return d->auditWrite(argv[opts.password], argv[opts.eventid], argv[opts.userid]);
 		break;
 	case sedutiloption::auditRead:
@@ -1188,7 +1188,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-	printf("Fidelity Lock Version : 0.4.0.%s.%s 20180913-A001\n", st1.c_str(),GIT_VERSION);
+	printf("Fidelity Lock Version : 0.5.0.%s.%s 20181022-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:

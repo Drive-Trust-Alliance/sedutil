@@ -20,6 +20,11 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include <stdio.h>
 #include <ctype.h>
+#define NOHEXDUMP 1
+
+#if NOHEXDUMP
+void DtaHexDump(void * address, int length) { }
+#else
 void DtaHexDump(void * address, int length) {
 	uint8_t display[17];
 	uint8_t * cpos = (uint8_t *)address;
@@ -52,3 +57,4 @@ void DtaHexDump(void * address, int length) {
 		fprintf( stderr," %s\n", display);
 	}
 }
+#endif

@@ -44,8 +44,7 @@ public:
      * @param buffer input/output buffer
      * @param bufferlen length of the input/output buffer
      */
-	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-		void * buffer, uint16_t bufferlen);
+	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, void * buffer, uint32_t bufferlen);
 	/** OS specific method to send an determing size of disk (in bytes)
 	* @param cmd ATA command to be sent to the device
 	* @param protocol security protocol to be used in the command

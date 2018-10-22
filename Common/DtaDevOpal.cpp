@@ -896,7 +896,7 @@ uint8_t DtaDevOpal::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<u
 		}
 		else {
 			LOG(E) << "Invalid Userid "; // JERRY gabble data << userid;
-			for (int ii=0; ii < 5; ii++) { printf("%02X", userid[ii]); } 
+			//for (int ii=0; ii < 5; ii++) { printf("%02X", userid[ii]); } 
 			userData.clear();
 			return DTAERROR_INVALID_PARAMETER;
 		}
@@ -1369,7 +1369,7 @@ vector<uint8_t> getUID(char * userid, vector<uint8_t> &auth2, vector<uint8_t> &a
 			id = ((uint8_t)atoi(&userid[4]));
 		}
 
-		IFLOG(D4) printf("UserN : %s traslated id = %d\n", userid,id);
+		//IFLOG(D4) printf("UserN : %s traslated id = %d\n", userid,id);
 		for (int i = 0; i < 7; i++) {
 			auth.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
 			auth2.push_back(OPALUID[OPAL_UID::OPAL_ADMIN1_UID][i]);
@@ -1380,7 +1380,7 @@ vector<uint8_t> getUID(char * userid, vector<uint8_t> &auth2, vector<uint8_t> &a
 		auth2.push_back(1); // always admin1 or user1 
 	}
 	else { // "Admin"
-		IFLOG(D4) printf("AdminN %s\n", userid); 
+		//IFLOG(D4) printf("AdminN %s\n", userid); 
 		id = (uint8_t)atoi(&userid[5]);
 		for (int i = 0; i < 7; i++) {
 			auth.push_back(OPALUID[OPAL_UID::OPAL_ADMIN1_UID][i]);
@@ -3371,14 +3371,14 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	LOG(D1) << "start hashing";
 	DtaHashPwd(hash, sernum, this,1000);
 	LOG(D1) << "end hashing";
-	IFLOG(D1) printf("hashed size = %zd\n", hash.size());
-	IFLOG(D1) printf("hashed serial number is ");
-	IFLOG(D1) // should never expose the hashed series , need to comment out when release
-	for (uint8_t i = 0; i < hash.size(); i++)
-	{
-		printf("%02X", hash.at(i));
-	}
-	printf("\n"); // end of IFLOG(D1)
+	//////IFLOG(D1) printf("hashed size = %zd\n", hash.size());
+	//////IFLOG(D1) printf("hashed serial number is ");
+	//////IFLOG(D1) // should never expose the hashed series , need to comment out when release
+	//////for (uint8_t i = 0; i < hash.size(); i++)
+	//////{
+	//////	printf("%02X", hash.at(i));
+	//////}
+	//////printf("\n"); // end of IFLOG(D1)
 	// try dump decompressed buffer of sector 0 , 1 
 	//DtaHexDump(DecompressedBuffer + 512, 512);
 	// write 32-byte date into buffer 

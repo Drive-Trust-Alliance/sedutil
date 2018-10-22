@@ -43,6 +43,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define NOLOGGING 0
+
 inline std::string NowTime();
 
 enum TLogLevel {
@@ -153,6 +155,9 @@ inline FILE*& Output2FILE::Stream() {
 }
 
 inline void Output2FILE::Output(const std::string& msg) {
+#if NOLOGGING
+	return;
+#endif
     FILE* pStream = Stream();
     if (!pStream)
         return;
