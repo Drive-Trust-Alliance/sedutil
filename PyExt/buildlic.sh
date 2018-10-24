@@ -12,5 +12,7 @@ echo "void * __gxx_personality_v0;" >> pyextlic.h
 
 CC=g++ python setup.py build
 
+cp -pv ./build/lib.linux-x86_64-2.7/PyExtLic.so ../py/
+
 # build x86_64 ob.so
 
