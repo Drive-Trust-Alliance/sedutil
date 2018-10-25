@@ -238,8 +238,8 @@ public:
 	uint8_t auditWrite(char * password,char * idstr, char * userid);
 
 	uint8_t getmfgstate(void);
-	uint8_t DataStoreWrite(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
-	uint8_t DataStoreRead(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
+	uint8_t DataStoreWrite(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
+	uint8_t DataStoreRead(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
 	uint8_t MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len);
 	uint8_t getMBRsize(char * password, uint32_t * msize);
 	uint8_t getMBRsize(char * password);

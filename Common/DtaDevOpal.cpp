@@ -2351,12 +2351,12 @@ uint8_t DtaDevOpal::getmfgstate()
 	return 0;
 }
 
-uint8_t DtaDevOpal::DataStoreWrite(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len)
+uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len)
 {
-        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-        LOG(D1) << "DtaDevOpal::DataStoreWrite() isn't supported in Linux";
-	return 0;
-        #else
+        //#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+        //LOG(D1) << "DtaDevOpal::DataStoreWrite() isn't supported in Linux";
+	//return 0;
+        //#else
 	LOG(D1) << "Entering DtaDevOpal::DataStoreWrite()";
 
 	ifstream datafile;
@@ -2453,7 +2453,11 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * filename, uint8_t dsn
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	LOG(D1) << "start lockingSP session";
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	vector<uint8_t> auth,auth2,auth3;
+	auth = getUID(userid,auth2,auth3,disk_info.OPAL20_numUsers); // pass vector directly, not enum index of vector table
+
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth)) != 0) {
 		delete cmd;
 		delete session;
 		return lastRC;
@@ -2584,16 +2588,16 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * filename, uint8_t dsn
 	LOG(I) << "Data Store file  " << filename << " written to " << dev;
 	LOG(D1) << "Exiting DtaDevOpal::DataStoreWrite()";
 	return 0;
-	#endif
+	//#endif
 
 }
 
-uint8_t DtaDevOpal::DataStoreRead(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len)
+uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len)
 {
-        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-        LOG(D1) << "DtaDevOpal::DataStoreRead() isn't supported in Linux";
-	return 0;
-        #else
+        //#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+        //LOG(D1) << "DtaDevOpal::DataStoreRead() isn't supported in Linux";
+	//return 0;
+        //#else
 	LOG(D1) << "Entering DtaDevOpal::DataStoreRead()";
 
 	ofstream datafile;
@@ -2663,7 +2667,10 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * filename, uint8_t dsnu
 	}
 	LOG(D1) << "start lockingSP session";
 	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // JERRY TEST User 1 
+	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // JERRY TEST User 1 
+	vector<uint8_t> auth,auth2,auth3;
+	auth = getUID(userid,auth2,auth3,disk_info.OPAL20_numUsers); // pass vector directly, not enum index of vector table
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth)) != 0) { 
 		delete cmd;
 		delete session;
 		LOG(E) << "DataStore Read Unable to start session Error";
@@ -2780,7 +2787,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * filename, uint8_t dsnu
 	LOG(I) << "Read Data Store from "<< dev << " to " << filename ;
 	LOG(D1) << "Exiting DtaDevOpal::DataStoreRead()";
 	return 0;
-	#endif
+	//#endif
 }
 
 uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len)

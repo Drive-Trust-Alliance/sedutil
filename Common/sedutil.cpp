@@ -87,8 +87,8 @@ int diskScan(char * devskip)
 	ndisk = atoi(buf);
 
 	#else
-	int r = system("fdisk -l | grep 'Disk /dev/sd.*:' | sudo wc -l > disksda.txt ");
-	r = system("fdisk -l | grep 'Disk /dev/nvme.*' | sudo wc -l > disknvme.txt ");
+	int r = system("sudo fdisk -l | grep 'Disk /dev/sd.*:' | sudo wc -l > disksda.txt ");
+	r = system("sudo fdisk -l | grep 'Disk /dev/nvme.*' | sudo wc -l > disknvme.txt ");
 	FILE * file;
 	file = fopen("disknvme.txt","r");
 	fgets(buf, 9, file);
@@ -996,14 +996,7 @@ int main(int argc, char * argv[])
 		LOG(D) << "PBA image validation";
 		return d->pbaValid(argv[opts.password]);
 		break;
-	case sedutiloption::DataStoreWrite:
-		LOG(D) << "Write to Data Store";
-		return d->DataStoreWrite(argv[opts.password], argv[opts.pbafile], (uint8_t)atoi(argv[opts.dsnum]), atol(argv[opts.startpos]), atol(argv[opts.len]));
-		break;
-	case sedutiloption::DataStoreRead:
-		LOG(D) << "Read Data Store to file";
-		return d->DataStoreRead(argv[opts.password], argv[opts.pbafile], (uint8_t)atoi(argv[opts.dsnum]), atol(argv[opts.startpos]), atol(argv[opts.len]));
-		break;
+
 	case sedutiloption::MBRRead:
 		LOG(D) << "Read shadow MBR to file";
 		return d->MBRRead(argv[opts.password], argv[opts.pbafile], atol(argv[opts.startpos]), atol(argv[opts.len]));
@@ -1015,7 +1008,14 @@ int main(int argc, char * argv[])
 		return diskUSBwrite(argv[opts.device], argv[opts.devusb], _com_util::ConvertBSTRToString(m_lv->getf2s()));
 		break;
     #endif
-
+	case sedutiloption::DataStoreWrite:
+		LOG(D) << "Write to Data Store";
+		return d->DataStoreWrite(argv[opts.password], argv[opts.userid], argv[opts.pbafile], (uint8_t)atoi(argv[opts.dsnum]), atol(argv[opts.startpos]), atol(argv[opts.len]));
+		break;
+	case sedutiloption::DataStoreRead:
+		LOG(D) << "Read Data Store to file";
+		return d->DataStoreRead(argv[opts.password], argv[opts.userid], argv[opts.pbafile], (uint8_t)atoi(argv[opts.dsnum]), atol(argv[opts.startpos]), atol(argv[opts.len]));
+		break;
 	case sedutiloption::getMBRsize:
 		LOG(D) << "get shadow MBR table size ";
 		return d->getMBRsize(argv[opts.password]);
@@ -1188,7 +1188,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-	printf("Fidelity Lock Version : 0.5.0.%s.%s 20181022-A001\n", st1.c_str(),GIT_VERSION);
+	printf("Fidelity Lock Version : 0.5.0.%s.%s 20181025-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:

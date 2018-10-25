@@ -889,11 +889,11 @@ uint8_t DtaDevEnterprise::getmfgstate() {
 	LOG(D1) << "Entering DtaDevEnterprise::getmfgstate() not implemented in Enterprize";
 	return 0;
 }
-uint8_t DtaDevEnterprise::DataStoreWrite(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len) {
+uint8_t DtaDevEnterprise::DataStoreWrite(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len) {
 	LOG(D1) << "Entering DtaDevEnterprise::DataStoreWrite() not implemented in Enterprize";
 	return 0;
 }
-uint8_t DtaDevEnterprise::DataStoreRead(char * password, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len) {
+uint8_t DtaDevEnterprise::DataStoreRead(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len) {
 	LOG(D1) << "Entering DtaDevEnterprise::DataStoreRead() not implemented in Enterprize";
 	return 0;
 }
