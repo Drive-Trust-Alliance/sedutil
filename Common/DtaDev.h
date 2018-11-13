@@ -310,7 +310,7 @@ protected:
 	uint8_t isOpen = FALSE;  /**< The device has been opened */
 	uint8_t isNVME = FALSE;  /**< This device is NVME */
 	uint8_t adj_host = FALSE; 
-	uint16_t adj_io_buffer_length = 17408; // user safe low buffer length
+	uint16_t adj_io_buffer_length = 16384; // 17408; // user safe low buffer length
 	OPAL_DiskInfo disk_info;  /**< Structure containing info from identify and discovery 0 */
 	DtaResponse response;   /**< shared response object */
 	DtaResponse propertiesResponse;  /**< response from properties exchange */
