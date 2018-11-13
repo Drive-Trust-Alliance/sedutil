@@ -78,6 +78,7 @@ void DtaDevOpal::init(const char * devref)
 {
 	uint8_t lastRC;
 	DtaDevOS::init(devref);
+	adj_host = 0; 
 	if((lastRC = properties()) != 0) { LOG(E) << "Properties exchange failed";}
 }
 
@@ -4200,7 +4201,6 @@ uint8_t DtaDevOpal::properties()
 	}
 	set_prop(props, sz_MaxComPacketSize, sz_MaxResponseComPacketSize, sz_MaxPacketSize, sz_MaxIndTokenSize);
 
-	props->complete();
 	if ((lastRC = session->sendCommand(props, propertiesResponse)) != 0) {
 		delete props;
 		return lastRC;
@@ -4323,7 +4323,7 @@ void DtaDevOpal::adj_host_prop(uint8_t act)
 		properties();
 		break;
 	} // switch 
-	fill_prop(FALSE); // JERRY must re-stuff the host property because properties() only exchange property with Tper but not set host_sz_Maxxxxxxxx
+	fill_prop(0); // JERRY must re-stuff the host property because properties() only exchange property with Tper but not set host_sz_Maxxxxxxxx
 	//LOG(I) << "Exit adj_host_prop";
 }
 
