@@ -67,7 +67,7 @@ bool DtaDevLinuxSata::init(const char * devref)
     LOG(D1) << "Creating DtaDevLinuxSata::DtaDev() " << devref;
 	bool isOpen = FALSE;
 
-    if(access("/dev/sda", R_OK | W_OK)) {
+    if (access(devref, R_OK | W_OK)) {
         LOG(E) << "You do not have permission to access the raw disk in write mode";
         LOG(E) << "Perhaps you might try sudo to run as root";
     }
