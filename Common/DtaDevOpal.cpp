@@ -78,6 +78,7 @@ void DtaDevOpal::init(const char * devref)
 {
 	uint8_t lastRC;
 	DtaDevOS::init(devref);
+	adj_host = 0; 
 	if((lastRC = properties()) != 0) { LOG(E) << "Properties exchange failed";}
 }
 
@@ -918,7 +919,7 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 	int idx=0;
 	memset(buf, 0, 20);
 	gethuser(buf);
-	if (!memcmp(userid , buf,5)) idx = disk_info.OPAL20_numUsers -1 ;
+	if (!memcmp(userid , buf, (disk_info.OPAL20_numUsers < 10) ? 5 : 6 ) ) idx = disk_info.OPAL20_numUsers -1 ;
 	// if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? (OPAL_UID)(OPAL_USER1_UID + idx) : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // ok work : JERRY can user set its own password ?????
 		delete session;
@@ -2243,18 +2244,27 @@ uint8_t DtaDevOpal::auditWrite(char * password, char * idstr, char * userid)
 	entry_t ent;
 	memset(&ent, 0, sizeof(entry_t));
 	char t[2];
+	memset(t, 0, 3);
+	DtaHexDump(idstr, 16);
 	memcpy(t, idstr, 2);
+	DtaHexDump(t, 3);
 	ent.event = (uint8_t)atoi(t);
+	memset(t, 0, 3);
 	memcpy(t, idstr+2, 2);
 	ent.yy = (uint8_t)atoi(t);
+	memset(t, 0, 3);
 	memcpy(t, idstr+4, 2);
 	ent.mm = (uint8_t)atoi(t);
+	memset(t, 0, 3);
 	memcpy(t, idstr+6, 2);
 	ent.dd = (uint8_t)atoi(t);
+	memset(t, 0, 3);
 	memcpy(t, idstr+8, 2);
 	ent.hh = (uint8_t)atoi(t);
+	memset(t, 0, 3);
 	memcpy(t, idstr+10, 2);
 	ent.min = (uint8_t)atoi(t);
+	memset(t, 0, 3);
 	memcpy(t, idstr+12, 2);
 	ent.sec = (uint8_t)atoi(t);
 	ent.reserved = 0;
@@ -4200,7 +4210,7 @@ uint8_t DtaDevOpal::properties()
 	}
 	set_prop(props, sz_MaxComPacketSize, sz_MaxResponseComPacketSize, sz_MaxPacketSize, sz_MaxIndTokenSize);
 
-	props->complete();
+	//props->complete();
 	if ((lastRC = session->sendCommand(props, propertiesResponse)) != 0) {
 		delete props;
 		return lastRC;
