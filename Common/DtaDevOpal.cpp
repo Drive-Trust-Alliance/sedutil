@@ -218,8 +218,8 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 	#else
 	strcat_s(p1, getSerialNum());
 	#endif
-	LOG(I) << p1;  // JERRY 
-	DtaHexDump(p1, 80); // JERRY 
+	//LOG(I) << p1;  // JERRY 
+	//DtaHexDump(p1, 80); // JERRY 
 	// setpassword has flag -n -t from GUI
 	if (no_hash_passwords) { // do it only when -n is set
 		bool saved_flag = no_hash_passwords;
