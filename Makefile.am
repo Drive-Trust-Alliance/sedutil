@@ -26,6 +26,7 @@ sedutil_cli_SOURCES = linux/Version.h Common/sedutil.cpp Common/DtaOptions.cpp C
 	linux/DtaDevLinuxSata.cpp linux/DtaDevLinuxSata.h \
 	linux/DtaDevOS.cpp linux/DtaDevOS.h \
 	linux/DtaDevLinuxDrive.h linux/os.h \
+    LinuxPBA/GetPassPhrase.cpp \
 	$(SEDUTIL_COMMON_CODE)
 CLEANFILES = linux/Version.h
 BUILT_SOURCES = linux/Version.h
