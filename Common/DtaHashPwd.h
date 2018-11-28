@@ -18,6 +18,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
+#include "SecureContainer.h"
 #include <vector>
 class DtaDev;
 
@@ -32,7 +33,7 @@ using namespace std;
  * @param password The password to be hashed
  * @param device the device where the password is to be used
  */
-void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * device);
+void DtaHashPwd(std::shared_ptr<SecureByteVector> &hash, char * password, DtaDev * device);
 /** Hash a passwor using the PBDKF2<SHA1> function 
  *
  * @param hash Field where hash returned
@@ -41,7 +42,7 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * device);
  * @param iter number of iterations to be preformed 
  * @param hashsize size of hash to be returned
  */
-void DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
+void DtaHashPassword(std::shared_ptr<SecureByteVector> &hash, char * password, vector<uint8_t> salt,
         unsigned int iter = 75000, uint8_t hashsize = 32);
 /** Test the hshing function using publicly available test cased and report */
 int TestPBKDF2();

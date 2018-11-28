@@ -692,7 +692,8 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 {
 	LOG(D1) << "Entering DtaDevOpal::setPassword" ;
 	uint8_t lastRC;
-	std::vector<uint8_t> userCPIN, hash;
+	std::vector<uint8_t> userCPIN;
+    std::shared_ptr<SecureByteVector> hash = std::allocate_shared<SecureByteVector>(SecureAllocator<SecureByteVector>(), 0);
 	session = new DtaSession(this);
 	if (NULL == session) {
 		LOG(E) << "Unable to create session object ";
@@ -707,8 +708,9 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 		delete session;
 		return lastRC;
 	}
-	DtaHashPwd(hash, newpassword, this);
-	if ((lastRC = setTable(userCPIN, OPAL_TOKEN::PIN, hash)) != 0) {
+    DtaHashPwd(hash, newpassword, this);
+
+	if ((lastRC = setTable(userCPIN, OPAL_TOKEN::PIN, *hash)) != 0) {
 		LOG(E) << "Unable to set user " << userid << " new password ";
 		delete session;
 		return lastRC;
@@ -722,7 +724,8 @@ uint8_t DtaDevOpal::setNewPassword_SUM(char * password, char * userid, char * ne
 {
 	LOG(D1) << "Entering DtaDevOpal::setNewPassword_SUM";
 	uint8_t lastRC;
-	std::vector<uint8_t> userCPIN, hash;
+	std::vector<uint8_t> userCPIN;
+    std::shared_ptr<SecureByteVector> hash = std::allocate_shared<SecureByteVector>(SecureAllocator<SecureByteVector>(), 0);
 	session = new DtaSession(this);
 	if (NULL == session) {
 		LOG(E) << "Unable to create session object ";
@@ -762,7 +765,7 @@ uint8_t DtaDevOpal::setNewPassword_SUM(char * password, char * userid, char * ne
 		return lastRC;
 	}
 	DtaHashPwd(hash, newpassword, this);
-	if ((lastRC = setTable(userCPIN, OPAL_TOKEN::PIN, hash)) != 0) {
+	if ((lastRC = setTable(userCPIN, OPAL_TOKEN::PIN, *hash)) != 0) {
 		LOG(E) << "Unable to set user " << userid << " new password ";
 		delete session;
 		return lastRC;
@@ -1449,7 +1452,8 @@ uint8_t DtaDevOpal::printDefaultPassword()
 uint8_t DtaDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
 	uint8_t hasholdpwd, uint8_t hashnewpwd)
 {
-	vector<uint8_t> hash, table;
+	vector<uint8_t> table;
+    std::shared_ptr<SecureByteVector> hash = std::allocate_shared<SecureByteVector>(SecureAllocator<SecureByteVector>(), 0);
 	LOG(D1) << "Entering DtaDevOpal::setSIDPassword()";
 	uint8_t lastRC;
 	session = new DtaSession(this);
@@ -1468,18 +1472,20 @@ uint8_t DtaDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
 	for (int i = 0; i < 8; i++) {
 		table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_SID][i]);
 	}
-	hash.clear();
-	if (hashnewpwd) {
-		DtaHashPwd(hash, newpassword, this);
-	}
-	else {
-		hash.push_back(0xd0);
-		hash.push_back((uint8_t)strnlen(newpassword, 255));
-		for (uint16_t i = 0; i < strnlen(newpassword, 255); i++) {
-			hash.push_back(newpassword[i]);
-		}
-	}
-	if ((lastRC = setTable(table, OPAL_TOKEN::PIN, hash)) != 0) {
+
+	hash->clear();
+    if (hashnewpwd) {
+        DtaHashPwd(hash, newpassword, this);
+    }
+    else {
+        hash->push_back(0xd0);
+        hash->push_back((uint8_t)strnlen(newpassword, 255));
+        for (uint16_t i = 0; i < strnlen(newpassword, 255); i++) {
+            hash->push_back(newpassword[i]);
+        }
+    }
+
+	if ((lastRC = setTable(table, OPAL_TOKEN::PIN, *hash)) != 0) {
 		LOG(E) << "Unable to set new SID password ";
 		delete session;
 		return lastRC;
@@ -1489,7 +1495,7 @@ uint8_t DtaDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
 	return 0;
 }
 
-uint8_t DtaDevOpal::setTable(vector<uint8_t> table, OPAL_TOKEN name,
+uint8_t DtaDevOpal::setTable(const vector<uint8_t>& table, OPAL_TOKEN name,
 	OPAL_TOKEN value)
 {
 	vector <uint8_t> token;
@@ -1497,8 +1503,8 @@ uint8_t DtaDevOpal::setTable(vector<uint8_t> table, OPAL_TOKEN name,
 	return(setTable(table, name, token));
 }
 
-uint8_t DtaDevOpal::setTable(vector<uint8_t> table, OPAL_TOKEN name, 
-	vector<uint8_t> value)
+template<class T> uint8_t DtaDevOpal::setTable(const std::vector<uint8_t>& table, OPAL_TOKEN name, 
+	const T& value)
 {
 	LOG(D1) << "Entering DtaDevOpal::setTable";
 	uint8_t lastRC;

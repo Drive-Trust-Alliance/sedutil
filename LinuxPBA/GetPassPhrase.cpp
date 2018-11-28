@@ -20,7 +20,6 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "os.h"
 #include "GetPassPhrase.h"
-#include <string>
 #include <termios.h>
 #include <stdio.h>
 using namespace std;
@@ -58,11 +57,11 @@ char getch(void)
   return getch_(0);
 }
 
-string GetPassPhrase(const char *prompt, bool show_asterisk)
+std::shared_ptr<SecureString> GetPassPhrase(const char *prompt, bool show_asterisk)
 {
   const char BACKSPACE=127;
   const char RETURN=10;
-  string password;
+  std::shared_ptr<SecureString> password = std::allocate_shared<SecureString>(SecureAllocator<SecureString>(), "");
   unsigned char ch=0;
   LOG(D4) << "Enter GetPassPhrase" << endl;
   printf("\n\n%s",prompt);
@@ -71,16 +70,16 @@ string GetPassPhrase(const char *prompt, bool show_asterisk)
 //      LOG(I) << "key value" << (uint16_t) ch << endl;
        if(ch==BACKSPACE)
          {
-            if(password.length()!=0)
+            if(password->length()!=0)
               {
                  if(show_asterisk)
                  printf("\b \b");
-                 password.resize(password.length()-1);
+                 password->resize(password->length()-1);
               }
          }
        else if(ch!=27) // ignore 'escape' key
          {
-             password+=ch;
+             password->push_back(ch);
              if(show_asterisk)
                  printf("*");
          }

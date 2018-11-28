@@ -88,8 +88,8 @@ public:
          * @param name the column name to be set
          * @param value data to be stored the the column 
          */
-	uint8_t setTable(vector<uint8_t> table, const char *name,
-		vector<uint8_t> value);
+	template<class T> uint8_t setTable(vector<uint8_t> table, const char *name,
+		const T& value);
         /** set a single column in a table 
          * @param table the UID of the table
          * @param name the column name to be set

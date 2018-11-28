@@ -450,9 +450,9 @@ uint8_t DtaDevEnterprise::setPassword(char * password, char * userid, char * new
 			return lastRC;
 		}
 	} else {
-		std::vector<uint8_t> hash;
+        std::shared_ptr<SecureByteVector> hash = std::allocate_shared<SecureByteVector>(SecureAllocator<SecureByteVector>(), 0);
 		DtaHashPwd(hash, newpwd, this);
-		if ((lastRC = setTable(usercpin, "PIN", hash)) != 0) {
+		if ((lastRC = setTable(usercpin, "PIN", *hash)) != 0) {
 			LOG(E) << "Unable to set user " << userid << " new password ";
 			delete session;
 			return lastRC;
@@ -1159,7 +1159,8 @@ uint8_t DtaDevEnterprise::setBandsEnabled(int16_t lockingrange, char * password)
 
 uint8_t DtaDevEnterprise::initLSPUsers(char * defaultPassword, char * newPassword)
 {
-    vector<uint8_t> user, usercpin, hash, erasemaster, table;
+    vector<uint8_t> user, usercpin, erasemaster, table;
+    std::shared_ptr<SecureByteVector> hash = std::allocate_shared<SecureByteVector>(SecureAllocator<SecureByteVector>(), 0);
 	uint8_t lastRC;
 	LOG(D1) << "Entering DtaDevEnterprise::initLSPUsers()";
 
@@ -1177,7 +1178,7 @@ uint8_t DtaDevEnterprise::initLSPUsers(char * defaultPassword, char * newPasswor
 	}
 	DtaHashPwd(hash, newPassword, this);
     user2cpin(usercpin, erasemaster);
-	if ((lastRC = setTable(usercpin, "PIN", hash)) != 0) {
+	if ((lastRC = setTable(usercpin, "PIN", *hash)) != 0) {
 		LOG(E) << "Unable to set new EraseMaster password ";
 		delete session;
 		return lastRC;
@@ -1215,7 +1216,7 @@ uint8_t DtaDevEnterprise::initLSPUsers(char * defaultPassword, char * newPasswor
 		}
 		DtaHashPwd(hash, newPassword, this);
         user2cpin(usercpin, user);
-		if ((lastRC = setTable(usercpin, "PIN", hash)) != 0) {
+		if ((lastRC = setTable(usercpin, "PIN", *hash)) != 0) {
 			LOG(E) << "Unable to set BandMaster" << (uint16_t) i << " new password ";
 			// We only return failure if we fail to set BandMaster0.
 			if (i == 0) {
@@ -1313,21 +1314,21 @@ uint8_t DtaDevEnterprise::setSIDPassword(char * oldpassword, char * newpassword,
 			return lastRC;
 		}
 	}
-	vector<uint8_t> hash;
+    std::shared_ptr<SecureByteVector> hash = std::allocate_shared<SecureByteVector>(SecureAllocator<SecureByteVector>(), 0);
 	if (hashnewpwd)
     {
 		DtaHashPwd(hash, newpassword, this);
 	}
 	else
     {
-		hash.push_back(0xd0);
-		hash.push_back((uint8_t)strnlen(newpassword, 255));
+		hash->push_back(0xd0);
+		hash->push_back((uint8_t)strnlen(newpassword, 255));
 		for (uint16_t i = 0; i < strnlen(newpassword, 255); i++)
         {
-			hash.push_back(newpassword[i]);
+			hash->push_back(newpassword[i]);
 		}
 	}
-	if ((lastRC = setTable(usercpin, "PIN", hash)) != 0) {
+	if ((lastRC = setTable(usercpin, "PIN", *hash)) != 0) {
 		LOG(E) << "Unable to set new SID password ";
 		delete session;
 		return lastRC;
@@ -1343,8 +1344,8 @@ uint8_t DtaDevEnterprise::setTable(vector<uint8_t> table, const char *name,
 	token.push_back((uint8_t) value);
 	return(setTable(table, name, token));
 }
-uint8_t DtaDevEnterprise::setTable(vector<uint8_t> table, const char *name, 
-	vector<uint8_t> value)
+template<class T> uint8_t DtaDevEnterprise::setTable(vector<uint8_t> table, const char *name, 
+	const T& value)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::setTable";
 	uint8_t lastRC;
