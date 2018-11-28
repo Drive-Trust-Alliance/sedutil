@@ -97,7 +97,7 @@ public:
          * @param Admin1Password password of administrative authority for locking range 
          */
 	 uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
-		char * Admin1Password) ;
+		const char *userid, char * password) ;
 	 /** Change the locking state of a locking range in Single User Mode
          * @param lockingrange The number of the locking range (0 = global)
          * @param lockingstate  the locking state to set
@@ -147,7 +147,7 @@ public:
 	 * @param lockingrange locking range number
 	 */
 	 uint8_t setBandsEnabled(int16_t rangeid, char * password);
-	 uint8_t setMBRDone(uint8_t state, char * Admin1Password) ;
+	 uint8_t setMBRDone(uint8_t state, const char *userid, char * password) ;
          /** Primitive to set the MBREnable flag.
          * @param state 0 or 1  
          * @param Admin1Password Locking SP authority with access to flag
@@ -224,4 +224,9 @@ public:
 	 uint8_t exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol = 1) ;
          /** return the communications ID to be used for sessions to this device */
 	 uint16_t comID() ;
+	/** Add the UserX authority to Locking (Rd/RW) ACEs
+	 * @param userid The user to add to Locking ACEs
+	 * @param Admin1Password Password of the LockingSP authority
+	 */
+	 uint8_t addUserToLockingACEs(const char *userid, char *Admin1Password);
 };

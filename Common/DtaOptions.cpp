@@ -69,7 +69,7 @@ void usage()
 	printf("--setPassword <oldpassword, \"\" for MSID> <userid> <newpassword> <device> \n");
 	printf("                                Change the Enterprise password for userid\n");
 	printf("                                \"EraseMaster\" or \"BandMaster<n>\", 0 <= n <= 1023\n");
-	printf("--setLockingRange <0...n> <RW|RO|LK> <Admin1password> <device> \n");
+	printf("--setLockingRange <0...n> <RW|RO|LK> <userid> <password> <device> \n");
 	printf("                                Set the status of a Locking Range\n");
 	printf("                                0 = GLobal 1..n  = LRn \n");
 	printf("--enableLockingRange <0...n> <Admin1password> <device> \n");
@@ -80,7 +80,7 @@ void usage()
 	printf("                                0 = GLobal 1..n  = LRn \n");
 	printf("--setMBREnable <on|off> <Admin1password> <device> \n");
 	printf("                                Enable|Disable MBR shadowing \n");
-	printf("--setMBRDone <on|off> <Admin1password> <device> \n");
+	printf("--setMBRDone <on|off> <userid> <password> <device> \n");
 	printf("                                set|unset MBRDone\n");
 	printf("--loadPBAimage <Admin1password> <file> <device> \n");
 	printf("                                Write <file> to MBR Shadow area\n");
@@ -95,6 +95,8 @@ void usage()
     printf("                                revert the device using the PSID *ERASING* *ALL* the data \n");
     printf("--printDefaultPassword <device>\n");
     printf("                                print MSID \n");
+	printf("--addUserToLockingACEs <userid> <Admin1password> <device> \n");
+	printf("                                add UserX to locking ACEs\n");
     printf("\n");
     printf("Examples \n");
     printf("sedutil-cli --scan \n");
@@ -126,6 +128,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			loggingLevel += (uint16_t)(strlen(argv[i]) - 1);
 			if (loggingLevel > 7) loggingLevel = 7;
 			CLog::Level() = CLog::FromInt(loggingLevel);
+			RCLog::Level() = RCLog::FromInt(loggingLevel);
 			LOG(D) << "Log level set to " << CLog::ToString(CLog::FromInt(loggingLevel));
 			LOG(D) << "sedutil version : " << GIT_VERSION;
 		}
@@ -182,7 +185,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 		BEGIN_OPTION(PSIDrevertAdminSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2) OPTION_IS(password) 
 			OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(enableuser, 2) OPTION_IS(password) OPTION_IS(userid) 
+		BEGIN_OPTION(enableuser, 3) OPTION_IS(password) OPTION_IS(userid) 
 			OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(activateLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(activateLockingSP_SUM, 3)
@@ -263,16 +266,17 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(setMBRDone, 3)
+		BEGIN_OPTION(setMBRDone, 4)
 			TESTARG(ON, mbrstate, 1)
 			TESTARG(on, mbrstate, 1)
 			TESTARG(off, mbrstate, 0)
 			TESTARG(OFF, mbrstate, 0)
 			TESTFAIL("Invalid setMBRDone argument not <on|off>")
+			OPTION_IS(userid)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(setLockingRange, 4)
+		BEGIN_OPTION(setLockingRange, 5)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)
 			TESTARG(2, lockingrange, 2)
@@ -297,6 +301,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			TESTARG(LK, lockingstate, OPAL_LOCKINGSTATE::LOCKED)
 			TESTARG(lk, lockingstate, OPAL_LOCKINGSTATE::LOCKED)
 			TESTFAIL("Invalid locking state <ro|rw|lk>")
+			OPTION_IS(userid)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
@@ -511,6 +516,11 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 		BEGIN_OPTION(objDump, 5) i += 4; OPTION_IS(device) END_OPTION
         BEGIN_OPTION(printDefaultPassword, 1) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(rawCmd, 7) i += 6; OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(addUserToLockingACEs, 3)
+			OPTION_IS(userid)
+			OPTION_IS(password)
+			OPTION_IS(device)
+			END_OPTION
 		else {
             LOG(E) << "Invalid command line argument " << argv[i];
 			return DTAERROR_INVALID_COMMAND;

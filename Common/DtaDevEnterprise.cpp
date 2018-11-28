@@ -181,7 +181,7 @@ uint8_t DtaDevEnterprise::initialSetup(char * password)
 		return lastRC;
 	}
 	if ((lastRC = setLockingRange(0,
-        OPAL_LOCKINGSTATE::READWRITE, password)) != 0) {
+        OPAL_LOCKINGSTATE::READWRITE, "Admin1", password)) != 0) {
 		LOG(E) << "Initial setup failed - unable to unlock for read/write";
 		return lastRC;
 	}
@@ -478,10 +478,10 @@ uint8_t DtaDevEnterprise::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 	LOG(D1) << "Exiting DtaDevEnterprise::setMBREnable";
 	return 0;
 }
-uint8_t DtaDevEnterprise::setMBRDone(uint8_t mbrstate, char * Admin1Password)
+uint8_t DtaDevEnterprise::setMBRDone(uint8_t mbrstate, const char *userid, char * password)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::setMBRDone";
-	if (NULL == Admin1Password) { LOG(E) << "This shouldn't happen " << mbrstate; }
+	if (NULL == password) { LOG(E) << "This shouldn't happen " << mbrstate; }
 	LOG(I) << "MBR shadowing is optional in the Enterprise SSC and not supported";
 	LOG(D1) << "Exiting DtaDevEnterprise::setMBRDone";
 	return 0;
@@ -757,7 +757,7 @@ uint8_t DtaDevEnterprise::listLockingRanges(char * password, int16_t rangeid)
 }
 
 uint8_t DtaDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
-	char * password)
+	const char *userid, char * password)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::setLockingRange";
 	uint8_t lastRC;
@@ -1675,6 +1675,13 @@ uint8_t DtaDevEnterprise::objDump(char *sp, char * auth, char *pass,
 	delete get;
 	delete session;
 	LOG(D1) << "Exiting DtaDevEnterprise::objDump";
+	return 0;
+}
+uint8_t DtaDevEnterprise::addUserToLockingACEs(const char *userid, char * Admin1Password)
+{
+	LOG(D1) << "Entering DtaDevEnterprise::addUserLockingACEs";
+	LOG(I) << "Enable User1 Locking ACES in the Enterprise SSC is not supported";
+	LOG(D1) << "Exiting DtaDevEnterprise::addUserLockingACEs";
 	return 0;
 }
 #ifdef _MSC_VER

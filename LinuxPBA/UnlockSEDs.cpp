@@ -32,7 +32,7 @@ using namespace std;
 uint8_t UnlockSEDs(char * password) {
 /* Loop through drives */
     char devref[25];
-    int failed = 0;
+    OPALSTATUSCODE unlock_state = OPALSTATUSCODE::FAIL;
     DtaDev *tempDev;
     DtaDev *d;
     DIR *dir;
@@ -41,6 +41,8 @@ uint8_t UnlockSEDs(char * password) {
      string tempstring;
     LOG(D4) << "Enter UnlockSEDs";
     dir = opendir("/dev");
+    const char* users[] = {"User1", "Admin1"};
+    const uint8_t nb_users = 2;
     if(dir!=NULL)
     {
         while((dirent=readdir(dir))!=NULL) {
@@ -74,25 +76,23 @@ uint8_t UnlockSEDs(char * password) {
             d = new DtaDevOpal1(devref);
         delete tempDev;
         d->no_hash_passwords = false;
-        failed = 0;
+        unlock_state = OPALSTATUSCODE::FAIL;
         if (d->Locked()) {
-            if (d->MBREnabled()) {
-                if (d->setMBRDone(1, password)) {
-                    failed = 1;
+            uint8_t j;
+            for (j = 0; unlock_state != OPALSTATUSCODE::SUCCESS && j < nb_users; j++) {
+                unlock_state = (OPALSTATUSCODE) d->setLockingRange(0, OPAL_LOCKINGSTATE::READWRITE, users[j], password);
+                if (unlock_state == OPALSTATUSCODE::SUCCESS && d->MBREnabled()) {
+                    unlock_state = (OPALSTATUSCODE) d->setMBRDone(1, users[j], password);
                 }
             }
-            if (d->setLockingRange(0, OPAL_LOCKINGSTATE::READWRITE, password)) {
-                failed = 1;
-            }
-            failed ? printf("Drive %-10s %-40s is OPAL Failed  \n", devref, d->getModelNum()) :
-                    printf("Drive %-10s %-40s is OPAL Unlocked   \n", devref, d->getModelNum());
+            (unlock_state == OPALSTATUSCODE::SUCCESS) ? printf("Drive %-10s %-40s is OPAL Unlocked\n", devref, d->getModelNum()):
+                printf("Drive %-10s %-40s is OPAL Failed  \n", devref, d->getModelNum()); 
             delete d;
         }
         else {
             printf("Drive %-10s %-40s is OPAL NOT LOCKED   \n", devref, d->getModelNum());
             delete d;
         }
-
     }
     return 0x00;
 };

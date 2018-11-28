@@ -120,7 +120,7 @@ int main(int argc, char * argv[])
 		break;
 	case sedutiloption::setLockingRange:
         LOG(D) << "Setting Locking Range " << (uint16_t) opts.lockingrange << " " << (uint16_t) opts.lockingstate;
-        return d->setLockingRange(opts.lockingrange, opts.lockingstate, argv[opts.password]);
+        return d->setLockingRange(opts.lockingrange, opts.lockingstate, argv[opts.userid], argv[opts.password]);
 		break;
 	case sedutiloption::setLockingRange_SUM:
 		LOG(D) << "Setting Locking Range " << (uint16_t)opts.lockingrange << " " << (uint16_t)opts.lockingstate << " in Single User Mode";
@@ -173,7 +173,7 @@ int main(int argc, char * argv[])
         break;
 	case sedutiloption::setMBRDone:
 		LOG(D) << "Setting MBRDone " << (uint16_t)opts.mbrstate;
-		return (d->setMBRDone(opts.mbrstate, argv[opts.password]));
+		return (d->setMBRDone(opts.mbrstate, argv[opts.userid], argv[opts.password]));
 		break;
 	case sedutiloption::setMBREnable:
 		LOG(D) << "Setting MBREnable " << (uint16_t)opts.mbrstate;
@@ -262,6 +262,10 @@ int main(int argc, char * argv[])
 	case sedutiloption::rawCmd:
 		LOG(D) << "Performing cmdDump ";
 		return d->rawCmd(argv[argc - 7], argv[argc - 6], argv[argc - 5], argv[argc - 4], argv[argc - 3], argv[argc - 2]);
+		break;
+    case sedutiloption::addUserToLockingACEs:
+        LOG(D) << "Performing addUserToLockingACEs";
+        return d->addUserToLockingACEs(argv[opts.userid], argv[opts.password]);
 		break;
     default:
         LOG(E) << "Unable to determine what you want to do ";

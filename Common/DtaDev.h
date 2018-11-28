@@ -149,11 +149,12 @@ public:
 	virtual uint8_t loadPBA(char * password, char * filename) = 0;
 	/** Change the locking state of a locking range
 	 * @param lockingrange The number of the locking range (0 = global)
-	 * @param lockingstate  the locking state to set
-	 * @param Admin1Password password of administrative authority for locking range
+	 * @param lockingstate  The locking state to set
+	 * @param userid The userid which will lock/unlock the locking range
+	 * @param password Password of the authority for locking range
 	 */
 	virtual uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
-		char * Admin1Password) = 0;
+		const char *userid, char * password) = 0;
 	/** Change the locking state of a locking range in Single User Mode
          * @param lockingrange The number of the locking range (0 = global)
          * @param lockingstate  the locking state to set
@@ -201,9 +202,10 @@ public:
 	virtual uint8_t setBandsEnabled(int16_t rangeid, char * password) = 0;
 	/** Primitive to set the MBRDone flag.
 	 * @param state 0 or 1
-	 * @param Admin1Password Locking SP authority with access to flag
+	 * @param userid the authority name
+	 * @param password Locking SP authority with access to flag
 	 */
-	virtual uint8_t setMBRDone(uint8_t state, char * Admin1Password) = 0;
+	virtual uint8_t setMBRDone(uint8_t state, const char *userid, char * password) = 0;
 	/** Primitive to set the MBREnable flag.
 	 * @param state 0 or 1
 	 * @param Admin1Password Locking SP authority with access to flag
@@ -283,6 +285,11 @@ public:
 	virtual uint8_t exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol = 0x01) = 0;
 	/** return the communications ID to be used for sessions to this device */
 	virtual uint16_t comID() = 0;
+	/** Add the UserX authority to Locking (Rd/RW) ACEs
+	 * @param userid The user to add to Locking ACEs
+	 * @param Admin1Password Password of the LockingSP authority
+	 */
+    virtual uint8_t addUserToLockingACEs(const char *userid, char* Admin1Password) = 0;
 	bool no_hash_passwords; /** disables hashing of passwords */
 	sedutiloutput output_format; /** standard, readable, JSON */
 protected:
