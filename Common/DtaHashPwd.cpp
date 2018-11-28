@@ -32,7 +32,7 @@ extern "C" {
 }
 using namespace std;
 
-void DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
+void DtaHashPassword(std::shared_ptr<SecureByteVector> &hash, char * password, vector<uint8_t> salt,
 	unsigned int iter, uint8_t hashsize)
 {
 	LOG(D1) << " Entered DtaHashPassword";
@@ -40,41 +40,41 @@ void DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> sal
 	assert(1 == sizeof(hashsize));
 	if (253 < hashsize) { LOG(E) << "Hashsize > 253 incorrect token generated"; }
 	
-	hash.clear();
+	hash->clear();
 	// don't hash the devault OPAL password ''
 	if (0 == strnlen(password, 32)) {
 		goto exit;
 	}
-	hash.reserve(hashsize + 2); // hope this will prevent reallocation
+	hash->reserve(hashsize + 2); // hope this will prevent reallocation
 	for (uint16_t i = 0; i < hashsize; i++) {
-		hash.push_back(' ');
+		hash->push_back(' ');
 	}
 	
 	cf_pbkdf2_hmac((uint8_t *)password, strnlen(password, 256),
 		salt.data(), salt.size(),
 		iter,
-		hash.data(), hash.size(),
+		hash->data(), hash->size(),
 		&cf_sha1);
 
 //	gc_pbkdf2_sha1(password, strnlen(password, 256), (const char *)salt.data(), salt.size(), iter,
-//		(char *)hash.data(), hash.size());
+//		(char *)hash->data(), hash->size());
 exit:	// add the token overhead
-	hash.insert(hash.begin(), (uint8_t)hash.size());
-	hash.insert(hash.begin(), 0xd0);
+	hash->insert(hash->begin(), (uint8_t)hash->size());
+	hash->insert(hash->begin(), 0xd0);
 }
 
-void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d)
+void DtaHashPwd(std::shared_ptr<SecureByteVector> &hash, char * password, DtaDev * d)
 {
     LOG(D1) << " Entered DtaHashPwd";
     char *serNum;
 
     if (d->no_hash_passwords) {
-        hash.clear();
+        hash->clear();
 	for (uint16_t i = 0; i < strnlen(password, 32); i++)
-		hash.push_back(password[i]);
+		hash->push_back(password[i]);
 	// add the token overhead
-	hash.insert(hash.begin(), (uint8_t)hash.size());
-	hash.insert(hash.begin(), 0xd0);
+	hash->insert(hash->begin(), (uint8_t)hash->size());
+	hash->insert(hash->begin(), 0xd0);
 	LOG(D1) << " Exit DtaHashPwd";
 	return;
     }
@@ -92,28 +92,29 @@ struct PBKDF_TestTuple
     const char *Password, *Salt, *hexDerivedKey;
 };
 
-int testresult(std::vector<uint8_t> &result, const char * expected, size_t len) {
+int testresult(const std::shared_ptr<SecureByteVector> &result, const char * expected, size_t len) {
 	char work[50];
 	if (len > 50) return 1;
 	int p = 0;
 	printf("Expected Result: %s\nActual Result  : ", expected);
-	for (uint32_t i = 0; i < len; i++) { printf("%02x", result[i + 2]); }; printf("\n");
+	for (uint32_t i = 0; i < len; i++) { printf("%02x", result->at(i + 2)); }; printf("\n");
 	for (uint32_t i = 0; i < len * 2; i += 2) {
 		work[p] = expected[i] & 0x40 ? 16 * ((expected[i] & 0xf) + 9) : 16 * (expected[i] & 0xf);
 		work[p] += expected[i + 1] & 0x40 ? (expected[i + 1] & 0xf) + 9 : expected[i + 1] & 0xf;
 		p++;
 	}
-	return memcmp(result.data()+2, work, len);
+	return memcmp(result->data()+2, work, len);
 }
 
 int Testsedutil(const PBKDF_TestTuple *testSet, unsigned int testSetSize)
 {
     int pass = 1;
-    std::vector<uint8_t> hash, seaSalt;
+    std::vector<uint8_t> seaSalt;
+    std::shared_ptr<SecureByteVector> hash = std::allocate_shared<SecureByteVector>(SecureAllocator<SecureByteVector>(), 0);
 
     for (unsigned int i = 0; i < testSetSize; i++) {
         const PBKDF_TestTuple &tuple = testSet[i];
-        hash.clear();
+        hash->clear();
         seaSalt.clear();
         for (uint16_t j = 0; j < strnlen(tuple.Salt, 255); j++) {
             seaSalt.push_back(tuple.Salt[j]);

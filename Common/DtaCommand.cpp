@@ -115,9 +115,18 @@ DtaCommand::addToken(uint64_t number)
 }
 
 void
-DtaCommand::addToken(vector<uint8_t> token)
+DtaCommand::addToken(const vector<uint8_t>& token)
 {
     LOG(D1) << "Entering addToken(vector<uint8_t>)";
+    for (uint32_t i = 0; i < token.size(); i++) {
+        cmdbuf[bufferpos++] = token[i];
+    }
+}
+
+void
+DtaCommand::addToken(const SecureByteVector& token)
+{
+    LOG(D1) << "Entering addToken(vector<SecureByteVector>)";
     for (uint32_t i = 0; i < token.size(); i++) {
         cmdbuf[bufferpos++] = token[i];
     }

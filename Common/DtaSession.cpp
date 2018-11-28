@@ -97,7 +97,7 @@ DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthori
 #endif
 {
     LOG(D1) << "Entering DtaSession::startSession ";
-	vector<uint8_t> hash;
+    std::shared_ptr<SecureByteVector> hash = std::allocate_shared<SecureByteVector>(SecureAllocator<SecureByteVector>(), 0);
 	lastRC = 0;
 
     DtaCommand *cmd = new DtaCommand();
@@ -115,9 +115,9 @@ DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthori
 		cmd->addToken(OPAL_TOKEN::STARTNAME);
 		cmd->addToken(OPAL_TINY_ATOM::UINT_00);
 		if (hashPwd) {
-			hash.clear();
+			hash->clear();
 			DtaHashPwd(hash, HostChallenge, d);
-			cmd->addToken(hash);
+			cmd->addToken(*hash);
 		} else {
 			cmd->addToken(HostChallenge);
 		}
@@ -159,7 +159,7 @@ uint8_t
 DtaSession::authenticate(vector<uint8_t> Authority, char * Challenge)
 {
 	LOG(D1) << "Entering DtaSession::authenticate ";
-	vector<uint8_t> hash;
+    std::shared_ptr<SecureByteVector> hash = std::allocate_shared<SecureByteVector>(SecureAllocator<SecureByteVector>(), 0);
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
 		LOG(E) << "Unable to create session object ";
@@ -177,9 +177,9 @@ DtaSession::authenticate(vector<uint8_t> Authority, char * Challenge)
 		else
 			cmd->addToken(OPAL_TINY_ATOM::UINT_00);
 		if (hashPwd) {
-			hash.clear();
+			hash->clear();
 			DtaHashPwd(hash, Challenge, d);
-			cmd->addToken(hash);
+			cmd->addToken(*hash);
 		}
 		else
 			cmd->addToken(Challenge);
