@@ -59,7 +59,7 @@ public:
          * @param newpassword  new password for SID 
          * @param securemode is the new password should be interactively asked
          */
-	uint8_t takeOwnership(char * newpassword, bool securemode);
+	uint8_t takeOwnership(char * newpassword, bool securemode = false);
         /** Change the passwords for the enabled Bandmasters and the Erasemaster 
          * from the MSID default.
          * @param defaultPassword the MSID password

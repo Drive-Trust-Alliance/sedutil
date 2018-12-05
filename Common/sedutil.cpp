@@ -114,7 +114,7 @@ int main(int argc, char * argv[])
 		break;
 	case sedutiloption::setSIDPassword:
         LOG(D) << "Performing setSIDPassword ";
-        return d->setSIDPassword(GET_PASSWORD(), GET_NEW_PASSWORD(), opts.secure_mode);
+        return d->setSIDPassword(GET_PASSWORD(), GET_NEW_PASSWORD(), opts.no_hash_passwords? 0 : 1, opts.no_hash_passwords? 0 : 1, opts.secure_mode);
 		break;
 	case sedutiloption::setAdmin1Pwd:
         LOG(D) << "Performing setPAdmin1Pwd ";

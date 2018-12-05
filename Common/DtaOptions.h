@@ -134,7 +134,8 @@ i++;
                         (!(strcasecmp(#option_field, "password")) || \
                         !(strcasecmp(#option_field, "newpassword")))) { \
                     opts->option_field = 255; \
-                    opts->ask_password = true; \
+                    if (opts->action != sedutiloption::initialSetup)\
+                        opts->ask_password = true; \
                 } \
                 else { \
                     opts->option_field = ++i; \

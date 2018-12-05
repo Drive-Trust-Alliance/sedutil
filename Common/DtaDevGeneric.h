@@ -180,7 +180,7 @@ public:
          * @param newpassword  new password for SID and locking SP admins
          * @param securemode is the new password should be interactively asked
          */ 
-	 uint8_t takeOwnership(char * newpassword, bool securemode) ;
+	 uint8_t takeOwnership(char * newpassword, bool securemode = false) ;
          /** Reset the Locking SP to its factory default condition
          * ERASES ALL DATA!
          * @param password of Administrative user

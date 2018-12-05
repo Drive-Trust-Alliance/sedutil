@@ -63,7 +63,7 @@ public:
          * @param newpassword  new password for SID 
          * @param securemode is the new password should be interactively asked
          */
-	uint8_t takeOwnership(char * newpassword, bool securemode);
+	uint8_t takeOwnership(char * newpassword, bool securemode = false);
         /** retrieve the MSID password */
 	uint8_t printDefaultPassword();
         /** retrieve a single row from a table 
@@ -300,5 +300,7 @@ protected:
       * @param password The new password entered by the user
       * @param confirm Is a double check necessary
       */
+#ifdef __linux__
     uint8_t askNewPassword(std::string &password, bool confirm = false);
+#endif //__linux__
 };
