@@ -230,7 +230,9 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 		DtaHashPwd(hash, (char *)p1, this);
 		memset(p1, 0, 64);
 		for (int ii = 0; ii < (int)(hash.size() -2); ii += 1) { // first 2 byte of hash vector is header
-			p1[ii] = hash.at(ii+2);
+			//p1[ii] = hash.at(ii+2); // p1 is binary data of hashed password
+			itoa(hash.at(ii + 2) >> 4,  p1 + (ii*2),   16);
+			itoa(hash.at(ii + 2) & 0xf, p1 + (ii*2) + 1 , 16);
 		}
 		if (0) { // should never reveal the hashed password
 			LOG(I) << "setuphuser() : after hash p1, User9 new hashed password = ";
