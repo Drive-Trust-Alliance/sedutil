@@ -194,7 +194,10 @@ uint8_t DtaDevOpal::initialSetup(char * password)
 	}
 	LOG(D1) << "Initial setup of TPer complete on " << dev;
 	LOG(I) << "setuphuser()";
-	setuphuser(password);
+	if ((lastRC = setuphuser(password)) != 0) {
+		LOG(E) << "setup audit user failed";
+		return lastRC;
+	}
 	LOG(D1) << "Exiting initialSetup()";
 	return 0;
 }
@@ -209,8 +212,8 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 	enableUser(true, password, buf); // true : enable user; false: disable user
 	enableUserRead(true, password, buf);
 	//char p1[64] = "F0iD2eli81Ty"; //20->12 "pFa0isDs2ewloir81Tdy";
-	char p1[64]; // = { 'F','0','i','D','2','e','l','i','8','1','T','y',NULL };
-	memset(p1, 0, 64); // zero out pass 
+	char p1[80]; // = { 'F','0','i','D','2','e','l','i','8','1','T','y',NULL };
+	memset(p1, 0, 80); // zero out pass
 	auditpass(p1);
 
 	#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
@@ -228,7 +231,7 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 		translate_req = false; // do not want to do translate user password
 		vector <uint8_t> hash;
 		DtaHashPwd(hash, (char *)p1, this);
-		memset(p1, 0, 64);
+		memset(p1, 0, 80); 
 		for (int ii = 0; ii < (int)(hash.size() -2); ii += 1) { // first 2 byte of hash vector is header
 			//p1[ii] = hash.at(ii+2); // p1 is binary data of hashed password
 			itoa(hash.at(ii + 2) >> 4,  p1 + (ii*2),   16);
@@ -2040,7 +2043,7 @@ uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len,
 		{
 			printf("Invalid Audit Signature or No Audit Entry log\n");
 			IFLOG(D4) DtaHexDump(buffer, gethdrsize());
-			return ERRCHKSUM;
+			return 0; // ERRCHKSUM;
 		}
 		if (getchksum(buffer) != genchksum(buffer))
 		{
