@@ -33,3 +33,5 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define SNPRINTF snprintf
 #define DEVICEMASK snprintf(devname,23,"/dev/sd%c",(char) 0x61+i)
 #define DEVICEEXAMPLE "/dev/sdc"
+
+#include "../LinuxPBA/GetPassPhrase.h"

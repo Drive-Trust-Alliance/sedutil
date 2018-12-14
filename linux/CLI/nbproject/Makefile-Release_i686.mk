@@ -56,6 +56,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/7a2a93ab/sedutil.o \
 	${OBJECTDIR}/_ext/5c0/DtaDevLinuxNvme.o \
 	${OBJECTDIR}/_ext/5c0/DtaDevLinuxSata.o \
+	${OBJECTDIR}/GetPassPhrase.o \
 	${OBJECTDIR}/_ext/5c0/DtaDevOS.o
 
 
@@ -192,6 +193,11 @@ ${OBJECTDIR}/_ext/5c0/DtaDevOS.o: ../DtaDevOS.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/5c0
 	${RM} "$@.d"
 	$(COMPILE.cc) -Werror -I.. -I../../Common -I../../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/5c0/DtaDevOS.o ../DtaDevOS.cpp
+
+${OBJECTDIR}/GetPassPhrase.o: GetPassPhrase.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GetPassPhrase.o GetPassPhrase.cpp
 
 # Subprojects
 .build-subprojects:

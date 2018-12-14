@@ -86,6 +86,7 @@ string GetPassPhrase(const char *prompt, bool show_asterisk)
          }
     }
 
+  printf("\n");
   return password;
 }
 
