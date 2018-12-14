@@ -96,7 +96,7 @@ typedef enum _sedutiloption {
 	objDump,
     printDefaultPassword,
 	rawCmd,
-
+    addUserToLockingACEs,
 } sedutiloption;
 /** verify the number of arguments passed */
 #define CHECKARGS(x) \

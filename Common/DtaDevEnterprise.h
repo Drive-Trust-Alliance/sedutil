@@ -113,7 +113,7 @@ public:
          * @param state 0 or 1  
          * @param Admin1Password Locking SP authority with access to flag
          */
-	uint8_t setMBRDone(uint8_t state, char * Admin1Password);
+	uint8_t setMBRDone(uint8_t state, const char *userid, char * password);
         /** Primitive to set the MBREnable flag.
          * @param state 0 or 1  
          * @param Admin1Password Locking SP authority with access to flag
@@ -129,7 +129,7 @@ public:
 	/** dummy code not implemented in the enterprise SSC*/
 	uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword);
 	uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
-		char * password);
+		const char *userid, char * password);
 	/** dummy code not implemented in the enterprise SSC*/
 	uint8_t setLockingRange_SUM(uint8_t lockingrange, uint8_t lockingstate,
 		char * password);
@@ -204,6 +204,12 @@ public:
          */
 	uint8_t rawCmd(char *sp, char *hexauth, char *pass,
 		char *hexinvokingUID, char *hexmethod, char *hexparms);
+
+	/** Add the UserX authority to Locking (Rd/RW) ACEs
+	 * @param userid The user to add to Locking ACEs
+	 * @param Admin1Password Password of the LockingSP authority
+	 */
+    uint8_t addUserToLockingACEs(const char *userid, char *Admin1Password);
 
 protected:
 	uint8_t getDefaultPassword();

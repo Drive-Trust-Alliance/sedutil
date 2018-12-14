@@ -70,9 +70,9 @@ uint8NOCODE(setup_SUM, uint8_t lockingrange, uint64_t start, uint64_t length, ch
 uint8NOCODE(setPassword,char * password, char * userid, char * newpassword)
 uint8NOCODE(setNewPassword_SUM,char * password, char * userid, char * newpassword)
 uint8NOCODE(setMBREnable,uint8_t mbrstate, char * Admin1Password)
-uint8NOCODE(setMBRDone,uint8_t mbrstate, char * Admin1Password)
+uint8NOCODE(setMBRDone,uint8_t mbrstate, const char *userid, char * password)
 uint8NOCODE(setLockingRange,uint8_t lockingrange, uint8_t lockingstate,
-	char * Admin1Password)
+	const char *userid, char * password)
 uint8NOCODE(setLockingRange_SUM, uint8_t lockingrange, uint8_t lockingstate,
 	char * password)
 uint8NOCODE(setupLockingRange,uint8_t lockingrange, uint64_t start,
@@ -93,6 +93,7 @@ uint8NOCODE(eraseLockingRange_SUM, uint8_t lockingrange, char * password)
 uint8NOCODE(takeOwnership, char * newpassword)
 uint8NOCODE(setSIDPassword,char * oldpassword, char * newpassword,
 	uint8_t hasholdpwd, uint8_t hashnewpwd)
+uint8NOCODE(addUserToLockingACEs, const char* userid, char * Admin1Password)
 uint16_t DtaDevGeneric::comID()
 {
 	LOG(E) << "Generic Device class does not support function " << "comID" << std::endl; 

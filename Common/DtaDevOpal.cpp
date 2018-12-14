@@ -24,7 +24,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
-#include<iomanip>
+#include <algorithm>
+#include <functional>
+#include <iomanip>
 #include "DtaDevOpal.h"
 #include "DtaHashPwd.h"
 #include "DtaEndianFixup.h"
@@ -66,11 +68,11 @@ uint8_t DtaDevOpal::initialSetup(char * password)
 		LOG(E) << "Initial setup failed - unable to configure global locking range";
 		return lastRC;
 	}
-	if ((lastRC = setLockingRange(0, OPAL_LOCKINGSTATE::READWRITE, password)) != 0) {
+	if ((lastRC = setLockingRange(0, OPAL_LOCKINGSTATE::READWRITE, "Admin1", password)) != 0) {
 		LOG(E) << "Initial setup failed - unable to set global locking range RW";
 		return lastRC;
 	}
-	if ((lastRC = setMBRDone(1, password)) != 0){
+	if ((lastRC = setMBRDone(1, "Admin1", password)) != 0){
 		LOG(E) << "Initial setup failed - unable to Enable MBR shadow";
 		return lastRC;
 	}
@@ -650,11 +652,11 @@ uint8_t DtaDevOpal::eraseLockingRange(uint8_t lockingrange, char * password)
 	LOG(D1) << "Exiting DtaDevOpal::eraseLockingRange()";
 	return 0;
 }
-uint8_t DtaDevOpal::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<uint8_t> &userData)
+uint8_t DtaDevOpal::getAuth4User(const char * userid, uint8_t uidorcpin, std::vector<uint8_t> &userData)
 {
 	LOG(D1) << "Entering DtaDevOpal::getAuth4User()";
 	userData.clear();
-	userData. push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+	userData.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
 	userData.push_back(0x00);
 	userData.push_back(0x00);
 	userData.push_back(0x00);
@@ -777,13 +779,13 @@ uint8_t DtaDevOpal::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 	LOG(D1) << "Entering DtaDevOpal::setMBREnable";
 	uint8_t lastRC;
         // set MBRDone before changing MBREnable so the PBA isn't presented
-        if ((lastRC = setMBRDone(1, Admin1Password)) != 0){
+        if ((lastRC = setMBRDone(1, "Admin1", Admin1Password)) != 0){
 		LOG(E) << "unable to set MBRDone";
                 return lastRC;
         }
 	if (mbrstate) {
 		if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRENABLE,
-			OPAL_TOKEN::OPAL_TRUE, Admin1Password, NULL)) != 0) {
+			OPAL_TOKEN::OPAL_TRUE, "Admin1", Admin1Password, NULL)) != 0) {
 			LOG(E) << "Unable to set setMBREnable on";
 			return lastRC;
 		}
@@ -793,7 +795,7 @@ uint8_t DtaDevOpal::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 	} 
 	else {
 		if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRENABLE,
-				OPAL_TOKEN::OPAL_FALSE, Admin1Password, NULL)) != 0) {
+				OPAL_TOKEN::OPAL_FALSE, "Admin1", Admin1Password, NULL)) != 0) {
 				LOG(E) << "Unable to set setMBREnable off";
 				return lastRC;
 			}
@@ -804,13 +806,13 @@ uint8_t DtaDevOpal::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 	LOG(D1) << "Exiting DtaDevOpal::setMBREnable";
 	return 0;
 }
-uint8_t DtaDevOpal::setMBRDone(uint8_t mbrstate, char * Admin1Password)
+uint8_t DtaDevOpal::setMBRDone(uint8_t mbrstate, const char* userid, char * password)
 {
 	LOG(D1) << "Entering DtaDevOpal::setMBRDone";
 	uint8_t lastRC;
 	if (mbrstate) {
 		if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRDONE,
-			OPAL_TOKEN::OPAL_TRUE, Admin1Password, NULL)) != 0) {
+			OPAL_TOKEN::OPAL_TRUE, userid, password, NULL)) != 0) {
 			LOG(E) << "Unable to set setMBRDone on";
 			return lastRC;
 		}
@@ -820,7 +822,7 @@ uint8_t DtaDevOpal::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 	}
 	else {
 		if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRDONE,
-			OPAL_TOKEN::OPAL_FALSE, Admin1Password, NULL)) != 0) {
+			OPAL_TOKEN::OPAL_FALSE, userid, password, NULL)) != 0) {
 			LOG(E) << "Unable to set setMBRDone off";
 			return lastRC;
 		}
@@ -832,12 +834,13 @@ uint8_t DtaDevOpal::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 	return 0;
 }
 uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
-	char * Admin1Password)
+	const char *userid, char * password)
 {
 	uint8_t lastRC;
 	uint8_t archiveuser = 0;
 	OPAL_TOKEN readlocked, writelocked;
 	const char *msg;
+	vector<uint8_t> userUID;
 
 	LOG(D1) << "Entering DtaDevOpal::setLockingRange";
 	switch (lockingstate) {
@@ -876,7 +879,12 @@ uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 		LOG(E) << "Unable to create session object ";
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, Admin1Password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	if ((lastRC = getAuth4User(userid, 0, userUID)) != 0) {
+		LOG(E) << "Unable to find user " << userid << " in Authority Table";
+		delete session;
+		return lastRC;
+	}
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, userUID)) != 0) {
 		delete session;
 		return lastRC;
 	}
@@ -1019,10 +1027,11 @@ uint8_t DtaDevOpal::setLockingRange_SUM(uint8_t lockingrange, uint8_t lockingsta
 	return 0;
 }
 uint8_t DtaDevOpal::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, 
-	OPAL_TOKEN value,char * password, char * msg)
+	OPAL_TOKEN value,const char *userid, char * password, char * msg)
 {
 	LOG(D1) << "Entering DtaDevOpal::setLockingSPvalue";
 	uint8_t lastRC;
+	vector<uint8_t> userUID;
 	vector<uint8_t> table;
 	table. push_back(OPAL_SHORT_ATOM::BYTESTRING8);
 	for (int i = 0; i < 8; i++) {
@@ -1033,7 +1042,12 @@ uint8_t DtaDevOpal::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
 		LOG(E) << "Unable to create session object ";
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	if ((lastRC = getAuth4User(userid, 0, userUID)) != 0) {
+		LOG(E) << "Unable to find user " << userid << " in Authority Table";
+		delete session;
+		return lastRC;
+	}
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, userUID)) != 0) {
 		delete session;
 		return lastRC;
 	}
@@ -1834,3 +1848,196 @@ uint8_t DtaDevOpal::rawCmd(char *sp, char * hexauth, char *pass,
 	LOG(D1) << "Exiting DtaDevEnterprise::rawCmd";
 	return 0;
 }
+uint8_t DtaDevOpal::addUserToLockingACEs(const char *userid, char *Admin1Password) {
+	uint8_t lastRC = 0;
+
+	session = new DtaSession(this);
+	LOG(D1) << "Entering DtaDevOpal::addUserToLockingACEs";
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, Admin1Password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+		delete session;
+		return lastRC;
+	}
+
+	vector<uint8_t> userUID;
+	if ((lastRC = getAuth4User(userid, 0, userUID)) != 0) {
+		LOG(E) << "Unable to find user " << userid << " in Authority Table";
+		delete session;
+		return lastRC;
+	}
+
+    std::function<bool(const std::vector<uint8_t>& v)> cmp = [&userUID] (const std::vector<uint8_t> &v) {
+        return (userUID.size() == v.size() && memcmp(userUID.data(), v.data(), v.size()) == 0);};
+
+    // Enable authorities in the ACE_Locking_GlobalRange_Set_RdLocked
+    // Get authorities already allowed
+    std::vector<std::vector<uint8_t>> authorities_uids;
+    if ((lastRC = getAuthoritiesFromACE(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL_ACE_RDLOCKED, authorities_uids)) != 0) {
+        LOG(E) << "Unable to get already allowed authorities for ACE_Locking_GlobalRange_Set_RdLocked";
+        delete session;
+        return lastRC;
+    }
+    // Add new allowed authority
+    if (std::find_if(authorities_uids.begin(), authorities_uids.end(), cmp) == authorities_uids.end()) {
+        authorities_uids.push_back(userUID);
+    }
+    if ((lastRC = setAuthoritiesToACE(authorities_uids, OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL_ACE_RDLOCKED)) != 0) {
+        delete session;
+        return lastRC;
+    }
+    LOG(I) << userid << " successfully added to ACE_Locking_GlobalRange_Set_RdLocked";
+
+    // Enable authorities in the ACE_Locking_GlobalRange_Set_WrLocked
+    // Get authorities already allowed
+    if ((lastRC = getAuthoritiesFromACE(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL_ACE_WRLOCKED, authorities_uids)) != 0) {
+        LOG(E) << "Unable to get already allowed authorities for ACE_Locking_GlobalRange_Set_WrLocked";
+        delete session;
+        return lastRC;
+    }
+    // Add new allowed authority
+    if (std::find_if(authorities_uids.begin(), authorities_uids.end(), cmp) == authorities_uids.end()) {
+        authorities_uids.push_back(userUID);
+    }
+    if ((lastRC = setAuthoritiesToACE(authorities_uids, OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL_ACE_WRLOCKED)) != 0) {
+        delete session;
+        return lastRC;
+    }
+    LOG(I) << userid << " successfully added to ACE_Locking_GlobalRange_Set_WrLocked";
+
+    // Enable Admins and User authority in the ACE_MBRControl_Set_DoneToDOR
+    // Get authorities already allowed
+    if ((lastRC = getAuthoritiesFromACE(OPAL_UID::OPAL_MBRControl_Set_DoneToDOR, authorities_uids)) != 0) {
+        LOG(E) << "Unable to get already allowed authorities for ACE_Locking_GlobalRange_Set_DoneToDOR";
+        delete session;
+        return lastRC;
+    }
+    // Add new allowed authority
+    if (std::find_if(authorities_uids.begin(), authorities_uids.end(), cmp) == authorities_uids.end()) {
+        authorities_uids.push_back(userUID);
+    }
+    lastRC = setAuthoritiesToACE(authorities_uids, OPAL_UID::OPAL_MBRControl_Set_DoneToDOR);
+
+    if (lastRC == 0) {
+        LOG(I) << userid << " successfully added to ACE_Locking_GlobalRange_Set_DoneToDOR";
+    }
+
+    delete session;
+    return lastRC;
+}
+uint8_t DtaDevOpal::setAuthoritiesToACE(const std::vector<std::vector<uint8_t>>& users_uid,
+        OPAL_UID ace_uid) {
+    uint8_t lastRC = 0;
+
+    DtaCommand *cmd = new DtaCommand();
+    cmd->reset(ace_uid, OPAL_METHOD::SET);
+    cmd->addToken(OPAL_TOKEN::STARTLIST);
+    cmd->addToken(OPAL_TOKEN::STARTNAME);
+    cmd->addToken(OPAL_TOKEN::VALUES);
+    cmd->addToken(OPAL_TOKEN::STARTLIST);
+    cmd->addToken(OPAL_TOKEN::STARTNAME);
+    cmd->addToken(0x03); // Column number
+    cmd->addToken(OPAL_TOKEN::STARTLIST);
+
+    for (size_t i = 0; i < users_uid.size(); i++) {
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+
+        //Authority object ref
+        cmd->addToken(OPAL_SHORT_ATOM::BYTESTRING4);
+        for (int j = 0; j < 4; j++) {
+            cmd->addToken(OPALUID[OPAL_UID::OPAL_HALF_UID_AUTHORITY_OBJ_REF][j]);
+        }
+
+        cmd->addToken(users_uid[i]);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+    }
+
+    //Boolean ACE
+    if (users_uid.size() > 1) {
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken(OPAL_SHORT_ATOM::BYTESTRING4);
+        for (int j = 0; j < 4; j++) {
+            cmd->addToken(OPALUID[OPAL_UID::OPAL_HALF_UID_BOOLEAN_ACE][j]);
+        }
+        cmd->addToken(OPAL_TINY_ATOM::UINT_01);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+    }
+    
+    cmd->addToken(OPAL_TOKEN::ENDLIST);
+    cmd->addToken(OPAL_TOKEN::ENDNAME);
+    cmd->addToken(OPAL_TOKEN::ENDLIST);
+    cmd->addToken(OPAL_TOKEN::ENDNAME);
+    cmd->addToken(OPAL_TOKEN::ENDLIST);
+    cmd->complete();
+
+    lastRC = session->sendCommand(cmd, response);
+
+    delete cmd;
+    return lastRC;
+}
+uint8_t DtaDevOpal::getAuthoritiesFromACE(OPAL_UID ace_uid, 
+        std::vector<std::vector<uint8_t>>& authorities_uid) {
+    uint8_t lastRC = OPALSTATUSCODE::SUCCESS;
+    authorities_uid.clear();
+    LOG(D) << "Entering in DtaDevOpal::getAuthoritiesFromACE";
+
+    std::vector<uint8_t> aceTable;
+    aceTable.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+    for (int i = 0; i < 8; i++) {
+        aceTable.push_back(OPALUID[ace_uid][i]);
+    }
+    lastRC = getTable(aceTable, OPAL_TINY_ATOM::UINT_03, OPAL_TINY_ATOM::UINT_03);
+
+    if (lastRC == OPALSTATUSCODE::SUCCESS) {
+        uint32_t i = 0;
+        while (i < response.getTokenCount() - 3) {
+            if (response.tokenIs(i) == OPAL_TOKEN::STARTNAME &&
+                    response.tokenIs(i + 1) == OPAL_TOKEN::DTA_TOKENID_UINT &&
+                    response.getUint8(i + 1) == OPAL_TINY_ATOM::UINT_03 &&
+                    response.tokenIs(i + 2) == OPAL_TOKEN::STARTLIST) {
+                // Ok, start authorities list
+                i += 3;
+
+                while (i < response.getTokenCount() - 2 &&
+                        lastRC == OPALSTATUSCODE::SUCCESS &&
+                        response.tokenIs(i) != OPAL_TOKEN::ENDLIST) {
+                    if (response.tokenIs(i) == OPAL_TOKEN::STARTNAME &&
+                            response.tokenIs(i + 1) == OPAL_TOKEN::DTA_TOKENID_BYTESTRING &&
+                            response.getLength(i + 1) == 5) {
+                        uint8_t buffer[4];
+                        response.getBytes(i + 1, buffer);
+                        i++;
+
+                        if (memcmp(buffer, OPALUID[OPAL_HALF_UID_AUTHORITY_OBJ_REF], 4) == 0) {
+                            // Find authority object ref
+                            LOG(D1) << "Find authority object ref";
+                            if (response.tokenIs(i + 1) == OPAL_TOKEN::DTA_TOKENID_BYTESTRING &&
+                                response.getLength(i + 1) == 9) {
+                                LOG(D1) << "Add authority";
+                                authorities_uid.emplace_back(response.getRawToken(i + 1));
+                            }
+                        }
+                        else if (memcmp(buffer, OPALUID[OPAL_HALF_UID_BOOLEAN_ACE], 4) == 0) {
+                            LOG(D1) << "Find a boolean ACE object ref";
+                            if (response.tokenIs(i + 1) == OPAL_TOKEN::DTA_TOKENID_BYTESTRING &&
+                                response.getLength(i + 1) == 1) {
+                                // Check if boolean ACE is OR
+                                if (response.getUint8(i + 1) != OPAL_TINY_ATOM::UINT_01)
+                                {
+                                    LOG(E) << "Invalid boolean ACE";
+                                    lastRC = OPALSTATUSCODE::FAIL;
+                                }
+                            }
+                        }
+                    }
+                    i++;
+                }
+            }
+            i++;
+        }
+    }
+    return lastRC;
+}
+
