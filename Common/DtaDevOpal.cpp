@@ -24,6 +24,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #pragma warning(disable: 4224) //C2224: conversion from int to char , possible loss of data
 #pragma warning(disable: 4244) //C4244: 'argument' : conversion from 'uint16_t' to 'uint8_t', possible loss of data
 #pragma warning(disable: 4996)
+#pragma comment(lib, "rpcrt4.lib")  // UuidCreate - Minimum supported OS Win 2000
 
 #include "os.h"
 #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
@@ -47,6 +48,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaHexDump.h"
 #include <signal.h>
 //#include "ob.h"
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#include "uuid.h"
+#endif
 
 
 void setlic(char * lic_level, const char * LicenseLevel);
@@ -3378,6 +3382,16 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 
 		fivepercent = (uint64_t)((DecompressedBufferSize / 20) / blockSize) * blockSize;
 	}
+	// change FAT uuid and disk label
+	UUID uuid;
+	uint8_t struuid[64];
+	vector <uint8_t> uu = ugenv(uuid, struuid);
+	for (uint8_t i = 0; i < 4; i++) { DecompressedBuffer[0x100027 + i] = uu.at(i); DecompressedBuffer[0x27 + i] = uu.at(i);
+		DecompressedBuffer[0x1b8 + i] = uu.at(i);
+	}
+	for (uint8_t i = 0; i < 11; i++) { DecompressedBuffer[0x10002b + i] = struuid[i]; DecompressedBuffer[0x2b + i] = struuid[i];
+	}
+
 	// embedded info to MBR
 	bool saved_flag = no_hash_passwords;
 	no_hash_passwords = false;
