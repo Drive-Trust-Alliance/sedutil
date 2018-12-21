@@ -194,6 +194,18 @@ void DtaDev::discovery0()
             disk_info.OPAL20_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
             disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
             break;
+		case FC_BLOCKSID: /* Block SID Authentication */
+			disk_info.BlockSID = 1;
+			disk_info.BlockSID_SIDBlockedState = body->blockSID.SIDBlockedState;
+			disk_info.BlockSID_SIDValueState = body->blockSID.SIDValueState;
+			disk_info.BlockSID_HardwareReset = body->blockSID.HardwareReset;
+			break;
+		case FC_NAMESPACE: /* Namespace */
+			disk_info.Namespace = 1;
+			disk_info.Namespace_MaximumKeyCount = SWAP32(body->ns.MaximumKeyCount);
+			disk_info.Namespace_UnusedKeyCount = SWAP32(body->ns.UnusedKeyCount);
+			disk_info.Namespace_MaximumRangesPerNamespace = SWAP32(body->ns.MaximumRangesPerNamespace);
+			break;
         default:
 			if (0xbfff < (SWAP16(body->TPer.featureCode))) {
 				// silently ignore vendor specific segments as there is no public doc on them
@@ -295,6 +307,20 @@ void DtaDev::puke()
 		cout << "    Locking Admins = " << disk_info.OPAL20_numAdmins;
 		cout << ", Locking Users = " << disk_info.OPAL20_numUsers;
 		cout << ", Range Crossing = " << (disk_info.OPAL20_rangeCrossing ? "Y" : "N");
+		cout << std::endl;
+	}
+	if (disk_info.BlockSID) {
+		cout << "Block SID Authentication function (" << HEXON(4) << FC_BLOCKSID << ")" << HEXOFF << std::endl;
+		cout << "    SID Blocked State = " << (disk_info.BlockSID_SIDBlockedState ? "Y" : "N");
+		cout << ", SID Value State = " << (disk_info.BlockSID_SIDValueState ? "Y" : "N");
+		cout << ", Hardware Reset = " << (disk_info.BlockSID_HardwareReset ? "Y" : "N");
+		cout << std::endl;
+	}
+	if (disk_info.Namespace) {
+		cout << "Namespace function (" << HEXON(4) << FC_NAMESPACE << ")" << HEXOFF << std::endl;
+		cout << "    Maximum Key Count = " << disk_info.Namespace_MaximumKeyCount;
+		cout << ", Unused Key Count = " << disk_info.Namespace_UnusedKeyCount;
+		cout << ", Maximum Ranges Per Namespace = " << disk_info.Namespace_MaximumRangesPerNamespace;
 		cout << std::endl;
 	}
 	if (disk_info.Unknown)

@@ -29,6 +29,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define FC_SINGLEUSER 0x0201
 #define FC_OPALV100   0x0200
 #define FC_OPALV200   0x0203
+#define FC_BLOCKSID   0x0402
+#define FC_NAMESPACE  0x0403
 /** The Discovery 0 Header. As defined in
 * Opal SSC Documentation
 */
@@ -219,6 +221,53 @@ typedef struct _Discovery0OPALV200 {
     uint8_t reserved02;
     uint32_t reserved03;
 } Discovery0OPALV200;
+
+/** Block SID Authentication feature
+ */
+typedef struct _Discovery0BlockSID {
+    uint16_t featureCode; /* 0x0402 */
+    uint8_t reserved_v : 4;
+    uint8_t version : 4;
+    uint8_t length;
+    /* big endian
+    uint8_t reserved01 : 6;
+    uint8_t SIDBlockedState : 1;
+    uint8_t SIDValueState : 1;
+     */
+    uint8_t SIDValueState : 1;
+    uint8_t SIDBlockedState : 1;
+    uint8_t reserved01 : 6;
+
+    /* big endian
+    uint8_t reserved01 : 7;
+    uint8_t HardwareReset : 1;
+     */
+    uint8_t HardwareReset : 1;
+    uint8_t reserved02 : 7;
+} Discovery0BlockSID;
+
+/** Namespace feature
+ */
+typedef struct _Discovery0Namespace {
+    uint16_t featureCode; /* 0x0403 */
+    uint8_t reserved_v : 4;
+    uint8_t version : 4;
+    uint8_t length;
+    /* big endian
+    uint8_t rangeCapable : 1;
+    uint8_t rangePresent : 1;
+    uint8_t reserved01 : 6;
+     */
+    uint8_t reserved01 : 6;
+    uint8_t rangePresent : 1;
+    uint8_t rangeCapable : 1;
+
+    uint8_t reserved02[3];
+    uint32_t MaximumKeyCount;
+    uint32_t UnusedKeyCount;
+    uint32_t MaximumRangesPerNamespace;
+} Discovery0Namespace;
+
 /** Union of features used to parse the discovery 0 response */
 union Discovery0Features {
     Discovery0TPerFeatures TPer;
@@ -229,6 +278,8 @@ union Discovery0Features {
     Discovery0OPALV200 opalv200;
 	Discovery0OpalV100 opalv100;
     Discovery0DatastoreTable datastore;
+	Discovery0BlockSID blockSID;
+	Discovery0Namespace ns;
 };
 
 /** ComPacket (header) for transmissions. */
@@ -294,6 +345,8 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t OPAL10 : 1;
 	uint8_t Properties : 1;
 	uint8_t ANY_OPAL_SSC : 1;
+	uint8_t BlockSID : 1;
+	uint8_t Namespace : 1;
     // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
     uint8_t TPer_ACKNACK : 1;
     uint8_t TPer_async : 1;
@@ -330,6 +383,12 @@ typedef struct _OPAL_DiskInfo {
     uint16_t OPAL20_numAdmins;
     uint16_t OPAL20_numUsers;
     uint8_t OPAL20_rangeCrossing;
+	uint8_t BlockSID_SIDBlockedState;
+	uint8_t BlockSID_SIDValueState;
+	uint8_t BlockSID_HardwareReset;
+	uint32_t Namespace_MaximumKeyCount;
+	uint32_t Namespace_UnusedKeyCount;
+	uint32_t Namespace_MaximumRangesPerNamespace;
     // IDENTIFY information
     DTA_DEVICE_TYPE devType;
     uint8_t serialNum[20];
