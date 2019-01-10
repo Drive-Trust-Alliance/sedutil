@@ -20,7 +20,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma warning(disable: 4224) //C2224: conversion from int to char , possible loss of data
 #pragma warning(disable: 4244) //C4244: 'argument' : conversion from 'uint16_t' to 'uint8_t', possible loss of data
-
+#pragma comment(lib, "rpcrt4.lib")  // UuidCreate - Minimum supported OS Win 2000
+// this resolve error of uuid 
 
 #include <iostream>
 #include "os.h"
@@ -33,6 +34,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevEnterprise.h"
 #include "Version.h"
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#include "uuid.h"
 #define WRITE_RETRIES 3
 #include "sedsize.h"
 #if (!WINDOWS7)
@@ -588,6 +590,18 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 		 // end cmprss
 		}
 
+		// change FAT uuid and disk label
+		UUID uuid;
+		uint8_t struuid[64];
+		vector <uint8_t> uu = ugenv(uuid, struuid);
+		for (uint8_t i = 0; i < 4; i++) {
+			DecompressedBuffer[0x100027 + i] = uu.at(i); DecompressedBuffer[0x27 + i] = uu.at(i); // mbr grub 
+			DecompressedBuffer[0x1b8 + i] = uu.at(i);
+		}
+		for (uint8_t i = 0; i < 11; i++) {
+			DecompressedBuffer[0x10002b + i] = struuid[i]; DecompressedBuffer[0x2b + i] = struuid[i]; // mbr grub 128200h
+			DecompressedBuffer[0x128200 + i] = struuid[i];
+		}
 		char * model = d->getModelNum();
 		char * firmware = d->getFirmwareRev();
 		char * sernum = d->getSerialNum();
@@ -1188,7 +1202,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 		
-	printf("Fidelity Lock Version : 0.5.0.%s.%s 20181025-A001\n", st1.c_str(),GIT_VERSION);
+	printf("Fidelity Lock Version : 0.6.4.%s.%s 20181212-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:

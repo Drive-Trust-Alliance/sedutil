@@ -59,6 +59,7 @@
     <ClInclude Include="..\nvme.h" />
     <ClInclude Include="..\nvmeIoctl.h" />
     <ClInclude Include="..\os.h" />
+    <ClInclude Include="..\uuid.h" />
     <ClInclude Include="..\Version.h" />
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +90,7 @@
     <ClCompile Include="..\DtaDiskATA.cpp" />
     <ClCompile Include="..\DtaDiskNvme.cpp" />
     <ClCompile Include="..\DtaDiskUSB.cpp" />
+    <ClCompile Include="..\uuid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\..\rc\Cabinet_x64.Lib" />
@@ -300,7 +302,7 @@ copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"</Command>
       <Message>Create version header from git --version dirty</Message>
     </PreBuildEvent>
     <PreLinkEvent>
-      <Command>del ..\Version.h</Command>
+      <Command>REM del ..\Version.h</Command>
     </PreLinkEvent>
     <PreLinkEvent>
       <Message>Remove version header file</Message>

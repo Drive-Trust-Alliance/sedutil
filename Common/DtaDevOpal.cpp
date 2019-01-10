@@ -24,6 +24,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #pragma warning(disable: 4224) //C2224: conversion from int to char , possible loss of data
 #pragma warning(disable: 4244) //C4244: 'argument' : conversion from 'uint16_t' to 'uint8_t', possible loss of data
 #pragma warning(disable: 4996)
+#pragma comment(lib, "rpcrt4.lib")  // UuidCreate - Minimum supported OS Win 2000
 
 #include "os.h"
 #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
@@ -47,6 +48,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaHexDump.h"
 #include <signal.h>
 //#include "ob.h"
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#include "uuid.h"
+#endif
 
 
 void setlic(char * lic_level, const char * LicenseLevel);
@@ -78,6 +82,7 @@ void DtaDevOpal::init(const char * devref)
 {
 	uint8_t lastRC;
 	DtaDevOS::init(devref);
+	adj_host = 0; 
 	if((lastRC = properties()) != 0) { LOG(E) << "Properties exchange failed";}
 }
 
@@ -193,7 +198,10 @@ uint8_t DtaDevOpal::initialSetup(char * password)
 	}
 	LOG(D1) << "Initial setup of TPer complete on " << dev;
 	LOG(I) << "setuphuser()";
-	setuphuser(password);
+	if ((lastRC = setuphuser(password)) != 0) {
+		LOG(E) << "setup audit user failed";
+		return lastRC;
+	}
 	LOG(D1) << "Exiting initialSetup()";
 	return 0;
 }
@@ -208,8 +216,8 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 	enableUser(true, password, buf); // true : enable user; false: disable user
 	enableUserRead(true, password, buf);
 	//char p1[64] = "F0iD2eli81Ty"; //20->12 "pFa0isDs2ewloir81Tdy";
-	char p1[64]; // = { 'F','0','i','D','2','e','l','i','8','1','T','y',NULL };
-	memset(p1, 0, 64); // zero out pass 
+	char p1[80]; // = { 'F','0','i','D','2','e','l','i','8','1','T','y',NULL };
+	memset(p1, 0, 80); // zero out pass
 	auditpass(p1);
 
 	#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
@@ -217,8 +225,8 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 	#else
 	strcat_s(p1, getSerialNum());
 	#endif
-	LOG(I) << p1;  // JERRY 
-	DtaHexDump(p1, 80); // JERRY 
+	//LOG(I) << p1;  // JERRY 
+	//DtaHexDump(p1, 80); // JERRY 
 	// setpassword has flag -n -t from GUI
 	if (no_hash_passwords) { // do it only when -n is set
 		bool saved_flag = no_hash_passwords;
@@ -227,9 +235,11 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 		translate_req = false; // do not want to do translate user password
 		vector <uint8_t> hash;
 		DtaHashPwd(hash, (char *)p1, this);
-		memset(p1, 0, 64);
+		memset(p1, 0, 80); 
 		for (int ii = 0; ii < (int)(hash.size() -2); ii += 1) { // first 2 byte of hash vector is header
-			p1[ii] = hash.at(ii+2);
+			//p1[ii] = hash.at(ii+2); // p1 is binary data of hashed password
+			itoa(hash.at(ii + 2) >> 4,  p1 + (ii*2),   16);
+			itoa(hash.at(ii + 2) & 0xf, p1 + (ii*2) + 1 , 16);
 		}
 		if (0) { // should never reveal the hashed password
 			LOG(I) << "setuphuser() : after hash p1, User9 new hashed password = ";
@@ -918,7 +928,7 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 	int idx=0;
 	memset(buf, 0, 20);
 	gethuser(buf);
-	if (!memcmp(userid , buf,5)) idx = disk_info.OPAL20_numUsers -1 ;
+	if (!memcmp(userid , buf, (disk_info.OPAL20_numUsers < 10) ? 5 : 6 ) ) idx = disk_info.OPAL20_numUsers -1 ;
 	// if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? (OPAL_UID)(OPAL_USER1_UID + idx) : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // ok work : JERRY can user set its own password ?????
 		delete session;
@@ -2037,7 +2047,7 @@ uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len,
 		{
 			printf("Invalid Audit Signature or No Audit Entry log\n");
 			IFLOG(D4) DtaHexDump(buffer, gethdrsize());
-			return ERRCHKSUM;
+			return 0; // ERRCHKSUM;
 		}
 		if (getchksum(buffer) != genchksum(buffer))
 		{
@@ -2243,18 +2253,27 @@ uint8_t DtaDevOpal::auditWrite(char * password, char * idstr, char * userid)
 	entry_t ent;
 	memset(&ent, 0, sizeof(entry_t));
 	char t[2];
+	memset(t, 0, 3);
+	DtaHexDump(idstr, 16);
 	memcpy(t, idstr, 2);
+	DtaHexDump(t, 3);
 	ent.event = (uint8_t)atoi(t);
+	memset(t, 0, 3);
 	memcpy(t, idstr+2, 2);
 	ent.yy = (uint8_t)atoi(t);
+	memset(t, 0, 3);
 	memcpy(t, idstr+4, 2);
 	ent.mm = (uint8_t)atoi(t);
+	memset(t, 0, 3);
 	memcpy(t, idstr+6, 2);
 	ent.dd = (uint8_t)atoi(t);
+	memset(t, 0, 3);
 	memcpy(t, idstr+8, 2);
 	ent.hh = (uint8_t)atoi(t);
+	memset(t, 0, 3);
 	memcpy(t, idstr+10, 2);
 	ent.min = (uint8_t)atoi(t);
+	memset(t, 0, 3);
 	memcpy(t, idstr+12, 2);
 	ent.sec = (uint8_t)atoi(t);
 	ent.reserved = 0;
@@ -3363,6 +3382,16 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 
 		fivepercent = (uint64_t)((DecompressedBufferSize / 20) / blockSize) * blockSize;
 	}
+	// change FAT uuid and disk label
+	UUID uuid;
+	uint8_t struuid[64];
+	vector <uint8_t> uu = ugenv(uuid, struuid);
+	for (uint8_t i = 0; i < 4; i++) { DecompressedBuffer[0x100027 + i] = uu.at(i); DecompressedBuffer[0x27 + i] = uu.at(i);
+		DecompressedBuffer[0x1b8 + i] = uu.at(i);
+	}
+	for (uint8_t i = 0; i < 11; i++) { DecompressedBuffer[0x10002b + i] = struuid[i]; DecompressedBuffer[0x2b + i] = struuid[i];
+	}
+
 	// embedded info to MBR
 	bool saved_flag = no_hash_passwords;
 	no_hash_passwords = false;
@@ -4200,7 +4229,7 @@ uint8_t DtaDevOpal::properties()
 	}
 	set_prop(props, sz_MaxComPacketSize, sz_MaxResponseComPacketSize, sz_MaxPacketSize, sz_MaxIndTokenSize);
 
-	props->complete();
+	//props->complete();
 	if ((lastRC = session->sendCommand(props, propertiesResponse)) != 0) {
 		delete props;
 		return lastRC;
