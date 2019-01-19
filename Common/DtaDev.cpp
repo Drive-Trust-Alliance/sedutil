@@ -128,12 +128,26 @@ void DtaDev::discovery0()
 	d0Response = discovery0buffer + IO_BUFFER_ALIGNMENT;
 	d0Response = (void *)((uintptr_t)d0Response & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
 	memset(d0Response, 0, IO_BUFFER_LENGTH);
+    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
     if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, 2048)) != 0) { 
+    #endif
+    #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+    if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, IO_BUFFER_LENGTH)) != 0) { 
+        if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, 2048)) == 0) {
+            LOG(D1) << "Send D0 request to device OK " << (uint16_t)lastRC;
+            goto OK101;
+        }
+    #endif
         LOG(D1) << "Send D0 request to device failed " << (uint16_t)lastRC;
         return;
     }
-	else { LOG(D1) << "Send D0 request to device OK " << (uint16_t)lastRC; }
 
+    else 
+        { LOG(D1) << "Send D0 request to device OK " << (uint16_t)lastRC; }
+
+    #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+OK101:
+    #endif
     epos = cpos = (uint8_t *) d0Response;
     hdr = (Discovery0Header *) d0Response;
     LOG(D3) << "Dumping D0Response";
