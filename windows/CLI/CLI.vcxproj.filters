@@ -147,6 +147,9 @@
     <ClInclude Include="..\uuid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\sedutil.cpp">
@@ -248,5 +251,10 @@
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="QlmLicenseLib.dll.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CLI.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

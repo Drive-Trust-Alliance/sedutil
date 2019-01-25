@@ -61,6 +61,7 @@
     <ClInclude Include="..\os.h" />
     <ClInclude Include="..\uuid.h" />
     <ClInclude Include="..\Version.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\DtaAnnotatedDump.cpp" />
@@ -102,6 +103,9 @@
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="QlmLicenseLib.dll.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CLI.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{267E9D28-7245-4182-9740-F386F4299E83}</ProjectGuid>
