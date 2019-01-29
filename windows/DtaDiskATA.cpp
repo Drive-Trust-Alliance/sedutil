@@ -112,7 +112,7 @@ void DtaDiskATA::identify(OPAL_DiskInfo& disk_info)
 	identifyResp = _aligned_malloc(IO_BUFFER_LENGTH, IO_BUFFER_ALIGNMENT);
     if (NULL == identifyResp) return;
     memset(identifyResp, 0, IO_BUFFER_LENGTH);
-    uint8_t iorc = sendCmd(IDENTIFY, 0x00, 0x0000, identifyResp, IO_BUFFER_LENGTH);
+	uint8_t iorc = sendCmd(IDENTIFY, 0x00, 0x0000, identifyResp, 512); // IO_BUFFER_LENGTH);
     // TODO: figure out why iorc = 4
     if ((0x00 != iorc) && (0x04 != iorc)) {
         LOG(D) << "SATA IDENTIFY Failed " << (uint16_t) iorc;
