@@ -17,10 +17,15 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
+
+
 #include "os.h"
 #include <iostream>
 #include <iomanip>
+#include "pyexthash.h"
+#ifndef PYEXTHASH
 #include "DtaHashPwd.h"
+#endif
 #include "DtaLexicon.h"
 #include "DtaDev.h"
 #include "log.h"
@@ -32,11 +37,31 @@ extern "C" {
 }
 #endif
 
-using namespace std;
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#include "..\License\include.h"
+#else
+#include "include.h"
+#endif
+#include <stdio.h>
 
-void DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
-	unsigned int iter, uint8_t hashsize)
+#include "pyexthash.h"
+#ifdef PYEXTHASH
+#include "hash.h"
+
+hashpwd::hashpwd()
 {
+}
+
+hashpwd::~hashpwd()
+{
+}
+
+vector<uint8_t> hashpwd::DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
+	unsigned int iter, uint8_t hashsize) {
+#else
+void DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
+	unsigned int iter, uint8_t hashsize) {
+#endif
 	LOG(D1) << " Entered DtaHashPassword";
 	// if the hashsize can be > 255 the token overhead logic needs to be fixed
 	assert(1 == sizeof(hashsize));
@@ -63,6 +88,7 @@ void DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> sal
 exit:	// add the token overhead
 	hash.insert(hash.begin(), (uint8_t)hash.size());
 	hash.insert(hash.begin(), 0xd0);
+	LOG(D1) << " Exited DtaHashPassword";
 }
 
 // credit
@@ -128,8 +154,11 @@ vector<uint8_t> hex2data(char * password)
 }
 
 
+#ifndef PYEXTHASH
+//void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int iter){}
 void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int iter)
 {
+
     LOG(D1) << " Entered DtaHashPwd";
     char *serNum;
 
@@ -175,6 +204,7 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
 	printf("\n");
 #endif	
 }
+
 
 struct PBKDF_TestTuple
 {
@@ -249,4 +279,55 @@ int TestPBKDF2()
         cout << "**FAILED**\n";
     return 0;
 }
+#endif
 
+#ifdef PYEXTHASH
+#pragma warning(disable: 4996)
+
+PyObject* hash_function1(PyObject* self, PyObject* args)
+{
+	vector<uint8_t>  hashstr; // returned hash
+	char * password;
+	char * saltstr;
+	vector<uint8_t> salt;
+	int iter;
+	uint8_t sz;
+	char hp[128]; // converted ascii from hashstr
+	hashpwd hh;
+
+	memset(hp, 0, 128);
+	//void hashpwd::DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
+	//unsigned int iter, uint8_t hashsize)
+	if (!PyArg_ParseTuple(args, "ssii", &password, &saltstr,&iter, &sz)) // str:password,str:salt,int(iteration,short i:hash size
+	{
+		//goto error; // why use go to 
+		return 0;
+	};
+	salt.clear();
+	for (int jj = 0; jj < 20; jj++) salt.push_back(saltstr[jj]);
+	printf("%s %s %d %d\n",password, saltstr,iter, sz);
+ 	hh.DtaHashPassword(hashstr, password, salt, iter, sz);
+	for (int ii = 0; ii < (int)(hashstr.size() - 2); ii += 1) { // first 2 byte of hash vector is header
+		snprintf(hp + (ii * 2), 4, "%02x", hashstr.at(ii + 2)); // itoa is not standard lib and linux doesn't like it
+	}
+	return PyString_FromStringAndSize(hp,sz*2);
+}
+
+
+PyMethodDef hashMethods[] =
+{
+	{ "hashpwd",(PyCFunction)hash_function1,METH_VARARGS,0 },
+	{ 0,0,0,0 }  // leave it empty for now
+};
+
+
+PyMODINIT_FUNC
+initPyExtHash(void)
+{
+	PyObject *m;
+
+	m = Py_InitModule("PyExtHash", hashMethods); // array of exported function 
+	if (m == NULL)
+		return;
+}
+#endif

@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\pbkdf2">
+      <UniqueIdentifier>{6bb7c54f-60d8-47cf-9926-497a68866625}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\pbkdf2">
+      <UniqueIdentifier>{46a4649e-6025-4511-8dce-66322609824e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Common\DtaHashPwd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\pbkdf2\blockwise.c">
+      <Filter>Source Files\pbkdf2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\pbkdf2\chash.c">
+      <Filter>Source Files\pbkdf2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\pbkdf2\hmac.c">
+      <Filter>Source Files\pbkdf2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\pbkdf2\pbkdf2.c">
+      <Filter>Source Files\pbkdf2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\pbkdf2\sha1.c">
+      <Filter>Source Files\pbkdf2</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Common\pbkdf2\bitops.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\pbkdf2\blockwise.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\pbkdf2\chash.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\pbkdf2\handy.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\pbkdf2\hmac.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\pbkdf2\pbkdf2.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\pbkdf2\sha1.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\pbkdf2\tassert.h">
+      <Filter>Header Files\pbkdf2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\DtaHashPwd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

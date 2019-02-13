@@ -18,28 +18,47 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Common\DtaHashPwd.cpp" />
+    <ClCompile Include="..\Common\pbkdf2\blockwise.c" />
+    <ClCompile Include="..\Common\pbkdf2\chash.c" />
+    <ClCompile Include="..\Common\pbkdf2\hmac.c" />
+    <ClCompile Include="..\Common\pbkdf2\pbkdf2.c" />
+    <ClCompile Include="..\Common\pbkdf2\sha1.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Common\DtaHashPwd.h" />
+    <ClInclude Include="..\Common\pbkdf2\bitops.h" />
+    <ClInclude Include="..\Common\pbkdf2\blockwise.h" />
+    <ClInclude Include="..\Common\pbkdf2\chash.h" />
+    <ClInclude Include="..\Common\pbkdf2\handy.h" />
+    <ClInclude Include="..\Common\pbkdf2\hmac.h" />
+    <ClInclude Include="..\Common\pbkdf2\pbkdf2.h" />
+    <ClInclude Include="..\Common\pbkdf2\sha1.h" />
+    <ClInclude Include="..\Common\pbkdf2\tassert.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{DDBCC318-9407-478B-949D-54148286A4E1}</ProjectGuid>
-    <RootNamespace>ob</RootNamespace>
+    <ProjectGuid>{D845DC71-5B46-44D3-8107-39C465EFCBC8}</ProjectGuid>
+    <RootNamespace>hash</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>PyExtOb</ProjectName>
+    <ProjectName>PyExtHash</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>NotSet</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>NotSet</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -69,22 +88,18 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetExt>.pyd</TargetExt>
-    <OutDir>$(SolutionDir)$(ProjectName)\$(Configuration)\</OutDir>
-    <IncludePath>C:\Python27\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Python27\libs;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetExt>.pyd</TargetExt>
-    <OutDir>$(SolutionDir)$(ProjectName)\$(Configuration)\</OutDir>
-    <IncludePath>C:\Python27\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Python27\libs;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt>.pyd</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetExt>.pyd</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetExt>.pyd</TargetExt>
+    <IncludePath>C:\Python27\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Python27\libs;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetExt>.pyd</TargetExt>
     <IncludePath>C:\Python27\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Python27\libs;$(LibraryPath)</LibraryPath>
@@ -94,22 +109,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Python27\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <Link>
-      <AdditionalLibraryDirectories>C:\Python27\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-    <PreBuildEvent>
-      <Command>echo #ifndef PYEXTOB &gt; $(SolutionName)\..\..\Common\pyextob.h
-echo #define PYEXTOB 1 &gt;&gt;$(SolutionName)\..\..\Common\pyextob.h
-echo #endif &gt;&gt; $(SolutionName)\..\..\Common\pyextob.h</Command>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2;$(SolutionDir)..\..\License;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -119,18 +126,12 @@ echo #endif &gt;&gt; $(SolutionName)\..\..\Common\pyextob.h</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Python27\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\common\pbkdf2;$(SolutionDir)..\..\windows</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Python27\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <PreBuildEvent>
-      <Command>echo #ifndef PYEXTOB &gt; $(SolutionName)\..\..\Common\pyextob.h
-echo #define PYEXTOB 1 &gt;&gt;$(SolutionName)\..\..\Common\pyextob.h
-echo #endif &gt;&gt; $(SolutionName)\..\..\Common\pyextob.h</Command>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -145,9 +146,6 @@ echo #endif &gt;&gt; $(SolutionName)\..\..\Common\pyextob.h</Command>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Common\ob.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
