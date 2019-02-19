@@ -1,7 +1,10 @@
 from distutils.core import setup, Extension
 
-module = Extension('PyExtOb',
-                    sources = ['ob.cpp'],
+module = Extension('PyExtHash',
+                    sources = ['blockwise.c'],  ['chash.c',    'hmac.c',   'pbkdf2.c',  'sha1.c' , 'DtaHashPwd.cpp'],
+                    #include_dirs = ['/usr/local/include'],
+                    #libraries = ['tcl83'],
+                    #library_dirs = ['/usr/local/lib'],
                     #language = ["g++"],
                     #linker = ["g++"],
                     extra_compile_args=["-Wno-narrowing",  "-std=c++0x"],
