@@ -292,7 +292,7 @@ PyObject* hash_function1(PyObject* self, PyObject* args)
 	vector<uint8_t> salt;
 	int iter;
 	uint8_t sz;
-	char hp[128]; // converted ascii from hashstr
+	uint8_t hp[128]; // converted ascii from hashstr
 	hashpwd hh;
 
 	memset(hp, 0, 128);
@@ -304,13 +304,14 @@ PyObject* hash_function1(PyObject* self, PyObject* args)
 		return 0;
 	};
 	salt.clear();
-	for (int jj = 0; jj < 20; jj++) salt.push_back(saltstr[jj]);
-	printf("%s %s %d %d\n",password, saltstr,iter, sz);
+	for (int jj = 0; jj < strnlen(saltstr, 255); jj++) salt.push_back(saltstr[jj]);
+	printf("%s %s %d %d %d %d\n",password, saltstr,iter, sz, strnlen(saltstr, 255), salt.size());
  	hh.DtaHashPassword(hashstr, password, salt, iter, sz);
+	
 	for (int ii = 0; ii < (int)(hashstr.size() - 2); ii += 1) { // first 2 byte of hash vector is header
-		snprintf(hp + (ii * 2), 4, "%02x", hashstr.at(ii + 2)); // itoa is not standard lib and linux doesn't like it
+		snprintf((char *)hp + (ii * 2), 4, "%02x", hashstr.at(ii + 2)); // itoa is not standard lib and linux doesn't like it
 	}
-	return PyString_FromStringAndSize(hp,sz*2);
+	return PyString_FromStringAndSize((char *)hp,sz*2);
 }
 
 
