@@ -61,11 +61,12 @@ OBJECTFILES= \
 
 
 # C Compiler Flags
-CFLAGS=-m64 -Wall
+CFLAGS=-m64 -Wall -fPIC
+
 
 # CC Compiler Flags
-CCFLAGS=-m64 -Wno-narrowing
-CXXFLAGS=-m64 -Wno-narrowing
+CCFLAGS=-m64 -Wno-narrowing -fPIC
+CXXFLAGS=-m64 -Wno-narrowing -fPIC
 
 # Fortran Compiler Flags
 FFLAGS=-Wall

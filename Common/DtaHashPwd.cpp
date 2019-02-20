@@ -18,6 +18,15 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 
+#include "pyexthash.h"
+#ifdef PYEXTHASH
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#include "..\License\include.h"
+#else
+// python.h is included in includ.h and must be include python.h first, it is python bug
+#include "../License/include.h" 
+#endif
+#endif
 
 #include "os.h"
 #include <iostream>
@@ -37,14 +46,10 @@ extern "C" {
 }
 #endif
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-#include "..\License\include.h"
-#else
-#include "include.h"
-#endif
+
 #include <stdio.h>
 
-#include "pyexthash.h"
+
 #ifdef PYEXTHASH
 #include "hash.h"
 
@@ -56,7 +61,8 @@ hashpwd::~hashpwd()
 {
 }
 
-vector<uint8_t> hashpwd::DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
+//vector<uint8_t> 
+void hashpwd::DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
 	unsigned int iter, uint8_t hashsize) {
 #else
 void DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
@@ -282,7 +288,9 @@ int TestPBKDF2()
 #endif
 
 #ifdef PYEXTHASH
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 #pragma warning(disable: 4996)
+#endif
 
 PyObject* hash_function1(PyObject* self, PyObject* args)
 {
@@ -290,7 +298,7 @@ PyObject* hash_function1(PyObject* self, PyObject* args)
 	char * password;
 	char * saltstr;
 	vector<uint8_t> salt;
-	int iter;
+	long int iter;
 	uint8_t sz;
 	uint8_t hp[128]; // converted ascii from hashstr
 	hashpwd hh;
@@ -298,18 +306,18 @@ PyObject* hash_function1(PyObject* self, PyObject* args)
 	memset(hp, 0, 128);
 	//void hashpwd::DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
 	//unsigned int iter, uint8_t hashsize)
-	if (!PyArg_ParseTuple(args, "ssii", &password, &saltstr,&iter, &sz)) // str:password,str:salt,int(iteration,short i:hash size
+	if (!PyArg_ParseTuple(args, "ssli", &password, &saltstr,&iter, &sz)) // str:password,str:salt,int(iteration,short i:hash size
 	{
 		//goto error; // why use go to 
 		return 0;
 	};
 	salt.clear();
 	for (int jj = 0; jj < strnlen(saltstr, 255); jj++) salt.push_back(saltstr[jj]);
-	printf("%s %s %d %d %d %d\n",password, saltstr,iter, sz, strnlen(saltstr, 255), salt.size());
+	//printf("%s %s %d %d %d %d\n",password, saltstr,iter, sz, strnlen(saltstr, 255), salt.size());
  	hh.DtaHashPassword(hashstr, password, salt, iter, sz);
 	
 	for (int ii = 0; ii < (int)(hashstr.size() - 2); ii += 1) { // first 2 byte of hash vector is header
-		snprintf((char *)hp + (ii * 2), 4, "%02x", hashstr.at(ii + 2)); // itoa is not standard lib and linux doesn't like it
+		snprintf((char *)hp + (ii * 2), 4, "%02x", hashstr.at(ii + 2));
 	}
 	return PyString_FromStringAndSize((char *)hp,sz*2);
 }

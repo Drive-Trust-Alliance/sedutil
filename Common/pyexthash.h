@@ -1,4 +1,3 @@
-#ifndef PYEXTHASH
-#define PYEXTHASH 1
+#ifdef PYEXTHASH
+#undef PYEXTHASH
 #endif
-void * __gxx_personality_v0;
