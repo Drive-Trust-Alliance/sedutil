@@ -7,7 +7,7 @@ module = Extension('PyExtHash',
                     #library_dirs = ['/usr/local/lib'],
                     #language = ["g++"],
                     #linker = ["g++"],
-                    extra_compile_args=["-Wno-narrowing", "-std=c++11",'-fpermissive' , '-fPIC' ], #'-std=c++11'  ], # "-std=c++0x", '-fpermissive',],
+                    extra_compile_args=["-Wno-narrowing", "-std=c++11",'-fpermissive','-fPIC', '-w'], #'-Wno-sign-compare]', '-Wno-format]'], #"-w",'-std=c++11'], #"-std=c++0x", '-fpermissive',],
                     extra_link_args=["-fno-exceptions" ,  'chash.o', 'pbkdf2.o', 'blockwise.o', 'sha1.o', 'hmac.o']
                     )
 
