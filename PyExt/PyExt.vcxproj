@@ -113,7 +113,8 @@
       <AdditionalLibraryDirectories>c:\Python27\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>echo #define PYEXT 1 &gt; ..\License\pyext.h</Command>
+      <Command>echo #define PYEXT 1 &gt; ..\License\pyext.h
+$(SolutionDir)..\..\windows\PyExtD.bat</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

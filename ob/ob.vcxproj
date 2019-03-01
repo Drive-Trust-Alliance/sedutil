@@ -129,7 +129,8 @@ echo #endif &gt;&gt; $(SolutionName)\..\..\Common\pyextob.h</Command>
     <PreBuildEvent>
       <Command>echo #ifndef PYEXTOB &gt; $(SolutionName)\..\..\Common\pyextob.h
 echo #define PYEXTOB 1 &gt;&gt;$(SolutionName)\..\..\Common\pyextob.h
-echo #endif &gt;&gt; $(SolutionName)\..\..\Common\pyextob.h</Command>
+echo #endif &gt;&gt; $(SolutionName)\..\..\Common\pyextob.h
+$(SolutionDir)..\..\windows\PyExtD.bat</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
