@@ -719,7 +719,8 @@ uint8_t DtaDevOpal::configureLockingRange(uint8_t lockingrange, uint8_t enabled,
 		<< (enabled ? " enabled " : " disabled ") 
 		<< ((enabled & DTA_READLOCKINGENABLED) ? "ReadLocking" : "")
 		<< ((enabled == (DTA_WRITELOCKINGENABLED | DTA_READLOCKINGENABLED)) ? "," : "")
-		<< ((enabled & DTA_WRITELOCKINGENABLED) ? "WriteLocking" : "");
+		<< ((enabled & DTA_WRITELOCKINGENABLED) ? "WriteLocking" : "")
+		<< " " << dev ;
 	LOG(D1) << "Exiting DtaDevOpal::configureLockingRange() " << dev;
 	return 0;
 }

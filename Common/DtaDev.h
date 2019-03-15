@@ -305,8 +305,8 @@ public:
 	bool usermodeON = FALSE;
 	bool translate_req = FALSE;
 	char LicenseLevel[32];
-protected:
 	const char * dev;   /**< character string representing the device in the OS lexicon */
+protected:
 	uint8_t isOpen = FALSE;  /**< The device has been opened */
 	uint8_t isNVME = FALSE;  /**< This device is NVME */
 	uint8_t adj_host = FALSE; 
