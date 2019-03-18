@@ -133,17 +133,18 @@ void DtaDev::discovery0()
     #endif
     #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
     if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, IO_BUFFER_LENGTH)) != 0) { 
+        LOG(D1) << "Send D0 request(IO_BUFFER_LENGTH) to device failed " << (uint16_t)lastRC;
         if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, 2048)) == 0) {
-            LOG(D1) << "Send D0 request to device OK " << (uint16_t)lastRC;
+            LOG(D1) << "Send D0 request(2048) to device OK " << (uint16_t)lastRC;
             goto OK101;
         }
     #endif
-        LOG(D1) << "Send D0 request to device failed " << (uint16_t)lastRC;
+        LOG(D1) << "Send D0 request(2048) to device failed " << (uint16_t)lastRC;
         return;
     }
 
     else 
-        { LOG(D1) << "Send D0 request to device OK " << (uint16_t)lastRC; }
+        { LOG(D1) << "Send D0 request(IO_BUFFER_LENGTH) to device OK " << (uint16_t)lastRC; }
 
     #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
 OK101:

@@ -121,6 +121,7 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
      */
     sg.timeout = 60000;
     if (IF_RECV == cmd) {
+        // how do I know it is discovery 0 ? 
         cdb[1] = 4 << 1; // PIO DATA IN
         cdb[2] = 0x0E; // T_DIR = 1, BYTE_BLOCK = 1, Length in Sector Count
         cdb[4] = bufferlen / 512; // Sector count / transfer length (512b blocks)
@@ -128,7 +129,7 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
         sg.dxfer_len = IO_BUFFER_LENGTH;
     } 
     else if (IDENTIFY == cmd) {
-        sg.timeout = 6; // Sabrent USB-SATA adapter
+        sg.timeout = 600; // Sabrent USB-SATA adapter 1ms,6ms,20ms,60 NG, 600ms OK
         cdb[1] = 4 << 1; // PIO DATA IN
         cdb[2] = 0x0E; // T_DIR = 1, BYTE_BLOCK = 1, Length in Sector Count
         cdb[4] = 1; // Sector count / transfer length (512b blocks)
@@ -242,6 +243,7 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
         memcpy(disk_info.serialNum, id->serialNum, sizeof (disk_info.serialNum));
         memcpy(disk_info.firmwareRev, id->firmwareRev, sizeof (disk_info.firmwareRev));
         memcpy(disk_info.modelNum, id->modelNum, sizeof (disk_info.modelNum));
+
     } else {
         disk_info.devType = DEVICE_TYPE_ATA;
         // looks like linux does the byte flipping for you, but not for device on SAS 
@@ -258,6 +260,31 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
             disk_info.modelNum[i + 1] = id->modelNum[i];
         }
     }
+    int nonp ;
+        nonp=0;
+        for (int i=0; i < sizeof (disk_info.serialNum) ; i++) {
+            if (!isprint((unsigned)disk_info.serialNum[i])) {
+                nonp=1;
+                break;
+            }  
+        }
+        if (nonp) memset(disk_info.serialNum,0,sizeof(disk_info.serialNum));
+        nonp=0;
+        for (int i=0; i < sizeof (disk_info.firmwareRev) ; i++) {
+            if (!isprint((unsigned)disk_info.firmwareRev[i])) {
+                nonp=1;
+                break;
+            }  
+        }
+        if (nonp) memset(disk_info.firmwareRev,0,sizeof(disk_info.firmwareRev));
+        nonp=0;
+        for (int i=0; i < sizeof (disk_info.modelNum) ; i++) {
+            if (!isprint((unsigned)disk_info.modelNum[i])) {
+                nonp=1;
+                break;
+            }  
+        }
+        if (nonp) memset(disk_info.modelNum,0,sizeof(disk_info.modelNum));
     free(buffer);
     return;
 }
