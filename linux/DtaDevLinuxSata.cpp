@@ -119,6 +119,7 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
      * bit 2    BYTE_BLock  1 = transfer in blocks, 0 transfer in bytes
      * bits 1-0 T_LENGTH -  10 = the length id in sector count
      */
+    sg.timeout = 60000;
     if (IF_RECV == cmd) {
         cdb[1] = 4 << 1; // PIO DATA IN
         cdb[2] = 0x0E; // T_DIR = 1, BYTE_BLOCK = 1, Length in Sector Count
@@ -127,6 +128,7 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
         sg.dxfer_len = IO_BUFFER_LENGTH;
     } 
     else if (IDENTIFY == cmd) {
+        sg.timeout = 6; // Sabrent USB-SATA adapter
         cdb[1] = 4 << 1; // PIO DATA IN
         cdb[2] = 0x0E; // T_DIR = 1, BYTE_BLOCK = 1, Length in Sector Count
         cdb[4] = 1; // Sector count / transfer length (512b blocks)
@@ -162,7 +164,7 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
     sg.dxferp = buffer;
     sg.cmdp = cdb;
     sg.sbp = sense;
-    sg.timeout = 60000;
+    //sg.timeout = 60000;
     sg.flags = 0;
     sg.pack_id = 0;
     sg.usr_ptr = NULL;
