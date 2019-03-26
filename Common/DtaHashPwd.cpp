@@ -298,7 +298,7 @@ PyObject* hash_function1(PyObject* self, PyObject* args)
 	char * password;
 	char * saltstr;
 	vector<uint8_t> salt;
-	long int iter;
+	uint32_t iter;
 	uint8_t sz;
 	uint8_t hp[128]; // converted ascii from hashstr
 	hashpwd hh;
@@ -306,14 +306,14 @@ PyObject* hash_function1(PyObject* self, PyObject* args)
 	memset(hp, 0, 128);
 	//void hashpwd::DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
 	//unsigned int iter, uint8_t hashsize)
-	if (!PyArg_ParseTuple(args, "ssli", &password, &saltstr,&iter, &sz)) // str:password,str:salt,int(iteration,short i:hash size
+	if (!PyArg_ParseTuple(args, "ssib", &password, &saltstr,&iter, &sz)) // str:password,str:salt,int(iteration,short i:hash size
 	{
 		//goto error; // why use go to 
 		return 0;
 	};
 	salt.clear();
 	for (int jj = 0; jj < strnlen(saltstr, 255); jj++) salt.push_back(saltstr[jj]);
-	//printf("%s %s %d %d %d %d\n",password, saltstr,iter, sz, strnlen(saltstr, 255), salt.size());
+	printf("%s %s %d %d %d %d\n",password, saltstr,iter, sz, strnlen(saltstr, 255), salt.size());
  	hh.DtaHashPassword(hashstr, password, salt, iter, sz);
 	
 	for (int ii = 0; ii < (int)(hashstr.size() - 2); ii += 1) { // first 2 byte of hash vector is header
