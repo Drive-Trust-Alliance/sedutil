@@ -78,12 +78,15 @@ uint8_t DtaDevFreeBSDNvme::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t co
 	pt.buf = buffer;
 
 	err = ioctl(fd, NVME_PASSTHROUGH_CMD, &pt);
-	if (err < 0)
+	if (err < 0) {
+		LOG(D4) << "NVME_PASSTHROUGH_CMD failed";
 		return (errno);
-	else if (err != 0) {
-		fprintf(stderr, "NVME Security Command Error:%d\n", err);
+	} else if (nvme_completion_is_error(&pt.cpl)) {
+		LOG(D4) << "NVME Security Command Error: " <<
+		    std::hex << pt.cpl.status;
+		return (0xff);
 	} else
-		LOG(D3) << "NVME Security Command Success";
+		LOG(D4) << "NVME Security Command Success";
 	return (err);
 }
 
