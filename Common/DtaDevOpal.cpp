@@ -83,7 +83,7 @@ void DtaDevOpal::init(const char * devref)
 	uint8_t lastRC;
 	DtaDevOS::init(devref);
 	adj_host = 0; 
-	if((lastRC = properties()) != 0) { LOG(E) << "Properties exchange failed";}
+	if((lastRC = properties()) != 0) { LOG(E) << "Properties exchange failed " << dev;}
 }
 
 // create an audit user UserN disk_info.OPAL20_numUsers
@@ -113,7 +113,7 @@ void DtaDevOpal::gethuser(char * buf)
 		}
 		session = new DtaSession(this);
 		if (NULL == session) {
-			LOG(E) << "Unable to create session object ";
+			LOG(E) << "Unable to create session object " << dev;
 			return DTAERROR_OBJECT_CREATE_FAILED;
 		}
 		if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
@@ -1303,7 +1303,7 @@ uint8_t DtaDevOpal::enableUser(uint8_t mbrstate, char * password, char * userid)
 	
 	session = new DtaSession(this);
 	if (NULL == session) {
-		LOG(E) << "Unable to create session object ";
+		LOG(E) << "Unable to create session object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
@@ -2196,7 +2196,7 @@ uint8_t DtaDevOpal::auditRec(char * password, entry_t * pent, char * userid)
 	// only for testing purpose
 	//srand((uint16_t)time(NULL));
 	//id = 1 + rand() % ((uint8_t)evt::evt_lastID);
-	printf("***** (uint8_t )evt::evt_lastID=%d event  %d  ***** \n", (uint8_t)evt::evt_lastID, pent->event);
+	printf("***** (uint8_t )evt::evt_lastID=%d event  %d  %s ***** \n", (uint8_t)evt::evt_lastID, pent->event, dev);
 	lastRC = auditlogwr(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buffer, pent, userid); // use rand id for test
 	if (lastRC)
 	{
@@ -2460,13 +2460,13 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
-		LOG(E) << "Unable to create command object ";
+		LOG(E) << "Unable to create command object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 
 	session = new DtaSession(this);
 	if (NULL == session) {
-		LOG(E) << "Unable to create session object ";
+		LOG(E) << "Unable to create session object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	LOG(D1) << "start lockingSP session";
@@ -2660,7 +2660,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	buffer = (char *)malloc(1024*58);
 	datafile.open(filename, ios::out | ios::binary);
 	if (!datafile) {
-		LOG(E) << "Unable to open Data file " << filename;
+		LOG(E) << "Unable to open Data file " << filename << dev ;
 		return DTAERROR_OPEN_ERR;
 	}
 	//datafile.seekg(0, datafile.end);
@@ -2673,13 +2673,13 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
-		LOG(E) << "Unable to create command object ";
+		LOG(E) << "Unable to create command object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 
 	session = new DtaSession(this);
 	if (NULL == session) {
-		LOG(E) << "Unable to create session object ";
+		LOG(E) << "Unable to create session object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	LOG(D1) << "start lockingSP session";
@@ -2690,7 +2690,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth)) != 0) { 
 		delete cmd;
 		delete session;
-		LOG(E) << "DataStore Read Unable to start session Error";
+		LOG(E) << "DataStore Read Unable to start session Error" << dev;
 		datafile.close();
 		free(buffer);
 		return lastRC;
@@ -2755,7 +2755,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 		if ((lastRC = session->sendCommand(cmd, response)) != 0) {
 			delete cmd;
 			delete session;
-			LOG(E) << "DataStore Read Error";
+			LOG(E) << "DataStore Read Error " << dev;
 			datafile.close();
 			free(buffer);
 			return lastRC;
@@ -2770,7 +2770,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 		LOG(D1) << "***** end of send read data store command ";
 
 		if (lastRC) {
-			LOG(E) << "DataStore Read Error";
+			LOG(E) << "DataStore Read Error " << dev;
 			datafile.close();
 			free(buffer);
 			delete cmd;
@@ -2780,7 +2780,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 		datafile.write(buffer, newSize);
 		if (datafile.fail())
 		{
-			LOG(E) << "Saving datafile error";
+			LOG(E) << "Saving datafile error " << dev;
 			delete cmd;
 			delete session;
 			datafile.close();
@@ -2832,7 +2832,7 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 #endif
 	if ((lastRC = getMBRsize(password, &maxMBRSize))!=0)
 	{
-		LOG(E) << " Can not get MBR table size";
+		LOG(E) << " Can not get MBR table size " << dev;
 		return lastRC;
 	}
 
@@ -2871,20 +2871,20 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
-		LOG(E) << "Unable to create command object ";
+		LOG(E) << "Unable to create command object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 
 	session = new DtaSession(this);
 	if (NULL == session) {
-		LOG(E) << "Unable to create session object ";
+		LOG(E) << "Unable to create session object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	LOG(D1) << "start lockingSP session";
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete cmd;
 		delete session;
-		LOG(E) << "DataStore Read Error";
+		LOG(E) << "DataStore Read Error" << dev;
 		datafile.close();
 		free(buffer);
 		return lastRC;
@@ -2931,7 +2931,7 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 		if ((lastRC = session->sendCommand(cmd, response)) != 0) {
 			delete cmd;
 			delete session;
-			LOG(E) << "MBR Read Error";
+			LOG(E) << "MBR Read Error " << dev;
 			datafile.close();
 			free(buffer);
 			return lastRC;
@@ -2946,7 +2946,7 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 		LOG(D1) << "***** end of send Read MBR command ";
 
 		if (lastRC) {
-			LOG(E) << "MBR Read Error";
+			LOG(E) << "MBR Read Error " << dev;
 			datafile.close();
 			free(buffer);
 			delete cmd;
@@ -2956,7 +2956,7 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 		datafile.write(buffer, newSize);
 		if (datafile.fail())
 		{
-			LOG(E) << "Saving datafile error";
+			LOG(E) << "Saving datafile error " << dev;
 			delete cmd;
 			delete session;
 			datafile.close();
@@ -3036,7 +3036,7 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 
 	session = new DtaSession(this);
 	if (NULL == session) {
-		LOG(E) << "Unable to create session object ";
+		LOG(E) << "Unable to create session object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG : JERRY 
@@ -3467,14 +3467,14 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
-		LOG(E) << "Unable to create command object ";
+		LOG(E) << "Unable to create command object " << dev;
 		adj_host_prop(2); // reset host properties to smaller size
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 
 	session = new DtaSession(this);
 	if (NULL == session) {
-		LOG(E) << "Unable to create session object ";
+		LOG(E) << "Unable to create session object " << dev;
 		adj_host_prop(2); // reset host properties to smaller size
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
@@ -3543,7 +3543,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 
 		if (!(filepos % (blockSize * 5))) {
 			progress_bar[1] = spinner[spinnertick.i++];
-			printf("\r%s %i(%I64d)", progress_bar,filepos, DecompressedBufferSize);
+			printf("\r%s %i(%I64d) %s", progress_bar,filepos, DecompressedBufferSize, dev);
 			fflush(stdout);
 			// open progress output file
 			progfile.open(sernum, ios::out);
@@ -3552,6 +3552,9 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 			progfile.write(progbuf, strlen(progbuf));
 			progfile.close();
 		}
+		int rty;
+		rty = 0;
+	rty1:
 		cmd->reset(OPAL_UID::OPAL_MBR, OPAL_METHOD::SET);
 		cmd->addToken(OPAL_TOKEN::STARTLIST);
 		cmd->addToken(OPAL_TOKEN::STARTNAME);
@@ -3566,12 +3569,16 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 		cmd->addToken(OPAL_TOKEN::ENDLIST);
 		cmd->complete();
 		if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+			rty += 1;
+			if (rty < 3) goto rty1;
 			delete cmd;
 			delete session;
 			pbafile.close();
 			adj_host_prop(2); // reset host properties to smaller size
 			return lastRC;
 		}
+
+		// do retry here 
 
 		filepos += blockSize;
 		if (filepos > DecompressedBufferSize)
@@ -3700,7 +3707,7 @@ uint8_t DtaDevOpal::activateLockingSP_SUM(uint8_t lockingrange, char * password)
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, OPAL_UID::OPAL_SID_UID)) != 0) {
-		LOG(E) << "session->start failed with code " << lastRC;
+		LOG(E) << "session->start failed with code " << lastRC << dev;
 		delete cmd;
 		delete session;
 		return lastRC;
@@ -3741,7 +3748,7 @@ uint8_t DtaDevOpal::activateLockingSP_SUM(uint8_t lockingrange, char * password)
 	cmd->addToken(OPAL_TOKEN::ENDLIST);
 	cmd->complete();
 	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
-		LOG(E) << "session->sendCommand failed with code " << lastRC;
+		LOG(E) << "session->sendCommand failed with code " << lastRC << dev;
 		delete cmd;
 		delete session;
 		return lastRC;
@@ -3770,7 +3777,7 @@ uint8_t DtaDevOpal::eraseLockingRange_SUM(uint8_t lockingrange, char * password)
 	}
 	session = new DtaSession(this);
 	if (NULL == session) {
-		LOG(E) << "Unable to create session object ";
+		LOG(E) << "Unable to create session object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
@@ -3780,7 +3787,7 @@ uint8_t DtaDevOpal::eraseLockingRange_SUM(uint8_t lockingrange, char * password)
 
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
-		LOG(E) << "Unable to create command object ";
+		LOG(E) << "Unable to create command object " << dev;
 		delete session;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
@@ -3790,7 +3797,7 @@ uint8_t DtaDevOpal::eraseLockingRange_SUM(uint8_t lockingrange, char * password)
 	cmd->addToken(OPAL_TOKEN::ENDLIST);
 	cmd->complete();
 	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
-		LOG(E) << "setLockingRange Failed ";
+		LOG(E) << "setLockingRange Failed " << dev;
 		delete cmd;
 		delete session;
 		return lastRC;
@@ -3914,7 +3921,7 @@ uint8_t DtaDevOpal::getTryLimit(uint16_t col1,uint16_t col2, char * password)
 				delete session;
 				session = new DtaSession(this);
 				if (NULL == session) {
-					LOG(E) << "Unable to create session object ";
+					LOG(E) << "Unable to create session object " << dev;
 					return DTAERROR_OBJECT_CREATE_FAILED;
 				}
 				//if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID)) != 0) {
@@ -4026,6 +4033,7 @@ uint8_t DtaDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
 	}
 	delete session;
 	//auditRec(newpassword, evt_PasswordChangedSID);
+	LOG(I) << "set SID password completed " << dev;
 	LOG(D1) << "Exiting DtaDevOpal::setSIDPassword() " << dev;
 	return 0;
 }
@@ -4063,7 +4071,7 @@ uint8_t DtaDevOpal::setTable(vector<uint8_t> table, OPAL_TOKEN name,
 	set->addToken(OPAL_TOKEN::ENDLIST);
 	set->complete();
 	if ((lastRC = session->sendCommand(set, response)) != 0) {
-		LOG(E) << "Set Failed ";
+		LOG(E) << "Set table Failed " << dev;
 		delete set;
 		return lastRC;
 	}
@@ -4107,7 +4115,7 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 {
 	uint8_t lastRC;
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
-	LOG(D1) << "Entering DtaDevOpal::exec";
+	LOG(D1) << "Entering DtaDevOpal::exec" << dev;
     LOG(D3) << endl << "Dumping command buffer";
     IFLOG(D3) DtaHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
 	LOG(D1) << "Entering DtaDevOpal::exec sendCmd(IF_SEND, IO_BUFFER_LENGTH)";
@@ -4119,22 +4127,23 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 	}
 	#endif
 	if ((lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), (adj_host == 1)? Host_sz_MaxComPacketSize : IO_BUFFER_LENGTH)) != 0) { // JERRY
-		LOG(E) << "Command failed on send " << (uint16_t) lastRC;
+		LOG(E) << "Command failed on send " << (uint16_t) lastRC << dev;
         return lastRC;
     }
     hdr = (OPALHeader *) cmd->getRespBuffer();
-    do {
-        osmsSleep(25);
-        memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
-		LOG(D1) << "Entering DtaDevOpal::exec sendCmd(IF_RECV, IO_BUFFER_LENGTH)";
-        lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
 
-    }
+    do {
+        osmsSleep(25); // could it be too fast if multiple drive situation ?????, 25->250 does not help
+        memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
+		LOG(D1) << "Entering DtaDevOpal::exec sendCmd(IF_RECV, IO_BUFFER_LENGTH) " << dev ; 
+        lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
+		//LOG(I) << "hdr->cp.outstandingData)=" << hdr->cp.outstandingData << " hdr->cp.minTransfer=" << hdr->cp.minTransfer << dev;
+	}
     while ((0 != hdr->cp.outstandingData) && (0 == hdr->cp.minTransfer));
     LOG(D3) << std::endl << "Dumping reply buffer";
     IFLOG(D3) DtaHexDump(cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
 	if (0 != lastRC) {
-        LOG(E) << "Command failed on recv" << (uint16_t) lastRC;
+        LOG(E) << "Command failed on recv" << (uint16_t) lastRC << dev;
         return lastRC;
     }
     resp.init(cmd->getRespBuffer());
@@ -4363,7 +4372,7 @@ uint8_t DtaDevOpal::objDump(char *sp, char * auth, char *pass,
 	uint8_t lastRC;
 	DtaCommand *get = new DtaCommand();
 	if (NULL == get) {
-		LOG(E) << "Unable to create command object ";
+		LOG(E) << "Unable to create command object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	vector<uint8_t> authority, object;
@@ -4399,7 +4408,7 @@ uint8_t DtaDevOpal::objDump(char *sp, char * auth, char *pass,
 	get->dumpCommand();
 	session = new DtaSession(this);
 	if (NULL == session) {
-		LOG(E) << "Unable to create session object ";
+		LOG(E) << "Unable to create session object " << dev;
 		delete get;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
@@ -4474,7 +4483,7 @@ uint8_t DtaDevOpal::rawCmd(char *sp, char * hexauth, char *pass,
 	}
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
-		LOG(E) << "Unable to create command object ";
+		LOG(E) << "Unable to create command object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	cmd->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, method);
@@ -4483,7 +4492,7 @@ uint8_t DtaDevOpal::rawCmd(char *sp, char * hexauth, char *pass,
 	cmd->complete();
 	session = new DtaSession(this);
 	if (NULL == session) {
-		LOG(E) << "Unable to create session object ";
+		LOG(E) << "Unable to create session object " << dev;
 		delete cmd;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}

@@ -171,7 +171,7 @@ DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response)
     uint8_t exec_rc = d->exec(cmd, response, SecurityProtocol);
     if (0 != exec_rc)
     {
-        LOG(E) << "Command failed on exec " << (uint16_t) exec_rc;
+        LOG(E) << "Command failed on exec " << (uint16_t) exec_rc << d->dev ;
         return exec_rc;
     }
     /*
@@ -201,12 +201,12 @@ DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response)
     if (!((OPAL_TOKEN::ENDLIST == response.tokenIs(response.getTokenCount() - 1)) &&
         (OPAL_TOKEN::STARTLIST == response.tokenIs(response.getTokenCount() - 5)))) {
         // no method status so we hope we reported the error someplace else
-        LOG(E) << "Method Status missing";
+        LOG(E) << "Method Status missing" << d->dev;
 		return DTAERROR_NO_METHOD_STATUS;
     }
     if (OPALSTATUSCODE::SUCCESS != response.getUint8(response.getTokenCount() - 4)) {
         LOG(E) << "method status code " <<
-                methodStatus(response.getUint8(response.getTokenCount() - 4));
+                methodStatus(response.getUint8(response.getTokenCount() - 4)) << d->dev ;
     }
     return response.getUint8(response.getTokenCount() - 4);
 }
