@@ -145,13 +145,21 @@ void DtaDevFreeBSDSata::identify(OPAL_DiskInfo& disk_info)
 		safecopy(disk_info.modelNum, sizeof(disk_info.modelNum),
 		    (uint8_t *)ccb.cgd.inq_data.vendor, sizeof(ccb.cgd.inq_data.vendor) + sizeof(ccb.cgd.inq_data.product));
 	} else if (ccb.cgd.protocol == PROTO_ATA) {
-		disk_info.devType = DEVICE_TYPE_ATA;
 		safecopy(disk_info.serialNum, sizeof(disk_info.serialNum),
 		    (uint8_t *)ccb.cgd.serial_num, ccb.cgd.serial_num_len);
 		memcpy(disk_info.firmwareRev, ccb.cgd.ident_data.revision,
 		    sizeof(disk_info.firmwareRev));
 		memcpy(disk_info.modelNum, ccb.cgd.ident_data.model,
 		    sizeof(disk_info.modelNum));
+		if ((ccb.cgd.ident_data.usedmovsd & 0xc001) == 0x4001) {
+			LOG(D4) << "Trusted Computing feature set is supported "
+			    << std::hex << ccb.cgd.ident_data.usedmovsd;
+			disk_info.devType = DEVICE_TYPE_ATA;
+		} else {
+			LOG(D4) << "Trusted Computing feature set is not supported "
+			    << std::hex << ccb.cgd.ident_data.usedmovsd;
+			disk_info.devType = DEVICE_TYPE_OTHER;
+		}
 	} else {
 		disk_info.devType = DEVICE_TYPE_OTHER;
 	}

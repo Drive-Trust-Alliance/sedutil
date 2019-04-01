@@ -95,6 +95,8 @@ void DtaDevFreeBSDNvme::identify(OPAL_DiskInfo& disk_info)
 	struct nvme_pt_command	pt;
 	struct nvme_controller_data cdata;
 
+	LOG(D4) << "Entering DtaDevFreeBSDNvme::identify()";
+
 	memset(&pt, 0, sizeof(pt));
 #if __FreeBSD_version >= 1200058 && __FreeBSD_version < 1200081
 	pt.cmd.opc_fuse = NVME_CMD_SET_OPC(NVME_OPC_IDENTIFY);
@@ -118,10 +120,22 @@ void DtaDevFreeBSDNvme::identify(OPAL_DiskInfo& disk_info)
 		return;
 	}
 
-	disk_info.devType = DEVICE_TYPE_NVME;
 	memcpy(disk_info.serialNum, cdata.sn, sizeof (disk_info.serialNum));
 	memcpy(disk_info.firmwareRev, cdata.fr, sizeof(disk_info.firmwareRev));
 	memcpy(disk_info.modelNum, cdata.mn, sizeof(disk_info.modelNum));
+
+#if __FreeBSD_version >= 1200058
+	if ((cdata.oacs >> NVME_CTRLR_DATA_OACS_SECURITY_SHIFT) &
+	    NVME_CTRLR_DATA_OACS_SECURITY_MASK) {
+#else
+	if (cdata.oacs.security) {
+#endif
+		LOG(D4) << "Security Send/Receive are supported";
+		disk_info.devType = DEVICE_TYPE_NVME;
+	} else {
+		LOG(D4) << "Security Send/Receive are not supported";
+		disk_info.devType = DEVICE_TYPE_OTHER;
+	}
 }
 
 /** Close the device reference so this object can be delete. */
