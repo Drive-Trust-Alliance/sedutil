@@ -30,7 +30,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <camlib.h>
 #include <cam/scsi/scsi_message.h>
 #include <cam/scsi/scsi_pass.h>
-#include "DtaDevFreeBSDSata.h"
+#include "DtaDevFreeBSDCAM.h"
 #include "DtaHexDump.h"
 
 using namespace std;
@@ -39,14 +39,14 @@ using namespace std;
  *  FreeBSD specific implementation using the CAM pass interface
  */
 
-DtaDevFreeBSDSata::DtaDevFreeBSDSata()
+DtaDevFreeBSDCAM::DtaDevFreeBSDCAM()
 {
-	isSAS = 0;
+	isSCSI = 0;
 }
 
-bool DtaDevFreeBSDSata::init(const char * devref)
+bool DtaDevFreeBSDCAM::init(const char * devref)
 {
-	LOG(D1) << "Creating DtaDevFreeBSDSata::DtaDev() " << devref;
+	LOG(D1) << "Creating DtaDevFreeBSDCAM::DtaDev() " << devref;
 
 	if ((camdev = cam_open_device(devref, O_RDWR)) == NULL) {
 		// This is a D1 because diskscan looks for open fail to end scan
@@ -57,13 +57,13 @@ bool DtaDevFreeBSDSata::init(const char * devref)
 }
 
 /** Send an ioctl to the device using pass through. */
-uint8_t DtaDevFreeBSDSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+uint8_t DtaDevFreeBSDCAM::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                          void * buffer, uint32_t bufferlen)
 {
 	union ccb ccb;
 
 	bzero(&ccb, sizeof(ccb));
-	if(isSAS) {
+	if(isSCSI) {
 		cam_fill_csio(&ccb.csio, 1, NULL,
 		    (cmd == IF_RECV) ? CAM_DIR_IN : CAM_DIR_OUT,
 		    MSG_SIMPLE_Q_TAG, (u_int8_t*)buffer, bufferlen,
@@ -115,11 +115,11 @@ static void safecopy(uint8_t * dst, size_t dstsize, uint8_t * src, size_t srcsiz
 	if (size < dstsize) memset(dst+size, '\0', dstsize-size);
 }
 
-void DtaDevFreeBSDSata::identify(OPAL_DiskInfo& disk_info)
+void DtaDevFreeBSDCAM::identify(OPAL_DiskInfo& disk_info)
 {
 	union ccb ccb;
 
-	LOG(D4) << "Entering DtaDevFreeBSDSata::identify()";
+	LOG(D4) << "Entering DtaDevFreeBSDCAM::identify()";
 
 	bzero(&ccb, sizeof(union ccb));
 	ccb.ccb_h.func_code = XPT_GDEV_TYPE;
@@ -137,7 +137,7 @@ void DtaDevFreeBSDSata::identify(OPAL_DiskInfo& disk_info)
 
 	if (ccb.cgd.protocol == PROTO_SCSI) {
 		disk_info.devType = DEVICE_TYPE_SAS;
-		isSAS = 1;
+		isSCSI = 1;
 		safecopy(disk_info.serialNum, sizeof(disk_info.serialNum),
 		    (uint8_t *)ccb.cgd.serial_num, ccb.cgd.serial_num_len);
 		safecopy(disk_info.firmwareRev, sizeof(disk_info.firmwareRev),
@@ -166,8 +166,8 @@ void DtaDevFreeBSDSata::identify(OPAL_DiskInfo& disk_info)
 }
 
 /** Close the device reference so this object can be delete. */
-DtaDevFreeBSDSata::~DtaDevFreeBSDSata()
+DtaDevFreeBSDCAM::~DtaDevFreeBSDCAM()
 {
-	LOG(D1) << "Destroying DtaDevFreeBSDSata";
+	LOG(D1) << "Destroying DtaDevFreeBSDCAM";
 	cam_close_device(camdev);
 }

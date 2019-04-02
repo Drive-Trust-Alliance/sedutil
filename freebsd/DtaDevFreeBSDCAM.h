@@ -26,12 +26,12 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * Uses the SCSI generic ioctls to send commands to the 
  * device 
  */
-class DtaDevFreeBSDSata: public DtaDevFreeBSDDrive {
+class DtaDevFreeBSDCAM: public DtaDevFreeBSDDrive {
 public:
     /** Default constructor */
-    DtaDevFreeBSDSata();
+    DtaDevFreeBSDCAM();
     /** Destructor */
-    ~DtaDevFreeBSDSata();
+    ~DtaDevFreeBSDCAM();
     /** Sata FreeBSD specific initialization.
      * This function should perform the necessary authority and environment checking
      * to allow proper functioning of the program, open the device, perform an ATA
@@ -52,5 +52,5 @@ public:
             void * buffer, uint32_t bufferlen);
     void identify(OPAL_DiskInfo& disk_info);
     struct cam_device *camdev;
-    int isSAS; /* The device is sas */
+    int isSCSI; /* The device is SCSI */
 };

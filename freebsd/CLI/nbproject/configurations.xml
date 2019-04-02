@@ -20,8 +20,8 @@
       <itemPath>../../Common/DtaDev.h</itemPath>
       <itemPath>../../Common/DtaDevEnterprise.h</itemPath>
       <itemPath>../DtaDevFreeBSDDrive.h</itemPath>
+      <itemPath>../DtaDevFreeBSDCAM.h</itemPath>
       <itemPath>../DtaDevFreeBSDNvme.h</itemPath>
-      <itemPath>../DtaDevFreeBSDSata.h</itemPath>
       <itemPath>../../Common/DtaDevGeneric.h</itemPath>
       <itemPath>../DtaDevOS.h</itemPath>
       <itemPath>../../Common/DtaDevOpal.h</itemPath>
@@ -56,8 +56,8 @@
       <itemPath>../../Common/DtaCommand.cpp</itemPath>
       <itemPath>../../Common/DtaDev.cpp</itemPath>
       <itemPath>../../Common/DtaDevEnterprise.cpp</itemPath>
+      <itemPath>../DtaDevFreeBSDCAM.cpp</itemPath>
       <itemPath>../DtaDevFreeBSDNvme.cpp</itemPath>
-      <itemPath>../DtaDevFreeBSDSata.cpp</itemPath>
       <itemPath>../../Common/DtaDevGeneric.cpp</itemPath>
       <itemPath>../DtaDevOS.cpp</itemPath>
       <itemPath>../../Common/DtaDevOpal.cpp</itemPath>
@@ -235,15 +235,15 @@
       </item>
       <item path="../../Common/sedutil.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="../DtaDevFreeBSDCAM.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../DtaDevFreeBSDCAM.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../DtaDevFreeBSDDrive.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../DtaDevFreeBSDNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../DtaDevFreeBSDNvme.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../DtaDevFreeBSDSata.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="../DtaDevFreeBSDSata.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../DtaDevOS.cpp" ex="false" tool="1" flavor2="8">
       </item>

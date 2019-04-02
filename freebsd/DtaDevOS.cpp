@@ -34,7 +34,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevOS.h"
 #include "DtaHexDump.h"
 #include "DtaDevFreeBSDNvme.h"
-#include "DtaDevFreeBSDSata.h"
+#include "DtaDevFreeBSDCAM.h"
 #include "DtaDevGeneric.h"
 
 using namespace std;
@@ -68,7 +68,7 @@ void DtaDevOS::init(const char * devref)
 	if (!strncmp(devref, "/dev/da", 7) ||
 	    !strncmp(devref, "/dev/ada", 8))
 	{
-		drive = new DtaDevFreeBSDSata();
+		drive = new DtaDevFreeBSDCAM();
 	}
 	else {
 		LOG(E) << "DtaDevOS::init ERROR - unknown drive type";
