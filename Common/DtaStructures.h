@@ -29,8 +29,13 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define FC_SINGLEUSER 0x0201
 #define FC_OPALV100   0x0200
 #define FC_OPALV200   0x0203
-#define FC_BLOCKSID   0x0402
+#define FC_OPALITE    0x0301	/* Opalite SSC */
+#define FC_PYRITEV100 0x0302	/* Pyrite SSC V1.00 */
+#define FC_PYRITEV200 0x0303	/* Pyrite SSC V2.00 */
+#define FC_RUBYV100   0x0304	/* Ruby SSC V1.00 */
+#define FC_BLOCKSID   0x0402	/* Block SID Authentication */
 #define FC_NAMESPACE  0x0403
+#define FC_DATAREM    0x0404	/* Supported Data Removal Mechanism */
 /** The Discovery 0 Header. As defined in
 * Opal SSC Documentation
 */
