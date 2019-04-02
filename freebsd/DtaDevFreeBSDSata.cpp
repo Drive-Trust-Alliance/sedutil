@@ -93,7 +93,7 @@ uint8_t DtaDevFreeBSDSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t co
 		ccb.ataio.cmd.sector_count = bufferlen / 512;
 	}
 
-	ccb.ccb_h.flags |= CAM_DEV_QFRZDIS;
+	ccb.ccb_h.flags |= CAM_PASS_ERR_RECOVER;
 
 	if (cam_send_ccb(camdev, &ccb) < 0) {
 		LOG(D4) << "cam_send_ccb failed";
