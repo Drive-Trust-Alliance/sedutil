@@ -53,4 +53,5 @@ public:
     void identify(OPAL_DiskInfo& disk_info);
     struct cam_device *camdev;
     int isSCSI; /* The device is SCSI */
+    int isNVMe; /* The device is NVMe */
 };

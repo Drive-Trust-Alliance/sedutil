@@ -66,7 +66,8 @@ void DtaDevOS::init(const char * devref)
 	}
 	else 
 	if (!strncmp(devref, "/dev/da", 7) ||
-	    !strncmp(devref, "/dev/ada", 8))
+	    !strncmp(devref, "/dev/ada", 8) ||
+	    !strncmp(devref, "/dev/nda", 8))
 	{
 		drive = new DtaDevFreeBSDCAM();
 	}

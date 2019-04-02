@@ -42,6 +42,7 @@ using namespace std;
 DtaDevFreeBSDCAM::DtaDevFreeBSDCAM()
 {
 	isSCSI = 0;
+	isNVMe = 0;
 }
 
 bool DtaDevFreeBSDCAM::init(const char * devref)
@@ -78,6 +79,19 @@ uint8_t DtaDevFreeBSDCAM::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t com
 		ccb.csio.cdb_io.cdb_bytes[7] = (bufferlen/512) >> 16;
 		ccb.csio.cdb_io.cdb_bytes[8] = (bufferlen/512) >> 8;
 		ccb.csio.cdb_io.cdb_bytes[9] = (bufferlen/512);
+	} else if(isNVMe) {
+		cam_fill_nvmeadmin(&ccb.nvmeio, 0, NULL,
+		    (cmd == IF_RECV) ? CAM_DIR_IN : CAM_DIR_OUT,
+		    (u_int8_t*)buffer, bufferlen, 60 * 1000);
+		if (IF_RECV == cmd) {
+			LOG(D3) << "Security Receive Command";
+			ccb.nvmeio.cmd.opc = NVME_OPC_SECURITY_RECEIVE;
+		} else {
+			LOG(D3) << "Security Send Command";
+			ccb.nvmeio.cmd.opc = NVME_OPC_SECURITY_SEND;
+		}
+		ccb.nvmeio.cmd.cdw10 = htole32(protocol << 24 | comID << 8);
+		ccb.nvmeio.cmd.cdw11 = htole32(bufferlen);
 	} else {
 		cam_fill_ataio(&ccb.ataio, 0, NULL,
 		    (cmd == IF_RECV) ? CAM_DIR_IN : CAM_DIR_OUT,
@@ -115,9 +129,44 @@ static void safecopy(uint8_t * dst, size_t dstsize, uint8_t * src, size_t srcsiz
 	if (size < dstsize) memset(dst+size, '\0', dstsize-size);
 }
 
+static int
+nvme_get_cdata(struct cam_device *dev, struct nvme_controller_data *cdata)
+{
+	union ccb *ccb;
+	struct ccb_dev_advinfo *advi;
+
+	ccb = cam_getccb(dev);
+	if (ccb == NULL) {
+		LOG(D4) << "couldn't allocate CCB";
+		return (1);
+	}
+
+	advi = &ccb->cdai;
+	advi->ccb_h.flags = CAM_DIR_IN;
+	advi->ccb_h.func_code = XPT_DEV_ADVINFO;
+	advi->flags = CDAI_FLAG_NONE;
+	advi->buftype = CDAI_TYPE_NVME_CNTRL;
+	advi->bufsiz = sizeof(struct nvme_controller_data);
+	advi->buf = (uint8_t *)cdata;
+
+	if (cam_send_ccb(dev, ccb) < 0) {
+		LOG(D4) << "error sending CAMIOCOMMAND ioctl";
+		cam_freeccb(ccb);
+		return (1);
+	}
+	if (advi->ccb_h.status != CAM_REQ_CMP) {
+		LOG(D4) << "got CAM error " << advi->ccb_h.status;
+		cam_freeccb(ccb);
+		return (1);
+	}
+	cam_freeccb(ccb);
+	return (0);
+}
+
 void DtaDevFreeBSDCAM::identify(OPAL_DiskInfo& disk_info)
 {
 	union ccb ccb;
+	struct nvme_controller_data cdata;
 
 	LOG(D4) << "Entering DtaDevFreeBSDCAM::identify()";
 
@@ -136,14 +185,39 @@ void DtaDevFreeBSDCAM::identify(OPAL_DiskInfo& disk_info)
 	}
 
 	if (ccb.cgd.protocol == PROTO_SCSI) {
-		disk_info.devType = DEVICE_TYPE_SAS;
 		isSCSI = 1;
+		disk_info.devType = DEVICE_TYPE_SAS;
 		safecopy(disk_info.serialNum, sizeof(disk_info.serialNum),
 		    (uint8_t *)ccb.cgd.serial_num, ccb.cgd.serial_num_len);
 		safecopy(disk_info.firmwareRev, sizeof(disk_info.firmwareRev),
 		    (uint8_t *)ccb.cgd.inq_data.revision, sizeof(ccb.cgd.inq_data.revision));
 		safecopy(disk_info.modelNum, sizeof(disk_info.modelNum),
 		    (uint8_t *)ccb.cgd.inq_data.vendor, sizeof(ccb.cgd.inq_data.vendor) + sizeof(ccb.cgd.inq_data.product));
+	} else if (ccb.cgd.protocol == PROTO_NVME) {
+		isNVMe = 1;
+		if (nvme_get_cdata(camdev, &cdata)) {
+			LOG(D4) << "nvme_get_cdata failed";
+			disk_info.devType = DEVICE_TYPE_OTHER;
+			return;
+		}
+		safecopy(disk_info.serialNum, sizeof(disk_info.serialNum),
+		    (uint8_t *)cdata.sn, sizeof(cdata.sn));
+		safecopy(disk_info.firmwareRev, sizeof(disk_info.firmwareRev),
+		    (uint8_t *)cdata.fr, sizeof(cdata.fr));
+		safecopy(disk_info.modelNum, sizeof(disk_info.modelNum),
+		    (uint8_t *)cdata.mn, sizeof(cdata.mn));
+#if __FreeBSD_version >= 1200058
+		if ((cdata.oacs >> NVME_CTRLR_DATA_OACS_SECURITY_SHIFT) &
+		    NVME_CTRLR_DATA_OACS_SECURITY_MASK) {
+#else
+		if (cdata.oacs.security) {
+#endif
+			LOG(D4) << "Security Send/Receive are supported";
+			disk_info.devType = DEVICE_TYPE_NVME;
+		} else {
+			LOG(D4) << "Security Send/Receive are not supported";
+			disk_info.devType = DEVICE_TYPE_OTHER;
+		}
 	} else if (ccb.cgd.protocol == PROTO_ATA) {
 		safecopy(disk_info.serialNum, sizeof(disk_info.serialNum),
 		    (uint8_t *)ccb.cgd.serial_num, ccb.cgd.serial_num_len);
