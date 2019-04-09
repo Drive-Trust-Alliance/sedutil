@@ -63,6 +63,7 @@ uint8_t DtaDevFreeBSDCAM::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t com
 {
 	union ccb ccb;
 
+	LOG(D1) << "Entering DtaDevFreeBSDCAM::sendCmd";
 	bzero(&ccb, sizeof(ccb));
 	if(isSCSI) {
 		cam_fill_csio(&ccb.csio, 1, NULL,
