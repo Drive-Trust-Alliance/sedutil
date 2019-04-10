@@ -268,14 +268,14 @@ DtaSession::setProtocol(uint8_t value)
 void
 DtaSession::dontHashPwd()
 {
-	LOG(D1) << "Entering DtaSession::setProtocol";
+	LOG(D1) << "Entering DtaSession::dontHashPwd";
 	hashPwd = 0;
 }
 
 void
 DtaSession::expectAbort()
 {
-    LOG(D1) << "Entering DtaSession::methodStatus()";
+    LOG(D1) << "Entering DtaSession::expectAbort()";
     willAbort = 1;
 }
 
