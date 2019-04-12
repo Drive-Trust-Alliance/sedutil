@@ -38,6 +38,12 @@ public:
 	DtaDev();
 	/** Default destructor, does nothing*/
 	virtual ~DtaDev();
+	/** Does the device conform to the Pyrite 2.0 SSC */
+	uint8_t isPyrite2();
+	/** Does the device conform to the Pyrite 1.0 SSC */
+	uint8_t isPyrite1();
+	/** Does the device conform to the Opalite SSC */
+	uint8_t isOpalite();
 	/** Does the device conform to the OPAL 2.0 SSC */
 	uint8_t isOpal2();
 	/** Does the device conform to the OPAL 1.0 SSC */
@@ -50,6 +56,8 @@ public:
 	uint8_t MBREnabled();
 	/** Is the MBRDone flag set */
 	uint8_t MBRDone();
+	/** Is the MBRAbsent flag set */
+	uint8_t MBRAbsent();
 	/** Is the Locked flag set */
 	uint8_t Locked();
 	/** Is the Locking SP enabled */

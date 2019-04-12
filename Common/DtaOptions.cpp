@@ -25,7 +25,7 @@ void usage()
 {
     printf("sedutil v%s Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>\n", GIT_VERSION);
     printf("a utility to manage self encrypting drives that conform\n");
-    printf("to the Trusted Computing Group OPAL 2.0 SSC specification\n");
+    printf("to the TCG Enterprise, Opal, Opalite and Pyrite SSC specs\n");
     printf("General Usage:                     (see readme for extended commandset)\n");
     printf("sedutil-cli <-v> <-n> <action> <options> <device>\n");
     printf("-v (optional)                       increase verbosity, one to five v's\n");

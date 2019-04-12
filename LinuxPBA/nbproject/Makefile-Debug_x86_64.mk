@@ -112,6 +112,21 @@ ${OBJECTDIR}/_ext/7daaf93a/DtaDevOpal2.o: ../Common/DtaDevOpal2.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaDevOpal2.o ../Common/DtaDevOpal2.cpp
 
+${OBJECTDIR}/_ext/7daaf93a/DtaDevOpalite.o: ../Common/DtaDevOpalite.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/7daaf93a
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaDevOpalite.o ../Common/DtaDevOpalite.cpp
+
+${OBJECTDIR}/_ext/7daaf93a/DtaDevPyrite1.o: ../Common/DtaDevPyrite1.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/7daaf93a
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaDevPyrite1.o ../Common/DtaDevPyrite1.cpp
+
+${OBJECTDIR}/_ext/7daaf93a/DtaDevPyrite2.o: ../Common/DtaDevPyrite2.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/7daaf93a
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Werror -I../linux -I../Common -I../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7daaf93a/DtaDevPyrite2.o ../Common/DtaDevPyrite2.cpp
+
 ${OBJECTDIR}/_ext/7daaf93a/DtaHashPwd.o: ../Common/DtaHashPwd.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/7daaf93a
 	${RM} "$@.d"

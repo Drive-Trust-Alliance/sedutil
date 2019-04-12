@@ -365,13 +365,13 @@ uint8_t DtaDevEnterprise::revertLockingSP(char * password, uint8_t keep)
 	cmd->addToken(OPAL_TOKEN::ENDNAME);
 	cmd->addToken(OPAL_TOKEN::ENDLIST);
 	cmd->complete();
-	session->expectAbort();
 	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
 		delete cmd;
 		delete session;
 		return lastRC;
 	}
 	LOG(I) << "revertLockingSP completed successfully";
+	session->expectAbort();
 	delete cmd;
 	delete session;
 	LOG(D1) << "Exiting DtaDevEnterprise::revertLockingSP()";
@@ -897,13 +897,13 @@ uint8_t DtaDevEnterprise::revertTPer(char * password, uint8_t PSID, uint8_t Admi
 	cmd->addToken(OPAL_TOKEN::STARTLIST);
 	cmd->addToken(OPAL_TOKEN::ENDLIST);
 	cmd->complete();
-	session->expectAbort();
 	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
 		delete cmd;
 		delete session;
 		return lastRC;
 	}
 	LOG(I) << "revertTper completed successfully";
+	session->expectAbort();
 	delete cmd;
 	delete session;
 	LOG(D1) << "Exiting DtaDevEnterprise::revertTPer()";

@@ -43,6 +43,9 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/7a2a93ab/DtaDevOpal.o \
 	${OBJECTDIR}/_ext/7a2a93ab/DtaDevOpal1.o \
 	${OBJECTDIR}/_ext/7a2a93ab/DtaDevOpal2.o \
+	${OBJECTDIR}/_ext/7a2a93ab/DtaDevOpalite.o \
+	${OBJECTDIR}/_ext/7a2a93ab/DtaDevPyrite1.o \
+	${OBJECTDIR}/_ext/7a2a93ab/DtaDevPyrite2.o \
 	${OBJECTDIR}/_ext/7a2a93ab/DtaHashPwd.o \
 	${OBJECTDIR}/_ext/7a2a93ab/DtaHexDump.o \
 	${OBJECTDIR}/_ext/7a2a93ab/DtaOptions.o \
@@ -122,6 +125,21 @@ ${OBJECTDIR}/_ext/7a2a93ab/DtaDevOpal2.o: ../../Common/DtaDevOpal2.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/7a2a93ab
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Werror -I.. -I../../Common -I../../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7a2a93ab/DtaDevOpal2.o ../../Common/DtaDevOpal2.cpp
+
+${OBJECTDIR}/_ext/7a2a93ab/DtaDevOpalite.o: ../../Common/DtaDevOpalite.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/7a2a93ab
+	${RM} "$@.d"
+	$(COMPILE.cc) -Werror -I.. -I../../Common -I../../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7a2a93ab/DtaDevOpalite.o ../../Common/DtaDevOpalite.cpp
+
+${OBJECTDIR}/_ext/7a2a93ab/DtaDevPyrite1.o: ../../Common/DtaDevPyrite1.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/7a2a93ab
+	${RM} "$@.d"
+	$(COMPILE.cc) -Werror -I.. -I../../Common -I../../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7a2a93ab/DtaDevPyrite1.o ../../Common/DtaDevPyrite1.cpp
+
+${OBJECTDIR}/_ext/7a2a93ab/DtaDevPyrite2.o: ../../Common/DtaDevPyrite2.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/7a2a93ab
+	${RM} "$@.d"
+	$(COMPILE.cc) -Werror -I.. -I../../Common -I../../Common/pbkdf2 -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7a2a93ab/DtaDevPyrite2.o ../../Common/DtaDevPyrite2.cpp
 
 ${OBJECTDIR}/_ext/7a2a93ab/DtaHashPwd.o: ../../Common/DtaHashPwd.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/7a2a93ab

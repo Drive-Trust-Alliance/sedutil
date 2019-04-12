@@ -71,13 +71,15 @@ uint8_t DtaDevOpal::initialSetup(char * password)
 		LOG(E) << "Initial setup failed - unable to set global locking range RW";
 		return lastRC;
 	}
-	if ((lastRC = setMBRDone(1, password)) != 0){
-		LOG(E) << "Initial setup failed - unable to Enable MBR shadow";
-		return lastRC;
-	}
-	if ((lastRC = setMBREnable(1, password)) != 0){
-		LOG(E) << "Initial setup failed - unable to Enable MBR shadow";
-		return lastRC;
+	if (!MBRAbsent()) {
+		if ((lastRC = setMBRDone(1, password)) != 0){
+			LOG(E) << "Initial setup failed - unable to set MBR Done";
+			return lastRC;
+		}
+		if ((lastRC = setMBREnable(1, password)) != 0){
+			LOG(E) << "Initial setup failed - unable to Enable MBR shadow";
+			return lastRC;
+		}
 	}
 	
 	LOG(I) << "Initial setup of TPer complete on " << dev;
@@ -639,6 +641,7 @@ uint8_t DtaDevOpal::revertLockingSP(char * password, uint8_t keep)
 	// empty list returned so rely on method status
 	LOG(I) << "Revert LockingSP complete";
 	session->expectAbort();
+	delete cmd;
 	delete session;
 	LOG(D1) << "Exiting DtaDevOpal::revertLockingSP()";
 	return 0;
@@ -1111,13 +1114,13 @@ uint8_t DtaDevOpal::revertTPer(char * password, uint8_t PSID, uint8_t AdminSP)
 	cmd->addToken(OPAL_TOKEN::STARTLIST);
 	cmd->addToken(OPAL_TOKEN::ENDLIST);
 	cmd->complete();
-	session->expectAbort();
 	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
 		delete cmd;
 		delete session;
 		return lastRC;
 	}
 	LOG(I) << "revertTper completed successfully";
+	session->expectAbort();
 	delete cmd;
 	delete session;
 	LOG(D1) << "Exiting DtaDevOpal::revertTPer()";

@@ -1,14 +1,15 @@
 .\" Manpage for sedutil-cli.
 .TH SEDUTIL\-CLI 8 "18 Feb 2016" "0.12" "sedutil-cli man page"
 .SH NAME
-sedutil-cli \- util to manage TCG Opal 2.0 self encrypting drives
+sedutil-cli \- util to manage TCG Storage self encrypting drives
 
 .SH SYNOPSIS
 sedutil\-cli <\-v> <\-n> <action> <options> <device>
 
 .SH DESCRIPTION
 sedutil-cli is a utility to manage self encrypting drives that conform
-to the Trusted Computing Group (TCG) OPAL 2.0 SSC specification.
+to the Trusted Computing Group (TCG) Enterprise, Opal, Opalite and
+Pyrite SSC specifications.
 
 In Linux libata.allow_tpm must be set to 1. Either via adding
 libata.allow_tpm=1 to the kernel flags at boot time or changing the

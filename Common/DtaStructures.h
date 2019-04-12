@@ -90,8 +90,8 @@ typedef struct _Discovery0LockingFeatures {
     uint8_t version : 4;
     uint8_t length;
     /* Big endian
-    uint8_t reserved01 : 1;
     uint8_t reserved02 : 1;
+    uint8_t MBRAbsent : 1;
     uint8_t MBRDone : 1;
     uint8_t MBREnabled : 1;
     uint8_t mediaEncryption : 1;
@@ -105,7 +105,7 @@ typedef struct _Discovery0LockingFeatures {
     uint8_t mediaEncryption : 1;
     uint8_t MBREnabled : 1;
     uint8_t MBRDone : 1;
-    uint8_t reserved01 : 1;
+    uint8_t MBRAbsent : 1;
     uint8_t reserved02 : 1;
 
     uint32_t reserved03;
@@ -273,6 +273,54 @@ typedef struct _Discovery0Namespace {
     uint32_t MaximumRangesPerNamespace;
 } Discovery0Namespace;
 
+/** Opalite feature
+ */
+typedef struct _Discovery0Opalite {
+	uint16_t featureCode; /* 0x0301 */
+	uint8_t reserved_v : 4;
+	uint8_t version : 4;
+	uint8_t length;
+	uint16_t baseCommID;
+	uint16_t numCommIDs;
+	uint8_t reserved01[5];
+	uint8_t initialPIN;
+	uint8_t revertedPIN;
+	uint8_t reserved02;
+	uint32_t reserved03;
+} Discovery0Opalite;
+
+/** Pyrite 1.0 feature
+ */
+typedef struct _Discovery0Pyrite10 {
+	uint16_t featureCode; /* 0x0302 */
+	uint8_t reserved_v : 4;
+	uint8_t version : 4;
+	uint8_t length;
+	uint16_t baseCommID;
+	uint16_t numCommIDs;
+	uint8_t reserved01[5];
+	uint8_t initialPIN;
+	uint8_t revertedPIN;
+	uint8_t reserved02;
+	uint32_t reserved03;
+} Discovery0Pyrite10;
+
+/** Pyrite 2.0 feature
+ */
+typedef struct _Discovery0Pyrite20 {
+	uint16_t featureCode; /* 0x0303 */
+	uint8_t reserved_v : 4;
+	uint8_t version : 4;
+	uint8_t length;
+	uint16_t baseCommID;
+	uint16_t numCommIDs;
+	uint8_t reserved01[5];
+	uint8_t initialPIN;
+	uint8_t revertedPIN;
+	uint8_t reserved02;
+	uint32_t reserved03;
+} Discovery0Pyrite20;
+
 /** Union of features used to parse the discovery 0 response */
 union Discovery0Features {
     Discovery0TPerFeatures TPer;
@@ -285,6 +333,9 @@ union Discovery0Features {
     Discovery0DatastoreTable datastore;
 	Discovery0BlockSID blockSID;
 	Discovery0Namespace ns;
+	Discovery0Opalite opalite;
+	Discovery0Pyrite10 pyrite10;
+	Discovery0Pyrite20 pyrite20;
 };
 
 /** ComPacket (header) for transmissions. */
@@ -352,6 +403,9 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t ANY_OPAL_SSC : 1;
 	uint8_t BlockSID : 1;
 	uint8_t Namespace : 1;
+	uint8_t Opalite : 1;
+	uint8_t Pyrite10 : 1;
+	uint8_t Pyrite20 : 1;
     // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
     uint8_t TPer_ACKNACK : 1;
     uint8_t TPer_async : 1;
@@ -364,6 +418,7 @@ typedef struct _OPAL_DiskInfo {
     uint8_t Locking_lockingSupported : 1;
     uint8_t Locking_MBRDone : 1;
     uint8_t Locking_MBREnabled : 1;
+    uint8_t Locking_MBRAbsent : 1;
     uint8_t Locking_mediaEncrypt : 1;
     uint8_t Geometry_align : 1;
     uint64_t Geometry_alignmentGranularity;
@@ -394,6 +449,18 @@ typedef struct _OPAL_DiskInfo {
 	uint32_t Namespace_MaximumKeyCount;
 	uint32_t Namespace_UnusedKeyCount;
 	uint32_t Namespace_MaximumRangesPerNamespace;
+	uint16_t Opalite_basecomID;
+	uint16_t Opalite_numcomIDs;
+	uint8_t Opalite_initialPIN;
+	uint8_t Opalite_revertedPIN;
+	uint16_t Pyrite10_basecomID;
+	uint16_t Pyrite10_numcomIDs;
+	uint8_t Pyrite10_initialPIN;
+	uint8_t Pyrite10_revertedPIN;
+	uint16_t Pyrite20_basecomID;
+	uint16_t Pyrite20_numcomIDs;
+	uint8_t Pyrite20_initialPIN;
+	uint8_t Pyrite20_revertedPIN;
     // IDENTIFY information
     DTA_DEVICE_TYPE devType;
     uint8_t serialNum[20];

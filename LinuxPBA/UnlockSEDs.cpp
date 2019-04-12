@@ -22,6 +22,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevGeneric.h"
 #include "DtaDevOpal1.h"
 #include "DtaDevOpal2.h"
+#include "DtaDevOpalite.h"
+#include "DtaDevPyrite1.h"
+#include "DtaDevPyrite2.h"
 
 #include <dirent.h>
 #include <fnmatch.h>
@@ -62,7 +65,9 @@ uint8_t UnlockSEDs(char * password) {
         if (!tempDev->isPresent()) {
             break;
         }
-        if ((!tempDev->isOpal1()) && (!tempDev->isOpal2())) {
+        if ((!tempDev->isOpal1()) && (!tempDev->isOpal2()) &&
+            (!tempDev->isOpalite()) && (!tempDev->isPyrite1()) &&
+            (!tempDev->isPyrite2())) {
             printf("Drive %-10s %-40s not OPAL  \n", devref, tempDev->getModelNum());
 
             delete tempDev;
@@ -70,6 +75,12 @@ uint8_t UnlockSEDs(char * password) {
         }
         if (tempDev->isOpal2())
             d = new DtaDevOpal2(devref);
+        else if (tempDev->isOpalite())
+            d = new DtaDevOpalite(devref);
+        else if (tempDev->isPyrite2())
+            d = new DtaDevPyrite2(devref);
+        else if (tempDev->isPyrite1())
+            d = new DtaDevPurite1(devref);
         else
             d = new DtaDevOpal1(devref);
         delete tempDev;

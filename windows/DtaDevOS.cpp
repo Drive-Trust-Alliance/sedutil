@@ -153,10 +153,12 @@ int DtaDevOS::diskScan()
 		if (d->isPresent()) {
 			printf("%s", devname);
 			if (d->isAnySSC())
-				printf(" %s%s%s ", (d->isOpal1() ? "1" : " "),
-				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
+				printf(" %s%s%s%s%s%s ", (d->isOpal1() ? "1" : " "),
+				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "),
+				(d->isOpalite() ? "L" : " "), (d->isPyrite1() ? "p" : " "),
+				(d->isPyrite2() ? "P" : " "));
 			else
-				printf("%s", " No  ");
+				printf("%s", " No     ");
 			cout << d->getModelNum() << " " << d->getFirmwareRev() << std::endl;
 			if (MAX_DISKS == i) {
 				LOG(I) << MAX_DISKS << " disks, really?";

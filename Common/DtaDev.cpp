@@ -44,6 +44,21 @@ DtaDev::DtaDev()
 DtaDev::~DtaDev()
 {
 }
+uint8_t DtaDev::isPyrite2()
+{
+	LOG(D1) << "Entering DtaDev::isPyrite2 " << (uint16_t) disk_info.Pyrite20;
+	return disk_info.Pyrite20;
+}
+uint8_t DtaDev::isPyrite1()
+{
+	LOG(D1) << "Entering DtaDev::isPyrite1 " << (uint16_t) disk_info.Pyrite10;
+	return disk_info.Pyrite10;
+}
+uint8_t DtaDev::isOpalite()
+{
+	LOG(D1) << "Entering DtaDev::isOpalite " << (uint16_t) disk_info.Opalite;
+	return disk_info.Opalite;
+}
 uint8_t DtaDev::isOpal2()
 {
 	LOG(D1) << "Entering DtaDev::isOpal2 " << (uint16_t) disk_info.OPAL20;
@@ -79,6 +94,11 @@ uint8_t DtaDev::MBRDone()
 {
 	LOG(D1) << "Entering DtaDev::MBRDone" << (uint16_t)disk_info.Locking_MBRDone;
 	return disk_info.Locking_MBRDone;
+}
+uint8_t DtaDev::MBRAbsent()
+{
+	LOG(D1) << "Entering DtaDev::MBRAbsent" << (uint16_t)disk_info.Locking_MBRAbsent;
+	return disk_info.Locking_MBRAbsent;
 }
 uint8_t DtaDev::Locked()
 {
@@ -148,6 +168,7 @@ void DtaDev::discovery0()
             disk_info.Locking_lockingSupported = body->locking.lockingSupported;
             disk_info.Locking_MBRDone = body->locking.MBRDone;
             disk_info.Locking_MBREnabled = body->locking.MBREnabled;
+            disk_info.Locking_MBRAbsent = body->locking.MBRAbsent;
             disk_info.Locking_mediaEncrypt = body->locking.mediaEncryption;
             break;
         case FC_GEOMETRY: /* Geometry Features */
@@ -206,6 +227,30 @@ void DtaDev::discovery0()
 			disk_info.Namespace_UnusedKeyCount = SWAP32(body->ns.UnusedKeyCount);
 			disk_info.Namespace_MaximumRangesPerNamespace = SWAP32(body->ns.MaximumRangesPerNamespace);
 			break;
+		case FC_OPALITE: /* Opalite */
+			disk_info.Opalite = 1;
+			disk_info.ANY_OPAL_SSC = 1;
+			disk_info.Opalite_basecomID = SWAP16(body->opalite.baseCommID);
+			disk_info.Opalite_numcomIDs = SWAP16(body->opalite.numCommIDs);
+			disk_info.Opalite_initialPIN = body->opalite.initialPIN;
+			disk_info.Opalite_revertedPIN = body->opalite.revertedPIN;
+			break;
+		case FC_PYRITEV100: /* Pyrite V100 */
+			disk_info.Pyrite10 = 1;
+			disk_info.ANY_OPAL_SSC = 1;
+			disk_info.Pyrite10_basecomID = SWAP16(body->pyrite10.baseCommID);
+			disk_info.Pyrite10_numcomIDs = SWAP16(body->pyrite10.numCommIDs);
+			disk_info.Pyrite10_initialPIN = body->pyrite10.initialPIN;
+			disk_info.Pyrite10_revertedPIN = body->pyrite10.revertedPIN;
+			break;
+		case FC_PYRITEV200: /* Pyrite V200 */
+			disk_info.Pyrite20 = 1;
+			disk_info.ANY_OPAL_SSC = 1;
+			disk_info.Pyrite20_basecomID = SWAP16(body->pyrite20.baseCommID);
+			disk_info.Pyrite20_numcomIDs = SWAP16(body->pyrite20.numCommIDs);
+			disk_info.Pyrite20_initialPIN = body->pyrite20.initialPIN;
+			disk_info.Pyrite20_revertedPIN = body->pyrite20.revertedPIN;
+			break;
         default:
 			if (0xbfff < (SWAP16(body->TPer.featureCode))) {
 				// silently ignore vendor specific segments as there is no public doc on them
@@ -252,6 +297,7 @@ void DtaDev::puke()
 			<< "LockingSupported = " << (disk_info.Locking_lockingSupported ? "Y, " : "N, ");
 		cout << "MBRDone = " << (disk_info.Locking_MBRDone ? "Y, " : "N, ")
 			<< "MBREnabled = " << (disk_info.Locking_MBREnabled ? "Y, " : "N, ")
+			<< "MBRAbsent = " << (disk_info.Locking_MBRAbsent ? "Y, " : "N, ")
 			<< "MediaEncrypt = " << (disk_info.Locking_mediaEncrypt ? "Y" : "N")
 			<< std::endl;
 	}
@@ -321,6 +367,30 @@ void DtaDev::puke()
 		cout << "    Maximum Key Count = " << disk_info.Namespace_MaximumKeyCount;
 		cout << ", Unused Key Count = " << disk_info.Namespace_UnusedKeyCount;
 		cout << ", Maximum Ranges Per Namespace = " << disk_info.Namespace_MaximumRangesPerNamespace;
+		cout << std::endl;
+	}
+	if (disk_info.Opalite) {
+		cout << "Opalite function (" << HEXON(4) << FC_OPALITE << ")" << HEXOFF << std::endl;
+		cout << "    Base comID = " << HEXON(4) << disk_info.Opalite_basecomID << HEXOFF;
+		cout << ", comIDs = " << disk_info.Opalite_numcomIDs;
+		cout << ", Initial PIN = " << HEXON(2) << disk_info.Opalite_initialPIN << HEXOFF;
+		cout << ", Reverted PIN = " << HEXON(2) << disk_info.Opalite_revertedPIN << HEXOFF;
+		cout << std::endl;
+	}
+	if (disk_info.Pyrite10) {
+		cout << "Pyrite 1.0 function (" << HEXON(4) << FC_PYRITEV100 << ")" << HEXOFF << std::endl;
+		cout << "    Base comID = " << HEXON(4) << disk_info.Pyrite10_basecomID << HEXOFF;
+		cout << ", comIDs = " << disk_info.Pyrite10_numcomIDs;
+		cout << ", Initial PIN = " << HEXON(2) << disk_info.Pyrite10_initialPIN << HEXOFF;
+		cout << ", Reverted PIN = " << HEXON(2) << disk_info.Pyrite10_revertedPIN << HEXOFF;
+		cout << std::endl;
+	}
+	if (disk_info.Pyrite20) {
+		cout << "Pyrite 2.0 function (" << HEXON(4) << FC_PYRITEV200 << ")" << HEXOFF << std::endl;
+		cout << "    Base comID = " << HEXON(4) << disk_info.Pyrite20_basecomID << HEXOFF;
+		cout << ", comIDs = " << disk_info.Pyrite20_numcomIDs;
+		cout << ", Initial PIN = " << HEXON(2) << disk_info.Pyrite20_initialPIN << HEXOFF;
+		cout << ", Reverted PIN = " << HEXON(2) << disk_info.Pyrite20_revertedPIN << HEXOFF;
 		cout << std::endl;
 	}
 	if (disk_info.Unknown)

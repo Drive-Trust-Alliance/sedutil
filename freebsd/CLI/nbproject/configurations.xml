@@ -27,6 +27,9 @@
       <itemPath>../../Common/DtaDevOpal.h</itemPath>
       <itemPath>../../Common/DtaDevOpal1.h</itemPath>
       <itemPath>../../Common/DtaDevOpal2.h</itemPath>
+      <itemPath>../../Common/DtaDevOpalite.h</itemPath>
+      <itemPath>../../Common/DtaDevPyrite1.h</itemPath>
+      <itemPath>../../Common/DtaDevPyrite2.h</itemPath>
       <itemPath>../../Common/DtaEndianFixup.h</itemPath>
       <itemPath>../../Common/DtaHashPwd.h</itemPath>
       <itemPath>../../Common/DtaHexDump.h</itemPath>
@@ -63,6 +66,9 @@
       <itemPath>../../Common/DtaDevOpal.cpp</itemPath>
       <itemPath>../../Common/DtaDevOpal1.cpp</itemPath>
       <itemPath>../../Common/DtaDevOpal2.cpp</itemPath>
+      <itemPath>../../Common/DtaDevOpalite.cpp</itemPath>
+      <itemPath>../../Common/DtaDevPyrite1.cpp</itemPath>
+      <itemPath>../../Common/DtaDevPyrite2.cpp</itemPath>
       <itemPath>../../Common/DtaHashPwd.cpp</itemPath>
       <itemPath>../../Common/DtaHexDump.cpp</itemPath>
       <itemPath>../../Common/DtaOptions.cpp</itemPath>
@@ -178,6 +184,18 @@
       <item path="../../Common/DtaDevOpal2.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="../../Common/DtaDevOpal2.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaDevOpalite.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaDevOpalite.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaDevPyrite1.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaDevPyrite1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaDevPyrite2.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaDevPyrite2.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../Common/DtaEndianFixup.h" ex="false" tool="3" flavor2="0">
       </item>
