@@ -82,8 +82,12 @@ uint8_t DtaDevFreeBSDNvme::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t co
 		LOG(D4) << "NVME_PASSTHROUGH_CMD failed";
 		return (errno);
 	} else if (nvme_completion_is_error(&pt.cpl)) {
-		LOG(D4) << "NVME Security Command Error: " <<
-		    std::hex << pt.cpl.status;
+		LOG(D4) << "NVME Security Command Error: " << std::hex <<
+#if __FreeBSD_version >= 1200058
+		    pt.cpl.status;
+#else
+		    pt.cpl.status.sct << " " << pt.cpl.status.sc;
+#endif
 		return (0xff);
 	} else
 		LOG(D4) << "NVME Security Command Success";
