@@ -99,7 +99,7 @@ void usage()
     printf("Examples \n");
     printf("sedutil-cli --scan \n");
 	printf("sedutil-cli --query %s \n", DEVICEEXAMPLE);
-	printf("sedutil-cli --yesIreallywanttoERASEALLmydatausingthePSID <PSIDALLCAPSNODASHED> %s \n", DEVICEEXAMPLE);
+	printf("sedutil-cli --yesIreallywanttoERASEALLmydatausingthePSID <PSIDNODASHED> %s \n", DEVICEEXAMPLE);
 	printf("sedutil-cli --initialSetup <newSIDpassword> %s \n", DEVICEEXAMPLE);
     return;
 }
