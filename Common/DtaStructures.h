@@ -165,6 +165,12 @@ typedef struct _Discovery0OpalV100 {
 	uint8_t length;
 	uint16_t baseComID;
 	uint16_t numberComIDs;
+	/* big endian
+	uint8_t reserved01 : 7;
+	uint8_t rangeCrossing : 1;
+	 */
+	uint8_t rangeCrossing : 1;
+	uint8_t reserved01 : 7;
 } Discovery0OpalV100;
 /** Single User Mode feature 
  */
@@ -436,6 +442,7 @@ typedef struct _OPAL_DiskInfo {
     uint32_t DataStore_alignment;
 	uint16_t OPAL10_basecomID;
 	uint16_t OPAL10_numcomIDs;
+    uint8_t OPAL10_rangeCrossing;
     uint16_t OPAL20_basecomID;
     uint16_t OPAL20_numcomIDs;
     uint8_t OPAL20_initialPIN;

@@ -190,6 +190,7 @@ void DtaDev::discovery0()
 			disk_info.ANY_OPAL_SSC = 1;
 	        disk_info.OPAL10_basecomID = SWAP16(body->opalv100.baseComID);
             disk_info.OPAL10_numcomIDs = SWAP16(body->opalv100.numberComIDs);
+            disk_info.OPAL10_rangeCrossing = body->opalv100.rangeCrossing;
             break;
         case FC_SINGLEUSER: /* Single User Mode */
             disk_info.SingleUser = 1;
@@ -323,8 +324,9 @@ void DtaDev::puke()
 	}
 	if (disk_info.OPAL10) {
 		cout << "Opal V1.0 function (" << HEXON(4) << FC_OPALV100 << HEXOFF << ")" << std::endl;
-		cout << "Base comID = " << HEXON(4) << disk_info.OPAL10_basecomID << HEXOFF
+		cout << "    Base comID = " << HEXON(4) << disk_info.OPAL10_basecomID << HEXOFF
 			<< ", comIDs = " << disk_info.OPAL10_numcomIDs
+			<< ", Range Crossing = " << (disk_info.OPAL10_rangeCrossing ? "Y" : "N")
 			<< std::endl;
 	}
 	if (disk_info.SingleUser) {
