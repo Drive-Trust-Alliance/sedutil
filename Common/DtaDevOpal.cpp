@@ -202,6 +202,27 @@ uint8_t DtaDevOpal::initialSetup(char * password)
 		LOG(E) << "setup audit user failed " << dev;
 		return lastRC;
 	}
+	LOG(I) << "setup normal user" << dev;
+	/*
+		enableUser(true, password, buf); // true : enable user; false: disable user
+	enableUserRead(true, password, buf);
+	
+	*/
+	char buf[5] = { 'U','s','e','r','1' };
+
+	if ((lastRC = enableUser(true, password, buf)) != 0) {
+		LOG(E) << "enable user failed " << dev;
+		return lastRC;
+	}
+	if ((lastRC = enableUserRead(true, password, buf)) != 0) {
+		LOG(E) << "enable user read failed " << dev;
+		return lastRC;
+	}
+	if ((lastRC = setPassword(password, buf, "USER1")) != 0) { // set User1 password as USER1 default
+		LOG(E) << "set user password failed " << dev;
+		return lastRC;
+	}
+
 	LOG(D1) << "Exiting initialSetup() " << dev;
 	return 0;
 }
@@ -254,7 +275,7 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 		translate_req = saved_t_flag;
 		no_hash_passwords = saved_flag ;
 	}
-
+	// 
 	if ((lastRC = setPassword(password, buf, (char *)p1) != 0))
 	{
 		LOG(E) << "setup h user failed " << dev;
@@ -958,7 +979,7 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 			//delete session;
 			return lastRC;
 		}
-		setuphuser(newpassword);
+		//setuphuser(newpassword); // do not setup audit user when set admin password 
 	}
 	//else {
 	//	LOG(I) << "User try set password ";
