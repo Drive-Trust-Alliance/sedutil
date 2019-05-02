@@ -168,13 +168,17 @@ uint8_t DtaDevOpal::initialSetup(char * password)
 	LOG(D1) << "Entering initialSetup() " << dev;
 	uint8_t lastRC;
 
-	if ((lastRC = takeOwnership(password)) != 0) {
-		LOG(E) << "Initial setup failed - unable to take ownership " << dev;
-		return lastRC;
-	}
-	if ((lastRC = activateLockingSP(password)) != 0) {
-		LOG(E) << "Initial setup failed - unable to activate LockingSP " << dev;
-		return lastRC;
+	if (!skip_activate) {
+		LOG(I) << "skip activateLockingSP"; 
+		if ((lastRC = takeOwnership(password)) != 0) {
+			LOG(E) << "Initial setup failed - unable to take ownership " << dev;
+			return lastRC;
+		}
+
+		if ((lastRC = activateLockingSP(password)) != 0) {
+			LOG(E) << "Initial setup failed - unable to activate LockingSP " << dev;
+			return lastRC;
+		}
 	}
 	if ((lastRC = configureLockingRange(0, DTA_DISABLELOCKING, password)) != 0) {
 		LOG(E) << "Initial setup failed - unable to configure global locking range " << dev;

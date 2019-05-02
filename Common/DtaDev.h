@@ -304,6 +304,7 @@ public:
 	bool no_hash_passwords; /** disables hashing of passwords */
 	bool usermodeON = FALSE;
 	bool translate_req = FALSE;
+	bool skip_activate = FALSE;
 	char LicenseLevel[32];
 	const char * dev;   /**< character string representing the device in the OS lexicon */
 protected:

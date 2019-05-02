@@ -37,7 +37,8 @@ typedef struct _DTA_OPTIONS {
 	bool no_hash_passwords; /** global parameter, disables hashing of passwords */
 	bool usermode; /* true : start session with UserN UID, otherwise with AdminN UID */
 	uint8_t devusb;			/** usb devname */
-	bool		translate_req;	/* global parameter, require to translate the hashed password string into hex data */
+	bool	translate_req;	/* global parameter, require to translate the hashed password string into hex data */
+	bool	skip_activate; /* skip activation LockingSP during initial setup */
 } DTA_OPTIONS;
 /** Print a usage message */
 void usage();

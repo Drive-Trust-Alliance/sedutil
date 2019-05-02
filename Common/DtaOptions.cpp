@@ -130,6 +130,11 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			LOG(D) << "Log level set to " << CLog::ToString(CLog::FromInt(loggingLevel));
 			LOG(D) << "sedutil version : " << GIT_VERSION;
 		}
+		else if (!(strcmp("-a", argv[i]))) {
+			baseOptions += 1;
+			opts->skip_activate = true;
+			LOG(D) << "Do not activate LockingSP";
+		}
 		else if (!(strcmp("-u", argv[i]))) {
 			baseOptions += 1;
 			opts->usermode = true;

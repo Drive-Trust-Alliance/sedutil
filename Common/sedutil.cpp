@@ -912,6 +912,10 @@ int main(int argc, char * argv[])
 	*/
 #endif
 
+	for (int i = 0; i < argc; i++)
+		printf("%s ", argv[i]);
+	printf("\n");
+
 	if ((opts.action != sedutiloption::scan) && 
 		(opts.action != sedutiloption::validatePBKDF2) &&
 		(opts.action != sedutiloption::version) &&
@@ -952,6 +956,7 @@ int main(int argc, char * argv[])
 		d->no_hash_passwords = opts.no_hash_passwords;
 		d->usermodeON = opts.usermode;
 		d->translate_req = opts.translate_req;
+		d->skip_activate = opts.skip_activate;
 		// only for window
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 		//d->LicenseLevel = (char *) malloc(32);
@@ -1203,7 +1208,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-	printf("Fidelity Lock Version : 0.8.0.%s.%s 20190429-A001\n", st1.c_str(),GIT_VERSION);
+	printf("Fidelity Lock Version : 0.8.0.%s.%s 20190502-A001\n", st1.c_str(),GIT_VERSION);
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:
