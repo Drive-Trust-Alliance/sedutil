@@ -4158,7 +4158,7 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
     hdr = (OPALHeader *) cmd->getRespBuffer();
 
     do {
-        osmsSleep(25); // could it be too fast if multiple drive situation ?????, 25->250 does not help
+        osmsSleep(100); // could it be too fast if multiple drive situation ?????, 25->250 does not help; 25->50 better, ->100
         memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
 		LOG(D1) << "Entering DtaDevOpal::exec sendCmd(IF_RECV, IO_BUFFER_LENGTH) " << dev ; 
         lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
