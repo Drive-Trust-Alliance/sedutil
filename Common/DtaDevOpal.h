@@ -139,6 +139,7 @@ public:
 	uint8_t enableUserRead(uint8_t mbrstate, char * password, char * userid);
 	uint8_t userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * userid);
 	uint8_t setMBRDone(uint8_t state, char * Admin1Password);
+	uint8_t TCGreset(uint8_t mbrstate);
           /** Primitive to set the MBREnable flag.
          * @param state 0 or 1  
          * @param Admin1Password Locking SP authority with access to flag

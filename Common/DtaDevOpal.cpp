@@ -1106,6 +1106,15 @@ uint8_t DtaDevOpal::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 
 	return 0;
 }
+uint8_t DtaDevOpal::TCGreset(uint8_t mbrstate)
+{
+	LOG(I) << "Entering DtaDevOpal::TCGreset " << dev;
+	uint8_t lastRC;
+	if (mbrstate) { // mbrstate=1 , Tper Reset;  mbrstate=2, STACK_RESET
+		DtaDev::TperReset();
+	}
+	return 0;
+}
 uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 	char * Admin1Password)
 {
@@ -4155,6 +4164,14 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 		LOG(E) << "Command failed on send " << (uint16_t) lastRC << dev;
         return lastRC;
     }
+
+	/* if TperReset, no response cmd to send */
+	if ((protocol == 0x02) && (comID() == 0x0004)) {
+		LOG(I) << "TperReset, No reponse command after all";
+		return 0;
+	}
+
+
     hdr = (OPALHeader *) cmd->getRespBuffer();
 
     do {

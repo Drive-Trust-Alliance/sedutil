@@ -445,6 +445,14 @@ uint8_t DtaDevEnterprise::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 	return 0;
 }
 
+uint8_t DtaDevEnterprise::TCGreset(uint8_t mbrstate)
+{
+	LOG(D1) << "Entering DtaDevEnterprise::TCGreset";
+
+	LOG(D1) << "Exiting DtaDevEnterprise::TCGreset";
+	return 0;
+}
+
 uint8_t DtaDevEnterprise::setupLockingRange(uint8_t lockingrange, uint64_t start, uint64_t length, char * password)
 {
 	uint8_t lastRC;

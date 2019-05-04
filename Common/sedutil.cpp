@@ -1215,6 +1215,10 @@ int main(int argc, char * argv[])
 		LOG(D) << "Hash Validation";
 		return hashvalidate(argv[opts.password],argv[opts.device]);
 		break;
+	case sedutiloption::TCGreset:
+		LOG(D) << "TCG Reset " <<  " " << argv[opts.device];
+		return (d->TCGreset(opts.mbrstate));
+		break;
     default:
         LOG(E) << "Unable to determine what you want to do ";
         usage();

@@ -89,6 +89,7 @@ typedef enum _sedutiloption {
     setBandEnabled,
 	setMBREnable,
 	setMBRDone,
+	TCGreset,
 	enableuser,
 	enableuserread,
 	activateLockingSP,

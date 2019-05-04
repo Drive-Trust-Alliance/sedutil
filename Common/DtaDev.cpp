@@ -284,6 +284,23 @@ OK101:
     while (cpos < epos);
 
 }
+uint8_t DtaDev::TperReset()
+{
+	LOG(D1) << "Entering DtaDev::TperReset()";
+	uint8_t lastRC;
+	void * tpResponse = NULL;
+	tpResponse = discovery0buffer + IO_BUFFER_ALIGNMENT;
+	tpResponse = (void *)((uintptr_t)tpResponse & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+	memset(tpResponse, 0, IO_BUFFER_LENGTH);
+	// TperReset ProtocolID=0x02 ComID=0x0004
+	if ((lastRC = sendCmd(IF_SEND, 0x02, 0x0004, tpResponse, 512)) != 0) { // 2048->512
+		LOG(D1) << "Send TperReset to device failed " << (uint16_t)lastRC;
+		return lastRC;
+	}
+	DtaHexDump((char *)tpResponse,64);
+	return 0;
+}
+
 void DtaDev::puke()
 {
 	LOG(D1) << "Entering DtaDev::puke()";

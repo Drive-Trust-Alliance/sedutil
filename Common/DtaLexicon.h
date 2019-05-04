@@ -129,6 +129,7 @@ static const uint8_t OPALUID[][8]{
 	{ 0x00, 0x00, 0x00, 0x08, 0x00, 0x03, 0xF0, 0x01 }, /* < UID ACE_Locking_GlobalRange_Admin_Start set starting and length */
 
 
+
 };
 /** Enum to index OPALUID array */
 typedef enum _OPAL_UID {
