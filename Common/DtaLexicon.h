@@ -127,8 +127,8 @@ static const uint8_t OPALUID[][8]{
 
 	{ 0x00, 0x00, 0x00, 0x08, 0x00, 0x03, 0xF0, 0x00 }, /* < UID ACE_Locking_GlobalRange_Admin_Set  enable locking*/
 	{ 0x00, 0x00, 0x00, 0x08, 0x00, 0x03, 0xF0, 0x01 }, /* < UID ACE_Locking_GlobalRange_Admin_Start set starting and length */
-
-
+	{ 0x00, 0x00, 0x00, 0x08, 0x00, 0x03, 0x00, 0x03 }, /* NOT_AUTHO  < UID ACE_TperInfo_Set_ProgrammaticResetEnable*/
+	//{ 0x00, 0x00, 0x02, 0x01, 0x00, 0x03, 0x00, 0x01 }, /* invalid parameter */
 
 };
 /** Enum to index OPALUID array */
@@ -226,7 +226,7 @@ typedef enum _OPAL_UID {
 	OPAL_ACE_Locking_GlobalRange_Set_WriteLocked,
 	OPAL_ACE_Locking_GlobalRange_Admin_Set,	// allow to set/reset 
 	OPAL_ACE_Locking_GlobalRange_Admin_Start, // allow to set/reset range start and length
-
+	OPAL_ACE_TperInfo_Set_ProgrammaticResetEnable, // 
 } OPAL_UID;
 
 /** TCG Storage SSC Methods.
@@ -286,6 +286,8 @@ typedef enum _OPAL_TOKEN {
 	VALUES = 0x01,
 	LOCKONRESETCOLUMN = 0x09,
 	LOCKONRESETVALUE = 0x03,
+	TPERRESETENABLECOLUMN = 0x08,
+	TPERRESETENABLEVALUE = 0x01, // TRUE=0, FALSE=0
 	// authority table
 	PIN = 0x03,
 	TryLimit = 0x05,

@@ -110,7 +110,8 @@ uint8_t DtaDiskUSB::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, vo
 	scsi->sd.Cdb[3] = protocol;
 	scsi->sd.Cdb[7] = ((comID & 0xff00) >> 8); // Commid MSB
 	scsi->sd.Cdb[6] = (comID & 0x00ff); // Commid LSB
-	
+	// JERRY 
+	//printf("comID=%04Xh;   protocol=%04Xh\n", comID, protocol);
  
     DeviceIoControl(hDev, // device to be queried
                     IOCTL_SCSI_PASS_THROUGH_DIRECT, // operation to perform

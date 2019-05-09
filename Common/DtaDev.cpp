@@ -301,6 +301,25 @@ uint8_t DtaDev::TperReset()
 	return 0;
 }
 
+/*
+uint8_t DtaDev::SATCK_Reset()
+{
+	LOG(D1) << "Entering DtaDev::STACK_Reset()";
+	uint8_t lastRC;
+	void * STACKResponse = NULL;
+	STACKResponse = discovery0buffer + IO_BUFFER_ALIGNMENT;
+	STACKResponse = (void *)((uintptr_t)STACKResponse & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+	memset(STACKResponse, 0, IO_BUFFER_LENGTH);
+	// STACK_RESET 
+	if ((lastRC = sendCmd(IF_SEND, 0x02, 0x0004, STACKResponse, 512)) != 0) { // 2048->512
+		LOG(D1) << "Send STACK_Reset to device failed " << (uint16_t)lastRC;
+		return lastRC;
+	}
+	DtaHexDump((char *)STACKResponse, 64);
+	return 0;
+}
+*/
+
 void DtaDev::puke()
 {
 	LOG(D1) << "Entering DtaDev::puke()";

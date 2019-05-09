@@ -96,6 +96,74 @@ void DtaDevOpal::gethuser(char * buf)
 		buf[ii] = hUser.at(ii);
 }
 
+ uint8_t DtaDevOpal::setTperResetEnable(bool enable,char * password)
+{
+		LOG(I) << "Entering DtaDevOpal::setTPerResetEnable()";
+		uint8_t lastRC;
+		/*
+		vector<uint8_t> LR;
+		LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+		for (int i = 0; i < 8; i++) {
+			LR.push_back(OPALUID[OPAL_UID::OPAL_ACE_TperInfo_Set_ProgrammaticResetEnable][i]);
+		}
+		*/
+		session = new DtaSession(this);
+		if (NULL == session) {
+			LOG(E) << "Unable to create session object " << dev;
+			return DTAERROR_OBJECT_CREATE_FAILED;
+		}// OPAL_ADMINSP_UID
+		//if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, OPAL_UID::OPAL_SID_UID)) != 0) {
+		if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, OPAL_UID::OPAL_SID_UID)) != 0) {
+			delete session;
+			return lastRC;
+		}
+		//if ((lastRC = getTable(LR, OPAL_TOKEN::ACTIVEKEY, OPAL_TOKEN::ACTIVEKEY)) != 0) {
+		//	delete session;
+		//	return lastRC;
+		//}
+		DtaCommand *rekey = new DtaCommand();
+		if (NULL == rekey) {
+			LOG(E) << "Unable to create command object " << dev;
+			delete session;
+			return DTAERROR_OBJECT_CREATE_FAILED;
+		}
+		rekey->reset(OPAL_UID::OPAL_ACE_TperInfo_Set_ProgrammaticResetEnable, OPAL_METHOD::SET);
+		//rekey->changeInvokingUid(LR);
+		rekey->addToken(OPAL_TOKEN::STARTLIST);
+		rekey->addToken(OPAL_TOKEN::STARTNAME);
+		rekey->addToken(OPAL_TOKEN::VALUES);
+
+		rekey->addToken(OPAL_TOKEN::STARTLIST);
+		rekey->addToken(OPAL_TOKEN::STARTNAME);
+		rekey->addToken(OPAL_TOKEN::TPERRESETENABLECOLUMN);
+
+		rekey->addToken(OPAL_TOKEN::STARTLIST);
+		rekey->addToken(OPAL_TOKEN::WHERE);
+		if (enable) 
+			rekey->addToken(OPAL_TOKEN::TPERRESETENABLEVALUE);
+		else
+			rekey->addToken(OPAL_TOKEN::WHERE); // Do I need WHERE ?
+		rekey->addToken(OPAL_TOKEN::ENDLIST);
+
+		rekey->addToken(OPAL_TOKEN::ENDNAME);
+		rekey->addToken(OPAL_TOKEN::ENDLIST);
+		rekey->addToken(OPAL_TOKEN::ENDNAME);
+		rekey->addToken(OPAL_TOKEN::ENDLIST);
+		rekey->complete();
+		rekey->dumpCommand(); // JERRY 
+
+		if ((lastRC = session->sendCommand(rekey, response)) != 0) {
+			LOG(E) << "setTPerResetEnable  " << (enable ? "ON" : "OFF") << " Failed " << dev;
+			delete rekey;
+			delete session;
+			return lastRC;
+		}
+		delete rekey;
+		delete session;
+		
+		LOG(D1) << "Exiting DtaDevOpal::setTPerResetEnable() " << dev;
+		return 0;
+}
  uint8_t DtaDevOpal::setLockonReset(uint8_t lockingrange, bool enable,char * password)
 {
 
@@ -1080,6 +1148,13 @@ uint8_t DtaDevOpal::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 }
 uint8_t DtaDevOpal::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 {
+	// hijack to setTperResetEnable
+	LOG(I) << "Entering HIJACKED DtaDevOpal::setMBRDon " << dev;
+	bool state;
+	state = true;
+	setTperResetEnable(state, Admin1Password);
+	return 0;
+
 	LOG(D1) << "Entering DtaDevOpal::setMBRDone " << dev;
 	uint8_t lastRC;
 	if (mbrstate) {
@@ -1110,9 +1185,48 @@ uint8_t DtaDevOpal::TCGreset(uint8_t mbrstate)
 {
 	LOG(I) << "Entering DtaDevOpal::TCGreset " << dev;
 	uint8_t lastRC;
-	if (mbrstate) { // mbrstate=1 , Tper Reset;  mbrstate=2, STACK_RESET
-		DtaDev::TperReset();
+	switch (mbrstate) { 
+		case 1 : // mbrstate=1 , Tper Reset;  mbrstate=2, STACK_RESET
+			LOG(I) << "TPerReset";
+			DtaDev::TperReset();
+			break;
+		case 2 : 
+			LOG(I) << "STACK_RESET";
+			STACK_RESET();
+			break;
+		default : 
+		// default do nothing 
+			break;
 	}
+	return 0;
+}
+uint8_t DtaDevOpal::STACK_RESET()
+{
+	LOG(D1) << "Entering DtaDevOpal::STACK_RESET " << dev;
+	uint8_t lastRC;
+	DtaCommand *set = new DtaCommand();
+	if (NULL == set) {
+		LOG(E) << "Unable to create command object " << dev;
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	set->reset();
+	set->setcomID(comID());
+	set->addToken((uint32_t)0x02);
+	LOG(I) << "1st dump";
+	set->dumpCommand();
+
+	// 8 - transfer len == 0 
+	set->complete();
+	LOG(I) << "2nd dump";
+	set->dumpCommand();
+
+	if ((lastRC = session->sendCommand(set, response)) != 0) {
+		LOG(E) << "StackReset Fail " << dev;
+		delete set;
+		return lastRC;
+	}
+	delete set;
+	LOG(D1) << "Exiting DtaDevOpal::STACK_RESET " << dev;
 	return 0;
 }
 uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
@@ -2016,14 +2130,40 @@ uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len,
 	} // if empty entry past, fill up the entry with system time
 	// otherwise, past entry already has time stamp and eventID
 	entryA.insert(entryA.begin(), *pent); // push_back -> insert
-	if (entryA.size() > MAX_ENTRY * 8) {
-		LOG(D1) << "Next execute erase()";
-		entryA.erase(entryA.begin() + MAX_ENTRY);
+	//printf("entryA.size()=%u\n", entryA.size());
+	//for (int kkk = 0; kkk < entryA.size(); kkk++) printf("%02X", entryA.at(kkk));
+	//printf("\n");
+	//if (entryA.size() > MAX_ENTRY * 8) {
+	//printf("size of entryA * 8 = %zd\n", entryA.size() * 8);
+	ptr->header.num_entry = (ptr->header.num_entry + 1); // inc number of entry if less than MAX_ENTRY, otherwise maintain the MAX_ENTRY 
+	ptr->header.tail = (ptr->header.tail + 1);
+	if (ptr->header.num_entry > MAX_ENTRY) {
+
+		LOG(D1) << "num of entry exceed MAX_ENT ; erase() the last entry ";
+		ptr->header.num_entry = MAX_ENTRY;
+		ptr->header.tail = (ptr->header.tail - 1);
+		try {
+			entryA.erase(entryA.end()-1);
+		}
+		catch (char *e) {
+			printf("Exception Caught: %s\n", e);
+		}
 	}
-	//printf("size of entryA = %zd\n", entryA.size() * 8);
+
 	memcpy(ptr->buffer, &entryA[0], MAX_ENTRY * 8);
- 	ptr->header.num_entry = (ptr->header.num_entry + 1) % MAX_ENTRY;
-	ptr->header.tail = (ptr->header.tail + 1) % MAX_ENTRY;
+	/*
+	if (entryA.size() > MAX_ENTRY ) {
+		LOG(I) << "erase() the last entry ";
+		entryA.erase(entryA.end());
+	}
+	else {
+		memcpy(ptr->buffer, &entryA[0], MAX_ENTRY * 8);
+		if (ptr->header.num_entry < MAX_ENTRY) {
+			ptr->header.num_entry = (ptr->header.num_entry + 1); // inc number of entry if less than MAX_ENTRY, otherwise maintain the MAX_ENTRY 
+			ptr->header.tail = (ptr->header.tail + 1);
+		}
+	}
+	*/
 	wrtchksum(buffer, genchksum(buffer));
 	if (0)
 	{
@@ -2283,14 +2423,95 @@ uint8_t DtaDevOpal::auditRead(char * password, char * userid)
 	return lastRC;
 }
 
+// duplicate from DtaHashPwd.cpp 
+// credit
+// https://www.codeproject.com/articles/99547/hex-strings-to-raw-data-and-back
+//
+
+inline unsigned char hex_digit_to_nybble(char ch)
+{
+	switch (ch)
+	{
+	case '0': return 0x0;
+	case '1': return 0x1;
+	case '2': return 0x2;
+	case '3': return 0x3;
+	case '4': return 0x4;
+	case '5': return 0x5;
+	case '6': return 0x6;
+	case '7': return 0x7;
+	case '8': return 0x8;
+	case '9': return 0x9;
+	case 'a': return 0xa;
+	case 'A': return 0xa;
+	case 'b': return 0xb;
+	case 'B': return 0xb;
+	case 'c': return 0xc;
+	case 'C': return 0xc;
+	case 'd': return 0xd;
+	case 'D': return 0xd;
+	case 'e': return 0xe;
+	case 'E': return 0xe;
+	case 'f': return 0xf;
+	case 'F': return 0xf;
+	default: return 0xff;  // throw std::invalid_argument();
+	}
+}
+
+vector<uint8_t> hex2data_a(char * password)
+{
+	vector<uint8_t> h;
+	h.clear();
+	if (false)
+		printf("strlen(password)=%d\n", (int)strlen(password));
+	/*
+	if (strlen(password) != 16)
+	{
+		//LOG(I) << "Hashed Password length isn't 64-byte, no translation";
+		h.clear();
+		for (uint16_t i = 0; i < (uint16_t)strnlen(password, 32); i++)
+			h.push_back(password[i]);
+		return h;
+	}
+	*/
+	
+	//printf("GUI hashed password=");
+	for (uint16_t i = 0; i < (uint16_t)strlen(password); i += 2)
+	{
+		h.push_back(
+			(hex_digit_to_nybble(password[i])) * 10 +  // high 4-bit
+			(hex_digit_to_nybble(password[i + 1]) & 0x0f)); // lo 4-bit
+	}
+	//for (uint16_t i = 0; i < (uint16_t)h.size(); i++)
+	//	printf("%02x", h[i]);
+	//printf("\n");
+	return h;
+}
 uint8_t DtaDevOpal::auditWrite(char * password, char * idstr, char * userid)
 {
 	uint8_t lastRC;
 	entry_t ent;
+	uint8_t * pent; 
+	pent = (uint8_t *)&ent;
 	memset(&ent, 0, sizeof(entry_t));
-	char t[2];
-	memset(t, 0, 3);
-	DtaHexDump(idstr, 16);
+	char t[16];
+	memset(t, 0, 16);
+	//DtaHexDump(idstr, 16);
+	vector<uint8_t> h;
+	h.clear();
+	h = hex2data_a(idstr);
+	uint16_t len = 0; 
+	if (h.size() < 8) {
+		for (int jj = 0; jj < (8 - h.size()); jj++ ) h.push_back(0); // fill up h to 8 bytes
+	}
+
+	for (uint8_t ii = 0; ii < 8; ii++) {
+		pent[ii] = h.at(ii);
+	}
+	//DtaHexDump(pent, 16);
+	//DtaHexDump(&ent, 16);
+
+	/*
 	memcpy(t, idstr, 2);
 	DtaHexDump(t, 3);
 	ent.event = (uint8_t)atoi(t);
@@ -2313,6 +2534,7 @@ uint8_t DtaDevOpal::auditWrite(char * password, char * idstr, char * userid)
 	memcpy(t, idstr+12, 2);
 	ent.sec = (uint8_t)atoi(t);
 	ent.reserved = 0;
+	*/
 
 	lastRC = auditRec(password, &ent, userid);
 	return lastRC;
@@ -4181,7 +4403,7 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
         lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
 		//LOG(I) << "hdr->cp.outstandingData)=" << hdr->cp.outstandingData << " hdr->cp.minTransfer=" << hdr->cp.minTransfer << dev;
 	}
-    while ((0 != hdr->cp.outstandingData) && (0 == hdr->cp.minTransfer));
+    while ((0 != hdr->cp.outstandingData) && (0 == hdr->cp.minTransfer));  // add timer --> advice from Joe
     LOG(D3) << std::endl << "Dumping reply buffer";
     IFLOG(D3) DtaHexDump(cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
 	if (0 != lastRC) {

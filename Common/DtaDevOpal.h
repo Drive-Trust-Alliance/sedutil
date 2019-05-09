@@ -140,6 +140,7 @@ public:
 	uint8_t userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * userid);
 	uint8_t setMBRDone(uint8_t state, char * Admin1Password);
 	uint8_t TCGreset(uint8_t mbrstate);
+	uint8_t STACK_RESET();
           /** Primitive to set the MBREnable flag.
          * @param state 0 or 1  
          * @param Admin1Password Locking SP authority with access to flag
@@ -257,6 +258,7 @@ public:
          */
 		 // create an audit user UserN disk_info.OPAL20_numUsers
 	void gethuser(char * buf);
+	uint8_t setTperResetEnable(bool enable, char * password);
 	uint8_t setLockonReset(uint8_t lockingrange, bool enable, char * password);
 	uint8_t setuphuser(char * password);
 	uint8_t initialSetup(char * password);

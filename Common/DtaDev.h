@@ -77,7 +77,6 @@ public:
 	 */
 	void discovery0();
 	uint8_t TperReset();
-
 	/*
 	 * virtual methods required in the OS specific
 	 * device class
