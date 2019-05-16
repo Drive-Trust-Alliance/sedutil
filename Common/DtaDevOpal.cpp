@@ -1149,11 +1149,13 @@ uint8_t DtaDevOpal::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 uint8_t DtaDevOpal::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 {
 	// hijack to setTperResetEnable
+	/*
 	LOG(I) << "Entering HIJACKED DtaDevOpal::setMBRDon " << dev;
 	bool state;
 	state = true;
 	setTperResetEnable(state, Admin1Password);
 	return 0;
+	*/
 
 	LOG(D1) << "Entering DtaDevOpal::setMBRDone " << dev;
 	uint8_t lastRC;
