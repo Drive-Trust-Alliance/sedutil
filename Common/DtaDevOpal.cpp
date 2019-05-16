@@ -290,7 +290,10 @@ uint8_t DtaDevOpal::initialSetup(char * password)
 		LOG(E) << "enable user read failed " << dev;
 		return lastRC;
 	}
-	if ((lastRC = setPassword(password, buf, "USER1")) != 0) { // set User1 password as USER1 default
+        char strname[20];
+	memset (strname,0,20);
+	strncpy(strname, "USER1", 255);
+	if ((lastRC = setPassword(password, buf, strname)) != 0) { // set User1 password as USER1 default
 		LOG(E) << "set user password failed " << dev;
 		return lastRC;
 	}
