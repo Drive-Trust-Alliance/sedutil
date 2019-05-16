@@ -67,13 +67,13 @@ typedef enum _evt{
 }evt;
 
 typedef struct _entry_t {
+	uint8_t event;
 	uint8_t yy;
 	uint8_t mm;
 	uint8_t dd;
 	uint8_t hh;
 	uint8_t min;
 	uint8_t sec;
-	uint8_t event;
 	uint8_t reserved;
 	//uint16_t reserved;
 } entry_t;
