@@ -306,8 +306,8 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 	char * buf = (char *)malloc(20);
 	memset(buf, 0, 20);
 	gethuser(buf);
-	enableUser(true, password, buf); // true : enable user; false: disable user
-	enableUserRead(true, password, buf);
+	if (enableUser(true, password, buf)) { LOG(E) << "enable audit User fail"; }; // true : enable user; false: disable user
+	if (enableUserRead(true, password, buf)) { LOG(E) << "enable User access fail"; };
 	//char p1[64] = "F0iD2eli81Ty"; //20->12 "pFa0isDs2ewloir81Tdy";
 	char p1[80]; // = { 'F','0','i','D','2','e','l','i','8','1','T','y',NULL };
 	memset(p1, 0, 80); // zero out pass
@@ -1982,7 +1982,7 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	vector <uint8_t> lengthtoken;
 	uint32_t filepos = startpos;
 
-	bufferA.insert(bufferA.begin(), buffer, buffer + len); 
+	bufferA.insert(bufferA.begin(), buffer, buffer + len ); 
 	//////////////////////////////////////////////
 	LOG(D1) << "bufferA contents after copy passed buffer content";
 	IFLOG(D4) DtaHexDump(bufferA.data(), 256);
@@ -2028,6 +2028,7 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	return lastRC;
 	}*/ 
 	LOG(D1) << "Writing to data store 0 " << dev;
+	LOG(I) << "filepos= " << filepos << " length= " << len << " " << dev;
 
 	cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::SET);
 	cmd->addToken(OPAL_TOKEN::STARTLIST);
@@ -2635,7 +2636,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 	LOG(D1) << "Entering DtaDevOpal::DataStoreWrite() " << dev;
 
 	ifstream datafile;
-	vector <uint8_t> bufferA(16384, 0x00); // (8192, 0x66); // 0 buffer  (57344, 0x00),
+	vector <uint8_t> bufferA(14336,0); // (16384, 0x00); // (8192, 0x66); // 0 buffer  (57344, 0x00),
 	vector <uint8_t> lengthtoken;
 	uint8_t lastRC;
 	uint64_t fivepercent = 0;
@@ -2646,7 +2647,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 	char star[] = "*";
 	char spinner[] = "|/-\\";
 	char progress_bar[] = "   [                     ]";
-	uint32_t blockSize = 16384;  // 57344; // 57344=512*112=E000h 1950=0x79E;
+	uint32_t blockSize = 14336;//  15360; // 16384;  // 57344; // 57344=512*112=E000h 1950=0x79E; 16384=512*32 for 17K MaxComPacketSize, 15360=512*30
 	uint32_t filepos = 0;
 	uint64_t imgsize;
 	uint32_t newSize;
@@ -2886,7 +2887,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	char star[] = "*";
 	char spinner[] = "|/-\\";
 	char progress_bar[] = "   [                     ]";
-	uint32_t blockSize = 16384; // 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
+	uint32_t blockSize = 14336; // 15360; //16384; // 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
 	uint32_t filepos = 0;
 	uint32_t newSize;
 
@@ -3079,7 +3080,7 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 	char star[] = "*";
 	char spinner[] = "|/-\\";
 	char progress_bar[] = "   [                     ]";
-	uint32_t blockSize = 16384;  // 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
+	uint32_t blockSize = 14336; // 15360; // 16384;  // 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
 	uint32_t filepos = 0;
 	uint32_t newSize;
 	uint32_t maxMBRSize;
@@ -3512,7 +3513,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	if (adj_host == 1)
 		blockSize = 57344; // 57344=512*112=E000h 1950=0x79E;  16384=512*32=0x4000
 	else
-		blockSize = 16384;
+		blockSize = 14336;//  15360; // 16384;
 	lengthtoken.clear();
 	lengthtoken.push_back(0xe2); // E2 is byte string which mean the followind data is byte-stream, but for read, there is no byte string so it should be E0
 	lengthtoken.push_back(0x00);
