@@ -125,11 +125,24 @@ void DtaDev::discovery0()
     uint8_t * epos, *cpos;
     Discovery0Header * hdr;
     Discovery0Features * body;
-	d0Response = discovery0buffer + IO_BUFFER_ALIGNMENT;
-	d0Response = (void *)((uintptr_t)d0Response & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+	d0Response = discovery0buffer;
+	// wrong memory alignment cause a huge difference. if correct, it seems run well 
+	//d0Response = (void *)((uintptr_t)d0Response & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+	d0Response = (void *)(((uintptr_t)d0Response + IO_BUFFER_ALIGNMENT - 1) & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+
 	memset(d0Response, 0, IO_BUFFER_LENGTH);
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-    if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, 2048)) != 0) { 
+	try {
+		lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, 2048); // IO_BUFFER_LENGTH); // 1024 * 14); // 12k->ok sometimes  10k->NG, 8k->NG 4096->NG); // IO_BUFFER_LENGTH->OK); // 2048->NG);
+	}
+	catch (char *error) // doesnt seem to catch any memory violation
+	{
+		printf("sendCmd Error : %s\n", error);
+		//ExitProcess(0);
+	}
+    if ((lastRC) != 0) { 
+		LOG(E) << "sendCmd failed; lastRC= " << lastRC;
+
     #endif
     #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
     if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, IO_BUFFER_LENGTH)) != 0) { 

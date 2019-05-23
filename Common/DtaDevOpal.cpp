@@ -84,6 +84,7 @@ void DtaDevOpal::init(const char * devref)
 	DtaDevOS::init(devref);
 	adj_host = 0; 
 	if((lastRC = properties()) != 0) { LOG(E) << "Properties exchange failed " << dev;}
+	else fill_prop(true);
 }
 
 // create an audit user UserN disk_info.OPAL20_numUsers
@@ -3515,8 +3516,10 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	adj_host_prop(1);
 	if (adj_host == 1)
 		blockSize = 57344; // 57344=512*112=E000h 1950=0x79E;  16384=512*32=0x4000
-	else
-		blockSize = 14336;//  15360; // 16384;
+	else if (adj_host == 2)
+		blockSize = Tper_sz_MaxIndTokenSize - 60; //  according to some source , it is smaller than what it claim 14336;//  15360; // 16384;
+	else if (adj_host == 0)
+		blockSize = 1992 - 60; //  1950 - 1932 ;
 	lengthtoken.clear();
 	lengthtoken.push_back(0xe2); // E2 is byte string which mean the followind data is byte-stream, but for read, there is no byte string so it should be E0
 	lengthtoken.push_back(0x00);
@@ -3525,7 +3528,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	if (embed == 0) {
 		pbafile.open(filename, ios::in | ios::binary);
 		if (!pbafile) {
-			adj_host_prop(2); // reset host properties to smaller size
+			adj_host_prop(0); // reset host properties to smaller size
 			LOG(E) << "Unable to open PBA image file " << filename;
 			return DTAERROR_OPEN_ERR;
 		}
@@ -3547,7 +3550,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 			CompressedBuffer = (PBYTE)malloc(CompressedBufferSize);
 			if (!CompressedBuffer)
 			{
-				adj_host_prop(2); // reset host properties to smaller size
+				adj_host_prop(0); // reset host properties to smaller size
 				LOG(E) << "Cannot allocate memory for compressed buffer.";
 				return DTAERROR_OPEN_ERR;
 			}
@@ -3636,7 +3639,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 
 		if (!Success || !somebuf)
 		{
-			adj_host_prop(2); // reset host properties to smaller size
+			adj_host_prop(0); // reset host properties to smaller size
 			return DTAERROR_OPEN_ERR;
 		}
 
@@ -3730,21 +3733,21 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
 		LOG(E) << "Unable to create command object " << dev;
-		adj_host_prop(2); // reset host properties to smaller size
+		adj_host_prop(0); // reset host properties to smaller size
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 
 	session = new DtaSession(this);
 	if (NULL == session) {
 		LOG(E) << "Unable to create session object " << dev;
-		adj_host_prop(2); // reset host properties to smaller size
+		adj_host_prop(0); // reset host properties to smaller size
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete cmd;
 		delete session;
 		pbafile.close();
-		adj_host_prop(2); // reset host properties to smaller size
+		adj_host_prop(0); // reset host properties to smaller size
 		return lastRC;
 	}
 	/* 
@@ -3779,7 +3782,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 						if (!somebuf)
 						{
 							LOG(E) << "Cannot allocate memory for last block buffer.";
-							adj_host_prop(2); // reset host properties to smaller size
+							adj_host_prop(0); // reset host properties to smaller size
 							return DTAERROR_OPEN_ERR;
 						}
 						memset(somebuf, 0, blockSize);
@@ -3836,7 +3839,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 			delete cmd;
 			delete session;
 			pbafile.close();
-			adj_host_prop(2); // reset host properties to smaller size
+			adj_host_prop(0); // reset host properties to smaller size
 			return lastRC;
 		}
 
@@ -3866,7 +3869,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 		delete cmd;
 		delete session;
 		pbafile.close();
-		adj_host_prop(2); // reset host properties to smaller size
+		adj_host_prop(0); // reset host properties to smaller size
 		return lastRC;
 	} */
 	delete cmd;
@@ -3879,7 +3882,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 
 	}
         #endif
-	adj_host_prop(2); // reset host properties to smaller size
+	adj_host_prop(0); // reset host properties to smaller size
 	LOG(D1) << "Exiting DtaDevOpal::loadPBAimage() " << dev;
 
 	return 0;
@@ -4388,7 +4391,8 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 		printf("Host_sz_MaxComPacketSize = %ld\n", Host_sz_MaxComPacketSize);
 	}
 	#endif
-	if ((lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), (adj_host == 1)? Host_sz_MaxComPacketSize : IO_BUFFER_LENGTH)) != 0) { // JERRY
+	printf("adj_io_buffer_length=", adj_io_buffer_length);
+	if ((lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), adj_io_buffer_length)) != 0) { // Tper_sz_MaxComPacketSize -> NG IO_BUFFER_LENGTH -> JERRY
 		LOG(E) << "Command failed on send " << (uint16_t) lastRC << dev;
         return lastRC;
     }
@@ -4406,7 +4410,7 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
         osmsSleep(100); // could it be too fast if multiple drive situation ?????, 25->250 does not help; 25->50 better, ->100
         memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
 		LOG(D1) << "Entering DtaDevOpal::exec sendCmd(IF_RECV, IO_BUFFER_LENGTH) " << dev ; 
-        lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
+		lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), adj_io_buffer_length); //  IO_BUFFER_LENGTH);
 		//LOG(I) << "hdr->cp.outstandingData)=" << hdr->cp.outstandingData << " hdr->cp.minTransfer=" << hdr->cp.minTransfer << dev;
 	}
     while ((0 != hdr->cp.outstandingData) && (0 == hdr->cp.minTransfer));  // add timer --> advice from Joe
@@ -4490,6 +4494,7 @@ uint8_t DtaDevOpal::properties()
 		delete session;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
+	LOG(I) << "adj_host = " << adj_host;
 	if (adj_host == 1) {
 		sz_MaxComPacketSize = 61440;
 		sz_MaxResponseComPacketSize = 61440;
@@ -4497,12 +4502,19 @@ uint8_t DtaDevOpal::properties()
 		sz_MaxIndTokenSize = 61384;
 		adj_io_buffer_length = 61440;
 	}
-	else {
-		sz_MaxComPacketSize = 17408; 
-		sz_MaxResponseComPacketSize = 17108; 
-		sz_MaxPacketSize = 17180; 
-		sz_MaxIndTokenSize = 16384;
-		adj_io_buffer_length = 17408;
+	else if (adj_host ==0) {
+		sz_MaxComPacketSize = 2048; // 10240; // 17408; 
+		sz_MaxResponseComPacketSize = 2048; // 10240; // 17108;
+		sz_MaxPacketSize = 2028; //  10220; // 17180;
+		sz_MaxIndTokenSize = 1992; //  10184; //  16384;
+		adj_io_buffer_length = 2048; // -> 2048 IO_BUFFER_LENGTH; // 10240; //  17408;
+	}
+	else if (adj_host == 2) {// anything less than 64K but greater than 2K, will adjust according to TPer returned size
+		sz_MaxComPacketSize = Tper_sz_MaxComPacketSize; // 10240; // 17408; 
+		sz_MaxResponseComPacketSize = Tper_sz_MaxResponseComPacketSize; // 10240; // 17108;
+		sz_MaxPacketSize = Tper_sz_MaxPacketSize; //  10220; // 17180;
+		sz_MaxIndTokenSize = Tper_sz_MaxIndTokenSize; //  10184; //  16384;
+		adj_io_buffer_length = Tper_sz_MaxComPacketSize + IO_BUFFER_ALIGNMENT; //  17408;
 	}
 	set_prop(props, sz_MaxComPacketSize, sz_MaxResponseComPacketSize, sz_MaxPacketSize, sz_MaxIndTokenSize);
 
@@ -4611,26 +4623,14 @@ void DtaDevOpal::puke()
 //act :2 : reset host property ; regardless if it has been adjust
 void DtaDevOpal::adj_host_prop(uint8_t act)
 {
-	//LOG(I) << "Enter adj_host_prop";
-	fill_prop(FALSE); // JERRY 
-	//printf("act =  %d\n", act);
-	switch (act) {
-	case 0 :
-	case 1 :
-		if (Tper_sz_MaxComPacketSize > 64 * 1024) {
-			//LOG(I) << "adj_host set to 1";
-			adj_host = 1;
-			properties();
-		}
-		break;
-	case 2 :
-		//LOG(I) << "adj_host set to 0";
-		adj_host = 0;
-		properties();
-		break;
-	} // switch 
+	LOG(I) << "Enter adj_host_prop";
+	//fill_prop(FALSE); // JERRY why there are two fill_property
+	printf("act =  %d\n", act);
+
+	adj_host = act;
+	properties();
 	fill_prop(FALSE); // JERRY must re-stuff the host property because properties() only exchange property with Tper but not set host_sz_Maxxxxxxxx
-	//LOG(I) << "Exit adj_host_prop";
+	LOG(I) << "Exit adj_host_prop";
 }
 
 uint8_t DtaDevOpal::objDump(char *sp, char * auth, char *pass,

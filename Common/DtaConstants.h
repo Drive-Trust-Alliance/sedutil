@@ -18,15 +18,15 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 /** Length of the IO buffers used */
-#define IO_BUFFER_LENGTH 15360 // 17408
+#define IO_BUFFER_LENGTH 12288 // 15360 // 17408
 #define IO_BUFFER_LENGTH_HI 61440
-#define IO_BUFFER_LENGTH_LO 15360 // 17408 
+#define IO_BUFFER_LENGTH_LO 12288 // 15360 // 17408 
 /** Alignment of the IO buffers.
 * generic align on 1k boundary probably not needed
 * but when things weren't working this was one of the 
 * things I tried to make it work.
 */
-#define IO_BUFFER_ALIGNMENT 4096
+#define IO_BUFFER_ALIGNMENT 1024 // 4096
 /** maximum number of disks to be scanned */
 #define MAX_DISKS 20
 /** iomanip commands to hexdump a field */

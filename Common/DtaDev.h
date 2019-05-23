@@ -312,18 +312,18 @@ protected:
 	uint8_t isOpen = FALSE;  /**< The device has been opened */
 	uint8_t isNVME = FALSE;  /**< This device is NVME */
 	uint8_t adj_host = FALSE; 
-	uint16_t adj_io_buffer_length = 17408; // user safe low buffer length
+	uint16_t adj_io_buffer_length = 2048; // 10240; // 17408; // user safe low buffer length
 	OPAL_DiskInfo disk_info;  /**< Structure containing info from identify and discovery 0 */
 	DtaResponse response;   /**< shared response object */
 	DtaResponse propertiesResponse;  /**< response from properties exchange */
 	DtaSession *session;  /**< shared session object pointer */
-	uint8_t discovery0buffer[IO_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT];
-	uint32_t Tper_sz_MaxComPacketSize;
-	uint32_t Tper_sz_MaxResponseComPacketSize;
-	uint32_t Tper_sz_MaxPacketSize;
-	uint32_t Tper_sz_MaxIndTokenSize;
-	uint32_t Host_sz_MaxComPacketSize;
-	uint32_t Host_sz_MaxResponseComPacketSize;
-	uint32_t Host_sz_MaxPacketSize;
-	uint32_t Host_sz_MaxIndTokenSize;
+	uint8_t discovery0buffer[IO_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT] ; // NG->__attribute__((aligned(16)));
+	uint32_t Tper_sz_MaxComPacketSize = 2048;
+	uint32_t Tper_sz_MaxResponseComPacketSize = 2048;
+	uint32_t Tper_sz_MaxPacketSize = 2028;
+	uint32_t Tper_sz_MaxIndTokenSize = 1992;
+	uint32_t Host_sz_MaxComPacketSize = 2048;
+	uint32_t Host_sz_MaxResponseComPacketSize = 2048;
+	uint32_t Host_sz_MaxPacketSize = 2028 ;
+	uint32_t Host_sz_MaxIndTokenSize = 1992 ;
 };
