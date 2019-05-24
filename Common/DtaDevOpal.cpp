@@ -1905,11 +1905,26 @@ uint8_t DtaDevOpal::MBRRead(char * password, uint32_t startpos, uint32_t len,cha
 
 uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, char * buffer, char * userid)
 {
-	LOG(D1) << "Entering DtaDevOpal::DataRead() " << dev;
+	LOG(I) << "Entering DtaDevOpal::DataRead() " << dev;
 	uint8_t lastRC;
 	vector<uint8_t> LR;
 	uint32_t filepos = startpos;
 	uint32_t blocksize = len;
+	
+	if ((len > 1950) &&  (Tper_sz_MaxComPacketSize > 2048) ) {
+	// adjust host property 
+		printf("\nread data lengtn = %ld Tper_sz_MaxComPacketSize = %ld\n", len , Tper_sz_MaxComPacketSize);
+		if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1; else adj_host = 2;
+		lastRC = properties();
+		if (lastRC != 0) {
+			LOG(E) << "adjust host property fail ; go back to MINIMUM packet size";
+			// improve later on with MINIMUM packet size 
+		}
+		else {
+			fill_prop(true);
+			blocksize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 60;
+		}
+	}
 
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
@@ -1943,7 +1958,9 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 			return lastRC;
 		}
 
-	LOG(D1) << "***** start read data store " << dev;
+	LOG(I) << "***** start read data store " << dev;
+
+	// need a loop here to handle len > blocksize 
 
 	cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::GET);
 	cmd->addToken(OPAL_TOKEN::STARTLIST);
@@ -2213,32 +2230,32 @@ uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len,
 	}
 }
 
-uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len, char * buffer, char * userid) // read audit log to Data Store
+uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len, char * buf, char * userid) // read audit log to Data Store
 {
 	LOG(D1) << "entering DtaDevOpal::auditlogrd " << dev;
 	//uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, char * buffer)
 	uint8_t lastRC;
 
-	lastRC = DataRead(password, startpos, len, buffer, userid);
+	lastRC = DataRead(password, startpos, len, buf, userid);
 	if (lastRC == 0)
 	{
-		audit_t * A = (audit_t *)buffer;
+		audit_t * A = (audit_t *)buf;
 		entry_t * ent;
 		char str1[] = SIGNATURE;
 		
 		if ((lastRC = (uint8_t)memcmp(A->header.signature, str1, strlen(str1))) != 0)
 		{
 			printf("Invalid Audit Signature or No Audit Entry log\n");
-			IFLOG(D4) DtaHexDump(buffer, gethdrsize());
+			IFLOG(D4) DtaHexDump(buf, gethdrsize());
 			return 0; // ERRCHKSUM;
 		}
-		if (getchksum(buffer) != genchksum(buffer))
+		if (getchksum(buf) != genchksum(buf))
 		{
 			LOG(D1) << "Audit log header check sum error " << dev;
 			return ERRCHKSUM; // checksum error 
 		}
 		printf("Fidelity Audit Log Version %d.%d :\n",A->header.ver_major,A->header.ver_minor);
-		IFLOG(D4) DtaHexDump(buffer + gethdrsize(), A->header.num_entry * 8);
+		IFLOG(D4) DtaHexDump(buf + gethdrsize(), A->header.num_entry * 8);
 
 		ent = (entry_t *)A->buffer;
 		printf("Total Number of Audit Entries: %d\n", A->header.num_entry);
@@ -2415,7 +2432,7 @@ uint8_t DtaDevOpal::auditErase(char * password, char * userid)
 
 uint8_t DtaDevOpal::auditRead(char * password, char * userid)
 {
-	char * buffer;
+	char * buf;
 	uint8_t lastRC;
 	uint32_t MAX_ENTRY;
 	LOG(I) << "***** enter audit read " << dev;
@@ -2424,9 +2441,9 @@ uint8_t DtaDevOpal::auditRead(char * password, char * userid)
 		MAX_ENTRY = 100;
 	}
 
-	buffer = (char *)malloc(8 * MAX_ENTRY + gethdrsize());
-	memset(buffer, 0, (MAX_ENTRY * 8) + gethdrsize());
-	lastRC = auditlogrd(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buffer,userid);
+	buf = (char *)malloc(8 * MAX_ENTRY + gethdrsize());
+	memset(buf, 0, (MAX_ENTRY * 8) + gethdrsize());
+	lastRC = auditlogrd(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buf,userid);
 	return lastRC;
 }
 
@@ -2891,7 +2908,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	char star[] = "*";
 	char spinner[] = "|/-\\";
 	char progress_bar[] = "   [                     ]";
-	uint32_t blockSize = 14336; // 15360; //16384; // 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
+	uint32_t blockSize = 1992; //  14336; // 15360; //16384; // 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
 	uint32_t filepos = 0;
 	uint32_t newSize;
 
@@ -2920,6 +2937,22 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 
 	}
 
+	// need to determine blockSize now
+	if ((len > 1950) && (Tper_sz_MaxComPacketSize > 2048)) {
+		// adjust host property 
+		printf("\nread data lengtn = %ld Tper_sz_MaxComPacketSize = %ld\n", len, Tper_sz_MaxComPacketSize);
+		if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1; else adj_host = 2;
+		lastRC = properties();
+		if (lastRC != 0) {
+			LOG(E) << "adjust host property fail ; go back to MINIMUM packet size";
+			// improve later on with MINIMUM packet size 
+		}
+		else {
+			fill_prop(true);
+			blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 60;
+		}
+	}
+
 	buffer = (char *)malloc(1024*58);
 	datafile.open(filename, ios::out | ios::binary);
 	if (!datafile) {
@@ -2929,6 +2962,11 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	//datafile.seekg(0, datafile.end);
 	//imgsize = datafile.tellg();
 	//printf("datafile size %I64Xh", imgsize);
+
+
+
+
+
 	fivepercent = (uint64_t)((disk_info.DataStore_maxTableSize / 20) / blockSize) * blockSize;
 	if (0 == fivepercent) fivepercent++;
 
@@ -4391,7 +4429,7 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 		printf("Host_sz_MaxComPacketSize = %ld\n", Host_sz_MaxComPacketSize);
 	}
 	#endif
-	printf("adj_io_buffer_length=", adj_io_buffer_length);
+	printf("adj_io_buffer_length=%d\n", adj_io_buffer_length);
 	if ((lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), adj_io_buffer_length)) != 0) { // Tper_sz_MaxComPacketSize -> NG IO_BUFFER_LENGTH -> JERRY
 		LOG(E) << "Command failed on send " << (uint16_t) lastRC << dev;
         return lastRC;
@@ -4476,10 +4514,10 @@ void DtaDevOpal::set_prop(DtaCommand *props ,uint16_t sz_MaxComPacketSize, uint1
 
 uint8_t DtaDevOpal::properties()
 {
-	uint16_t sz_MaxComPacketSize; // = 17408; // 61440;
-	uint16_t sz_MaxResponseComPacketSize; // = 17108; //  61440;
-	uint16_t sz_MaxPacketSize; // = 17180; // 61440;
-	uint16_t sz_MaxIndTokenSize; // = 16384; // 61384;
+	uint16_t sz_MaxComPacketSize = 2048; // = 17408; // 61440;
+	uint16_t sz_MaxResponseComPacketSize = 2048; // = 17108; //  61440;
+	uint16_t sz_MaxPacketSize = 2028; // = 17180; // 61440;
+	uint16_t sz_MaxIndTokenSize = 1992; // = 16384; // 61384;
 
 	LOG(D1) << "Entering DtaDevOpal::properties() " << dev;
 	uint8_t lastRC;
@@ -4494,7 +4532,6 @@ uint8_t DtaDevOpal::properties()
 		delete session;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
-	LOG(I) << "adj_host = " << adj_host;
 	if (adj_host == 1) {
 		sz_MaxComPacketSize = 61440;
 		sz_MaxResponseComPacketSize = 61440;
@@ -4514,8 +4551,11 @@ uint8_t DtaDevOpal::properties()
 		sz_MaxResponseComPacketSize = Tper_sz_MaxResponseComPacketSize; // 10240; // 17108;
 		sz_MaxPacketSize = Tper_sz_MaxPacketSize; //  10220; // 17180;
 		sz_MaxIndTokenSize = Tper_sz_MaxIndTokenSize; //  10184; //  16384;
-		adj_io_buffer_length = Tper_sz_MaxComPacketSize + IO_BUFFER_ALIGNMENT; //  17408;
+		adj_io_buffer_length = Tper_sz_MaxComPacketSize; // +IO_BUFFER_ALIGNMENT; //  17408;
+		// adj_io_buffer_length must not exceed TperMaxComPacketSize 
 	}
+	printf("adj_host = %d adj_io_buffer_length = %d\n", adj_host, adj_io_buffer_length);
+
 	set_prop(props, sz_MaxComPacketSize, sz_MaxResponseComPacketSize, sz_MaxPacketSize, sz_MaxIndTokenSize);
 
 	//props->complete();
