@@ -1908,8 +1908,10 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 	LOG(I) << "Entering DtaDevOpal::DataRead() " << dev;
 	uint8_t lastRC;
 	vector<uint8_t> LR;
-	uint32_t filepos = startpos;
-	uint32_t blocksize = len;
+	uint32_t filepos = 0; // startpos;
+	uint32_t blockSize = 1950;
+	uint32_t newSize = 1950;
+
 	
 	if ((len > 1950) &&  (Tper_sz_MaxComPacketSize > 2048) ) {
 	// adjust host property 
@@ -1922,7 +1924,8 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 		}
 		else {
 			fill_prop(true);
-			blocksize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 60;
+			blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 60;
+			newSize = blockSize;
 		}
 	}
 
@@ -1962,36 +1965,53 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 
 	// need a loop here to handle len > blocksize 
 
-	cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::GET);
-	cmd->addToken(OPAL_TOKEN::STARTLIST);
-	cmd->addToken(OPAL_TOKEN::STARTLIST);
-	cmd->addToken(OPAL_TOKEN::STARTNAME);
-	cmd->addToken(OPAL_TOKEN::STARTROW);
-	cmd->addToken(filepos);
-	cmd->addToken(OPAL_TOKEN::ENDNAME);
-	cmd->addToken(OPAL_TOKEN::STARTNAME);
-	cmd->addToken(OPAL_TOKEN::ENDROW);
-	cmd->addToken(blocksize);
-	cmd->addToken(OPAL_TOKEN::ENDNAME);
-	cmd->addToken(OPAL_TOKEN::ENDLIST);
-	cmd->addToken(OPAL_TOKEN::ENDLIST);
-	cmd->complete();
-	LOG(D1) << "***** send read data store command " << dev;
-	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
-	delete cmd;
-	delete session;
-	return lastRC;
+	while ((filepos + startpos ) < disk_info.DataStore_maxTableSize && (filepos < len)) {
+
+		newSize = ((filepos + startpos + blockSize) <= disk_info.DataStore_maxTableSize) ?
+			blockSize : (disk_info.DataStore_maxTableSize - filepos - startpos);
+		if (len < newSize) // newSize : 1950 to BLOCKSIZE_HI
+		{
+			newSize = len;
+			if (newSize < 1950) adj_io_buffer_length = 2048; 
+			//else 
+			//	if (newSize < Tper_sz_MaxIndTokenSize -60 ) {
+			//		// what is the adj_io_buffer_length, round up to  
+			//		adj_io_buffer_length = newSize + 60 + 56; // payload heasdrr size 
+			//	}
+		}
+		printf("filepos=%ld startpop=%ld blockSize=%ld newSize=%ld  len=%ld\n", filepos, startpos, blockSize, newSize, len);
+
+		cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::GET);
+		cmd->addToken(OPAL_TOKEN::STARTLIST);
+		cmd->addToken(OPAL_TOKEN::STARTLIST);
+		cmd->addToken(OPAL_TOKEN::STARTNAME);
+		cmd->addToken(OPAL_TOKEN::STARTROW);
+		cmd->addToken(filepos + startpos);
+		cmd->addToken(OPAL_TOKEN::ENDNAME);
+		cmd->addToken(OPAL_TOKEN::STARTNAME);
+		cmd->addToken(OPAL_TOKEN::ENDROW);
+		cmd->addToken(filepos + startpos + newSize - 1);
+		cmd->addToken(OPAL_TOKEN::ENDNAME);
+		cmd->addToken(OPAL_TOKEN::ENDLIST);
+		cmd->addToken(OPAL_TOKEN::ENDLIST);
+		cmd->complete();
+		LOG(D1) << "***** send read data store command " << dev;
+		if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+			LOG(E) << " audit read read data store error " << dev;
+			delete cmd;
+			delete session;
+			return lastRC;
+		}
+		response.getBytes(1, (uint8_t *) (buffer)); // data is token 1, save read data to new buffer position
+		LOG(D1) << "raw data after data store read response data " << dev;
+		filepos += blockSize;
 	}
-	
-	response.getBytes(1, (uint8_t *) buffer); // data is token 1
-	LOG(D1) << "raw data after data store read response data " << dev;
 
 	IFLOG(D4) DtaHexDump(buffer, gethdrsize()); // contain header and entries
 	LOG(D1) << "***** end of send read data store command " << dev;
 	delete cmd;
 	delete session;
 	return 0;
-	
 }
 
 uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, char * buffer, char * userid)
@@ -2268,7 +2288,7 @@ uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len,
 	}
 	else
 	{
-		LOG(E) << "read data store Error " << dev;
+		LOG(E) << "auditread read data store Error " << dev;
 		return lastRC;
 	}
 }
