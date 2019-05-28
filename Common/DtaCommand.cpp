@@ -248,6 +248,14 @@ DtaCommand::getRespBuffer()
 {
     return respbuf;
 }
+uint16_t
+DtaCommand::outputBufferSize() {
+	//	if (MIN_BUFFER_LENGTH + 1 > bufferpos) return(MIN_BUFFER_LENGTH);
+	if (bufferpos % 512)
+		return(((uint16_t)(bufferpos / 512) + 1) * 512);
+	else
+		return((uint16_t)(bufferpos / 512) * 512);
+}
 void
 DtaCommand::dumpCommand()
 {
