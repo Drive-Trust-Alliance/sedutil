@@ -161,14 +161,14 @@ DtaSession::authenticate(vector<uint8_t> Authority, char * Challenge)
 	return 0;
 }
 uint8_t
-DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response)
+DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response, uint8_t oper) // oper=0 -> normal for read and non-data ; oper =1 -> write 
 {
     LOG(D1) << "Entering DtaSession::sendCommand()";
     cmd->setHSN(HSN);
     cmd->setTSN(TSN);
     cmd->setcomID(d->comID());
-
-    uint8_t exec_rc = d->exec(cmd, response, SecurityProtocol);
+	printf("oper=%d\n", oper); // JERRY
+    uint8_t exec_rc = d->exec(cmd, response, SecurityProtocol, oper);
     if (0 != exec_rc)
     {
         LOG(E) << "Command failed on exec " << (uint16_t) exec_rc << d->dev ;

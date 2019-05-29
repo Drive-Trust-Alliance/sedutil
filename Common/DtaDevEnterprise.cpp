@@ -1288,7 +1288,7 @@ uint16_t DtaDevEnterprise::comID()
     LOG(D1) << "Entering DtaDevEnterprise::comID()";
     return disk_info.Enterprise_basecomID;
 }
-uint8_t DtaDevEnterprise::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
+uint8_t DtaDevEnterprise::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol, uint8_t oper )
 {
     uint8_t rc = 0;
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
@@ -1296,7 +1296,10 @@ uint8_t DtaDevEnterprise::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t pro
     LOG(D3) << endl << "Dumping command buffer";
     IFLOG(D) DtaAnnotatedDump(IF_SEND, cmd->getCmdBuffer(), 2048); // IO_BUFFER_LENGTH
     IFLOG(D3) DtaHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
-    rc = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), 2048); // IO_BUFFER_LENGTH
+	if (oper == 1)
+		rc = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), cmd->outputBufferSize()); // IO_BUFFER_LENGTH
+	else
+		rc = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), 2048); // IO_BUFFER_LENGTH
     if (0 != rc) {
         LOG(E) << "DtaDevEnterprize::exec Command failed on send " << (uint16_t) rc;
         return rc;

@@ -1908,7 +1908,7 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 	LOG(I) << "Entering DtaDevOpal::DataRead() " << dev;
 	uint8_t lastRC;
 	vector<uint8_t> LR;
-	uint32_t filepos = 0; // startpos;
+	uint32_t filepos = startpos;
 	uint32_t blockSize = 1950;
 	uint32_t newSize = 1950;
 
@@ -2014,6 +2014,7 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 	return 0;
 }
 
+// need to handle if the length is greater than the block size 
 uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, char * buffer, char * userid)
 {
 	LOG(D1) << "Entering DtaDevOpal::DataWrite() " << dev;
@@ -2022,17 +2023,32 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	vector <uint8_t> bufferA; // (8192, 0x66); // 0 buffer  (57344, 0x00),
 	vector <uint8_t> lengthtoken;
 	uint32_t filepos = startpos;
+	uint32_t blockSize = 1950; // default data write 
+	uint32_t newSize;
 
+	// determin the blockSize from Tper packet size
+	if ((len > 1950) && (Tper_sz_MaxComPacketSize > 2048)) {
+		// adjust host property 
+		printf("\nread data lengtn = %ld Tper_sz_MaxComPacketSize = %ld\n", len, Tper_sz_MaxComPacketSize);
+		if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1; else adj_host = 2;
+		lastRC = properties();
+		if (lastRC != 0) {
+			LOG(E) << "adjust host property fail ; go back to MINIMUM packet size";
+			// improve later on with MINIMUM packet size 
+		}
+		else {
+			fill_prop(true);
+			blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 60;
+			newSize = blockSize;
+		}
+	}
+	/*
 	bufferA.insert(bufferA.begin(), buffer, buffer + len ); 
 	//////////////////////////////////////////////
 	LOG(D1) << "bufferA contents after copy passed buffer content";
 	IFLOG(D4) DtaHexDump(bufferA.data(), 256);
 	//////////////////////////////////////////////
-	lengthtoken.clear();
-	lengthtoken.push_back(0xe2); // 8k = 8192 (0x2000)
-	lengthtoken.push_back(0x00);
-	lengthtoken.push_back((len>>8) & 0x000000ff);
-	lengthtoken.push_back(len & 0x000000ff);
+	*/
 
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
@@ -2071,23 +2087,47 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	LOG(D1) << "Writing to data store 0 " << dev;
 	LOG(I) << "filepos= " << filepos << " length= " << len << " " << dev;
 
-	cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::SET);
-	cmd->addToken(OPAL_TOKEN::STARTLIST);
-	cmd->addToken(OPAL_TOKEN::STARTNAME);
-	cmd->addToken(OPAL_TOKEN::WHERE);
-	cmd->addToken(filepos);
-	cmd->addToken(OPAL_TOKEN::ENDNAME);
-	cmd->addToken(OPAL_TOKEN::STARTNAME);
-	cmd->addToken(OPAL_TOKEN::VALUES);
-	cmd->addToken(lengthtoken);
-	cmd->addToken(bufferA);
-	cmd->addToken(OPAL_TOKEN::ENDNAME);
-	cmd->addToken(OPAL_TOKEN::ENDLIST);
-	cmd->complete();
-	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
-	delete cmd;
-	delete session;
-	return lastRC;
+	while ((filepos + startpos ) < disk_info.DataStore_maxTableSize && (filepos <= len)    ) {
+
+		newSize = ((filepos + startpos + blockSize) <= disk_info.DataStore_maxTableSize) ?
+			blockSize : (disk_info.DataStore_maxTableSize - filepos - startpos);
+		if (len < newSize) // newSize : 1950 to BLOCKSIZE_HI
+		{
+			newSize = len;
+			if (newSize < 1950) adj_io_buffer_length = 2048;
+			//else 
+			//	if (newSize < Tper_sz_MaxIndTokenSize -60 ) {
+			//		// what is the adj_io_buffer_length, round up to  
+			//		adj_io_buffer_length = newSize + 60 + 56; // payload heasdrr size 
+			//	}
+		}
+		printf("filepos=%ld startpop=%ld blockSize=%ld newSize=%ld  len=%ld\n", filepos, startpos, blockSize, newSize, len);
+
+		lengthtoken.clear();
+		lengthtoken.push_back(0xe2); // 8k = 8192 (0x2000)
+		lengthtoken.push_back(0x00);
+		lengthtoken.push_back((blockSize >> 8) & 0x000000ff);
+		lengthtoken.push_back(blockSize & 0x000000ff);
+
+		cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::SET);
+		cmd->addToken(OPAL_TOKEN::STARTLIST);
+		cmd->addToken(OPAL_TOKEN::STARTNAME);
+		cmd->addToken(OPAL_TOKEN::WHERE);
+		cmd->addToken(filepos + startpos);
+		cmd->addToken(OPAL_TOKEN::ENDNAME);
+		cmd->addToken(OPAL_TOKEN::STARTNAME);
+		cmd->addToken(OPAL_TOKEN::VALUES);
+		cmd->addToken(lengthtoken);
+		cmd->addToken(bufferA);
+		cmd->addToken(OPAL_TOKEN::ENDNAME);
+		cmd->addToken(OPAL_TOKEN::ENDLIST);
+		cmd->complete();
+		if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+			delete cmd;
+			delete session;
+			return lastRC;
+		}
+		filepos += blockSize;
 	}
 	LOG(D1) << "***** command buffer of write data store buffer:";
 	IFLOG(D4) cmd->dumpCommand();
@@ -2677,7 +2717,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 	LOG(D1) << "Entering DtaDevOpal::DataStoreWrite() " << dev;
 
 	ifstream datafile;
-	vector <uint8_t> bufferA(14336,0); // (16384, 0x00); // (8192, 0x66); // 0 buffer  (57344, 0x00),
+	vector <uint8_t> bufferA(1950, 0); // (14336, 0); // (16384, 0x00); // (8192, 0x66); // 0 buffer  (57344, 0x00),
 	vector <uint8_t> lengthtoken;
 	uint8_t lastRC;
 	uint64_t fivepercent = 0;
@@ -2688,10 +2728,11 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 	char star[] = "*";
 	char spinner[] = "|/-\\";
 	char progress_bar[] = "   [                     ]";
-	uint32_t blockSize = 14336;//  15360; // 16384;  // 57344; // 57344=512*112=E000h 1950=0x79E; 16384=512*32 for 17K MaxComPacketSize, 15360=512*30
+	uint32_t blockSize = 1950; // 14336;//  15360; // 16384;  // 57344; // 57344=512*112=E000h 1950=0x79E; 16384=512*32 for 17K MaxComPacketSize, 15360=512*30
 	uint32_t filepos = 0;
 	uint64_t imgsize;
 	uint32_t newSize;
+	uint8_t oper = 0;
 
 	//printf("dsnum = %d startpos=%ld len=%ld\n", dsnum, startpos, len);
 
@@ -2756,6 +2797,36 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 		return 1; // general error 
 	}
 
+	// initial accessment of blockSize
+	// need to determine blockSize now
+	printf("\nwrite data length = %ld Tper_sz_MaxComPacketSize = %ld\n", len, Tper_sz_MaxComPacketSize);
+
+	if ((len > 1950) && (Tper_sz_MaxComPacketSize > 2048)) {
+		// adjust host property 
+		printf("\nwrite data lengtn = %ld Tper_sz_MaxComPacketSize = %ld\n", len, Tper_sz_MaxComPacketSize);
+		if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1; else adj_host = 2;
+		lastRC = properties();
+		if (lastRC != 0) {
+			LOG(E) << "adjust host property fail ; go back to MINIMUM packet size";
+			// improve later on with MINIMUM packet size 
+		}
+		else {
+			fill_prop(true);
+			blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 60;
+			if (len < blockSize) {
+				blockSize = len; // truncate blockSize to len 
+			}
+			bufferA.resize(blockSize);
+		}
+	}
+	else { // len <= 1950
+		if (len < blockSize) { // len < 1950  
+			blockSize = len;
+			bufferA.resize(len); // need to resize bufferA due to truncated size of data length by user 
+		}
+	}
+	printf("After Tper size exchange , blockSize=%ld bufferA.size()=%ld len=%ld\n", blockSize, (uint32_t)bufferA.size(), len);
+
 	LOG(I) << "Writing datafile to " << dev;
 
 	DtaCommand *cmd = new DtaCommand();
@@ -2793,7 +2864,37 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 	// 3 boundary
 	// (1) eof (2) len (3) data store size
 	while (!datafile.eof()  && filepos < (len) ) {
+		// Max Tables = disk_info.DataStore_maxTables
+		// Max Size Tables = " disk_info.DataStore_maxTableSize
+		// 
+		if (filepos + blockSize + startpos > disk_info.DataStore_maxTableSize)
+		{
+			newSize = disk_info.DataStore_maxTableSize - filepos - startpos;
+			printf("***** A filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
+
+			//printf("***** filepos=%ld - startpos = %ld *****\n", filepos, startpos);
+			//printf("***** newSize = disk_info.DataStore_maxTableSize - filepos - startpos = %ld ; bufferA.size()=%I64d *****\n", newSize, bufferA.size());
+
+			//printf("***** newSize = disk_info.DataStore_maxTableSize - filepos - startpos = %ld ; bufferA.size()=%I64d tmpbuf.size()=%I64d *****\n", newSize, bufferA.size(), tmpbuf.size());
+		}
+		else if (filepos + blockSize > len) {
+			newSize = len - filepos; //filepos + blockSize - (filepos + blockSize - len);
+			printf("***** B filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
+
+		}
+		else {
+			newSize = blockSize;
+			printf("***** C filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
+
+		}
+
+		printf("blockSize=%ld newSize=%ld bufferA.size()=%ld\n", blockSize, newSize, (uint32_t)bufferA.size());
+
+		bufferA.resize(newSize);
+		printf("Before read from file , blockSize=%ld bufferA.size()=%ld newSize=%ld\n", blockSize, (uint32_t)bufferA.size(), newSize);
 		datafile.read((char *)bufferA.data(), blockSize);
+		printf("After read from file , blockSize=%ld bufferA.size()=%ld newSize=%ld\n", blockSize, (uint32_t)bufferA.size(), newSize);
+		/*
 		if (!(filepos % fivepercent)) {
 			if (complete <24)
 				progress_bar[complete++] = star[0];
@@ -2805,42 +2906,25 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 			printf("\r%s %i", progress_bar, filepos);
 			fflush(stdout);
 		}
-		// Max Tables = disk_info.DataStore_maxTables
-		// Max Size Tables = " disk_info.DataStore_maxTableSize
-		// 
-		if (filepos + blockSize + startpos > disk_info.DataStore_maxTableSize)
-		{
-			newSize = disk_info.DataStore_maxTableSize - filepos - startpos;
-			//printf("***** filepos=%ld - startpos = %ld *****\n", filepos, startpos);
-			//printf("***** newSize = disk_info.DataStore_maxTableSize - filepos - startpos = %ld ; bufferA.size()=%I64d *****\n", newSize, bufferA.size());
-			vector <uint8_t> tmpbuf;
-			
-			// bufferA.insert(bufferA.begin(), buffer, buffer + len);
-			tmpbuf.insert(tmpbuf.begin(), bufferA.begin(), bufferA.begin() + newSize);
-			bufferA.erase(bufferA.begin(), bufferA.end());
-			bufferA.insert(bufferA.begin(), tmpbuf.begin(), tmpbuf.end());
-			//printf("***** newSize = disk_info.DataStore_maxTableSize - filepos - startpos = %ld ; bufferA.size()=%I64d tmpbuf.size()=%I64d *****\n", newSize, bufferA.size(), tmpbuf.size());
-		}
-		else {
-			newSize = blockSize;
-		}
+		*/
+		printf("writing %ld of %ld \n", filepos, len); 
 
 		//bufferA.insert(bufferA.begin(), buffer, buffer + len);
 		//////////////////////////////////////////////
-		LOG(D1) << "bufferA contents after copy passed buffer content";
-		IFLOG(D4) DtaHexDump(bufferA.data(), 256);
+		LOG(D) << "bufferA contents after copy passed buffer content";
+		IFLOG(D) DtaHexDump(bufferA.data(), 128 );
 		//////////////////////////////////////////////
 		lengthtoken.clear();
 		lengthtoken.push_back(0xe2); // 8k = 8192 (0x2000)
 		lengthtoken.push_back(0x00);
 		lengthtoken.push_back((newSize >> 8) & 0x000000ff);
 		lengthtoken.push_back(newSize & 0x000000ff);
-
+		
 		// cmd buffer before write 
-		LOG(D1) << "bufferA before send write data command";
-		IFLOG(D4) DtaHexDump(bufferA.data(), 256);
+		LOG(D) << "bufferA before send write data command";
+		IFLOG(D) DtaHexDump(bufferA.data(), 256);
 
-		LOG(D1) << "Writing to data store" << hex << dsnum << " of " << dev;
+		LOG(D) << "Writing to data store " << hex << dsnum << " of " << dev;
 		//printf(" ***** dsnum = %d *****\n", dsnum);
 		vector<uint8_t> DstoreUid;
 		DstoreUid.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
@@ -2872,7 +2956,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 		cmd->addToken(OPAL_TOKEN::ENDNAME);
 		cmd->addToken(OPAL_TOKEN::ENDLIST);
 		cmd->complete();
-		if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+		if ((lastRC = session->sendCommand(cmd, response, oper = 1)) != 0) {
 			delete cmd;
 			delete session;
 			return lastRC;
@@ -2887,7 +2971,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 		}
 		filepos += newSize;
 	}
-	printf("\r%s %i bytes written \n", progress_bar, filepos);
+	//  printf("\r%s %i bytes written \n", progress_bar, filepos);
 	/* temp out due to MX300 limitation
 	LOG(D1) << "end transaction";
 	cmd->reset();
@@ -2928,7 +3012,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	char star[] = "*";
 	char spinner[] = "|/-\\";
 	char progress_bar[] = "   [                     ]";
-	uint32_t blockSize = 1992; //  14336; // 15360; //16384; // 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
+	uint32_t blockSize = 1950; //  14336; // 15360; //16384; // 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
 	uint32_t filepos = 0;
 	uint32_t newSize;
 
@@ -4434,14 +4518,14 @@ uint8_t DtaDevOpal::getTable(vector<uint8_t> table, uint16_t startcol,
 	delete get;
 	return 0;
 }
-uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
+uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol, uint8_t oper )
 {
 	uint8_t lastRC;
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
-	LOG(D1) << "Entering DtaDevOpal::exec" << dev;
+	LOG(D) << "Entering DtaDevOpal::exec" << dev;
     LOG(D3) << endl << "Dumping command buffer";
-    IFLOG(D3) DtaHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
-	LOG(D1) << "Entering DtaDevOpal::exec sendCmd(IF_SEND, IO_BUFFER_LENGTH)";
+    IFLOG(D) DtaHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
+	LOG(D) << "Entering DtaDevOpal::exec sendCmd(IF_SEND, IO_BUFFER_LENGTH)";
     //if((lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH)) != 0) {
 	#if 0
 	if (adj_host == 1) {
@@ -4449,8 +4533,12 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 		printf("Host_sz_MaxComPacketSize = %ld\n", Host_sz_MaxComPacketSize);
 	}
 	#endif
-	printf("adj_io_buffer_length=%d\n", adj_io_buffer_length);
-	if ((lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), adj_io_buffer_length)) != 0) { // Tper_sz_MaxComPacketSize -> NG IO_BUFFER_LENGTH -> JERRY
+	printf("adj_io_buffer_length=%d ; oper = %d ; cmd->outputBufferSize()=%d \n", adj_io_buffer_length, oper, cmd->outputBufferSize());
+	if (oper == 1)
+		lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), cmd->outputBufferSize());
+	else
+		lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), adj_io_buffer_length);
+	if ((lastRC) != 0) { // Tper_sz_MaxComPacketSize -> NG IO_BUFFER_LENGTH -> JERRY
 		LOG(E) << "Command failed on send " << (uint16_t) lastRC << dev;
         return lastRC;
     }
@@ -4467,7 +4555,7 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
     do {
         osmsSleep(100); // could it be too fast if multiple drive situation ?????, 25->250 does not help; 25->50 better, ->100
         memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
-		LOG(D1) << "Entering DtaDevOpal::exec sendCmd(IF_RECV, IO_BUFFER_LENGTH) " << dev ; 
+		LOG(D) << "Entering DtaDevOpal::exec sendCmd(IF_RECV, IO_BUFFER_LENGTH) " << dev ; 
 		lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), adj_io_buffer_length); //  IO_BUFFER_LENGTH);
 		//LOG(I) << "hdr->cp.outstandingData)=" << hdr->cp.outstandingData << " hdr->cp.minTransfer=" << hdr->cp.minTransfer << dev;
 	}

@@ -234,7 +234,7 @@ public:
          * @param response the DtaResonse object containing the response
          * @param protocol The security protocol number to use for the command
          */
-	 uint8_t exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol = 1) ;
+	 uint8_t exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol = 1, uint8_t oper = 0) ;
          /** return the communications ID to be used for sessions to this device */
 	 uint16_t comID() ;
 };

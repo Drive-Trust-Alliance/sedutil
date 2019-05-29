@@ -75,7 +75,7 @@ public:
      * @param cmd  The DtaCommand object 
      * @param response The MesdResponse object 
      */
-    uint8_t sendCommand(DtaCommand * cmd, DtaResponse & response);
+    uint8_t sendCommand(DtaCommand * cmd, DtaResponse & response, uint8_t oper = 0);
 private:
     /** Default constructor, private should never be called */
     DtaSession();
