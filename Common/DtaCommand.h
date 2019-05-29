@@ -124,6 +124,7 @@ private:
 	void * getCmdBuffer();
     /** return a pointer to the response buffer. */
 	void * getRespBuffer();
+	uint16_t outputBufferSize();
 	uint8_t commandbuffer[IO_BUFFER_LENGTH_HI + IO_BUFFER_ALIGNMENT]; /**< buffer allocation allow for 1k alignment */
 	uint8_t responsebuffer[IO_BUFFER_LENGTH_HI + IO_BUFFER_ALIGNMENT]; /**< buffer allocation allow for 1k alignment */
 	uint8_t *cmdbuf;  /**< Pointer to the command buffer */

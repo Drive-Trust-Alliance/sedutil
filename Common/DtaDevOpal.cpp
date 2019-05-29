@@ -2014,17 +2014,19 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 	return 0;
 }
 
+
 // need to handle if the length is greater than the block size 
-uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, char * buffer, char * userid)
+uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, char * buffer, char * userid )
 {
 	LOG(D1) << "Entering DtaDevOpal::DataWrite() " << dev;
 	uint8_t lastRC;
 	vector<uint8_t> LR;
 	vector <uint8_t> bufferA; // (8192, 0x66); // 0 buffer  (57344, 0x00),
 	vector <uint8_t> lengthtoken;
-	uint32_t filepos = startpos;
+	uint32_t filepos = 0; // startpos;
 	uint32_t blockSize = 1950; // default data write 
-	uint32_t newSize;
+	uint32_t newSize = 1950;
+	uint8_t oper = 0;
 
 	// determin the blockSize from Tper packet size
 	if ((len > 1950) && (Tper_sz_MaxComPacketSize > 2048)) {
@@ -2039,16 +2041,21 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 		else {
 			fill_prop(true);
 			blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 60;
-			newSize = blockSize;
+			if (len < blockSize) {
+				blockSize = len; // truncate blockSize to len 
+			}
+			//bufferA.resize(blockSize);
 		}
 	}
-	/*
-	bufferA.insert(bufferA.begin(), buffer, buffer + len ); 
-	//////////////////////////////////////////////
-	LOG(D1) << "bufferA contents after copy passed buffer content";
-	IFLOG(D4) DtaHexDump(bufferA.data(), 256);
-	//////////////////////////////////////////////
-	*/
+	else { // len <= 1950
+		if (len < blockSize) { // len < 1950  
+			blockSize = len;
+			//bufferA.resize(len); // need to resize bufferA due to truncated size of data length by user 
+		}
+	}
+	printf("After Tper size exchange , blockSize=%ld bufferA.size()=%ld len=%ld\n", blockSize, (uint32_t)bufferA.size(), len);
+
+	LOG(I) << "Writing datafile to " << dev;
 
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
@@ -2058,16 +2065,16 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 
 	session = new DtaSession(this);
 	if (NULL == session) {
-	LOG(E) << "Unable to create session object " << dev;
-	return DTAERROR_OBJECT_CREATE_FAILED;
+		LOG(E) << "Unable to create session object " << dev;
+		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	LOG(D1) << "start lockingSP session " << dev;
-	vector<uint8_t> auth,auth2,auth3;
-	auth = getUID(userid,auth2, auth3, disk_info.OPAL20_numUsers);
+	vector<uint8_t> auth, auth2, auth3;
+	auth = getUID(userid, auth2, auth3, disk_info.OPAL20_numUsers);
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth)) != 0) { // OPAL_UID::OPAL_ADMIN1_UID
-	delete cmd;
-	delete session;
-	return lastRC;
+		delete cmd;
+		delete session;
+		return lastRC;
 	}
 	/* temp out due to MX300 limitation
 	LOG(D1) << "Start transaction";
@@ -2075,7 +2082,7 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	cmd->addToken(OPAL_TOKEN::STARTTRANSACTON);
 	cmd->addToken(OPAL_TOKEN::WHERE);
 	cmd->complete();
-	// cmd buffer before write 
+	// cmd buffer before write
 	LOG(D1) << "bufferA before send write data command";
 	IFLOG(D4) DtaHexDump(bufferA.data(), 256);
 	// //////////////////////////
@@ -2083,31 +2090,43 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	delete cmd;
 	delete session;
 	return lastRC;
-	}*/ 
+	}*/
 	LOG(D1) << "Writing to data store 0 " << dev;
 	LOG(I) << "filepos= " << filepos << " length= " << len << " " << dev;
 
-	while ((filepos + startpos ) < disk_info.DataStore_maxTableSize && (filepos <= len)    ) {
+	while ((filepos + startpos) < disk_info.DataStore_maxTableSize && (filepos < len)) {
 
-		newSize = ((filepos + startpos + blockSize) <= disk_info.DataStore_maxTableSize) ?
-			blockSize : (disk_info.DataStore_maxTableSize - filepos - startpos);
-		if (len < newSize) // newSize : 1950 to BLOCKSIZE_HI
+		if (filepos + blockSize + startpos > disk_info.DataStore_maxTableSize)
 		{
-			newSize = len;
-			if (newSize < 1950) adj_io_buffer_length = 2048;
-			//else 
-			//	if (newSize < Tper_sz_MaxIndTokenSize -60 ) {
-			//		// what is the adj_io_buffer_length, round up to  
-			//		adj_io_buffer_length = newSize + 60 + 56; // payload heasdrr size 
-			//	}
+			newSize = disk_info.DataStore_maxTableSize - filepos - startpos;
+			printf("***** A filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
 		}
-		printf("filepos=%ld startpop=%ld blockSize=%ld newSize=%ld  len=%ld\n", filepos, startpos, blockSize, newSize, len);
+		else if (filepos + blockSize > len) {
+			newSize = len - filepos; //filepos + blockSize - (filepos + blockSize - len);
+			printf("***** B filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
+
+		}
+		else {
+			newSize = blockSize;
+			printf("***** C filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
+
+		}
+		printf("blockSize=%ld newSize=%ld bufferA.size()=%ld\n", blockSize, newSize, (uint32_t)bufferA.size());
+
+		//bufferA.resize(newSize);
+		//printf("Before read from file , blockSize=%ld bufferA.size()=%ld newSize=%ld\n", blockSize, (uint32_t)bufferA.size(), newSize);
+		// insert to bufferA from input buffer 
+		bufferA.clear(); // cleanup vector once for all , erase remove one by one
+		bufferA.insert(bufferA.begin(), buffer + filepos, buffer + filepos + newSize); 
+		//datafile.read((char *)bufferA.data(), blockSize);
+		//printf("After read from file , blockSize=%ld bufferA.size()=%ld newSize=%ld\n", blockSize, (uint32_t)bufferA.size(), newSize);
+		printf("writing %ld of %ld \n", filepos, len);
 
 		lengthtoken.clear();
 		lengthtoken.push_back(0xe2); // 8k = 8192 (0x2000)
 		lengthtoken.push_back(0x00);
-		lengthtoken.push_back((blockSize >> 8) & 0x000000ff);
-		lengthtoken.push_back(blockSize & 0x000000ff);
+		lengthtoken.push_back((newSize >> 8) & 0x000000ff);
+		lengthtoken.push_back(newSize & 0x000000ff);
 
 		cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::SET);
 		cmd->addToken(OPAL_TOKEN::STARTLIST);
@@ -2122,16 +2141,18 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 		cmd->addToken(OPAL_TOKEN::ENDNAME);
 		cmd->addToken(OPAL_TOKEN::ENDLIST);
 		cmd->complete();
-		if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+		if ((lastRC = session->sendCommand(cmd, response, oper = 1)) != 0) {
 			delete cmd;
 			delete session;
 			return lastRC;
 		}
-		filepos += blockSize;
+
+		filepos += newSize;
 	}
+
 	LOG(D1) << "***** command buffer of write data store buffer:";
 	IFLOG(D4) cmd->dumpCommand();
-	
+
 	/* temp out due to MX300 limitation
 	// end write
 	LOG(D1) << "end transaction";
@@ -2150,6 +2171,8 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	LOG(D1) << "Exiting DtaDevOpal::DataWrite() " << dev;
 	return 0;
 }
+
+
 
 
 
