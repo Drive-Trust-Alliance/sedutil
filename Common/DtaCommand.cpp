@@ -220,7 +220,7 @@ DtaCommand::complete(uint8_t EOD)
 	LOG(D1) << "hdr->subpkt.length=" << SWAP32(hdr->subpkt.length) << endl;
 	LOG(D1) << "hdr->pkt.length=" << SWAP32(hdr->pkt.length) << endl;
 	LOG(D1) << "hdr->cp.length=" << SWAP32(hdr->cp.length) << endl;
-	if (bufferpos > 57444) { 
+	if (bufferpos > IO_BUFFER_LENGTH_HI ) { //57444) { 
 		LOG(E) << " Buffer Overrun " << bufferpos;
 		exit(EXIT_FAILURE);
 	}

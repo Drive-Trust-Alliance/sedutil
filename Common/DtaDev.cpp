@@ -125,10 +125,10 @@ void DtaDev::discovery0()
     uint8_t * epos, *cpos;
     Discovery0Header * hdr;
     Discovery0Features * body;
-	d0Response = discovery0buffer;
+	d0Response = discovery0buffer + IO_BUFFER_ALIGNMENT;
 	// wrong memory alignment cause a huge difference. if correct, it seems run well 
-	//d0Response = (void *)((uintptr_t)d0Response & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
-	d0Response = (void *)(((uintptr_t)d0Response + IO_BUFFER_ALIGNMENT - 1) & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+	d0Response = (void *)((uintptr_t)d0Response & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+	//d0Response = (void *)(((uintptr_t)d0Response + IO_BUFFER_ALIGNMENT - 1) & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
 
 	memset(d0Response, 0, IO_BUFFER_LENGTH);
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)

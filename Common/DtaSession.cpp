@@ -167,7 +167,7 @@ DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response, uint8_t oper) 
     cmd->setHSN(HSN);
     cmd->setTSN(TSN);
     cmd->setcomID(d->comID());
-	printf("oper=%d\n", oper); // JERRY
+	//printf("oper=%d\n", oper); // JERRY
     uint8_t exec_rc = d->exec(cmd, response, SecurityProtocol, oper);
     if (0 != exec_rc)
     {

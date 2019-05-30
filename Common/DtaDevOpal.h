@@ -251,6 +251,8 @@ public:
 	uint8_t auditlogwr(char * password, uint32_t startpos, uint32_t len, char * buffer, entry_t * ent, char * userid); // audit log write
 	uint8_t auditlogrd(char * password, uint32_t startpos, uint32_t len, char * buffer,char * userid); // audit log read
 	uint8_t createUSB(char * filename);
+	uint8_t loadPBA_O(char * password, char * filename);
+	uint8_t loadPBA_M(char * password, char * filename);
 	uint8_t loadPBA(char * password, char * filename);
         /** User command to prepare the device for management by sedutil. 
          * Specific to the SSC that the device supports
