@@ -84,7 +84,7 @@ void DtaDevOpal::init(const char * devref)
 	DtaDevOS::init(devref);
 	adj_host = 0; 
 	if((lastRC = properties()) != 0) { LOG(E) << "Properties exchange failed " << dev;}
-	else fill_prop(true);
+	else fill_prop(false);
 }
 
 // create an audit user UserN disk_info.OPAL20_numUsers
@@ -3669,18 +3669,15 @@ uint8_t DtaDevOpal::loadPBA_O(char * password, char * filename) {
 		blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 110; // 60;
 	}
 
-
-
-
 #define MAX_BUFFER_LENGTH IO_BUFFER_LENGTH_HI
 	uint32_t tperMaxPacket = Tper_sz_MaxComPacketSize;
 	uint32_t tperMaxToken = Tper_sz_MaxIndTokenSize;
 	(MAX_BUFFER_LENGTH > tperMaxPacket) ? blockSize = tperMaxPacket : blockSize = MAX_BUFFER_LENGTH;
 	if (blockSize > (tperMaxToken - 4)) blockSize = tperMaxToken - 4;
-	printf("tperMaxPacket=%ld  tperMaxToken=%ld before blockSize=%ld", tperMaxPacket, tperMaxToken, blockSize);
+	//printf("tperMaxPacket=%ld  tperMaxToken=%ld before blockSize=%ld\n", tperMaxPacket, tperMaxToken, blockSize);
 	vector <uint8_t> buffer, lengthtoken;
 	blockSize -= sizeof(OPALHeader) + 50;  // packet overhead
-	printf("tperMaxPacket=%ld  tperMaxToken=%ld After blockSize=%ld", tperMaxPacket, tperMaxToken, blockSize);
+	printf("tperMaxPacket=%ld  tperMaxToken=%ld After blockSize=%l\nd", tperMaxPacket, tperMaxToken, blockSize);
 	buffer.resize(blockSize);
 	pbafile.open(filename, ios::in | ios::binary);
 	if (!pbafile) {
@@ -3743,7 +3740,7 @@ uint8_t DtaDevOpal::loadPBA_O(char * password, char * filename) {
 			return lastRC;
 		}
 		filepos += blockSize;
-		cout << "\rWriting PBA " << filepos << " of " << eofpos << " " << (uint16_t) (((float)filepos/(float)eofpos) * 100) << "% blkSz=" << blockSize << " \r";
+		cout << "Writing PBA " << filepos << " of " << eofpos << " " << (uint16_t)(((float)filepos / (float)eofpos) * 100) << "% blkSz=" << blockSize << " \r";
 		// LOG(I) << "Writing PBA " << filepos << " of " << eofpos << " " << (uint16_t)(((float)filepos / (float)eofpos) * 100) << "% blkSz=" << blockSize << " \n";
 		//printf("\rWriting PBA %ld (%ld) %d  blkSz=%ld %s", filepos, eofpos, "%", (uint16_t)((filepos * 100) / eofpos),blockSize, dev);
 	}
@@ -3862,7 +3859,7 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 					goto done;
 				}
 			}
-				DecompressedBuffer = (PBYTE)_aligned_malloc(DecompressedBufferSize, IO_BUFFER_ALIGNMENT);
+				DecompressedBuffer = (PBYTE)_aligned_malloc(DecompressedBufferSize + (1024 * IO_BUFFER_ALIGNMENT), IO_BUFFER_ALIGNMENT);
 				if (!DecompressedBuffer)
 				{
 					LOG(E) << "Cannot allocate memory for decompressed buffer";
@@ -3917,7 +3914,7 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 			return DTAERROR_OPEN_ERR;
 		}
 
-		fivepercent = (uint64_t)((DecompressedBufferSize / 20) / blockSize) * blockSize;
+		//fivepercent = (uint64_t)((DecompressedBufferSize / 20) / blockSize) * blockSize;
 	}
 	// change FAT uuid and disk label
 	UUID uuid;
@@ -4084,7 +4081,7 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 							//buffer.resize(sz);
 					}
 					buffer.resize(sz); // always use the same buffer 
-					printf("buffer.size()=%zd ; DecompressedBuffer+filepos=%I64X; DecompressedBuffer+filepos+sz=%I64X; filepos=%ld; sz=%I64d; blkSz=%ld; \n", buffer.size(), (uint64_t)DecompressedBuffer + filepos, (uint64_t)DecompressedBuffer + filepos + sz, filepos, sz, blockSize );
+					//printf("buffer.size()=%zd ; DecompressedBuffer+filepos=%I64X; DecompressedBuffer+filepos+sz=%I64X; filepos=%ld; sz=%I64d; blkSz=%ld; \n", buffer.size(), (uint64_t)DecompressedBuffer + filepos, (uint64_t)DecompressedBuffer + filepos + sz, filepos, sz, blockSize );
 				}
 				catch (char *e) {
 					LOG(E) << "Exception Caught: " << e;
@@ -4138,7 +4135,7 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 			delete cmd;
 			delete session;
 			pbafile.close();
-            _aligned_free(DecompressedBuffer);
+            if (DecompressedBuffer) _aligned_free(DecompressedBuffer);
 			adj_host_prop(0); // reset host properties to smaller size
 			return lastRC;
 		}
@@ -4148,13 +4145,13 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 		filepos += blockSize;
 		if (filepos > DecompressedBufferSize)
 		{
-			LOG(I) << "filepos > DecompressedBufferSize";
+			//LOG(I) << "filepos > DecompressedBufferSize";
 			break;
 		}
 	} // end of while 
 
 	//printf("\r%s %i(%I64d) bytes written \n", progress_bar, filepos, DecompressedBufferSize);
-	printf("%I64d(%I64d) bytes written \n", filepos - blockSize + sz, DecompressedBufferSize);
+	printf("\n%I64d(%I64d) bytes written \n", filepos - blockSize + sz, DecompressedBufferSize);
 	// open progress output file
 	progfile.open(sernum, ios::out);
 	memset(progbuf, 0, 50);
@@ -4828,7 +4825,7 @@ uint8_t DtaDevOpal::properties()
 		adj_io_buffer_length = Tper_sz_MaxComPacketSize; // +IO_BUFFER_ALIGNMENT; //  17408;
 		// adj_io_buffer_length must not exceed TperMaxComPacketSize 
 	}
-	printf("adj_host = %d adj_io_buffer_length = %d\n", adj_host, adj_io_buffer_length);
+	//printf("adj_host = %d adj_io_buffer_length = %d\n", adj_host, adj_io_buffer_length);
 
 	set_prop(props, sz_MaxComPacketSize, sz_MaxResponseComPacketSize, sz_MaxPacketSize, sz_MaxIndTokenSize);
 
@@ -4937,14 +4934,14 @@ void DtaDevOpal::puke()
 //act :2 : reset host property ; regardless if it has been adjust
 void DtaDevOpal::adj_host_prop(uint8_t act)
 {
-	LOG(I) << "Enter adj_host_prop";
+	LOG(D1) << "Enter adj_host_prop";
 	//fill_prop(FALSE); // JERRY why there are two fill_property
-	printf("act =  %d\n", act);
+	//printf("act =  %d\n", act);
 
 	adj_host = act;
 	properties();
 	fill_prop(FALSE); // JERRY must re-stuff the host property because properties() only exchange property with Tper but not set host_sz_Maxxxxxxxx
-	LOG(I) << "Exit adj_host_prop";
+	LOG(D1) << "Exit adj_host_prop";
 }
 
 uint8_t DtaDevOpal::objDump(char *sp, char * auth, char *pass,
