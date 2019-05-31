@@ -1923,7 +1923,7 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 			// improve later on with MINIMUM packet size 
 		}
 		else {
-			fill_prop(true);
+			fill_prop(false);
 			blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 60;
 			newSize = blockSize;
 		}
@@ -2039,7 +2039,7 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 			// improve later on with MINIMUM packet size 
 		}
 		else {
-			fill_prop(true);
+			fill_prop(false);
 			blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 60;
 			if (len < blockSize) {
 				blockSize = len; // truncate blockSize to len 
@@ -2834,7 +2834,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 			// improve later on with MINIMUM packet size 
 		}
 		else {
-			fill_prop(true);
+			fill_prop(false);
 			blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 60;
 			if (len < blockSize) {
 				blockSize = len; // truncate blockSize to len 
@@ -3075,7 +3075,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 			// improve later on with MINIMUM packet size 
 		}
 		else {
-			fill_prop(true);
+			fill_prop(false);
 			blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 60;
 		}
 	}
@@ -3665,7 +3665,7 @@ uint8_t DtaDevOpal::loadPBA_O(char * password, char * filename) {
 		// improve later on with MINIMUM packet size 
 	}
 	else {
-		fill_prop(true);
+		fill_prop(false);
 		blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 110; // 60;
 	}
 
@@ -3677,7 +3677,7 @@ uint8_t DtaDevOpal::loadPBA_O(char * password, char * filename) {
 	//printf("tperMaxPacket=%ld  tperMaxToken=%ld before blockSize=%ld\n", tperMaxPacket, tperMaxToken, blockSize);
 	vector <uint8_t> buffer, lengthtoken;
 	blockSize -= sizeof(OPALHeader) + 50;  // packet overhead
-	printf("tperMaxPacket=%ld  tperMaxToken=%ld After blockSize=%l\nd", tperMaxPacket, tperMaxToken, blockSize);
+	printf("tperMaxPacket=%ld  tperMaxToken=%ld After blockSize=%ld\n", tperMaxPacket, tperMaxToken, blockSize);
 	buffer.resize(blockSize);
 	pbafile.open(filename, ios::in | ios::binary);
 	if (!pbafile) {
@@ -4012,18 +4012,18 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 			// improve later on with MINIMUM packet size 
 		}
 		else {
-			fill_prop(true);
+			fill_prop(false);
 			blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 110; // 60;
 			if (DecompressedBufferSize < blockSize) {  
 				blockSize = DecompressedBufferSize; // truncate blockSize to len 
 			}
-			//bufferA.resize(blockSize);
+			buffer.resize(blockSize);
 		}
 	}
 	else { // len <= 1950
 		if (DecompressedBufferSize < blockSize) { // len < 1950 very unlikely but it may happen
 			blockSize = DecompressedBufferSize;
-			//bufferA.resize(len); // need to resize bufferA due to truncated size of data length by user 
+			buffer.resize(blockSize); // need to resize buffer due to truncated size of data length by user 
 		}
 	}
 	printf("After Tper size exchange , blockSize=%ld len=%lld\n", blockSize,  DecompressedBufferSize);
@@ -4075,12 +4075,13 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 					//buffer.erase(buffer.begin(), buffer.end());
 					
 					sz = (((filepos + blockSize) <= DecompressedBufferSize) ? blockSize : DecompressedBufferSize - filepos);
-					buffer.clear();
-					buffer.insert(buffer.begin(), DecompressedBuffer + filepos, DecompressedBuffer +filepos + sz); // could pointer be a problem 
+					//buffer.clear();
+					//buffer.insert(buffer.begin(), DecompressedBuffer + filepos, DecompressedBuffer +filepos + sz); // could pointer be a problem 
 					if (sz < blockSize) {
-							//buffer.resize(sz);
+							buffer.resize(sz);
 					}
-					buffer.resize(sz); // always use the same buffer 
+					//buffer.resize(sz); // always use the same buffer
+					memcpy_s( buffer.data(), sz, DecompressedBuffer + filepos, sz); // better way to copy buf to vector, no mem reallocation 
 					//printf("buffer.size()=%zd ; DecompressedBuffer+filepos=%I64X; DecompressedBuffer+filepos+sz=%I64X; filepos=%ld; sz=%I64d; blkSz=%ld; \n", buffer.size(), (uint64_t)DecompressedBuffer + filepos, (uint64_t)DecompressedBuffer + filepos + sz, filepos, sz, blockSize );
 				}
 				catch (char *e) {
@@ -4111,11 +4112,6 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 		lengthtoken.push_back(0x00);
 		lengthtoken.push_back((uint8_t)(sz >> 8)); // (0xE0); // 
 		lengthtoken.push_back((uint8_t)(sz & 0xFF));// (0x00); // 
-
-
-		//int rty;
-		//rty = 0;
-	//rty1:
 		cmd->reset(OPAL_UID::OPAL_MBR, OPAL_METHOD::SET);
 		cmd->addToken(OPAL_TOKEN::STARTLIST);
 		cmd->addToken(OPAL_TOKEN::STARTNAME);
@@ -4130,8 +4126,6 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 		cmd->addToken(OPAL_TOKEN::ENDLIST);
 		cmd->complete();
 		if ((lastRC = session->sendCommand(cmd, response,oper = 1)) != 0) {
-			//rty += 1;
-			//if (rty < 3) goto rty1;
 			delete cmd;
 			delete session;
 			pbafile.close();
@@ -4139,8 +4133,6 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 			adj_host_prop(0); // reset host properties to smaller size
 			return lastRC;
 		}
-
-		// do retry here 
 
 		filepos += blockSize;
 		if (filepos > DecompressedBufferSize)
@@ -4151,7 +4143,7 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 	} // end of while 
 
 	//printf("\r%s %i(%I64d) bytes written \n", progress_bar, filepos, DecompressedBufferSize);
-	printf("\n%I64d(%I64d) bytes written \n", filepos - blockSize + sz, DecompressedBufferSize);
+	printf("\n%I64d(%I64d) bytes written to %s \n", filepos - blockSize + sz, DecompressedBufferSize, dev);
 	// open progress output file
 	progfile.open(sernum, ios::out);
 	memset(progbuf, 0, 50);
