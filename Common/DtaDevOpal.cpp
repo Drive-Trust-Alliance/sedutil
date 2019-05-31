@@ -2596,25 +2596,42 @@ vector<uint8_t> hex2data_a(char * password)
 }
 uint8_t DtaDevOpal::auditWrite(char * password, char * idstr, char * userid)
 {
-	uint8_t lastRC;
+	uint8_t lastRC, rc, rc1, rc2;
 	entry_t ent;
-	uint8_t * pent; 
+	uint8_t * pent;
 	pent = (uint8_t *)&ent;
+	//LOG(I) << "sizeof(entry_t)=" << sizeof(entry_t) ;
 	memset(&ent, 0, sizeof(entry_t));
-	char t[16];
-	memset(t, 0, 16);
-	//DtaHexDump(idstr, 16);
+	char t[16], t1[16], t2[16];
+	memset(t, 0, 16); memset(t1, 0, 16); memset(t1, 0, 16);
+	rc = memcpy_s(t, 8, idstr, 8); 	rc1 = memcpy_s(t1, 8, idstr, 8); 	rc2 = memcpy_s(t2, 8, idstr, 8);
+	if (rc | rc1 | rc2) {
+		LOG(E) << "idstr copy error " << rc << rc1 << rc2;
+	}
+	rc = memcmp(t, idstr, 8); rc1 = memcmp(t1, idstr, 8); rc2 = memcmp(t2, idstr, 8);
+	if (rc | rc1 | rc2) {
+		LOG(E) << "idstr is wrong " << rc << rc1 << rc2;
+	}
+
 	vector<uint8_t> h;
 	h.clear();
 	h = hex2data_a(idstr);
-	uint16_t len = 0; 
-	if (h.size() < 8) {
-		for (int jj = 0; jj < (8 - h.size()); jj++ ) h.push_back(0); // fill up h to 8 bytes
-	}
 
-	for (uint8_t ii = 0; ii < 8; ii++) {
+	//uint16_t len = 0; 
+
+	for (uint8_t ii = 0; ii < 7; ii++) {
 		pent[ii] = h.at(ii);
 	}
+#define MAX_EVENT  40
+	if (ent.event > MAX_EVENT) {
+		LOG(E) << "eventID error " << ent.event;
+	}
+	//LOG(I) << "event ID correct";
+	if (((ent.yy < 19) && (ent.yy > 29)) || (ent.mm > 12) || (ent.dd > 31) || (ent.hh > 60) || (ent.min > 60) || (ent.sec > 60)) {
+		LOG(E) << "event time stamp error " << ent.yy << ent.mm << ent.dd << ent.hh << ent.min << ent.sec;
+		DtaHexDump(&ent, 8);
+	}
+
 	//DtaHexDump(pent, 16);
 	//DtaHexDump(&ent, 16);
 
@@ -4097,7 +4114,8 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 		{
 		//	progress_bar[1] = spinner[spinnertick.i++];
 			//printf("\r%s %i(%I64d) %s", progress_bar,filepos, DecompressedBufferSize, dev);
-			printf("\r %i(%I64d) %s",  filepos, DecompressedBufferSize, dev);
+			//
+			printf("\r %i(%I64d) %d%% %s ",  filepos, DecompressedBufferSize, (uint16_t)(((float)filepos / (float)DecompressedBufferSize) * 100),dev);
 			fflush(stdout);
 			// open progress output file
 			progfile.open(sernum, ios::out);
