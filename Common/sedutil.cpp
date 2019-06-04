@@ -1208,7 +1208,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-		printf("Fidelity Lock Version : 0.8.0.%s.%s 20190531-A002\n", st1.c_str(),GIT_VERSION);
+		printf("Fidelity Lock Version : 0.8.1.%s.%s 20190604-A001\n", st1.c_str(),GIT_VERSION);
 
 		return 0;
 		break;
