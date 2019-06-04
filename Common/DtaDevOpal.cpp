@@ -2602,6 +2602,7 @@ uint8_t DtaDevOpal::auditWrite(char * password, char * idstr, char * userid)
 	pent = (uint8_t *)&ent;
 	//LOG(I) << "sizeof(entry_t)=" << sizeof(entry_t) ;
 	memset(&ent, 0, sizeof(entry_t));
+	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 	char t[16], t1[16], t2[16];
 	memset(t, 0, 16); memset(t1, 0, 16); memset(t1, 0, 16);
 	rc = memcpy_s(t, 8, idstr, 8); 	rc1 = memcpy_s(t1, 8, idstr, 8); 	rc2 = memcpy_s(t2, 8, idstr, 8);
@@ -2612,6 +2613,7 @@ uint8_t DtaDevOpal::auditWrite(char * password, char * idstr, char * userid)
 	if (rc | rc1 | rc2) {
 		LOG(E) << "idstr is wrong " << rc << rc1 << rc2;
 	}
+	#endif
 
 	vector<uint8_t> h;
 	h.clear();
@@ -2622,7 +2624,7 @@ uint8_t DtaDevOpal::auditWrite(char * password, char * idstr, char * userid)
 	for (uint8_t ii = 0; ii < 7; ii++) {
 		pent[ii] = h.at(ii);
 	}
-#define MAX_EVENT  40
+	#define MAX_EVENT  40
 	if (ent.event > MAX_EVENT) {
 		LOG(E) << "eventID error " << ent.event;
 	}
