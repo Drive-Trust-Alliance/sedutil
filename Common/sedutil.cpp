@@ -52,6 +52,48 @@ void setlic(char * lic_level, const char * LicenseLevel);
 
 using namespace std;
 
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+//int DtaDevOS::diskScan()
+int diskScan(char * devskip)
+{
+	char devname[25];
+	int i = 0;
+	DtaDev * d;
+	LOG(D1) << "Creating diskList";
+	printf("\nScanning for Opal compliant disks\n");
+	while (TRUE) {
+		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i);
+		d = new DtaDevGeneric(devname);
+		if (d->isPresent()) {
+			printf("%s", devname);
+			if (d->isAnySSC())
+				printf(" %s%s%s ", (d->isOpal1() ? "1" : " "),
+				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
+			else
+				printf("%s", " No  ");
+			//cout << d->getModelNum() << " " << d->getFirmwareRev() << std::endl;
+			cout << d->getModelNum() << ":" << d->getFirmwareRev() << ":" << d->getSerialNum() << std::endl; // GUI not work if no endl?
+			if (MAX_DISKS == i) {
+				LOG(I) << MAX_DISKS << " disks, really?";
+				delete d;
+				return 1;
+			}
+		}
+		else break;
+		delete d;
+		i += 1;
+	}
+	delete d;
+	printf("No more disks present ending scan\n");
+	return 0;
+}
+
+
+
+
+
+#else // linux 
 int diskScan(char * devskip)
 {
 	char devname[25];
@@ -191,6 +233,7 @@ int diskScan(char * devskip)
 	//printf ("out of while loop ; ndisk=%d mdisk=%d  lpc=%d nvmedisk=%d mnvmedisk=%d\n", ndisk, mdisk,lpc,nvmedisk, mnvmedisk);
 	return 0;
 }
+#endif
 
 void auditpass(char * apass);
 void auditpass(char * apass)
@@ -1208,7 +1251,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-		printf("Fidelity Lock Version : 0.8.1.%s.%s 20190604-A001\n", st1.c_str(),GIT_VERSION);
+		printf("Fidelity Lock Version : 0.8.1.%s.%s 201906012-A001\n", st1.c_str(),GIT_VERSION);
 
 		return 0;
 		break;

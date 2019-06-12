@@ -4079,7 +4079,7 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 		pbafile.close();
 		return lastRC;
 	} */
-
+	
 	LOG(I) << "Writing PBA to " << dev;
 	
 	while ( (filepos < DecompressedBufferSize)) {
@@ -4112,19 +4112,22 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 		//if (!(filepos % fivepercent))
 		//	progress_bar[complete++] = star[0];
 
-		//if (!(filepos % (blockSize * 5)))
-		{
+		if (!(filepos % (blockSize * 5))) {
 		//	progress_bar[1] = spinner[spinnertick.i++];
 			//printf("\r%s %i(%I64d) %s", progress_bar,filepos, DecompressedBufferSize, dev);
 			//
-			printf("\r %i(%I64d) %d%% %s ",  filepos, DecompressedBufferSize, (uint16_t)(((float)filepos / (float)DecompressedBufferSize) * 100),dev);
+			
+			printf("\r %c %i(%I64d) %d%% BklSz=%ld %s ", spinner[spinnertick.i++],  filepos, DecompressedBufferSize, (uint16_t)(((float)filepos / (float)DecompressedBufferSize) * 100), blockSize , dev);
 			fflush(stdout);
-			// open progress output file
-			progfile.open(sernum, ios::out);
-			memset(progbuf, 0,50);
-			sprintf(progbuf,"\r%i(%I64d)", filepos, DecompressedBufferSize);
-			progfile.write(progbuf, strlen(progbuf));
-			progfile.close();
+
+			// open progress output file at slower rate
+			if (!(filepos % (blockSize * 50))) {
+				progfile.open(sernum, ios::out);
+				memset(progbuf, 0, 50);
+				sprintf(progbuf, "\r%i(%I64d)", filepos, DecompressedBufferSize);
+				progfile.write(progbuf, strlen(progbuf));
+				progfile.close();
+			}
 		}
 
 		lengthtoken.clear();
