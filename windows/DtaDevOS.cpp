@@ -119,11 +119,13 @@ void DtaDevOS::init(const char * devref)
 	uint8_t geometry[256];
 	uint32_t disksz;
 	PDISK_GEOMETRY_EX DiskGeometry = (PDISK_GEOMETRY_EX)(void*)geometry; // defined in winioctl.h
-																		 // double check if it is a usb thumb drive, ignore discovery0()
-	if (!DeviceIoControl(hDev, IOCTL_DISK_GET_DRIVE_GEOMETRY_EX,
-		NULL, 0, geometry, sizeof(geometry), &BytesReturned, NULL))
+	BOOL r = 0;																	 // double check if it is a usb thumb drive, ignore discovery0()
+	if (!(r = DeviceIoControl(hDev, IOCTL_DISK_GET_DRIVE_GEOMETRY_EX,
+		NULL, 0, geometry, sizeof(geometry), &BytesReturned, NULL)))
 	{
-		return;
+		LOG(D1) << "IOCTL_DISK_GET_DRIVE_GEOMETRY_EX error"  ; 
+		LOG(D1) << "Pyrite return error for some reason (when locked), ignore error for now"; 
+		// return; // jerry pyrite return error for geometry info ????
 	}
 	/*
 	printf("Disk size = %I64d\n", DiskGeometry->DiskSize.QuadPart);
@@ -138,14 +140,17 @@ void DtaDevOS::init(const char * devref)
 	disksz = (DiskGeometry->Geometry.Cylinders.LowPart *
 		DiskGeometry->Geometry.TracksPerCylinder *
 		DiskGeometry->Geometry.SectorsPerTrack) / 2000; // size in MB
-	if (disksz > (32 * 1000)) { // only > 32GB consider as SSD otherwise treat it as usb thumb
+	if ((disksz > (32 * 1000)) || (descriptor.BusType != BusTypeUsb)) { // only > 32GB and not usb-bus consider as SSD otherwise treat it as usb thumb
 		identify(disk_info);
+	}
+	else {
+		LOG(D) << "disksz is less than 32GB treat it as flash usb drive";
 	}
 
 	LOG(D1) << "Before Entering disk->init";
 	if (DEVICE_TYPE_OTHER != disk_info.devType)
 	{
-		if (disksz > (32 * 1000)) // only > 32GB consider as SSD otherwise treat it as usb thumb
+		if ((disksz > (32 * 1000)) || (descriptor.BusType != BusTypeUsb)) // only > 32GB consider as SSD otherwise treat it as usb thumb
 			discovery0();
 	}
 }

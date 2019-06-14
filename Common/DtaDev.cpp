@@ -147,7 +147,7 @@ void DtaDev::discovery0()
 		//ExitProcess(0);
 	}
     if ((lastRC) != 0) { 
-		LOG(E) << "sendCmd failed; lastRC= " << lastRC;
+		LOG(D1) << "sendCmd failed; lastRC= " << lastRC;
 
     #endif
     #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)

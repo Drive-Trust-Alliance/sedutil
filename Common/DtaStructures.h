@@ -289,7 +289,7 @@ union Discovery0Features {
     Discovery0SingleUserMode singleUserMode;
     Discovery0OPALV200 opalv200;
 	Discovery0PYRITE pyritev100;
-	Discovery0PYRITE opalite100;
+	Discovery0OPALITE opalite100;
 	Discovery0OpalV100 opalv100;
     Discovery0DatastoreTable datastore;
 	Discovery0BlockSIDFeatures blocksidauth;
