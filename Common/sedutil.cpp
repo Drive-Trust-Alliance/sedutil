@@ -68,10 +68,12 @@ int diskScan(char * devskip)
 		if (d->isPresent()) {
 			printf("%s", devname);
 			if (d->isAnySSC())
-				printf(" %s%s%s ", (d->isOpal1() ? "1" : " "),
-				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
+				printf(" %s%s%s%s%s%s ", (d->isOpal1() ? "1" : " "),
+				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "),    
+					(d->isPyrite() ? "P" : " "), (d->isOpalite() ? "L" : " "), (d->isRuby() ? "R" : " ") );
 			else
-				printf("%s", " No  ");
+				printf("%s", " No     ");
+				//            12345678
 			//cout << d->getModelNum() << " " << d->getFirmwareRev() << std::endl;
 			cout << d->getModelNum() << ":" << d->getFirmwareRev() << ":" << d->getSerialNum() << std::endl; // GUI not work if no endl?
 			if (MAX_DISKS == i) {
@@ -177,11 +179,19 @@ int diskScan(char * devskip)
 				{mnvmedisk+=1;}
 		#endif	
 			printf("%s", devname);
+
+			//if (d->isAnySSC())
+			//	printf(" %s%s%s ", (d->isOpal1() ? "1" : " "),
+			//	(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
+			//			else
+			// printf("%s", " No  ");
 			if (d->isAnySSC())
-				printf(" %s%s%s ", (d->isOpal1() ? "1" : " "),
-				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
+				printf(" %s%s%s%s%s%s ", (d->isOpal1() ? "1" : " "),
+				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "),
+					(d->isPyrite() ? "P" : " "), (d->isOpalite() ? "L" : " "), (d->isRuby() ? "R" : " "));
 			else
-				printf("%s", " No  ");
+				printf("%s", " No     ");
+
 			cout << d->getModelNum() << ":" << d->getFirmwareRev() << ":" << d->getSerialNum() << std::endl; // GUI not work if no endl?
 			if (MAX_DISKS == (i+j)) {
 				LOG(I) << MAX_DISKS << " disks, really?";
@@ -976,7 +986,7 @@ int main(int argc, char * argv[])
 			delete tempDev;
 			return DTAERROR_COMMAND_ERROR;
 		}
-		if (tempDev->isOpal2())
+		if (tempDev->isOpal2() || tempDev->isPyrite() || tempDev->isOpalite() || tempDev->isRuby())
 			d = new DtaDevOpal2(argv[opts.device]);
 		else
 			if (tempDev->isOpal1())
@@ -985,7 +995,8 @@ int main(int argc, char * argv[])
 				if (tempDev->isEprise())
 					d = new DtaDevEnterprise(argv[opts.device]);
 				else
-				// isOpalite() isPyrite()
+				 //isOpalite() isPyrite()
+				//	if (tempDev->isPyrite())
 				{
 					LOG(E) << "Unknown OPAL SSC ";
 					return DTAERROR_INVALID_COMMAND;

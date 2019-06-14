@@ -44,6 +44,12 @@ DtaDev::~DtaDev()
 {
 }
 
+uint8_t DtaDev::isRuby()
+{
+	LOG(D1) << "Entering DtaDev::isRuby " << (uint16_t)disk_info.RUBY;
+	return disk_info.RUBY;
+}
+
 uint8_t DtaDev::isOpalite()
 {
 	LOG(D1) << "Entering DtaDev::isOpalite " << (uint16_t) disk_info.OPALITE;
@@ -251,6 +257,15 @@ OK101:
             disk_info.OPALITE_revertedPIN = body->opalv200.revertedPIN;
             disk_info.OPALITE_numcomIDs = SWAP16(body->opalv200.numCommIDs);
 			disk_info.OPALITE_version = body->opalv200.version;
+			// temp patch ; use OPAL2 diskinfo if needed; need create pyrite class in the future
+			disk_info.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
+			disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
+			disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
+			disk_info.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+			disk_info.OPAL20_numAdmins = SWAP16(body->opalv200.numlockingAdminAuth);
+			disk_info.OPAL20_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
+			disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
+			disk_info.OPAL20_version = body->opalv200.version;
             break;
         case FC_PYRITE: /* PYRITE */
             disk_info.PYRITE= 1;
@@ -260,6 +275,16 @@ OK101:
             disk_info.PYRITE_initialPIN = body->opalv200.initialPIN;
             disk_info.PYRITE_revertedPIN = body->opalv200.revertedPIN;
             disk_info.PYRITE_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+			// temp patch ; use OPAL2 diskinfo if needed; need create pyrite class in the future
+			disk_info.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
+			disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
+			disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
+			disk_info.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+			disk_info.OPAL20_numAdmins = SWAP16(body->opalv200.numlockingAdminAuth);
+			disk_info.OPAL20_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
+			disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
+			disk_info.OPAL20_version = body->opalv200.version;
+
             break;        
 		case FC_RUBY: /* RUBY */
 			disk_info.RUBY = 1;
@@ -271,6 +296,16 @@ OK101:
 			disk_info.RUBY_numcomIDs = SWAP16(body->opalv200.numCommIDs);
 			disk_info.RUBY_numAdmins = SWAP16(body->opalv200.numlockingAdminAuth);
 			disk_info.RUBY_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
+			// temp patch ; use OPAL2 diskinfo if needed; need create pyrite class in the future
+			disk_info.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
+			disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
+			disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
+			disk_info.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+			disk_info.OPAL20_numAdmins = SWAP16(body->opalv200.numlockingAdminAuth);
+			disk_info.OPAL20_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
+			disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
+			disk_info.OPAL20_version = body->opalv200.version;
+
 			break;
 		case FC_BlockSID: /* Block SID */
 			disk_info.BlockSID = 1;
@@ -430,7 +465,15 @@ void DtaDev::puke()
 		cout << ", Reverted PIN = " << HEXON(2) << disk_info.PYRITE_revertedPIN << HEXOFF;
 		cout << ", comIDs = " << disk_info.PYRITE_numcomIDs;
 		cout << std::endl;
-	}    
+	}
+	if (disk_info.RUBY) {
+		cout << "RUBY 1." << ((disk_info.RUBY_version & 0xf) - 1) << " function (" << HEXON(4) << FC_RUBY << ")" << HEXOFF << std::endl;
+		cout << "    Base comID = " << HEXON(4) << disk_info.RUBY_basecomID << HEXOFF;
+		cout << ", Initial PIN = " << HEXON(2) << disk_info.RUBY_initialPIN << HEXOFF;
+		cout << ", Reverted PIN = " << HEXON(2) << disk_info.RUBY_revertedPIN << HEXOFF;
+		cout << ", comIDs = " << disk_info.RUBY_numcomIDs;
+		cout << std::endl;
+	}
 	if (disk_info.BlockSID) {
 		cout << "BlockSID function (" << HEXON(4) << FC_BlockSID << ")" << HEXOFF << std::endl;
 		cout << "    BlockSIDState " << HEXON(2) << disk_info.BlockSID_BlockSIDState << HEXOFF;
