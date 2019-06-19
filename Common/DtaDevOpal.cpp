@@ -316,7 +316,8 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 	char * buf = (char *)malloc(20);
 	memset(buf, 0, 20);
 	if (isPyrite() || isOpalite() || isRuby() ) {
-		buf = "User2"; // User2 is the last user of Pyrite
+		//buf = "User2"; // User2 is the last user of Pyrite
+		strncpy(buf, "User2", 5);
 	}
 	else {
 		gethuser(buf);
