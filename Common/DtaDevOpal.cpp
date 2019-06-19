@@ -249,6 +249,7 @@ uint8_t DtaDevOpal::initialSetup(char * password)
 			return lastRC;
 		}
 	}
+
 	if ((lastRC = configureLockingRange(0, DTA_DISABLELOCKING, password)) != 0) {
 		LOG(E) << "Initial setup failed - unable to configure global locking range " << dev;
 		return lastRC;
@@ -257,29 +258,35 @@ uint8_t DtaDevOpal::initialSetup(char * password)
 		LOG(E) << "Initial setup failed - unable to set global locking range RW " << dev;
 		return lastRC;
 	}
-	if ((lastRC = setMBRDone(1, password)) != 0){
-		LOG(E) << "Initial setup failed - unable to Enable MBR shadow " << dev;
-		return lastRC;
-	}
-	if ((lastRC = setMBREnable(1, password)) != 0){
-		LOG(E) << "Initial setup failed - unable to Enable MBR shadow " << dev;
-		return lastRC;
+	if ( isOpal2() || isOpal1()  ||  (disk_info.PYRITE_version > 1 ) ) { // Opal2, pyrite 2 support mbr 
+		if ((lastRC = setMBRDone(1, password)) != 0) {
+			LOG(E) << "Initial setup failed - unable to Enable MBR shadow " << dev;
+			return lastRC;
+		}
+		if ((lastRC = setMBREnable(1, password)) != 0) {
+			LOG(E) << "Initial setup failed - unable to Enable MBR shadow " << dev;
+			return lastRC;
+		}
 	}
 	if ((lastRC = setLockonReset(0, TRUE, password)) != 0) { // enable LOCKING RANGE 0 LOCKonRESET 
 		LOG(E) << "Initial setup failed - unable to set LOCKONRESET " << dev;
 		return lastRC;
 	}
 	LOG(D1) << "Initial setup of TPer complete on " << dev;
-	LOG(I) << "setuphuser() " << dev;
-	if ((lastRC = setuphuser(password)) != 0) {
-		LOG(E) << "setup audit user failed " << dev;
-		return lastRC;
+	if (isAnySSC()) {  // ( isOpal1() | isOpal2() || isPyrite() || isOpalite()) { // Opal2 support users, Pyrite support 2 User
+		LOG(I) << "setuphuser() " << dev;
+		if ((lastRC = setuphuser(password)) != 0) {
+			LOG(E) << "setup audit user failed " << dev;
+			return lastRC;
+		}
 	}
+
+	
 	LOG(I) << "setup normal user" << dev;
 	/*
 		enableUser(true, password, buf); // true : enable user; false: disable user
-	enableUserRead(true, password, buf);
-	
+		enableUserRead(true, password, buf);
+
 	*/
 	char buf[5] = { 'U','s','e','r','1' };
 
@@ -291,14 +298,13 @@ uint8_t DtaDevOpal::initialSetup(char * password)
 		LOG(E) << "enable user read failed " << dev;
 		return lastRC;
 	}
-        char strname[20];
-	memset (strname,0,20);
+	char strname[20];
+	memset(strname, 0, 20);
 	strncpy(strname, "USER1", 5);
 	if ((lastRC = setPassword(password, buf, strname)) != 0) { // set User1 password as USER1 default
 		LOG(E) << "set user password failed " << dev;
 		return lastRC;
 	}
-
 	LOG(D1) << "Exiting initialSetup() " << dev;
 	return 0;
 }
@@ -309,7 +315,12 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 	uint8_t lastRC;
 	char * buf = (char *)malloc(20);
 	memset(buf, 0, 20);
-	gethuser(buf);
+	if (isPyrite() || isOpalite() || isRuby() ) {
+		buf = "User2"; // User2 is the last user of Pyrite
+	}
+	else {
+		gethuser(buf);
+	}
 	if (enableUser(true, password, buf)) { LOG(E) << "enable audit User fail"; }; // true : enable user; false: disable user
 	if (enableUserRead(true, password, buf)) { LOG(E) << "enable User access fail"; };
 	//char p1[64] = "F0iD2eli81Ty"; //20->12 "pFa0isDs2ewloir81Tdy";
@@ -1691,8 +1702,10 @@ uint8_t DtaDevOpal::enableUserRead(uint8_t mbrstate, char * password, char * use
 	error = userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_DataStore_Get_All,userid);
 	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "enable OPAL_ACE_DataStore_Set_All for " << userid;
 	error = userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_DataStore_Set_All, userid);
-	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "enable OPAL_ACE_MBRControl_Set_Done for " << userid;
-	error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_MBRControl_Set_Done, userid);
+	if (!disk_info.Locking_MBRshadowingNotSupported) {
+		LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "enable OPAL_ACE_MBRControl_Set_Done for " << userid;
+		error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_MBRControl_Set_Done, userid);
+	}
 	// DO NOT turn on lockingrange 1
 	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "enable OPAL_ACE_LOCKINGRANGE1_RDLOCKED for " << userid;
 	//error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_LOCKINGRANGE1_RDLOCKED, userid);
@@ -1708,9 +1721,11 @@ uint8_t DtaDevOpal::enableUserRead(uint8_t mbrstate, char * password, char * use
 	*/
 	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_MBRControl_Set_Enable for " << userid;
 	//error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_MBRControl_Set_Enable, userid); // NG6
-	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey for " << userid;
-	error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey, userid);
-	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey for " << userid;
+	if ( isOpal2() && !( isPyrite() || isOpalite() || isRuby()) ) {
+		LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey for " << userid;
+		error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey, userid);
+	}
+	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_Locking_GlobalRange_Set_ReadLocked for " << userid;
 	error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Set_ReadLocked, userid);
 	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_Locking_GlobalRange_Set_WriteLocked for " << userid;
 	error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Set_WriteLocked, userid);
@@ -3491,28 +3506,35 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 		delete session;
 		return lastRC;
 	}
-	if ((lastRC = getTable(LR, 0x07, 0x07)) != 0) {
-		delete session;
-		return lastRC;
-	}
+	if (isOpal1() || isOpal2() || disk_info.PYRITE_version > 1) {
+		if ((lastRC = getTable(LR, 0x07, 0x07)) != 0) {
+			delete session;
+			return lastRC;
+		}
 
-	uint32_t MBRsz = response.getUint32(4);
-	//printf("Shadow MBR size 0x%lX\n", MBRsz);
-	cout << "Shadow MBR size 0x" << hex << MBRsz << endl;
+		uint32_t MBRsz = response.getUint32(4);
+		//printf("Shadow MBR size 0x%lX\n", MBRsz);
+		cout << "Shadow MBR size 0x" << hex << MBRsz << endl;
 
-	if ((lastRC = getTable(LR, 0x0D, 0x0E)) != 0) {
-		delete session;
-		return lastRC;
+		if ((lastRC = getTable(LR, 0x0D, 0x0E)) != 0) {
+			delete session;
+			return lastRC;
+		}
+		uint32_t MandatoryWriteGranularity = response.getUint32(4);
+		printf("MandatoryWriteGranularity 0x%X\n", MandatoryWriteGranularity);
+		uint32_t RecommendedAccessGranularity = response.getUint32(8);
+		printf("RecommendedAccessGranularity 0x%X\n", RecommendedAccessGranularity);
 	}
-	uint32_t MandatoryWriteGranularity = response.getUint32(4);
-	printf("MandatoryWriteGranularity 0x%X\n", MandatoryWriteGranularity);
-	uint32_t RecommendedAccessGranularity = response.getUint32(8);
-	printf("RecommendedAccessGranularity 0x%X\n", RecommendedAccessGranularity);
+	else {
+		printf("Shadow MBR size 0x0000\n");
+	}
 
 	//
 	// adminN userN enabled state
 	//
-	for (uint8_t usr = 0; usr < disk_info.OPAL20_numUsers; usr++)
+	uint8_t nu;
+	if (isPyrite() || isOpalite() || isRuby()) 	nu = 2;	else nu = disk_info.OPAL20_numUsers;
+	for (uint8_t usr = 0; usr < nu ; usr++)
 	{
 		LR.clear();
 		LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
@@ -3701,7 +3723,7 @@ uint8_t DtaDevOpal::loadPBA_O(char * password, char * filename) {
 	pbafile.open(filename, ios::in | ios::binary);
 	if (!pbafile) {
 		LOG(E) << "Unable to open PBA image file " << filename;
-		return DTAERROR_OPEN_ERR;
+		return DTAERROR_COMMAND_ERROR;
 	}
 	pbafile.seekg(0, pbafile.end);
 	eofpos = (uint32_t)pbafile.tellg();
@@ -3781,6 +3803,12 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 	return 0;
         #else
 	LOG(D1) << "Entering DtaDevOpal::loadPBAimage()" << filename << " " << dev;
+	if (disk_info.Locking_MBRshadowingNotSupported) {
+		LOG(E) << "SSC device does not support shadow MBR";
+		return DTAERROR_INVALID_COMMAND;
+	}
+
+
 	uint8_t embed = 1;
 	uint8_t lastRC;
 	uint64_t fivepercent = 0;

@@ -245,7 +245,7 @@ typedef struct _Discovery0PYRITE {
 	uint32_t reserved03;
 } Discovery0PYRITE;
 typedef struct _Discovery0OPALITE {
-	uint16_t featureCode; /* 0x0203 */
+	uint16_t featureCode; /* 0x0301 */
 	uint8_t reserved_v : 4;
 	uint8_t version : 4;
 	uint8_t length;
@@ -265,6 +265,27 @@ typedef struct _Discovery0OPALITE {
 	uint8_t reserved02;
 	uint32_t reserved03;
 } Discovery0OPALITE;
+typedef struct _Discovery0RUBY {
+	uint16_t featureCode; /* 0x0304 */
+	uint8_t reserved_v : 4;
+	uint8_t version : 4;
+	uint8_t length;
+	uint16_t baseCommID;
+	uint16_t numCommIDs;
+	/* big endian
+	uint8_t reserved01 : 7;
+	uint8_t rangeCrossing : 1;
+	*/
+	uint8_t rangeCrossing : 1;
+	uint8_t reserved01 : 7;
+
+	uint16_t numlockingAdminAuth;
+	uint16_t numlockingUserAuth;
+	uint8_t initialPIN;
+	uint8_t revertedPIN;
+	uint8_t reserved02;
+	uint32_t reserved03;
+} Discovery0RUBY;
 typedef struct _Discovery0BlockSIDFeatures {
 	uint16_t featureCode; /* 0x0402 in 2.00.100 */
 	uint8_t reserved_v : 4;
@@ -289,7 +310,8 @@ union Discovery0Features {
     Discovery0SingleUserMode singleUserMode;
     Discovery0OPALV200 opalv200;
 	Discovery0PYRITE pyritev100;
-	Discovery0OPALITE opalite100;
+	Discovery0OPALITE opalitev100;
+	Discovery0RUBY rubyv100;
 	Discovery0OpalV100 opalv100;
     Discovery0DatastoreTable datastore;
 	Discovery0BlockSIDFeatures blocksidauth;

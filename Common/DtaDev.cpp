@@ -262,10 +262,15 @@ OK101:
 			disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
 			disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
 			disk_info.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-			disk_info.OPAL20_numAdmins = SWAP16(body->opalv200.numlockingAdminAuth);
-			disk_info.OPAL20_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
+			disk_info.OPAL20_numAdmins = 1; // SWAP16(body->opalv200.numlockingAdminAuth);
+			disk_info.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
 			disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
 			disk_info.OPAL20_version = body->opalv200.version;
+			// does pyrite has data store. no feature set for data store default vaule 128K 
+			disk_info.DataStore = 1;
+			disk_info.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
+			disk_info.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
+			disk_info.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
             break;
         case FC_PYRITE: /* PYRITE */
             disk_info.PYRITE= 1;
@@ -280,11 +285,15 @@ OK101:
 			disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
 			disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
 			disk_info.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-			disk_info.OPAL20_numAdmins = SWAP16(body->opalv200.numlockingAdminAuth);
-			disk_info.OPAL20_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
+			disk_info.OPAL20_numAdmins = 1; // SWAP16(body->opalv200.numlockingAdminAuth);
+			disk_info.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
 			disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
 			disk_info.OPAL20_version = body->opalv200.version;
-
+			// does pyrite has data store. no feature set for data store default vaule 128K 
+			disk_info.DataStore = 1;
+			disk_info.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
+			disk_info.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
+			disk_info.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
             break;        
 		case FC_RUBY: /* RUBY */
 			disk_info.RUBY = 1;
@@ -301,10 +310,15 @@ OK101:
 			disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
 			disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
 			disk_info.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-			disk_info.OPAL20_numAdmins = SWAP16(body->opalv200.numlockingAdminAuth);
-			disk_info.OPAL20_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
+			disk_info.OPAL20_numAdmins = 1; // SWAP16(body->opalv200.numlockingAdminAuth);
+			disk_info.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
 			disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
 			disk_info.OPAL20_version = body->opalv200.version;
+			// does pyrite has data store. no feature set for data store default vaule 128K 
+			disk_info.DataStore = 1;
+			disk_info.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
+			disk_info.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
+			disk_info.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
 
 			break;
 		case FC_BlockSID: /* Block SID */
@@ -456,6 +470,8 @@ void DtaDev::puke()
 		cout << ", Initial PIN = " << HEXON(2) << disk_info.OPALITE_initialPIN << HEXOFF;
 		cout << ", Reverted PIN = " << HEXON(2) << disk_info.OPALITE_revertedPIN << HEXOFF;
 		cout << ", comIDs = " << disk_info.OPALITE_numcomIDs;
+		cout << "    Locking Admins = " << disk_info.OPAL20_numAdmins;
+		cout << ", Locking Users = " << disk_info.OPAL20_numUsers;
 		cout << std::endl;
 	}
 	if (disk_info.PYRITE) {
@@ -464,6 +480,8 @@ void DtaDev::puke()
 		cout << ", Initial PIN = " << HEXON(2) << disk_info.PYRITE_initialPIN << HEXOFF;
 		cout << ", Reverted PIN = " << HEXON(2) << disk_info.PYRITE_revertedPIN << HEXOFF;
 		cout << ", comIDs = " << disk_info.PYRITE_numcomIDs;
+		cout << "    Locking Admins = " << disk_info.OPAL20_numAdmins;
+		cout << ", Locking Users = " << disk_info.OPAL20_numUsers;
 		cout << std::endl;
 	}
 	if (disk_info.RUBY) {
@@ -472,6 +490,8 @@ void DtaDev::puke()
 		cout << ", Initial PIN = " << HEXON(2) << disk_info.RUBY_initialPIN << HEXOFF;
 		cout << ", Reverted PIN = " << HEXON(2) << disk_info.RUBY_revertedPIN << HEXOFF;
 		cout << ", comIDs = " << disk_info.RUBY_numcomIDs;
+		cout << "    Locking Admins = " << disk_info.OPAL20_numAdmins;
+		cout << ", Locking Users = " << disk_info.OPAL20_numUsers;
 		cout << std::endl;
 	}
 	if (disk_info.BlockSID) {
