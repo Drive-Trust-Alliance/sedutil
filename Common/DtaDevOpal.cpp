@@ -1037,6 +1037,7 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 	}
 	char * buf = (char *)malloc(20);
 	int idx=0;
+
 	memset(buf, 0, 20);
 	gethuser(buf);
 	if (!memcmp(userid , buf, (disk_info.OPAL20_numUsers < 10) ? 5 : 6 ) ) idx = disk_info.OPAL20_numUsers -1 ;
@@ -1133,6 +1134,10 @@ uint8_t DtaDevOpal::setNewPassword_SUM(char * password, char * userid, char * ne
 uint8_t DtaDevOpal::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 {
 	LOG(D1) << "Entering DtaDevOpal::setMBREnable " << dev;
+	if (disk_info.Locking_MBRshadowingNotSupported) {
+		LOG(E) << "SSC device does not support shadow MBR";
+		return DTAERROR_INVALID_COMMAND;
+	}
 	uint8_t lastRC;
         // set MBRDone before changing MBREnable so the PBA isn't presented
         if ((lastRC = setMBRDone(1, Admin1Password)) != 0) {
@@ -1174,6 +1179,10 @@ uint8_t DtaDevOpal::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 	*/
 
 	LOG(D1) << "Entering DtaDevOpal::setMBRDone " << dev;
+	if (disk_info.Locking_MBRshadowingNotSupported) {
+		LOG(E) << "SSC device does not support shadow MBR";
+		return DTAERROR_INVALID_COMMAND;
+	}
 	uint8_t lastRC;
 	if (mbrstate) {
 		if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRDONE,
@@ -1800,11 +1809,16 @@ uint8_t DtaDevOpal::pbaValid(char * password)
 	LOG(D1) << "DtaDevOpal::pbaValid() isn't supported in Linux";
 	return 0;
 	#else
+	if (disk_info.Locking_MBRshadowingNotSupported) {
+		LOG(E) << "SSC device does not support shadow MBR";
+		return DTAERROR_INVALID_COMMAND;
+	}
 	uint8_t lastRC;
 	uint8_t pbaver[512];	
 	uint8_t boot[512];
 	uint8_t bootsig[2] = { 0x55,0xAA };
 	uint8_t pat[16] = { 0xEB,0x3C, 0x90, 0x6D,  0x6B, 0x66, 0x73, 0x2E,  0x66, 0x61, 0x74, };
+
 	lastRC = MBRRead(password, 512, 512, (char *)pbaver);
 	if (lastRC) {
 		LOG(D1) << "MBRRead error " << dev;
@@ -1867,6 +1881,10 @@ uint8_t DtaDevOpal::pbaValid(char * password)
 uint8_t DtaDevOpal::MBRRead(char * password, uint32_t startpos, uint32_t len,char * buffer)
 {
 	LOG(D1) << "Entering DtaDevOpal::MBRRead() with buffer " << dev;
+	if (disk_info.Locking_MBRshadowingNotSupported) {
+		LOG(E) << "SSC device does not support shadow MBR";
+		return DTAERROR_INVALID_COMMAND;
+	}
 	uint8_t lastRC;
 	vector<uint8_t> LR;
 	uint32_t filepos = 0; // startpos;
@@ -3451,6 +3469,11 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 uint8_t DtaDevOpal::getMBRsize(char * password, uint32_t * msize)
 {
 	LOG(D1) << "Entering DtaDevOpal::getMBRsize() " << dev;
+	if (disk_info.Locking_MBRshadowingNotSupported) {
+		LOG(E) << "SSC device does not support shadow MBR";
+		*msize = 0;
+		return DTAERROR_INVALID_COMMAND;
+	}
 
 	uint8_t lastRC;
 	vector<uint8_t> LR;
@@ -3507,7 +3530,8 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 		delete session;
 		return lastRC;
 	}
-	if (isOpal1() || isOpal2() || disk_info.PYRITE_version > 1) {
+	if (!disk_info.Locking_MBRshadowingNotSupported) {
+		LOG(D) << "MBRshadowingNotSupported = 0";
 		if ((lastRC = getTable(LR, 0x07, 0x07)) != 0) {
 			delete session;
 			return lastRC;
@@ -3516,18 +3540,18 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 		uint32_t MBRsz = response.getUint32(4);
 		//printf("Shadow MBR size 0x%lX\n", MBRsz);
 		cout << "Shadow MBR size 0x" << hex << MBRsz << endl;
-
-		if ((lastRC = getTable(LR, 0x0D, 0x0E)) != 0) {
-			delete session;
-			return lastRC;
-		}
 		uint32_t MandatoryWriteGranularity = response.getUint32(4);
 		printf("MandatoryWriteGranularity 0x%X\n", MandatoryWriteGranularity);
 		uint32_t RecommendedAccessGranularity = response.getUint32(8);
 		printf("RecommendedAccessGranularity 0x%X\n", RecommendedAccessGranularity);
 	}
 	else {
+		LOG(D) << "MBRshadowingNotSupported = 0";
 		printf("Shadow MBR size 0x0000\n");
+	}
+	if ((lastRC = getTable(LR, 0x0D, 0x0E)) != 0) {
+		delete session;
+		return lastRC;
 	}
 
 	//
