@@ -82,7 +82,13 @@ int diskScan(char * devskip)
 				return 1;
 			}
 		}
-		else break;
+		else {
+			if (MAX_DISKS == i) {
+				LOG(I) << MAX_DISKS << " disks, really?";
+				delete d;
+				return 1;
+			}
+		}
 		delete d;
 		i += 1;
 	}
@@ -1262,7 +1268,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-		printf("Fidelity Lock Version : 0.8.1.%s.%s 201906018-A001\n", st1.c_str(),GIT_VERSION);
+		printf("Fidelity Lock Version : 0.8.1.%s.%s 201906020-A001\n", st1.c_str(),GIT_VERSION);
 
 		return 0;
 		break;
