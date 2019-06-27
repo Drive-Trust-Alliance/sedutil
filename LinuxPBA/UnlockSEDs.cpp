@@ -80,7 +80,7 @@ uint8_t UnlockSEDs(char * password) {
         else if (tempDev->isPyrite2())
             d = new DtaDevPyrite2(devref);
         else if (tempDev->isPyrite1())
-            d = new DtaDevPurite1(devref);
+            d = new DtaDevPyrite1(devref);
         else
             d = new DtaDevOpal1(devref);
         delete tempDev;
