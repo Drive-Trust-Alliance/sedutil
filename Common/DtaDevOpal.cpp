@@ -3514,6 +3514,7 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 	uint8_t lastRC;
 	vector<uint8_t> LR;
 
+
 	LR.clear();
 	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
 	for (int i = 0; i < 8; i++) {
@@ -3525,6 +3526,19 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 		LOG(E) << "Unable to create session object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
+
+	if (skip_activate) {
+		//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, NULL, OPAL_UID::OPAL_ANYBODY_UID)) != 0) {
+		LOG(I) << " start non-authenticated session with ADMINSP OK for printdefaultpassword";
+		if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID)) != 0) {
+			delete session;
+			LOG(I) << " Failed : start non-authenticated session with ADMINSP OK for printdefaultpassword";
+			return lastRC;
+		}
+		LOG(I) << " OK : start non-authenticated session with ADMINSP OK for printdefaultpassword";
+
+	}
+
 	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG : JERRY 
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete session;
@@ -3557,6 +3571,7 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 	//
 	// adminN userN enabled state
 	//
+skip_act: 
 	uint8_t nu;
 	if (isPyrite() || isOpalite() || isRuby()) 	nu = 2;	else nu = disk_info.OPAL20_numUsers;
 	for (uint8_t usr = 0; usr < nu ; usr++)

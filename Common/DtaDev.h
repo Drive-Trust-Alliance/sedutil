@@ -42,6 +42,7 @@ public:
 	uint8_t isOpalite();
 	/** Does the device conform to the PYRITE SSC */
 	uint8_t isPyrite();
+	uint8_t isPyrite2();
 	/** Does the device conform to the OPAL 2.0 SSC */
 	uint8_t isOpal2();
 	/** Does the device conform to the OPAL 1.0 SSC */

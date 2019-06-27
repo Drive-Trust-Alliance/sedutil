@@ -31,8 +31,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define FC_OPALV200   0x0203
 #define FC_OPALITE    0x0301
 #define FC_PYRITE     0x0302
+#define FC_PYRITE2    0x0303
 #define FC_RUBY       0x0304
 #define FC_BlockSID   0x0402
+#define FC_DataRemoval 0x0404
 /** The Discovery 0 Header. As defined in
 * Opal SSC Documentation
 */
@@ -244,6 +246,27 @@ typedef struct _Discovery0PYRITE {
 	uint8_t reserved02;
 	uint32_t reserved03;
 } Discovery0PYRITE;
+typedef struct _Discovery0PYRITE2 {
+	uint16_t featureCode; /* 0x0303 */
+	uint8_t reserved_v : 4;
+	uint8_t version : 4;
+	uint8_t length;
+	uint16_t baseCommID;
+	uint16_t numCommIDs;
+	/* big endian
+	uint8_t reserved01 : 7;
+	uint8_t rangeCrossing : 1;
+	*/
+	uint8_t rangeCrossing : 1;
+	uint8_t reserved01 : 7;
+
+	uint16_t numlockingAdminAuth;
+	uint16_t numlockingUserAuth;
+	uint8_t initialPIN;
+	uint8_t revertedPIN;
+	uint8_t reserved02;
+	uint32_t reserved03;
+} Discovery0PYRITE2;
 typedef struct _Discovery0OPALITE {
 	uint16_t featureCode; /* 0x0301 */
 	uint8_t reserved_v : 4;
@@ -300,6 +323,31 @@ typedef struct _Discovery0BlockSIDFeatures {
 	uint32_t reserved04;
 	uint32_t reserved03;
 } Discovery0BlockSIDFeatures;
+//Supported Data RemovalMechanism Feature (Feature Code = 0x0404)
+typedef struct _Discovery0DataRemovalMechanismFeatures {
+	uint16_t featureCode; /* 0x0404 in Pyrite 2 */
+	uint8_t reserved_v : 4;
+	uint8_t version : 4;
+	uint8_t length;
+	uint8_t reserved04; 
+	uint8_t reserved05 : 7;
+	uint8_t DataRemoval_OperationProcessing : 1;
+	uint8_t DataRemoval_Mechanism; 
+	uint8_t DataRemoval_reserved : 2 ; 
+	uint8_t DataRemoval_TimeFormat_Bit5 : 1;
+	uint8_t DataRemoval_TimeFormat_Bit4 : 1;
+	uint8_t DataRemoval_TimeFormat_Bit3 : 1;
+	uint8_t DataRemoval_TimeFormat_Bit2 : 1;
+	uint8_t DataRemoval_TimeFormat_Bit1 : 1;
+	uint8_t DataRemoval_TimeFormat_Bit0 : 1;
+	uint16_t DataRemoval_Time_Bit5;
+	uint16_t DataRemoval_Time_Bit4;
+	uint16_t DataRemoval_Time_Bit3;
+	uint16_t DataRemoval_Time_Bit2;
+	uint16_t DataRemoval_Time_Bit1;
+	uint16_t DataRemoval_Time_Bit0;
+	uint8_t reserved16[16]; // byte 20 - 35
+} Discovery0DataRemovalMechanismFeatures;
 
 /** Union of features used to parse the discovery 0 response */
 union Discovery0Features {
@@ -310,11 +358,13 @@ union Discovery0Features {
     Discovery0SingleUserMode singleUserMode;
     Discovery0OPALV200 opalv200;
 	Discovery0PYRITE pyritev100;
+	Discovery0PYRITE2 pyritev200;
 	Discovery0OPALITE opalitev100;
 	Discovery0RUBY rubyv100;
 	Discovery0OpalV100 opalv100;
     Discovery0DatastoreTable datastore;
 	Discovery0BlockSIDFeatures blocksidauth;
+	Discovery0DataRemovalMechanismFeatures dataremoval;
 };
 
 /** ComPacket (header) for transmissions. */
@@ -388,8 +438,10 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t ANY_OPAL_SSC : 1;
     uint8_t OPALITE : 1;
     uint8_t PYRITE : 1;
+	uint8_t PYRITE2 : 1;
 	uint8_t RUBY : 1;
 	uint8_t BlockSID : 1;
+	uint8_t DataRemoval : 1; 
     // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
     uint8_t TPer_ACKNACK : 1;
     uint8_t TPer_async : 1;
@@ -428,6 +480,7 @@ typedef struct _OPAL_DiskInfo {
     uint16_t OPAL20_numAdmins;
     uint16_t OPAL20_numUsers;
     uint8_t OPAL20_rangeCrossing;
+
 	uint8_t OPALITE_version;
     uint16_t OPALITE_basecomID;
     uint16_t OPALITE_numcomIDs;
@@ -439,6 +492,12 @@ typedef struct _OPAL_DiskInfo {
     uint16_t PYRITE_numcomIDs;
     uint8_t PYRITE_initialPIN;
     uint8_t PYRITE_revertedPIN;
+
+	uint8_t PYRITE2_version;
+	uint16_t PYRITE2_basecomID;
+	uint16_t PYRITE2_numcomIDs;
+	uint8_t PYRITE2_initialPIN;
+	uint8_t PYRITE2_revertedPIN;
 	//
 	uint8_t RUBY_version;
 	uint16_t RUBY_basecomID;
@@ -453,6 +512,22 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t BlockSID_BlockSIDState : 1;
 	uint8_t BlockSID_SIDvalueState : 1;
 	uint8_t BlockSID_HardReset : 1;
+
+	uint8_t DataRemoval_version;
+	uint8_t DataRemoval_OperationProcessing;
+	uint8_t DataRemoval_Mechanism;
+	uint8_t DataRemoval_TimeFormat_Bit5;
+	uint16_t DataRemoval_Time_Bit5;
+	uint8_t DataRemoval_TimeFormat_Bit4;
+	uint16_t DataRemoval_Time_Bit4;
+	uint8_t DataRemoval_TimeFormat_Bit3;
+	uint16_t DataRemoval_Time_Bit3;
+	uint8_t DataRemoval_TimeFormat_Bit2;
+	uint16_t DataRemoval_Time_Bit2;
+	uint8_t DataRemoval_TimeFormat_Bit1;
+	uint16_t DataRemoval_Time_Bit1;
+	uint8_t DataRemoval_TimeFormat_Bit0;
+	uint16_t DataRemoval_Time_Bit0;
 
     // IDENTIFY information
     DTA_DEVICE_TYPE devType;

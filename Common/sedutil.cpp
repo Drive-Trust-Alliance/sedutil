@@ -70,7 +70,7 @@ int diskScan(char * devskip)
 			if (d->isAnySSC())
 				printf(" %s%s%s%s%s%s ", (d->isOpal1() ? "1" : " "),
 				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "),    
-					(d->isPyrite() ? "P" : " "), (d->isOpalite() ? "L" : " "), (d->isRuby() ? "R" : " ") );
+					(d->isPyrite2() ? "Y" : d->isPyrite() ? "P" : " "), (d->isOpalite() ? "L" : " "), (d->isRuby() ? "R" : " ") );
 			else
 				printf("%s", " No     ");
 				//            12345678
@@ -1268,7 +1268,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-		printf("Fidelity Lock Version : 0.8.1.%s.%s 201906020-A001\n", st1.c_str(),GIT_VERSION);
+		printf("Fidelity Lock Version : 0.8.1.%s.%s 201906027-A001\n", st1.c_str(),GIT_VERSION);
 
 		return 0;
 		break;

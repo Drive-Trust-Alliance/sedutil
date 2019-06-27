@@ -55,6 +55,11 @@ uint8_t DtaDev::isOpalite()
 	LOG(D1) << "Entering DtaDev::isOpalite " << (uint16_t) disk_info.OPALITE;
 	return disk_info.OPALITE;
 }
+uint8_t DtaDev::isPyrite2()
+{
+	LOG(D1) << "Entering DtaDev::isPyrite2 " << (uint16_t)disk_info.PYRITE2;
+	return disk_info.PYRITE2;
+}
 uint8_t DtaDev::isPyrite()
 {
 	LOG(D1) << "Entering DtaDev::isPyrite " << (uint16_t) disk_info.PYRITE;
@@ -185,7 +190,7 @@ OK101:
         body = (Discovery0Features *) cpos;
         LOG(D2) << "Discover0FeatureCode: " << hex << SWAP16(body->TPer.featureCode);
         switch (SWAP16(body->TPer.featureCode)) { /* could use of the structures here is a common field */
-        case FC_TPER: /* TPer */
+        case FC_TPER: /* TPer 0x001 */
             disk_info.TPer = 1;
             disk_info.TPer_ACKNACK = body->TPer.acknack;
             disk_info.TPer_async = body->TPer.async;
@@ -194,7 +199,7 @@ OK101:
             disk_info.TPer_streaming = body->TPer.streaming;
             disk_info.TPer_sync = body->TPer.sync;
             break;
-        case FC_LOCKING: /* Locking*/
+        case FC_LOCKING: /* Locking 0x002 */
             disk_info.Locking = 1;
             disk_info.Locking_locked = body->locking.locked;
             disk_info.Locking_lockingEnabled = body->locking.lockingEnabled;
@@ -204,40 +209,40 @@ OK101:
             disk_info.Locking_mediaEncrypt = body->locking.mediaEncryption;
 			disk_info.Locking_MBRshadowingNotSupported = body->locking.MBRshadowingNotSupported; // 
             break;
-        case FC_GEOMETRY: /* Geometry Features */
+        case FC_GEOMETRY: /* Geometry Features 0x003 */
             disk_info.Geometry = 1;
             disk_info.Geometry_align = body->geometry.align;
             disk_info.Geometry_alignmentGranularity = SWAP64(body->geometry.alignmentGranularity);
             disk_info.Geometry_logicalBlockSize = SWAP32(body->geometry.logicalBlockSize);
             disk_info.Geometry_lowestAlignedLBA = SWAP64(body->geometry.lowestAlighedLBA);
             break;
-        case FC_ENTERPRISE: /* Enterprise SSC */
+        case FC_ENTERPRISE: /* Enterprise SSC 0x100 */
             disk_info.Enterprise = 1;
 			disk_info.ANY_OPAL_SSC = 1;
 	        disk_info.Enterprise_rangeCrossing = body->enterpriseSSC.rangeCrossing;
             disk_info.Enterprise_basecomID = SWAP16(body->enterpriseSSC.baseComID);
             disk_info.Enterprise_numcomID = SWAP16(body->enterpriseSSC.numberComIDs);
             break;
-        case FC_OPALV100: /* Opal V1 */
+        case FC_OPALV100: /* Opal V1 0x200 */
             disk_info.OPAL10 = 1;
 			disk_info.ANY_OPAL_SSC = 1;
 	        disk_info.OPAL10_basecomID = SWAP16(body->opalv100.baseComID);
             disk_info.OPAL10_numcomIDs = SWAP16(body->opalv100.numberComIDs);
             break;
-        case FC_SINGLEUSER: /* Single User Mode */
+        case FC_SINGLEUSER: /* Single User Mode 0x201 */
             disk_info.SingleUser = 1;
             disk_info.SingleUser_all = body->singleUserMode.all;
             disk_info.SingleUser_any = body->singleUserMode.any;
             disk_info.SingleUser_policy = body->singleUserMode.policy;
             disk_info.SingleUser_lockingObjects = SWAP32(body->singleUserMode.numberLockingObjects);
             break;
-        case FC_DATASTORE: /* Datastore Tables */
+        case FC_DATASTORE: /* Datastore Tables 0x202 */
             disk_info.DataStore = 1;
             disk_info.DataStore_maxTables = SWAP16(body->datastore.maxTables);
             disk_info.DataStore_maxTableSize = SWAP32(body->datastore.maxSizeTables);
             disk_info.DataStore_alignment = SWAP32(body->datastore.tableSizeAlignment);
             break;
-        case FC_OPALV200: /* OPAL V200 */
+        case FC_OPALV200: /* OPAL V200 0x203 */
             disk_info.OPAL20 = 1;
 			disk_info.ANY_OPAL_SSC = 1;
 		    disk_info.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
@@ -249,7 +254,7 @@ OK101:
             disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
 			disk_info.OPAL20_version = body->opalv200.version;
             break;
-        case FC_OPALITE: /* OPALITE */
+        case FC_OPALITE: /* OPALITE 0x301 */
             disk_info.OPALITE = 1;
 			disk_info.ANY_OPAL_SSC = 1;
 		    disk_info.OPALITE_basecomID = SWAP16(body->opalv200.baseCommID);
@@ -263,7 +268,7 @@ OK101:
 			disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
 			disk_info.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
 			disk_info.OPAL20_numAdmins = 1; // SWAP16(body->opalv200.numlockingAdminAuth);
-			disk_info.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
+			disk_info.OPAL20_numUsers =  2; // SWAP16(body->opalv200.numlockingUserAuth);
 			disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
 			disk_info.OPAL20_version = body->opalv200.version;
 			// does pyrite has data store. no feature set for data store default vaule 128K 
@@ -272,7 +277,7 @@ OK101:
 			disk_info.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
 			disk_info.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
             break;
-        case FC_PYRITE: /* PYRITE */
+        case FC_PYRITE: /* PYRITE 0x302 */
             disk_info.PYRITE= 1;
 			disk_info.ANY_OPAL_SSC = 1;
 			disk_info.PYRITE_version = body->opalv200.version;
@@ -294,8 +299,31 @@ OK101:
 			disk_info.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
 			disk_info.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
 			disk_info.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
-            break;        
-		case FC_RUBY: /* RUBY */
+            break; 
+		case FC_PYRITE2: /* PYRITE 2 0x303 */
+			disk_info.PYRITE2 = 1;
+			disk_info.ANY_OPAL_SSC = 1;
+			disk_info.PYRITE2_version = body->opalv200.version;
+			disk_info.PYRITE2_basecomID = SWAP16(body->opalv200.baseCommID);
+			disk_info.PYRITE2_initialPIN = body->opalv200.initialPIN;
+			disk_info.PYRITE2_revertedPIN = body->opalv200.revertedPIN;
+			disk_info.PYRITE2_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+			// temp patch ; use OPAL2 diskinfo if needed; need create pyrite class in the future
+			disk_info.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
+			disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
+			disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
+			disk_info.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+			disk_info.OPAL20_numAdmins = 1; // SWAP16(body->opalv200.numlockingAdminAuth);
+			disk_info.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
+			disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
+			disk_info.OPAL20_version = body->opalv200.version;
+			// does pyrite has data store. no feature set for data store default vaule 128K 
+			disk_info.DataStore = 1;
+			disk_info.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
+			disk_info.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
+			disk_info.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
+			break;
+		case FC_RUBY: /* RUBY 0x304 */
 			disk_info.RUBY = 1;
 			disk_info.ANY_OPAL_SSC = 1;
 			disk_info.RUBY_version = body->opalv200.version;
@@ -321,14 +349,28 @@ OK101:
 			disk_info.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
 
 			break;
-		case FC_BlockSID: /* Block SID */
+		case FC_BlockSID: /* Block SID 0x402 */
 			disk_info.BlockSID = 1;
 			disk_info.BlockSID_BlockSIDState = body->blocksidauth.BlockSIDState;
 			disk_info.BlockSID_SIDvalueState = body->blocksidauth.SIDvalueState;
 			disk_info.BlockSID_HardReset = body->blocksidauth.HardReset;
 			break;
-// 0x0304
-
+		case FC_DataRemoval: /* Data Remove mechanism 0x402 */
+			disk_info.DataRemoval = 1;
+			disk_info.DataRemoval_version = body->dataremoval.version;
+			disk_info.DataRemoval_Mechanism = body->dataremoval.DataRemoval_Mechanism;
+			disk_info.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit5;
+			disk_info.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit5;
+			disk_info.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit4;
+			disk_info.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit4;
+			disk_info.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit3;
+			disk_info.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit3;
+			disk_info.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit2;
+			disk_info.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit2;
+			disk_info.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit1;
+			disk_info.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit1;
+			disk_info.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit0;
+			disk_info.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit0;
         default:
 			if (0xbfff < (SWAP16(body->TPer.featureCode))) {
 				// silently ignore vendor specific segments as there is no public doc on them
@@ -484,6 +526,16 @@ void DtaDev::puke()
 		cout << ", Locking Users = " << disk_info.OPAL20_numUsers;
 		cout << std::endl;
 	}
+	if (disk_info.PYRITE2) {
+		cout << "PYRITE 2." << ((disk_info.PYRITE2_version & 0xf) - 1) << " function (" << HEXON(4) << FC_PYRITE << ")" << HEXOFF << std::endl;
+		cout << "    Base comID = " << HEXON(4) << disk_info.PYRITE2_basecomID << HEXOFF;
+		cout << ", Initial PIN = " << HEXON(2) << disk_info.PYRITE2_initialPIN << HEXOFF;
+		cout << ", Reverted PIN = " << HEXON(2) << disk_info.PYRITE2_revertedPIN << HEXOFF;
+		cout << ", comIDs = " << disk_info.PYRITE2_numcomIDs;
+		cout << "    Locking Admins = " << disk_info.OPAL20_numAdmins;
+		cout << ", Locking Users = " << disk_info.OPAL20_numUsers;
+		cout << std::endl;
+	}
 	if (disk_info.RUBY) {
 		cout << "RUBY 1." << ((disk_info.RUBY_version & 0xf) - 1) << " function (" << HEXON(4) << FC_RUBY << ")" << HEXOFF << std::endl;
 		cout << "    Base comID = " << HEXON(4) << disk_info.RUBY_basecomID << HEXOFF;
@@ -501,6 +553,20 @@ void DtaDev::puke()
 		cout << ", HardReset  = " << HEXON(2) << disk_info.BlockSID_HardReset << HEXOFF;
 		cout << std::endl;
 	}
+	if (disk_info.DataRemoval) {
+		cout << "DataRemoval 1." << ((disk_info.DataRemoval_version & 0xf) - 1) << " function (" << HEXON(4) << FC_DataRemoval << ")" << HEXOFF << std::endl;
+		cout << "    DataRemoval OperationProcessing " << HEXON(2) << disk_info.DataRemoval_OperationProcessing << HEXOFF;
+		cout << ", DataRemoval Machanisim " << HEXON(2) << disk_info.DataRemoval_Mechanism << HEXOFF << std::endl;
+		cout << "    DataRemoval TimeFormat Bit 5 : " << HEXON(2) << disk_info.DataRemoval_TimeFormat_Bit5 << " " << HEXON(4) << disk_info.DataRemoval_Time_Bit5 << HEXOFF << std::endl;
+		cout << "    DataRemoval TimeFormat Bit 4 : " << HEXON(2) << disk_info.DataRemoval_TimeFormat_Bit4 << " " << HEXON(4) << disk_info.DataRemoval_Time_Bit4 << HEXOFF << std::endl;
+		cout << "    DataRemoval TimeFormat Bit 3 : " << HEXON(2) << disk_info.DataRemoval_TimeFormat_Bit3 << " " << HEXON(4) << disk_info.DataRemoval_Time_Bit3 << HEXOFF << std::endl;
+		cout << "    DataRemoval TimeFormat Bit 2 : " << HEXON(2) << disk_info.DataRemoval_TimeFormat_Bit2 << " " << HEXON(4) << disk_info.DataRemoval_Time_Bit2 << HEXOFF << std::endl;
+		cout << "    DataRemoval TimeFormat Bit 1 : " << HEXON(2) << disk_info.DataRemoval_TimeFormat_Bit1 << " " << HEXON(4) << disk_info.DataRemoval_Time_Bit1 << HEXOFF << std::endl;
+		cout << "    DataRemoval TimeFormat Bit 0 : " << HEXON(2) << disk_info.DataRemoval_TimeFormat_Bit0 << " " << HEXON(4) << disk_info.DataRemoval_Time_Bit0 << HEXOFF << std::endl;
+	}
+
+
+
 	if (disk_info.Unknown)
 		cout << "**** " << (uint16_t)disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
 }
