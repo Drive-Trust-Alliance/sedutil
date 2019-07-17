@@ -103,13 +103,28 @@ void DtaDevOS::init(const char * devref)
 		break;
 	case BusTypeRAID:
 		LOG(D1) << "Enter RAID bus type case";
-		disk = new DtaDiskUSB();
+		disk = new DtaDiskUSB(); 
+		identify(disk_info);
+		if (disk_info.devType == DEVICE_TYPE_OTHER)
+		{
+			delete disk;
+			disk = new DtaDiskNVME();
+			identify(disk_info);
+			if (disk_info.devType == DEVICE_TYPE_OTHER)
+			{
+				LOG(D) << "Device on RAID not identified";
+				delete disk;
+				return;
+			}
+		}
 		break;
 	case BusTypeSas:
 		LOG(D1) << "Enter Sas bus type case";
 		disk = new DtaDiskUSB();
 		break;
 	default:
+		LOG(D) << "Unknown bus Type on system storage";
+		delete disk;
 		return;
 	}
 	LOG(D1) << "Before Entering disk->init";

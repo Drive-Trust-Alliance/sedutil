@@ -1618,7 +1618,7 @@ uint8_t DtaDevOpal::userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * use
 	cmd->addToken(auth);
 	cmd->addToken(OPAL_TOKEN::ENDNAME);
 	// /////////////////////////////////////////////////////////////
-	// User2 
+	// Admin1
 	cmd->addToken(OPAL_TOKEN::STARTNAME);
 	cmd->addToken(OPAL_UID::OPAL_HALF_UID_AUTHORITY_OBJ_REF, 4); //????? how to insert 4-byte here, addToken will insert BYTESTRING4 token
 	cmd->addToken(auth2);  
@@ -1628,7 +1628,7 @@ uint8_t DtaDevOpal::userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * use
 	cmd->addToken(OPAL_UID::OPAL_HALF_UID_BOOLEAN_ACE, 4);
 	cmd->addToken(mbrstate ? OPAL_TOKEN::VALUES : OPAL_TOKEN::WHERE);
 	cmd->addToken(OPAL_TOKEN::ENDNAME);
-	//
+	// User2 
 	// always add this audit use, if request user id is not audit id
 	// !memcmp("User", userid, 4) 
 	if (1) { // ((uint8_t)atoi(&userid[4]) != disk_info.OPAL20_numUsers) { 

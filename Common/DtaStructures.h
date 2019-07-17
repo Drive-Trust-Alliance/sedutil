@@ -330,22 +330,23 @@ typedef struct _Discovery0DataRemovalMechanismFeatures {
 	uint8_t version : 4;
 	uint8_t length;
 	uint8_t reserved04; 
-	uint8_t reserved05 : 7;
+// bit defined from LSB to MSB on intel x86 x64 
 	uint8_t DataRemoval_OperationProcessing : 1;
+	uint8_t reserved05 : 7;
 	uint8_t DataRemoval_Mechanism; 
-	uint8_t DataRemoval_reserved : 2 ; 
-	uint8_t DataRemoval_TimeFormat_Bit5 : 1;
-	uint8_t DataRemoval_TimeFormat_Bit4 : 1;
-	uint8_t DataRemoval_TimeFormat_Bit3 : 1;
-	uint8_t DataRemoval_TimeFormat_Bit2 : 1;
-	uint8_t DataRemoval_TimeFormat_Bit1 : 1;
 	uint8_t DataRemoval_TimeFormat_Bit0 : 1;
-	uint16_t DataRemoval_Time_Bit5;
-	uint16_t DataRemoval_Time_Bit4;
-	uint16_t DataRemoval_Time_Bit3;
-	uint16_t DataRemoval_Time_Bit2;
+	uint8_t DataRemoval_TimeFormat_Bit1 : 1;
+	uint8_t DataRemoval_TimeFormat_Bit2 : 1;
+	uint8_t DataRemoval_TimeFormat_Bit3 : 1;
+	uint8_t DataRemoval_TimeFormat_Bit4 : 1;
+	uint8_t DataRemoval_TimeFormat_Bit5 : 1;
+	uint8_t DataRemoval_TimeFormat_reserved : 2;
+	uint16_t DataRemoval_Time_Bit0; // byte 8-9
 	uint16_t DataRemoval_Time_Bit1;
-	uint16_t DataRemoval_Time_Bit0;
+	uint16_t DataRemoval_Time_Bit2;
+	uint16_t DataRemoval_Time_Bit3;
+	uint16_t DataRemoval_Time_Bit4;
+	uint16_t DataRemoval_Time_Bit5; // byte 18-19
 	uint8_t reserved16[16]; // byte 20 - 35
 } Discovery0DataRemovalMechanismFeatures;
 
@@ -506,8 +507,6 @@ typedef struct _OPAL_DiskInfo {
 	uint16_t RUBY_numUsers;
 	uint8_t RUBY_initialPIN;
 	uint8_t RUBY_revertedPIN;
-
-
 	//
 	uint8_t BlockSID_BlockSIDState : 1;
 	uint8_t BlockSID_SIDvalueState : 1;

@@ -354,8 +354,18 @@ OK101:
 			disk_info.BlockSID_BlockSIDState = body->blocksidauth.BlockSIDState;
 			disk_info.BlockSID_SIDvalueState = body->blocksidauth.SIDvalueState;
 			disk_info.BlockSID_HardReset = body->blocksidauth.HardReset;
+#if 0
+			LOG(I) << "BLockSID buffer dump";
+			DtaHexDump(body, 64);
+			printf("body->blocksidauth.BlockSIDState= %d ", body->blocksidauth.BlockSIDState);
+			printf("disk_info.BlockSID_BlockSIDState= %d ", disk_info.BlockSID_BlockSIDState);
+			printf("body->blocksidauth.SIDvalueState= %d ", body->blocksidauth.SIDvalueState);
+			printf("disk_info.BlockSID_SIDvalueState= %d ", disk_info.BlockSID_SIDvalueState);
+			printf("body->blocksidauth.HardReset= %d ", body->blocksidauth.HardReset);
+			printf("disk_info.BlockSID_HardReset= %d\n", disk_info.BlockSID_HardReset);
+#endif
 			break;
-		case FC_DataRemoval: /* Data Remove mechanism 0x402 */
+		case FC_DataRemoval: /* Data Remove mechanism 0x403 */
 			disk_info.DataRemoval = 1;
 			disk_info.DataRemoval_version = body->dataremoval.version;
 			disk_info.DataRemoval_Mechanism = body->dataremoval.DataRemoval_Mechanism;
@@ -548,9 +558,9 @@ void DtaDev::puke()
 	}
 	if (disk_info.BlockSID) {
 		cout << "BlockSID function (" << HEXON(4) << FC_BlockSID << ")" << HEXOFF << std::endl;
-		cout << "    BlockSIDState " << HEXON(2) << disk_info.BlockSID_BlockSIDState << HEXOFF;
-		cout << ", SIDvalueState = " << HEXON(2) << disk_info.BlockSID_SIDvalueState << HEXOFF;
-		cout << ", HardReset  = " << HEXON(2) << disk_info.BlockSID_HardReset << HEXOFF;
+		cout << "    BlockSIDState = " << (disk_info.BlockSID_BlockSIDState ? "Y" : "N" );
+		cout << ", SIDvalueState = " << (disk_info.BlockSID_SIDvalueState? "1" : "0");
+		cout << ", HardReset  = " << (disk_info.BlockSID_HardReset? "1" : "0") ;
 		cout << std::endl;
 	}
 	if (disk_info.DataRemoval) {
