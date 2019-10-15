@@ -3,4 +3,4 @@
 #  This script should be sourced by the other scripts
 SYSLINUX=syslinux-6.03
 BUILDROOT=git://git.buildroot.net/buildroot
-BUILDROOT_TAG=2017.05.1
+BUILDROOT_TAG=2019.02.6
