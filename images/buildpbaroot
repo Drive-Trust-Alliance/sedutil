@@ -33,17 +33,13 @@ sed -i '/menu "System tools"/a \\tsource "package/sedutil/Config.in"' package/Co
 cp -r ../../buildroot/packages/sedutil/ package/
 # Make a distribution from the current source
 cd ../../..
-# Added -i 2019-10-03 based on lukefor tree
-autoreconf -i 
+autoreconf 
 ./configure
 make dist
 mkdir images/scratch/buildroot/dl/
 cp sedutil-*.tar.gz images/scratch/buildroot/dl/
 make distclean
-cd images/scratch/buildroot/dl
-tar xvfz sedutil-*.tar.gz
-mv sedutil sedutil-local
-cd ..
+cd images/scratch/buildroot
 # build the rootfs for 64 and 32 bit systems
 #echo Building bootable systems for the PBA, this is going to take a while ..... Press enter to continue
 #read INOUT
