@@ -1,19 +1,22 @@
 #!/bin/bash
 set -x
+#### Should probably use this function against some of the calls below....
 function die {
-echo An error has occured please fix this and start over
+echo An error has occurred!  Please fix this and start over!
 exit 99
 }
-. conf
+#. conf
 cd scratch
-# clean up and start over
-rm -rf buildroot
-git clone ${BUILDROOT} || die
+#### MOVED this section to ./getresources script since it was getting resources.
+#### clean up and start over
+#rm -rf buildroot
+#git clone ${BUILDROOT} || die
 cd buildroot
-git checkout -b PBABUILD ${BUILDROOT_TAG}  || die
-git reset --hard
-git clean -df
-# add out of tree build directoried and files
+#git checkout -b PBABUILD ${BUILDROOT_TAG}  || die
+#git reset --hard
+#git clean -df
+
+# add out of tree build directories and files
 # 64 bit system
 mkdir 64bit
 cp ../../buildroot/64bit/.config 64bit/
@@ -30,16 +33,22 @@ sed -i '/menu "System tools"/a \\tsource "package/sedutil/Config.in"' package/Co
 cp -r ../../buildroot/packages/sedutil/ package/
 # Make a distribution from the current source
 cd ../../..
-autoreconf 
+# Added -i 2019-10-03 based on lukefor tree
+autoreconf -i 
 ./configure
 make dist
 mkdir images/scratch/buildroot/dl/
 cp sedutil-*.tar.gz images/scratch/buildroot/dl/
 make distclean
-cd images/scratch/buildroot
+cd images/scratch/buildroot/dl
+tar xvfz sedutil-*.tar.gz
+mv sedutil sedutil-local
+cd ..
 # build the rootfs for 64 and 32 bit systems
-echo Building bootable systems for the PBA, this is going to take a while ..... Press enter to continue
-read INOUT
+#echo Building bootable systems for the PBA, this is going to take a while ..... Press enter to continue
+#read INOUT
+# Don't stop in the middle of a build to chat....
+echo Building bootable systems for the PBA, this is going to take a while ...
 echo Making the 64bit PBA Linux system
 make O=64bit 2>&1 | tee 64bit/build_output.txt
 echo Making the 32bit PBA Linux system

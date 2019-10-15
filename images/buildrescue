@@ -13,7 +13,7 @@ elif [ x${1} == "xRescue64" ] ; then
 	BUILDTYPE="RESCUE64"
 	ROOTDIR="64bit"
 else 
-	echo "NO BUILDTYPE specified defalted to Rescue32"
+	echo "NO BUILDTYPE specified; defaulted to Rescue32"
 fi
 BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 echo "Building " $BUILDTYPE "image"

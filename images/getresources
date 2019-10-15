@@ -2,9 +2,28 @@
 set -x
 ## Get version information
 . conf
+set -x
+function die {
+echo An error has occurred!  Please fix this and start over!
+exit 99
+}
 ## Make a clean start
 rm -rf scratch
 mkdir scratch
 cd scratch
-wget https://www.kernel.org/pub/linux/utils/boot/syslinux/${SYSLINUX}.tar.xz
+wget https://www.kernel.org/pub/linux/utils/boot/syslinux/${SYSLINUX}.tar.xz || die
 tar xf ${SYSLINUX}.tar.xz 
+
+## Moved the "fetch buildroot" work here; was previously in ./buildpbaroot for unknown $reason
+## Seemed reasonable to get resources in the getresources script.
+#
+# We don't need to rm - rf buildroot since we already removed its parent directory 'scratch' above.
+#rm -rf buildroot
+git clone ${BUILDROOT} || die
+cd buildroot
+git checkout -b PBABUILD ${BUILDROOT_TAG}  || die
+git reset --hard
+git clean -df
+
+## Go back where we started
+cd ../..
