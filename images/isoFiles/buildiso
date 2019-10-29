@@ -1,0 +1,97 @@
+#!/bin/bash
+
+function die {
+echo An error has occurred!  Please fix this and start over!
+exit 99
+}
+
+## Preparatory work:
+## Source config
+. isogrubconf
+
+BUILDIMG="RESCUE64-${VERSIONINFO}.img"
+
+## Uncomment the two lines below, and comment out the following line, if doing multiple
+## runs to test new ISO etc.
+#now_datetime="$(date +%Y%m%d_%H%M)"
+#new_iso="sedutil-${VERSIONINFO}-Rescue64UEFIgrub_${now_datetime}.iso"
+new_iso="sedutil-${VERSIONINFO}-Rescue64UEFIgrub.iso"
+
+
+## Check for prereqs
+hash xorriso 2>/dev/null ||
+	{ echo >&2 "ISO build script requires xorriso but it's not available."; exit 1;}
+[ -f ../RESCUE64/${BUILDIMG}.gz ] || { echo " prereqs are not available "; exit 1; }
+[ -f grub-SEDutil.cfg ] || { echo " prereqs are not available "; exit 1; }
+
+set -x
+## Clean old directories and set up new ones
+#[ -d scratch/${GRUBVER} ] && rm -rf scratch/${GRUBVER}
+[ -d scratch ] && rm -rf scratch
+
+mkdir scratch
+## Copy RESCUE64 image over from its build directory
+## gzip -d the RESCUE64 image
+
+cp ../RESCUE64/${BUILDIMG}.gz . || die
+gzip -d ${BUILDIMG}.gz || die
+
+## grub command line pieced together from multiple sources including
+##     wiki.archlinux.org/index.php/GRUB/Tips_and_tricks
+## NOTE that as written this requires that GRUB v2.04 source was downloaded (cloned) and built
+## locally - if the ISO buildhost is Ubuntu 18.04.3 LTS or similar then this was the cleanest
+## way to get the 2.04 GRUB that includes Secure Boot functions.
+## Also needs "mtools" which should be installed standard on Ubuntu desktops.
+
+./grub-2.04/grub-mkstandalone \
+	--format=x86_64-efi \
+	--output=./scratch/grubx64_standalone.efi \
+	--modules="shim_lock tpm part_gpt part_msdos all_video gfxterm" \
+	--directory=./grub-2.04/grub-core \
+	--locales="en@quot" --fonts="" --themes="" \
+	"boot/grub/grub.cfg=grub-SEDutil.cfg"
+
+## Now create a small IMG file to contain just the standalone Grub2.
+dd if=/dev/zero of=./scratch/efiboot.img bs=1M count=4
+mkfs.vfat ./scratch/efiboot.img
+mmd -i ./scratch/efiboot.img EFI EFI/boot EFI/boot/grub
+mcopy -i ./scratch/efiboot.img ./scratch/grubx64_standalone.efi ::EFI/boot/bootx64.efi
+mcopy -i ./scratch/efiboot.img grub-SEDutil.cfg ::EFI/boot/grub/grub.cfg
+
+## The efiboot.img file above was manipulated without ever mounting it, so unlike the
+# other img/ISO files we don't have to unmount it.
+
+# Mount the RESCUE64 image (already UEFI) and remaster slightly with the new efiboot.img file.
+LOOPDEV=`sudo losetup --show -f -o 1048576 ${BUILDIMG}`
+
+if [ ! -d image ]; then
+   mkdir image
+fi
+sudo mount $LOOPDEV image
+sudo chmod 777 image
+
+sudo cp scratch/efiboot.img image/EFI/boot
+
+# And now that that's done, let's also put the "real" grub.cfg file where it goes
+sudo cp grub-SEDutil.cfg image/EFI/boot/grub.cfg
+
+## NB for future edits:  There's at least one extra copy of the grub-SEDutil.cfg file ending up
+## in the final ISO (extraneous/not needed) but it's tiny and doesn't break anything so for
+## now just leave it.
+
+echo Building "$new_iso"
+xorriso \
+	-as mkisofs \
+	-iso-level 3 \
+	-full-iso9660-filenames \
+	-volid 'SEDutil Rescue64 boot' \
+	-eltorito-alt-boot \
+	    -e EFI/boot/efiboot.img \
+	    -no-emul-boot -isohybrid-gpt-basdat \
+	-output "$new_iso" \
+	image
+
+## Cleanup your mess
+sudo umount image
+sudo losetup -d $LOOPDEV
+rm -f ${BUILDIMG}
