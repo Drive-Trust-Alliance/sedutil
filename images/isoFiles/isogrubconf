@@ -1,0 +1,12 @@
+## Versioning to be consistent with other build scripts
+VERSIONINFO=`git describe --dirty`  || VERSIONINFO=tarball
+
+## We chose GRUB, and specifically v2.04, for documented Secure Boot support.
+## Meanwhile Ubuntu 18.04.3 LTS and Buildroot target 2019.02.6 are both still tied to v2.02
+## so we can't easily use OS-level packages or any binaries already built as part of Buildroot.
+
+GRUBGIT=https://git.savannah.gnu.org/git/grub.git
+## For whatever reason, older grub versions are tagged in the repo with bare version number but
+## as of 2.02 they're tagged both ways (?!) and as of 2.04 only as "grub-${numeric}".
+GRUBVER=grub-2.04
+
