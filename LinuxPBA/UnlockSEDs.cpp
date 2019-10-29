@@ -84,12 +84,12 @@ uint8_t UnlockSEDs(char * password) {
             if (d->setLockingRange(0, OPAL_LOCKINGSTATE::READWRITE, password)) {
                 failed = 1;
             }
-            failed ? printf("Drive %-10s %-40s is OPAL Failed  \n", devref, d->getModelNum()) :
-                    printf("Drive %-10s %-40s is OPAL Unlocked   \n", devref, d->getModelNum());
+            failed ? printf("Drive %-10s %-40s is OPAL \033[1;31m Failed \033[0m \n", devref, d->getModelNum()) :
+                    printf("Drive %-10s %-40s is OPAL \033[1;32m Unlocked \033[0m \n", devref, d->getModelNum());
             delete d;
         }
         else {
-            printf("Drive %-10s %-40s is OPAL NOT LOCKED   \n", devref, d->getModelNum());
+            printf("Drive %-10s %-40s is OPAL \033[1;32m NOT LOCKED \033[0m \n", devref, d->getModelNum());
             delete d;
         }
 
