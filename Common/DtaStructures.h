@@ -21,20 +21,22 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #pragma pack(push)
 #pragma pack(1)
 
-#define FC_TPER		  0x0001
-#define FC_LOCKING    0x0002
-#define FC_GEOMETRY   0x0003
-#define FC_ENTERPRISE 0x0100
-#define FC_DATASTORE  0x0202
-#define FC_SINGLEUSER 0x0201
-#define FC_OPALV100   0x0200
-#define FC_OPALV200   0x0203
+#define FC_TPER       0x0001	/* TPer */
+#define FC_LOCKING    0x0002	/* Locking */
+#define FC_GEOMETRY   0x0003	/* Geometry Reporting */
+#define FC_SECUREMSG  0x0004	/* Secure Messaging */
+#define FC_ENTERPRISE 0x0100	/* Enterprise SSC */
+#define FC_OPALV100   0x0200	/* Opal SSC V1.00 */
+#define FC_SINGLEUSER 0x0201	/* Single User Mode */
+#define FC_DATASTORE  0x0202	/* DataStore Table */
+#define FC_OPALV200   0x0203	/* Opal SSC V2.00 */
 #define FC_OPALITE    0x0301	/* Opalite SSC */
 #define FC_PYRITEV100 0x0302	/* Pyrite SSC V1.00 */
 #define FC_PYRITEV200 0x0303	/* Pyrite SSC V2.00 */
 #define FC_RUBYV100   0x0304	/* Ruby SSC V1.00 */
+#define FC_LOCKINGLBA 0x0401	/* Locking LBA Ranges Control */
 #define FC_BLOCKSID   0x0402	/* Block SID Authentication */
-#define FC_NAMESPACE  0x0403
+#define FC_NAMESPACE  0x0403	/* Configurable Namespace Locking*/
 #define FC_DATAREM    0x0404	/* Supported Data Removal Mechanism */
 /** The Discovery 0 Header. As defined in
 * Opal SSC Documentation
@@ -133,6 +135,23 @@ typedef struct _Discovery0GeometryFeatures {
     uint64_t alignmentGranularity;
     uint64_t lowestAlighedLBA;
 } Discovery0GeometryFeatures;
+
+/** Secure Messaging Feature Descriptor
+ */
+typedef struct _Discovery0SecureMsgFeatures {
+    uint16_t featureCode; /* 0x0004 */
+    uint8_t reserved_v : 4;
+    uint8_t version : 4;
+    uint8_t length;
+    /* big Endian
+    uint8_t activated : 1;
+    uint8_t reserved01 : 7;
+     */
+    uint8_t reserved01 : 7;
+    uint8_t activated : 1;
+    uint8_t reserved02[3];
+    uint16_t numberOfSPs;
+} Discovery0SecureMsgFeatures;
 
 /** Enterprise SSC Feature 
  */
@@ -332,6 +351,7 @@ union Discovery0Features {
     Discovery0TPerFeatures TPer;
     Discovery0LockingFeatures locking;
     Discovery0GeometryFeatures geometry;
+    Discovery0SecureMsgFeatures secureMsg;
     Discovery0EnterpriseSSC enterpriseSSC;
     Discovery0SingleUserMode singleUserMode;
     Discovery0OPALV200 opalv200;
@@ -400,6 +420,7 @@ typedef struct _OPAL_DiskInfo {
     uint8_t TPer : 1;
     uint8_t Locking : 1;
     uint8_t Geometry : 1;
+    uint8_t SecureMsg : 1;
     uint8_t Enterprise : 1;
     uint8_t SingleUser : 1;
     uint8_t DataStore : 1;
@@ -430,6 +451,8 @@ typedef struct _OPAL_DiskInfo {
     uint64_t Geometry_alignmentGranularity;
     uint32_t Geometry_logicalBlockSize;
     uint64_t Geometry_lowestAlignedLBA;
+    uint8_t SecureMsg_activated : 1;
+    uint16_t SecureMsg_numberOfSPs;
     uint8_t Enterprise_rangeCrossing : 1;
     uint16_t Enterprise_basecomID;
     uint16_t Enterprise_numcomID;

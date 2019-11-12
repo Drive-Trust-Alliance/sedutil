@@ -178,6 +178,11 @@ void DtaDev::discovery0()
             disk_info.Geometry_logicalBlockSize = SWAP32(body->geometry.logicalBlockSize);
             disk_info.Geometry_lowestAlignedLBA = SWAP64(body->geometry.lowestAlighedLBA);
             break;
+        case FC_SECUREMSG: /* Secure Messaging */
+            disk_info.SecureMsg = 1;
+            disk_info.SecureMsg_activated = body->secureMsg.activated;
+            disk_info.SecureMsg_numberOfSPs = SWAP16(body->secureMsg.numberOfSPs);
+            break;
         case FC_ENTERPRISE: /* Enterprise SSC */
             disk_info.Enterprise = 1;
 			disk_info.ANY_OPAL_SSC = 1;
@@ -313,6 +318,13 @@ void DtaDev::puke()
 			<< ")"
 			<< ", Logical Block size = " << disk_info.Geometry_logicalBlockSize
 			<< ", Lowest Aligned LBA = " << disk_info.Geometry_lowestAlignedLBA
+			<< std::endl;
+	}
+	if (disk_info.SecureMsg) {
+
+		cout << "Secure Messaging function (" << HEXON(4) << FC_SECUREMSG << HEXOFF << ")" << std::endl;
+		cout << "    Activated = " << (disk_info.SecureMsg_activated ? "Y, " : "N, ")
+			<< "Number of SPs = " << disk_info.SecureMsg_numberOfSPs
 			<< std::endl;
 	}
 	if (disk_info.Enterprise) {
