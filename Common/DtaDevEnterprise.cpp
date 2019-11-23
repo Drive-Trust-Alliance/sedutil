@@ -1266,56 +1266,53 @@ uint8_t DtaDevEnterprise::setSIDPassword(char * oldpassword, char * newpassword,
 {
 	LOG(D1) << "Entering DtaDevEnterprise::setSIDPassword()";
 	uint8_t lastRC;
+	string defaultPassword;
+	char *pwd = oldpassword, *newpwd = newpassword;
 
-	vector<uint8_t> user;
-    set8(user, OPALUID[OPAL_SID_UID]);
+	std::vector<uint8_t> user;
+	set8(user, OPALUID[OPAL_SID_UID]);
 
-    vector<uint8_t> usercpin;
-    set8(usercpin, OPALUID[OPAL_C_PIN_SID]);
+	std::vector<uint8_t> usercpin;
+	set8(usercpin, OPALUID[OPAL_C_PIN_SID]);
 
-	if (*oldpassword == '\0')
-	{
+	if ((oldpassword == NULL) || (*oldpassword == '\0') ||
+	  (newpassword == NULL) || (*newpassword == '\0')) {
 		if ((lastRC = getDefaultPassword()) != 0) {
-			LOG(E) << "setPassword failed to retrieve MSID";
+			LOG(E) << "setSIDPassword failed to retrieve MSID";
 			return lastRC;
 		}
-		string defaultPassword = response.getString(5);
-		session = new DtaSession(this);
-		if (session == NULL) {
-			LOG(E) << "Unable to create session object ";
-			return DTAERROR_OBJECT_CREATE_FAILED;
+		defaultPassword = response.getString(5);
+		if ((oldpassword == NULL) || (*oldpassword == '\0')) {
+			pwd = (char *)defaultPassword.c_str();
+			hasholdpwd = 0;
 		}
+
+		if ((newpassword == NULL) || (*newpassword == '\0')) {
+			newpwd = (char *)defaultPassword.c_str();
+			hashnewpwd = 0;
+		}
+	}
+
+	session = new DtaSession(this);
+	if (session == NULL) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	if (!hasholdpwd)
 		session->dontHashPwd();
-		if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, (char *)defaultPassword.c_str(), user)) != 0) {
-			delete session;
-			return lastRC;
-		}
+	if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, pwd, user)) != 0) {
+		delete session;
+		return lastRC;
 	}
-	else
-	{
-		session = new DtaSession(this);
-		if (session == NULL) {
-			LOG(E) << "Unable to create session object ";
-			return DTAERROR_OBJECT_CREATE_FAILED;
-		}
-		if (!hasholdpwd) session->dontHashPwd();
-		if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, oldpassword, user)) != 0) {
-			delete session;
-			return lastRC;
-		}
-	}
-	vector<uint8_t> hash;
-	if (hashnewpwd)
-    {
-		DtaHashPwd(hash, newpassword, this);
-	}
-	else
-    {
+
+	std::vector<uint8_t> hash;
+	if (hashnewpwd) {
+		DtaHashPwd(hash, newpwd, this);
+	} else {
 		hash.push_back(0xd0);
-		hash.push_back((uint8_t)strnlen(newpassword, 255));
-		for (uint16_t i = 0; i < strnlen(newpassword, 255); i++)
-        {
-			hash.push_back(newpassword[i]);
+		hash.push_back((uint8_t)strnlen(newpwd, 255));
+		for (uint16_t i = 0; i < strnlen(newpwd, 255); i++) {
+			hash.push_back(newpwd[i]);
 		}
 	}
 	if ((lastRC = setTable(usercpin, "PIN", hash)) != 0) {
