@@ -435,28 +435,20 @@ uint8_t DtaDevEnterprise::setPassword(char * password, char * userid, char * new
 		return lastRC;
 	}
 
+	std::vector<uint8_t> hash;
 	if ((newpassword == NULL) || (*newpassword == '\0')) {
-		std::vector<uint8_t> tmppwd;
-
-		tmppwd.push_back(0xd0);
-		tmppwd.push_back((uint8_t)strnlen(newpwd, 255));
+		hash.push_back(0xd0);
+		hash.push_back((uint8_t)strnlen(newpwd, 255));
 		for (unsigned int i = 0; i < strnlen(newpwd, 255); i++) {
-			tmppwd.push_back(newpwd[i]);
-		}
-
-		if ((lastRC = setTable(usercpin, "PIN", tmppwd)) != 0) {
-			LOG(E) << "Unable to set user " << userid << " new password ";
-			delete session;
-			return lastRC;
+			hash.push_back(newpwd[i]);
 		}
 	} else {
-		std::vector<uint8_t> hash;
 		DtaHashPwd(hash, newpwd, this);
-		if ((lastRC = setTable(usercpin, "PIN", hash)) != 0) {
-			LOG(E) << "Unable to set user " << userid << " new password ";
-			delete session;
-			return lastRC;
-		}
+	}
+	if ((lastRC = setTable(usercpin, "PIN", hash)) != 0) {
+		LOG(E) << "Unable to set user " << userid << " new password ";
+		delete session;
+		return lastRC;
 	}
 	LOG(I) << userid << " password changed";
 	delete session;
