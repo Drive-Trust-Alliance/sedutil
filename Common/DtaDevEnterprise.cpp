@@ -1174,7 +1174,7 @@ uint8_t DtaDevEnterprise::initLSPUsers(char * defaultPassword, char * newPasswor
 		delete session;
 		return lastRC;
 	}
-	LOG(I) << "EraseMaster  password set";
+	LOG(I) << "EraseMaster password set";
 	delete session;
     // look up MaxRanges
 	uint16_t MaxRanges = 0;
@@ -1320,6 +1320,7 @@ uint8_t DtaDevEnterprise::setSIDPassword(char * oldpassword, char * newpassword,
 		delete session;
 		return lastRC;
 	}
+	LOG(I) << "SID password changed";
 	delete session;
 	LOG(D1) << "Exiting DtaDevEnterprise::setSIDPassword()";
 	return 0;

@@ -1488,6 +1488,7 @@ uint8_t DtaDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
 		delete session;
 		return lastRC;
 	}
+	LOG(I) << "SID password changed";
 	delete session;
 	LOG(D1) << "Exiting DtaDevOpal::setSIDPassword()";
 	return 0;

@@ -64,11 +64,10 @@ void usage()
 	printf("                                <SIDpassword> is new SID and Admin1 password\n");
 	printf("--setSIDPassword <SIDpassword> <newSIDpassword> <device> \n");
 	printf("                                Change the SID password\n");
-	printf("--setAdmin1Pwd <Admin1password> <newAdmin1password> <device> \n");
-	printf("                                Change the Admin1 password\n");
 	printf("--setPassword <oldpassword, \"\" for MSID> <userid> <newpassword> <device> \n");
-	printf("                                Change the Enterprise password for userid\n");
-	printf("                                \"EraseMaster\" or \"BandMaster<n>\", 0 <= n <= 1023\n");
+	printf("                                Change password for userid:\n");
+	printf("                                Enteprise: \"EraseMaster\" or \"BandMaster<n>\"\n");
+	printf("                                Opal: \"Admin<n>\" or \"User<n>\"\n");
 	printf("--setLockingRange <0...n> <RW|RO|LK> <Admin1password> <device> \n");
 	printf("                                Set the status of a Locking Range\n");
 	printf("                                0 = GLobal 1..n  = LRn \n");
