@@ -3554,6 +3554,10 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 		uint32_t MBRsz = response.getUint32(4);
 		//printf("Shadow MBR size 0x%lX\n", MBRsz);
 		cout << "Shadow MBR size 0x" << hex << MBRsz << endl;
+		if ((lastRC = getTable(LR, 0x0D, 0x0E)) != 0) {
+			delete session;
+			return lastRC;
+		}
 		uint32_t MandatoryWriteGranularity = response.getUint32(4);
 		printf("MandatoryWriteGranularity 0x%X\n", MandatoryWriteGranularity);
 		uint32_t RecommendedAccessGranularity = response.getUint32(8);
@@ -3563,10 +3567,7 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 		LOG(D) << "MBRshadowingNotSupported = 0";
 		printf("Shadow MBR size 0x0000\n");
 	}
-	if ((lastRC = getTable(LR, 0x0D, 0x0E)) != 0) {
-		delete session;
-		return lastRC;
-	}
+
 
 	//
 	// adminN userN enabled state
