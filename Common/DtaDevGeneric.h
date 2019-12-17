@@ -195,16 +195,16 @@ public:
 	virtual uint8_t eraseLockingRange(uint8_t lockingrange, char * password);
          /** Dumps an object for diagnostic purposes
          * @param sp index into the OPALUID table for the SP the object is in
-         * @param auth the authority ti use for the dump
-         * @param pass the password for the suthority
+         * @param auth the authority to use for the dump
+         * @param pass the password for the authority
          * @param objID the UID of the object to dump
          */ 
 	 uint8_t objDump(char *sp, char * auth, char *pass,
 		char * objID) ;
          /** Issue any command to the drive for diagnostic purposes
          * @param sp index into the OPALUID table for the SP the object is in
-         * @param auth the authority ti use for the dump
-         * @param pass the password for the suthority
+         * @param auth the authority to use for the dump
+         * @param pass the password for the authority
          * @param invoker caller of the method
          * @param method the method to call
          * @param plist  the parameter list for the command

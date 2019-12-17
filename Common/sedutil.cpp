@@ -121,7 +121,7 @@ int main(int argc, char * argv[])
         return d->setSIDPassword(argv[opts.password], argv[opts.newpassword]);
 		break;
 	case sedutiloption::setAdmin1Pwd:
-        LOG(D) << "Performing setPAdmin1Pwd ";
+        LOG(D) << "Performing setAdmin1Pwd ";
         return d->setPassword(argv[opts.password], (char *) "Admin1",
                             argv[opts.newpassword]);
 		break;
@@ -148,7 +148,7 @@ int main(int argc, char * argv[])
 			argv[opts.password]));
 		break;
 	case sedutiloption::readonlyLockingRange:
-		LOG(D) << "Enabling Locking Range " << (uint16_t)opts.lockingrange;
+		LOG(D) << "Enabling Locking Range " << (uint16_t)opts.lockingrange << " read-only";
 		return (d->configureLockingRange(opts.lockingrange,
 			DTA_WRITELOCKINGENABLED, argv[opts.password]));
 		break;
