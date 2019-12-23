@@ -72,14 +72,7 @@ uint8_t DtaDevOpal::initialSetup(char * password)
 		return lastRC;
 	}
 	if (!MBRAbsent()) {
-		if ((lastRC = setMBRDone(1, password)) != 0){
-			LOG(E) << "Initial setup failed - unable to set MBR Done";
-			return lastRC;
-		}
-		if ((lastRC = setMBREnable(1, password)) != 0){
-			LOG(E) << "Initial setup failed - unable to Enable MBR shadow";
-			return lastRC;
-		}
+		setMBREnable(1, password);
 	}
 	
 	LOG(I) << "Initial setup of TPer complete on " << dev;
