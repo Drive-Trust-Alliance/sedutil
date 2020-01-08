@@ -104,11 +104,13 @@ void DtaDevOS::init(const char * devref)
 	case BusTypeRAID:
 		LOG(D1) << "Enter RAID bus type case";
 		disk = new DtaDiskUSB(); 
+		disk->init(dev);
 		identify(disk_info);
 		if (disk_info.devType == DEVICE_TYPE_OTHER)
 		{
 			delete disk;
 			disk = new DtaDiskNVME();
+			disk->init(dev);
 			identify(disk_info);
 			if (disk_info.devType == DEVICE_TYPE_OTHER)
 			{
