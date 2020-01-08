@@ -257,6 +257,14 @@ void DtaDev::discovery0()
 			disk_info.Pyrite20_initialPIN = body->pyrite20.initialPIN;
 			disk_info.Pyrite20_revertedPIN = body->pyrite20.revertedPIN;
 			break;
+		case FC_DATAREM: /* Supported Data Removal Mechanism */
+			disk_info.DataRem = 1;
+			disk_info.DataRem_processing = body->dataRem.processing;
+			disk_info.DataRem_supported = body->dataRem.supported;
+			disk_info.DataRem_format = body->dataRem.format;
+			for (int i = 0; i < 6; i++)
+				disk_info.DataRem_time[i] = SWAP16(body->dataRem.time[i]);
+			break;
         default:
 			if (0xbfff < (SWAP16(body->TPer.featureCode))) {
 				// silently ignore vendor specific segments as there is no public doc on them
@@ -405,6 +413,19 @@ void DtaDev::puke()
 		cout << ", comIDs = " << disk_info.Pyrite20_numcomIDs;
 		cout << ", Initial PIN = " << HEXON(2) << disk_info.Pyrite20_initialPIN << HEXOFF;
 		cout << ", Reverted PIN = " << HEXON(2) << disk_info.Pyrite20_revertedPIN << HEXOFF;
+		cout << std::endl;
+	}
+	if (disk_info.DataRem) {
+		cout << "Supported Data Removal Mechanism function (" << HEXON(4) << FC_DATAREM << ")" << HEXOFF << std::endl;
+		cout << "    Processing = " << (disk_info.DataRem_processing ? "Y" : "N");
+		string types[6] = { "Overwrite", "Block", "Crypto", "Unmap", "Reset Write Pointers", "Vendor Specific" };
+		for (int i = 0; i < 6; i++) {
+			if ((disk_info.DataRem_supported & (1 << i)) == 0)
+				continue;
+			cout << ", " << types[i];
+			cout << " = " << (disk_info.DataRem_time[i] * 2) <<
+			    (((disk_info.DataRem_format & (1 << i)) == 0) ? "s " : "m ");
+		}
 		cout << std::endl;
 	}
 	if (disk_info.Unknown)

@@ -346,6 +346,21 @@ typedef struct _Discovery0Pyrite20 {
 	uint32_t reserved03;
 } Discovery0Pyrite20;
 
+/** Supported Data Removal Mechanism feature
+ */
+typedef struct _Discovery0DataRem {
+	uint16_t featureCode; /* 0x0404 */
+	uint8_t reserved_v : 4;
+	uint8_t version : 4;
+	uint8_t length;
+	uint8_t reserved01;
+	uint8_t processing;
+	uint8_t supported;
+	uint8_t format;
+	uint16_t time[6];
+	uint8_t reserved02[16];
+} Discovery0DataRem;
+
 /** Union of features used to parse the discovery 0 response */
 union Discovery0Features {
     Discovery0TPerFeatures TPer;
@@ -362,6 +377,7 @@ union Discovery0Features {
 	Discovery0Opalite opalite;
 	Discovery0Pyrite10 pyrite10;
 	Discovery0Pyrite20 pyrite20;
+	Discovery0DataRem dataRem;
 };
 
 /** ComPacket (header) for transmissions. */
@@ -433,6 +449,7 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t Opalite : 1;
 	uint8_t Pyrite10 : 1;
 	uint8_t Pyrite20 : 1;
+	uint8_t DataRem : 1;
     // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
     uint8_t TPer_ACKNACK : 1;
     uint8_t TPer_async : 1;
@@ -491,6 +508,10 @@ typedef struct _OPAL_DiskInfo {
 	uint16_t Pyrite20_numcomIDs;
 	uint8_t Pyrite20_initialPIN;
 	uint8_t Pyrite20_revertedPIN;
+	uint8_t DataRem_processing;
+	uint8_t DataRem_supported;
+	uint8_t DataRem_format;
+	uint16_t DataRem_time[6];
     // IDENTIFY information
     DTA_DEVICE_TYPE devType;
     uint8_t serialNum[20];
