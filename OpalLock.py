@@ -2,6 +2,7 @@ import gtk
 import os
 import re
 import sys
+sys.path.insert(1, '..\py')
 import background
 import getopt
 import gobject
@@ -19,6 +20,8 @@ import runprocess
 import multiprocessing
 import time
 import verify
+
+
 from ctypes import c_long, c_int
 
 from string import ascii_uppercase
