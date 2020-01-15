@@ -27,6 +27,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaLexicon.h"
 #include "DtaResponse.h"
 #include <vector>
+#include <wchar.h>
 
 using namespace std;
 
@@ -86,7 +87,7 @@ typedef struct _audit_hdr {
 	uint16_t head = 0; // 0 to 1000
 	uint16_t tail = 0; // 0 to 1000
 	uint16_t num_entry = 0;
-	uint8_t signature[32] = "Fidelity Lock Signature"; // password + salt + entry
+	char signature[32] = "Fidelity Lock Signature"; // password + salt + entry
 	uint16_t chksum;
 } audit_hdr;
 
