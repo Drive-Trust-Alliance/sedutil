@@ -1,5 +1,4 @@
 import datetime
-#from multiprocessing import Event, Array, Value
 import platform
 import os
 import re
@@ -177,7 +176,6 @@ def passSaveUSB(hashed_pwd, drive, mnum, snum, pass_usb, auth):
         return 0
     else:
         return 1
-        
 
 def rp_pbaWrite(e_to, i, result_list, status_list, count, password, au_pwd, dev, prefix, model, sn, ds_sup, user, version, admin_counter, pass_sav, sel_drive):
     pass_usb = ''

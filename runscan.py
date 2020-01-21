@@ -12,12 +12,10 @@ import re
 import runop
 import string
 from string import ascii_uppercase
-import subprocess
-import sys
+if platform.system() == 'Windows':
+    import subprocess
 import threading
 import verify
-
-import PyExtOb
 
 def run_scan(button, ui, fullscan):
     verify.licCheck(ui)

@@ -1,11 +1,14 @@
+import gobject
 import gtk
 import os
 import platform
 import re
 import runop
+import runscan
 from string import ascii_uppercase
 if platform.system() == 'Windows':
     import subprocess
+import threading
 import time
 
 DBT_DEVTYP_DEVICEINTERFACE = 0x00000005  # device interface class
@@ -37,19 +40,30 @@ def exitFL(_, self, *args):
     gtk.main_quit()
     
 def exitX(_, self, *args):
-    if self.DEV_OS == 'Windows':
-        f = open('mountvol.txt','w')
-        write_list = []
-        for v in self.mv_list:
-            if v[0] not in write_list:
-                f.write(v[0] + ' ' + v[1] + ' ' + v[2] + '\n')
-                write_list.append(v[0])
-        for u in self.usb_mv_list:
-            if u[0] not in write_list:
-                f.write(u[0] + ' ' + u[1] + '\n')
-                write_list.append(u[0])
-        f.close()
-    gtk.main_quit()
+    proceed = False
+    if self.op_inprogress:
+        message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_YES_NO, parent = ui)
+        message.set_markup("Warning: Closing Opal Lock while an operation is running may cause problems.\nAre you sure you want to close Opal Lock?")
+        res = message.run()
+        
+        if res == gtk.RESPONSE_YES:
+            proceed = True
+    else:
+        proceed = True
+    if proceed:
+        if self.DEV_OS == 'Windows':
+            f = open('mountvol.txt','w')
+            write_list = []
+            for v in self.mv_list:
+                if v[0] not in write_list:
+                    f.write(v[0] + ' ' + v[1] + ' ' + v[2] + '\n')
+                    write_list.append(v[0])
+            for u in self.usb_mv_list:
+                if u[0] not in write_list:
+                    f.write(u[0] + ' ' + u[1] + '\n')
+                    write_list.append(u[0])
+            f.close()
+        gtk.main_quit()
 
 def reboot(_, self, *args):
     self.reboot_req = True
@@ -75,7 +89,7 @@ def shutdown(_, self, *args):
         txt = os.popen('mountvol').read()
         unmount_list = []
         for i in range(len(self.full_devs_list)):
-            if self.full_isSetup_list[i] == 'Yes' and self.full_isLocked_list[i] == 'Unlocked':
+            if self.full_isSetup_list[i] and not self.full_isLocked_list[i]:
                 if self.full_devs_map[i] != -1:
                     runop.prelock(self.full_devs_map[i])
                 for v in self.mv_list:
@@ -105,11 +119,11 @@ def shutdown(_, self, *args):
         self.unhookWndProc()
     gtk.main_quit()
     
-def hibernate(self, *args):
+def hibernate(_, self, *args):
     txt = os.popen('mountvol').read()
     unmount_list = []
     for i in range(len(self.full_devs_list)):
-        if self.full_isSetup_list[i] == 'Yes' and self.full_isLocked_list[i] == 'Unlocked':
+        if self.full_isSetup_list[i] and not self.full_isLocked_list[i]:
             if self.full_devs_map[i] != -1:
                 runop.prelock(self.full_devs_map[i])
             for v in self.mv_list:
@@ -320,7 +334,7 @@ def powerBroadcast(self, wParam,lParam):
         txt = os.popen('mountvol').read()
         unmount_list = []
         for i in range(len(self.full_devs_list)):
-            if self.full_isSetup_list[i] == 'Yes' and self.full_isLocked_list[i] == 'Unlocked':
+            if self.full_isSetup_list[i] and not self.full_isLocked_list[i]:
                 if self.full_devs_map[i] != -1:
                     runop.prelock(self.full_devs_map[i])
                 for v in self.mv_list:
@@ -375,7 +389,7 @@ def powerBroadcast(self, wParam,lParam):
                     vol_re = 'Volume [0-9]+\s+([A-Z])\s+'
 
                     list_v = re.findall(vol_re, output)
-                    if self.full_isSetup_list[i] == True and self.full_isLocked_list[i] == False:
+                    if self.full_isSetup_list[i]:# and not self.full_isLocked_list[i]:
                         if self.full_devs_map[i] != -1:
                             runop.prelock(self.full_devs_map[i])
                         txt_q = os.popen(self.prefix + 'sedutil-cli --query ' + self.full_devs_list[i]).read()

@@ -1,5 +1,4 @@
 import datetime
-#from multiprocessing import Event, Array, Value
 import os
 import re
 import platform
@@ -250,7 +249,6 @@ def removeUserUSB(prefix, model, sn, *args):
                     pass
         return
 
-
 def rp_setupFull(e, i, result_list, status_list, trylimit_list, count, rc_list, password, status_usb, usb_dir, dev, prefix, msid, model, sn, usb, mbr_sup, admin, user, version, preserved_files, au_pwd):
     usb_failed = False
     status_final = -1
@@ -400,10 +398,6 @@ def rp_setupFull(e, i, result_list, status_list, trylimit_list, count, rc_list, 
                             
                     
                                 
-    #    gobject.idle_add(cleanup1, i, status_final, password, thread_list, result_list, status_list, count, usb_dir, e, rc, rc_list, status_usb)
-        
-
-    #def cleanup1(i, status, password, thread_list, result_list, status_list, count, usb_dir, e, rc, rc_list, status_usb):
         if os.path.isfile('datawrite' + sn + '.txt'):
             try:
                 os.remove('datawrite' + sn + '.txt')

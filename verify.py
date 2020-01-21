@@ -2,6 +2,7 @@ import gtk
 import platform
 import os
 import re
+import sys
 
 import lockhash
 
@@ -118,7 +119,7 @@ def pbaVerify(self, *args):
             self.invalid_pba = True
 
 def licCheck(self, *args):
-    if self.VERSION != 1 and self.VERSION != -1:
+    if self.VERSION != 1 and self.VERSION != -1 and self.VERSION != 1:
         version_text = os.popen(self.prefix + 'sedutil-cli --version').read()
         regex_license = '0:([0-9]+);'
         f = re.search(regex_license, version_text)
@@ -158,7 +159,6 @@ def licCheck(self, *args):
         else:
             self.msg_err('License not detected. Closing the application.')
             self.exitFL(self)
-
 
 def initCheck(self, *args):
     version_text = ''
