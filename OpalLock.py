@@ -2,34 +2,22 @@ import gtk
 import os
 import re
 import sys
-sys.path.insert(1, '..\py')
 import background
 import getopt
 import gobject
-import subprocess
-import datetime
 import threading
 import string
 import platform
-import lockhash
+if platform.system() == 'Windows':
+    import subprocess
 import runop
 import runscan
 import dialogs
 import ctypes
-import runprocess
 import multiprocessing
-import time
 import verify
-
-
 from ctypes import c_long, c_int
 
-from string import ascii_uppercase
-
-if platform.system() == 'Windows':
-    import PyExtLic
-    
-import PyExtOb
 
 
 GWL_WNDPROC = -4
@@ -1784,6 +1772,8 @@ if __name__ == "__main__":
                     self.na_instr.hide()
                     if self.VERSION != 0 and self.PBA_VERSION != 0:
                         self.enable_entries_buttons()
+                    else:
+                        self.disable_entries_buttons()
                 
                 else:
                     self.na_instr.show()
@@ -1933,7 +1923,8 @@ if __name__ == "__main__":
                         self.na_instr.hide()
                         if self.VERSION != 0 and self.PBA_VERSION != 0:
                             self.enable_entries_buttons()
-                        
+                        else:
+                            self.disable_entries_buttons()
                     else:
                         if curr_idx in self.tcg_list and curr_idx in self.setup_list:
                             #if count > 0:
@@ -1951,8 +1942,11 @@ if __name__ == "__main__":
                     #if count > 0:
                     self.op_instr.show()
                     self.na_instr.hide()
-                    if self.VERSION == 3:
-                        self.enable_entries_buttons()
+                    if self.VERSION % 3 == 0:
+                        if self.VERSION != 0 and self.PBA_VERSION != 0:
+                            self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
                         if curr_idx not in self.nonsetup_list:
                             if curr_idx in self.tcg_list:
                                 self.na_instr.set_text('This drive has already been set up.')
@@ -1972,6 +1966,7 @@ if __name__ == "__main__":
                         self.disable_entries_buttons()
                     else:
                         self.enable_entries_buttons()
+                    
             else:
                 self.naDevices_instr.show()
             
@@ -2023,6 +2018,8 @@ if __name__ == "__main__":
                     self.na_instr.hide()
                     if self.VERSION != 0 and self.PBA_VERSION != 0:
                         self.enable_entries_buttons()
+                    else:
+                        self.disable_entries_buttons()
                 else:
                     if self.setupuser_list[curr_idx] == 'Yes':
                         self.na_instr.set_text('User has already been set up for this drive.')
@@ -2080,6 +2077,8 @@ if __name__ == "__main__":
                     self.na_instr.hide()
                     if self.VERSION != 0 and self.PBA_VERSION != 0:
                         self.enable_entries_buttons()
+                    else:
+                        self.disable_entries_buttons()
                 else:
                     if self.setupuser_list[curr_idx] != 'Yes':
                         self.na_instr.set_text('User is not set up for this drive.')
@@ -2162,6 +2161,8 @@ if __name__ == "__main__":
                         self.na_instr.hide()
                         if self.VERSION != 0 and self.PBA_VERSION != 0:
                             self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
                     else:
                         if curr_idx not in self.mbr_list and curr_idx in self.tcg_list:
                             self.na_instr.set_text('Preboot image is not supported on this drive.')
@@ -2175,8 +2176,11 @@ if __name__ == "__main__":
                 else:
                     self.op_instr.show()
                     self.na_instr.hide()
-                    if self.VERSION == 3:
-                        self.enable_entries_buttons()
+                    if self.VERSION % 3 == 0:
+                        if self.VERSION != 0 and self.PBA_VERSION != 0:
+                            self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
                         if curr_idx not in self.mbr_setup_list:
                             if curr_idx not in self.mbr_list and curr_idx in self.tcg_list:
                                 self.na_instr.set_text('Preboot image is not supported on this drive.')
@@ -2267,6 +2271,8 @@ if __name__ == "__main__":
                         self.na_instr.hide()
                         if self.VERSION != 0 and self.PBA_VERSION != 0:
                             self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
                     else:
                         if curr_idx in self.tcg_list:
                             self.na_instr.set_text('This drive has not been set up.')
@@ -2279,7 +2285,10 @@ if __name__ == "__main__":
                     self.op_instr.show()
                     self.na_instr.hide()
                     if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                        self.enable_entries_buttons()
+                        if self.VERSION != 0 and self.PBA_VERSION != 0:
+                            self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
                         if curr_idx not in self.setup_list:
                             if curr_idx in self.tcg_list:
                                 self.na_instr.set_text('This drive has not been set up.')
@@ -2332,6 +2341,8 @@ if __name__ == "__main__":
                     self.na_instr.hide()
                     if self.VERSION != 0 and self.PBA_VERSION != 0:
                         self.enable_entries_buttons()
+                    else:
+                        self.disable_entries_buttons()
                 else:
                     if curr_idx in self.tcg_list:
                         self.na_instr.set_text('This drive has not been set up.')
@@ -2408,6 +2419,8 @@ if __name__ == "__main__":
                         self.na_instr.hide()
                         if self.VERSION != 0 and self.PBA_VERSION != 0:
                             self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
                     else:
                         self.na_instr.set_text('This drive is not a TCG drive.')
                         self.na_instr.show()
@@ -2416,7 +2429,10 @@ if __name__ == "__main__":
                     self.op_instr.show()
                     self.na_instr.hide()
                     if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                        self.enable_entries_buttons()
+                        if self.VERSION != 0 and self.PBA_VERSION != 0:
+                            self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
                         if curr_idx not in self.tcg_list:
                             self.na_instr.set_text('This drive is not a TCG drive.')
                     elif curr_idx not in self.tcg_list:
@@ -2461,7 +2477,8 @@ if __name__ == "__main__":
                     self.na_instr.hide()
                     if self.VERSION != 0 and self.PBA_VERSION != 0:
                         self.enable_entries_buttons()
-                    
+                    else:
+                        self.disable_entries_buttons()
                 else:
                     self.na_instr.set_text('This drive is not a TCG drive.')
                     self.na_instr.show()
@@ -2542,6 +2559,8 @@ if __name__ == "__main__":
                         self.na_instr.hide()
                         if self.VERSION != 0 and self.PBA_VERSION != 0:
                             self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
                     else:
                         if curr_idx in self.tcg_list:
                             self.na_instr.set_text('This drive is not locked.')
@@ -2554,6 +2573,8 @@ if __name__ == "__main__":
                     self.na_instr.hide()
                     if self.VERSION != 0 and self.PBA_VERSION != 0:
                         self.enable_entries_buttons()
+                    else:
+                        self.disable_entries_buttons()
                     if curr_idx not in self.setup_list:
                         if curr_idx in self.tcg_list:
                             self.na_instr.set_text('This drive is not locked.')
@@ -2629,7 +2650,8 @@ if __name__ == "__main__":
                         self.na_instr.hide()
                         if self.VERSION != 0 and self.PBA_VERSION != 0:
                             self.enable_entries_buttons()
-                        
+                        else:
+                            self.disable_entries_buttons()
                     else:
                         self.na_instr.set_text('This drive is not a TCG drive.')
                         self.na_instr.show()
@@ -2638,7 +2660,10 @@ if __name__ == "__main__":
                     self.op_instr.show()
                     self.na_instr.hide()
                     if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                        self.enable_entries_buttons()
+                        if self.VERSION != 0 and self.PBA_VERSION != 0:
+                            self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
                         if curr_idx not in self.tcg_list:
                             self.na_instr.set_text('This drive is not a TCG drive.')
                     elif curr_idx not in self.tcg_list:
@@ -2764,8 +2789,6 @@ if __name__ == "__main__":
             self.wait_instr.hide()
             self.multi_wait_instr.hide()
             
-        
-            
         def mode_toggled(self, button):
             verify.licCheck(self)
             if self.toggleSingle_radio.get_active():
@@ -2821,6 +2844,8 @@ if __name__ == "__main__":
                     if len(self.locked_list) > 0:
                         if self.VERSION != 0 and self.PBA_VERSION != 0:
                             self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
                         self.op_instr.show()
                         self.na_instr.hide()
                         self.selectMulti_instr.show()
@@ -2838,6 +2863,8 @@ if __name__ == "__main__":
                     if len(self.ulocked_list) > 0:
                         if self.VERSION != 0 and self.PBA_VERSION != 0:
                             self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
                         self.op_instr.show()
                         self.na_instr.hide()
                         self.selectMulti_instr.show()
@@ -2855,6 +2882,8 @@ if __name__ == "__main__":
                     if len(self.setup_list) > 0:
                         if self.VERSION != 0 and self.PBA_VERSION != 0:
                             self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
                         self.op_instr.show()
                         self.na_instr.hide()
                         self.selectMulti_instr.show()
@@ -2872,6 +2901,8 @@ if __name__ == "__main__":
                     if len(self.usetup_list) > 0:
                         if self.VERSION != 0 and self.PBA_VERSION != 0:
                             self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
                         self.op_instr.show()
                         self.na_instr.hide()
                         self.selectMulti_instr.show()
@@ -2909,6 +2940,8 @@ if __name__ == "__main__":
                     if len(self.tcg_list) > 0:
                         if self.VERSION != 0 and self.PBA_VERSION != 0:
                             self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
                         self.op_instr.show()
                         self.na_instr.hide()
                         self.selectMulti_instr.show()
@@ -2926,6 +2959,8 @@ if __name__ == "__main__":
                     if len(self.mbr_setup_list) > 0:
                         if self.VERSION != 0 and self.PBA_VERSION != 0:
                             self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
                         self.op_instr.show()
                         self.na_instr.hide()
                         self.selectMulti_instr.show()
@@ -3139,7 +3174,6 @@ if __name__ == "__main__":
                     os.system("sudo reboot now")
                 elif self.ostype == 2 :
                     os.system("sudo reboot now")  
-            
             
     runop.define_lock_t()
     app = LockApp()

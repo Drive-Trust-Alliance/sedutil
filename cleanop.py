@@ -4,7 +4,8 @@ import os
 import platform
 import runop
 import runscan
-import subprocess
+if platform.system() == 'Windows':
+    import subprocess
 import time
 
 def timeout_cleanup(ui, max_time, start_time, op_procs, res_list, e, selected_list, status_list, val, val2, val3, val4):
@@ -24,8 +25,6 @@ def timeout_cleanup(ui, max_time, start_time, op_procs, res_list, e, selected_li
                             p = None
                     ui.process_list = []
                 op_proc.join(0.0)
-    
-    #ui.stop_spin()
 
 def setupFull_cleanup(ui, max_time, start_time, op_procs, res_list, e_to, selected_list, status_list, rc_list, status_usb, trylimit_list, rescan_needed):
     curr_time = time.time()
@@ -838,7 +837,7 @@ def unlockPBA_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
     #ui.scan_ip = False
     if res_sum == 0 and reboot:
         ui.stop_spin()
-        ui.reboot()
+        background.reboot(None, ui)
 
 def revertKeep_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selected_list, status_list, rescan_needed, val2, val3, val4):
     if rescan_needed:
@@ -1019,7 +1018,6 @@ def revertKeep_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sel
     if rescan_needed:
         ui.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
         runscan.run_scan(None, ui, True)
-    #ui.scan_ip = False
         
 def revertErase_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selected_list, status_list, rescan_needed, val2, val3, val4):
     curr_time = time.time()
@@ -1216,3 +1214,384 @@ def revertErase_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, se
         runscan.run_scan(None, ui, True)
     elif any_success:
         runscan.run_scan(None, ui, False)
+        
+def setupUSB_cleanup(ui, index, status, no_pw, s, e, preserved_files, present, rescan_needed):
+    pass_usb = ''
+    
+    ui.op_inprogress = False
+    #if status == 0 and (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)):
+    #    ui.check_pass_rd.set_active(False)
+    if e.is_set():
+        ui.msg_err('Setup Bootable USB timed out.')
+    else:
+        if not present:
+            ui.msg_err('Selected drive was not detected.')
+            rescan_needed = True
+            #if ui.check_pass_rd.get_active():
+            #    ui.pass_entry.set_sensitive(True)
+            #    ui.op_instr.show()
+            #    ui.setupUSB_button.show()
+            #    ui.cancel_button.show()
+            #    ui.check_pass_rd.set_active(False)
+        elif no_pw:
+            #ui.pass_entry.set_sensitive(True)
+            ui.msg_err('No password found for the drive. Bootable USB setup aborted.')
+            #ui.op_instr.show()
+            #ui.setupUSB_button.show()
+            #ui.cancel_button.show()
+            #ui.check_pass_rd.set_active(False)
+        elif ui.auth_menu.get_active() == 0:
+            if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.pass_sav.get_active() and s != 0:
+                if s == ui.NOT_AUTHORIZED and ui.admin_aol_list[index] < ui.retrylimit_list[index]:
+                    ui.admin_aol_list[index] = ui.admin_aol_list[index] + 1
+                    ui.msg_err('Invalid password. Attempt ' + str(ui.admin_aol_list[index]) + ' of ' + str(ui.retrylimit_list[index]) + '. Bootable USB setup aborted.')
+                elif s == ui.AUTHORITY_LOCKED_OUT or ui.admin_aol_list[index] >= ui.retrylimit_list[index]:
+                    ui.admin_aol_list[index] = ui.retrylimit_list[index] + 1
+                    ui.msg_err('Retry limit reached, please power cycle the drive before trying again. Bootable USB setup aborted.')
+                else:
+                    ui.msg_err('Error while attempting to save password to USB. Bootable USB setup aborted.')
+                ui.op_instr.show()
+                ui.setupUSB_button.show()
+                ui.cancel_button.show()
+            elif status != 0 :
+                ui.msg_err("Error: Setup Bootable USB failed.")
+                ui.op_instr.show()
+                ui.setupUSB_button.show()
+                ui.cancel_button.show()
+                #usb_dialog.destroy()
+            else :
+                ui.admin_aol_list[index] = 0
+                ui.msg_ok("Bootable USB has been setup successfully")
+                #usb_dialog.destroy()
+                
+                ui.returnToMain(None, False)
+        else:
+            if s != 0:
+                if s == ui.NOT_AUTHORIZED and ui.user_aol_list[index] < ui.retrylimit_list[index]:
+                    ui.user_aol_list[index] = ui.user_aol_list[index] + 1
+                    ui.msg_err('Invalid password. Attempt ' + str(ui.user_aol_list[index]) + ' of ' + str(ui.retrylimit_list[index]) + '. Bootable USB setup aborted.')
+                elif s == ui.AUTHORITY_LOCKED_OUT or ui.user_aol_list[index] >= ui.retrylimit_list[index]:
+                    ui.user_aol_list[index] = ui.retrylimit_list[index] + 1
+                    ui.msg_err('Retry limit reached, please power cycle the drive before trying again. Bootable USB setup aborted.')
+                else:
+                    ui.msg_err('Error while attempting to save password to USB. Bootable USB setup aborted.')
+            elif status != 0 :
+                ui.msg_err("Error: Setup USB failed.")
+                ui.op_instr.show()
+                ui.setupUSB_button.show()
+                ui.cancel_button.show()
+                #usb_dialog.destroy()
+            else :
+                ui.user_aol_list[index] = 0
+                ui.msg_ok("Bootable USB has been setup successfully")
+                #usb_dialog.destroy()
+                
+                ui.returnToMain(None, False)
+    ui.stop_spin()
+    if rescan_needed:
+        ui.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
+        runscan.run_scan(None, ui, True)
+        
+def setupUser_cleanup(ui, index, status, op_to, no_pw, no_usb, password_a, password_u, present, rescan_needed, save_status):
+    pass_usb = ''
+    
+    #if status == 0:
+    #    ui.check_pass_rd.set_active(False)
+    ui.op_inprogress = False
+    if not present:
+        ui.msg_err('Selected drive not detected.')
+        rescan_needed = True
+    elif no_pw:
+        #ui.check_pass_rd.set_sensitive(True)
+        #ui.pass_sav.set_sensitive(True)
+        #ui.pass_entry.set_sensitive(False)
+        ui.msg_err('Password not found.')
+    elif no_usb:
+        #ui.check_pass_rd.set_sensitive(True)
+        #ui.pass_sav.set_sensitive(True)
+        #ui.pass_entry.set_sensitive(False)
+        ui.msg_err('Selected USB could not be detected')
+    else:
+        if status != 0:
+            if op_to:
+                ui.msg_err('Operation timed out.')
+            if status != 0:
+                
+                if status == ui.NOT_AUTHORIZED and ui.admin_aol_list[index] < ui.retrylimit_list[index]:
+                    ui.admin_aol_list[index] = ui.admin_aol_list[index] + 1
+                    
+                    ui.msg_err("User setup for " + ui.devname + " failed. Invalid Admin password. Attempt " + str(ui.admin_aol_list[index]) + " of " + str(ui.retrylimit_list[index]) + ".")
+                elif status == ui.AUTHORITY_LOCKED_OUT or ui.admin_aol_list[index] >= ui.retrylimit_list[index]:
+                    ui.admin_aol_list[index] = ui.retrylimit_list[index] + 1
+                    
+                    ui.msg_err("User setup for " + ui.devname + " failed. Retry limit has been reached, power cycle the drive before trying again.")
+                elif status == ui.SP_BUSY:
+                    ui.msg_err("User setup for " + ui.devname + " failed. There was an error while attempting to access the drive, please power cycle the drive before trying again.")
+                else:
+                    ui.msg_err("User setup for " + ui.devname + " failed.")
+                
+            else:
+                ui.admin_aol_list[index] = 0
+                ui.msg_err("User setup for " + ui.devname + " failed.")
+            ui.op_instr.show()
+            ui.box_pass.show()
+            ui.box_newpass.show()
+            ui.box_newpass_confirm.show()
+            ui.check_box_pass.show()
+            ui.cancel_button.show()
+            ui.setupUser_prompt()
+        else:
+            ui.admin_aol_list[index] = 0
+            #save_status = -1
+            
+            
+            
+            dialogs.query(None,ui,1)
+            ui.setupuser_list[index] = 'Yes'
+            if index not in ui.usetup_list:
+                ui.usetup_list.append(index)
+                ui.usetup_list.sort()
+                if index in ui.locked_list and index not in ui.ulocked_list:
+                    ui.ulocked_list.append(index)
+                    ui.ulocked_list.sort()
+            if save_status == 1:
+                ui.msg_err('User password could not be saved for ' + ui.devname + '.')
+            ui.msg_ok("User Password for " + ui.devname + " set up successfully.")
+            ui.returnToMain(None, False)
+    ui.stop_spin()
+    if rescan_needed:
+        ui.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
+        runscan.run_scan(None, ui, True)
+        
+def removeUser_cleanup(ui, index, status, op_to, no_pw, password_a, pass_usb, present, rescan_needed, save_status):
+    
+    #ui.check_pass_rd.set_active(False)
+    ui.op_inprogress = False
+    if not present:
+        ui.msg_err('The selected drive was not detected.')
+        rescan_needed = True
+    elif no_pw:
+        ui.msg_err('Admin password not found.')
+    elif status !=0 :
+        
+        
+        if status == ui.NOT_AUTHORIZED and ui.admin_aol_list[index] < ui.retrylimit_list[index]:
+            ui.admin_aol_list[index] = ui.admin_aol_list[index] + 1
+            
+            ui.msg_err("Removing user for " + ui.devname + " failed. Invalid password. Attempt " + str(ui.admin_aol_list[index]) + " of " + str(ui.retrylimit_list[index]) + ".")
+        elif status == ui.AUTHORITY_LOCKED_OUT or ui.admin_aol_list[index] >= ui.retrylimit_list[index]:
+            ui.admin_aol_list[index] = ui.retrylimit_list[index] + 1
+            
+            ui.msg_err("Removing user for " + ui.devname + " failed. Retry limit reached, please power cycle the drive before trying again.")
+        elif status == ui.SP_BUSY:
+            ui.msg_err("Removing user for " + ui.devname + " failed. There was an error while attempting to access the drive, please power cycle the drive before trying again.")
+        else:
+            ui.msg_err("Removing user for " + ui.devname + " failed.")
+        
+        ui.op_instr.show()
+        ui.box_pass.show()
+        ui.check_box_pass.show()
+        ui.cancel_button.show()
+        ui.removeUser_prompt()
+    else :
+        
+        
+        if save_status == 1:
+            ui.msg_err('Admin password could not be saved to USB for ' + ui.devname + '.')
+        
+        ui.admin_aol_list[index] = 0
+        ui.user_aol_list[index] = 0
+        dialogs.query(None,ui,1)
+        ui.setupuser_list[index] = 'No'
+        ui.usetup_list.remove(index)
+        if index in ui.locked_list:
+            ui.ulocked_list.remove(index)
+        ui.msg_ok("User removed on " + ui.devname + " successfully.")
+        ui.returnToMain(None, False)
+    ui.stop_spin()
+    if rescan_needed:
+        ui.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
+        runscan.run_scan(None, ui, True)
+        
+def revertPSID_cleanup(ui, status, present, rescan_needed):
+    index = ui.dev_select.get_active()
+    
+    ui.op_inprogress = False
+    if not present:
+        ui.msg_err('The selected drive was not detected.')
+        rescan_needed = True
+    elif status != 0 :
+        if status == ui.NOT_AUTHORIZED:
+            ui.psid_aol_list[index] = ui.psid_aol_list[index] + 1
+        elif status == ui.AUTHORITY_LOCKED_OUT:
+            ui.psid_aol_list[index] = ui.retrylimit_list[index] + 1
+        if status == ui.NOT_AUTHORIZED and ui.psid_aol_list[index] <= ui.retrylimit_list[index]:
+            ui.msg_err("Incorrect PSID, please try again. Attempt " + str(ui.psid_aol_list[index]) + " of " + str(ui.retrylimit_list[index]) + "." )
+        elif status == ui.AUTHORITY_LOCKED_OUT or ui.psid_aol_list[index] > ui.retrylimit_list[index]:
+            ui.msg_err("Retry limit reached for PSID. Please power cycle the drive before trying again.")
+        else:
+            ui.msg_err("Remove Lock with PSID failed." )
+    else :
+        ui.admin_aol_list[index] = 0
+        ui.user_aol_list[index] = 0
+        ui.psid_aol_list[index] = 0
+        if ui.DEV_OS == 'Windows':
+            for x in range(len(ui.devs_list)):
+                runop.prelock(x)
+            os.system('echo rescan > rescan.txt')
+            os.system('diskpart /s rescan.txt')
+            os.remove('rescan.txt')
+            for x in range(len(ui.devs_list)):
+                runop.postlock(x)
+        ui.msg_ok("Successfully removed lock and erased data with PSID for " + ui.devname + ".")
+        index = ui.dev_select.get_active()
+        dialogs.query(None,ui,1)
+        
+        if ui.DEV_OS == 'Windows':
+            txt = os.popen('mountvol').read()
+            del_entries = []
+            idx = 0
+            #print ui.mv_list
+            for v in ui.mv_list:
+                if v[2] == ui.sn_list[index]:
+                    #print 'matched'
+                    del_entries.append(idx)
+                idx = idx + 1
+            x = len(del_entries) - 1
+            while x >= 0:
+                ui.mv_list.pop(del_entries[x])
+                x = x - 1
+        ui.lockstatus_list[index] = "Unlocked"
+        ui.setupstatus_list[index] = "No"
+        ui.setupuser_list[index] = "N/A"
+        if index in ui.usetup_list:
+            ui.usetup_list.remove(index)
+        ui.pba_list[index] = 'N/A'
+        ui.updateDevs(index,[4])
+        ui.returnToMain(None, False)
+    ui.stop_spin()
+    if rescan_needed:
+        ui.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
+        runscan.run_scan(None, ui, True)
+    elif status == 0:
+        runscan.run_scan(None, ui, False)
+        
+def queryAuth_cleanup(self, index, failed, parent, add_str, rc, no_pass, no_usb):
+    self.stopSpin(parent)
+    user_regex = 'User1 TryLimit\s*=\s*[0-9]+\s*:\s*Tries\s*=\s*([0-9]+)'
+    m2 = re.search(user_regex, add_str)
+    
+    self.queryWinText = self.queryWinText + add_str
+    self.queryWinText = self.queryWinText.strip('\0')
+    self.queryTextBuffer.set_text(self.queryWinText)
+    
+    index = parent.dev_select.get_active()
+    auth = 0
+    
+    if m2:
+        parent.user_aol_list[index] = int(m2.group(1))
+    
+    self.queryPass.set_sensitive(True)
+    #if parent.VERSION % 3 == 0 and parent.setupuser_list[index] == 'Yes':
+    #    self.authQuery.set_sensitive(True)
+    #    auth = self.authQuery.get_active()
+    self.submitPass.set_sensitive(True)
+    self.showPassQ.set_sensitive(True)
+    if (parent.VERSION == 3 or parent.PBA_VERSION >= 2):
+        self.passReadQ.set_sensitive(True)
+        self.passReadQ.set_active(False)
+    if not failed:
+        self.passBoxQ.hide()
+        #if parent.VERSION % 3 == 0 and parent.setupuser_list[index] == 'Yes':
+        #    self.authBoxQ.hide()
+    else:
+        self.query_instr.show()
+    if parent.VERSION != 1:
+        self.save_box.set_sensitive(True)
+    if no_usb:
+        self.msg_err('No USB detected.')
+    elif no_pass:
+        self.msg_err('Password not found.')
+    elif rc != 0:
+        if rc == parent.NOT_AUTHORIZED and ((auth == 0 and parent.admin_aol_list[index] < parent.retrylimit_list[index]) or (auth == 1 and parent.user_aol_list[index] < parent.retrylimit_list[index])):
+            count = ''
+            if auth == 0:
+                parent.admin_aol_list[index] = parent.admin_aol_list[index] + 1
+                count = str(parent.admin_aol_list[index])
+            else:
+                parent.user_aol_list[index] = parent.user_aol_list[index] + 1
+                count = str(parent.user_aol_list[index])
+            self.msg_err("Invalid password. Attempt " + count + " of " + str(parent.retrylimit_list[index]) + ".")
+        elif rc == parent.AUTHORITY_LOCKED_OUT or ((auth == 0 and parent.admin_aol_list[index] >= parent.retrylimit_list[index]) or (auth == 1 and parent.user_aol_list[index] >= parent.retrylimit_list[index])):
+            if auth == 0:
+                parent.admin_aol_list[index] = parent.retrylimit_list[index] + 1
+            else:
+                parent.user_aol_list[index] = parent.retrylimit_list[index] + 1
+            self.msg_err("Retry limit reached, please power cycle your drive before trying again.")
+        elif rc == parent.SP_BUSY:
+            self.msg_err("Failed to retrieve the information. There was an error while attempting to access the drive, please power cycle the drive before trying again.")
+        else:
+            self.msg_err("Failed to retrieve the information.")
+        self.queryPass.set_text('')
+    else:
+        if auth == 0:
+            parent.admin_aol_list[index] = 0
+        else:
+            parent.user_aol_list[index] = 0
+        self.msg_ok('Information successfully retrieved.')
+        
+def openLog_cleanup(parent, index, statusAW, password, txt, no_pw, no_USB, not_detected, not_setup, not_active, auth_level, drive, rescan_needed, present, save_status):
+    if not present:
+        parent.msg_err('The selected drive was not detected.')
+        parent.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
+        runscan.run_scan(None, parent, True)
+        rescan_needed = True
+    elif not_setup:
+        parent.msg_err('This drive has not been set up, use the MSID to access the audit log.')
+    elif not_active:
+        parent.msg_err('This drive has not been activated. The audit log for this drive is not accessible.')
+    elif no_pw:
+        parent.pass_entry.set_sensitive(False)
+        parent.msg_err('No password found for the drive.')
+    elif no_USB:
+        #parent.pass_entry.set_sensitive(False)
+        parent.msg_err('No USB selected.')
+    elif not_detected:
+        parent.msg_err('Selected USB not detected')
+    else:
+        if statusAW == parent.NOT_AUTHORIZED and ((auth_level == 0 and parent.admin_aol_list[index] < parent.retrylimit_list[index]) or (auth_level == 1 and parent.user_aol_list[index] < parent.retrylimit_list[index])):
+            count = ''
+            if auth_level == 0:
+                count = str(parent.admin_aol_list[index])
+            else:
+                count = str(parent.user_aol_list[index])
+            parent.msg_err('Audit Log could not be retrieved. Invalid password. Attempt ' + count + ' of ' + str(parent.retrylimit_list[index]) + '.')
+        elif statusAW == parent.AUTHORITY_LOCKED_OUT or ((auth_level == 0 and parent.admin_aol_list[index] >= parent.retrylimit_list[index]) or (auth_level == 1 and parent.user_aol_list[index] >= parent.retrylimit_list[index])):
+            parent.msg_err('Audit Log could not be retrieved. Retry limit has been reached.  Please power cycle your drive before trying again.')
+        elif statusAW == parent.SP_BUSY:
+            parent.msg_err('Audit Log could not be retrieved. There was an error while attempting to access the drive, please power cycle the drive before trying again.')
+        elif statusAW != 0:
+            parent.msg_err('Audit Log could not be retrieved.')
+        else:
+            if (parent.VERSION % 3 == 0 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and parent.pass_sav.get_active() and drive != '' and save_status > 0:
+                parent.msg_err('Failed to save password to USB.')
+            auditFullRegex = 'Total Number of Audit Entries\s*:\s*([0-9]+)\n((?:.+\n?)+)'
+            a = re.search(auditFullRegex, txt)
+            if txt == "Invalid Audit Signature or No Audit Entry log\n" or not a:
+                
+                parent.msg_err("Invalid Audit Signature or No Audit Entry Log or Read Error")
+            else:
+                
+                logWin = dialogs.AuditDialog(parent, a)
+                
+                logWin.run()
+                
+                logWin.destroy()
+                
+                parent.returnToMain(None, False)
+                
+                if rescan_needed:
+                    parent.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
+                    runscan.run_scan(None, parent, True)
+    if not rescan_needed:
+        parent.stop_spin()
