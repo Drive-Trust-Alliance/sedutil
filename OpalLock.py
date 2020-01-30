@@ -1,5 +1,6 @@
 import gtk
 import os
+from os import path
 import re
 import sys
 sys.path.insert(1, '..\py')
@@ -3119,11 +3120,35 @@ if __name__ == "__main__":
             self.locked_list.sort()
             self.setup_list.sort()
             self.nonsetup_list.sort()
-                            
+
+        '''For catching the destroy event for the first instance and making appropriate clean up - @author : Lokesh'''
+        def on_destroy(self):
+            os.remove('checkInstance.txt') #Removes the file after closing the main application window.
+
         def run(self):
-            ''' Run the app. '''
-            
-            gtk.main()
+            #Before running the gtk.main(), this will check if an instance of the application is already running
+            instanceCheck =''
+            fileExists = path.exists('checkInstance.txt')
+            if fileExists:
+                fr = open("checkInstance.txt", "r")
+                if fr.mode == "r":
+                    instanceCheck = str(fr.read())
+                fr.close();
+            if instanceCheck != 'InstanceIsRunning!':
+                #Run the app no other instance is running
+                fw = open("checkInstance.txt", "w+")
+                fw.write('InstanceIsRunning!')
+                fw.close()
+                gtk.main()
+                LockApp.connect('destroy_event', LockApp.on_destroy(self))
+            else:
+                #Throw the info box for the user that an instance of the application is already running.
+                info  =  'An instance of Opal Lock is already running!!'
+                dialog = gtk.MessageDialog(type=gtk.MESSAGE_INFO,message_format=info,buttons=gtk.BUTTONS_OK)
+                dialog.set_title('Opal Lock Info')
+                dialog.run()
+                dialog.destroy()
+
             #self.unhookWndProc()
             if self.shutdown_req:
                 if self.ostype == 0:
