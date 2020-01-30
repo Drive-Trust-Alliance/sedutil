@@ -12,6 +12,7 @@
 
 import gobject._gobject
 import gobject.constants
+import random
 import datetime
 import _winreg
 import cleanop
@@ -36,6 +37,7 @@ import warnings
 import optparse
 import gtk._gtk
 import sys
+import PyExtHash
 import gtk.deprecation
 import ctypes
 import background

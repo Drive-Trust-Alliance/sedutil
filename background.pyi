@@ -23,13 +23,14 @@ import gdk
 import gobject.propertyhelper
 import dialogs
 import lockhash
-import platform
+import re
 import verify
 import gtk
-import re
+import platform
 import runthread
 import csv
 import runsetup
+import PyExtLic
 import glib
 import runprocess
 import string

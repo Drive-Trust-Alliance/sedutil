@@ -4,14 +4,9 @@ import re
 import gobject
 import datetime
 import powerset
-import platform
-import lockhash
 import runop
-import runprocess
 import runscan
 import runthread
-if platform.system() == 'Windows':
-    import subprocess
 import csv
 import threading
 import verify
@@ -109,7 +104,7 @@ class QueryDialog(gtk.Window):
         
         spBoxQ = gtk.HBox(False, 0)
         self.showPassQ = gtk.CheckButton("Show Password")
-        self.showPassQ.connect("toggled", self.showPass_toggled)
+        self.showPassQ.connect("toggled", self.showPass_toggled, parent)
         self.showPassQ.set_active(False)
         spBoxQ.pack_end(self.showPassQ, False, False, 0)
         self.passBoxQ.pack_start(spBoxQ, False, False, 0)
@@ -117,7 +112,7 @@ class QueryDialog(gtk.Window):
         if parent.VERSION % 3 == 0 or (parent.VERSION == 1 and parent.PBA_VERSION != 1):
             checkBoxQ = gtk.HBox(False, 0)
             self.passReadQ = gtk.CheckButton("Read password from USB")
-            self.passReadQ.connect("toggled", self.check_toggled)
+            self.passReadQ.connect("toggled", self.check_toggled, parent)
             checkBoxQ.pack_end(self.passReadQ, False, False, 0)
             self.passBoxQ.pack_start(checkBoxQ, False, False, 0)
         
@@ -137,7 +132,7 @@ class QueryDialog(gtk.Window):
     def onDestroy(self, button, parent):
         parent.enable_menu()
         
-    def check_toggled(self, checkbox):
+    def check_toggled(self, checkbox, parent):
         verify.licCheck(parent)
         is_checked = checkbox.get_active()
         if is_checked:
@@ -149,7 +144,7 @@ class QueryDialog(gtk.Window):
             self.queryPass.set_sensitive(True)
             self.showPassQ.set_sensitive(True)
 
-    def showPass_toggled(self, *args):
+    def showPass_toggled(self, checkbox, parent):
         verify.licCheck(parent)
         if self.showPassQ.get_active():
             self.queryPass.set_visibility(True)
@@ -182,27 +177,6 @@ class QueryDialog(gtk.Window):
         if m_na:
             self.msg_err('This drive has not been activated with Opal Lock.')
             return
-        #if (parent.VERSION == 3 or parent.PBA_VERSION != 1) and self.passReadQ.get_active():
-        #    sl = [parent.devs_list[index]]
-        #    mn = [parent.vendor_list[index]]
-        #    sn = [parent.sn_list[index]]
-        #    d_list = runprocess.findUSB('Admin', sl, mn, sn)
-        #    #print d_list
-        #    if len(d_list[1]) == 0:
-        #        #print 'here'
-        #        #print d_list[1]
-        #        self.msg_err('No USB detected.')
-        #        return
-        #    elif len(d_list[0]) == 0:
-        #        self.msg_err('No password files found on USB.')
-        #        return
-        #    elif d_list[2] != '':
-        #        #if parent.auth_menu.get_active() == 0:
-        #        self.msg_err('Admin password not found for ' + d_list[2] + '.')
-        #        #else:
-        #        #    parent.msg_err('User password not found for ' + d_list[2] + '.')
-        #        return
-        #if parent.view_state == 0:
         salt = parent.salt_list[index]
         user = parent.user_list[index]
         
@@ -225,7 +199,6 @@ class QueryDialog(gtk.Window):
         self.startSpin(parent)
         t1 = threading.Thread(target=runthread.rt_queryAuth, args=(self, parent, index, salt, user))
         t1.start()
-        
             
     def startSpin(self, parent, *args):
         self.spinQ.show()
@@ -236,7 +209,7 @@ class QueryDialog(gtk.Window):
         self.spinQ.hide()
         
     def saveToText(self, *args):
-        verify.licCheck(parent)
+        verify.licCheck(self)
         chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_SAVE,buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK))
         chooser.set_do_overwrite_confirmation(True)
         
@@ -280,7 +253,6 @@ class QueryDialog(gtk.Window):
         
         res = message.run()
         message.destroy()
-        
         
 def query(button, parent, mode):
     verify.licCheck(parent)
@@ -487,7 +459,6 @@ def query(button, parent, mode):
     elif mode == 0:
         parent.msg_err('Non-TCG drives cannot be queried.')
         
-
 class AuditDialog(gtk.Dialog):
     eventDescriptions = dict({1 : 'Drive Activated',
                               2 : 'Initial Drive Setup',
@@ -531,9 +502,6 @@ class AuditDialog(gtk.Dialog):
                               40: 'Audit Log Access Failed'})
 
     def __init__(self, parent, a):
-        #if (parent.VERSION == 3 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and parent.pass_sav.get_active():
-            ##print "openLog passSaveUSB " + password + " "  + self.auth_menu.get_active_text()
-            #runprocess.passSaveUSB(self, password, parent.drive_menu.get_active_text(), parent.dev_vendor.get_text(), parent.dev_sn.get_text())
         columns = ["Level", "Date and Time", "Event ID", "Event Description"]
         self.auditEntries = []
         self.errorEntries = []
@@ -618,7 +586,6 @@ class AuditDialog(gtk.Dialog):
         
         self.show_all()
         
-        
     def saveToCSV(self, button, parent):
         verify.licCheck(parent)
         chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_SAVE,buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK))
@@ -667,7 +634,6 @@ class AuditDialog(gtk.Dialog):
             chooser.destroy()
         
     def filterLog(self, button, entries, mode):
-        
         self.listStore.clear()
         for i in range(len(entries)):
             self.listStore.append(entries[i])
@@ -728,7 +694,6 @@ class OpalDialog(gtk.Dialog):
         
         vbox.pack_start(scrolledWin)
         self.show_all()
-        
 
 def openOpal(button, parent, *args):
     verify.licCheck(parent)
@@ -928,7 +893,6 @@ class USBDialog(gtk.Dialog):
         else:
             self.na_instr.show()
         self.refresh_button.set_sensitive(True)
-        
              
 def show_about(button, parent, *args):
     verify.licCheck(parent)
@@ -944,7 +908,7 @@ def show_about(button, parent, *args):
     m = re.search(regex_ver, txtVersion)
     ver_parse = m.group(1)
     
-    aboutWin.set_version('GUI v0.24.1')
+    aboutWin.set_version('GUI v0.24.2')
     aboutWin.set_comments('Opal Lock Version: ' + ver_parse)
     aboutWin.set_copyright('(c) 2019 Fidelity Height LLC. All rights reserved.')
     if parent.VERSION != 1:
@@ -1085,7 +1049,6 @@ class SetPowerDialog(gtk.Dialog):
         vbox.pack_start(hbox5, True, False)
         
         self.show_all()
-        
         
 def mngPower_prompt(button, parent, mode):
     verify.licCheck(parent)

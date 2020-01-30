@@ -30,11 +30,13 @@ import re
 import runthread
 import csv
 import runsetup
+import PyExtLic
 import glib
 import runprocess
 import string
 import warnings
 import optparse
+import PyExtOb
 import gtk._gtk
 import sys
 import PyExtHash
@@ -43,12 +45,14 @@ import ctypes
 import background
 import subprocess
 import types
+import runupdate
 import gtk._lazyutils
 import threading
 import time
 import gobject
 import glib._glib
 import os
+import multiprocessing
 
 # This is not Python source even if it looks so. Make it clear for
 # now. This was decided by PEP 484 designers.

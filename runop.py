@@ -1,25 +1,17 @@
-import ctypes
 import cleanop
-import datetime
 import dialogs
-import gobject
 import gtk
-import lockhash
 import os
 import platform
 import re
 import runprocess
-import runscan
 import runsetup
 import runthread
-import string
-import subprocess
-import sys
+if platform.system() == 'Windows':
+    import subprocess
 import threading
 import time
 import verify
-
-from multiprocessing import Process, Value, Array, Event
 
 
 def define_lock_t():
@@ -920,13 +912,6 @@ def run_revertKeep(button, ui):
             ui.msg_err('Admin password not found for ' + f_list[2] + '.')
             return
     password = ''
-    #if ui.VERSION == 3 and ui.check_pass_rd.get_active():
-    #    password = runprocess.passReadUSB(ui, ui.dev_vendor.get_text(), ui.dev_sn.get_text())
-    #    if password == None or password == 'x':
-    #        ui.msg_err('No password found for the drive.')
-    #        return
-    #else:
-    #    password = lockhash.hash_pass(ui.pass_entry.get_text(), index, ui)#ui.salt_list[index], ui.dev_msid.get_text())
     
     ui.start_spin()
     if len(selected_list) == 1:
