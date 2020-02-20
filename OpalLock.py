@@ -21,6 +21,7 @@ from ctypes import c_long, c_int
 
 
 
+
 GWL_WNDPROC = -4
 WM_DESTROY  = 2
 DBT_DEVTYP_DEVICEINTERFACE = 0x00000005  # device interface class
@@ -752,10 +753,45 @@ if __name__ == "__main__":
                 
                 self.main_instr.show()
                 self.op_label.show()
-                
-                
-                
-                    
+
+                # If the power setting sleep option is active, this function will open the power settings dialog box
+
+                scheme = ''
+                Bal = "381b4222-f694-41f0-9685-ff5bb260df2e"
+                High = "8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c"
+                Saver = "a1841308-3541-4fab-bc81-f71556f20b4a"
+                newSaver = "57e53caa-acb0-453c-baee-85c8b2c5fb66" #This is a new power scheme GUID that I found on my laptop
+
+                s = os.popen('powercfg -GETACTIVESCHEME').read()
+
+                s1 = re.search(Bal, s)
+                s2 = re.search(High, s)
+                s3 = re.search(Saver, s)
+                s4 = re.search(newSaver,s)
+
+                if s1:
+                    scheme = s1.group()
+                if s2:
+                    scheme = s2.group()
+                if s3:
+                    scheme = s3.group()
+                if s4:
+                    scheme = s4.group()
+                sub_sleep = '238c9fa8-0aad-41ed-83f4-97be242c8f20'
+                sleepValueQuery = os.popen('powercfg /QUERY ' + str(scheme) + ' ' + str(sub_sleep)).read()
+                sleep_regex = 'Power Setting GUID: 29f6c1db-86da-48c5-9fdb-f2b67b1f44da\s*\(Sleep after\).*\n.+\n.+\n.+\n.+\n.+\n\s+Current AC Power Setting Index: (0x\S+)'
+                m_sleep = re.search(sleep_regex, sleepValueQuery)
+                hex_Sleep = None
+                str_Sleep = None
+                if m_sleep:
+                    hex_Sleep = m_sleep.group(1)
+                if m_sleep != None:
+                    dec_Sleep = int(hex_Sleep, 0) / 60
+                    str_Sleep = str(dec_Sleep)
+                if str_Sleep != '0':
+                    dialogs.mngPower_prompt(None, self, 1)
+
+
                 runscan.run_scan(None, self, True)
                 
                 
@@ -790,7 +826,13 @@ if __name__ == "__main__":
             else:
                 self.msg_err('No valid license of Opal Lock found, please register to get demo license or buy basic/premium license')
                 gtk.main_quit()
-               
+                
+       
+            
+
+
+
+
         def display_single(self, *args):
             homogeneous = False
             spacing = 0
@@ -1579,8 +1621,8 @@ if __name__ == "__main__":
                             else:
                                 self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
                         if len(self.setup_list) > 0:
-            #                for i in self.setup_list:
-            #                    self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
+                        #for i in self.setup_list:
+                        #self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
                             if self.VERSION != 0 and self.PBA_VERSION != 0:
                                 self.enable_entries_buttons()
                             self.op_instr.show()
@@ -1597,8 +1639,8 @@ if __name__ == "__main__":
                             else:
                                 self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
                         if len(self.usetup_list) > 0:
-            #                for i in self.usetup_list:
-            #                    self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
+                            #for i in self.usetup_list:
+                            #self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
                             if self.VERSION != 0 and self.PBA_VERSION != 0:
                                 self.enable_entries_buttons()
                             self.op_instr.show()
@@ -1616,8 +1658,8 @@ if __name__ == "__main__":
                             else:
                                 self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
                         if len(self.locked_list) > 0:
-            #                for i in self.locked_list:
-            #                    self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
+                            #for i in self.locked_list:
+                            #self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
                             if self.VERSION != 0 and self.PBA_VERSION != 0:
                                 self.enable_entries_buttons()
                             self.op_instr.show()
@@ -1634,8 +1676,8 @@ if __name__ == "__main__":
                             else:
                                 self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
                         if len(self.ulocked_list) > 0:
-            #                for i in self.ulocked_list:
-            #                    self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
+                            #for i in self.ulocked_list:
+                            #self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
                             if self.VERSION != 0 and self.PBA_VERSION != 0:
                                 self.enable_entries_buttons()
                             self.op_instr.show()
@@ -1651,7 +1693,8 @@ if __name__ == "__main__":
                     lambda path: self.liststore[path][4]
                 )
                 selection.set_mode(gtk.SELECTION_MULTIPLE)
-                
+
+
         def pass_dialog(self, *args):
             homogeneous = False
             spacing = 0
@@ -1680,7 +1723,11 @@ if __name__ == "__main__":
                 self.check_pass_rd.show()
                 self.check_pass_rd.set_tooltip_text('Authenticate using the drive\'s password file from USB')
                 self.box_pass.pack_end(self.check_pass_rd, False, False, padding)
-         
+
+
+
+
+
         def new_pass_dialog(self, *args):
             homogeneous = False
             spacing = 0
@@ -3170,7 +3217,7 @@ if __name__ == "__main__":
                     instanceCheck = str(fr.read())
                 fr.close();
             if instanceCheck != 'InstanceIsRunning!':
-                #Run the app no other instance is running
+                #Run the app if no other instance is running
                 fw = open("checkInstance.txt", "w+")
                 fw.write('InstanceIsRunning!')
                 fw.close()
