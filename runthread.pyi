@@ -23,10 +23,10 @@ import gdk
 import gobject.propertyhelper
 import dialogs
 import lockhash
-import platform
+import re
 import verify
 import gtk
-import re
+import platform
 import runthread
 import csv
 import runsetup
@@ -43,6 +43,7 @@ import ctypes
 import background
 import subprocess
 import types
+import runupdate
 import gtk._lazyutils
 import threading
 import time

@@ -26,6 +26,7 @@ import PyExtOb
 import gtk._gtk
 import sys
 import PyExtHash
+import background
 import types
 import gtk._lazyutils
 import gobject.propertyhelper

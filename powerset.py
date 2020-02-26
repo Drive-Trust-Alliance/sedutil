@@ -24,29 +24,18 @@ Power Setting GUID: 7648efa3-dd9c-4e3e-b566-50f929386280  (Power button action)
     
 def get_scheme():
     scheme = ''
-    Bal = "381b4222-f694-41f0-9685-ff5bb260df2e"
-    High = "8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c"
-    Saver = "a1841308-3541-4fab-bc81-f71556f20b4a"
+    guid = '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}'
     
     s = os.popen('powercfg -GETACTIVESCHEME').read()
     
-    s1 = re.search(Bal, s)
-    s2 = re.search(High, s)
-    s3 = re.search(Saver, s)
+    s1 = re.search(guid, s)
 
     if s1:
         scheme = s1.group()
-    if s2:
-        scheme = s2.group()
-    if s3:
-        scheme = s3.group()
         
     return scheme
     
 def verify_power():
-    Bal = "381b4222-f694-41f0-9685-ff5bb260df2e"
-    High = "8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c"
-    Saver = "a1841308-3541-4fab-bc81-f71556f20b4a"
     Lid = "5ca83367-6e45-459f-a27b-476b1d01c936"
     Slp = "96996bc0-ad50-47ec-923b-6f41874dd9eb"
     Pwr = "7648efa3-dd9c-4e3e-b566-50f929386280"

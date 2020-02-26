@@ -21,7 +21,6 @@ from ctypes import c_long, c_int
 
 
 
-
 GWL_WNDPROC = -4
 WM_DESTROY  = 2
 DBT_DEVTYP_DEVICEINTERFACE = 0x00000005  # device interface class
@@ -294,7 +293,7 @@ if __name__ == "__main__":
                 
                 self.set_resizable(False)
 
-                self.connect('destroy', background.exitX, self)
+                self.connect('destroy', self.exitX)
                 
                 if self.DEV_OS == 'Windows':
                     theme = os.path.join(os.getcwd(), 'gtkrc')
@@ -323,20 +322,20 @@ if __name__ == "__main__":
                 self.backToMain.set_tooltip_text('Return to home view')
                 self.navMenu.append(self.backToMain)
                 self.exitApp = gtk.MenuItem("Exit")
-                self.exitApp.connect("activate", background.exitFL, self)
+                self.exitApp.connect("activate", self.exitFL)
                 self.exitApp.set_tooltip_text('Exit the app')
                 self.navMenu.append(self.exitApp)
                 self.exitReboot = gtk.MenuItem("Restart")
-                self.exitReboot.connect("activate", background.reboot, self)
+                self.exitReboot.connect("activate", self.reboot)
                 self.exitReboot.set_tooltip_text('Restarts the computer')
                 self.navMenu.append(self.exitReboot)
                 if self.DEV_OS == 'Windows':
                     self.exitHibernate = gtk.MenuItem('Hibernate')
-                    self.exitHibernate.connect('activate', background.hibernate, self)
+                    self.exitHibernate.connect('activate', self.hibernate)
                     self.exitHibernate.set_tooltip_text('Hibernates the computer')
                     self.navMenu.append(self.exitHibernate)
                 self.exitShutDown = gtk.MenuItem("Shut Down")
-                self.exitShutDown.connect("activate", background.shutdown, self)
+                self.exitShutDown.connect("activate", self.shutdown)
                 self.exitShutDown.set_tooltip_text('Shuts down the computer')
                 self.navMenu.append(self.exitShutDown)
                 
@@ -753,45 +752,10 @@ if __name__ == "__main__":
                 
                 self.main_instr.show()
                 self.op_label.show()
-
-                # If the power setting sleep option is active, this function will open the power settings dialog box
-
-                scheme = ''
-                Bal = "381b4222-f694-41f0-9685-ff5bb260df2e"
-                High = "8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c"
-                Saver = "a1841308-3541-4fab-bc81-f71556f20b4a"
-                newSaver = "57e53caa-acb0-453c-baee-85c8b2c5fb66" #This is a new power scheme GUID that I found on my laptop
-
-                s = os.popen('powercfg -GETACTIVESCHEME').read()
-
-                s1 = re.search(Bal, s)
-                s2 = re.search(High, s)
-                s3 = re.search(Saver, s)
-                s4 = re.search(newSaver,s)
-
-                if s1:
-                    scheme = s1.group()
-                if s2:
-                    scheme = s2.group()
-                if s3:
-                    scheme = s3.group()
-                if s4:
-                    scheme = s4.group()
-                sub_sleep = '238c9fa8-0aad-41ed-83f4-97be242c8f20'
-                sleepValueQuery = os.popen('powercfg /QUERY ' + str(scheme) + ' ' + str(sub_sleep)).read()
-                sleep_regex = 'Power Setting GUID: 29f6c1db-86da-48c5-9fdb-f2b67b1f44da\s*\(Sleep after\).*\n.+\n.+\n.+\n.+\n.+\n\s+Current AC Power Setting Index: (0x\S+)'
-                m_sleep = re.search(sleep_regex, sleepValueQuery)
-                hex_Sleep = None
-                str_Sleep = None
-                if m_sleep:
-                    hex_Sleep = m_sleep.group(1)
-                if m_sleep != None:
-                    dec_Sleep = int(hex_Sleep, 0) / 60
-                    str_Sleep = str(dec_Sleep)
-                if str_Sleep != '0':
-                    dialogs.mngPower_prompt(None, self, 1)
-
-
+                
+                
+                
+                    
                 runscan.run_scan(None, self, True)
                 
                 
@@ -826,13 +790,7 @@ if __name__ == "__main__":
             else:
                 self.msg_err('No valid license of Opal Lock found, please register to get demo license or buy basic/premium license')
                 gtk.main_quit()
-                
-       
-            
-
-
-
-
+               
         def display_single(self, *args):
             homogeneous = False
             spacing = 0
@@ -1384,6 +1342,9 @@ if __name__ == "__main__":
             index = -1
             #if self.view_state != 7:
             index = act_idx
+            self.pass_entry.set_text('')
+            self.new_pass_entry.set_text('')
+            self.confirm_pass_entry.set_text('')
             if self.view_state == 1:
                 if act_idx in self.locked_list:
                     self.na_instr.hide()
@@ -1608,6 +1569,10 @@ if __name__ == "__main__":
                            
         def auth_changed(self, *args):
             verify.licCheck(self)
+            if self.op_prompt != 0:
+                self.pass_entry.set_text('')
+                self.new_pass_entry.set_text('')
+                self.confirm_pass_entry.set_text('')
             if (self.op_prompt == 4 or self.op_prompt == 7) and self.toggleMulti_radio.get_active():
                 self.liststore.clear()
                 self.selectAll_check.set_inconsistent(False)
@@ -1621,8 +1586,8 @@ if __name__ == "__main__":
                             else:
                                 self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
                         if len(self.setup_list) > 0:
-                        #for i in self.setup_list:
-                        #self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
+            #                for i in self.setup_list:
+            #                    self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
                             if self.VERSION != 0 and self.PBA_VERSION != 0:
                                 self.enable_entries_buttons()
                             self.op_instr.show()
@@ -1639,8 +1604,8 @@ if __name__ == "__main__":
                             else:
                                 self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
                         if len(self.usetup_list) > 0:
-                            #for i in self.usetup_list:
-                            #self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
+            #                for i in self.usetup_list:
+            #                    self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
                             if self.VERSION != 0 and self.PBA_VERSION != 0:
                                 self.enable_entries_buttons()
                             self.op_instr.show()
@@ -1658,8 +1623,8 @@ if __name__ == "__main__":
                             else:
                                 self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
                         if len(self.locked_list) > 0:
-                            #for i in self.locked_list:
-                            #self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
+            #                for i in self.locked_list:
+            #                    self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
                             if self.VERSION != 0 and self.PBA_VERSION != 0:
                                 self.enable_entries_buttons()
                             self.op_instr.show()
@@ -1676,8 +1641,8 @@ if __name__ == "__main__":
                             else:
                                 self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
                         if len(self.ulocked_list) > 0:
-                            #for i in self.ulocked_list:
-                            #self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
+            #                for i in self.ulocked_list:
+            #                    self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i]])
                             if self.VERSION != 0 and self.PBA_VERSION != 0:
                                 self.enable_entries_buttons()
                             self.op_instr.show()
@@ -1693,8 +1658,7 @@ if __name__ == "__main__":
                     lambda path: self.liststore[path][4]
                 )
                 selection.set_mode(gtk.SELECTION_MULTIPLE)
-
-
+                
         def pass_dialog(self, *args):
             homogeneous = False
             spacing = 0
@@ -1723,11 +1687,7 @@ if __name__ == "__main__":
                 self.check_pass_rd.show()
                 self.check_pass_rd.set_tooltip_text('Authenticate using the drive\'s password file from USB')
                 self.box_pass.pack_end(self.check_pass_rd, False, False, padding)
-
-
-
-
-
+         
         def new_pass_dialog(self, *args):
             homogeneous = False
             spacing = 0
@@ -3202,35 +3162,83 @@ if __name__ == "__main__":
             self.locked_list.sort()
             self.setup_list.sort()
             self.nonsetup_list.sort()
-
-        '''For catching the destroy event for the first instance and making appropriate clean up - @author : Lokesh'''
-        def on_destroy(self):
-            os.remove('checkInstance.txt') #Removes the file after closing the main application window.
-
-        def run(self):
-            #Before running the gtk.main(), this will check if an instance of the application is already running
-            instanceCheck =''
-            fileExists = path.exists('checkInstance.txt')
-            if fileExists:
-                fr = open("checkInstance.txt", "r")
-                if fr.mode == "r":
-                    instanceCheck = str(fr.read())
-                fr.close();
-            if instanceCheck != 'InstanceIsRunning!':
-                #Run the app if no other instance is running
-                fw = open("checkInstance.txt", "w+")
-                fw.write('InstanceIsRunning!')
-                fw.close()
-                gtk.main()
-                LockApp.connect('destroy_event', LockApp.on_destroy(self))
+        
+        
+        def exitFL(self, *args):
+            if self.DEV_OS == 'Windows':
+                background.exitMV(self, 0)
+                self.unhookWndProc()
+            os.remove('checkInstance.txt')
+            gtk.main_quit()
+            
+        def exitX(self, *args):
+            proceed = False
+            if self.op_inprogress:
+                message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_YES_NO, parent = self)
+                message.set_markup("Warning: Closing Opal Lock while an operation is running may cause problems.\nAre you sure you want to close Opal Lock?")
+                res = message.run()
+                message.destroy()
+                if res == gtk.RESPONSE_YES:
+                    proceed = True
             else:
-                #Throw the info box for the user that an instance of the application is already running.
-                info  =  'An instance of Opal Lock is already running!!'
-                dialog = gtk.MessageDialog(type=gtk.MESSAGE_INFO,message_format=info,buttons=gtk.BUTTONS_OK)
-                dialog.set_title('Opal Lock Info')
-                dialog.run()
-                dialog.destroy()
+                proceed = True
+            if proceed:
+                if self.DEV_OS == 'Windows':
+                    background.exitMV(self, 0)
+                os.remove('checkInstance.txt')
+                gtk.main_quit()
+                return False
+            else:
+                return True
 
+        def reboot(self, *args):
+            self.reboot_req = True
+            if self.DEV_OS == 'Windows':
+                background.exitMV(self, 0)
+                self.unhookWndProc()
+            os.remove('checkInstance.txt')
+            gtk.main_quit()
+                
+        def shutdown(self, *args):
+            self.shutdown_req = True
+            if self.DEV_OS == 'Windows':
+                unmountPC(self, 0)
+                exitMV(self, 1)
+                self.unhookWndProc()
+            os.remove('checkInstance.txt')
+            gtk.main_quit()
+            
+        def hibernate(self, *args):
+            unmountPC(self, 1)
+
+        '''For catching the destroy event for the first instance and making appropriate clean up - @author : Lokesh''' 
+        #def on_destroy(self): 
+        #    os.remove('checkInstance.txt') #Removes the file after closing the main application window.
+        
+        def run(self):
+            ''' Run the app. '''
+            #Before running the gtk.main(), this will check if an instance of the application is already running 
+            instanceCheck ='' 
+            fileExists = path.exists('checkInstance.txt') 
+            if fileExists: 
+                fr = open("checkInstance.txt", "r") 
+                if fr.mode == "r": 
+                    instanceCheck = str(fr.read()) 
+                fr.close(); 
+            if instanceCheck != 'InstanceIsRunning!': 
+                #Run the app no other instance is running 
+                fw = open("checkInstance.txt", "w+") 
+                fw.write('InstanceIsRunning!') 
+                fw.close() 
+                gtk.main() 
+                #LockApp.connect('destroy_event', LockApp.on_destroy(self)) 
+            else: 
+                #Throw the info box for the user that an instance of the application is already running. 
+                info  =  'An instance of Opal Lock is already running!!' 
+                dialog = gtk.MessageDialog(type=gtk.MESSAGE_INFO,message_format=info,buttons=gtk.BUTTONS_OK) 
+                dialog.set_title('Opal Lock Info') 
+                dialog.run() 
+                dialog.destroy()
             #self.unhookWndProc()
             if self.shutdown_req:
                 if self.ostype == 0:
