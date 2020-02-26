@@ -1,3 +1,4 @@
+import background
 import gtk
 import platform
 import os
@@ -153,12 +154,12 @@ def licCheck(self, *args):
                     md_check = sys.maxint
             if v_check != self.VERSION and md_check != self.MAX_DEV:
                 self.msg_err('License change detected. Closing the application.')
-                self.exitFL(self)
+                background.exitFL(self)
             else:
                 return
         else:
             self.msg_err('License not detected. Closing the application.')
-            self.exitFL(self)
+            background.exitFL(self)
 
 def initCheck(self, *args):
     version_text = ''

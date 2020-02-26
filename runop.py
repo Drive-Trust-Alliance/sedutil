@@ -469,7 +469,10 @@ def run_setupUSB(button, ui, *args):
     if res == gtk.RESPONSE_OK:
         if usb_dialog.usb_menu.get_active() >= 0:
             message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_YES_NO, parent = ui)
-            message.set_markup("Warning: You will lose any files you have on the USB (except for any previously saved password files). Do you want to proceed?")
+            if ui.VERSION == 3 or (ui.VERSION == 1 and ui.PBA_VERSION != 1):
+                message.set_markup("Warning: You will lose any files you have on the USB (except for any previously saved password files). Do you want to proceed?")
+            else:
+                message.set_markup("Warning: You will lose any files you have on the USB. Do you want to proceed?")
             
             res = message.run()
             if res == gtk.RESPONSE_YES:
@@ -701,7 +704,7 @@ def run_removeUser(button, ui):
     pw_trim = re.sub('\s', '', pw)
     password_a = ''
     
-    if ui.VERSION % 2 == 1 and ui.pass_sav.get_active():
+    if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.pass_sav.get_active():
         drive = ui.drive_menu.get_active_text()
         
         if ui.DEV_OS == 'Windows':
@@ -710,7 +713,7 @@ def run_removeUser(button, ui):
             ui.msg_err('Selected USB could not be detected')
             return
             
-    #if ui.VERSION % 2 == 1 and ui.check_pass_rd.get_active():
+    #if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
     #    f_list = runprocess.findUSB(ui)
     #    if len(f_list) == 0:
     #        ui.msg_err('No USB detected.')
@@ -963,6 +966,7 @@ def run_revertErase(button, ui):
         if ui.orig != ui.pass_entry.get_text():
             ui.orig = ''
             ui.msg_err('The passwords entered do not match')
+            ui.revert_erase_prompt()
             return
         ui.orig = ''
         messageA = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_YES_NO, parent = ui)
@@ -999,6 +1003,7 @@ def run_revertErase(button, ui):
                     index = index + 1
                 if len(selected_list) == 0:
                     ui.msg_err('No drives selected.')
+                    ui.revert_erase_prompt()
                     return
                     
             list_remove = []
@@ -1029,6 +1034,7 @@ def run_revertErase(button, ui):
                 ui.msg_err('Unable to erase ' + list_d + ' because the drive(s) have not been activated with Opal Lock. Please set up the drive(s) before proceeding.')
                     
             if len(selected_list) == 0:
+                ui.revert_erase_prompt()
                 return
                     
             if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
@@ -1084,6 +1090,7 @@ def run_revertPSID(button, ui):
     m_na = re.search(drive_na, txt_q)
     if m_na:
         ui.msg_err('This drive has not been activated by Opal Lock. Please set up the drive before proceeding.')
+        ui.revert_psid_prompt()
         return
     
     if not ui.warned:
@@ -1105,6 +1112,7 @@ def run_revertPSID(button, ui):
         if ui.orig != psid:
             ui.orig = ''
             ui.msg_err('The PSIDs entered do not match')
+            ui.revert_psid_prompt()
             return
         ui.orig = ''
         message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_YES_NO, parent = ui)

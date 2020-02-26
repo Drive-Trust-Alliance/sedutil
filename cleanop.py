@@ -2,6 +2,7 @@ import background
 import dialogs
 import os
 import platform
+import re
 import runop
 import runscan
 if platform.system() == 'Windows':
@@ -58,7 +59,7 @@ def setupFull_cleanup(ui, max_time, start_time, op_procs, res_list, e_to, select
     if status_usb.value != 0:
         ui.msg_err('USB setup failed. Setup aborted.')
         ui.stop_spin()
-        ui.setup_prompt1()
+        ui.setup_prompt1(ui)
     
     else:
         start_f0 = True
@@ -246,7 +247,7 @@ def setupFull_cleanup(ui, max_time, start_time, op_procs, res_list, e_to, select
                         ui.msg_ok('Preboot image set up successfully for ' + list_p0 + '.')
                     else:
                         ui.msg_err('Preboot image set up successfully for ' + list_p0 + ', but failed for ' + list_f0 + '.')
-            ui.setup_prompt1()
+            ui.setup_prompt1(ui)
         else:
             start = True
             liststr = ''
@@ -294,6 +295,13 @@ def setupFull_cleanup(ui, max_time, start_time, op_procs, res_list, e_to, select
         if rescan_needed:
             ui.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
             runscan.run_scan(None, ui, True)
+
+def setupFull_abort(ui):
+    if ui.VERSION == 3:
+        ui.msg_err('One or more selected drives were not detected, setup aborted. Rescanning to update drive list.')
+    else:
+        ui.msg_err('Selected drive was not detected, setup aborted. Rescanning to update drive list.')
+    runscan.run_scan(None, ui, True)
 
 def pbaWrite_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selected_list, status_list, rescan_needed, val2, val3, val4):
     curr_time = time.time()
@@ -448,7 +456,7 @@ def pbaWrite_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selec
             ui.msg_err('Retry limit reached for ' + list_alo + '. Please power cycle the drive before trying again.')
         if list_p != '':
             ui.msg_ok('Preboot image successfully written for ' + list_p + '.')
-        ui.updatePBA_prompt()
+        ui.updatePBA_prompt(ui)
     else:
         start = True
         liststr = ''
@@ -614,7 +622,7 @@ def changePW_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selec
                 ui.msg_err('User retry limit reached for ' + list_alo + ', please power cycle the drive(s) before trying again.')
         if list_p != '':
             ui.msg_ok('Password successfully changed for ' + list_p + '.')
-        ui.changePW_prompt()
+        ui.changePW_prompt(ui)
     else:
         start = True
         liststr = ''
@@ -730,7 +738,8 @@ def unlockPBA_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
                     start_p = False
                 list_p = list_p + ui.devs_list[y]
                 if ui.DEV_OS == 'Windows':
-                    background.remount(ui, y)
+                    c = background.remount(ui, y)
+                    m_count = m_count + c
                 ui.lockstatus_list[y] = "Unlocked"
                 
                 ui.updateDevs(y,[2])
@@ -819,7 +828,8 @@ def unlockPBA_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
                 liststr = liststr + ui.devs_list[d]
                 
                 if ui.DEV_OS == 'Windows':
-                    background.remount(ui, d)
+                    c = background.remount(ui, d)
+                    m_count = m_count + c
                 
                 ui.lockstatus_list[d] = "Unlocked"
                 ui.updateDevs(d,[2])
@@ -917,7 +927,8 @@ def revertKeep_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sel
                 list_p = list_p + ui.devs_list[y]
                 
                 if ui.DEV_OS == 'Windows':
-                    background.remount(ui, y)
+                    c = background.remount(ui, y)
+                    m_count = m_count + c
                     
                 
                 ui.lockstatus_list[y] = "Unlocked"
@@ -1001,7 +1012,8 @@ def revertKeep_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sel
             
             
             if ui.DEV_OS == 'Windows':
-                background.remount(ui, d)
+                c = background.remount(ui, d)
+                m_count = m_count + c
             ui.lockstatus_list[d] = "Unlocked"
             ui.setupstatus_list[d] = "No"
             ui.setupuser_list[d] = 'N/A'
@@ -1253,11 +1265,13 @@ def setupUSB_cleanup(ui, index, status, no_pw, s, e, preserved_files, present, r
                 ui.op_instr.show()
                 ui.setupUSB_button.show()
                 ui.cancel_button.show()
+                ui.setupUSB_prompt(ui)
             elif status != 0 :
                 ui.msg_err("Error: Setup Bootable USB failed.")
                 ui.op_instr.show()
                 ui.setupUSB_button.show()
                 ui.cancel_button.show()
+                ui.setupUSB_prompt(ui)
                 #usb_dialog.destroy()
             else :
                 ui.admin_aol_list[index] = 0
@@ -1275,11 +1289,13 @@ def setupUSB_cleanup(ui, index, status, no_pw, s, e, preserved_files, present, r
                     ui.msg_err('Retry limit reached, please power cycle the drive before trying again. Bootable USB setup aborted.')
                 else:
                     ui.msg_err('Error while attempting to save password to USB. Bootable USB setup aborted.')
+                ui.setupUSB_prompt(ui)
             elif status != 0 :
                 ui.msg_err("Error: Setup USB failed.")
                 ui.op_instr.show()
                 ui.setupUSB_button.show()
                 ui.cancel_button.show()
+                ui.setupUSB_prompt(ui)
                 #usb_dialog.destroy()
             else :
                 ui.user_aol_list[index] = 0
@@ -1339,7 +1355,7 @@ def setupUser_cleanup(ui, index, status, op_to, no_pw, no_usb, password_a, passw
             ui.box_newpass_confirm.show()
             ui.check_box_pass.show()
             ui.cancel_button.show()
-            ui.setupUser_prompt()
+            ui.setupUser_prompt(ui)
         else:
             ui.admin_aol_list[index] = 0
             #save_status = -1
@@ -1392,7 +1408,7 @@ def removeUser_cleanup(ui, index, status, op_to, no_pw, password_a, pass_usb, pr
         ui.box_pass.show()
         ui.check_box_pass.show()
         ui.cancel_button.show()
-        ui.removeUser_prompt()
+        ui.removeUser_prompt(ui)
     else :
         
         
@@ -1431,6 +1447,7 @@ def revertPSID_cleanup(ui, status, present, rescan_needed):
             ui.msg_err("Retry limit reached for PSID. Please power cycle the drive before trying again.")
         else:
             ui.msg_err("Remove Lock with PSID failed." )
+        ui.revert_psid_prompt(ui)
     else :
         ui.admin_aol_list[index] = 0
         ui.user_aol_list[index] = 0
@@ -1559,19 +1576,21 @@ def openLog_cleanup(parent, index, statusAW, password, txt, no_pw, no_USB, not_d
     elif not_detected:
         parent.msg_err('Selected USB not detected')
     else:
-        if statusAW == parent.NOT_AUTHORIZED and ((auth_level == 0 and parent.admin_aol_list[index] < parent.retrylimit_list[index]) or (auth_level == 1 and parent.user_aol_list[index] < parent.retrylimit_list[index])):
-            count = ''
-            if auth_level == 0:
-                count = str(parent.admin_aol_list[index])
+        if statusAW != 0:
+            if statusAW == parent.NOT_AUTHORIZED and ((auth_level == 0 and parent.admin_aol_list[index] < parent.retrylimit_list[index]) or (auth_level == 1 and parent.user_aol_list[index] < parent.retrylimit_list[index])):
+                count = ''
+                if auth_level == 0:
+                    count = str(parent.admin_aol_list[index])
+                else:
+                    count = str(parent.user_aol_list[index])
+                parent.msg_err('Audit Log could not be retrieved. Invalid password. Attempt ' + count + ' of ' + str(parent.retrylimit_list[index]) + '.')
+            elif statusAW == parent.AUTHORITY_LOCKED_OUT or ((auth_level == 0 and parent.admin_aol_list[index] >= parent.retrylimit_list[index]) or (auth_level == 1 and parent.user_aol_list[index] >= parent.retrylimit_list[index])):
+                parent.msg_err('Audit Log could not be retrieved. Retry limit has been reached.  Please power cycle your drive before trying again.')
+            elif statusAW == parent.SP_BUSY:
+                parent.msg_err('Audit Log could not be retrieved. There was an error while attempting to access the drive, please power cycle the drive before trying again.')
             else:
-                count = str(parent.user_aol_list[index])
-            parent.msg_err('Audit Log could not be retrieved. Invalid password. Attempt ' + count + ' of ' + str(parent.retrylimit_list[index]) + '.')
-        elif statusAW == parent.AUTHORITY_LOCKED_OUT or ((auth_level == 0 and parent.admin_aol_list[index] >= parent.retrylimit_list[index]) or (auth_level == 1 and parent.user_aol_list[index] >= parent.retrylimit_list[index])):
-            parent.msg_err('Audit Log could not be retrieved. Retry limit has been reached.  Please power cycle your drive before trying again.')
-        elif statusAW == parent.SP_BUSY:
-            parent.msg_err('Audit Log could not be retrieved. There was an error while attempting to access the drive, please power cycle the drive before trying again.')
-        elif statusAW != 0:
-            parent.msg_err('Audit Log could not be retrieved.')
+                parent.msg_err('Audit Log could not be retrieved.')
+            ui.openLog_prompt(ui)
         else:
             if (parent.VERSION % 3 == 0 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and parent.pass_sav.get_active() and drive != '' and save_status > 0:
                 parent.msg_err('Failed to save password to USB.')

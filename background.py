@@ -23,103 +23,26 @@ WM_POWERBROADCAST = 0x0218
 
 WM_QUERYENDSESSION = 0x11
 
-def exitFL(_, self, *args):
-    if self.DEV_OS == 'Windows':
-        f = open('mountvol.txt','w')
-        write_list = []
-        for v in self.mv_list:
-            if v[0] not in write_list:
-                f.write(v[0] + ' ' + v[1] + ' ' + v[2] + '\n')
-                write_list.append(v[0])
-        for u in self.usb_mv_list:
-            if u[0] not in write_list:
-                f.write(u[0] + ' ' + u[1] + '\n')
-                write_list.append(u[0])
-        f.close()
-        self.unhookWndProc()
-    gtk.main_quit()
-    
-def exitX(_, self, *args):
-    proceed = False
-    if self.op_inprogress:
-        message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_YES_NO, parent = ui)
-        message.set_markup("Warning: Closing Opal Lock while an operation is running may cause problems.\nAre you sure you want to close Opal Lock?")
-        res = message.run()
-        
-        if res == gtk.RESPONSE_YES:
-            proceed = True
-    else:
-        proceed = True
-    if proceed:
-        if self.DEV_OS == 'Windows':
-            f = open('mountvol.txt','w')
-            write_list = []
-            for v in self.mv_list:
-                if v[0] not in write_list:
-                    f.write(v[0] + ' ' + v[1] + ' ' + v[2] + '\n')
-                    write_list.append(v[0])
-            for u in self.usb_mv_list:
-                if u[0] not in write_list:
-                    f.write(u[0] + ' ' + u[1] + '\n')
-                    write_list.append(u[0])
-            f.close()
-        gtk.main_quit()
 
-def reboot(_, self, *args):
-    self.reboot_req = True
-    if self.DEV_OS == 'Windows':
-        f = open('mountvol.txt','w')
-        write_list = []
-        for v in self.mv_list:
-            if v[0] not in write_list:
-                f.write(v[0] + ' ' + v[1] + ' ' + v[2] + '\n')
-                write_list.append(v[0])
-        for u in self.usb_mv_list:
-            if u[0] not in write_list:
-                f.write(u[0] + ' ' + u[1] + '\n')
-                write_list.append(u[0])
-        f.close()
-        self.unhookWndProc()
-    gtk.main_quit()
-        
-def shutdown(_, self, *args):
-    self.shutdown_req = True
-    if self.ostype == 0 :
-        f = open('mountvol.txt', 'w')
-        txt = os.popen('mountvol').read()
-        unmount_list = []
-        for i in range(len(self.full_devs_list)):
-            if self.full_isSetup_list[i] and not self.full_isLocked_list[i]:
-                if self.full_devs_map[i] != -1:
-                    runop.prelock(self.full_devs_map[i])
-                for v in self.mv_list:
-                    if v[2] == self.full_sn_list[i]:
-                        regex_mounted = v[0] + '}\\\s*\n\s*([D-Z]:)'
-                        v_mounted = re.search(regex_mounted,txt)
-                        if v_mounted:
-                            if v_mounted.group(1) not in unmount_list:
-                                v[1] = v_mounted.group(1)
-                                subprocess.call(['mountvol', v_mounted.group(1), '/d'])
-                                unmount_list.append(v_mounted.group(1))
-                if self.full_devs_map[i] != -1:
-                    runop.postlock(self.full_devs_map[i])
-        write_list = []
-        for v in self.mv_list:
-            if v[0] not in write_list:
-                f.write(v[0] + ' ' + v[1] + ' ' + v[2] + '\n')
-                write_list.append(v[0])
-        for u in self.usb_mv_list:
-            if u[0] not in write_list:
-                f.write(u[0] + ' ' + u[1] + '\n')
-                write_list.append(u[0])
-        f.close()
+    
+def exitMV(self, mode):
+    f = open('mountvol.txt','w')
+    write_list = []
+    for v in self.mv_list:
+        if v[0] not in write_list:
+            f.write(v[0] + ' ' + v[1] + ' ' + v[2] + '\n')
+            write_list.append(v[0])
+    for u in self.usb_mv_list:
+        if u[0] not in write_list:
+            f.write(u[0] + ' ' + u[1] + '\n')
+            write_list.append(u[0])
+    f.close()
+    if mode > 0:
         subprocess.call(['mountvol', '/n'])
         subprocess.call(['mountvol', '/r'])
-    if self.DEV_OS == 'Windows':
-        self.unhookWndProc()
-    gtk.main_quit()
+    return
     
-def hibernate(_, self, *args):
+def unmountPC(self, mode):
     txt = os.popen('mountvol').read()
     unmount_list = []
     for i in range(len(self.full_devs_list)):
@@ -137,9 +60,14 @@ def hibernate(_, self, *args):
                             unmount_list.append(v_mounted.group(1))
             if self.full_devs_map[i] != -1:
                 runop.postlock(self.full_devs_map[i])
-    subprocess.call(['mountvol', '/n'])
-    subprocess.call(['mountvol', '/r'])
-    subprocess.call(['shutdown', '-h'])
+    if mode > 0:
+        subprocess.call(['mountvol', '/n'])
+        subprocess.call(['mountvol', '/r'])
+        subprocess.call(['shutdown', '-h'])
+        
+
+    
+    
 
 def devChange(self, wParam,lParam):
     #print "WM_DEVICECHANGE [WPARAM:%i][LPARAM:%i]"%(wParam,lParam)
@@ -476,6 +404,7 @@ def remount(ui, y):
     txt = os.popen('mountvol').read()
     mv_idx = 0
     mv_rm = []
+    m_count = 0
     for v in ui.mv_list:
         if v[2] == ui.sn_list[y]:
             if ui.lockstatus_list[y] == "Locked":
@@ -531,3 +460,4 @@ def remount(ui, y):
         while i_rm >= 0:
             ui.mv_list.pop(mv_rm[i_rm])
             i_rm = i_rm - 1
+    return m_count
