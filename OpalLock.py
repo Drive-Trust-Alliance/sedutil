@@ -80,6 +80,7 @@ if __name__ == "__main__":
     gobject.threads_init()
         
     class LockApp(gtk.Window,WndProcHookMixin):
+        canDestroyMain = True # This flag is responsible for deciding if the main window can be destroyed
         firstscan = True
         firstmsg = True
         devname="\\\\.\\PhysicalDrive9"
@@ -290,7 +291,7 @@ if __name__ == "__main__":
                     width = 700
                     
                 self.set_size_request(width, height)
-                
+
                 self.set_resizable(False)
 
                 self.connect('destroy', self.exitX)
@@ -377,7 +378,7 @@ if __name__ == "__main__":
                     self.updatePBA.connect("activate", self.updatePBA_prompt)
                     self.updatePBA.set_tooltip_text('Update a drive\'s preboot image')
                     self.setupMenu.append(self.updatePBA)
-                
+
                     self.changePassword = gtk.MenuItem("Change Password")
                     self.changePassword.connect("activate", self.changePW_prompt)
                     self.changePassword.set_tooltip_text('Change a drive\'s password')
@@ -449,7 +450,7 @@ if __name__ == "__main__":
                 self.aboutM.connect("activate", dialogs.show_about, self)
                 self.aboutM.set_tooltip_text('About Opal Lock')
                 self.helpMenu.append(self.aboutM)
-                
+
                 self.menuBar.append(self.helpM)
                 
                 if self.VERSION != 1 and (self.VERSION != 3 or self.MAX_DEV != sys.maxint):
@@ -782,8 +783,8 @@ if __name__ == "__main__":
                 #if len(self.devs_list) == 0:
                 #    self.msg_err('No drives detected, try running this application with Administrator.')
                 #    gtk.main_quit()
-                    
-                
+
+                self.connect("delete_event", self.on_delete_event)
                         
                 
                 
@@ -2785,6 +2786,7 @@ if __name__ == "__main__":
             self.disable_menu()
             self.waitSpin.show()
             self.waitSpin.start()
+            self.canDestroyMain = False
             
         def stop_spin(self, *args):
             self.enable_menu()
@@ -2796,6 +2798,7 @@ if __name__ == "__main__":
             self.setup_wait_instr.hide()
             self.wait_instr.hide()
             self.multi_wait_instr.hide()
+            self.canDestroyMain = True
             
         def mode_toggled(self, button):
             verify.licCheck(self)
@@ -3211,10 +3214,19 @@ if __name__ == "__main__":
         def hibernate(self, *args):
             unmountPC(self, 1)
 
-        '''For catching the destroy event for the first instance and making appropriate clean up - @author : Lokesh''' 
-        #def on_destroy(self): 
-        #    os.remove('checkInstance.txt') #Removes the file after closing the main application window.
-        
+        # '''For catching the on_delete  event and checking if the main destroy can be destroyed - @author : Lokesh'''
+        def on_delete_event(self, widget, event = None):
+            if self.canDestroyMain == True:
+                return False
+            else:
+                info = 'This window cannot be closed until the current operation is done'
+                dialog = gtk.MessageDialog(type=gtk.MESSAGE_INFO, message_format=info, buttons=gtk.BUTTONS_OK)
+                dialog.set_title('Opal Lock Info')
+                dialog.run()
+                dialog.destroy()
+                return True
+
+
         def run(self):
             ''' Run the app. '''
             #Before running the gtk.main(), this will check if an instance of the application is already running 
@@ -3229,9 +3241,9 @@ if __name__ == "__main__":
                 #Run the app no other instance is running 
                 fw = open("checkInstance.txt", "w+") 
                 fw.write('InstanceIsRunning!') 
-                fw.close() 
-                gtk.main() 
-                #LockApp.connect('destroy_event', LockApp.on_destroy(self)) 
+                fw.close()
+                gtk.main()
+                #LockApp.connect('destroy_event', LockApp.on_destroy(self))
             else: 
                 #Throw the info box for the user that an instance of the application is already running. 
                 info  =  'An instance of Opal Lock is already running!!' 
