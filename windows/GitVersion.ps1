@@ -3,7 +3,7 @@ Param ([String]$filename = "gitversion.h")
 set-alias git "C:\Program Files\Git\cmd\git.exe"
 $filename = Join-Path $pwd $filename
 $define = "#define GIT_VERSION "
-$gitdesc = git describe --dirty
+$gitdesc = git describe --dirty='-derive'
 echo $define`"$gitdesc`" | Out-File -FilePath $filename
 # SIG # Begin signature block
 # MIIFuQYJKoZIhvcNAQcCoIIFqjCCBaYCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
