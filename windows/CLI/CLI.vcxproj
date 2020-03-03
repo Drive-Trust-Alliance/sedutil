@@ -195,7 +195,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
+      <Command>powershell -ExecutionPolicy ByPass -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
 copy  "..\..\rc\QlmLicenseLib.*"  "$(TargetDir)"
 copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
 
@@ -229,7 +229,7 @@ copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
       <ShowProgress>NotSet</ShowProgress>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
+      <Command>powershell -ExecutionPolicy ByPass  -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
 copy  "..\..\rc\QlmLicenseLib.*"  "$(TargetDir)"
 copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
 </Command>
@@ -263,7 +263,7 @@ copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
+      <Command>powershell -ExecutionPolicy ByPass -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
 copy  "..\..\rc\QlmLicenseLib.*"  "$(TargetDir)"
 copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
 $(SolutionDir)..\..\windows\PyExtuD.bat
