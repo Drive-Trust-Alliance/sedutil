@@ -299,7 +299,7 @@ $(SolutionDir)..\..\windows\PyExtuD.bat
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
+      <Command>powershell -ExecutionPolicy ByPass -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
 copy  "..\..\rc\QlmLicenseLib.*"  "$(TargetDir)"
 copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"</Command>
     </PreBuildEvent>
