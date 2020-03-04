@@ -6,7 +6,13 @@
 //
 //*****************************************************************************
 //#import "..\..\..\redistrib\.net 2.0\QlmLicenseLib.tlb" rename( "publicKey", "PublicKey" )
+#define QLMV10 TRUE // comment out this line if switch to QLM V12
+#ifdef QLMV10
+#import "C:\Program Files\Soraco\QuickLicenseMgrV10\redistrib\.net 4.0\QlmLicenseLib.tlb"
+#else
 #import "C:\Program Files\Soraco\QuickLicenseMgr\redistrib\.net 4.0\QlmLicenseLib.tlb"
+#endif
+
 
 using namespace QlmLicenseLib;
 
