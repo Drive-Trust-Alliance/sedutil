@@ -23,7 +23,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "Version.h"
 void usage()
 {
-    printf("sedutil v%s Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>\n", GIT_VERSION);
+    printf("sedutil %s Copyright 2017-2020 Fidelity Height LLC <www.fidelityheight.com>\n", GIT_VERSION);
     printf("a utility to manage self encrypting drives that conform\n");
     printf("to the Trusted Computing Group OPAL 2.0 SSC specification\n");
     printf("General Usage:                     (see readme for extended commandset)\n");
