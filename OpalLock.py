@@ -1130,8 +1130,10 @@ if __name__ == "__main__":
                     self.liststore.set_value(iter, 0, value)
                 iter = self.liststore.iter_next(iter)
                 index = index + 1
-            
+
         def grid_ms_toggle(self, cell, path, data=None):
+            if (self.op_prompt == 2 and self.warned == True): #Checks if the the user is on a warned window in the Setup Drive, resets the the process if drive checkbox is toggled - Lokesh
+                self.setup_prompt1()
             verify.licCheck(self)
             i = self.liststore.get_iter(path)
             curr_val = self.liststore.get_value(i, 0)
@@ -1978,7 +1980,7 @@ if __name__ == "__main__":
                     
             else:
                 self.naDevices_instr.show()
-            
+
         def setupUser_prompt(self, *args):
             verify.licCheck(self)
             self.hideAll()
