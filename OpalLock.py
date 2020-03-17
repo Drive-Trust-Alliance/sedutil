@@ -99,7 +99,9 @@ if __name__ == "__main__":
                        '11111111': 1,
                        'sunshine': 1,
                        'zaq1zaq1': 1,
-                       'password1': 1})
+                       'password1': 1,
+                       'Password123': 1
+                       })
                        
         DEV_OS = platform.system()
 
@@ -3239,10 +3241,10 @@ if __name__ == "__main__":
                 if fr.mode == "r": 
                     instanceCheck = str(fr.read()) 
                 fr.close(); 
-            if instanceCheck != 'InstanceIsRunning!': 
-                #Run the app no other instance is running 
-                fw = open("checkInstance.txt", "w+") 
-                fw.write('InstanceIsRunning!') 
+            if instanceCheck != 'InstanceIsRunning!':
+                #Run the app no other instance is running
+                fw = open("checkInstance.txt", "w+")
+                fw.write('InstanceIsRunning!')
                 fw.close()
                 gtk.main()
                 #LockApp.connect('destroy_event', LockApp.on_destroy(self))
