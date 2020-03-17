@@ -57,7 +57,10 @@ def setupFull_cleanup(ui, max_time, start_time, op_procs, res_list, e_to, select
     #no_usb = False
     
     if status_usb.value != 0:
-        ui.msg_err('USB setup failed. Setup aborted.')
+        if status_list[0] != 1:
+            ui.msg_err('USB setup failed. Setup aborted.')
+        else:
+            ui.msg_err('Password set up failed for ' + ui.devs_list[selected_list[0]] + '. Setup aborted.')
         ui.stop_spin()
         ui.setup_prompt1(ui)
     
@@ -215,10 +218,10 @@ def setupFull_cleanup(ui, max_time, start_time, op_procs, res_list, e_to, select
             if list_alo != '':
                 ui.msg_err('Setup failed. Please power cycle ' + list_nat + ' before trying again.')
             if list_p == '':
-                if list_f == '':
+                if list_f != '':
                     ui.msg_err('Password set up failed for ' + list_f + '.')
                     ui.msg_ok('USB setup complete.')
-                elif list_to == '':
+                elif list_to != '':
                     ui.msg_err('Password set up timed out for ' + list_to + '.')
                     ui.msg_ok('USB setup complete.')
                 else:
@@ -297,10 +300,14 @@ def setupFull_cleanup(ui, max_time, start_time, op_procs, res_list, e_to, select
             runscan.run_scan(None, ui, True)
 
 def setupFull_abort(ui):
+    ui.op_inprogress = False
+    ui.pbawrite_ip = False
+    ui.scan_ip = True
     if ui.VERSION == 3:
         ui.msg_err('One or more selected drives were not detected, setup aborted. Rescanning to update drive list.')
     else:
         ui.msg_err('Selected drive was not detected, setup aborted. Rescanning to update drive list.')
+    ui.setup_prompt1(ui)
     runscan.run_scan(None, ui, True)
 
 def pbaWrite_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selected_list, status_list, rescan_needed, val2, val3, val4):
@@ -550,6 +557,7 @@ def changePW_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selec
         count = 0
         count_f = 0
         last_f = -1
+        count_alo = 0
         for y in selected_list:
             ui.devname = ui.devs_list[y]
             if res_list[count] == 0:
@@ -574,6 +582,7 @@ def changePW_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selec
                     else:
                         start_alo = False
                     list_alo = list_alo + ui.devs_list[y]
+                    count_alo = count_alo + 1
             elif res_list[count] == 3:
                 if not start_na:
                     list_na = list_na + ', '
@@ -616,10 +625,16 @@ def changePW_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selec
             else:
                 ui.msg_err('Password change failed for ' + list_f + '. Invalid password. Attempt ' + str(ui.user_aol_list[last_f]) + ' of ' + str(ui.retrylimit_list[last_f]) + '.')
         if list_alo != '':
-            if ui.auth_menu.get_active() == 0:
-                ui.msg_err('Retry limit reached for ' + list_alo + ', please power cycle the drive(s) before trying again.')
+            if count_alo == 1:
+                if ui.auth_menu.get_active() == 0:
+                    ui.msg_err('Retry limit reached for ' + list_alo + ', please power cycle the drive before trying again.')
+                else:
+                    ui.msg_err('User retry limit reached for ' + list_alo + ', please power cycle the drive before trying again.')
             else:
-                ui.msg_err('User retry limit reached for ' + list_alo + ', please power cycle the drive(s) before trying again.')
+                if ui.auth_menu.get_active() == 0:
+                    ui.msg_err('Retry limit reached for ' + list_alo + ', please power cycle the drives before trying again.')
+                else:
+                    ui.msg_err('User retry limit reached for ' + list_alo + ', please power cycle the drives before trying again.')
         if list_p != '':
             ui.msg_ok('Password successfully changed for ' + list_p + '.')
         ui.changePW_prompt(ui)
@@ -728,6 +743,7 @@ def unlockPBA_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
         count = 0
         count_f = 0
         last_f = -1
+        count_alo = 0
         for y in selected_list:
             ui.devname = ui.devs_list[y]
             if res_list[count] == 0:
@@ -760,6 +776,7 @@ def unlockPBA_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
                     else:
                         start_alo = False
                     list_alo = list_alo + ui.devs_list[y]
+                    count_alo = count_alo + 1
             elif res_list[count] == 3:
                 if not start_na:
                     list_na = list_na + ', '
@@ -804,9 +821,15 @@ def unlockPBA_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
                 ui.msg_err('Failed to unlock ' + list_f + '. Invalid password. Attempt ' + str(ui.user_aol_list[last_f]) + ' of ' + str(ui.retrylimit_list[last_f]) + '.')
         if list_alo != '':
             if ui.auth_menu.get_active() == 0:
-                ui.msg_err('Retry limit reached for ' + list_alo + ', please power cycle the drive(s) before trying again.')
+                if count_alo == 1:
+                    ui.msg_err('Retry limit reached for ' + list_alo + ', please power cycle the drive before trying again.')
+                else:
+                    ui.msg_err('Retry limit reached for ' + list_alo + ', please power cycle the drives before trying again.')
             else:
-                ui.msg_err('User retry limit reached for ' + list_alo + ', please power cycle the drive(s) before trying again.')
+                if count_alo == 1:
+                    ui.msg_err('User retry limit reached for ' + list_alo + ', please power cycle the drive before trying again.')
+                else:
+                    ui.msg_err('User retry limit reached for ' + list_alo + ', please power cycle the drives before trying again.')
             
         if list_p != '':
             ui.msg_ok(list_p + ' successfully unlocked.')
@@ -847,7 +870,7 @@ def unlockPBA_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
     #ui.scan_ip = False
     if res_sum == 0 and reboot:
         ui.stop_spin()
-        background.reboot(None, ui)
+        ui.reboot(None, ui)
 
 def revertKeep_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selected_list, status_list, rescan_needed, val2, val3, val4):
     if rescan_needed:
@@ -916,6 +939,7 @@ def revertKeep_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sel
         count = 0
         count_f = 0
         last_f = -1
+        count_alo = 0
         for y in selected_list:
             ui.devname = ui.devs_list[y]
             if res_list[count] == 0:
@@ -952,6 +976,7 @@ def revertKeep_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sel
                         list_alo = list_alo + ', '
                     else:
                         start_alo = False
+                    count_alo = count_alo + 1
                     list_alo = list_alo + ui.devs_list[y]
             elif res_list[count] == 2:
                 if not start_to:
@@ -992,7 +1017,10 @@ def revertKeep_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sel
             else:
                 ui.msg_err('Failed to remove lock for ' + list_f + '. Invalid password. Attempt ' + str(ui.admin_aol_list[last_f]) + ' of ' + str(ui.retrylimit_list[last_f]) + '.')
         if list_alo != '':
-            ui.msg_err('Retry limit reached for ' + list_alo + ', please power cycle the drive(s) before trying again.')
+            if count_alo == 1:
+                ui.msg_err('Retry limit reached for ' + list_alo + ', please power cycle the drive before trying again.')
+            else:
+                ui.msg_err('Retry limit reached for ' + list_alo + ', please power cycle the drives before trying again.')
         if list_p != '':
             ui.msg_ok('Successfully removed lock for ' + list_p + '.')
         ui.revert_keep_prompt(ui)
@@ -1096,6 +1124,7 @@ def revertErase_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, se
         count = 0
         count_f = 0
         last_f = -1
+        count_alo = 0
         for y in selected_list:
             ui.devname = ui.devs_list[y]
             if res_list[count] == 0:
@@ -1140,6 +1169,7 @@ def revertErase_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, se
                     else:
                         start_alo = False
                     list_alo = list_alo + ui.devs_list[y]
+                    count_alo = count_alo + 1
             elif res_list[count] == 2:
                 if not start_to:
                     list_to = list_to + ', '
@@ -1180,7 +1210,10 @@ def revertErase_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, se
             else:
                 ui.msg_err('Failed to remove lock and erase data for ' + list_f + '. Invalid password. Attempt ' + str(ui.admin_aol_list[last_f]) + ' of ' + str(ui.retrylimit_list[last_f]) + '.')
         if list_alo != '':
-            ui.msg_err('Retry limit reached for ' + list_alo + ', please power cycle the drive(s) before trying again.')
+            if count_alo == 1:
+                ui.msg_err('Retry limit reached for ' + list_alo + ', please power cycle the drive before trying again.')
+            else:
+                ui.msg_err('Retry limit reached for ' + list_alo + ', please power cycle the drives before trying again.')
             
         if list_p != '':
             any_success = True
@@ -1446,7 +1479,7 @@ def revertPSID_cleanup(ui, status, present, rescan_needed):
         elif status == ui.AUTHORITY_LOCKED_OUT or ui.psid_aol_list[index] > ui.retrylimit_list[index]:
             ui.msg_err("Retry limit reached for PSID. Please power cycle the drive before trying again.")
         else:
-            ui.msg_err("Remove Lock with PSID failed." )
+            ui.msg_err("Revert Setup with PSID failed." )
         ui.revert_psid_prompt(ui)
     else :
         ui.admin_aol_list[index] = 0
@@ -1590,7 +1623,7 @@ def openLog_cleanup(parent, index, statusAW, password, txt, no_pw, no_USB, not_d
                 parent.msg_err('Audit Log could not be retrieved. There was an error while attempting to access the drive, please power cycle the drive before trying again.')
             else:
                 parent.msg_err('Audit Log could not be retrieved.')
-            ui.openLog_prompt(ui)
+            parent.openLog_prompt(parent)
         else:
             if (parent.VERSION % 3 == 0 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and parent.pass_sav.get_active() and drive != '' and save_status > 0:
                 parent.msg_err('Failed to save password to USB.')

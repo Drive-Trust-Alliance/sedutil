@@ -115,7 +115,6 @@ def pbaVerify(self, *args):
                             break
                     if self.pba_devname != None:
                         break
-        print "PBA_VERSION: " + str(self.PBA_VERSION)
         if sum(ver_list) == 0:
             self.invalid_pba = True
 
@@ -154,19 +153,19 @@ def licCheck(self, *args):
                     md_check = sys.maxint
             if v_check != self.VERSION and md_check != self.MAX_DEV:
                 self.msg_err('License change detected. Closing the application.')
-                background.exitFL(self)
+                self.exitFL(self)
             else:
                 return
         else:
             self.msg_err('License not detected. Closing the application.')
-            background.exitFL(self)
+            self.exitFL(self)
 
 def initCheck(self, *args):
     version_text = ''
-    if self.DEV_OS == 'Windows':
-        version_text = PyExtLic.get_lic()
-    else:
-        version_text = os.popen(self.prefix + 'sedutil-cli --version').read()
+    #if self.DEV_OS == 'Windows':
+    #    version_text = PyExtLic.get_lic()
+    #else:
+    version_text = os.popen(self.prefix + 'sedutil-cli --version').read()
     regex_license = '0:([0-9]+);'
     f = re.search(regex_license, version_text)
     if f or self.VERSION != -1:

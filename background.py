@@ -390,7 +390,8 @@ def powerBroadcast(self, wParam,lParam):
                 
 def endSession(self, wParam,lParam):
     #print 'WM_QUERYENDSESSION [WPARAM:%i][LPARAM:%i]'%(wParam,lParam)
-    
+    if os.path.exists('checkInstance.txt'):
+        os.remove('checkInstance.txt')
     if lParam == 0:
         if self.ostype == 0 :
             f = open('mountvol.txt', 'w')

@@ -254,6 +254,7 @@ def rp_setupFull(e, i, result_list, status_list, trylimit_list, count, rc_list, 
     status_final = -1
     rc = -1
     save_status = -1
+    valid = False
     with open(os.devnull, 'w') as pipe:
         if not e.is_set():
             queryText = os.popen(prefix + 'sedutil-cli --query ' + dev).read()
@@ -262,43 +263,53 @@ def rp_setupFull(e, i, result_list, status_list, trylimit_list, count, rc_list, 
                 unlocked = re.search(txt_LE, queryText)
                 if unlocked:
                     subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--activate', msid, dev], stdout=pipe)#stderr=log)
+                    if count == 0:
+                        valid = True
                 if count == 0 and not e.is_set():
                     hash_pwd = ''
-                    status_tmp = subprocess.call([prefix + 'sedutil-cli', '--createUSB', 'UEFI', dev, '\\\\.\\PhysicalDrive' + usb], stdout=pipe)#stderr=log)
-                    if version == 3 and status_tmp == 0:
-                        if usb_dir == '':
-                            usb_dev = usb
-                            p = subprocess.Popen(["diskpart"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-                            res1 = p.stdin.write('select disk ' + usb_dev + b'\n')
-                            res1 = p.stdin.write('detail disk\n')
-                            res1 = p.stdin.write('exit\n')
+                    if not valid:
+                        statusTest = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--setAdmin1Pwd', msid, msid, dev], stdout=pipe)
+                        if statusTest == 0:
+                            valid = True
+                    if valid:
+                        status_tmp = subprocess.call([prefix + 'sedutil-cli', '--createUSB', 'UEFI', dev, '\\\\.\\PhysicalDrive' + usb], stdout=pipe)#stderr=log)
+                        if version == 3 and status_tmp == 0:
+                            if usb_dir == '':
+                                usb_dev = usb
+                                p = subprocess.Popen(["diskpart"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+                                res1 = p.stdin.write('select disk ' + usb_dev + b'\n')
+                                res1 = p.stdin.write('detail disk\n')
+                                res1 = p.stdin.write('exit\n')
 
-                            output = p.communicate()[0]
-                            
-                            vol_re = 'Volume [0-9]+\s+([A-Z])\s+'
+                                output = p.communicate()[0]
+                                
+                                vol_re = 'Volume [0-9]+\s+([A-Z])\s+'
 
-                            list_v = re.findall(vol_re, output)
-                            if list_v != []:
-                                usb_dir = list_v[0] + ':'
-                        if usb_dir != '':
-                            if len(preserved_files) > 0:
-                                try:
-                                    os.makedirs('%s/OpalLock' % usb_dir)
-                                except WindowsError:
-                                    pass
-                            for fp in preserved_files:
-                                try:
-                                    f = open(fp[0], 'w')
-                                    f.write(fp[1])
-                                    f.close()
-                                except IOError:
-                                    pass
-                            save_status = passSaveUSB(password, usb_dir, model, sn, '', "Admin")
-                            if save_status == 0:
-                                timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                                timeStr = timeStr[2:]
-                                statusAW = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '23' + timeStr, msid, 'Admin1', dev], stdout=pipe)#stderr=log)
-                    status_usb.value = status_tmp
+                                list_v = re.findall(vol_re, output)
+                                if list_v != []:
+                                    usb_dir = list_v[0] + ':'
+                            if usb_dir != '':
+                                if len(preserved_files) > 0:
+                                    try:
+                                        os.makedirs('%s/OpalLock' % usb_dir)
+                                    except WindowsError:
+                                        pass
+                                for fp in preserved_files:
+                                    try:
+                                        f = open(fp[0], 'w')
+                                        f.write(fp[1])
+                                        f.close()
+                                    except IOError:
+                                        pass
+                                save_status = passSaveUSB(password, usb_dir, model, sn, '', "Admin")
+                                if save_status == 0:
+                                    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                                    timeStr = timeStr[2:]
+                                    statusAW = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '23' + timeStr, msid, 'Admin1', dev], stdout=pipe)#stderr=log)
+                        status_usb.value = status_tmp
+                    else:
+                        status_final = 1
+                        status_usb.value = -2
                 elif count != 0 and not e.is_set():
                     while status_usb.value == -1:
                         time.sleep(1)

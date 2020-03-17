@@ -55,36 +55,28 @@ def run_setupFull(button, ui):
             ui.msg_err('No drives selected.')
             return
         
-    if ui.warned and ui.orig != ui.new_pass_entry.get_text():
-        ui.orig = ''
-        ui.warned = False
-        
-        ui.msg_err('The passwords entered do not match. Try again.')
-        ui.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Continue\'.')
-        return
-        
-    if ui.new_pass_entry.get_text() == '' or ui.confirm_pass_entry.get_text() == '':
+    if not ui.warned and ui.new_pass_entry.get_text() == '' or ui.confirm_pass_entry.get_text() == '':
         ui.msg_err('Enter and confirm a password.')
         return
+        
     
-    pw = ui.new_pass_entry.get_text()
-    pw_confirm = ui.confirm_pass_entry.get_text()
-    pw_trim = re.sub('\s', '', pw)
-    pw_trim_confirm = re.sub(r'\s+', '', pw_confirm)
-    usb_dir = ''
-    if len(pw_trim) < 8:
-        ui.msg_err("This password is too short.  Please enter a password at least 8 characters long excluding whitespace.")
-        return
-    elif ui.bad_pw.has_key(pw_trim):
-        ui.msg_err("This password is on the blacklist of bad passwords, please enter a stronger password.")
-        return
-    elif pw != pw_confirm:
-        ui.msg_err("The entered passwords do not match.")
-        return
-    
-    
-    
+        
     if not ui.warned:
+        pw = ui.new_pass_entry.get_text()
+        pw_confirm = ui.confirm_pass_entry.get_text()
+        pw_trim = re.sub('\s', '', pw)
+        pw_trim_confirm = re.sub(r'\s+', '', pw_confirm)
+        usb_dir = ''
+        if len(pw_trim) < 8:
+            ui.msg_err("This password is too short.  Please enter a password at least 8 characters long excluding whitespace.")
+            return
+        elif ui.bad_pw.has_key(pw_trim):
+            ui.msg_err("This password is on the blacklist of bad passwords, please enter a stronger password.")
+            return
+        elif pw != pw_confirm:
+            ui.msg_err("The entered passwords do not match.")
+            return
+    
         message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_YES_NO, parent = ui)
         message.set_markup("Warning: If you lose or forget your password, all data will be lost. Do you want to proceed?")
         
@@ -95,20 +87,28 @@ def run_setupFull(button, ui):
             ui.orig = ui.new_pass_entry.get_text()
             ui.new_pass_entry.get_buffer().delete_text(0,-1)
             ui.confirm_pass_entry.get_buffer().delete_text(0,-1)
-            ui.op_instr.set_text('Re-enter and re-confirm the password to verify.')
+            ui.op_instr.set_text('Confirm the password once more to verify.')
+            ui.new_pass_entry.hide()
+            ui.new_pass_label.hide()
         else:
             message.destroy()
+        del pw_trim
+        del pw_trim_confirm
         return
             
-    else :
+    if ui.warned and ui.orig != ui.confirm_pass_entry.get_text():
+        ui.orig = ''
         ui.warned = False
+        
+        ui.msg_err('The passwords entered do not match. Try again.')
+        ui.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Continue\'.')
+        return
         
     #ui.treeview.grab_focus()
     #ui.treeview.emit('toggle-cursor-row')
         
     
-    del pw_trim
-    del pw_trim_confirm
+    
     message2 = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK_CANCEL, parent = ui)
     message2.set_markup("Final Warning: If you lose your password, all data will be lost. Are you sure you want to proceed?")
     
@@ -447,23 +447,6 @@ def run_setupUSB(button, ui, *args):
     elif ((ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.pass_sav.get_active()) and pw_strip == '' and not ui.check_pass_rd.get_active():
         ui.msg_err('Invalid password. Passwords must have non-whitespace characters.')
         return
-    #if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
-    #    sl = [ui.dev_select.get_active_text()]
-    #    mn1 = [ui.dev_vendor.get_text()]
-    #    sn1 = [ui.dev_sn.get_text()]
-    #    f_list = runprocess.findUSB(ui.auth_menu.get_active_text(), sl, mn1, sn1)
-    #    if len(f_list[1]) == 0:
-    #        ui.msg_err('No USB detected.')
-    #        return
-    #    elif len(f_list[0]) == 0:
-    #        ui.msg_err('No password files found on USB.')
-    #        return
-    #    elif f_list[2] != '':
-    #        if ui.auth_menu.get_active() == 0:
-    #            ui.msg_err('Admin password not found for ' + f_list[2] + '.')
-    #        else:
-    #            ui.msg_err('User password not found for ' + f_list[2] + '.')
-    #        return
     usb_dialog = dialogs.USBDialog(ui)
     res = usb_dialog.run()
     if res == gtk.RESPONSE_OK:
@@ -767,7 +750,7 @@ def run_unlockPBA(button, ui, reboot, autounlock, msg):
         if ui.toggleSingle_radio.get_active():
             index = ui.dev_select.get_active()
             selected_list = [index]
-            devs = [ui.dev_select.get_active_text()]
+            devs = [ui.devs_list[index]]
             list_mn = [ui.dev_vendor.get_text()]
             list_sn = [ui.dev_sn.get_text()]
         else:
@@ -953,7 +936,10 @@ def run_revertErase(button, ui):
             ui.orig = ui.pass_entry.get_text()
             ui.pass_entry.get_buffer().delete_text(0,-1)
             ui.revert_agree_entry.get_buffer().delete_text(0,-1)
-            ui.op_instr.set_text('Re-enter the password to verify that you want to erase data for the drive(s).')
+            if ui.VERSION == 3 or (ui.VERSION == 1 and ui.PBA_VERSION != 1):
+                ui.op_instr.set_text('Re-enter the password to verify that you want to erase data for the drive(s).')
+            else:
+                ui.op_instr.set_text('Re-enter the password to verify that you want to erase data for the drive.')
             #ui.dev_single.show()
             #ui.label_dev2.show()
             #ui.dev_select.hide()
@@ -970,8 +956,10 @@ def run_revertErase(button, ui):
             return
         ui.orig = ''
         messageA = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_YES_NO, parent = ui)
-        messageA.set_markup("Final Warning: Are you absolutely sure you want to proceed with removing lock and erasing all data from the selected drive(s)?")
-        
+        if ui.VERSION == 3 or (ui.VERSION == 1 and ui.PBA_VERSION != 1):
+            messageA.set_markup("Final Warning: Are you absolutely sure you want to proceed with removing lock and erasing all data from the selected drive(s)?")
+        else:
+            messageA.set_markup("Final Warning: Are you absolutely sure you want to proceed with removing lock and erasing all data from the selected drive?")
         resA = messageA.run()
 
         if resA == gtk.RESPONSE_YES : 
@@ -1031,7 +1019,10 @@ def run_revertErase(button, ui):
                     list_mn.pop(list_remove[y])
                     list_sn.pop(list_remove[y])
                     y = y - 1
-                ui.msg_err('Unable to erase ' + list_d + ' because the drive(s) have not been activated with Opal Lock. Please set up the drive(s) before proceeding.')
+                if len(list_remove) > 1:
+                    ui.msg_err('Unable to erase ' + list_d + ' because the drives have not been activated with Opal Lock. Please set up the drives before proceeding.')
+                else:
+                    ui.msg_err('Unable to erase ' + list_d + ' because the drive has not been activated with Opal Lock. Please set up the drive before proceeding.')
                     
             if len(selected_list) == 0:
                 ui.revert_erase_prompt()

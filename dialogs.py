@@ -208,7 +208,7 @@ class QueryDialog(gtk.Window):
         self.spinQ.stop()
         self.spinQ.hide()
         
-    def saveToText(self, parent):
+    def saveToText(self, _, parent):
         verify.licCheck(parent)
         chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_SAVE,buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK))
         chooser.set_do_overwrite_confirmation(True)
@@ -908,7 +908,7 @@ def show_about(button, parent, *args):
     m = re.search(regex_ver, txtVersion)
     ver_parse = m.group(1)
     
-    aboutWin.set_version('GUI v0.24.3')
+    aboutWin.set_version('GUI v0.25.0')
     aboutWin.set_comments('Opal Lock Version: ' + ver_parse)
     aboutWin.set_copyright('(c) 2019 Fidelity Height LLC. All rights reserved.')
     if parent.VERSION != 1:
