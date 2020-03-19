@@ -99,7 +99,16 @@ if __name__ == "__main__":
                        '11111111': 1,
                        'sunshine': 1,
                        'zaq1zaq1': 1,
-                       'password1': 1})
+                       'password1': 1,
+                       'password12': 1,
+                       'password1234': 1,
+                       'password12345': 1,
+                       'password123456': 1,
+                       'password1234567': 1,
+                       'password12345678': 1,
+                       'password123456789': 1,
+                       'password1234567890': 1,
+                       'password123': 1})
                        
         DEV_OS = platform.system()
 
@@ -3328,12 +3337,11 @@ if __name__ == "__main__":
             app = LockApp()
             app.run()
             #LockApp.connect('destroy_event', LockApp.on_destroy(self)) 
-        else:
-            if platform.system() == 'Windows':
-                theme = os.path.join(os.getcwd(), 'gtkrc')
-                gtk.rc_set_default_files([theme])
-                gtk.rc_reparse_all_for_settings(gtk.settings_get_default(), True)
-                #gtk.rc_reset_styles(gtk.settings_get_for_screen(self.get_screen()))
+        elif platform.system() == 'Windows':
+            theme = os.path.join(os.getcwd(), 'gtkrc')
+            gtk.rc_set_default_files([theme])
+            gtk.rc_reparse_all_for_settings(gtk.settings_get_default(), True)
+            #gtk.rc_reset_styles(gtk.settings_get_for_screen(self.get_screen()))
             info  =  'Opal Lock must be run as Administrator.' 
             dialog = gtk.MessageDialog(type=gtk.MESSAGE_INFO,message_format=info,buttons=gtk.BUTTONS_OK) 
             dialog.set_title('Opal Lock Info') 

@@ -495,9 +495,9 @@ class AuditDialog(gtk.Dialog):
                               33: 'Drive unlock failed',
                               34: 'Preboot unlock from MBR failed',
                               35: 'Preboot unlock from USB failed',
-                              36: 'Remove lock failed',
-                              37: 'Remove lock and erase data failed',
-                              38: 'Remove lock and erase data using PSID failed',
+                              36: 'Revert setup failed',
+                              37: 'Revert setup and erase data failed',
+                              38: 'Revert setup and erase data using PSID failed',
                               39: 'Query information Access Failed',
                               40: 'Audit Log Access Failed'})
 
@@ -664,7 +664,7 @@ def openLog(button, parent, *args):
         
 class OpalDialog(gtk.Dialog):
     def __init__(self, parent):
-        columns = ['Drive', 'Model Number', 'Serial Number', 'TCG Version']
+        columns = ['Drive', 'Model No.', 'Serial Number', 'TCG Version']
         gtk.Dialog.__init__(self, 'TCG Drives', parent, 0, (gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE))
         self.set_border_width(10)
         self.set_default_size(500, 500)

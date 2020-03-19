@@ -1006,16 +1006,16 @@ def revertKeep_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sel
         if list_miss != '':
             ui.msg_err(list_miss + ' not detected.')
         if list_spb != '':
-            ui.msg_err('Failed to remove lock for ' + list_spb + '. There was an error while attempting to access the drive, please power cycle the drive before trying again.')
+            ui.msg_err('Failed to revert setup for ' + list_spb + '. There was an error while attempting to access the drive, please power cycle the drive before trying again.')
         if list_na != '':
-            ui.msg_err('Failed to remove lock for ' + list_na + '.')
+            ui.msg_err('Failed to revert setup for ' + list_na + '.')
         if list_to != '':
-            ui.msg_err('Remove lock timed out for ' + list_to + '.')
+            ui.msg_err('Revert setup timed out for ' + list_to + '.')
         if list_f != '':
             if count_f > 1:
-                ui.msg_err('Failed to remove lock for ' + list_f + '. Invalid password.')
+                ui.msg_err('Failed to revert setup for ' + list_f + '. Invalid password.')
             else:
-                ui.msg_err('Failed to remove lock for ' + list_f + '. Invalid password. Attempt ' + str(ui.admin_aol_list[last_f]) + ' of ' + str(ui.retrylimit_list[last_f]) + '.')
+                ui.msg_err('Failed to revert setup for ' + list_f + '. Invalid password. Attempt ' + str(ui.admin_aol_list[last_f]) + ' of ' + str(ui.retrylimit_list[last_f]) + '.')
         if list_alo != '':
             if count_alo == 1:
                 ui.msg_err('Retry limit reached for ' + list_alo + ', please power cycle the drive before trying again.')
@@ -1198,17 +1198,17 @@ def revertErase_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, se
         if list_miss != '':
             ui.msg_err(list_miss + ' not detected.')
         if list_spb != '':
-            ui.msg_err('Failed to remove lock and erase data for ' + list_spb + '. There was an error while attempting to access the drive, please power cycle the drive before trying again.')
+            ui.msg_err('Failed to revert setup and erase data for ' + list_spb + '. There was an error while attempting to access the drive, please power cycle the drive before trying again.')
         if list_na != '':
-            ui.msg_err('Failed to remove lock and erase data for ' + list_na + '.')
+            ui.msg_err('Failed to revert setup and erase data for ' + list_na + '.')
             
         if list_to != '':
-            ui.msg_err('Remove lock and erase data timed out for ' + list_to + '.')
+            ui.msg_err('Revert setup and erase data timed out for ' + list_to + '.')
         if list_f != '':
             if count_f > 1:
-                ui.msg_err('Failed to remove lock and erase data for ' + list_f + '. Invalid password.')
+                ui.msg_err('Failed to revert setup and erase data for ' + list_f + '. Invalid password.')
             else:
-                ui.msg_err('Failed to remove lock and erase data for ' + list_f + '. Invalid password. Attempt ' + str(ui.admin_aol_list[last_f]) + ' of ' + str(ui.retrylimit_list[last_f]) + '.')
+                ui.msg_err('Failed to revert setup and erase data for ' + list_f + '. Invalid password. Attempt ' + str(ui.admin_aol_list[last_f]) + ' of ' + str(ui.retrylimit_list[last_f]) + '.')
         if list_alo != '':
             if count_alo == 1:
                 ui.msg_err('Retry limit reached for ' + list_alo + ', please power cycle the drive before trying again.')

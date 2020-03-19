@@ -927,7 +927,7 @@ def run_revertErase(button, ui):
         return
     if not ui.warned:
         message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_YES_NO, parent = ui)
-        message.set_markup("Warning: Are you sure you want to remove lock and erase this drive's data?\nYou will not be able to recover your data after it is deleted.")
+        message.set_markup("Warning: Are you sure you want to revert setup and erase this drive's data?\nYou will not be able to recover your data after it is deleted.")
         
         res = message.run()
         if res == gtk.RESPONSE_YES:
@@ -1086,7 +1086,7 @@ def run_revertPSID(button, ui):
     
     if not ui.warned:
         message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_YES_NO, parent = ui)
-        message.set_markup("Warning: Are you sure you want to remove lock for " + ui.devname + " and erase all of its data?\nYou will not be able to recover your data after it is deleted.")
+        message.set_markup("Warning: Are you sure you want to revert setup for " + ui.devname + " and erase all of its data?\nYou will not be able to recover your data after it is deleted.")
         
         res = message.run()
         if res == gtk.RESPONSE_YES:
