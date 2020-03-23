@@ -514,8 +514,18 @@ if __name__ == "__main__":
                 
                 self.op_label = gtk.Label('Main')
                 self.op_label.set_alignment(0,0.5)
-                self.vbox.pack_start(self.op_label, False, False, 0)
-                
+                self.firstHbox = gtk.HBox(homogeneous, 0)
+                self.firstHbox.pack_start(self.op_label, False, False, 0)
+
+
+                self.rescanButton = gtk.Button()
+                self.rescanButton.set_label('Rescan Drives')
+                self.rescanButton.set_size_request(100,25)
+                self.rescanButton.connect("clicked",runscan.run_scan, self, True)
+                self.firstHbox.pack_start(self.rescanButton, False, False, 460)
+                self.vbox.pack_start(self.firstHbox , False, False, 0 )
+
+
                 top_box = gtk.HBox(homogeneous, 0)
                 
                 self.noTCG_instr = gtk.Label('No TCG drives were detected, please insert a TCG drive and use \'Rescan drives\' to continue.')
@@ -533,7 +543,7 @@ if __name__ == "__main__":
                 self.main_instr = gtk.Label('Select an operation from the menu bar above.')
                 self.main_instr.set_alignment(0,0.5)
                 top_box.pack_start(self.main_instr, False, False, 0)
-                
+
                 self.naDevices_instr = gtk.Label('No drives available for this operation.')
                 self.naDevices_instr.set_alignment(0,0.5)
                 top_box.pack_start(self.naDevices_instr, False, False, 0)
@@ -952,7 +962,7 @@ if __name__ == "__main__":
             
             
             #opal_info
-            
+                
             #opal_label = gtk.Label(" TCG information")
             #opal_label.show()
             #opal_info.pack_start(opal_label, False, False, padding)
@@ -1064,8 +1074,12 @@ if __name__ == "__main__":
             
             self.box_dev.pack_start(frm_d, True, True, padding)
             self.box_dev.pack_start(frm_o, True, True, padding)
-            
+
             self.vbox.pack_start(self.box_dev, False)
+            # self.vbox.pack_start(self.box_dev, True, True, 0)
+            # self.vbox.queue_draw_area(0, 0, 0, 10)
+            # self.vbox.queue_resize();
+
             
         def display_grid(self,*args):
             self.selectAll_check = gtk.CheckButton('Select/Deselect All')
