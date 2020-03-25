@@ -83,8 +83,8 @@ if __name__ == "__main__":
         canDestroyMain = True # This flag is responsible for deciding if the main window can be destroyed
         firstscan = True
         firstmsg = True
-        devname="\\\\.\\PhysicalDrive9"
-        
+        # devname="\\\\.\\PhysicalDrive9"
+        devname = "PhysicalDrive9"
         bad_pw = dict({'password': 1,
                        '12345678': 1,
                        '123456789': 1,
@@ -865,7 +865,7 @@ if __name__ == "__main__":
             self.select_box.pack_start(self.dev_select, True, True, padding)
             
             self.dev_select.connect('changed', self.changed_cb)
-            
+
             #self.dev_single = gtk.Entry()
             #self.dev_single.set_width_chars(35)
             #self.dev_single.set_sensitive(False)
@@ -1075,7 +1075,7 @@ if __name__ == "__main__":
             self.box_dev.pack_start(frm_d, True, True, padding)
             self.box_dev.pack_start(frm_o, True, True, padding)
 
-            self.vbox.pack_start(self.box_dev, False)
+            self.vbox.pack_start(self.box_dev, False , False,0)
             # self.vbox.pack_start(self.box_dev, True, True, 0)
             # self.vbox.queue_draw_area(0, 0, 0, 10)
             # self.vbox.queue_resize();
@@ -1351,7 +1351,7 @@ if __name__ == "__main__":
 
         def onEndSession(self,wParam, lParam):
             background.endSession(self, wParam, lParam)
-        
+
         def changed_cb(self, entry):
             verify.licCheck(self)
             #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
@@ -2481,7 +2481,7 @@ if __name__ == "__main__":
                 self.userSetup_box.hide()
             self.cancel_button.show()
             self.op_label.set_text('Remove Lock and Erase Data with PSID')
-            self.op_instr.set_text('Reverting with PSID reverts the drive to manufacturer settings and erases all data.\nEnter the drive\'s PSID and press \'Remove Lock with PSID\'.')
+            self.op_instr.set_text('Reverting with PSID reverts the drive to manufacturer settings and erases all data.\nEnter the drive\'s PSID and press \'Remove Lock with PSID\' . \n \n \n You will get the PSID on the label of the drive')
             
             self.op_prompt = 11
             
@@ -2493,7 +2493,7 @@ if __name__ == "__main__":
                 self.view_state = 5
             if len(self.devs_list) > 1:
                 self.select_instr.show()
-                
+
             if len(self.devs_list) > 0:
                 self.box_psid.show()
                 self.box_revert_agree.show()
