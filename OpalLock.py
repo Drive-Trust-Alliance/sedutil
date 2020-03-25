@@ -958,9 +958,9 @@ if __name__ == "__main__":
             
             
             dev_info.pack_start(pbaver_box, False, False, 1)
-            
-            
-            
+
+
+
             #opal_info
                 
             #opal_label = gtk.Label(" TCG information")
@@ -1074,8 +1074,20 @@ if __name__ == "__main__":
             
             self.box_dev.pack_start(frm_d, True, True, padding)
             self.box_dev.pack_start(frm_o, True, True, padding)
+            self.vbox.pack_start(self.box_dev, False, False, 0)
 
-            self.vbox.pack_start(self.box_dev, False , False,0)
+            self.driveInformation = gtk.HBox(False, 0)
+            self.driveCount = gtk.Label("")
+            self.driveCount.set_alignment(0,0.5)
+            self.driveCount.set_text("Total number of the drives : " + str(len(self.devs_list)))
+
+            # self.tcgCount = gtk.Label("")
+            # self.tcgCount.set_alignment(0, 0.5)
+            # self.tcgCount.set_text("Total number of TCG drives : " + str(len(self.tcg_list)))
+            self.driveInformation.pack_start(self.driveCount, False, False, 0)
+            # self.driveInformation.pack_start(self.tcgCount, False, False, 0)
+            self.vbox.pack_start(self.driveInformation, False, False, 0)
+
             # self.vbox.pack_start(self.box_dev, True, True, 0)
             # self.vbox.queue_draw_area(0, 0, 0, 10)
             # self.vbox.queue_resize();
@@ -1706,6 +1718,8 @@ if __name__ == "__main__":
                 self.check_pass_rd.show()
                 self.check_pass_rd.set_tooltip_text('Authenticate using the drive\'s password file from USB')
                 self.box_pass.pack_end(self.check_pass_rd, False, False, padding)
+                print "tcgList = > " + str(self.tcg_list)
+                print "devs_list = > " + str(self.devs_list)
          
         def new_pass_dialog(self, *args):
             homogeneous = False
@@ -2798,14 +2812,14 @@ if __name__ == "__main__":
             self.orig = ''
             
             self.mode_setupUSB = False
-            
+
         def start_spin(self, *args):
             self.op_instr.hide()
             self.disable_menu()
             self.waitSpin.show()
             self.waitSpin.start()
             self.canDestroyMain = False
-            
+
         def stop_spin(self, *args):
             self.enable_menu()
             self.waitSpin.stop()
@@ -2817,7 +2831,11 @@ if __name__ == "__main__":
             self.wait_instr.hide()
             self.multi_wait_instr.hide()
             self.canDestroyMain = True
-            
+            self.pass_dialog()
+            self.driveCount.set_text("Total number of the drives : " + str(len(self.devs_list)))
+
+
+
         def mode_toggled(self, button):
             verify.licCheck(self)
             if self.toggleSingle_radio.get_active():
