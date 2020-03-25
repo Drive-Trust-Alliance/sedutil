@@ -3,13 +3,28 @@ import gtk
 import platform
 import os
 import re
+import requests
 import sys
+
+from HTMLParser import HTMLParser
 
 import lockhash
 
 if platform.system() == 'Windows':
     import PyExtLic
 import PyExtOb
+
+class MyHTMLParser(HTMLParser):
+    latest_major = 0
+    latest_minor = 0
+    latest_build = 0
+    def handle_data(self, data):
+        txt = 'The latest version is ([0-9]+)\.([0-9]+)\.([0-9]+)'
+        m = re.search( txt , data)
+        if m : 
+            self.latest_major = int(m.group(1))
+            self.latest_minor = int(m.group(2))
+            self.latest_build = int(m.group(3))
 
 def pbaVerify(self, *args):
     pba_devlist = []
@@ -168,6 +183,8 @@ def initCheck(self, *args):
     version_text = os.popen(self.prefix + 'sedutil-cli --version').read()
     regex_license = '0:([0-9]+);'
     f = re.search(regex_license, version_text)
+    regex_build = 'FL\.([0-9]+)\.([0-9]+)\.([0-9]+)'
+    f1 = re.search(regex_build, version_text)
     if f or self.VERSION != -1:
         if self.VERSION == -1:
             v = f.group(1)
@@ -211,4 +228,61 @@ def initCheck(self, *args):
         if status != 0 or not f:
             self.msg_err("Hash validation failed")
             gtk.main_quit()
+    if f1 and self.VERSION != 1:
+        curr_major = int(f1.group(1))
+        curr_minor = int(f1.group(2))
+        curr_build = int(f1.group(3))
+        urlStr = "https://quicklicensemanager.com/fidelityheight/qlmLicenseServer/qlmservice.asmx/GetLatestVersionHttp?is_productid=1&is_majorversion=1&is_minorversion=0"
+        r = ''
+        r =requests.get(urlStr)
+        if r.status_code == 200:
+            parser = MyHTMLParser()
+            parser.feed(r.text)
+            if curr_major < parser.latest_major:
+                self.up_to_date = False
+            elif curr_major == parser.latest_major:
+                if curr_minor < parser.latest_minor:
+                    self.up_to_date = False
+                elif curr_minor == parser.latest_minor:
+                    if curr_build < parser.latest_build:
+                        self.up_to_date = False
+        
     return f
+    
+def updateCheck(button, self):
+    version_text = os.popen(self.prefix + 'sedutil-cli --version').read()
+    regex_build = 'FL\.([0-9]+)\.([0-9]+)\.([0-9]+)'
+    f1 = re.search(regex_build, version_text)
+    self.up_to_date = True
+    if f1 and self.VERSION != 1:
+        curr_major = int(f1.group(1))
+        curr_minor = int(f1.group(2))
+        curr_build = int(f1.group(3))
+        urlStr = "https://quicklicensemanager.com/fidelityheight/qlmLicenseServer/qlmservice.asmx/GetLatestVersionHttp?is_productid=1&is_majorversion=1&is_minorversion=0"
+        r = ''
+        r =requests.get(urlStr)
+        if r.status_code == 200:
+            parser = MyHTMLParser()
+            parser.feed(r.text)
+            if curr_major < parser.latest_major:
+                self.up_to_date = False
+            elif curr_major == parser.latest_major:
+                if curr_minor < parser.latest_minor:
+                    self.up_to_date = False
+                elif curr_minor == parser.latest_minor:
+                    if curr_build < parser.latest_build:
+                        self.up_to_date = False
+            if not self.up_to_date:
+                message = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, buttons=gtk.BUTTONS_YES_NO, parent = self)
+                message.set_markup("A new version of Opal Lock is available, would you like to update now?")
+                res = message.run()
+                message.destroy()
+                if res == gtk.RESPONSE_YES:
+                    os.system("start \"\" https://fidelityheight.com/download/OpalLock_setup.exe")
+                    #gtk.main_quit()
+                else:
+                    self.update_link.show()
+            else:
+                self.msg_ok('You are running the latest version of Opal Lock.')
+        else:
+            self.msg_warn('Could not check online for updates, please check your connection or try again later.')

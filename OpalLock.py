@@ -40,6 +40,8 @@ if platform.system() == 'Windows':
     CallWindowProc = ctypes.windll.user32.CallWindowProcW
 
     WndProcType = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_int, ctypes.c_uint, ctypes.c_int, ctypes.c_int)
+            
+            
 
 class WndProcHookMixin:
     def __init__(self):
@@ -143,7 +145,7 @@ if __name__ == "__main__":
                 MAX_DEV = sys.maxint
             elif o in ("--pba"):
                 VERSION = 1
-                MAX_DEV = sys.maxint
+                MAX_DEV = 5
             elif o in ("--standard"):
                 VERSION = 2
                 MAX_DEV = 5
@@ -247,6 +249,8 @@ if __name__ == "__main__":
         pba_devname = None
         
         posthibern = False
+        
+        up_to_date = True
         
         NOT_AUTHORIZED = 1
         AUTHORITY_LOCKED_OUT = 18
@@ -455,6 +459,7 @@ if __name__ == "__main__":
             self.helpMenu.append(self.help1)
             if self.VERSION != 1:
                 self.updateM = gtk.MenuItem("Check for updates")
+                self.updateM.connect('activate', verify.updateCheck, self)
                 self.updateM.set_tooltip_text('Check for an updated version of this app')
                 self.helpMenu.append(self.updateM)
             self.aboutM = gtk.MenuItem("About")
@@ -468,7 +473,11 @@ if __name__ == "__main__":
                 self.upgradeMenu = gtk.Menu()
                 self.upgradeM = gtk.MenuItem("License")
                 self.upgradeM.set_submenu(self.upgradeMenu)
-                self.openLicense = gtk.MenuItem("Open License Manager")
+                self.openLicense = None
+                if self.VERSION <= 0:
+                    self.openLicense = gtk.MenuItem("Activate License")
+                else:
+                    self.openLicense = gtk.MenuItem("Deactivate License")
                 self.openLicense.connect('activate', self.openLicenseManager)
                 self.upgradeMenu.append(self.openLicense)
                 if self.VERSION == 0:
@@ -536,9 +545,19 @@ if __name__ == "__main__":
             self.revertUser_button.set_flags(gtk.CAN_DEFAULT)
             self.revertPSID_button = gtk.Button('_Revert Setup and Erase with PSID')
             
+            label_box = gtk.HBox(homogeneous, 0)
+            
             self.op_label = gtk.Label('')
             self.op_label.set_alignment(0,0.5)
-            self.vbox.pack_start(self.op_label, False, False, 0)
+            label_box.pack_start(self.op_label, False, False, 0)
+            
+            self.update_link = gtk.LinkButton('https://fidelityheight.com/download/OpalLock_setup.exe', 'Update available!')
+            self.update_link.set_alignment(0,0.5)
+            label_box.pack_end(self.update_link, False, False, 0)
+            
+            #self.updated_label = gtk.Label('Latest')
+            
+            self.vbox.pack_start(label_box, False, False, 0)
             
             top_box = gtk.HBox(homogeneous, 0)
             
@@ -776,6 +795,8 @@ if __name__ == "__main__":
             self.show_all()
             self.hideAll()
             
+            if self.up_to_date:
+                self.update_link.hide()
             
             self.load_instr.hide()
             
@@ -1833,6 +1854,13 @@ if __name__ == "__main__":
                     
         def msg_err(self, msg):
             message = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK, parent = self)
+            message.set_markup(msg)
+            
+            res = message.run()
+            message.destroy()
+            
+        def msg_warn(self, msg):
+            message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK, parent = self)
             message.set_markup(msg)
             
             res = message.run()
@@ -3282,7 +3310,7 @@ if __name__ == "__main__":
                 return True
 
         def openLicenseManager(self, *args):
-            subprocess.Popen(['.\QLMwizardFidelity\QlmLicenseWizardVC_NoMFC.exe'])
+            subprocess.Popen(['.\QLMwizardFidelity\QlmLicenseWizard.exe','/settings','.\QLMwizardFidelity\Opal Lock 1.0.lw.xml'])
 
         '''For catching the destroy event for the first instance and making appropriate clean up - @author : Lokesh''' 
         #def on_destroy(self): 
@@ -3329,7 +3357,7 @@ if __name__ == "__main__":
             t1 = ctypes.windll.shell32.IsUserAnAdmin()
             if t1 != 0:
                 is_admin = True
-        if is_admin:
+        if is_admin or platform.system() == 'Linux':
             #Run the app no other instance is running 
             fw = open("checkInstance.txt", "w+") 
             fw.write('InstanceIsRunning!') 
@@ -3337,7 +3365,7 @@ if __name__ == "__main__":
             app = LockApp()
             app.run()
             #LockApp.connect('destroy_event', LockApp.on_destroy(self)) 
-        elif platform.system() == 'Windows':
+        else:
             theme = os.path.join(os.getcwd(), 'gtkrc')
             gtk.rc_set_default_files([theme])
             gtk.rc_reparse_all_for_settings(gtk.settings_get_default(), True)
@@ -3347,6 +3375,7 @@ if __name__ == "__main__":
             dialog.set_title('Opal Lock Info') 
             dialog.run() 
             dialog.destroy()
+            
     else: 
         #Throw the info box for the user that an instance of the application is already running. 
         if platform.system() == 'Windows':

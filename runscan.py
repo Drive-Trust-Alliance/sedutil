@@ -1449,7 +1449,16 @@ def finddev(ui, fullscan):
                 demo_msg.run()
                 demo_msg.destroy()
             
-                
+            if not ui.up_to_date:
+                message = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, buttons=gtk.BUTTONS_YES_NO, parent = ui)
+                message.set_markup("A new version of Opal Lock is available, would you like to update now?")
+                res = message.run()
+                message.destroy()
+                if res == gtk.RESPONSE_YES:
+                    os.system("start \"\" https://fidelityheight.com/download/OpalLock_setup.exe")
+                    #gtk.main_quit()
+                else:
+                    ui.update_link.show()
             
             if ui.DEV_OS == 'Windows':
                 verified = powerset.verify_power()

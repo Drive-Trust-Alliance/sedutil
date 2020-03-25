@@ -934,6 +934,9 @@ def run_revertErase(button, ui):
             message.destroy()
             ui.warned = True
             ui.orig = ui.pass_entry.get_text()
+            if ui.orig == '':
+                ui.pass_entry.set_sensitive(False)
+            ui.check_pass_rd.set_sensitive(False)
             ui.pass_entry.get_buffer().delete_text(0,-1)
             ui.revert_agree_entry.get_buffer().delete_text(0,-1)
             if ui.VERSION == 3 or (ui.VERSION == 1 and ui.PBA_VERSION != 1):
@@ -944,6 +947,7 @@ def run_revertErase(button, ui):
             #ui.label_dev2.show()
             #ui.dev_select.hide()
             #ui.label_dev.hide()
+            
         else:
             message.destroy()
             

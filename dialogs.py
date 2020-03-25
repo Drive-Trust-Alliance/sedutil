@@ -908,7 +908,7 @@ def show_about(button, parent, *args):
     m = re.search(regex_ver, txtVersion)
     ver_parse = m.group(1)
     
-    aboutWin.set_version('GUI v0.25.0')
+    aboutWin.set_version('GUI v0.25.1')
     aboutWin.set_comments('Opal Lock Version: ' + ver_parse)
     aboutWin.set_copyright('(c) 2019 Fidelity Height LLC. All rights reserved.')
     if parent.VERSION != 1:
