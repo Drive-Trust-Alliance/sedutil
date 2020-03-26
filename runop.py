@@ -52,7 +52,7 @@ def run_setupFull(button, ui):
             iter = ui.liststore.iter_next(iter)
             index = index + 1
         if len(selected_list) == 0:
-            ui.msg_err('No drives selected.')
+            ui.msg_ok('No drives selected.')
             return
         
     if ui.warned and ui.orig != ui.new_pass_entry.get_text():
@@ -92,7 +92,7 @@ def run_setupFull(button, ui):
         if res == gtk.RESPONSE_YES:
             message.destroy()
             ui.warned = True
-            ui.orig = ui.new_pass_entry.get_text()
+              ui.orig = ui.new_pass_entry.get_text()
             ui.new_pass_entry.get_buffer().delete_text(0,-1)
             ui.confirm_pass_entry.get_buffer().delete_text(0,-1)
             ui.op_instr.set_text('Re-enter and re-confirm the password to verify.')
@@ -310,7 +310,7 @@ def run_pbaWrite(button, ui):
             iter = ui.liststore.iter_next(iter)
             index = index + 1
         if len(selected_list) == 0:
-            ui.msg_err('No drives selected.')
+            ui.msg_ok('No drives selected.')
             return
             
     if ui.VERSION == 3 and ui.check_pass_rd.get_active():
@@ -386,7 +386,7 @@ def run_changePW(button, ui):
             iter = ui.liststore.iter_next(iter)
             index = index + 1
         if len(selected_list) == 0:
-            ui.msg_err('No drives selected.')
+            ui.msg_ok('No drives selected.')
             return
             
     if ui.VERSION == 3 and ui.check_pass_rd.get_active():
@@ -789,7 +789,7 @@ def run_unlockPBA(button, ui, reboot, autounlock, msg):
                 iter = ui.liststore.iter_next(iter)
                 index = index + 1
             if len(selected_list) == 0:
-                ui.msg_err('No drives selected.')
+                ui.msg_ok('No drives selected.')
                 return
                 
         if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
@@ -900,7 +900,7 @@ def run_revertKeep(button, ui):
             iter = ui.liststore.iter_next(iter)
             index = index + 1
         if len(selected_list) == 0:
-            ui.msg_err('No drives selected.')
+            ui.msg_ok('No drives selected.')
             return
             
     if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
@@ -1002,7 +1002,7 @@ def run_revertErase(button, ui):
                     iter = ui.liststore.iter_next(iter)
                     index = index + 1
                 if len(selected_list) == 0:
-                    ui.msg_err('No drives selected.')
+                    ui.msg_ok('No drives selected.')
                     ui.revert_erase_prompt()
                     return
                     

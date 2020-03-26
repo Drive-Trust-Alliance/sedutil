@@ -1081,11 +1081,11 @@ if __name__ == "__main__":
             self.driveCount.set_alignment(0,0.5)
             self.driveCount.set_text("Total number of the drives : " + str(len(self.devs_list)))
 
-            # self.tcgCount = gtk.Label("")
-            # self.tcgCount.set_alignment(0, 0.5)
-            # self.tcgCount.set_text("Total number of TCG drives : " + str(len(self.tcg_list)))
+            self.tcgCount = gtk.Label("")
+            self.tcgCount.set_alignment(0, 0.5)
+            self.tcgCount.set_text("Total number of TCG drives : " + str(len(self.tcg_list)))
             self.driveInformation.pack_start(self.driveCount, False, False, 0)
-            # self.driveInformation.pack_start(self.tcgCount, False, False, 0)
+            self.driveInformation.pack_start(self.tcgCount, False, False, 10)
             self.vbox.pack_start(self.driveInformation, False, False, 0)
 
             # self.vbox.pack_start(self.box_dev, True, True, 0)
@@ -2837,6 +2837,7 @@ if __name__ == "__main__":
             self.canDestroyMain = True
             self.pass_dialog()
             self.driveCount.set_text("Total number of the drives : " + str(len(self.devs_list)))
+            self.tcgCount.set_text("Total number of TCG drives : " + str(len(self.tcg_list)))
 
 
 
