@@ -107,6 +107,9 @@
   <ItemGroup>
     <ResourceCompile Include="CLI.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\rc\icon-opal.ico" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{267E9D28-7245-4182-9740-F386F4299E83}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -297,6 +300,8 @@ $(SolutionDir)..\..\windows\PyExtuD.bat
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <UACUIAccess>false</UACUIAccess>
     </Link>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy ByPass -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
