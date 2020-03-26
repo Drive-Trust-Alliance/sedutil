@@ -1365,6 +1365,10 @@ if __name__ == "__main__":
             background.endSession(self, wParam, lParam)
 
         def changed_cb(self, entry):
+            # Resets the setup action if the user changes the drive midway needs to be tested again.
+            if self.warned == True:
+                self.setup_prompt1()
+                self.warned = False
             verify.licCheck(self)
             #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
             #    self.check_pass_rd.set_active(False)
