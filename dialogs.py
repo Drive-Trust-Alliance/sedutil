@@ -922,7 +922,7 @@ def show_about(button, parent, *args):
     
 class SetPowerDialog(gtk.Dialog):
     def __init__(self, parent, mode):
-        gtk.Dialog.__init__(self, 'Power Settings', parent, 0, ('Apply and Close', gtk.RESPONSE_APPLY))
+        gtk.Dialog.__init__(self, 'Power Settings', parent, 0, ('Apply and Close', gtk.RESPONSE_APPLY, 'Skip', gtk.RESPONSE_CANCEL))
         
         self.set_default_size(300, 300)
         
