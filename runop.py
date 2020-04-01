@@ -92,7 +92,7 @@ def run_setupFull(button, ui):
         if res == gtk.RESPONSE_YES:
             message.destroy()
             ui.warned = True
-              ui.orig = ui.new_pass_entry.get_text()
+            ui.orig = ui.new_pass_entry.get_text()
             ui.new_pass_entry.get_buffer().delete_text(0,-1)
             ui.confirm_pass_entry.get_buffer().delete_text(0,-1)
             ui.op_instr.set_text('Re-enter and re-confirm the password to verify.')
