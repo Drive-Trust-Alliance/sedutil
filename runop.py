@@ -126,8 +126,9 @@ def run_setupFull(button, ui):
         else:
             if usb_dialog.usb_menu.get_active() >= 0:
                 msg_usb = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK_CANCEL, parent = ui)
-                msg_usb.set_markup('WARNING: All data on the USB will be erased (except for any previously saved password files).  Are you sure you want to proceed?')
-                
+                markupString='<span foreground="red">WARNING: All data on the USB will be erased (except for any previously saved password files).  Are you sure you want to proceed?</span> '
+                msg_usb.set_markup(markupString)
+
                 res2 = msg_usb.run()
                 if res2 != gtk.RESPONSE_OK:
                     proceed = False

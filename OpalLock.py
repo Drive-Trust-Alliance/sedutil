@@ -18,6 +18,7 @@ import ctypes
 import multiprocessing
 import verify
 from ctypes import c_long, c_int
+import pango
 
 
 
@@ -2399,8 +2400,9 @@ if __name__ == "__main__":
                 self.userSetup_box.hide()
             self.cancel_button.show()
             self.op_label.set_text('Set up USB')
-            self.op_instr.set_text('This will write the bootable image to a USB drive.\nYou can then use the USB drive to unlock the selected drive.\nWARNING: Setting up the USB will erase its contents, use an empty USB.')
-            
+            markupString = 'This will write the bootable image to a USB drive.\nYou can then use the USB drive to unlock the selected drive.\n <span foreground="red">WARNING: Setting up the USB will erase its contents, use an empty USB.</span>'
+            self.op_instr.set_markup(markupString)
+           
             self.op_prompt = 5
             
             curr_idx = self.dev_select.get_active()

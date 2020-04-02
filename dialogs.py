@@ -10,6 +10,7 @@ import runthread
 import csv
 import threading
 import verify
+import pango
 
 class QueryDialog(gtk.Window):
     def __init__(self, parent, queryTextList):
@@ -714,8 +715,13 @@ class USBDialog(gtk.Dialog):
 
 
         box = self.get_content_area()
-        
+
         usb_instr = gtk.Label('Select a USB.\nA bootable USB will be created with the preboot image embedded in it.\nAfter the USB is set up, it can be used to unlock the selected drive.\nWARNING: All data on the USB will be erased (except for any previously saved password files).')
+        attr = pango.AttrList()
+        fg_color = pango.AttrForeground(65535, 0, 0, 154, 249)
+        attr.insert(fg_color)
+        usb_instr.set_attributes(attr)
+        
         
         self.na_instr = gtk.Label('No USB detected. Insert a USB and press \'Rescan\' to continue.')
         
