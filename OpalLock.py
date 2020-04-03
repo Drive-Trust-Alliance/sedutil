@@ -18,6 +18,7 @@ import ctypes
 import multiprocessing
 import verify
 from ctypes import c_long, c_int
+import pango
 
 
 
@@ -40,6 +41,8 @@ if platform.system() == 'Windows':
     CallWindowProc = ctypes.windll.user32.CallWindowProcW
 
     WndProcType = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_int, ctypes.c_uint, ctypes.c_int, ctypes.c_int)
+            
+            
 
 class WndProcHookMixin:
     def __init__(self):
@@ -83,8 +86,8 @@ if __name__ == "__main__":
         canDestroyMain = True # This flag is responsible for deciding if the main window can be destroyed
         firstscan = True
         firstmsg = True
-        # devname="\\\\.\\PhysicalDrive9"
-        devname = "PhysicalDrive9"
+        devname="\\\\.\\PhysicalDrive9"
+        
         bad_pw = dict({'password': 1,
                        '12345678': 1,
                        '123456789': 1,
@@ -100,8 +103,15 @@ if __name__ == "__main__":
                        'sunshine': 1,
                        'zaq1zaq1': 1,
                        'password1': 1,
-                       'Password123': 1
-                       })
+                       'password12': 1,
+                       'password1234': 1,
+                       'password12345': 1,
+                       'password123456': 1,
+                       'password1234567': 1,
+                       'password12345678': 1,
+                       'password123456789': 1,
+                       'password1234567890': 1,
+                       'password123': 1})
                        
         DEV_OS = platform.system()
 
@@ -136,7 +146,7 @@ if __name__ == "__main__":
                 MAX_DEV = sys.maxint
             elif o in ("--pba"):
                 VERSION = 1
-                MAX_DEV = sys.maxint
+                MAX_DEV = 5
             elif o in ("--standard"):
                 VERSION = 2
                 MAX_DEV = 5
@@ -241,6 +251,8 @@ if __name__ == "__main__":
         
         posthibern = False
         
+        up_to_date = True
+        
         NOT_AUTHORIZED = 1
         AUTHORITY_LOCKED_OUT = 18
         SP_BUSY = 3
@@ -264,545 +276,580 @@ if __name__ == "__main__":
             
             f = verify.initCheck(self)
             
-            if f or self.VERSION != -1:
-                if self.DEV_OS == 'Windows':
-                    WndProcHookMixin.__init__(self)
-                gtk.Window.__init__(self)
-                if self.VERSION == 0:
-                    self.set_title('Opal Lock - Demo')
-                elif self.VERSION == 1:
-                    self.set_title('Opal Lock - PBA')
-                elif self.VERSION == 2:
-                    self.set_title('Opal Lock - Standard')
-                elif self.MAX_DEV == 5:
-                    self.set_title('Opal Lock - Premium5')
-                elif self.MAX_DEV == 25:
-                    self.set_title('Opal Lock - Premium25')
-                elif self.MAX_DEV == 100:
-                    self.set_title('Opal Lock - Premium100')
-                else:
-                    self.set_title('Opal Lock - PremiumUnlimited')
-                    
-                if os.path.isfile('icon.ico'):
-                    self.set_icon_from_file('icon.ico')
-
-                height = 540
-                width = 630
-                if self.DEV_OS == 'Linux' and self.VERSION == 1:
-                    height = 600
-                    width = 700
-                    
-                self.set_size_request(width, height)
-
-                self.set_resizable(False)
-
-                self.connect('destroy', self.exitX)
-                
-                if self.DEV_OS == 'Windows':
-                    theme = os.path.join(os.getcwd(), 'gtkrc')
-                    gtk.rc_set_default_files([theme])
-                    gtk.rc_reparse_all_for_settings(gtk.settings_get_default(), True)
-                    gtk.rc_reset_styles(gtk.settings_get_for_screen(self.get_screen()))
-                
-                homogeneous = False
-                spacing = 0
-                expand = False
-                fill = False
-                padding = 0
-                
-                self.vbox0 = gtk.VBox(False,0)
-                self.hbox0 = gtk.HBox(False,0)
-                self.hbox = gtk.HBox(False,0)
-                self.vbox = gtk.VBox(False,5)
-                
-                self.menuBar = gtk.MenuBar()
-                
-                self.navMenu = gtk.Menu()
-                self.navM = gtk.MenuItem("Main")
-                self.navM.set_submenu(self.navMenu)
-                self.backToMain = gtk.MenuItem("Home")
-                self.backToMain.connect("activate", self.returnToMain, False)
-                self.backToMain.set_tooltip_text('Return to home view')
-                self.navMenu.append(self.backToMain)
-                self.exitApp = gtk.MenuItem("Exit")
-                self.exitApp.connect("activate", self.exitFL)
-                self.exitApp.set_tooltip_text('Exit the app')
-                self.navMenu.append(self.exitApp)
-                self.exitReboot = gtk.MenuItem("Restart")
-                self.exitReboot.connect("activate", self.reboot)
-                self.exitReboot.set_tooltip_text('Restarts the computer')
-                self.navMenu.append(self.exitReboot)
-                if self.DEV_OS == 'Windows':
-                    self.exitHibernate = gtk.MenuItem('Hibernate')
-                    self.exitHibernate.connect('activate', self.hibernate)
-                    self.exitHibernate.set_tooltip_text('Hibernates the computer')
-                    self.navMenu.append(self.exitHibernate)
-                self.exitShutDown = gtk.MenuItem("Shut Down")
-                self.exitShutDown.connect("activate", self.shutdown)
-                self.exitShutDown.set_tooltip_text('Shuts down the computer')
-                self.navMenu.append(self.exitShutDown)
-                
-                
-                self.menuBar.append(self.navM)
-                
-                self.devMenu = gtk.Menu()
-                self.devM = gtk.MenuItem("Drive")
-                self.devM.set_submenu(self.devMenu)
-                self.devQuery = gtk.MenuItem("Query drive")
-                self.devQuery.connect("activate", dialogs.query, self, 0)
-                self.devQuery.set_tooltip_text('Query the currently selected drive')
-                self.devMenu.append(self.devQuery)
-                self.readLog = gtk.MenuItem("View Audit Log")
-                self.readLog.connect("activate", self.openLog_prompt)
-                self.readLog.set_tooltip_text('Access a drive\'s event log')
-                self.devMenu.append(self.readLog)
-                self.devScan = gtk.MenuItem("Rescan drives")
-                self.devScan.connect("activate", runscan.run_scan, self, True)
-                self.devScan.set_tooltip_text('Update the list of detected drives')
-                self.devMenu.append(self.devScan)
-                self.devOpal = gtk.MenuItem("View Opal drives")
-                self.devOpal.connect("activate", dialogs.openOpal, self)
-                self.devOpal.set_tooltip_text('View a list of detected Opal drives and their Opal versions')
-                self.devMenu.append(self.devOpal)
-                
-                self.menuBar.append(self.devM)
-                
-                
-                if self.VERSION != 1:
-                    self.setupMenu = gtk.Menu()
-                    self.setupM = gtk.MenuItem("Setup")
-                    self.setupM.set_submenu(self.setupMenu)
-                    self.setupFull = gtk.MenuItem("Set Up Drive(s)")
-                    self.setupFull.connect("activate", self.setup_prompt1)
-                    self.setupFull.set_tooltip_text('Set up password and preboot image for a drive')
-                    self.setupMenu.append(self.setupFull)
-                    self.updatePBA = gtk.MenuItem("Update Preboot Image")
-                    self.updatePBA.connect("activate", self.updatePBA_prompt)
-                    self.updatePBA.set_tooltip_text('Update a drive\'s preboot image')
-                    self.setupMenu.append(self.updatePBA)
-
-                    self.changePassword = gtk.MenuItem("Change Password")
-                    self.changePassword.connect("activate", self.changePW_prompt)
-                    self.changePassword.set_tooltip_text('Change a drive\'s password')
-                    self.setupMenu.append(self.changePassword)
-                    
-                    self.setupUSB = gtk.MenuItem("Setup Bootable USB")
-                    self.setupUSB.connect("activate", self.setupUSB_prompt)
-                    self.setupUSB.set_tooltip_text('Set up bootable USB')
-                    self.setupMenu.append(self.setupUSB)
-                    
-                    if self.VERSION % 3 == 0:
-                        self.setupUser = gtk.MenuItem("Setup User")
-                        self.setupUser.connect("activate", self.setupUser_prompt)
-                        self.setupUser.set_tooltip_text('Set up a user password')
-                        self.setupMenu.append(self.setupUser)
-                        
-                        self.removeUser = gtk.MenuItem("Remove User")
-                        self.removeUser.connect("activate", self.removeUser_prompt)
-                        self.removeUser.set_tooltip_text('Disable the user')
-                        self.setupMenu.append(self.removeUser)
-                    
-                    self.mngPower = gtk.MenuItem("Power Settings")
-                    self.mngPower.connect("activate", dialogs.mngPower_prompt, self, 1)
-                    self.mngPower.set_tooltip_text('Manage system power settings')
-                    self.setupMenu.append(self.mngPower)
-                    
-                    self.menuBar.append(self.setupM)
-                
-                
-                self.unlockMenu = gtk.Menu()
-                self.unlockM = gtk.MenuItem("Unlock")
-                self.unlockM.set_submenu(self.unlockMenu)
-                self.unlock1 = gtk.MenuItem("Unlock Drive(s)")
-                self.unlock1.connect("activate", self.unlock_prompt)
-                self.unlock1.set_tooltip_text('Unlock a drive to boot into')
-                self.unlockMenu.append(self.unlock1)
-            
-                self.menuBar.append(self.unlockM)
-                
-                self.revertMenu = gtk.Menu()
-                self.revertM = gtk.MenuItem("Remove Lock")
-                self.revertM.set_submenu(self.revertMenu)
-                self.revertO = gtk.MenuItem("and Keep Data")
-                self.revertO.connect("activate", self.revert_keep_prompt)
-                self.revertO.set_tooltip_text('Use password to revert the drive\'s LockingSP while keeping its data')
-                self.revertMenu.append(self.revertO)
-                self.revertPW = gtk.MenuItem("and Erase Data")
-                self.revertPW.connect("activate", self.revert_erase_prompt)
-                self.revertPW.set_tooltip_text('Use password to revert the drive\'s LockingSP and erase data')
-                self.revertMenu.append(self.revertPW)
-                self.revertPSID = gtk.MenuItem("and Erase Data with PSID")
-                self.revertPSID.connect("activate", self.revert_psid_prompt)
-                self.revertPSID.set_tooltip_text('Use drive\'s PSID to revert drive to manufacturer settings')
-                self.revertMenu.append(self.revertPSID)
-                
-                self.menuBar.append(self.revertM)
-                
-                self.helpMenu = gtk.Menu()
-                self.helpM = gtk.MenuItem("Help")
-                self.helpM.set_submenu(self.helpMenu)
-                self.help1 = gtk.MenuItem("Help")
-                self.help1.set_tooltip_text('Access online help')
-                self.helpMenu.append(self.help1)
-                if self.VERSION != 1:
-                    self.updateM = gtk.MenuItem("Check for updates")
-                    self.updateM.set_tooltip_text('Check for an updated version of this app')
-                    self.helpMenu.append(self.updateM)
-                self.aboutM = gtk.MenuItem("About")
-                self.aboutM.connect("activate", dialogs.show_about, self)
-                self.aboutM.set_tooltip_text('About Opal Lock')
-                self.helpMenu.append(self.aboutM)
-
-                self.menuBar.append(self.helpM)
-                
-                if self.VERSION != 1 and (self.VERSION != 3 or self.MAX_DEV != sys.maxint):
-                    self.upgradeMenu = gtk.Menu()
-                    self.upgradeM = gtk.MenuItem("License")
-                    self.upgradeM.set_submenu(self.upgradeMenu)
-                    if self.VERSION == 0:
-                        self.upgradeBasic = gtk.MenuItem("Upgrade to Standard")
-                        self.upgradeMenu.append(self.upgradeBasic)
-                    if self.VERSION != 3:
-                        self.upgradePro5 = gtk.MenuItem("Upgrade to Premium5")
-                        self.upgradeMenu.append(self.upgradePro5)
-                    if self.MAX_DEV == 5 or self.VERSION == 0:
-                        self.upgradePro25 = gtk.MenuItem("Upgrade to Premium25")
-                        self.upgradeMenu.append(self.upgradePro25)
-                    if self.MAX_DEV <= 25 or self.VERSION == 0:
-                        self.upgradePro100 = gtk.MenuItem("Upgrade to Premium100")
-                        self.upgradeMenu.append(self.upgradePro100)
-                    if self.MAX_DEV <= 100 or self.VERSION == 0:
-                        self.upgradeProU = gtk.MenuItem("Upgrade to PremiumUnlimited")
-                        self.upgradeMenu.append(self.upgradeProU)
-                    self.menuBar.append(self.upgradeM)
-                
-                self.hbox0.pack_start(self.menuBar, True, True, 0)
-                self.vbox0.pack_start(self.hbox0, False, False, 0)
-                
-                self.buttonBox = gtk.HBox(homogeneous, 0)
-                
-                self.cancel_button = gtk.Button('_Cancel')
-                
-                self.viewLog = gtk.Button('_View Audit Log')
-                self.viewLog.set_flags(gtk.CAN_DEFAULT)
-                
-                self.setup_next = gtk.Button('_Set Up Drive(s)')
-                
-
-                
-                self.setupUserPW = gtk.Button('_Set Up User Password')
-                self.removeUser_button = gtk.Button('_Remove User')
-                
-                self.updatePBA_button = gtk.Button('_Update')
-                self.updatePBA_button.set_flags(gtk.CAN_DEFAULT)
-                
-                self.changePW_button = gtk.Button('_Change Password')
-                
-                self.setupUSB_button = gtk.Button('_Create bootable USB')
-                
-                self.pbaUnlockReboot = gtk.Button("_Unlock and Restart")
-                self.pbaUnlockReboot.set_flags(gtk.CAN_DEFAULT)
-                self.pbaUnlockOnly = gtk.Button("_Unlock only")
-                self.pbaUSB_button = gtk.Button('_Unlock with USB')
-                
-                self.revertOnly_button = gtk.Button('_Remove Lock')
-                self.revertOnly_button.set_flags(gtk.CAN_DEFAULT)
-                
-                self.revertUser_button = gtk.Button('_Remove Lock and Erase')
-                self.revertUser_button.set_flags(gtk.CAN_DEFAULT)
-                self.revertPSID_button = gtk.Button('_Remove Lock and Erase with PSID')
-                
-                self.op_label = gtk.Label('Main')
-                self.op_label.set_alignment(0,0.5)
-                self.firstHbox = gtk.HBox(homogeneous, 0)
-                self.firstHbox.pack_start(self.op_label, False, False, 0)
-
-
-                self.rescanButton = gtk.Button()
-                self.rescanButton.set_label('Rescan Drives')
-                self.rescanButton.set_size_request(100,25)
-                self.rescanButton.connect("clicked",runscan.run_scan, self, True)
-                self.firstHbox.pack_start(self.rescanButton, False, False, 460)
-                self.vbox.pack_start(self.firstHbox , False, False, 0 )
-
-
-                top_box = gtk.HBox(homogeneous, 0)
-                
-                self.noTCG_instr = gtk.Label('No TCG drives were detected, please insert a TCG drive and use \'Rescan drives\' to continue.')
-                self.noTCG_instr.set_alignment(0,0.5)
-                top_box.pack_start(self.noTCG_instr, False, False, 0)
-                
-                self.select_instr = gtk.Label('Select a drive from the dropdown menu.')
-                self.select_instr.set_alignment(0,0.5)
-                top_box.pack_start(self.select_instr, False, False, 0)
-                
-                self.selectMulti_instr = gtk.Label('Select one or more drives from the list.')
-                self.selectMulti_instr.set_alignment(0,0.5)
-                top_box.pack_start(self.selectMulti_instr, False, False, 0)
-                
-                self.main_instr = gtk.Label('Select an operation from the menu bar above.')
-                self.main_instr.set_alignment(0,0.5)
-                top_box.pack_start(self.main_instr, False, False, 0)
-
-                self.naDevices_instr = gtk.Label('No drives available for this operation.')
-                self.naDevices_instr.set_alignment(0,0.5)
-                top_box.pack_start(self.naDevices_instr, False, False, 0)
-                
-                blank_instr = gtk.Label('')
-                top_box.pack_start(blank_instr, False, False, 0)
-                
-                self.toggleSingle_radio = gtk.RadioButton(None, 'Single')
-                self.toggleSingle_radio.connect('toggled', self.mode_toggled)
-                self.toggleMulti_radio = gtk.RadioButton(self.toggleSingle_radio, 'Multi')
-
-                top_box.pack_end(self.toggleMulti_radio, False, False, 0)
-                top_box.pack_end(self.toggleSingle_radio, False, False, 0)
-                
-                self.vbox.pack_start(top_box, False, False, 0)
-                
-                self.op_instr = gtk.Label('')
-                self.op_instr.set_alignment(0,0.5)
-                
-                self.na_instr = gtk.Label('')
-                self.na_instr.set_alignment(0,0.5)
-                
-                self.naUSB_instr = gtk.Label('No USB detected for Setup USB')
-                self.naUSB_instr.set_alignment(0,0.5)
-                
-                self.cancel_button.connect('clicked', self.returnToMain, False)
-                self.revertUser_button.connect('clicked', runop.run_revertErase, self)
-                self.revertPSID_button.connect('clicked', runop.run_revertPSID, self)
-                self.changePW_button.connect('clicked', runop.run_changePW, self)
-                self.setup_next.connect('clicked', runop.run_setupFull, self)
-                self.updatePBA_button.connect('clicked', runop.run_pbaWrite, self)
-                
-
-                
-                self.setupUSB_button.connect('clicked', runop.run_setupUSB, self)
-                
-                self.setupUserPW.connect('clicked', runop.run_setupUser, self)
-                self.removeUser_button.connect('clicked', runop.run_removeUser, self)
-                
-                self.pbaUnlockReboot.connect("clicked", runop.run_unlockPBA, self, True, False, None)
-                self.pbaUnlockOnly.connect("clicked", runop.run_unlockPBA, self, False, False, None)
-                
-                self.revertOnly_button.connect('clicked', runop.run_revertKeep, self)
-                
-                self.viewLog.connect('clicked', dialogs.openLog, self)
-
-                self.display_single()
-                
-                self.display_grid()
-                
-                self.wait_instr = gtk.Label('Please wait, this may take up to a minute...')
-                self.multi_wait_instr = gtk.Label('Please wait, this may take up to a minute per drive...')
-                self.pba_wait_instr = gtk.Label('Please wait, writing the preboot image may take up to 15 minutes per drive...\nDo not turn off your computer while setup is ongoing.')
-                self.setup_wait_instr = gtk.Label('Please wait, password setup and USB creation will take a few minutes.\nWriting the preboot image to the drive may take up to 15 minutes per drive.\nDo not turn off your computer while setup is ongoing.')
-                self.load_instr = gtk.Label('Loading drive information...')
-                self.progress_bar = gtk.ProgressBar()
-                self.vbox.pack_start(self.wait_instr, False, False, 5)
-                self.vbox.pack_start(self.multi_wait_instr, False, False, 5)
-                self.vbox.pack_start(self.pba_wait_instr, False, False, 5)
-                self.vbox.pack_start(self.setup_wait_instr, False, False, 5)
-                self.vbox.pack_start(self.load_instr, False, False, 5)
-                self.vbox.pack_start(self.progress_bar, False, False, 5)
-                
-                self.waitSpin = gtk.Spinner()
-                self.vbox.pack_start(self.waitSpin, False, False, 5)
-                
-                self.vbox.pack_start(self.op_instr, False, False, 5)
-                self.vbox.pack_start(self.na_instr, False, False, 5)
-                self.vbox.pack_start(self.naUSB_instr, False, False, 5)
-                
-                self.box_psid = gtk.HBox(homogeneous, 0)
-                
-                self.revert_psid_label = gtk.Label("Enter PSID (omit dashes)")
-                self.revert_psid_label.set_width_chars(22)
-                self.revert_psid_label.set_alignment(0,0.5)
-                self.box_psid.pack_start(self.revert_psid_label, expand, fill, padding)
-                
-                self.revert_psid_entry = gtk.Entry()
-                self.revert_psid_entry.set_text("")
-                self.box_psid.pack_start(self.revert_psid_entry, True, True, padding)
-                
-                self.box_newpass_confirm = gtk.HBox(homogeneous, 0)
-                
-                self.confirm_pass_label = gtk.Label("Confirm New Password")
-                self.confirm_pass_label.set_width_chars(22)
-                self.confirm_pass_label.set_alignment(0,0.5)
-                self.box_newpass_confirm.pack_start(self.confirm_pass_label, expand, fill, padding)
-                self.confirm_pass_entry = gtk.Entry()
-                self.confirm_pass_entry.set_text("")
-                self.confirm_pass_entry.set_width_chars(27)
-                self.confirm_pass_entry.set_visibility(False)
-                self.box_newpass_confirm.pack_start(self.confirm_pass_entry, False, False, padding)
-                
-                self.box_revert_agree = gtk.HBox(homogeneous, 0)
-                
-                self.revert_agree_label = gtk.Label("Type 'I agree'")
-                self.revert_agree_label.set_width_chars(22)
-                self.revert_agree_label.set_alignment(0,0.5)
-                self.box_revert_agree.pack_start(self.revert_agree_label, expand, fill, padding)
-                self.revert_agree_entry = gtk.Entry()
-                self.revert_agree_entry.set_text("")
-                self.revert_agree_entry.set_width_chars(27)
-                self.box_revert_agree.pack_start(self.revert_agree_entry, False, False, padding)
-                
-                
-                if (gtk.gtk_version[1] > 24 or
-                    (gtk.gtk_version[1] == 24 and gtk.gtk_version[2] > 28)):
-                    self.drive_menu = gtk.ComboBox()
-                    self.auth_menu = gtk.ComboBox()
-                    #self.usb_menu = gtk.ComboBox()
-                else:
-                    self.drive_menu = gtk.combo_box_new_text()
-                    self.auth_menu = gtk.combo_box_new_text()
-                    #self.usb_menu = gtk.combo_box_new_text()
-                    
-                    #self.drive_menu.append = self.drive_menu.append_text
-                    #self.auth_menu.append = self.auth_menu.append_text
-                    #self.usb_menu.append = self.usb_menu.append_text
-                
-                self.auth_menu.connect('changed', self.auth_changed)
-                
-                self.box_drive = gtk.HBox(homogeneous, 0)
-                
-                self.drive_label = gtk.Label("USB (FAT only)")
-                self.drive_label.set_width_chars(22)
-                self.drive_label.set_alignment(0,0.5)
-                self.box_drive.pack_start(self.drive_label, expand, fill, padding)
-                
-                self.box_drive.pack_start(self.drive_menu, True, True, padding)
-                
-                self.drive_refresh = gtk.Button('Refresh')
-                self.drive_refresh.connect('clicked', self.showDrive)
-                
-                self.box_drive.pack_start(self.drive_refresh, False, False, padding)
-                
-                
-                drv_blnk = gtk.Label('')
-                self.box_drive.pack_start(drv_blnk, False, False, 0)
-                
-                self.drive_list = []
-                
-                #self.box_drive.pack_start(self.usb_menu, True, True, padding)
-                
-                self.check_box_pass = gtk.CheckButton("Show Password")
-                self.check_box_pass.connect("toggled", self.entry_check_box_pass, self.check_box_pass)
-                self.check_box_pass.set_active(False)
-                self.box_drive.pack_end(self.check_box_pass, False, False, 0)
-                
-                
-                self.usb_list = []
-                
-                self.box_auth = gtk.HBox(homogeneous, 0)
-                
-                self.auth_label = gtk.Label("Auth Level")
-                self.auth_label.set_width_chars(22)
-                self.auth_label.set_alignment(0,0.5)
-                self.box_auth.pack_start(self.auth_label, expand, fill, padding)
-                self.auth_menu.append_text('Admin')
-                self.auth_menu.append_text('User')
-                self.auth_menu.set_active(0)
-                self.box_auth.pack_start(self.auth_menu, False, False, padding)
-                
-                self.buttonBox.pack_start(self.setup_next, False, False, padding)
-
-                self.buttonBox.pack_start(self.changePW_button, False, False, padding)
-                self.buttonBox.pack_start(self.revertUser_button, False, False, padding)
-                self.buttonBox.pack_start(self.revertPSID_button, False, False, padding)
-                self.buttonBox.pack_start(self.pbaUnlockReboot, False, False, padding)
-                self.buttonBox.pack_start(self.pbaUnlockOnly, False, False, padding)
-                self.buttonBox.pack_start(self.updatePBA_button, False, False, padding)
-                self.buttonBox.pack_start(self.pbaUSB_button, False, False, padding)
-                self.buttonBox.pack_start(self.revertOnly_button, False, False, padding)
-                self.buttonBox.pack_start(self.viewLog, False, False, padding)
-                self.buttonBox.pack_start(self.setupUSB_button, False, False, padding)
-                self.buttonBox.pack_start(self.setupUserPW, False, False, padding)
-                self.buttonBox.pack_start(self.removeUser_button, False, False, padding)
-                
-                self.buttonBox.pack_start(self.cancel_button, False, False, padding)
-                
-                self.pass_dialog()
-                self.new_pass_dialog()
-                
-                self.mbr_radio = gtk.RadioButton(None, 'Write Preboot Image to Shadow MBR')
-                self.skip_radio = gtk.RadioButton(self.mbr_radio, 'I already have another drive or USB for unlocking this drive')
-                self.mbr_radio.connect('toggled', self.hideUSB)
-                self.skip_radio.connect('toggled', self.hideUSB)
-                
-                halign = gtk.Alignment(1,0,0,0)
-                halign.add(self.buttonBox)
-                self.vbox.pack_end(halign, False, False, padding)
-                self.vbox.pack_end(self.skip_radio, False)
-                self.vbox.pack_end(self.mbr_radio, False)
-                self.vbox.pack_end(self.box_drive, False)
-                self.vbox.pack_end(self.box_revert_agree, False)
-                self.vbox.pack_end(self.box_psid, False)
-                self.vbox.pack_end(self.box_newpass_confirm, False)
-                self.vbox.pack_end(self.box_newpass, False)
-                self.vbox.pack_end(self.box_pass, False)
-                self.vbox.pack_end(self.box_auth, False)
-                
-                self.hbox.set_border_width(20)
-                
-                self.hbox.pack_start(self.vbox, True, True, padding)
-                self.vbox0.pack_start(self.hbox, True, True, padding)
-                
-                self.add(self.vbox0)
-                
-                self.show_all()
-                self.hideAll()
-                
-                
-                self.load_instr.hide()
-                
-                self.select_box.show()
-                self.box_dev.show()
-                if self.VERSION == 2 or self.PBA_VERSION == 1:
-                    self.userSetup_box.hide()
-                
-                
-                self.main_instr.show()
-                self.op_label.show()
-                
-                
-                
-                    
-                runscan.run_scan(None, self, True)
-                
-                
-                
-                if self.DEV_OS == 'Windows':
-                    self.addMsgHandler(WM_DEVICECHANGE, self.onDeviceChange)
-                    self.addMsgHandler(WM_POWERBROADCAST, self.onPowerBroadcast)
-                    self.addMsgHandler(WM_QUERYENDSESSION, self.onEndSession)
-                    self.hookWndProc()
-                
-                ##print self.devs_list
-                ##print self.vendor_list
-                ##print self.sn_list
-                ##print self.salt_list
-                ##print self.msid_list
-                ##print self.series_list
-                
-                ##print self.locked_list
-                ##print self.setup_list
-                ##print self.nonsetup_list
-                ##print self.tcg_list
-                
-                
-                #if len(self.devs_list) == 0:
-                #    self.msg_err('No drives detected, try running this application with Administrator.')
-                #    gtk.main_quit()
-
-                self.connect("delete_event", self.on_delete_event)
-                        
-                
-                
+            #if f or self.VERSION != -1:
+            if self.DEV_OS == 'Windows':
+                WndProcHookMixin.__init__(self)
+            gtk.Window.__init__(self)
+            if self.VERSION == 0:
+                self.set_title('Opal Lock Demo')
+            elif self.VERSION == 1:
+                self.set_title('Opal Lock PBA')
+            elif self.VERSION == 2:
+                self.set_title('Opal Lock Standard')
+            elif self.MAX_DEV == 5:
+                self.set_title('Opal Lock Premium')
+            #elif self.MAX_DEV == 25:
+            #    self.set_title('Opal Lock Premium25')
+            #elif self.MAX_DEV == 100:
+            #    self.set_title('Opal Lock Premium100')
             else:
-                self.msg_err('No valid license of Opal Lock found, please register to get demo license or buy basic/premium license')
-                gtk.main_quit()
+            #    self.set_title('Opal Lock PremiumUnlimited')
+                self.set_title('Opal Lock (no license)')
+                
+            if os.path.isfile('icon.ico'):
+                self.set_icon_from_file('icon.ico')
+
+            height = 630
+            width = 630
+            if self.DEV_OS == 'Linux' and self.VERSION == 1:
+                height = 700
+                width = 700
+                
+            self.set_size_request(width, height)
+            
+            self.set_resizable(False)
+
+            self.connect('destroy', self.exitX)
+            
+            if self.DEV_OS == 'Windows':
+                theme = os.path.join(os.getcwd(), 'gtkrc')
+                gtk.rc_set_default_files([theme])
+                gtk.rc_reparse_all_for_settings(gtk.settings_get_default(), True)
+                gtk.rc_reset_styles(gtk.settings_get_for_screen(self.get_screen()))
+            
+            homogeneous = False
+            spacing = 0
+            expand = False
+            fill = False
+            padding = 0
+            
+            self.vbox0 = gtk.VBox(False,0)
+            self.hbox0 = gtk.HBox(False,0)
+            self.hbox = gtk.HBox(False,0)
+            self.vbox = gtk.VBox(False,5)
+            
+            self.menuBar = gtk.MenuBar()
+            
+            self.navMenu = gtk.Menu()
+            self.navM = gtk.MenuItem("Main")
+            self.navM.set_submenu(self.navMenu)
+            self.backToMain = gtk.MenuItem("Home")
+            self.backToMain.connect("activate", self.returnToMain, False)
+            self.backToMain.set_tooltip_text('Return to home view')
+            self.navMenu.append(self.backToMain)
+            self.exitApp = gtk.MenuItem("Exit")
+            self.exitApp.connect("activate", self.exitFL)
+            self.exitApp.set_tooltip_text('Exit the app')
+            self.navMenu.append(self.exitApp)
+            self.exitReboot = gtk.MenuItem("Reboot")
+            self.exitReboot.connect("activate", self.reboot)
+            self.exitReboot.set_tooltip_text('Reboots the computer')
+            self.navMenu.append(self.exitReboot)
+            if self.DEV_OS == 'Windows':
+                self.exitHibernate = gtk.MenuItem('Hibernate')
+                self.exitHibernate.connect('activate', self.hibernate)
+                self.exitHibernate.set_tooltip_text('Hibernates the computer')
+                self.navMenu.append(self.exitHibernate)
+            self.exitShutDown = gtk.MenuItem("Shut Down")
+            self.exitShutDown.connect("activate", self.shutdown)
+            self.exitShutDown.set_tooltip_text('Shuts down the computer')
+            self.navMenu.append(self.exitShutDown)
+            
+            
+            self.menuBar.append(self.navM)
+            
+            self.devMenu = gtk.Menu()
+            self.devM = gtk.MenuItem("Drive")
+            self.devM.set_submenu(self.devMenu)
+            self.devQuery = gtk.MenuItem("Query drive")
+            self.devQuery.connect("activate", dialogs.query, self, 0)
+            self.devQuery.set_tooltip_text('Query the currently selected drive')
+            self.devMenu.append(self.devQuery)
+            self.readLog = gtk.MenuItem("View Audit Log")
+            self.readLog.connect("activate", self.openLog_prompt)
+            self.readLog.set_tooltip_text('Access a drive\'s event log')
+            self.devMenu.append(self.readLog)
+            self.devScan = gtk.MenuItem("Rescan drives")
+            self.devScan.connect("activate", runscan.run_scan, self, True)
+            self.devScan.set_tooltip_text('Update the list of detected drives')
+            self.devMenu.append(self.devScan)
+            self.devOpal = gtk.MenuItem("View Opal drives")
+            self.devOpal.connect("activate", dialogs.openOpal, self)
+            self.devOpal.set_tooltip_text('View a list of detected Opal drives and their Opal versions')
+            self.devMenu.append(self.devOpal)
+            
+            self.menuBar.append(self.devM)
+            
+            
+            if self.VERSION != 1:
+                self.setupMenu = gtk.Menu()
+                self.setupM = gtk.MenuItem("Setup")
+                self.setupM.set_submenu(self.setupMenu)
+                self.setupFull = gtk.MenuItem("Set Up Drive")
+                self.setupFull.connect("activate", self.setup_prompt1)
+                self.setupFull.set_tooltip_text('Set up password and preboot image for a drive')
+                self.setupMenu.append(self.setupFull)
+                self.updatePBA = gtk.MenuItem("Update Preboot Image")
+                self.updatePBA.connect("activate", self.updatePBA_prompt)
+                self.updatePBA.set_tooltip_text('Update a drive\'s preboot image')
+                self.setupMenu.append(self.updatePBA)
+            
+                self.changePassword = gtk.MenuItem("Change Password")
+                self.changePassword.connect("activate", self.changePW_prompt)
+                self.changePassword.set_tooltip_text('Change a drive\'s password')
+                self.setupMenu.append(self.changePassword)
+                
+                self.setupUSB = gtk.MenuItem("Setup Bootable USB")
+                self.setupUSB.connect("activate", self.setupUSB_prompt)
+                self.setupUSB.set_tooltip_text('Set up bootable USB')
+                self.setupMenu.append(self.setupUSB)
+                
+                if self.VERSION % 3 == 0:
+                    self.setupUser = gtk.MenuItem("Setup User")
+                    self.setupUser.connect("activate", self.setupUser_prompt)
+                    self.setupUser.set_tooltip_text('Set up a user password')
+                    self.setupMenu.append(self.setupUser)
+                    
+                    self.removeUser = gtk.MenuItem("Remove User")
+                    self.removeUser.connect("activate", self.removeUser_prompt)
+                    self.removeUser.set_tooltip_text('Disable the user')
+                    self.setupMenu.append(self.removeUser)
+                
+                self.mngPower = gtk.MenuItem("Power Settings")
+                self.mngPower.connect("activate", dialogs.mngPower_prompt, self, 1)
+                self.mngPower.set_tooltip_text('Manage system power settings')
+                self.setupMenu.append(self.mngPower)
+                
+                self.menuBar.append(self.setupM)
+            
+            
+            self.unlockMenu = gtk.Menu()
+            self.unlockM = gtk.MenuItem("Unlock")
+            self.unlockM.set_submenu(self.unlockMenu)
+            
+            self.unlock1 = gtk.MenuItem("Unlock Drive")
+            self.unlock1.connect("activate", self.unlock_prompt)
+            self.unlock1.set_tooltip_text('Unlock a drive to boot into')
+            self.unlockMenu.append(self.unlock1)
+        
+            self.menuBar.append(self.unlockM)
+            
+            self.revertMenu = gtk.Menu()
+            self.revertM = gtk.MenuItem("Revert Setup")
+            self.revertM.set_submenu(self.revertMenu)
+            self.revertO = gtk.MenuItem("and Keep Data")
+            self.revertO.connect("activate", self.revert_keep_prompt)
+            self.revertO.set_tooltip_text('Use password to revert the drive\'s LockingSP while keeping its data')
+            self.revertMenu.append(self.revertO)
+            self.revertPW = gtk.MenuItem("and Erase Data")
+            self.revertPW.connect("activate", self.revert_erase_prompt)
+            self.revertPW.set_tooltip_text('Use password to revert the drive\'s LockingSP and erase data')
+            self.revertMenu.append(self.revertPW)
+            self.revertPSID = gtk.MenuItem("and Erase Data with PSID")
+            self.revertPSID.connect("activate", self.revert_psid_prompt)
+            self.revertPSID.set_tooltip_text('Use drive\'s PSID to revert drive to manufacturer settings')
+            self.revertMenu.append(self.revertPSID)
+            
+            self.menuBar.append(self.revertM)
+            
+            self.helpMenu = gtk.Menu()
+            self.helpM = gtk.MenuItem("Help")
+            self.helpM.set_submenu(self.helpMenu)
+            self.help1 = gtk.MenuItem("Help")
+            self.help1.set_tooltip_text('Access online help')
+            self.helpMenu.append(self.help1)
+            if self.VERSION != 1:
+                self.updateM = gtk.MenuItem("Check for updates")
+                self.updateM.connect('activate', verify.updateCheck, self)
+                self.updateM.set_tooltip_text('Check for an updated version of this app')
+                self.helpMenu.append(self.updateM)
+            self.aboutM = gtk.MenuItem("About")
+            self.aboutM.connect("activate", dialogs.show_about, self)
+            self.aboutM.set_tooltip_text('About Opal Lock')
+            self.helpMenu.append(self.aboutM)
+            
+            self.menuBar.append(self.helpM)
+            
+            if self.VERSION != 1:
+                self.upgradeMenu = gtk.Menu()
+                self.upgradeM = gtk.MenuItem("License")
+                self.upgradeM.set_submenu(self.upgradeMenu)
+                self.openLicense = None
+                if self.VERSION <= 0:
+                    self.openLicense = gtk.MenuItem("Activate License")
+                else:
+                    self.openLicense = gtk.MenuItem("Deactivate License")
+                self.openLicense.connect('activate', self.openLicenseManager)
+                self.upgradeMenu.append(self.openLicense)
+                if self.VERSION == 0:
+                    self.upgradeBasic = gtk.MenuItem("Upgrade to Standard")
+                    self.upgradeMenu.append(self.upgradeBasic)
+                if self.VERSION != 3:
+                    self.upgradePro5 = gtk.MenuItem("Upgrade to Premium")
+                    self.upgradeMenu.append(self.upgradePro5)
+                
+                #if self.MAX_DEV == 5 or self.VERSION == 0:
+                #    self.upgradePro25 = gtk.MenuItem("Upgrade to Premium25")
+                #    self.upgradeMenu.append(self.upgradePro25)
+                #if self.MAX_DEV <= 25 or self.VERSION == 0:
+                #    self.upgradePro100 = gtk.MenuItem("Upgrade to Premium100")
+                #    self.upgradeMenu.append(self.upgradePro100)
+                #if self.MAX_DEV <= 100 or self.VERSION == 0:
+                #    self.upgradeProU = gtk.MenuItem("Upgrade to PremiumUnlimited")
+                #    self.upgradeMenu.append(self.upgradeProU)
+                self.menuBar.append(self.upgradeM)
+            
+            self.hbox0.pack_start(self.menuBar, True, True, 0)
+            self.vbox0.pack_start(self.hbox0, False, False, 0)
+            
+            self.buttonBox = gtk.HBox(homogeneous, 0)
+            
+            self.cancel_button = gtk.Button('_Cancel')
+            
+            self.viewLog = gtk.Button('_View Audit Log')
+            self.viewLog.set_flags(gtk.CAN_DEFAULT)
+            
+            self.setup_next = None
+            if self.VERSION == 3:
+                self.setup_next = gtk.Button('_Set Up Drive(s)')
+            else:
+                self.setup_next = gtk.Button('_Set Up Drive')
+            
+            self.setupUserPW = gtk.Button('_Set Up User Password')
+            self.removeUser_button = gtk.Button('_Remove User')
+            
+            self.updatePBA_button = gtk.Button('_Update')
+            self.updatePBA_button.set_flags(gtk.CAN_DEFAULT)
+            
+            self.changePW_button = gtk.Button('_Change Password')
+            
+            self.setupUSB_button = gtk.Button('_Create bootable USB')
+            
+            self.pbaUnlockReboot = gtk.Button("_Unlock and Reboot")
+            self.pbaUnlockOnly = None
+            
+            
+            if self.VERSION == 1:
+                self.pbaUnlockOnly = gtk.Button("_Unlock only")
+                self.pbaUnlockReboot.set_flags(gtk.CAN_DEFAULT)
+            else:
+                if self.VERSION % 3 == 0:
+                    self.pbaUnlockOnly = gtk.Button("_Unlock Drives")
+                else:
+                    self.pbaUnlockOnly = gtk.Button("_Unlock Drive")
+                self.pbaUnlockOnly.set_flags(gtk.CAN_DEFAULT)
+            
+            self.revertOnly_button = gtk.Button('_Revert Setup')
+            self.revertOnly_button.set_flags(gtk.CAN_DEFAULT)
+            
+            self.revertUser_button = gtk.Button('_Revert Setup and Erase')
+            self.revertUser_button.set_flags(gtk.CAN_DEFAULT)
+            self.revertPSID_button = gtk.Button('_Revert Setup and Erase with PSID')
+            
+            label_box = gtk.HBox(homogeneous, 0)
+            
+            self.op_label = gtk.Label('')
+            self.op_label.set_alignment(0,0.5)
+            label_box.pack_start(self.op_label, False, False, 0)
+            
+            self.update_link = gtk.LinkButton('https://fidelityheight.com/download/OpalLock_setup.exe', 'Update available!')
+            self.update_link.set_alignment(0,0.5)
+            label_box.pack_end(self.update_link, False, False, 0)
+            
+            #self.updated_label = gtk.Label('Latest')
+            
+            self.vbox.pack_start(label_box, False, False, 0)
+            
+            top_box = gtk.HBox(homogeneous, 0)
+            
+            self.noTCG_instr = gtk.Label('No TCG drives were detected, please insert a TCG drive and use \'Rescan drives\' to continue.')
+            self.noTCG_instr.set_alignment(0,0.5)
+            top_box.pack_start(self.noTCG_instr, False, False, 0)
+            
+            self.select_instr = gtk.Label('Select a drive from the dropdown menu.')
+            self.select_instr.set_alignment(0,0.5)
+            top_box.pack_start(self.select_instr, False, False, 0)
+            
+            self.selectMulti_instr = gtk.Label('Select one or more drives from the list.')
+            self.selectMulti_instr.set_alignment(0,0.5)
+            top_box.pack_start(self.selectMulti_instr, False, False, 0)
+            
+            self.main_instr = gtk.Label('Select an operation from the menu bar above.')
+            self.main_instr.set_alignment(0,0.5)
+            top_box.pack_start(self.main_instr, False, False, 0)
+            
+            self.naDevices_instr = gtk.Label('No drives available for this operation.')
+            self.naDevices_instr.set_alignment(0,0.5)
+            top_box.pack_start(self.naDevices_instr, False, False, 0)
+            
+            blank_instr = gtk.Label('')
+            top_box.pack_start(blank_instr, False, False, 0)
+            
+            self.toggleSingle_radio = gtk.RadioButton(None, 'Single')
+            self.toggleSingle_radio.connect('toggled', self.mode_toggled)
+            self.toggleMulti_radio = gtk.RadioButton(self.toggleSingle_radio, 'Multi')
+
+            top_box.pack_end(self.toggleMulti_radio, False, False, 0)
+            top_box.pack_end(self.toggleSingle_radio, False, False, 0)
+            
+            self.vbox.pack_start(top_box, False, False, 0)
+            
+            self.op_instr = gtk.Label('')
+            self.op_instr.set_alignment(0,0.5)
+            
+            self.na_instr = gtk.Label('')
+            self.na_instr.set_alignment(0,0.5)
+            
+            self.naUSB_instr = gtk.Label('No USB detected for Setup USB')
+            self.naUSB_instr.set_alignment(0,0.5)
+            
+            self.cancel_button.connect('clicked', self.returnToMain, False)
+            self.revertUser_button.connect('clicked', runop.run_revertErase, self)
+            self.revertPSID_button.connect('clicked', runop.run_revertPSID, self)
+            self.changePW_button.connect('clicked', runop.run_changePW, self)
+            self.setup_next.connect('clicked', runop.run_setupFull, self)
+            self.updatePBA_button.connect('clicked', runop.run_pbaWrite, self)
+            
+
+            
+            self.setupUSB_button.connect('clicked', runop.run_setupUSB, self)
+            
+            self.setupUserPW.connect('clicked', runop.run_setupUser, self)
+            self.removeUser_button.connect('clicked', runop.run_removeUser, self)
+            
+            self.pbaUnlockReboot.connect("clicked", runop.run_unlockPBA, self, True, False, None)
+            self.pbaUnlockOnly.connect("clicked", runop.run_unlockPBA, self, False, False, None)
+            
+            self.revertOnly_button.connect('clicked', runop.run_revertKeep, self)
+            
+            self.viewLog.connect('clicked', dialogs.openLog, self)
+
+            self.display_single()
+            
+            self.display_grid()
+            
+            self.wait_instr = gtk.Label('Please wait, this may take up to a minute...')
+            self.multi_wait_instr = gtk.Label('Please wait, this may take up to a minute per drive...')
+            self.pba_wait_instr = gtk.Label('Please wait, writing the preboot image may take up to 15 minutes per drive...\nDo not turn off your computer while setup is ongoing.')
+            self.setup_wait_instr = gtk.Label('Please wait, password setup and USB creation will take a few minutes.\nWriting the preboot image to the drive may take up to 15 minutes per drive.\nDo not turn off your computer while setup is ongoing.')
+            self.load_instr = gtk.Label('Loading drive information...')
+            
+            self.progress_bar = gtk.ProgressBar()
+            
+            self.no_license_instr = gtk.Label('No license detected, please activate your Opal Lock license and then reopen the application.')
+            self.licManager_button = gtk.Button('_Launch License Manager')
+            self.licManager_button.connect('clicked', self.openLicenseManager)
+            
+            self.vbox.pack_start(self.wait_instr, False, False, 5)
+            self.vbox.pack_start(self.multi_wait_instr, False, False, 5)
+            self.vbox.pack_start(self.pba_wait_instr, False, False, 5)
+            self.vbox.pack_start(self.setup_wait_instr, False, False, 5)
+            self.vbox.pack_start(self.load_instr, False, False, 5)
+            self.vbox.pack_start(self.progress_bar, False, False, 5)
+            
+            self.waitSpin = gtk.Spinner()
+            self.vbox.pack_start(self.waitSpin, False, False, 5)
+            
+            self.vbox.pack_start(self.op_instr, False, False, 5)
+            self.vbox.pack_start(self.na_instr, False, False, 5)
+            self.vbox.pack_start(self.naUSB_instr, False, False, 5)
+            
+            self.vbox.pack_start(self.no_license_instr, False, False, 5)
+            self.vbox.pack_start(self.licManager_button, False, False, padding)
+            
+            self.box_psid = gtk.HBox(homogeneous, 0)
+            
+            self.revert_psid_label = gtk.Label("Enter PSID (omit dashes)")
+            self.revert_psid_label.set_width_chars(22)
+            self.revert_psid_label.set_alignment(0,0.5)
+            self.box_psid.pack_start(self.revert_psid_label, expand, fill, padding)
+            
+            self.revert_psid_entry = gtk.Entry()
+            self.revert_psid_entry.set_text("")
+            self.box_psid.pack_start(self.revert_psid_entry, True, True, padding)
+            
+            self.box_newpass_confirm = gtk.HBox(homogeneous, 0)
+            
+            self.confirm_pass_label = gtk.Label("Confirm New Password")
+            self.confirm_pass_label.set_width_chars(22)
+            self.confirm_pass_label.set_alignment(0,0.5)
+            self.box_newpass_confirm.pack_start(self.confirm_pass_label, expand, fill, padding)
+            self.confirm_pass_entry = gtk.Entry()
+            self.confirm_pass_entry.set_text("")
+            self.confirm_pass_entry.set_width_chars(27)
+            self.confirm_pass_entry.set_visibility(False)
+            self.box_newpass_confirm.pack_start(self.confirm_pass_entry, False, False, padding)
+            
+            self.box_revert_agree = gtk.HBox(homogeneous, 0)
+            
+            self.revert_agree_label = gtk.Label("Type 'I agree'")
+            self.revert_agree_label.set_width_chars(22)
+            self.revert_agree_label.set_alignment(0,0.5)
+            self.box_revert_agree.pack_start(self.revert_agree_label, expand, fill, padding)
+            self.revert_agree_entry = gtk.Entry()
+            self.revert_agree_entry.set_text("")
+            self.revert_agree_entry.set_width_chars(27)
+            self.box_revert_agree.pack_start(self.revert_agree_entry, False, False, padding)
+            
+            
+            if (gtk.gtk_version[1] > 24 or
+                (gtk.gtk_version[1] == 24 and gtk.gtk_version[2] > 28)):
+                self.drive_menu = gtk.ComboBox()
+                self.auth_menu = gtk.ComboBox()
+                #self.usb_menu = gtk.ComboBox()
+            else:
+                self.drive_menu = gtk.combo_box_new_text()
+                self.auth_menu = gtk.combo_box_new_text()
+                #self.usb_menu = gtk.combo_box_new_text()
+                
+                #self.drive_menu.append = self.drive_menu.append_text
+                #self.auth_menu.append = self.auth_menu.append_text
+                #self.usb_menu.append = self.usb_menu.append_text
+            
+            self.auth_menu.connect('changed', self.auth_changed)
+            
+            self.box_drive = gtk.HBox(homogeneous, 0)
+            
+            self.drive_label = gtk.Label("USB (FAT only)")
+            self.drive_label.set_width_chars(22)
+            self.drive_label.set_alignment(0,0.5)
+            self.box_drive.pack_start(self.drive_label, expand, fill, padding)
+            
+            self.box_drive.pack_start(self.drive_menu, True, True, padding)
+            
+            self.drive_refresh = gtk.Button('Refresh')
+            self.drive_refresh.connect('clicked', self.showDrive)
+            
+            self.box_drive.pack_start(self.drive_refresh, False, False, padding)
+            
+            
+            drv_blnk = gtk.Label('')
+            self.box_drive.pack_start(drv_blnk, False, False, 0)
+            
+            self.drive_list = []
+            
+            #self.box_drive.pack_start(self.usb_menu, True, True, padding)
+            
+            self.check_box_pass = gtk.CheckButton("Show Password")
+            self.check_box_pass.connect("toggled", self.entry_check_box_pass, self.check_box_pass)
+            self.check_box_pass.set_active(False)
+            self.box_drive.pack_end(self.check_box_pass, False, False, 0)
+            
+            
+            self.usb_list = []
+            
+            self.box_auth = gtk.HBox(homogeneous, 0)
+            
+            self.auth_label = gtk.Label("Auth Level")
+            self.auth_label.set_width_chars(22)
+            self.auth_label.set_alignment(0,0.5)
+            self.box_auth.pack_start(self.auth_label, expand, fill, padding)
+            self.auth_menu.append_text('Admin')
+            self.auth_menu.append_text('User')
+            self.auth_menu.set_active(0)
+            self.box_auth.pack_start(self.auth_menu, False, False, padding)
+            
+            self.buttonBox.pack_start(self.setup_next, False, False, padding)
+
+            self.buttonBox.pack_start(self.changePW_button, False, False, padding)
+            self.buttonBox.pack_start(self.revertUser_button, False, False, padding)
+            self.buttonBox.pack_start(self.revertPSID_button, False, False, padding)
+            self.buttonBox.pack_start(self.pbaUnlockReboot, False, False, padding)
+            self.buttonBox.pack_start(self.pbaUnlockOnly, False, False, padding)
+            self.buttonBox.pack_start(self.updatePBA_button, False, False, padding)
+            self.buttonBox.pack_start(self.revertOnly_button, False, False, padding)
+            self.buttonBox.pack_start(self.viewLog, False, False, padding)
+            self.buttonBox.pack_start(self.setupUSB_button, False, False, padding)
+            self.buttonBox.pack_start(self.setupUserPW, False, False, padding)
+            self.buttonBox.pack_start(self.removeUser_button, False, False, padding)
+            
+            self.buttonBox.pack_start(self.cancel_button, False, False, padding)
+            
+            self.pass_dialog()
+            self.new_pass_dialog()
+            
+            self.mbr_radio = gtk.RadioButton(None, 'Write Preboot Image to Shadow MBR')
+            self.skip_radio = gtk.RadioButton(self.mbr_radio, 'I already have another drive or USB for unlocking this drive')
+            self.mbr_radio.connect('toggled', self.hideUSB)
+            self.skip_radio.connect('toggled', self.hideUSB)
+            
+            halign = gtk.Alignment(1,0,0,0)
+            halign.add(self.buttonBox)
+            self.vbox.pack_end(halign, False, False, padding)
+            self.vbox.pack_end(self.skip_radio, False)
+            self.vbox.pack_end(self.mbr_radio, False)
+            self.vbox.pack_end(self.box_drive, False)
+            self.vbox.pack_end(self.box_revert_agree, False)
+            self.vbox.pack_end(self.box_psid, False)
+            self.vbox.pack_end(self.box_newpass_confirm, False)
+            self.vbox.pack_end(self.box_newpass, False)
+            self.vbox.pack_end(self.box_pass, False)
+            self.vbox.pack_end(self.box_auth, False)
+            
+            self.hbox.set_border_width(20)
+            
+            self.hbox.pack_start(self.vbox, True, True, padding)
+            self.vbox0.pack_start(self.hbox, True, True, padding)
+            
+            self.add(self.vbox0)
+            
+            self.show_all()
+            self.hideAll()
+            
+            if self.up_to_date:
+                self.update_link.hide()
+            
+            self.load_instr.hide()
+            
+            self.select_box.show()
+            self.box_dev.show()
+            if self.VERSION == 2 or self.PBA_VERSION == 1:
+                self.userSetup_box.hide()
+            
+            
+            self.main_instr.show()
+            self.op_label.show()
+            
+            
+            
+            if self.VERSION != -1:
+                runscan.run_scan(None, self, True)
+            else:
+                self.disable_menu()
+                self.no_license_instr.show()
+                self.licManager_button.show()
+            
+            
+            if self.DEV_OS == 'Windows':
+                self.addMsgHandler(WM_DEVICECHANGE, self.onDeviceChange)
+                self.addMsgHandler(WM_POWERBROADCAST, self.onPowerBroadcast)
+                self.addMsgHandler(WM_QUERYENDSESSION, self.onEndSession)
+                self.hookWndProc()
+            
+            ##print self.devs_list
+            ##print self.vendor_list
+            ##print self.sn_list
+            ##print self.salt_list
+            ##print self.msid_list
+            ##print self.series_list
+            
+            ##print self.locked_list
+            ##print self.setup_list
+            ##print self.nonsetup_list
+            ##print self.tcg_list
+            
+            
+            #if len(self.devs_list) == 0:
+            #    self.msg_err('No drives detected, try running this application with Administrator.')
+            #    gtk.main_quit()
+                    
+            self.connect("delete_event", self.on_delete_event)
+                        
+                
+                
+            #else:
+            #    self.msg_err('No valid license of Opal Lock found, please register to get demo license or buy basic/premium license')
+            #    gtk.main_quit()
                
         def display_single(self, *args):
             homogeneous = False
@@ -865,7 +912,7 @@ if __name__ == "__main__":
             self.select_box.pack_start(self.dev_select, True, True, padding)
             
             self.dev_select.connect('changed', self.changed_cb)
-
+            
             #self.dev_single = gtk.Entry()
             #self.dev_single.set_width_chars(35)
             #self.dev_single.set_sensitive(False)
@@ -958,11 +1005,11 @@ if __name__ == "__main__":
             
             
             dev_info.pack_start(pbaver_box, False, False, 1)
-
-
-
+            
+            
+            
             #opal_info
-                
+            
             #opal_label = gtk.Label(" TCG information")
             #opal_label.show()
             #opal_info.pack_start(opal_label, False, False, padding)
@@ -1074,24 +1121,8 @@ if __name__ == "__main__":
             
             self.box_dev.pack_start(frm_d, True, True, padding)
             self.box_dev.pack_start(frm_o, True, True, padding)
-            self.vbox.pack_start(self.box_dev, False, False, 0)
-
-            self.driveInformation = gtk.HBox(False, 0)
-            self.driveCount = gtk.Label("")
-            self.driveCount.set_alignment(0,0.5)
-            self.driveCount.set_text("Total number of the drives : " + str(len(self.devs_list)))
-
-            self.tcgCount = gtk.Label("")
-            self.tcgCount.set_alignment(0, 0.5)
-            self.tcgCount.set_text("Total number of TCG drives : " + str(len(self.tcg_list)))
-            self.driveInformation.pack_start(self.driveCount, False, False, 0)
-            self.driveInformation.pack_start(self.tcgCount, False, False, 10)
-            self.vbox.pack_start(self.driveInformation, False, False, 0)
-
-            # self.vbox.pack_start(self.box_dev, True, True, 0)
-            # self.vbox.queue_draw_area(0, 0, 0, 10)
-            # self.vbox.queue_resize();
-
+            
+            self.vbox.pack_start(self.box_dev, False)
             
         def display_grid(self,*args):
             self.selectAll_check = gtk.CheckButton('Select/Deselect All')
@@ -1107,21 +1138,28 @@ if __name__ == "__main__":
             cell_check = gtk.CellRendererToggle()
             cell_check.connect('toggled', self.grid_ms_toggle)
             self.tvcolumn[0] = gtk.TreeViewColumn(column_names[0], cell_check, active=0, visible=4)
+            self.tvcolumn[0].set_min_width(50)
+            self.tvcolumn[0].set_alignment(0.5)
             self.treeview.append_column(self.tvcolumn[0])
             
             cell_dev = gtk.CellRendererText()
             cell_dev.set_property('editable', False)
             self.tvcolumn[1] = gtk.TreeViewColumn(column_names[1], cell_dev, text=1)
+            self.tvcolumn[1].set_min_width(160)
+            self.tvcolumn[1].set_alignment(0.5)
             self.treeview.append_column(self.tvcolumn[1])
             
             cell_model = gtk.CellRendererText()
             cell_model.set_property('editable', False)
             self.tvcolumn[2] = gtk.TreeViewColumn(column_names[2], cell_model, text=2)
+            self.tvcolumn[2].set_min_width(160)
+            self.tvcolumn[2].set_alignment(0.5)
             self.treeview.append_column(self.tvcolumn[2])
             
             cell_sn = gtk.CellRendererText()
             cell_sn.set_property('editable', False)
             self.tvcolumn[3] = gtk.TreeViewColumn(column_names[3], cell_sn, text=3)
+            self.tvcolumn[3].set_alignment(0.5)
             self.treeview.append_column(self.tvcolumn[3])
             
             self.scrolledWin_grid = gtk.ScrolledWindow()
@@ -1158,7 +1196,7 @@ if __name__ == "__main__":
                     self.liststore.set_value(iter, 0, value)
                 iter = self.liststore.iter_next(iter)
                 index = index + 1
-
+            
         def grid_ms_toggle(self, cell, path, data=None):
             if (self.op_prompt == 2 and self.warned == True): #Checks if the the user is on a warned window in the Setup Drive, resets the the process if drive checkbox is toggled - Lokesh
                 self.setup_prompt1()
@@ -1363,12 +1401,8 @@ if __name__ == "__main__":
 
         def onEndSession(self,wParam, lParam):
             background.endSession(self, wParam, lParam)
-
+        
         def changed_cb(self, entry):
-            # Resets the setup action if the user changes the drive midway needs to be tested again.
-            if self.warned == True:
-                self.setup_prompt1()
-                self.warned = False
             verify.licCheck(self)
             #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
             #    self.check_pass_rd.set_active(False)
@@ -1408,7 +1442,8 @@ if __name__ == "__main__":
                         else:
                             self.box_auth.hide()
                             self.auth_menu.set_active(0)
-                    self.na_instr.show()
+                    if not self.scan_ip:
+                        self.na_instr.show()
             elif self.view_state == 2:
                 if act_idx in self.setup_list and (self.op_prompt != 6 or self.setupuser_list[act_idx] != 'Yes') and (self.op_prompt != 12 or self.setupuser_list[act_idx] != 'No') and (self.op_prompt != 3 or self.datastore_list[act_idx] == 'Supported'):
                     self.na_instr.hide()
@@ -1453,7 +1488,8 @@ if __name__ == "__main__":
                         else:
                             self.box_auth.hide()
                             self.auth_menu.set_active(0)
-                    self.na_instr.show()
+                    if not self.scan_ip:
+                        self.na_instr.show()
             elif self.view_state == 4:
                 if act_idx in self.nonsetup_list and (self.VERSION != 2 or self.datastore_list[act_idx] == 'Supported'):
                     self.na_instr.hide()
@@ -1473,7 +1509,8 @@ if __name__ == "__main__":
                         self.na_instr.set_text('Standard version only supports drives that support preboot image.')
                     else:
                         self.na_instr.set_text('This drive is not a TCG drive.')
-                    self.na_instr.show()
+                    if not self.scan_ip:
+                        self.na_instr.show()
             elif self.view_state == 5:
                 if act_idx in self.tcg_list:
                     self.na_instr.hide()
@@ -1488,7 +1525,8 @@ if __name__ == "__main__":
                     self.op_instr.hide()
                     self.disable_entries_buttons()
                     self.na_instr.set_text('This drive is not a TCG drive.')
-                    self.na_instr.show()
+                    if not self.scan_ip:
+                        self.na_instr.show()
             elif self.view_state == 6:
                 if act_idx in self.tcg_list and self.datastore_list[act_idx] == 'Supported':
                     self.na_instr.hide()
@@ -1519,7 +1557,8 @@ if __name__ == "__main__":
                             else:
                                 self.box_auth.hide()
                                 self.auth_menu.set_active(0)
-                    self.na_instr.show()
+                    if not self.scan_ip:
+                        self.na_instr.show()
                     
             elif self.view_state == 7:# and act_idx >= 0:
                 #index = self.sel_list[act_idx]
@@ -1541,7 +1580,8 @@ if __name__ == "__main__":
                         self.na_instr.set_text('Preboot image is not supported on this drive.')
                     else:
                         self.na_instr.set_text('This drive is not a TCG drive.')
-                    self.na_instr.show()
+                    if not self.scan_ip:
+                        self.na_instr.show()
                 #if self.pba_list[index] == 'Not Supported': #change to get rid of usb radio, disable mbr_radio
                 #    self.na_instr.set_text('Preboot image is not supported on this drive.')
                 #    self.na_instr.show()
@@ -1716,14 +1756,11 @@ if __name__ == "__main__":
             
      
             if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                print "VERSION: " + str(self.VERSION) + " PBA_VERSION: " + str(self.PBA_VERSION)
                 self.check_pass_rd = gtk.CheckButton("Read password from USB")
                 self.check_pass_rd.connect("toggled", self.check_passRead)
                 self.check_pass_rd.show()
                 self.check_pass_rd.set_tooltip_text('Authenticate using the drive\'s password file from USB')
                 self.box_pass.pack_end(self.check_pass_rd, False, False, padding)
-                print "tcgList = > " + str(self.tcg_list)
-                print "devs_list = > " + str(self.devs_list)
          
         def new_pass_dialog(self, *args):
             homogeneous = False
@@ -1745,7 +1782,6 @@ if __name__ == "__main__":
             self.box_newpass.pack_start(self.new_pass_entry, False, False, padding)
      
             if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                print "VERSION: " + str(self.VERSION) + " PBA_VERSION: " + str(self.PBA_VERSION)
                 self.pass_sav = gtk.CheckButton("Save to USB")
                 self.pass_sav.connect("clicked", self.showDrive)
                 self.pass_sav.show()
@@ -1831,6 +1867,13 @@ if __name__ == "__main__":
             res = message.run()
             message.destroy()
             
+        def msg_warn(self, msg):
+            message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK, parent = self)
+            message.set_markup(msg)
+            
+            res = message.run()
+            message.destroy()
+            
         def msg_ok(self, msg):
             message = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_OK, parent = self)
             message.set_markup(msg)
@@ -1847,7 +1890,7 @@ if __name__ == "__main__":
             self.box_dev.show()
             if self.VERSION == 2 or self.PBA_VERSION == 1:
                 self.userSetup_box.hide()
-            self.op_label.set_text('Main')
+            self.op_label.set_text('')
             self.main_instr.show()
             self.op_instr.hide()
             self.op_prompt = 0
@@ -1913,8 +1956,11 @@ if __name__ == "__main__":
             self.op_prompt = 2
             
             self.cancel_button.show()
-            self.op_label.set_text('Set Up Drive(s)')
-            self.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Set up Drive(s)\'.')
+            self.op_label.set_text('Set Up Drive')
+            if self.VERSION == 3:
+                self.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Set up Drive(s)\'.')
+            else:
+                self.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Set up Drive\'.')
             
             if self.view_state != 4:
                 self.view_state = 4
@@ -2014,7 +2060,7 @@ if __name__ == "__main__":
                     
             else:
                 self.naDevices_instr.show()
-
+            
         def setupUser_prompt(self, *args):
             verify.licCheck(self)
             self.hideAll()
@@ -2361,8 +2407,9 @@ if __name__ == "__main__":
                 self.userSetup_box.hide()
             self.cancel_button.show()
             self.op_label.set_text('Set up USB')
-            self.op_instr.set_text('This will write the bootable image to a USB drive.\nYou can then use the USB drive to unlock the selected drive.\nWARNING: Setting up the USB will erase its contents, use an empty USB.')
-            
+            markupString = 'This will write the bootable image to a USB drive.\nYou can then use the USB drive to unlock the selected drive.\n <span foreground="red">WARNING: Setting up the USB will erase its contents, use an empty USB.</span>'
+            self.op_instr.set_markup(markupString)
+           
             self.op_prompt = 5
             
             curr_idx = self.dev_select.get_active()
@@ -2429,7 +2476,7 @@ if __name__ == "__main__":
                     else:
                         self.mode_toggled(None)
             
-            self.op_label.set_text('Remove Lock and Erase Data')
+            self.op_label.set_text('Revert Setup and Erase Data')
             self.op_instr.set_text('Revert with Password reverts the drive\'s LockingSP.\nThis resets the drive\'s password and disables locking.\nEnter the drive\'s password and choose whether or not to erase all data.')
             self.cancel_button.show()
             
@@ -2498,8 +2545,8 @@ if __name__ == "__main__":
             if self.VERSION == 2 or self.PBA_VERSION == 1:
                 self.userSetup_box.hide()
             self.cancel_button.show()
-            self.op_label.set_text('Remove Lock and Erase Data with PSID')
-            self.op_instr.set_text('Reverting with PSID reverts the drive to manufacturer settings and erases all data.\nEnter the drive\'s PSID and press \'Remove Lock with PSID\' . \n \n \n You will get the PSID on the label of the drive')
+            self.op_label.set_text('Revert Setup and Erase Data with PSID')
+            self.op_instr.set_text('Reverting with PSID reverts the drive to manufacturer settings and erases all data.\nEnter the drive\'s PSID and press \'Revert Setup with PSID\'.')
             
             self.op_prompt = 11
             
@@ -2511,7 +2558,7 @@ if __name__ == "__main__":
                 self.view_state = 5
             if len(self.devs_list) > 1:
                 self.select_instr.show()
-
+                
             if len(self.devs_list) > 0:
                 self.box_psid.show()
                 self.box_revert_agree.show()
@@ -2586,10 +2633,12 @@ if __name__ == "__main__":
                     self.new_pass_entry.hide()
                 
                 self.check_exclusive = True
-                
-                self.pbaUnlockReboot.show()
                 self.pbaUnlockOnly.show()
-                self.set_default(self.pbaUnlockReboot)
+                if self.VERSION == 1:
+                    self.pbaUnlockReboot.show()
+                    self.set_default(self.pbaUnlockReboot)
+                else:
+                    self.set_default(self.pbaUnlockOnly)
                 
                 self.box_drive.show()
                 self.drive_label.hide()
@@ -2658,8 +2707,8 @@ if __name__ == "__main__":
                     else:
                         self.mode_toggled(None)
             
-            self.op_label.set_text('Remove Lock and Keep Data')
-            self.op_instr.set_text('Reverting a drive disables locking and resets the drive password.\nEnter the password and press \'Remove Lock\'.')
+            self.op_label.set_text('Revert Setup and Keep Data')
+            self.op_instr.set_text('Reverting a drive disables locking and resets the drive password.\nEnter the password and press \'Revert Setup\'.')
             self.cancel_button.show()
             
             
@@ -2770,7 +2819,6 @@ if __name__ == "__main__":
             
             self.revertOnly_button.hide()
             self.viewLog.hide()
-            self.pbaUSB_button.hide()
             
             self.box_newpass.hide()
             self.box_newpass_confirm.hide()
@@ -2795,6 +2843,9 @@ if __name__ == "__main__":
             self.check_exclusive = False
             self.check_both = False
             
+            self.no_license_instr.hide()
+            self.licManager_button.hide()
+            
             if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
                 self.pass_sav.set_sensitive(True)
                 self.pass_sav.set_active(False)
@@ -2816,14 +2867,14 @@ if __name__ == "__main__":
             self.orig = ''
             
             self.mode_setupUSB = False
-
+            
         def start_spin(self, *args):
             self.op_instr.hide()
             self.disable_menu()
             self.waitSpin.show()
             self.waitSpin.start()
             self.canDestroyMain = False
-
+            
         def stop_spin(self, *args):
             self.enable_menu()
             self.waitSpin.stop()
@@ -2835,12 +2886,7 @@ if __name__ == "__main__":
             self.wait_instr.hide()
             self.multi_wait_instr.hide()
             self.canDestroyMain = True
-            self.pass_dialog()
-            self.driveCount.set_text("Total number of the drives : " + str(len(self.devs_list)))
-            self.tcgCount.set_text("Total number of TCG drives : " + str(len(self.tcg_list)))
-
-
-
+            
         def mode_toggled(self, button):
             verify.licCheck(self)
             if self.toggleSingle_radio.get_active():
@@ -3212,7 +3258,8 @@ if __name__ == "__main__":
             if self.DEV_OS == 'Windows':
                 background.exitMV(self, 0)
                 self.unhookWndProc()
-            os.remove('checkInstance.txt')
+            if path.exists('checkInstance.txt'):
+                os.remove('checkInstance.txt')
             gtk.main_quit()
             
         def exitX(self, *args):
@@ -3229,7 +3276,8 @@ if __name__ == "__main__":
             if proceed:
                 if self.DEV_OS == 'Windows':
                     background.exitMV(self, 0)
-                os.remove('checkInstance.txt')
+                if path.exists('checkInstance.txt'):
+                    os.remove('checkInstance.txt')
                 gtk.main_quit()
                 return False
             else:
@@ -3240,24 +3288,27 @@ if __name__ == "__main__":
             if self.DEV_OS == 'Windows':
                 background.exitMV(self, 0)
                 self.unhookWndProc()
-            os.remove('checkInstance.txt')
+            if path.exists('checkInstance.txt'):
+                os.remove('checkInstance.txt')
             gtk.main_quit()
                 
         def shutdown(self, *args):
             self.shutdown_req = True
             if self.DEV_OS == 'Windows':
-                unmountPC(self, 0)
-                exitMV(self, 1)
+                background.unmountPC(self, 0)
+                background.exitMV(self, 1)
                 self.unhookWndProc()
-            os.remove('checkInstance.txt')
+            if path.exists('checkInstance.txt'):
+                os.remove('checkInstance.txt')
             gtk.main_quit()
             
         def hibernate(self, *args):
-            unmountPC(self, 1)
+            background.unmountPC(self, 1)
 
-        # '''For catching the on_delete  event and checking if the main destroy can be destroyed - @author : Lokesh'''
         def on_delete_event(self, widget, event = None):
             if self.canDestroyMain == True:
+                if path.exists('checkInstance.txt'):
+                    os.remove('checkInstance.txt')
                 return False
             else:
                 info = 'This window cannot be closed until the current operation is done'
@@ -3267,31 +3318,17 @@ if __name__ == "__main__":
                 dialog.destroy()
                 return True
 
+        def openLicenseManager(self, *args):
+            subprocess.Popen(['.\QLMwizardFidelity\QlmLicenseWizard.exe','/settings','.\QLMwizardFidelity\Opal Lock 1.0.lw.xml'])
 
+        '''For catching the destroy event for the first instance and making appropriate clean up - @author : Lokesh''' 
+        #def on_destroy(self): 
+        #    os.remove('checkInstance.txt') #Removes the file after closing the main application window.
+        
         def run(self):
             ''' Run the app. '''
-            #Before running the gtk.main(), this will check if an instance of the application is already running 
-            instanceCheck ='' 
-            fileExists = path.exists('checkInstance.txt') 
-            if fileExists: 
-                fr = open("checkInstance.txt", "r") 
-                if fr.mode == "r": 
-                    instanceCheck = str(fr.read()) 
-                fr.close(); 
-            if instanceCheck != 'InstanceIsRunning!':
-                #Run the app no other instance is running
-                fw = open("checkInstance.txt", "w+")
-                fw.write('InstanceIsRunning!')
-                fw.close()
-                gtk.main()
-                #LockApp.connect('destroy_event', LockApp.on_destroy(self))
-            else: 
-                #Throw the info box for the user that an instance of the application is already running. 
-                info  =  'An instance of Opal Lock is already running!!' 
-                dialog = gtk.MessageDialog(type=gtk.MESSAGE_INFO,message_format=info,buttons=gtk.BUTTONS_OK) 
-                dialog.set_title('Opal Lock Info') 
-                dialog.run() 
-                dialog.destroy()
+            gtk.main() 
+            
             #self.unhookWndProc()
             if self.shutdown_req:
                 if self.ostype == 0:
@@ -3308,6 +3345,56 @@ if __name__ == "__main__":
                 elif self.ostype == 2 :
                     os.system("sudo reboot now")  
             
+            
+    
     runop.define_lock_t()
-    app = LockApp()
-    app.run()
+    #Before running the gtk.main(), this will check if an instance of the application is already running 
+    instanceCheck ='' 
+    fileExists = path.exists('checkInstance.txt') 
+    if fileExists: 
+        fr = open("checkInstance.txt", "r") 
+        if fr.mode == "r": 
+            instanceCheck = str(fr.read()) 
+        fr.close(); 
+    if instanceCheck != 'InstanceIsRunning!': 
+        is_admin = False
+        try:
+            t1 = os.getuid()
+            if t1 == 0:
+                is_admin = True
+        except AttributeError:
+            t1 = ctypes.windll.shell32.IsUserAnAdmin()
+            if t1 != 0:
+                is_admin = True
+        if is_admin or platform.system() == 'Linux':
+            #Run the app no other instance is running 
+            fw = open("checkInstance.txt", "w+") 
+            fw.write('InstanceIsRunning!') 
+            fw.close() 
+            app = LockApp()
+            app.run()
+            #LockApp.connect('destroy_event', LockApp.on_destroy(self)) 
+        else:
+            theme = os.path.join(os.getcwd(), 'gtkrc')
+            gtk.rc_set_default_files([theme])
+            gtk.rc_reparse_all_for_settings(gtk.settings_get_default(), True)
+            #gtk.rc_reset_styles(gtk.settings_get_for_screen(self.get_screen()))
+            info  =  'Opal Lock must be run as Administrator.' 
+            dialog = gtk.MessageDialog(type=gtk.MESSAGE_INFO,message_format=info,buttons=gtk.BUTTONS_OK) 
+            dialog.set_title('Opal Lock Info') 
+            dialog.run() 
+            dialog.destroy()
+            
+    else: 
+        #Throw the info box for the user that an instance of the application is already running. 
+        if platform.system() == 'Windows':
+            theme = os.path.join(os.getcwd(), 'gtkrc')
+            gtk.rc_set_default_files([theme])
+            gtk.rc_reparse_all_for_settings(gtk.settings_get_default(), True)
+            #gtk.rc_reset_styles(gtk.settings_get_for_screen(self.get_screen()))
+        info  =  'An instance of Opal Lock is already running!!' 
+        dialog = gtk.MessageDialog(type=gtk.MESSAGE_INFO,message_format=info,buttons=gtk.BUTTONS_OK) 
+        dialog.set_title('Opal Lock Info') 
+        dialog.run() 
+        dialog.destroy()
+        

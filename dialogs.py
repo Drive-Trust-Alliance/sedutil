@@ -10,6 +10,7 @@ import runthread
 import csv
 import threading
 import verify
+import pango
 
 class QueryDialog(gtk.Window):
     def __init__(self, parent, queryTextList):
@@ -208,7 +209,7 @@ class QueryDialog(gtk.Window):
         self.spinQ.stop()
         self.spinQ.hide()
         
-    def saveToText(self, parent):
+    def saveToText(self, _, parent):
         verify.licCheck(parent)
         chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_SAVE,buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK))
         chooser.set_do_overwrite_confirmation(True)
@@ -495,9 +496,9 @@ class AuditDialog(gtk.Dialog):
                               33: 'Drive unlock failed',
                               34: 'Preboot unlock from MBR failed',
                               35: 'Preboot unlock from USB failed',
-                              36: 'Remove lock failed',
-                              37: 'Remove lock and erase data failed',
-                              38: 'Remove lock and erase data using PSID failed',
+                              36: 'Revert setup failed',
+                              37: 'Revert setup and erase data failed',
+                              38: 'Revert setup and erase data using PSID failed',
                               39: 'Query information Access Failed',
                               40: 'Audit Log Access Failed'})
 
@@ -664,7 +665,7 @@ def openLog(button, parent, *args):
         
 class OpalDialog(gtk.Dialog):
     def __init__(self, parent):
-        columns = ['Drive', 'Model Number', 'Serial Number', 'TCG Version']
+        columns = ['Drive', 'Model No.', 'Serial Number', 'TCG Version']
         gtk.Dialog.__init__(self, 'TCG Drives', parent, 0, (gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE))
         self.set_border_width(10)
         self.set_default_size(500, 500)
@@ -684,6 +685,8 @@ class OpalDialog(gtk.Dialog):
         for i in range(len(columns)):
             cell = gtk.CellRendererText()
             col = gtk.TreeViewColumn(columns[i], cell, text=i)
+            col.set_min_width(170)
+            col.set_alignment(0.5)
             col.set_sort_column_id(gtk.SORT_ASCENDING)
             col.set_sort_indicator(True)
             tvOpal.append_column(col)
@@ -714,8 +717,13 @@ class USBDialog(gtk.Dialog):
 
 
         box = self.get_content_area()
-        
+
         usb_instr = gtk.Label('Select a USB.\nA bootable USB will be created with the preboot image embedded in it.\nAfter the USB is set up, it can be used to unlock the selected drive.\nWARNING: All data on the USB will be erased (except for any previously saved password files).')
+        attr = pango.AttrList()
+        fg_color = pango.AttrForeground(65535, 0, 0, 154, 249)
+        attr.insert(fg_color)
+        usb_instr.set_attributes(attr)
+        
         
         self.na_instr = gtk.Label('No USB detected. Insert a USB and press \'Rescan\' to continue.')
         
@@ -908,7 +916,7 @@ def show_about(button, parent, *args):
     m = re.search(regex_ver, txtVersion)
     ver_parse = m.group(1)
     
-    aboutWin.set_version('GUI v0.24.3')
+    aboutWin.set_version('GUI v0.25.1')
     aboutWin.set_comments('Opal Lock Version: ' + ver_parse)
     aboutWin.set_copyright('(c) 2019 Fidelity Height LLC. All rights reserved.')
     if parent.VERSION != 1:
@@ -922,7 +930,7 @@ def show_about(button, parent, *args):
     
 class SetPowerDialog(gtk.Dialog):
     def __init__(self, parent, mode):
-        gtk.Dialog.__init__(self, 'Power Settings', parent, 0, ('Apply and Close', gtk.RESPONSE_APPLY))
+        gtk.Dialog.__init__(self, 'Power Settings', parent, 0, ('Apply and Close', gtk.RESPONSE_APPLY, 'Skip', gtk.RESPONSE_CANCEL))
         
         self.set_default_size(300, 300)
         
