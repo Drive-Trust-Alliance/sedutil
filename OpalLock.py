@@ -1138,21 +1138,28 @@ if __name__ == "__main__":
             cell_check = gtk.CellRendererToggle()
             cell_check.connect('toggled', self.grid_ms_toggle)
             self.tvcolumn[0] = gtk.TreeViewColumn(column_names[0], cell_check, active=0, visible=4)
+            self.tvcolumn[0].set_min_width(50)
+            self.tvcolumn[0].set_alignment(0.5)
             self.treeview.append_column(self.tvcolumn[0])
             
             cell_dev = gtk.CellRendererText()
             cell_dev.set_property('editable', False)
             self.tvcolumn[1] = gtk.TreeViewColumn(column_names[1], cell_dev, text=1)
+            self.tvcolumn[1].set_min_width(160)
+            self.tvcolumn[1].set_alignment(0.5)
             self.treeview.append_column(self.tvcolumn[1])
             
             cell_model = gtk.CellRendererText()
             cell_model.set_property('editable', False)
             self.tvcolumn[2] = gtk.TreeViewColumn(column_names[2], cell_model, text=2)
+            self.tvcolumn[2].set_min_width(160)
+            self.tvcolumn[2].set_alignment(0.5)
             self.treeview.append_column(self.tvcolumn[2])
             
             cell_sn = gtk.CellRendererText()
             cell_sn.set_property('editable', False)
             self.tvcolumn[3] = gtk.TreeViewColumn(column_names[3], cell_sn, text=3)
+            self.tvcolumn[3].set_alignment(0.5)
             self.treeview.append_column(self.tvcolumn[3])
             
             self.scrolledWin_grid = gtk.ScrolledWindow()
