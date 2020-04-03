@@ -685,6 +685,8 @@ class OpalDialog(gtk.Dialog):
         for i in range(len(columns)):
             cell = gtk.CellRendererText()
             col = gtk.TreeViewColumn(columns[i], cell, text=i)
+            col.set_min_width(170)
+            col.set_alignment(0.5)
             col.set_sort_column_id(gtk.SORT_ASCENDING)
             col.set_sort_indicator(True)
             tvOpal.append_column(col)
