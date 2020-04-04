@@ -36,3 +36,10 @@ Source code is available on GitHub at https://github.com/Drive-Trust-Alliance/se
 Linux and Windows executables are available at https://github.com/Drive-Trust-Alliance/sedutil/wiki/Executable-Distributions
 
 If you are looking for the PSID revert function see linux/PSIDRevert_LINUX.txt or win32/PSIDRevert_WINDOWS.txt
+=======
+# py-gui
+merge py-src and py repo
+pull gui py directory from util repo
+python source code not avilable to py repository with collaborator
+
+
