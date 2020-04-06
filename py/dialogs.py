@@ -12,12 +12,11 @@ import threading
 import verify
 import pango
 
-class QueryDialog(gtk.Window):
+class QueryDialog(gtk.Dialog):
     def __init__(self, parent, queryTextList):
         self.queryWinText = ''.join(queryTextList)
     
-        gtk.Window.__init__(self)
-        self.set_title('Query Drive')
+        gtk.Dialog.__init__(self, 'Query Drive', parent,0)
         self.set_border_width(10)
         
         scrolledWin = gtk.ScrolledWindow()
@@ -27,8 +26,8 @@ class QueryDialog(gtk.Window):
         if os.path.isfile('icon.ico'):
             self.set_icon_from_file('icon.ico')
         
-        queryVbox = gtk.VBox(False,0)
-        
+        queryVbox = self.get_content_area()
+
         queryTextView = gtk.TextView()
         queryTextView.set_editable(False)
         self.queryTextBuffer = queryTextView.get_buffer()
@@ -904,29 +903,56 @@ class USBDialog(gtk.Dialog):
              
 def show_about(button, parent, *args):
     verify.licCheck(parent)
-    aboutWin = gtk.AboutDialog()
-    aboutWin.set_program_name('Opal Lock')
     prefix = ''
-    
     if parent.DEV_OS != 'Windows':
         prefix = 'sudo '
-    
     txtVersion = os.popen(prefix + "sedutil-cli --version" ).read()
     regex_ver = 'Fidelity Lock Version\s*:\s*(.*)'
     m = re.search(regex_ver, txtVersion)
     ver_parse = m.group(1)
-    
-    aboutWin.set_version('GUI v0.25.1')
-    aboutWin.set_comments('Opal Lock Version: ' + ver_parse)
-    aboutWin.set_copyright('(c) 2019 Fidelity Height LLC. All rights reserved.')
-    if parent.VERSION != 1:
-        aboutWin.set_logo(gtk.gdk.pixbuf_new_from_file('icon.ico'))
-    
-    
-    
-    aboutWin.run()
-    
-    aboutWin.destroy()
+
+
+    aboutDialog = gtk.Dialog('About', parent, 0, ())
+
+    vbox = aboutDialog.get_content_area()
+
+    hboxIcon = gtk.HBox(False, 0)
+    hboxIcon.show()
+    hboxFirst = gtk.HBox(False, 0)
+    hboxFirst.show()
+    hboxSecond = gtk.HBox(False, 0)
+    hboxSecond.show()
+    hboxThird = gtk.HBox(False, 0)
+    hboxThird.show()
+
+    appFirstLabel = gtk.Label()
+    firstString = '<span size="20" weight="bold">Opal Lock GUI v0.25.1</span>'
+    appFirstLabel.set_markup(firstString)
+    appFirstLabel.show()
+    appIcon = gtk.Image()
+    appIcon.set_from_file('icon.ico')
+    appIcon.show()
+    appSecondLabel = gtk.Label()
+    secondStr = 'Opal Lock Version: ' + ver_parse
+    appSecondLabel.set_text(secondStr)
+    appSecondLabel.show()
+    appThirdLable = gtk.Label()
+    appThirdLable.set_text("(c) 2019 Fidelity Height LLC. All rights reserved.")
+    appThirdLable.show()
+
+    hboxIcon.pack_start(appIcon, True, True, 20)
+    hboxFirst.pack_start(appFirstLabel, True, True, 20)
+    hboxSecond.pack_start(appSecondLabel, True, True, 20)
+    hboxThird.pack_end(appThirdLable, True, True, 20)
+
+    aboutDialog.vbox.pack_start(hboxIcon, True, True, 10)
+    aboutDialog.vbox.pack_start(hboxFirst, True, True, 10)
+    aboutDialog.vbox.pack_start(hboxSecond, True, True, 10)
+    aboutDialog.vbox.pack_start(hboxThird, True, True, 10)
+
+    aboutDialog.run()
+    aboutDialog.destroy()
+
     
 class SetPowerDialog(gtk.Dialog):
     def __init__(self, parent, mode):
