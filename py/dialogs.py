@@ -936,7 +936,7 @@ def show_about(button, parent, *args):
         hboxThird.show()
 
         appFirstLabel = gtk.Label()
-        firstString = '<span size="20" weight="bold">Opal Lock GUI v0.25.1</span>'
+        firstString = '<span size="20" weight="bold">Opal Lock GUI v0.25.2</span>'
         appFirstLabel.set_markup(firstString)
         appFirstLabel.show()
         appIcon = gtk.Image()
