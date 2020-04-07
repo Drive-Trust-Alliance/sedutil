@@ -328,6 +328,10 @@ if __name__ == "__main__":
             self.hbox = gtk.HBox(False,0)
             self.vbox = gtk.VBox(False,5)
             
+            self.passwordErrorLabel = gtk.Label('')
+            self.passwordErrorLabel.set_alignment(0, 0.5)
+            self.passwordErrorLabel.show()
+
             self.menuBar = gtk.MenuBar()
             
             self.navMenu = gtk.Menu()
@@ -797,6 +801,7 @@ if __name__ == "__main__":
             self.vbox.pack_end(self.box_newpass, False)
             self.vbox.pack_end(self.box_pass, False)
             self.vbox.pack_end(self.box_auth, False)
+            self.vbox.pack_end(self.passwordErrorLabel,False)
             
             self.hbox.set_border_width(20)
             
@@ -2823,7 +2828,7 @@ if __name__ == "__main__":
             self.box_dev.hide()
             
             self.scrolledWin_grid.hide()
-            
+            self.passwordErrorLabel.set_markup('')
             self.toggleMulti_radio.hide()
             self.toggleSingle_radio.hide()
         
