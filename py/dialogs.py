@@ -953,7 +953,7 @@ def show_about(button, parent, *args):
         hboxIcon.pack_start(appIcon, True, True, 20)
         hboxFirst.pack_start(appFirstLabel, True, True, 20)
         hboxSecond.pack_start(appSecondLabel, True, True, 20)
-        hboxThird.pack_end(appThirdLable, True, True, 20)
+        hboxThird.pack_end(appThirdLabel, True, True, 20)
 
         aboutDialog.vbox.pack_start(hboxIcon, True, True, 10)
         aboutDialog.vbox.pack_start(hboxFirst, True, True, 10)
