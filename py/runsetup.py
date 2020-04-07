@@ -339,7 +339,7 @@ def rt_pbaWrite(ui, selected_list):
         if actual_d[count] != None:
             fn = ui.salt_list[i]
             password = None
-            if ui.VERSION == 3 and ui.check_pass_rd.get_active():
+            if ui.check_pass_rd.get_active():
                 password = None
                 #(pw, pass_usb) = runprocess.passReadUSB('Admin', ui.devs_list[i], ui.vendor_list[i], ui.sn_list[i])
                 #pw_list.append(pw)
@@ -353,8 +353,8 @@ def rt_pbaWrite(ui, selected_list):
             if os.path.isfile(fn):
                 os.remove(fn)
             ps_ga = 0
-            if ui.VERSION == 3:
-                ps_ga = ui.pass_sav.get_active()
+            #if ui.VERSION == 3:
+            ps_ga = ui.pass_sav.get_active()
             proc_list[count] = Process(target=runupdate.rp_pbaWrite, args=(e_to, i, result_list, status_list, count, password, hash_au_pwd, actual_d[count], ui.prefix, ui.vendor_list[i], ui.sn_list[i], ui.datastore_list[i], ui.user_list[i], ui.VERSION, ui.admin_aol_list[i], ps_ga, ui.drive_menu.get_active_text()))
             proc_list[count].start()
         count = count + 1
@@ -535,7 +535,7 @@ def rt_changePW(ui, selected_list, level):
             (old_hash, pass_usb) = runprocess.passReadUSB(ui.auth_menu.get_active_text(), ui.devs_list[index], ui.vendor_list[index], ui.sn_list[index])
         if old_hash == None or old_hash == 'x':
             noPW = True
-        if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.pass_sav.get_active() and pass_usb == '' and not noPW:
+        if ui.pass_sav.get_active() and pass_usb == '' and not noPW:
             
             drive = ui.drive_menu.get_active_text()
             if ui.DEV_OS == 'Windows':
@@ -594,10 +594,10 @@ def rt_changePW(ui, selected_list, level):
         if not e.is_set():
             if status_final == 0:
                 if ui.auth_menu.get_active() == 0:
-                    if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.pass_sav.get_active():
+                    if ui.pass_sav.get_active():
                         save_status = runprocess.passSaveUSB(new_hash, ui.drive_menu.get_active_text(), ui.vendor_list[index], ui.sn_list[index], pass_usb, ui.auth_menu.get_active_text())
                 else:
-                    if ui.VERSION == 3 and ui.pass_sav.get_active():
+                    if ui.pass_sav.get_active():
                         save_status = runprocess.passSaveUSB(new_hash, ui.drive_menu.get_active_text(), ui.vendor_list[index], ui.sn_list[index], pass_usb, ui.auth_menu.get_active_text())
             def aw_run(dev, i, status_final, save_status, auth, new_hash):
                 timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
@@ -621,7 +621,7 @@ def rt_changePW(ui, selected_list, level):
                                 subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '32' + timeStr, hash_au, 'User' + ui.user_list[i], dev], stdout=pipe)#stderr=log)
                         else:
                             if auth == 0:
-                                if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
+                                if ui.check_pass_rd.get_active():
                                     statusAW = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '25' + timeStr, new_hash, 'Admin1', dev], stdout=pipe)#stderr=log)
                                 statusAW = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '03' + timeStr, new_hash, 'Admin1', dev], stdout=pipe)#stderr=log)
                                 statusAW = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '13' + timeStr, new_hash, 'Admin1', dev], stdout=pipe)#stderr=log)
@@ -652,7 +652,7 @@ def rt_changePW(ui, selected_list, level):
                             os.system(ui.prefix + 'sedutil-cli -n -t -u --auditwrite 32' + timeStr + ' "' + hash_au + '" User' + ui.user_list[i] + ' ' + dev)
                     else:
                         if auth == 0:
-                            if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
+                            if ui.check_pass_rd.get_active():
                                 statusAW = os.system(ui.prefix + 'sedutil-cli -n -t --auditwrite 25' + timeStr + ' "' + new_hash + '" Admin1 ' + dev)
                             statusAW = os.system(ui.prefix + 'sedutil-cli -n -t --auditwrite 03' + timeStr + ' "' + new_hash + '" Admin1 ' + dev)
                             statusAW = os.system(ui.prefix + 'sedutil-cli -n -t --auditwrite 13' + timeStr + ' "' + new_hash + '" Admin1 ' + dev)
@@ -729,7 +729,7 @@ def rt_changePW(ui, selected_list, level):
     for i in selected_list:
         if actual_d[count] != None:
             old_hash = None
-            if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
+            if ui.check_pass_rd.get_active():
                 old_hash = None
                 #old_hash = runprocess.passReadUSB(ui, ui.vendor_list[i], ui.sn_list[i], ui.auth_menu.get_active())
             else:
@@ -791,8 +791,8 @@ def rt_setupUSB(ui, index, index2, e, preserved_files):
             
     if present:
         runop.prelock(index)
-        if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.pass_sav.get_active():
-            if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
+        if ui.pass_sav.get_active():
+            if ui.check_pass_rd.get_active():
                 (hash_pwd, pass_usb) = runprocess.passReadUSB(ui.auth_menu.get_active_text(), dev1, ui.vendor_list[index], ui.sn_list[index])
                 if hash_pwd == None or hash_pwd == 'x':
                     noPW = True
@@ -826,11 +826,11 @@ def rt_setupUSB(ui, index, index2, e, preserved_files):
                                     subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '08' + timeStr, hash_au, 'User' + ui.user_list[index], dev1], stdout=pipe)#stderr=log)
                                     subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '09' + timeStr, hash_au, 'User' + ui.user_list[index], dev1], stdout=pipe)#stderr=log)
                         elif ui.auth_menu.get_active() == 1:
-                            if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
+                            if ui.check_pass_rd.get_active():
                                 subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '26' + timeStr, hash_pwd, 'User1', dev1], stdout=pipe)#stderr=log)
                             subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '06' + timeStr, hash_pwd, 'User1', dev1], stdout=pipe)#stderr=log)
                         else:
-                            if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
+                            if ui.check_pass_rd.get_active():
                                 subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '25' + timeStr, hash_pwd, 'Admin1', dev1], stdout=pipe)#stderr=log)
                             subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '03' + timeStr, hash_pwd, 'Admin1', dev1], stdout=pipe)#stderr=log)
                 else:
@@ -857,11 +857,11 @@ def rt_setupUSB(ui, index, index2, e, preserved_files):
                                 os.system(ui.prefix + 'sedutil-cli -n -t -u --auditwrite 08' + timeStr + ' "' + hash_au + '" User' + ui.user_list[index] + ' ' + dev1)
                                 os.system(ui.prefix + 'sedutil-cli -n -t -u --auditwrite 09' + timeStr + ' "' + hash_au + '" User' + ui.user_list[index] + ' ' + dev1)
                     elif ui.auth_menu.get_active() == 1:
-                        if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
+                        if ui.check_pass_rd.get_active():
                             os.system(ui.prefix + 'sedutil-cli -n -t -u --auditwrite 26' + timeStr + ' "' + hash_pwd + '" User1 ' + dev1)
                         os.system(ui.prefix + 'sedutil-cli -n -t -u --auditwrite 06' + timeStr + ' "' + hash_pwd + '" User1 ' + dev1)
                     else:
-                        if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
+                        if ui.check_pass_rd.get_active():
                             os.system(ui.prefix + 'sedutil-cli -n -t --auditwrite 25' + timeStr + ' "' + hash_pwd + '" Admin1 ' + dev1)
                         os.system(ui.prefix + 'sedutil-cli -n -t --auditwrite 03' + timeStr + ' "' + hash_pwd + '" Admin1 ' + dev1)
                     
@@ -873,48 +873,48 @@ def rt_setupUSB(ui, index, index2, e, preserved_files):
                 if ui.process != None:
                     status1 = ui.process.returncode
                     if status1 == 0:
-                        if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)):
+                        #if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)):
                             ##print "setupUSB runprocess.passSaveUSB " + hash_pwd
                             #Windows usb_list: disk number, disk name
                             #search through drive letters to find the matching disk number
-                            if ui.DEV_OS == 'Windows':
-                                usb_drive = ''
-                                #print 'before diskpart to save password to USB'
-                                for j in range(len(ui.devs_list)):
-                                    if j != index:
-                                        runop.prelock(j)
-                                p = subprocess.Popen(["diskpart"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-                                res1 = p.stdin.write('select disk ' + ui.usb_list[index2][1] + '\n')
-                                res1 = p.stdin.write('detail disk\n')
-                                res1 = p.stdin.write('exit\n')
-                                output = p.communicate()[0]
-                                for j in range(len(ui.devs_list)):
-                                    if j != index:
-                                        runop.postlock(j)
-                                disk_regex = 'Volume [0-9]+\s+([A-Z])\s+'
-                                m = re.search(disk_regex, output)
-                                if m:
-                                    usb_drive = m.group(1) + ':'
-                                if usb_drive != '':
-                                    if len(preserved_files) > 0:
-                                        os.makedirs('%s/OpalLock' % usb_drive)
-                                    for fp in preserved_files:
-                                        try:
-                                            f = open(fp[0], 'w')
-                                            f.write(fp[1])
-                                            f.close()
-                                        except IOError:
-                                            pass
-                                    if ui.VERSION == 3 and ui.pass_sav.get_active():
-                                        save_status = runprocess.passSaveUSB(hash_pwd, usb_drive, ui.dev_vendor.get_text(), ui.dev_sn.get_text(), pass_usb, ui.auth_menu.get_active_text())
-                                        if save_status == 0:
-                                            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                                            timeStr = timeStr[2:]
-                                            with open(os.devnull, 'w') as pipe:
-                                                if ui.auth_menu.get_active() == 1:
-                                                    subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '24' + timeStr, hash_pwd, 'User1', dev1], stdout=pipe)#stderr=log)
-                                                else:
-                                                    subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '23' + timeStr, hash_pwd, 'Admin1', dev1], stdout=pipe)#stderr=log)
+                        if ui.DEV_OS == 'Windows':
+                            usb_drive = ''
+                            #print 'before diskpart to save password to USB'
+                            for j in range(len(ui.devs_list)):
+                                if j != index:
+                                    runop.prelock(j)
+                            p = subprocess.Popen(["diskpart"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+                            res1 = p.stdin.write('select disk ' + ui.usb_list[index2][1] + '\n')
+                            res1 = p.stdin.write('detail disk\n')
+                            res1 = p.stdin.write('exit\n')
+                            output = p.communicate()[0]
+                            for j in range(len(ui.devs_list)):
+                                if j != index:
+                                    runop.postlock(j)
+                            disk_regex = 'Volume [0-9]+\s+([A-Z])\s+'
+                            m = re.search(disk_regex, output)
+                            if m:
+                                usb_drive = m.group(1) + ':'
+                            if usb_drive != '':
+                                if len(preserved_files) > 0:
+                                    os.makedirs('%s/OpalLock' % usb_drive)
+                                for fp in preserved_files:
+                                    try:
+                                        f = open(fp[0], 'w')
+                                        f.write(fp[1])
+                                        f.close()
+                                    except IOError:
+                                        pass
+                                if ui.pass_sav.get_active():
+                                    save_status = runprocess.passSaveUSB(hash_pwd, usb_drive, ui.dev_vendor.get_text(), ui.dev_sn.get_text(), pass_usb, ui.auth_menu.get_active_text())
+                                    if save_status == 0:
+                                        timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                                        timeStr = timeStr[2:]
+                                        with open(os.devnull, 'w') as pipe:
+                                            if ui.auth_menu.get_active() == 1:
+                                                subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '24' + timeStr, hash_pwd, 'User1', dev1], stdout=pipe)#stderr=log)
+                                            else:
+                                                subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '23' + timeStr, hash_pwd, 'Admin1', dev1], stdout=pipe)#stderr=log)
                                 #else:
                                 #    ui.msg_err('Partition could not be found to save password.')
                     gobject.idle_add(cleanop.setupUSB_cleanup, ui, index, status1, noPW, s, e, preserved_files, present, rescan_needed)
@@ -984,7 +984,7 @@ def rt_setupUser(ui, index, e):
             rescan_needed = True
             
     if present:
-        if ui.VERSION == 3 and ui.check_pass_rd.get_active():
+        if ui.check_pass_rd.get_active():
             ui.auth_menu.set_active(0)
             (password_a, pass_usb) = runprocess.passReadUSB("Admin", ui.devs_list[index], ui.dev_vendor.get_text(), ui.dev_sn.get_text())
             if password_a == None or password_a == 'x':
@@ -996,7 +996,7 @@ def rt_setupUser(ui, index, e):
         new_pw = ui.new_pass_entry.get_text()
         new_pw_trim = re.sub('\s', '', new_pw)
         password_u = lockhash.hash_pass(new_pw_trim, index, ui)#ui.salt_list[index], ui.dev_msid.get_text())
-        if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.pass_sav.get_active():
+        if ui.pass_sav.get_active():
             drive = ''
             if pass_usb != '':
                 #print ui.pass_usb
@@ -1161,7 +1161,7 @@ def rt_removeUser(ui, index, e):
             rescan_needed = True
             
     if present:
-        if ui.VERSION == 3 and ui.check_pass_rd.get_active():
+        if ui.check_pass_rd.get_active():
             ui.auth_menu.set_active(0)
             (password_a, pass_usb) = runprocess.passReadUSB('Admin', ui.devs_list[index], ui.dev_vendor.get_text(), ui.dev_sn.get_text())
             if password_a == None or password_a == 'x':

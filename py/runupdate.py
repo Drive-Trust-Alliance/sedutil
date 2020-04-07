@@ -232,12 +232,12 @@ def rp_pbaWrite(e_to, i, result_list, status_list, count, password, au_pwd, dev,
                 f.close()
                 s = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--datastorewrite', password, 'Admin1', 'datawrite' + sn + '.txt', '0', '130098', '32', dev], stdout=pipe)#stderr=log)
             save_status = -1
-            if version % 2 == 1 and pass_rd:
+            if pass_rd:
                 if ds_sup == 'Supported':
                     timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
                     timeStr = timeStr[2:]
                     statusAW = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '25' + timeStr, password, 'Admin1', dev], stdout=pipe)#stderr=log)
-            if version % 2 == 1 and pass_sav:
+            if pass_sav:
                 save_status = passSaveUSB(password, sel_drive, model, sn, pass_usb, 'Admin')
                 if ds_sup == 'Supported' and save_status == 0:
                     timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')

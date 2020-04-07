@@ -16,7 +16,8 @@ class QueryDialog(gtk.Dialog):
     def __init__(self, parent, queryTextList):
         self.queryWinText = ''.join(queryTextList)
     
-        gtk.Dialog.__init__(self, 'Query Drive', parent,0)
+        gtk.Window.__init__(self)
+        self.set_title('Query Drive')
         self.set_border_width(10)
         
         scrolledWin = gtk.ScrolledWindow()
@@ -27,7 +28,7 @@ class QueryDialog(gtk.Dialog):
             self.set_icon_from_file('icon.ico')
         
         queryVbox = self.get_content_area()
-
+        
         queryTextView = gtk.TextView()
         queryTextView.set_editable(False)
         self.queryTextBuffer = queryTextView.get_buffer()
@@ -109,12 +110,12 @@ class QueryDialog(gtk.Dialog):
         spBoxQ.pack_end(self.showPassQ, False, False, 0)
         self.passBoxQ.pack_start(spBoxQ, False, False, 0)
         
-        if parent.VERSION % 3 == 0 or (parent.VERSION == 1 and parent.PBA_VERSION != 1):
-            checkBoxQ = gtk.HBox(False, 0)
-            self.passReadQ = gtk.CheckButton("Read password from USB")
-            self.passReadQ.connect("toggled", self.check_toggled, parent)
-            checkBoxQ.pack_end(self.passReadQ, False, False, 0)
-            self.passBoxQ.pack_start(checkBoxQ, False, False, 0)
+        #if parent.VERSION % 3 == 0 or (parent.VERSION == 1 and parent.PBA_VERSION != 1):
+        checkBoxQ = gtk.HBox(False, 0)
+        self.passReadQ = gtk.CheckButton("Read password from USB")
+        self.passReadQ.connect("toggled", self.check_toggled, parent)
+        checkBoxQ.pack_end(self.passReadQ, False, False, 0)
+        self.passBoxQ.pack_start(checkBoxQ, False, False, 0)
         
         
         self.queryTextBuffer.set_text(self.queryWinText)
@@ -133,23 +134,25 @@ class QueryDialog(gtk.Dialog):
         parent.enable_menu()
         
     def check_toggled(self, checkbox, parent):
-        verify.licCheck(parent)
-        is_checked = checkbox.get_active()
-        if is_checked:
-            self.queryPass.set_text("")
-            self.queryPass.set_sensitive(False)
-            self.showPassQ.set_active(False)
-            self.showPassQ.set_sensitive(False)
-        else:
-            self.queryPass.set_sensitive(True)
-            self.showPassQ.set_sensitive(True)
+        verified = verify.licCheck(parent)
+        if verified:
+            is_checked = checkbox.get_active()
+            if is_checked:
+                self.queryPass.set_text("")
+                self.queryPass.set_sensitive(False)
+                self.showPassQ.set_active(False)
+                self.showPassQ.set_sensitive(False)
+            else:
+                self.queryPass.set_sensitive(True)
+                self.showPassQ.set_sensitive(True)
 
     def showPass_toggled(self, checkbox, parent):
-        verify.licCheck(parent)
-        if self.showPassQ.get_active():
-            self.queryPass.set_visibility(True)
-        else:
-            self.queryPass.set_visibility(False)
+        verified = verify.licCheck(parent)
+        if verified:
+            if self.showPassQ.get_active():
+                self.queryPass.set_visibility(True)
+            else:
+                self.queryPass.set_visibility(False)
 
     def msg_err(self, msg):
         message = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK, parent = self)
@@ -159,46 +162,47 @@ class QueryDialog(gtk.Dialog):
         message.destroy()
         
     def queryAuth(self, button, parent):
-        verify.licCheck(parent)
-        pw_strip = re.sub('\s', '', self.queryPass.get_text())
-        if self.queryPass.get_text() == '' and not ((parent.VERSION == 3 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and self.passReadQ.get_active()):
-            self.msg_err('Enter the password.')
-            return
-        elif pw_strip == '' and not ((parent.VERSION == 3 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and self.passReadQ.get_active()):
-            self.msg_err('Invalid password. Passwords must have non-whitespace characters.')
-            return
-        salt = ''
-        user = ''
-        index = parent.dev_select.get_active()
-        self.showPassQ.set_active(False)
-        parent.devname = parent.devs_list[index]
-        drive_na = 'Locking Enabled: N'
-        m_na = re.search(drive_na, self.queryWinText)
-        if m_na:
-            self.msg_err('This drive has not been activated with Opal Lock.')
-            return
-        salt = parent.salt_list[index]
-        user = parent.user_list[index]
-        
-        
-        
-        #if parent.VERSION % 3 == 0 and parent.setupuser_list[index] == 'Yes':
-        #    self.authQuery.set_sensitive(False)
-        self.queryPass.set_sensitive(False)
-        self.submitPass.set_sensitive(False)
-        self.query_instr.hide()
-        self.showPassQ.set_sensitive(False)
-        if (parent.VERSION == 3 or parent.PBA_VERSION >= 2):
+        verified = verify.licCheck(parent)
+        if verified:
+            pw_strip = re.sub('\s', '', self.queryPass.get_text())
+            if self.queryPass.get_text() == '' and not self.passReadQ.get_active():
+                self.msg_err('Enter the password.')
+                return
+            elif pw_strip == '' and not self.passReadQ.get_active():
+                self.msg_err('Invalid password. Passwords must have non-whitespace characters.')
+                return
+            salt = ''
+            user = ''
+            index = parent.dev_select.get_active()
+            self.showPassQ.set_active(False)
+            parent.devname = parent.devs_list[index]
+            drive_na = 'Locking Enabled: N'
+            m_na = re.search(drive_na, self.queryWinText)
+            if m_na:
+                self.msg_err('This drive has not been activated with Opal Lock.')
+                return
+            salt = parent.salt_list[index]
+            user = parent.user_list[index]
+            
+            
+            
+            #if parent.VERSION % 3 == 0 and parent.setupuser_list[index] == 'Yes':
+            #    self.authQuery.set_sensitive(False)
+            self.queryPass.set_sensitive(False)
+            self.submitPass.set_sensitive(False)
+            self.query_instr.hide()
+            self.showPassQ.set_sensitive(False)
+            #if (parent.VERSION == 3 or parent.PBA_VERSION >= 2):
             self.passReadQ.set_sensitive(False)
-        if parent.VERSION != 1:
-            self.save_box.set_sensitive(False)
+            if parent.VERSION != 1:
+                self.save_box.set_sensitive(False)
+                
             
-        
+                
             
-        
-        self.startSpin(parent)
-        t1 = threading.Thread(target=runthread.rt_queryAuth, args=(self, parent, index, salt, user))
-        t1.start()
+            self.startSpin(parent)
+            t1 = threading.Thread(target=runthread.rt_queryAuth, args=(self, parent, index, salt, user))
+            t1.start()
             
     def startSpin(self, parent, *args):
         self.spinQ.show()
@@ -209,36 +213,37 @@ class QueryDialog(gtk.Dialog):
         self.spinQ.hide()
         
     def saveToText(self, _, parent):
-        verify.licCheck(parent)
-        chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_SAVE,buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK))
-        chooser.set_do_overwrite_confirmation(True)
-        
-        filter = gtk.FileFilter()
-        filter.set_name("Text Files")
-        filter.add_mime_type("text/plain")
-        filter.add_pattern("*.txt")
-        chooser.add_filter(filter)
-        
-        filter = gtk.FileFilter()
-        filter.set_name("All files")
-        filter.add_pattern("*")
-        chooser.add_filter(filter)
-        
-        response = chooser.run()
-        if response == gtk.RESPONSE_OK:
-            filename = chooser.get_filename()
-            #if not filename.endswith('.txt'):
-            #    filename += '.txt'
-            try:
-                f = open(filename, 'w')
-                f.write(self.queryWinText)
-                f.close()
+        verified = verify.licCheck(parent)
+        if verified:
+            chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_SAVE,buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK))
+            chooser.set_do_overwrite_confirmation(True)
+            
+            filter = gtk.FileFilter()
+            filter.set_name("Text Files")
+            filter.add_mime_type("text/plain")
+            filter.add_pattern("*.txt")
+            chooser.add_filter(filter)
+            
+            filter = gtk.FileFilter()
+            filter.set_name("All files")
+            filter.add_pattern("*")
+            chooser.add_filter(filter)
+            
+            response = chooser.run()
+            if response == gtk.RESPONSE_OK:
+                filename = chooser.get_filename()
+                #if not filename.endswith('.txt'):
+                #    filename += '.txt'
+                try:
+                    f = open(filename, 'w')
+                    f.write(self.queryWinText)
+                    f.close()
+                    chooser.destroy()
+                except IOError:
+                    chooser.destroy()
+                    self.msg_err('Invalid file path.')
+            else:
                 chooser.destroy()
-            except IOError:
-                chooser.destroy()
-                self.msg_err('Invalid file path.')
-        else:
-            chooser.destroy()
         
     def msg_err(self, msg):
         message = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK, parent = self)
@@ -255,209 +260,209 @@ class QueryDialog(gtk.Dialog):
         message.destroy()
         
 def query(button, parent, mode):
-    verify.licCheck(parent)
-    index = -1
-    if len(parent.devs_list) > 0:
-        index = parent.dev_select.get_active()
-    else :
-        parent.msg_err('No drive selected')
-        return
-    parent.devname = parent.devs_list[index]
-    
-    parent.dev_vendor.set_text(parent.vendor_list[index])
-    parent.dev_sn.set_text(parent.sn_list[index])
-    parent.dev_series.set_text(parent.series_list[index])
-    if parent.msid_list[index] != None:
-        parent.dev_msid.set_text(parent.msid_list[index])
-    else:
-        parent.dev_msid.set_text('Loading...')
-    if parent.pba_list[index] != None:
-        parent.dev_pbaVer.set_text(parent.pba_list[index])
-    else:
-        parent.dev_pbaVer.set_text('Loading...')
-    
-    parent.dev_opal_ver.set_text(parent.opal_ver_list[index])
-    parent.dev_status.set_text(parent.lockstatus_list[index])
-    if parent.setupstatus_list[index] != None:
-        parent.dev_setup.set_text(parent.setupstatus_list[index])
-    else:
-        parent.dev_setup.set_text('Loading...')
-    if parent.setupuser_list[index] != None:
-        parent.dev_userSetup.set_text(parent.setupuser_list[index])
-    else:
-        parent.dev_userSetup.set_text('Loading...')
-    parent.dev_enc.set_text(parent.encsup_list[index])
-    parent.dev_blockSID.set_text(parent.blockSID_list[index])
-    
-    txt2 = ""
-    if mode == 0 and index in parent.tcg_list:
-        if not parent.scanning:
-            verify.licCheck(parent)
-            new_devname = None
+    verified = verify.licCheck(parent)
+    if verified:
+        index = -1
+        if len(parent.devs_list) > 0:
+            index = parent.dev_select.get_active()
+        else :
+            parent.msg_err('No drive selected')
+            return
+        parent.devname = parent.devs_list[index]
         
-            rescan_needed = False
-            dl_len = len(parent.devs_list)
-            for i in range(dl_len):
-                runop.prelock(i)
-            if parent.tcg_usb_list[index]:
-                matched = False
-                present = False
-                txt_s = os.popen(parent.prefix + 'sedutil-cli --scan n').read()
-                rgx = '(PhysicalDrive[0-9]+|/dev/sd[a-z][0-9]?|/dev/nvme[0-9])\s+(?:[12ELP]+|No)\s+([^\:\s]+(?:\s[^\:\s]+)*)\s*:\s*[^:]+\s*:\s*(\S+)'
-                list_d = re.findall(rgx, txt_s)
-                for entry in list_d:
-                    #print entry
-                    if not present or not matched:
-                        test_dev = entry[0]
-                        if parent.DEV_OS == 'Windows':
-                            test_dev = '\\\\.\\' + test_dev
-                        if test_dev == parent.devname and entry[1] == parent.vendor_list[index] and entry[2] == parent.sn_list[index]:
-                            present = True
-                            matched = True
-                        elif entry[1] == parent.vendor_list[index] and entry[2] == parent.sn_list[index]:
-                            present = True
-                            new_devname = test_dev
-                if present and not matched:
-                    parent.devname = new_devname
-                if not present or not matched:
-                    rescan_needed = True
-        
-            txt = os.popen(parent.prefix + "sedutil-cli --query " + parent.devname ).read()
-        
-            queryTextList = ["Opal Lock Query information for drive " + parent.devname + "\n"]
-            
-            #txtVersion = os.popen(parent.prefix + "sedutil-cli --version" ).read()
-            #regex_ver = 'OpalLock Version\s*:\s*.*'
-            #m = re.search(regex_ver, txtVersion)
-            #ver_parse = m.group()
-            #queryTextList.append(ver_parse + "\nGUI Version 0.12.1\n\nDrive information\n")
-            queryTextList.append("\nDrive information\n")
-            
-            queryTextList.append("Model: " + parent.dev_vendor.get_text() + "\n")
-            queryTextList.append("Serial Number: " + parent.dev_sn.get_text() + "\n")
-            queryTextList.append("TCG SSC: " + parent.dev_opal_ver.get_text() + "\n")
-            queryTextList.append("MSID: " + parent.dev_msid.get_text() + "\n")
-            
-            txtState = os.popen(parent.prefix + "sedutil-cli --getmfgstate " + parent.devname).read()
-            for i in range(dl_len):
-                runop.postlock(i)
-            regex_sp = 'adminSP life cycle state\s*:\s*(.*)\nlockingSP life cycle state\s*:\s*(.*)'
-            m = re.search(regex_sp, txtState)
-            if m:
-                admin_state = m.group(1)
-                locking_state = m.group(2)
-            
-                queryTextList.append("Admin SP State: " + admin_state + "\nLocking SP State: " + locking_state + "\n\nLocking Information\n")
-            
-            
-            t = [ "Locked = [YN], LockingEnabled = [YN], MBR shadowing Not Supported = [YN], MBRDone = [YN], MBREnabled = [YN]",
-                "Locking Objects = [0-9]*",
-                "Max Tables = [0-9]*, Max Size Tables = [0-9]*",
-                "Locking Admins = [0-9]*.*, Locking Users = [0-9]*.",
-                "Policy = [NY].*",
-                "Base comID = 0x[0-9A-F]*, Initial PIN = 0x[0-9A-F]*"]
-
-            for txt11 in t:
-                m = re.search(txt11, txt)
-                if m:
-                    txt1 = m.group()
-                    txt11 = txt1.replace("Locking ", "")            
-                    txt1 = txt11
-                    txt11 = txt1.replace(", ", "\n")
-                    txt2 = txt2 + txt11 + "\n"
-            txt2 = parent.devname + " " + parent.dev_vendor.get_text() + "\n" + txt2
-        
-            tt = [ "Locked = [YN]", 
-                    "LockingEnabled = [YN]",
-                    "MBR shadowing Not Supported = [YN]",
-                    "MBRDone = [YN]",
-                    "MBREnabled = [YN]",
-                    "Objects = [0-9]*",
-                    "Max Tables = [0-9]*",
-                    "Max Size Tables = [0-9]*",
-                    "Admins = [0-9]",
-                    "Users = [0-9]*",
-                    "Policy = [YN]",
-                    "Base comID = 0x[0-9A-F]*",
-                    "Initial PIN = 0x[0-9A-F]*"]
-                    
-            sts_Locked = ""
-            sts_LockingEnabled = ""
-            sts_MBRShadowNotSupported = "N"
-            sts_MBRDone = ""
-            sts_MBREnabled = ""
-            tblsz = ""
-            nbr_MaxTables = ""
-            nbr_Admins = ""
-            nbr_Users = ""
-            singleUser = ""
-            comID_base = ""
-            initialPIN = ""
-            nbr_Objects = ""
-            for txt_33 in tt:
-                m = re.search(txt_33,txt2) 
-                if m:
-                    t3 = m.group()
-                    x_words = t3.split(' = ',1)
-                    if x_words[0] == "Locked":
-                        sts_Locked = x_words[1]
-                    elif x_words[0] == "LockingEnabled":
-                        sts_LockingEnabled = x_words[1]                   
-                    elif x_words[0] == "MBR shadowing Not Supported":
-                        sts_MBRShadowNotSupported = x_words[1]
-                    elif x_words[0] == "MBRDone":
-                        sts_MBRDone = x_words[1]
-                    elif x_words[0] == "MBREnabled":
-                        sts_MBREnabled = x_words[1]
-                    elif x_words[0] == "Max Size Tables":
-                        tblsz_i = int(x_words[1],10)   
-                        tblsz = str(tblsz_i/1000000) + "MB"
-                    elif x_words[0] == "Max Tables":
-                        nbr_MaxTables = x_words[1]
-                    elif x_words[0] == "Objects":
-                        nbr_Objects = x_words[1]
-                    elif x_words[0] == "Admins":
-                        nbr_Admins = x_words[1]
-                    elif x_words[0] == "Users":
-                        nbr_Users = x_words[1]  
-                    elif x_words[0] == "Policy":
-                        singleUser = x_words[1]
-                    elif x_words[0] == "Base comID":
-                        comID_base = x_words[1]
-                    elif x_words[0] == "Initial PIN":
-                        initialPIN = x_words[1]
-            if singleUser == '':
-                singleUser = 'N'
-                nbr_Objects = 'N/A'
-            queryTextList.append("Locked: " + sts_Locked + "\n")
-            queryTextList.append("Locking Enabled: " + sts_LockingEnabled + "\n")
-            queryTextList.append("MBR Shadowing Not Supported: " + sts_MBRShadowNotSupported + "\n")
-            queryTextList.append("Shadow MBR Enabled: " + sts_MBREnabled + "\n")
-            queryTextList.append("Shadow MBR Done: " + sts_MBRDone + "\n\nSingle User information\n")
-            queryTextList.append("Single User Mode Support: " + singleUser + "\n")
-            queryTextList.append("Number of Locking Ranges Supported: " + nbr_Objects + "\n\nDataStore information\n")
-            queryTextList.append("DataStore Table Size: " + tblsz + "\n")
-            queryTextList.append("Number of DataStore Tables: " + nbr_MaxTables + "\n\nOpal information\n")
-            queryTextList.append("Number of Admins: " + nbr_Admins + "\n")
-            queryTextList.append("Number of Users: " + nbr_Users + "\n")
-            queryTextList.append("Base comID: " + comID_base + "\n")
-            queryTextList.append("Initial PIN: " + initialPIN + "\n")
-        
-        
-            queryWin = QueryDialog(parent, queryTextList)
-        
-            #queryWin.run()
-        
-            #queryWin.destroy()
-            if rescan_needed:
-                parent.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
-                runscan.run_scan(None, parent, True)
-            
-            
+        parent.dev_vendor.set_text(parent.vendor_list[index])
+        parent.dev_sn.set_text(parent.sn_list[index])
+        parent.dev_series.set_text(parent.series_list[index])
+        if parent.msid_list[index] != None:
+            parent.dev_msid.set_text(parent.msid_list[index])
         else:
-            parent.scanning = False
-    elif mode == 0:
-        parent.msg_err('Non-TCG drives cannot be queried.')
+            parent.dev_msid.set_text('Loading...')
+        if parent.pba_list[index] != None:
+            parent.dev_pbaVer.set_text(parent.pba_list[index])
+        else:
+            parent.dev_pbaVer.set_text('Loading...')
+        
+        parent.dev_opal_ver.set_text(parent.opal_ver_list[index])
+        parent.dev_status.set_text(parent.lockstatus_list[index])
+        if parent.setupstatus_list[index] != None:
+            parent.dev_setup.set_text(parent.setupstatus_list[index])
+        else:
+            parent.dev_setup.set_text('Loading...')
+        if parent.setupuser_list[index] != None:
+            parent.dev_userSetup.set_text(parent.setupuser_list[index])
+        else:
+            parent.dev_userSetup.set_text('Loading...')
+        parent.dev_enc.set_text(parent.encsup_list[index])
+        parent.dev_blockSID.set_text(parent.blockSID_list[index])
+        
+        txt2 = ""
+        if mode == 0 and index in parent.tcg_list:
+            if not parent.scanning:
+                new_devname = None
+            
+                rescan_needed = False
+                dl_len = len(parent.devs_list)
+                for i in range(dl_len):
+                    runop.prelock(i)
+                if parent.tcg_usb_list[index]:
+                    matched = False
+                    present = False
+                    txt_s = os.popen(parent.prefix + 'sedutil-cli --scan n').read()
+                    rgx = '(PhysicalDrive[0-9]+|/dev/sd[a-z][0-9]?|/dev/nvme[0-9])\s+(?:[12ELP]+|No)\s+([^\:\s]+(?:\s[^\:\s]+)*)\s*:\s*[^:]+\s*:\s*(\S+)'
+                    list_d = re.findall(rgx, txt_s)
+                    for entry in list_d:
+                        #print entry
+                        if not present or not matched:
+                            test_dev = entry[0]
+                            if parent.DEV_OS == 'Windows':
+                                test_dev = '\\\\.\\' + test_dev
+                            if test_dev == parent.devname and entry[1] == parent.vendor_list[index] and entry[2] == parent.sn_list[index]:
+                                present = True
+                                matched = True
+                            elif entry[1] == parent.vendor_list[index] and entry[2] == parent.sn_list[index]:
+                                present = True
+                                new_devname = test_dev
+                    if present and not matched:
+                        parent.devname = new_devname
+                    if not present or not matched:
+                        rescan_needed = True
+            
+                txt = os.popen(parent.prefix + "sedutil-cli --query " + parent.devname ).read()
+            
+                queryTextList = ["Opal Lock Query information for drive " + parent.devname + "\n"]
+                
+                #txtVersion = os.popen(parent.prefix + "sedutil-cli --version" ).read()
+                #regex_ver = 'OpalLock Version\s*:\s*.*'
+                #m = re.search(regex_ver, txtVersion)
+                #ver_parse = m.group()
+                #queryTextList.append(ver_parse + "\nGUI Version 0.12.1\n\nDrive information\n")
+                queryTextList.append("\nDrive information\n")
+                
+                queryTextList.append("Model: " + parent.dev_vendor.get_text() + "\n")
+                queryTextList.append("Serial Number: " + parent.dev_sn.get_text() + "\n")
+                queryTextList.append("TCG SSC: " + parent.dev_opal_ver.get_text() + "\n")
+                queryTextList.append("MSID: " + parent.dev_msid.get_text() + "\n")
+                
+                txtState = os.popen(parent.prefix + "sedutil-cli --getmfgstate " + parent.devname).read()
+                for i in range(dl_len):
+                    runop.postlock(i)
+                regex_sp = 'adminSP life cycle state\s*:\s*(.*)\nlockingSP life cycle state\s*:\s*(.*)'
+                m = re.search(regex_sp, txtState)
+                if m:
+                    admin_state = m.group(1)
+                    locking_state = m.group(2)
+                
+                    queryTextList.append("Admin SP State: " + admin_state + "\nLocking SP State: " + locking_state + "\n\nLocking Information\n")
+                
+                
+                t = [ "Locked = [YN], LockingEnabled = [YN], MBR shadowing Not Supported = [YN], MBRDone = [YN], MBREnabled = [YN]",
+                    "Locking Objects = [0-9]*",
+                    "Max Tables = [0-9]*, Max Size Tables = [0-9]*",
+                    "Locking Admins = [0-9]*.*, Locking Users = [0-9]*.",
+                    "Policy = [NY].*",
+                    "Base comID = 0x[0-9A-F]*, Initial PIN = 0x[0-9A-F]*"]
+
+                for txt11 in t:
+                    m = re.search(txt11, txt)
+                    if m:
+                        txt1 = m.group()
+                        txt11 = txt1.replace("Locking ", "")            
+                        txt1 = txt11
+                        txt11 = txt1.replace(", ", "\n")
+                        txt2 = txt2 + txt11 + "\n"
+                txt2 = parent.devname + " " + parent.dev_vendor.get_text() + "\n" + txt2
+            
+                tt = [ "Locked = [YN]", 
+                        "LockingEnabled = [YN]",
+                        "MBR shadowing Not Supported = [YN]",
+                        "MBRDone = [YN]",
+                        "MBREnabled = [YN]",
+                        "Objects = [0-9]*",
+                        "Max Tables = [0-9]*",
+                        "Max Size Tables = [0-9]*",
+                        "Admins = [0-9]",
+                        "Users = [0-9]*",
+                        "Policy = [YN]",
+                        "Base comID = 0x[0-9A-F]*",
+                        "Initial PIN = 0x[0-9A-F]*"]
+                        
+                sts_Locked = ""
+                sts_LockingEnabled = ""
+                sts_MBRShadowNotSupported = "N"
+                sts_MBRDone = ""
+                sts_MBREnabled = ""
+                tblsz = ""
+                nbr_MaxTables = ""
+                nbr_Admins = ""
+                nbr_Users = ""
+                singleUser = ""
+                comID_base = ""
+                initialPIN = ""
+                nbr_Objects = ""
+                for txt_33 in tt:
+                    m = re.search(txt_33,txt2) 
+                    if m:
+                        t3 = m.group()
+                        x_words = t3.split(' = ',1)
+                        if x_words[0] == "Locked":
+                            sts_Locked = x_words[1]
+                        elif x_words[0] == "LockingEnabled":
+                            sts_LockingEnabled = x_words[1]                   
+                        elif x_words[0] == "MBR shadowing Not Supported":
+                            sts_MBRShadowNotSupported = x_words[1]
+                        elif x_words[0] == "MBRDone":
+                            sts_MBRDone = x_words[1]
+                        elif x_words[0] == "MBREnabled":
+                            sts_MBREnabled = x_words[1]
+                        elif x_words[0] == "Max Size Tables":
+                            tblsz_i = int(x_words[1],10)   
+                            tblsz = str(tblsz_i/1000000) + "MB"
+                        elif x_words[0] == "Max Tables":
+                            nbr_MaxTables = x_words[1]
+                        elif x_words[0] == "Objects":
+                            nbr_Objects = x_words[1]
+                        elif x_words[0] == "Admins":
+                            nbr_Admins = x_words[1]
+                        elif x_words[0] == "Users":
+                            nbr_Users = x_words[1]  
+                        elif x_words[0] == "Policy":
+                            singleUser = x_words[1]
+                        elif x_words[0] == "Base comID":
+                            comID_base = x_words[1]
+                        elif x_words[0] == "Initial PIN":
+                            initialPIN = x_words[1]
+                if singleUser == '':
+                    singleUser = 'N'
+                    nbr_Objects = 'N/A'
+                queryTextList.append("Locked: " + sts_Locked + "\n")
+                queryTextList.append("Locking Enabled: " + sts_LockingEnabled + "\n")
+                queryTextList.append("MBR Shadowing Not Supported: " + sts_MBRShadowNotSupported + "\n")
+                queryTextList.append("Shadow MBR Enabled: " + sts_MBREnabled + "\n")
+                queryTextList.append("Shadow MBR Done: " + sts_MBRDone + "\n\nSingle User information\n")
+                queryTextList.append("Single User Mode Support: " + singleUser + "\n")
+                queryTextList.append("Number of Locking Ranges Supported: " + nbr_Objects + "\n\nDataStore information\n")
+                queryTextList.append("DataStore Table Size: " + tblsz + "\n")
+                queryTextList.append("Number of DataStore Tables: " + nbr_MaxTables + "\n\nOpal information\n")
+                queryTextList.append("Number of Admins: " + nbr_Admins + "\n")
+                queryTextList.append("Number of Users: " + nbr_Users + "\n")
+                queryTextList.append("Base comID: " + comID_base + "\n")
+                queryTextList.append("Initial PIN: " + initialPIN + "\n")
+            
+            
+                queryWin = QueryDialog(parent, queryTextList)
+            
+                #queryWin.run()
+            
+                #queryWin.destroy()
+                if rescan_needed:
+                    parent.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
+                    runscan.run_scan(None, parent, True)
+                
+                
+            else:
+                parent.scanning = False
+        elif mode == 0:
+            parent.msg_err('Non-TCG drives cannot be queried.')
         
 class AuditDialog(gtk.Dialog):
     eventDescriptions = dict({1 : 'Drive Activated',
@@ -587,51 +592,52 @@ class AuditDialog(gtk.Dialog):
         self.show_all()
         
     def saveToCSV(self, button, parent):
-        verify.licCheck(parent)
-        chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_SAVE,buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK))
-        chooser.set_do_overwrite_confirmation(True)
-        
-        filter = gtk.FileFilter()
-        filter.set_name("CSV Files")
-        filter.add_mime_type("text/csv")
-        filter.add_pattern("*.csv")
-        
-        filter = gtk.FileFilter()
-        filter.set_name("All files")
-        filter.add_pattern("*")
-        chooser.add_filter(filter)
-        
-        response = chooser.run()
-        if response == gtk.RESPONSE_OK:
-            filename = chooser.get_filename()
-            #if not filename.endswith('.csv'):
-            #    filename += '.csv'
-            try:
-                f = open(filename, 'wb')
-                with f:
-                    data = []
-                    data.append(['Drive', parent.devname])
-                    data.append(['Model', parent.dev_vendor.get_text()])
-                    data.append(['Serial Number', parent.dev_sn.get_text()])
-                    timeStr = datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-                    data.append(['Time', timeStr])
-                    data.append(['Level', 'Date/Time', 'Event ID', 'Event Description'])
-                    for row in self.listStore:
-                        row_data = [row[0], row[1], row[2], row[3]]
-                        data.append(row_data)
-                    writer = csv.writer(f)
-                    writer.writerows(data)
-                f.close()
+        verified = verify.licCheck(parent)
+        if verified:
+            chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_SAVE,buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK))
+            chooser.set_do_overwrite_confirmation(True)
+            
+            filter = gtk.FileFilter()
+            filter.set_name("CSV Files")
+            filter.add_mime_type("text/csv")
+            filter.add_pattern("*.csv")
+            
+            filter = gtk.FileFilter()
+            filter.set_name("All files")
+            filter.add_pattern("*")
+            chooser.add_filter(filter)
+            
+            response = chooser.run()
+            if response == gtk.RESPONSE_OK:
+                filename = chooser.get_filename()
+                #if not filename.endswith('.csv'):
+                #    filename += '.csv'
+                try:
+                    f = open(filename, 'wb')
+                    with f:
+                        data = []
+                        data.append(['Drive', parent.devname])
+                        data.append(['Model', parent.dev_vendor.get_text()])
+                        data.append(['Serial Number', parent.dev_sn.get_text()])
+                        timeStr = datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+                        data.append(['Time', timeStr])
+                        data.append(['Level', 'Date/Time', 'Event ID', 'Event Description'])
+                        for row in self.listStore:
+                            row_data = [row[0], row[1], row[2], row[3]]
+                            data.append(row_data)
+                        writer = csv.writer(f)
+                        writer.writerows(data)
+                    f.close()
+                    chooser.destroy()
+                except IOError:
+                    chooser.destroy()
+                    message = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK, parent = self)
+                    message.set_markup('Invalid file path.')
+                    
+                    res = message.run()
+                    message.destroy()
+            else:
                 chooser.destroy()
-            except IOError:
-                chooser.destroy()
-                message = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK, parent = self)
-                message.set_markup('Invalid file path.')
-                
-                res = message.run()
-                message.destroy()
-        else:
-            chooser.destroy()
         
     def filterLog(self, button, entries, mode):
         self.listStore.clear()
@@ -642,25 +648,26 @@ class AuditDialog(gtk.Dialog):
         self.viewErr_button.set_sensitive(mode != 2)
         
 def openLog(button, parent, *args):
-    verify.licCheck(parent)
-    pw_strip = re.sub('\s', '', parent.pass_entry.get_text())
-    if parent.pass_entry.get_text() == '' and not ((parent.VERSION == 3 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and parent.check_pass_rd.get_active()):
-        parent.msg_err('Enter the password.')
-        return
-    elif pw_strip == '' and not ((parent.VERSION == 3 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and parent.check_pass_rd.get_active()):
-        parent.msg_err('Invalid password. Passwords must have non-whitespace characters.')
-        return
-    if parent.VERSION % 3 == 0 or (parent.VERSION == 1 and parent.PBA_VERSION != 1):
+    verified = verify.licCheck(parent)
+    if verified:
+        pw_strip = re.sub('\s', '', parent.pass_entry.get_text())
+        if parent.pass_entry.get_text() == '' and not parent.check_pass_rd.get_active():
+            parent.msg_err('Enter the password.')
+            return
+        elif pw_strip == '' and not parent.check_pass_rd.get_active():
+            parent.msg_err('Invalid password. Passwords must have non-whitespace characters.')
+            return
+        #if parent.VERSION % 3 == 0 or (parent.VERSION == 1 and parent.PBA_VERSION != 1):
         if parent.pass_sav.get_active() and parent.drive_menu.get_active() < 0:
             parent.msg_err('No USB detected.')
             return
-    
-    index = parent.dev_select.get_active()
-    parent.devname = parent.devs_list[index]
-    
-    parent.start_spin()
-    t = threading.Thread(target=runthread.rt_openLog, args=(parent, index))
-    t.start()
+        
+        index = parent.dev_select.get_active()
+        parent.devname = parent.devs_list[index]
+        
+        parent.start_spin()
+        t = threading.Thread(target=runthread.rt_openLog, args=(parent, index))
+        t.start()
         
 class OpalDialog(gtk.Dialog):
     def __init__(self, parent):
@@ -684,7 +691,7 @@ class OpalDialog(gtk.Dialog):
         for i in range(len(columns)):
             cell = gtk.CellRendererText()
             col = gtk.TreeViewColumn(columns[i], cell, text=i)
-            col.set_min_width(170)
+            col.set_min_width(170) 
             col.set_alignment(0.5)
             col.set_sort_column_id(gtk.SORT_ASCENDING)
             col.set_sort_indicator(True)
@@ -698,11 +705,12 @@ class OpalDialog(gtk.Dialog):
         self.show_all()
 
 def openOpal(button, parent, *args):
-    verify.licCheck(parent)
-    tcgWin = OpalDialog(parent)
-    tcgWin.run()
-    
-    tcgWin.destroy()
+    verified = verify.licCheck(parent)
+    if verified:
+        tcgWin = OpalDialog(parent)
+        tcgWin.run()
+        
+        tcgWin.destroy()
 
 class USBDialog(gtk.Dialog):
     def __init__(self, parent):
@@ -716,13 +724,13 @@ class USBDialog(gtk.Dialog):
 
 
         box = self.get_content_area()
-
-        usb_instr = gtk.Label('Select a USB.\nA bootable USB will be created with the preboot image embedded in it.\nAfter the USB is set up, it can be used to unlock the selected drive.\nWARNING: All data on the USB will be erased (except for any previously saved password files).')
-        attr = pango.AttrList()
-        fg_color = pango.AttrForeground(65535, 0, 0, 154, 249)
-        attr.insert(fg_color)
-        usb_instr.set_attributes(attr)
         
+        usb_instr = gtk.Label('Select a USB.\nA bootable USB will be created with the preboot image embedded in it.\nAfter the USB is set up, it can be used to unlock the selected drive.\nWARNING: All data on the USB will be erased (except for any previously saved password files).')
+        
+        attr = pango.AttrList() 
+        fg_color = pango.AttrForeground(65535, 0, 0, 154, 249) 
+        attr.insert(fg_color) 
+        usb_instr.set_attributes(attr)
         
         self.na_instr = gtk.Label('No USB detected. Insert a USB and press \'Rescan\' to continue.')
         
@@ -902,57 +910,58 @@ class USBDialog(gtk.Dialog):
         self.refresh_button.set_sensitive(True)
              
 def show_about(button, parent, *args):
-    verify.licCheck(parent)
-    prefix = ''
-    if parent.DEV_OS != 'Windows':
-        prefix = 'sudo '
-    txtVersion = os.popen(prefix + "sedutil-cli --version" ).read()
-    regex_ver = 'Fidelity Lock Version\s*:\s*(.*)'
-    m = re.search(regex_ver, txtVersion)
-    ver_parse = m.group(1)
+    verified = verify.licCheck(parent)
+    if verified:
+        prefix = ''
+        
+        if parent.DEV_OS != 'Windows':
+            prefix = 'sudo '
+        
+        txtVersion = os.popen(prefix + "sedutil-cli --version" ).read()
+        regex_ver = 'Fidelity Lock Version\s*:\s*(.*)'
+        m = re.search(regex_ver, txtVersion)
+        ver_parse = m.group(1)
+        
+        aboutDialog = gtk.Dialog('About', parent, 0, ())
 
+        vbox = aboutDialog.get_content_area()
 
-    aboutDialog = gtk.Dialog('About', parent, 0, ())
+        hboxIcon = gtk.HBox(False, 0)
+        hboxIcon.show()
+        hboxFirst = gtk.HBox(False, 0)
+        hboxFirst.show()
+        hboxSecond = gtk.HBox(False, 0)
+        hboxSecond.show()
+        hboxThird = gtk.HBox(False, 0)
+        hboxThird.show()
 
-    vbox = aboutDialog.get_content_area()
+        appFirstLabel = gtk.Label()
+        firstString = '<span size="20" weight="bold">Opal Lock GUI v0.25.1</span>'
+        appFirstLabel.set_markup(firstString)
+        appFirstLabel.show()
+        appIcon = gtk.Image()
+        appIcon.set_from_file('icon.ico')
+        appIcon.show()
+        appSecondLabel = gtk.Label()
+        secondStr = 'Opal Lock Version: ' + ver_parse
+        appSecondLabel.set_text(secondStr)
+        appSecondLabel.show()
+        appThirdLabel = gtk.Label()
+        appThirdLabel.set_text("(c) 2019 Fidelity Height LLC. All rights reserved.")
+        appThirdLabel.show()
 
-    hboxIcon = gtk.HBox(False, 0)
-    hboxIcon.show()
-    hboxFirst = gtk.HBox(False, 0)
-    hboxFirst.show()
-    hboxSecond = gtk.HBox(False, 0)
-    hboxSecond.show()
-    hboxThird = gtk.HBox(False, 0)
-    hboxThird.show()
+        hboxIcon.pack_start(appIcon, True, True, 20)
+        hboxFirst.pack_start(appFirstLabel, True, True, 20)
+        hboxSecond.pack_start(appSecondLabel, True, True, 20)
+        hboxThird.pack_end(appThirdLable, True, True, 20)
 
-    appFirstLabel = gtk.Label()
-    firstString = '<span size="20" weight="bold">Opal Lock GUI v0.25.1</span>'
-    appFirstLabel.set_markup(firstString)
-    appFirstLabel.show()
-    appIcon = gtk.Image()
-    appIcon.set_from_file('icon.ico')
-    appIcon.show()
-    appSecondLabel = gtk.Label()
-    secondStr = 'Opal Lock Version: ' + ver_parse
-    appSecondLabel.set_text(secondStr)
-    appSecondLabel.show()
-    appThirdLable = gtk.Label()
-    appThirdLable.set_text("(c) 2019 Fidelity Height LLC. All rights reserved.")
-    appThirdLable.show()
+        aboutDialog.vbox.pack_start(hboxIcon, True, True, 10)
+        aboutDialog.vbox.pack_start(hboxFirst, True, True, 10)
+        aboutDialog.vbox.pack_start(hboxSecond, True, True, 10)
+        aboutDialog.vbox.pack_start(hboxThird, True, True, 10)
 
-    hboxIcon.pack_start(appIcon, True, True, 20)
-    hboxFirst.pack_start(appFirstLabel, True, True, 20)
-    hboxSecond.pack_start(appSecondLabel, True, True, 20)
-    hboxThird.pack_end(appThirdLable, True, True, 20)
-
-    aboutDialog.vbox.pack_start(hboxIcon, True, True, 10)
-    aboutDialog.vbox.pack_start(hboxFirst, True, True, 10)
-    aboutDialog.vbox.pack_start(hboxSecond, True, True, 10)
-    aboutDialog.vbox.pack_start(hboxThird, True, True, 10)
-
-    aboutDialog.run()
-    aboutDialog.destroy()
-
+        aboutDialog.run()
+        aboutDialog.destroy()
     
 class SetPowerDialog(gtk.Dialog):
     def __init__(self, parent, mode):
@@ -1085,20 +1094,21 @@ class SetPowerDialog(gtk.Dialog):
         self.show_all()
         
 def mngPower_prompt(button, parent, mode):
-    verify.licCheck(parent)
-    done = False
-    while not done:
-        dialog = SetPowerDialog(parent, mode)
-        res = dialog.run()
-        
-        if res == gtk.RESPONSE_APPLY:
-            s = powerset.set_power(dialog)
-            if s == 0:
-                parent.msg_ok('Power settings applied successfully.')
-                done = True
-            else:
-                parent.msg_err('There was an error while changing your power settings.')
-        else:
-            done = True
+    verified = verify.licCheck(parent)
+    if verified:
+        done = False
+        while not done:
+            dialog = SetPowerDialog(parent, mode)
+            res = dialog.run()
             
-        dialog.destroy()
+            if res == gtk.RESPONSE_APPLY:
+                s = powerset.set_power(dialog)
+                if s == 0:
+                    parent.msg_ok('Power settings applied successfully.')
+                    done = True
+                else:
+                    parent.msg_err('There was an error while changing your power settings.')
+            else:
+                done = True
+                
+            dialog.destroy()

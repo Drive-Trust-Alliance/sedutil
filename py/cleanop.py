@@ -1286,7 +1286,7 @@ def setupUSB_cleanup(ui, index, status, no_pw, s, e, preserved_files, present, r
             #ui.cancel_button.show()
             #ui.check_pass_rd.set_active(False)
         elif ui.auth_menu.get_active() == 0:
-            if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.pass_sav.get_active() and s != 0:
+            if ui.pass_sav.get_active() and s != 0:
                 if s == ui.NOT_AUTHORIZED and ui.admin_aol_list[index] < ui.retrylimit_list[index]:
                     ui.admin_aol_list[index] = ui.admin_aol_list[index] + 1
                     ui.msg_err('Invalid password. Attempt ' + str(ui.admin_aol_list[index]) + ' of ' + str(ui.retrylimit_list[index]) + '. Bootable USB setup aborted.')
@@ -1547,9 +1547,9 @@ def queryAuth_cleanup(self, index, failed, parent, add_str, rc, no_pass, no_usb)
     #    auth = self.authQuery.get_active()
     self.submitPass.set_sensitive(True)
     self.showPassQ.set_sensitive(True)
-    if (parent.VERSION == 3 or parent.PBA_VERSION >= 2):
-        self.passReadQ.set_sensitive(True)
-        self.passReadQ.set_active(False)
+    #if (parent.VERSION == 3 or parent.PBA_VERSION >= 2):
+    self.passReadQ.set_sensitive(True)
+    self.passReadQ.set_active(False)
     if not failed:
         self.passBoxQ.hide()
         #if parent.VERSION % 3 == 0 and parent.setupuser_list[index] == 'Yes':
@@ -1625,7 +1625,7 @@ def openLog_cleanup(parent, index, statusAW, password, txt, no_pw, no_USB, not_d
                 parent.msg_err('Audit Log could not be retrieved.')
             parent.openLog_prompt(parent)
         else:
-            if (parent.VERSION % 3 == 0 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and parent.pass_sav.get_active() and drive != '' and save_status > 0:
+            if parent.pass_sav.get_active() and drive != '' and save_status > 0:
                 parent.msg_err('Failed to save password to USB.')
             auditFullRegex = 'Total Number of Audit Entries\s*:\s*([0-9]+)\n((?:.+\n?)+)'
             a = re.search(auditFullRegex, txt)

@@ -273,7 +273,7 @@ def rp_setupFull(e, i, result_list, status_list, trylimit_list, count, rc_list, 
                             valid = True
                     if valid:
                         status_tmp = subprocess.call([prefix + 'sedutil-cli', '--createUSB', 'UEFI', dev, '\\\\.\\PhysicalDrive' + usb], stdout=pipe)#stderr=log)
-                        if version == 3 and status_tmp == 0:
+                        if status_tmp == 0:
                             if usb_dir == '':
                                 usb_dev = usb
                                 p = subprocess.Popen(["diskpart"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)

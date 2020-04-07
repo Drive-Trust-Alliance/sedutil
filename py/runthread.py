@@ -198,7 +198,7 @@ def rt_unlockPBA(ui, selected_list, reboot, autounlock):
                                         status1 = os.system(ui.prefix + "sedutil-cli -n -t -u --setMBRDone off " + password_u + " " + dev)
                                     status2 = os.system(ui.prefix + "sedutil-cli -n -t -u --setLockingRange 0 LK " + password_u + " " + dev)
         if not e.is_set():
-            if status_final == 0 and (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.pass_sav.get_active():
+            if status_final == 0 and ui.pass_sav.get_active():
                 save_status = runprocess.passSaveUSB(password, ui.drive_menu.get_active_text(), ui.vendor_list[i], ui.sn_list[i], pass_usb, ui.auth_menu.get_active_text())
             def aw_run(i, save_status, auth, dev, password):
                 timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
@@ -229,7 +229,7 @@ def rt_unlockPBA(ui, selected_list, reboot, autounlock):
                                     subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '34' + timeStr, hash_au, 'User' + ui.user_list[i], dev], stdout=pipe)#stderr=log)
                                 subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '33' + timeStr, hash_au, 'User' + ui.user_list[i], dev], stdout=pipe)#stderr=log)
                         else:
-                            if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ((not autounlock and auth == 1) or (autounlock and auto_auth == 1)):
+                            if (not autounlock and auth == 1) or (autounlock and auto_auth == 1):
                                 if ui.check_pass_rd.get_active():
                                     statusAW = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '26' + timeStr, password, 'User1', dev], stdout=pipe)#stderr=log)
                                 statusAW = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '06' + timeStr, password, 'User1', dev], stdout=pipe)#stderr=log)
@@ -239,7 +239,7 @@ def rt_unlockPBA(ui, selected_list, reboot, autounlock):
                                 elif ui.VERSION == 1:
                                     statusAW = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '16' + timeStr, password, 'User1', dev], stdout=pipe)#stderr=log)
                             else:
-                                if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
+                                if ui.check_pass_rd.get_active():
                                     statusAW = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '25' + timeStr, password, 'Admin1', dev], stdout=pipe)#stderr=log)
                                 statusAW = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '03' + timeStr, password, 'Admin1', dev], stdout=pipe)#stderr=log)
                                 statusAW = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '15' + timeStr, password, 'Admin1', dev], stdout=pipe)#stderr=log)
@@ -277,7 +277,7 @@ def rt_unlockPBA(ui, selected_list, reboot, autounlock):
                                 os.system(ui.prefix + 'sedutil-cli -n -t -u --auditwrite 34' + timeStr + ' "' + hash_au + '" User' + ui.user_list[i] + ' ' + dev)
                             os.system(ui.prefix + 'sedutil-cli -n -t -u --auditwrite 33' + timeStr + ' "' + hash_au + '" User' + ui.user_list[i] + ' ' + dev)
                     else:
-                        if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ((not autounlock and auth == 1) or (autounlock and auto_auth == 1)):
+                        if (not autounlock and auth == 1) or (autounlock and auto_auth == 1):
                             if ui.check_pass_rd.get_active():
                                 statusAW = os.system(ui.prefix + 'sedutil-cli -n -t -u --auditwrite 26' + timeStr + ' "' + password + '" User1 ' + dev)
                             statusAW = os.system(ui.prefix + 'sedutil-cli -n -t -u --auditwrite 06' + timeStr + ' "' + password + '" User1 ' + dev)
@@ -287,7 +287,7 @@ def rt_unlockPBA(ui, selected_list, reboot, autounlock):
                             elif ui.VERSION == 1:
                                 statusAW = os.system(ui.prefix + 'sedutil-cli -n -t -u --auditwrite 16' + timeStr + ' "' + password + '" User1 ' + dev)
                         else:
-                            if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
+                            if ui.check_pass_rd.get_active():
                                 statusAW = os.system(ui.prefix + 'sedutil-cli -n -t --auditwrite 25' + timeStr + ' "' + password + '" Admin1 ' + dev)
                             statusAW = os.system(ui.prefix + 'sedutil-cli -n -t --auditwrite 03' + timeStr + ' "' + password + '" Admin1 ' + dev)
                             statusAW = os.system(ui.prefix + 'sedutil-cli -n -t --auditwrite 15' + timeStr + ' "' + password + '" Admin1 ' + dev)
@@ -348,7 +348,7 @@ def rt_unlockPBA(ui, selected_list, reboot, autounlock):
                 ui.admin_aol_list[i] = 0
             else:
                 ui.user_aol_list[i] = 0
-            if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.pass_sav.get_active():
+            if ui.pass_sav.get_active():
                 
                 if save_status <= 0:
                     result_list[count] = 0
@@ -383,7 +383,7 @@ def rt_unlockPBA(ui, selected_list, reboot, autounlock):
     for i in selected_list:
         if actual_d[count] != None:
             if not autounlock:
-                if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
+                if ui.check_pass_rd.get_active():
                     password = None
                     #password = runprocess.passReadUSB(ui, ui.vendor_list[i], ui.sn_list[i], ui.auth_menu.get_active())
                 else:
@@ -645,7 +645,7 @@ def rt_revertKeep(ui, selected_list):
     for i in selected_list:
         if actual_d[count] != None:
             password = None
-            if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
+            if ui.check_pass_rd.get_active():
                 password = None
                 #password = runprocess.passReadUSB(ui, ui.vendor_list[i], ui.sn_list[i], 0)
             else:
@@ -861,7 +861,7 @@ def rt_revertErase(ui, selected_list):
     for i in selected_list:
         if actual_d[count] != None:
             password = None
-            if (ui.VERSION % 3 == 0 or (ui.VERSION == 1 and ui.PBA_VERSION != 1)) and ui.check_pass_rd.get_active():
+            if ui.check_pass_rd.get_active():
                 password = None
             else:
                 pw_trim = re.sub('\s','',ui.pass_entry.get_text())
@@ -967,7 +967,7 @@ def rt_queryAuth(self, parent, index, salt, user):
     
     statusAW = -1
     
-    if (parent.VERSION == 3 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and self.passReadQ.get_active():
+    if self.passReadQ.get_active():
         model = parent.vendor_list[index]
         sn = parent.sn_list[index]
         #devpass = runop.passReadUSB(parent, model, sn)
@@ -1136,7 +1136,7 @@ def rt_queryAuth(self, parent, index, salt, user):
             elif statusAW != 0:
                 failed = True
             else:
-                if (parent.VERSION == 3 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and self.passReadQ.get_active():
+                if self.passReadQ.get_active():
                     if parent.DEV_OS == 'Windows':
                         with open(os.devnull, 'w') as pipe:
                             subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '25' + timeStr, devpass, 'Admin1', parent.devname], stdout=pipe)#stderr=log)
@@ -1256,7 +1256,7 @@ def rt_openLog(parent, index):
     auth_level = parent.auth_menu.get_active()
     if present:
         
-        if (parent.VERSION == 3 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and parent.check_pass_rd.get_active():
+        if parent.check_pass_rd.get_active():
             (password, pass_usb) = runprocess.passReadUSB(parent.auth_menu.get_active_text(), parent.devs_list[index], parent.dev_vendor.get_text(), parent.dev_sn.get_text())
             rd_usb = True
             if password == None or password == 'x':
@@ -1270,7 +1270,7 @@ def rt_openLog(parent, index):
             pw = re.sub('\s', '', parent.pass_entry.get_text())
             password = lockhash.hash_pass(pw, index, parent)#parent.salt_list[index], parent.dev_msid.get_text())
             parent.pass_entry.get_buffer().delete_text(0,-1)
-        if not no_pw and (parent.VERSION % 3 == 0 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and parent.pass_sav.get_active():
+        if not no_pw and parent.pass_sav.get_active():
             if parent.drive_menu.get_active() < 0:
                 #parent.msg_err('No USB selected.')
                 #return
@@ -1314,7 +1314,7 @@ def rt_openLog(parent, index):
             
             if parent.DEV_OS == 'Windows':
                 with open(os.devnull, 'w') as pipe:
-                    if (parent.VERSION == 3 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and parent.datastore_list[index] == 'Supported':
+                    if parent.datastore_list[index] == 'Supported':
                         if auth_level == 0:
                             statusAW = subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '03' + timeStr, password, 'Admin1', parent.devname], stdout=pipe)#stderr=log)
                             if statusAW == 0:
@@ -1357,28 +1357,28 @@ def rt_openLog(parent, index):
                                 subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '08' + timeStr, hash_pwd, 'User' + parent.user_list[index], parent.devname], stdout=pipe)#stderr=log)
                                 subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '40' + timeStr, hash_pwd, 'User' + parent.user_list[index], parent.devname], stdout=pipe)#stderr=log)
                                 subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '09' + timeStr, hash_pwd, 'User' + parent.user_list[index], parent.devname], stdout=pipe)#stderr=log)
-                    elif parent.datastore_list[index] == 'Supported':
-                        statusAW = subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '03' + timeStr, password, 'Admin1', parent.devname], stdout=pipe)#stderr=log)
-                        if statusAW == 0:
-                            subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '22' + timeStr, password, 'Admin1', parent.devname], stdout=pipe)#stderr=log)
-                            txt = os.popen(parent.prefix + 'sedutil-cli -n -t --auditread "' + password + '" Admin1 ' + parent.devname ).read()
-                            parent.admin_aol_list[index] = 0
-                            if (parent.VERSION % 3 == 0 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and parent.pass_sav.get_active():
-                                save_status = runprocess.passSaveUSB(password, parent.drive_menu.get_active_text(), parent.dev_vendor.get_text(), parent.dev_sn.get_text(), pass_usb, parent.auth_menu.get_active_text())
-                                if save_status == 0:
-                                    statusAW = subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '23' + timeStr, password, 'Admin1', parent.devname], stdout=pipe)#stderr=log)
-                        elif statusAW == parent.NOT_AUTHORIZED and parent.admin_aol_list[index] < parent.retrylimit_list[index]:
-                            parent.admin_aol_list[index] = parent.admin_aol_list[index] + 1
-                            subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '04' + timeStr, hash_pwd, 'User' + parent.user_list[index], parent.devname], stdout=pipe)#stderr=log)
-                            subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '40' + timeStr, hash_pwd, 'User' + parent.user_list[index], parent.devname], stdout=pipe)#stderr=log)
-                        elif statusAW == parent.AUTHORITY_LOCKED_OUT or parent.admin_aol_list[index] >= parent.retrylimit_list[index]:
-                            parent.admin_aol_list[index] = parent.retrylimit_list[index] + 1
-                            subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '05' + timeStr, hash_pwd, 'User' + parent.user_list[index], parent.devname], stdout=pipe)#stderr=log)
-                            subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '40' + timeStr, hash_pwd, 'User' + parent.user_list[index], parent.devname], stdout=pipe)#stderr=log)
-                            subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '09' + timeStr, hash_pwd, 'User' + parent.user_list[index], parent.devname], stdout=pipe)#stderr=log)
+                    #elif parent.datastore_list[index] == 'Supported':
+                    #    statusAW = subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '03' + timeStr, password, 'Admin1', parent.devname], stdout=pipe)#stderr=log)
+                    #    if statusAW == 0:
+                    #        subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '22' + timeStr, password, 'Admin1', parent.devname], stdout=pipe)#stderr=log)
+                    #        txt = os.popen(parent.prefix + 'sedutil-cli -n -t --auditread "' + password + '" Admin1 ' + parent.devname ).read()
+                    #        parent.admin_aol_list[index] = 0
+                    #        if parent.pass_sav.get_active():
+                    #            save_status = runprocess.passSaveUSB(password, parent.drive_menu.get_active_text(), parent.dev_vendor.get_text(), parent.dev_sn.get_text(), pass_usb, #parent.auth_menu.get_active_text())
+                    #             if save_status == 0:
+                    #                statusAW = subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '23' + timeStr, password, 'Admin1', parent.devname], stdout=pipe)#stderr=log)
+                    #    elif statusAW == parent.NOT_AUTHORIZED and parent.admin_aol_list[index] < parent.retrylimit_list[index]:
+                    #        parent.admin_aol_list[index] = parent.admin_aol_list[index] + 1
+                    #        subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '04' + timeStr, hash_pwd, 'User' + parent.user_list[index], parent.devname], stdout=pipe)#stderr=log)
+                    #        subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '40' + timeStr, hash_pwd, 'User' + parent.user_list[index], parent.devname], stdout=pipe)#stderr=log)
+                    #    elif statusAW == parent.AUTHORITY_LOCKED_OUT or parent.admin_aol_list[index] >= parent.retrylimit_list[index]:
+                    #        parent.admin_aol_list[index] = parent.retrylimit_list[index] + 1
+                    #        subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '05' + timeStr, hash_pwd, 'User' + parent.user_list[index], parent.devname], stdout=pipe)#stderr=log)
+                    #        subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '40' + timeStr, hash_pwd, 'User' + parent.user_list[index], parent.devname], stdout=pipe)#stderr=log)
+                    #        subprocess.call([parent.prefix + 'sedutil-cli', '-n', '-t', '-u', '--auditwrite', '09' + timeStr, hash_pwd, 'User' + parent.user_list[index], parent.devname], stdout=pipe)#stderr=log)
 
             else:
-                if (parent.VERSION == 3 or (parent.VERSION == 1 and parent.PBA_VERSION != 1)) and parent.datastore_list[index] == 'Supported':
+                if parent.datastore_list[index] == 'Supported':
                     if auth_level == 0:
                         statusAW = os.system(parent.prefix + 'sedutil-cli -n -t --auditwrite 03' + timeStr + ' "' + password + '" Admin1 ' + parent.devname)
                         if statusAW == 0:
@@ -1421,25 +1421,25 @@ def rt_openLog(parent, index):
                             os.system(parent.prefix + 'sedutil-cli -n -t -u --auditwrite 08' + timeStr + ' "' + hash_pwd + '" User' + parent.user_list[index] + ' ' + parent.devname)
                             os.system(parent.prefix + 'sedutil-cli -n -t -u --auditwrite 40' + timeStr + ' "' + hash_pwd + '" User' + parent.user_list[index] + ' ' + parent.devname)
                             os.system(parent.prefix + 'sedutil-cli -n -t -u --auditwrite 09' + timeStr + ' "' + hash_pwd + '" User' + parent.user_list[index] + ' ' + parent.devname)
-                elif parent.datastore_list[index] == 'Supported':
-                    statusAW = os.system(parent.prefix + 'sedutil-cli -n -t --auditwrite 03' + timeStr + ' "' + password + '" Admin1 ' + parent.devname)
-                    if statusAW == 0:
-                        os.system(parent.prefix + 'sedutil-cli -n -t --auditwrite 22' + timeStr + ' "' + password + '" Admin1 ' + parent.devname)
-                        txt = os.popen(parent.prefix + 'sedutil-cli -n -t --auditread "' + password + '" Admin1 ' + parent.devname ).read()
-                        parent.admin_aol_list[index] = 0
-                        #if parent.pass_sav.get_active():
-                        #    save_status = runprocess.passSaveUSB(password, parent.drive_menu.get_active_text(), parent.dev_vendor.get_text(), parent.dev_sn.get_text(), pass_usb, parent.auth_menu.get_active_text())
-                        #    if save_status == 0:
-                        #        statusAW = os.system(parent.prefix + 'sedutil-cli -n -t --auditwrite 23' + timeStr + ' "' + password + '" Admin1 ' + parent.devname)
-                    elif statusAW == parent.NOT_AUTHORIZED and parent.admin_aol_list[index] < parent.retrylimit_list[index]:
-                        parent.admin_aol_list[index] = parent.admin_aol_list[index] + 1
-                        os.system(parent.prefix + 'sedutil-cli -n -t -u --auditwrite 04' + timeStr + ' "' + hash_pwd + '" User' + parent.user_list[index] + ' ' + parent.devname)
-                        os.system(parent.prefix + 'sedutil-cli -n -t -u --auditwrite 40' + timeStr + ' "' + hash_pwd + '" User' + parent.user_list[index] + ' ' + parent.devname)
-                    elif statusAW == parent.AUTHORITY_LOCKED_OUT or parent.admin_aol_list[index] >= parent.retrylimit_list[index]:
-                        parent.admin_aol_list[index] = parent.retrylimit_list[index] + 1
-                        os.system(parent.prefix + 'sedutil-cli -n -t -u --auditwrite 05' + timeStr + ' "' + hash_pwd + '" User' + parent.user_list[index] + ' ' + parent.devname)
-                        os.system(parent.prefix + 'sedutil-cli -n -t -u --auditwrite 40' + timeStr + ' "' + hash_pwd + '" User' + parent.user_list[index] + ' ' + parent.devname)
-                        os.system(parent.prefix + 'sedutil-cli -n -t -u --auditwrite 09' + timeStr + ' "' + hash_pwd + '" User' + parent.user_list[index] + ' ' + parent.devname)
+                #elif parent.datastore_list[index] == 'Supported':
+                #    statusAW = os.system(parent.prefix + 'sedutil-cli -n -t --auditwrite 03' + timeStr + ' "' + password + '" Admin1 ' + parent.devname)
+                #    if statusAW == 0:
+                #        os.system(parent.prefix + 'sedutil-cli -n -t --auditwrite 22' + timeStr + ' "' + password + '" Admin1 ' + parent.devname)
+                #        txt = os.popen(parent.prefix + 'sedutil-cli -n -t --auditread "' + password + '" Admin1 ' + parent.devname ).read()
+                #        parent.admin_aol_list[index] = 0
+                #        if parent.pass_sav.get_active():
+                #            save_status = runprocess.passSaveUSB(password, parent.drive_menu.get_active_text(), parent.dev_vendor.get_text(), parent.dev_sn.get_text(), pass_usb, parent.auth_menu.get_active_text())
+                #            if save_status == 0:
+                #                statusAW = os.system(parent.prefix + 'sedutil-cli -n -t --auditwrite 23' + timeStr + ' "' + password + '" Admin1 ' + parent.devname)
+                #    elif statusAW == parent.NOT_AUTHORIZED and parent.admin_aol_list[index] < parent.retrylimit_list[index]:
+                #        parent.admin_aol_list[index] = parent.admin_aol_list[index] + 1
+                #        os.system(parent.prefix + 'sedutil-cli -n -t -u --auditwrite 04' + timeStr + ' "' + hash_pwd + '" User' + parent.user_list[index] + ' ' + parent.devname)
+                #        os.system(parent.prefix + 'sedutil-cli -n -t -u --auditwrite 40' + timeStr + ' "' + hash_pwd + '" User' + parent.user_list[index] + ' ' + parent.devname)
+                #    elif statusAW == parent.AUTHORITY_LOCKED_OUT or parent.admin_aol_list[index] >= parent.retrylimit_list[index]:
+                #        parent.admin_aol_list[index] = parent.retrylimit_list[index] + 1
+                #        os.system(parent.prefix + 'sedutil-cli -n -t -u --auditwrite 05' + timeStr + ' "' + hash_pwd + '" User' + parent.user_list[index] + ' ' + parent.devname)
+                #        os.system(parent.prefix + 'sedutil-cli -n -t -u --auditwrite 40' + timeStr + ' "' + hash_pwd + '" User' + parent.user_list[index] + ' ' + parent.devname)
+                #        os.system(parent.prefix + 'sedutil-cli -n -t -u --auditwrite 09' + timeStr + ' "' + hash_pwd + '" User' + parent.user_list[index] + ' ' + parent.devname)
     runop.postlock(index)
     gobject.idle_add(cleanop.openLog_cleanup, parent, index, statusAW, password, txt, no_pw, no_USB, not_detected, not_setup, not_active, auth_level, drive, rescan_needed, present, save_status)
 

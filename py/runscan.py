@@ -18,78 +18,78 @@ import threading
 import verify
 
 def run_scan(button, ui, fullscan):
-    verify.licCheck(ui)
-    ui.scan_ip = True
-    timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-    #print 'start scan ' + timeStr
-    ui.start_spin()
-    ui.load_instr.show()
-    ui.disable_menu()
-    
-    if not ui.firstscan and fullscan:
-        model = ui.dev_select.get_model()
-    
-        iter = gtk.TreeIter
-        for row in model:
-            model.remove(row.iter)
-            
-        ui.dev_vendor.set_text('')
-        ui.dev_sn.set_text('')
-        ui.dev_msid.set_text('')
-        ui.dev_series.set_text('')
-        ui.dev_pbaVer.set_text('')
+    verified = verify.licCheck(ui)
+    if verified:
+        ui.scan_ip = True
+        timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        #print 'start scan ' + timeStr
+        ui.start_spin()
+        ui.load_instr.show()
+        ui.disable_menu()
         
-        ui.dev_opal_ver.set_text('')
-        ui.dev_status.set_text('')
-        ui.dev_setup.set_text('')
-        ui.dev_enc.set_text('')
-        ui.dev_blockSID.set_text('')
-        ui.dev_userSetup.set_text('')
+        if not ui.firstscan and fullscan:
+            model = ui.dev_select.get_model()
+        
+            iter = gtk.TreeIter
+            for row in model:
+                model.remove(row.iter)
+                
+            ui.dev_vendor.set_text('')
+            ui.dev_sn.set_text('')
+            ui.dev_msid.set_text('')
+            ui.dev_series.set_text('')
+            ui.dev_pbaVer.set_text('')
+            
+            ui.dev_opal_ver.set_text('')
+            ui.dev_status.set_text('')
+            ui.dev_setup.set_text('')
+            ui.dev_enc.set_text('')
+            ui.dev_blockSID.set_text('')
+            ui.dev_userSetup.set_text('')
 
-        #if len(ui.vendor_list) > 0:
-        #    ui.opal_ver_list = []
-        #    ui.series_list = []
-        #    ui.lockstatus_list = []
-        #    ui.setupstatus_list = []
-    
-    if ui.firstscan and ui.DEV_OS == 'Windows':
-        if os.path.isfile('mountvol.txt'):
-            f = open('mountvol.txt', 'r')
-            txt = f.read()
-            #print txt
-            f.close()
-            regex = '([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}) ([A-Z]:) ([A-Z0-9]+)'
-            usb_regex = '([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}) ([A-Z]:)\n'
-            mv_tuples = re.findall(regex,txt)
-            for t in mv_tuples:
-                duplicate = False
-                for e in ui.mv_list:
+            #if len(ui.vendor_list) > 0:
+            #    ui.opal_ver_list = []
+            #    ui.series_list = []
+            #    ui.lockstatus_list = []
+            #    ui.setupstatus_list = []
+        
+        if ui.firstscan and ui.DEV_OS == 'Windows':
+            if os.path.isfile('mountvol.txt'):
+                f = open('mountvol.txt', 'r')
+                txt = f.read()
+                #print txt
+                f.close()
+                regex = '([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}) ([A-Z]:) ([A-Z0-9]+)'
+                usb_regex = '([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}) ([A-Z]:)\n'
+                mv_tuples = re.findall(regex,txt)
+                for t in mv_tuples:
+                    duplicate = False
+                    for e in ui.mv_list:
+                        if not duplicate:
+                            if t[0] == e[0] and t[2] == e[2]:
+                                duplicate = True
                     if not duplicate:
-                        if t[0] == e[0] and t[2] == e[2]:
-                            duplicate = True
-                if not duplicate:
-                    entry = [t[0],t[1],t[2]]
-                    #print entry
-                    ui.mv_list.append(entry)
-            #print ui.mv_list
-            usb_tuples = re.findall(usb_regex,txt)
-            for u in usb_tuples:
-                duplicate = False
-                for e in ui.usb_mv_list:
+                        entry = [t[0],t[1],t[2]]
+                        #print entry
+                        ui.mv_list.append(entry)
+                #print ui.mv_list
+                usb_tuples = re.findall(usb_regex,txt)
+                for u in usb_tuples:
+                    duplicate = False
+                    for e in ui.usb_mv_list:
+                        if not duplicate:
+                            if u[0] == e[0]:
+                                duplicate = True
                     if not duplicate:
-                        if u[0] == e[0]:
-                            duplicate = True
-                if not duplicate:
-                    entry = [u[0],u[1]]
-                    ui.usb_mv_list.append(entry)
-            #print '\n'
-            #print ui.usb_mv_list
-    
-    #if fullscan:
-    finddev(ui, fullscan)
+                        entry = [u[0],u[1]]
+                        ui.usb_mv_list.append(entry)
+                #print '\n'
+                #print ui.usb_mv_list
+        
+        #if fullscan:
+        finddev(ui, fullscan)
 
 def finddev(ui, fullscan):
-    
     if not fullscan:
         ui.firstscan = False
     
@@ -424,7 +424,6 @@ def finddev(ui, fullscan):
         mv_newdir = []
         mv_rm = []
         usb_edit = []
-
         if devs_new != [] or not fullscan:
             if fullscan:
                 lockstatus_new = [None] * len(devs_new)
@@ -878,7 +877,7 @@ def finddev(ui, fullscan):
                             if (ui.view_state == 2 and ui.setupstatus_list[act_idx] == 'No') or (ui.view_state == 4 and ui.setupstatus_list[act_idx] == 'Yes'):
                                 ui.mode_toggled(None)
                         #ui.dev_msid.set_text(ui.msid_list[act_idx])
-            
+
             if sedutil_res == hash_res:
                 thread_list = [None] * len(full_devs_new)
                 
@@ -1072,7 +1071,7 @@ def finddev(ui, fullscan):
                             usb_edit.append([p[0], p[1]])
                     for x in range(256):
                         runop.postlock(x)
-            
+
         #else:
         #    ui.setupstatus_list = []
         #    ui.lockstatus_list = []
@@ -1382,7 +1381,7 @@ def finddev(ui, fullscan):
                         ui.dev_select.set_active(ui.locked_list[0])
                     ui.unlock_prompt()
                 present = False
-                if ui.PBA_VERSION != 1 and ui.pba_devname != None and not ui.invalid_pba:
+                if ui.pba_devname != None and not ui.invalid_pba:
                     folder_list = []
                     
                     txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d\" \" -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do\necho $DLIST\ndone ").read()
@@ -1427,7 +1426,7 @@ def finddev(ui, fullscan):
                     else:
                         ui.msg_err('Invalid preboot image.')
                     ui.PBA_VERSION = 0
-                elif present:
+                elif present and ui.PBA_VERSION > 1:
                     message = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION, buttons=gtk.BUTTONS_CANCEL, parent = ui)
                     msg = 'USB detected, Proceeding to unlock with USB in 5 seconds.'
                     message.set_markup(msg)
@@ -1465,6 +1464,8 @@ def finddev(ui, fullscan):
                 if len(ui.tcg_list) > 0 and not verified:
                     dialogs.mngPower_prompt(None, ui, 0)
             ui.firstscan = False
+        ui.driveCount.set_text("Total number of drives : " + str(len(ui.devs_list)))
+        ui.tcgCount.set_text("Total number of TCG drives : " + str(len(ui.tcg_list)))
         ui.scan_ip = False
         
         ui.posthibern = False

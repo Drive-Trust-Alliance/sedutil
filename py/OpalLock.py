@@ -19,8 +19,7 @@ import multiprocessing
 import verify
 from ctypes import c_long, c_int
 import pango
-
-
+import vfysig
 
 GWL_WNDPROC = -4
 WM_DESTROY  = 2
@@ -197,6 +196,7 @@ if __name__ == "__main__":
         drc_ip = False
         da_ip = False
         dnc_mount = False
+        unlock_mount = False
         
         user_list = []
         admin_list = []
@@ -546,19 +546,31 @@ if __name__ == "__main__":
             self.revertUser_button.set_flags(gtk.CAN_DEFAULT)
             self.revertPSID_button = gtk.Button('_Revert Setup and Erase with PSID')
             
-            label_box = gtk.HBox(homogeneous, 0)
+            #label_box = gtk.HBox(homogeneous, 0)
             
             self.op_label = gtk.Label('')
             self.op_label.set_alignment(0,0.5)
-            label_box.pack_start(self.op_label, False, False, 0)
+            #label_box.pack_start(self.op_label, False, False, 0)
             
             self.update_link = gtk.LinkButton('https://fidelityheight.com/download/OpalLock_setup.exe', 'Update available!')
             self.update_link.set_alignment(0,0.5)
-            label_box.pack_end(self.update_link, False, False, 0)
+            #label_box.pack_end(self.update_link, False, False, 0)
             
             #self.updated_label = gtk.Label('Latest')
             
-            self.vbox.pack_start(label_box, False, False, 0)
+            #self.vbox.pack_start(label_box, False, False, 0)
+            
+            self.firstHbox = gtk.HBox(homogeneous, 0)
+            self.firstHbox.pack_start(self.op_label, False, False, 0)
+
+
+            self.rescanButton = gtk.Button()
+            self.rescanButton.set_label('Rescan Drives')
+            self.rescanButton.set_size_request(100,25)
+            self.rescanButton.connect("clicked",runscan.run_scan, self, True)
+            self.firstHbox.pack_end(self.rescanButton, False, False, 5)
+            self.firstHbox.pack_end(self.update_link, False, False, 5)
+            self.vbox.pack_start(self.firstHbox , False, False, 0 )
             
             top_box = gtk.HBox(homogeneous, 0)
             
@@ -1122,7 +1134,20 @@ if __name__ == "__main__":
             self.box_dev.pack_start(frm_d, True, True, padding)
             self.box_dev.pack_start(frm_o, True, True, padding)
             
-            self.vbox.pack_start(self.box_dev, False)
+            self.vbox.pack_start(self.box_dev, False, False, 0) 
+
+            self.driveInformation = gtk.HBox(False, 0) 
+
+            self.driveCount = gtk.Label("") 
+            self.driveCount.set_alignment(0,0.5) 
+            self.driveCount.set_text("Total number of drives : " + str(len(self.devs_list))) 
+
+            self.tcgCount = gtk.Label("") 
+            self.tcgCount.set_alignment(0, 0.5) 
+            self.tcgCount.set_text("Total number of TCG drives : " + str(len(self.tcg_list))) 
+            self.driveInformation.pack_start(self.driveCount, False, False, 0) 
+            self.driveInformation.pack_start(self.tcgCount, False, False, 10) 
+            self.vbox.pack_start(self.driveInformation, False, False, 0)
             
         def display_grid(self,*args):
             self.selectAll_check = gtk.CheckButton('Select/Deselect All')
@@ -1138,21 +1163,21 @@ if __name__ == "__main__":
             cell_check = gtk.CellRendererToggle()
             cell_check.connect('toggled', self.grid_ms_toggle)
             self.tvcolumn[0] = gtk.TreeViewColumn(column_names[0], cell_check, active=0, visible=4)
-            self.tvcolumn[0].set_min_width(50)
+            self.tvcolumn[0].set_min_width(50) 
             self.tvcolumn[0].set_alignment(0.5)
             self.treeview.append_column(self.tvcolumn[0])
             
             cell_dev = gtk.CellRendererText()
             cell_dev.set_property('editable', False)
             self.tvcolumn[1] = gtk.TreeViewColumn(column_names[1], cell_dev, text=1)
-            self.tvcolumn[1].set_min_width(160)
+            self.tvcolumn[1].set_min_width(160) 
             self.tvcolumn[1].set_alignment(0.5)
             self.treeview.append_column(self.tvcolumn[1])
             
             cell_model = gtk.CellRendererText()
             cell_model.set_property('editable', False)
             self.tvcolumn[2] = gtk.TreeViewColumn(column_names[2], cell_model, text=2)
-            self.tvcolumn[2].set_min_width(160)
+            self.tvcolumn[2].set_min_width(160) 
             self.tvcolumn[2].set_alignment(0.5)
             self.treeview.append_column(self.tvcolumn[2])
             
@@ -1170,228 +1195,233 @@ if __name__ == "__main__":
             self.treeview.set_model(self.liststore)
             
         def selectAll_toggle(self, *args):
-            verify.licCheck(self)
-            self.selectAll_check.set_inconsistent(False)
-            value = self.selectAll_check.get_active()
-            #def Toggle(store, path, itr, v):
-            #    self.liststore[path][0] = v
-            #self.liststore.foreach(Toggle, value)
-            index = 0
-            iter = self.liststore.get_iter_first()
-            
-            while iter != None:
-                if self.view_state == 1 and self.auth_menu.get_active() == 0 and index in self.locked_list:
-                    self.liststore.set_value(iter, 0, value)
-                elif self.view_state == 1 and self.auth_menu.get_active() == 1 and index in self.ulocked_list:
-                    self.liststore.set_value(iter, 0, value)
-                elif self.view_state == 2 and self.auth_menu.get_active() == 0 and index in self.setup_list:
-                    self.liststore.set_value(iter, 0, value)
-                elif self.view_state == 2 and self.auth_menu.get_active() == 1 and index in self.usetup_list:
-                    self.liststore.set_value(iter, 0, value)
-                elif self.view_state == 4 and index in self.nonsetup_list:
-                    self.liststore.set_value(iter, 0, value)
-                elif self.view_state == 5 and index in self.tcg_list:
-                    self.liststore.set_value(iter, 0, value)
-                elif self.view_state == 7 and index in self.mbr_setup_list:
-                    self.liststore.set_value(iter, 0, value)
-                iter = self.liststore.iter_next(iter)
-                index = index + 1
+            verified = verify.licCheck(self)
+            if verified:
+                self.selectAll_check.set_inconsistent(False)
+                value = self.selectAll_check.get_active()
+                #def Toggle(store, path, itr, v):
+                #    self.liststore[path][0] = v
+                #self.liststore.foreach(Toggle, value)
+                index = 0
+                iter = self.liststore.get_iter_first()
+                
+                while iter != None:
+                    if self.view_state == 1 and self.auth_menu.get_active() == 0 and index in self.locked_list:
+                        self.liststore.set_value(iter, 0, value)
+                    elif self.view_state == 1 and self.auth_menu.get_active() == 1 and index in self.ulocked_list:
+                        self.liststore.set_value(iter, 0, value)
+                    elif self.view_state == 2 and self.auth_menu.get_active() == 0 and index in self.setup_list:
+                        self.liststore.set_value(iter, 0, value)
+                    elif self.view_state == 2 and self.auth_menu.get_active() == 1 and index in self.usetup_list:
+                        self.liststore.set_value(iter, 0, value)
+                    elif self.view_state == 4 and index in self.nonsetup_list:
+                        self.liststore.set_value(iter, 0, value)
+                    elif self.view_state == 5 and index in self.tcg_list:
+                        self.liststore.set_value(iter, 0, value)
+                    elif self.view_state == 7 and index in self.mbr_setup_list:
+                        self.liststore.set_value(iter, 0, value)
+                    iter = self.liststore.iter_next(iter)
+                    index = index + 1
             
         def grid_ms_toggle(self, cell, path, data=None):
-            if (self.op_prompt == 2 and self.warned == True): #Checks if the the user is on a warned window in the Setup Drive, resets the the process if drive checkbox is toggled - Lokesh
-                self.setup_prompt1()
-            verify.licCheck(self)
-            i = self.liststore.get_iter(path)
-            curr_val = self.liststore.get_value(i, 0)
-            self.liststore.set_value(i, 0, not curr_val)
-            
-            #self.treeview.grab_focus()
-            #self.treeview.emit('toggle-cursor-row')
-            
-            checked = list()
-            self.liststore.foreach(lambda store, path, itr: checked.append(store[path][0]))
-            all_checked = True
-            none_checked = True
-            for i in range(len(checked)):
-                if self.view_state == 1 and self.auth_menu.get_active() == 0:
-                    if i in self.locked_list and checked[i]:
-                        none_checked = False
-                    elif i in self.locked_list and not checked[i]:
-                        all_checked = False
-                elif self.view_state == 1:
-                    if i in self.ulocked_list and checked[i]:
-                        none_checked = False
-                    elif i in self.ulocked_list and not checked[i]:
-                        all_checked = False
-                elif self.view_state == 2 and self.auth_menu.get_active() == 0:
-                    if i in self.setup_list and checked[i]:
-                        none_checked = False
-                    elif i in self.setup_list and not checked[i]:
-                        all_checked = False
-                elif self.view_state == 2:
-                    if i in self.usetup_list and checked[i]:
-                        none_checked = False
-                    elif i in self.usetup_list and not checked[i]:
-                        all_checked = False
-                elif self.view_state == 4:
-                    if i in self.nonsetup_list and checked[i]:
-                        none_checked = False
-                    elif i in self.nonsetup_list and not checked[i]:
-                        all_checked = False
-                elif self.view_state == 5:
-                    if i in self.tcg_list and checked[i]:
-                        none_checked = False
-                    elif i in self.tcg_list and not checked[i]:
-                        all_checked = False
-                elif self.view_state == 7:
-                    if i in self.mbr_setup_list and checked[i]:
-                        none_checked = False
-                    elif i in self.mbr_setup_list and not checked[i]:
-                        all_checked = False
-            if all_checked:
-                self.selectAll_check.set_inconsistent(False)
-                self.selectAll_check.set_active(True)
-            elif none_checked:
-                self.selectAll_check.set_inconsistent(False)
-                self.selectAll_check.set_active(False)
-            else:
-                self.selectAll_check.set_inconsistent(True)
+            verified = verify.licCheck(self)
+            if verified:
+                if (self.op_prompt == 2 and self.warned == True): #Checks if the the user is on a warned window in the Setup Drive, resets the the process if drive checkbox is toggled - Lokesh
+                    self.setup_prompt1()
+                i = self.liststore.get_iter(path)
+                curr_val = self.liststore.get_value(i, 0)
+                self.liststore.set_value(i, 0, not curr_val)
+                
+                #self.treeview.grab_focus()
+                #self.treeview.emit('toggle-cursor-row')
+                
+                checked = list()
+                self.liststore.foreach(lambda store, path, itr: checked.append(store[path][0]))
+                all_checked = True
+                none_checked = True
+                for i in range(len(checked)):
+                    if self.view_state == 1 and self.auth_menu.get_active() == 0:
+                        if i in self.locked_list and checked[i]:
+                            none_checked = False
+                        elif i in self.locked_list and not checked[i]:
+                            all_checked = False
+                    elif self.view_state == 1:
+                        if i in self.ulocked_list and checked[i]:
+                            none_checked = False
+                        elif i in self.ulocked_list and not checked[i]:
+                            all_checked = False
+                    elif self.view_state == 2 and self.auth_menu.get_active() == 0:
+                        if i in self.setup_list and checked[i]:
+                            none_checked = False
+                        elif i in self.setup_list and not checked[i]:
+                            all_checked = False
+                    elif self.view_state == 2:
+                        if i in self.usetup_list and checked[i]:
+                            none_checked = False
+                        elif i in self.usetup_list and not checked[i]:
+                            all_checked = False
+                    elif self.view_state == 4:
+                        if i in self.nonsetup_list and checked[i]:
+                            none_checked = False
+                        elif i in self.nonsetup_list and not checked[i]:
+                            all_checked = False
+                    elif self.view_state == 5:
+                        if i in self.tcg_list and checked[i]:
+                            none_checked = False
+                        elif i in self.tcg_list and not checked[i]:
+                            all_checked = False
+                    elif self.view_state == 7:
+                        if i in self.mbr_setup_list and checked[i]:
+                            none_checked = False
+                        elif i in self.mbr_setup_list and not checked[i]:
+                            all_checked = False
+                if all_checked:
+                    self.selectAll_check.set_inconsistent(False)
+                    self.selectAll_check.set_active(True)
+                elif none_checked:
+                    self.selectAll_check.set_inconsistent(False)
+                    self.selectAll_check.set_active(False)
+                else:
+                    self.selectAll_check.set_inconsistent(True)
             
         def entry_check_box_pass(self, widget, checkbox):
-            verify.licCheck(self)
-            b_entry_checkbox = checkbox.get_active()
-            pass_show = False
-            if b_entry_checkbox:
-                pass_show = True
-            else:
+            verified = verify.licCheck(self)
+            if verified:
+                b_entry_checkbox = checkbox.get_active()
                 pass_show = False
-            self.pass_entry.set_visibility(pass_show)
-            self.new_pass_entry.set_visibility(pass_show)
-            self.confirm_pass_entry.set_visibility(pass_show)
-            return 
+                if b_entry_checkbox:
+                    pass_show = True
+                else:
+                    pass_show = False
+                self.pass_entry.set_visibility(pass_show)
+                self.new_pass_entry.set_visibility(pass_show)
+                self.confirm_pass_entry.set_visibility(pass_show)
+                return 
             
         def check_passRead(self, checkbox):
-            verify.licCheck(self)
-            b_entry_checkbox = checkbox.get_active()
-            if b_entry_checkbox:
-                self.pass_entry.set_text("")
-                self.pass_entry.set_sensitive(False)
-            else:
-                self.pass_entry.set_sensitive(True)
-                
-            if self.check_pass_rd.get_active():
-                if self.check_both:
-                    self.pass_sav.set_active(True)
-                    self.drive_label.hide()
-                    self.drive_menu.hide()
-                    self.drive_refresh.hide()
-                if self.op_prompt != 4 and self.op_prompt != 6:
-                    self.check_box_pass.set_active(False)
-                    self.check_box_pass.set_sensitive(False)
-                if self.op_prompt != 6:
-                    self.pass_sav.set_sensitive(False)
-            else:
-                self.pass_sav.set_sensitive(True)
-                self.check_box_pass.set_sensitive(True)
-                if self.check_both:
-                    self.pass_sav.set_active(False)
+            verified = verify.licCheck(self)
+            if verified:
+                b_entry_checkbox = checkbox.get_active()
+                if b_entry_checkbox:
+                    self.pass_entry.set_text("")
+                    self.pass_entry.set_sensitive(False)
+                else:
+                    self.pass_entry.set_sensitive(True)
+                    
+                if self.check_pass_rd.get_active():
+                    if self.check_both:
+                        self.pass_sav.set_active(True)
+                        self.drive_label.hide()
+                        self.drive_menu.hide()
+                        self.drive_refresh.hide()
+                    if self.op_prompt != 4 and self.op_prompt != 6:
+                        self.check_box_pass.set_active(False)
+                        self.check_box_pass.set_sensitive(False)
+                    if self.op_prompt != 6:
+                        self.pass_sav.set_sensitive(False)
+                else:
+                    self.pass_sav.set_sensitive(True)
+                    self.check_box_pass.set_sensitive(True)
+                    if self.check_both:
+                        self.pass_sav.set_active(False)
                 
         def showDrive(self, *args):
-            b_entry_checkbox = self.pass_sav.get_active()
-            verify.licCheck(self)
-            if not self.mode_setupUSB:
-                if b_entry_checkbox and (not self.check_pass_rd.get_active() or self.op_prompt == 6):
-                    #print 'save checked and read unchecked or in setup user prompt, drive menu should appear'
-                    def t1_run():
-                        #self.drive_list = []
-                        d_list = []
+            verified = verify.licCheck(self)
+            if verified:
+                b_entry_checkbox = self.pass_sav.get_active()
+                if not self.mode_setupUSB:
+                    if b_entry_checkbox and (not self.check_pass_rd.get_active() or self.op_prompt == 6):
+                        #print 'save checked and read unchecked or in setup user prompt, drive menu should appear'
+                        def t1_run():
+                            #self.drive_list = []
+                            d_list = []
+                            
+                            if self.DEV_OS == 'Windows':
+                                txt = os.popen('wmic logicaldisk where "drivetype=2" get caption,filesystem').read()
+                                txt_regex = '([D-Z]:)\s+FAT'
+                                d_list = re.findall(txt_regex,txt)
+                            elif self.DEV_OS == 'Linux':
+                                txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d\" \" -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do\necho $DLIST\ndone ").read()
+                                #print txt
+                                txt_regex = 'sd[a-z]'
+                                list_u = re.findall(txt_regex,txt)
+                                #print list_u
+                                for u in list_u:
+                                    txt1 = os.popen(self.prefix + 'mount').read()
+                                    m = re.search(u,txt1)
+                                    if not m:
+                                        txt2 = os.popen(self.prefix + 'blkid').read()
+                                        rgx = '(' + u + '1?).+'
+                                        m1 = re.search(rgx,txt2)
+                                        if m1:
+                                            r2 = '\s+TYPE="([a-z]+)"'
+                                            txt3 = m1.group(0)
+                                            m2 = re.search(r2,txt3)
+                                            type_a = m2.group(1)
+                                            if type_a != 'ntfs' and type_a != 'exfat':
+                                                s = os.system(self.prefix + 'mount -t ' + type_a + ' /dev/' + m1.group(1))
+                            
+                                txt = os.popen(self.prefix + 'mount').read()
+                                dev_regex = '/dev/(sd[a-z])[1-9]?\s*on\s*(\S+)\s*type'
+                                full_list = re.findall(dev_regex, txt)
+                                for m in full_list:
+                                    if m[0] in list_u:
+                                        blktxt = os.popen(self.prefix + 'blkid').read()
+                                        dev_d = '/dev/' + m[0]
+                                        n = re.search(dev_d, blktxt)
+                                        if n:
+                                            #self.drive_list.append(m[1])
+                                            d_list.append(m[1])
+                            gobject.idle_add(cleanup, d_list)
+                                            
                         
-                        if self.DEV_OS == 'Windows':
-                            txt = os.popen('wmic logicaldisk where "drivetype=2" get caption,filesystem').read()
-                            txt_regex = '([D-Z]:)\s+FAT'
-                            d_list = re.findall(txt_regex,txt)
-                        elif self.DEV_OS == 'Linux':
-                            txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d\" \" -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do\necho $DLIST\ndone ").read()
-                            #print txt
-                            txt_regex = 'sd[a-z]'
-                            list_u = re.findall(txt_regex,txt)
-                            #print list_u
-                            for u in list_u:
-                                txt1 = os.popen(self.prefix + 'mount').read()
-                                m = re.search(u,txt1)
-                                if not m:
-                                    txt2 = os.popen(self.prefix + 'blkid').read()
-                                    rgx = '(' + u + '1?).+'
-                                    m1 = re.search(rgx,txt2)
-                                    if m1:
-                                        r2 = '\s+TYPE="([a-z]+)"'
-                                        txt3 = m1.group(0)
-                                        m2 = re.search(r2,txt3)
-                                        type_a = m2.group(1)
-                                        if type_a != 'ntfs' and type_a != 'exfat':
-                                            s = os.system(self.prefix + 'mount -t ' + type_a + ' /dev/' + m1.group(1))
-                        
-                            txt = os.popen(self.prefix + 'mount').read()
-                            dev_regex = '/dev/(sd[a-z])[1-9]?\s*on\s*(\S+)\s*type'
-                            full_list = re.findall(dev_regex, txt)
-                            for m in full_list:
-                                if m[0] in list_u:
-                                    blktxt = os.popen(self.prefix + 'blkid').read()
-                                    dev_d = '/dev/' + m[0]
-                                    n = re.search(dev_d, blktxt)
-                                    if n:
-                                        #self.drive_list.append(m[1])
-                                        d_list.append(m[1])
-                        gobject.idle_add(cleanup, d_list)
-                                        
-                    
-                    def cleanup(d_list):
-                        #print 'showDrive thread cleanup, menu should be showing'
-                        self.drive_list = d_list
-                        model = self.drive_menu.get_model()
-                        
-                        iter = gtk.TreeIter
-                        for row in model:
-                            model.remove(row.iter)
-                        
-                        length = len(self.drive_list)
-                        
-                        if length > 0:
-                            for d in self.drive_list:
-                                self.drive_menu.append_text(d)
-                            self.drive_menu.set_active(0)
-                        
-                        self.drive_label.show()
-                        self.drive_menu.show()
-                        self.drive_refresh.show()
-                    t = threading.Thread(target=t1_run, args=())
-                    t.start()
+                        def cleanup(d_list):
+                            #print 'showDrive thread cleanup, menu should be showing'
+                            self.drive_list = d_list
+                            model = self.drive_menu.get_model()
+                            
+                            iter = gtk.TreeIter
+                            for row in model:
+                                model.remove(row.iter)
+                            
+                            length = len(self.drive_list)
+                            
+                            if length > 0:
+                                for d in self.drive_list:
+                                    self.drive_menu.append_text(d)
+                                self.drive_menu.set_active(0)
+                            
+                            self.drive_label.show()
+                            self.drive_menu.show()
+                            self.drive_refresh.show()
+                        t = threading.Thread(target=t1_run, args=())
+                        t.start()
+                    else:
+                        self.drive_label.hide()
+                        self.drive_menu.hide()
+                        self.drive_refresh.hide()
+                    if self.check_exclusive and self.pass_sav.get_active():
+                        self.check_pass_rd.set_sensitive(False)
+                    elif self.check_exclusive:
+                        self.check_pass_rd.set_sensitive(True)
                 else:
-                    self.drive_label.hide()
-                    self.drive_menu.hide()
-                    self.drive_refresh.hide()
-                if self.check_exclusive and self.pass_sav.get_active():
-                    self.check_pass_rd.set_sensitive(False)
-                elif self.check_exclusive:
-                    self.check_pass_rd.set_sensitive(True)
-            else:
-                if b_entry_checkbox:
-                    if self.op_prompt != 2:
-                        i = self.dev_select.get_active()
-                        if self.setupuser_list[i] == 'Yes' or self.setupuser_list[i] == None:
-                            self.box_auth.show()
-                        self.box_pass.show()
-                    self.box_drive.show()
-                    self.drive_label.hide()
-                    self.drive_menu.hide()
-                    self.drive_refresh.hide()
-                    self.check_box_pass.show()
-                else:
-                    if self.op_prompt != 2:
-                        self.box_auth.hide()
-                        self.auth_menu.set_active(0)
-                        self.box_pass.hide()
-                    self.box_drive.hide()
+                    if b_entry_checkbox:
+                        if self.op_prompt != 2:
+                            i = self.dev_select.get_active()
+                            if self.setupuser_list[i] == 'Yes' or self.setupuser_list[i] == None:
+                                self.box_auth.show()
+                            self.box_pass.show()
+                        self.box_drive.show()
+                        self.drive_label.hide()
+                        self.drive_menu.hide()
+                        self.drive_refresh.hide()
+                        self.check_box_pass.show()
+                    else:
+                        if self.op_prompt != 2:
+                            self.box_auth.hide()
+                            self.auth_menu.set_active(0)
+                            self.box_pass.hide()
+                        self.box_drive.hide()
 
         def onDeviceChange(self,wParam,lParam):
             background.devChange(self, wParam, lParam)
@@ -1403,247 +1433,252 @@ if __name__ == "__main__":
             background.endSession(self, wParam, lParam)
         
         def changed_cb(self, entry):
-            verify.licCheck(self)
-            #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-            #    self.check_pass_rd.set_active(False)
-            #    self.pass_sav.set_active(False)
-            act_idx = self.dev_select.get_active()
-            index = -1
-            #if self.view_state != 7:
-            index = act_idx
-            self.pass_entry.set_text('')
-            self.new_pass_entry.set_text('')
-            self.confirm_pass_entry.set_text('')
-            if self.view_state == 1:
-                if act_idx in self.locked_list:
-                    self.na_instr.hide()
-                    self.op_instr.show()
-                    if self.VERSION != 0 and self.PBA_VERSION != 0:
-                        self.enable_entries_buttons()
-                    if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                        if self.check_pass_rd.get_active():
-                            self.pass_entry.set_text("")
-                            self.pass_entry.set_sensitive(False)
+            verified = verify.licCheck(self)
+            if verified:
+                if self.warned == True and self.op_prompt == 2:
+                    self.setup_prompt1()
+                    self.warned = False
+                #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                #    self.check_pass_rd.set_active(False)
+                #    self.pass_sav.set_active(False)
+                act_idx = self.dev_select.get_active()
+                index = -1
+                #if self.view_state != 7:
+                index = act_idx
+                self.pass_entry.set_text('')
+                self.new_pass_entry.set_text('')
+                self.confirm_pass_entry.set_text('')
+                if self.view_state == 1:
+                    if act_idx in self.locked_list:
+                        self.na_instr.hide()
+                        self.op_instr.show()
+                        if self.VERSION != 0 and self.PBA_VERSION != 0:
+                            self.enable_entries_buttons()
+                        #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                            if self.check_pass_rd.get_active():
+                                self.pass_entry.set_text("")
+                                self.pass_entry.set_sensitive(False)
                         if self.setupuser_list[act_idx] == 'Yes':# or self.setupuser_list[act_idx] == None:
                             self.box_auth.show()
                         else:
                             self.box_auth.hide()
                             self.auth_menu.set_active(0)
-                else:
-                    self.op_instr.hide()
-                    self.disable_entries_buttons()
-                    if act_idx in self.tcg_list:
-                        self.na_instr.set_text('This drive is not locked.')
                     else:
-                        self.na_instr.set_text('This drive is not a TCG drive.')
-                    if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                        if self.setupuser_list[act_idx] == 'Yes':# or self.setupuser_list[act_idx] == None:
-                            self.box_auth.show()
+                        self.op_instr.hide()
+                        self.disable_entries_buttons()
+                        if act_idx in self.tcg_list:
+                            self.na_instr.set_text('This drive is not locked.')
                         else:
-                            self.box_auth.hide()
-                            self.auth_menu.set_active(0)
-                    if not self.scan_ip:
-                        self.na_instr.show()
-            elif self.view_state == 2:
-                if act_idx in self.setup_list and (self.op_prompt != 6 or self.setupuser_list[act_idx] != 'Yes') and (self.op_prompt != 12 or self.setupuser_list[act_idx] != 'No') and (self.op_prompt != 3 or self.datastore_list[act_idx] == 'Supported'):
-                    self.na_instr.hide()
-                    self.op_instr.show()
-                    if self.VERSION != 0 and self.PBA_VERSION != 0:
-                        self.enable_entries_buttons()
-                    if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                        if self.check_pass_rd.get_active():
-                            self.pass_entry.set_text("")
-                            self.pass_entry.set_sensitive(False)
-                    if (self.op_prompt == 4 or self.op_prompt == 5) and (self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1)) and self.pass_sav.get_active():
-                        if self.setupuser_list[act_idx] == 'Yes':# or self.setupuser_list[act_idx] == None:
-                            self.box_auth.show()
-                        else:
-                            self.box_auth.hide()
-                            self.auth_menu.set_active(0)
-                    #elif self.op_prompt == 5 and (self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1)) and self.pass_sav.get_active():
-                    #    if self.setupuser_list[act_idx] == 'Yes' or self.setupuser_list[act_idx] == None:
-                    #        self.box_auth.show()
-                    #    else:
-                    #        self.box_auth.hide()
-                    #        self.auth_menu.set_active(0)
-                else:
-                    self.op_instr.hide()
-                    self.disable_entries_buttons()
-                    if self.op_prompt == 6 and self.setupuser_list[act_idx] == 'Yes':
-                        self.na_instr.set_text('User has already been set up for this drive.')
-                    elif self.op_prompt == 6 and self.setupuser_list[act_idx] == 'Not Supported':
-                        self.na_instr.set_text('User is not supported on this drive.')
-                    elif self.op_prompt == 12 and self.setupuser_list[act_idx] != 'Yes':
-                        self.na_instr.set_text('User is not set up for this drive.')
-                    elif self.op_prompt == 3 and self.datastore_list[act_idx] == 'Not Supported':
-                        self.na_instr.set_text('Preboot image is not supported on this drive.')
-                    
-                    elif act_idx in self.tcg_list:
-                        self.na_instr.set_text('This drive has not been set up.')
-                    else:
-                        self.na_instr.set_text('This drive is not a TCG drive.')
-                    if (self.op_prompt == 4 or self.op_prompt == 5) and (self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1)) and self.pass_sav.get_active():
-                        if self.setupuser_list[act_idx] == 'Yes':# or self.setupuser_list[act_idx] == None:
-                            self.box_auth.show()
-                        else:
-                            self.box_auth.hide()
-                            self.auth_menu.set_active(0)
-                    if not self.scan_ip:
-                        self.na_instr.show()
-            elif self.view_state == 4:
-                if act_idx in self.nonsetup_list and (self.VERSION != 2 or self.datastore_list[act_idx] == 'Supported'):
-                    self.na_instr.hide()
-                    self.op_instr.show()
-                    if self.VERSION != 0 and self.PBA_VERSION != 0:
-                        self.enable_entries_buttons()
-                    if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                        if self.check_pass_rd.get_active():
-                            self.pass_entry.set_text("")
-                            self.pass_entry.set_sensitive(False)
-                else:
-                    self.op_instr.hide()
-                    self.disable_entries_buttons()
-                    if act_idx in self.setup_list:
-                        self.na_instr.set_text('This drive is already set up.')
-                    elif act_idx in self.nonsetup_list:
-                        self.na_instr.set_text('Standard version only supports drives that support preboot image.')
-                    else:
-                        self.na_instr.set_text('This drive is not a TCG drive.')
-                    if not self.scan_ip:
-                        self.na_instr.show()
-            elif self.view_state == 5:
-                if act_idx in self.tcg_list:
-                    self.na_instr.hide()
-                    self.op_instr.show()
-                    if self.VERSION != 0 and self.PBA_VERSION != 0:
-                        self.enable_entries_buttons()
-                    if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                        if self.check_pass_rd.get_active():
-                            self.pass_entry.set_text("")
-                            self.pass_entry.set_sensitive(False)
-                else:
-                    self.op_instr.hide()
-                    self.disable_entries_buttons()
-                    self.na_instr.set_text('This drive is not a TCG drive.')
-                    if not self.scan_ip:
-                        self.na_instr.show()
-            elif self.view_state == 6:
-                if act_idx in self.tcg_list and self.datastore_list[act_idx] == 'Supported':
-                    self.na_instr.hide()
-                    self.op_instr.show()
-                    if self.VERSION != 0 and self.PBA_VERSION != 0:
-                        self.enable_entries_buttons()
-                    if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                        if self.check_pass_rd.get_active():
-                            self.pass_entry.set_text("")
-                            self.pass_entry.set_sensitive(False)
-                        if self.op_prompt == 1:
+                            self.na_instr.set_text('This drive is not a TCG drive.')
+                        if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
                             if self.setupuser_list[act_idx] == 'Yes':# or self.setupuser_list[act_idx] == None:
                                 self.box_auth.show()
                             else:
                                 self.box_auth.hide()
                                 self.auth_menu.set_active(0)
-                else:
-                    self.op_instr.hide()
-                    self.disable_entries_buttons()
-                    if act_idx in self.tcg_list:
-                        self.na_instr.set_text('Audit Log is not supported on this drive.')
-                    else:
-                        self.na_instr.set_text('This drive is not a TCG drive.')
-                    if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                        if self.op_prompt == 1:
+                        if not self.scan_ip:
+                            self.na_instr.show()
+                elif self.view_state == 2:
+                    if act_idx in self.setup_list and (self.op_prompt != 6 or self.setupuser_list[act_idx] != 'Yes') and (self.op_prompt != 12 or self.setupuser_list[act_idx] != 'No') and (self.op_prompt != 3 or self.datastore_list[act_idx] == 'Supported'):
+                        self.na_instr.hide()
+                        self.op_instr.show()
+                        if self.VERSION != 0 and self.PBA_VERSION != 0:
+                            self.enable_entries_buttons()
+                        #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                            if self.check_pass_rd.get_active():
+                                self.pass_entry.set_text("")
+                                self.pass_entry.set_sensitive(False)
+                        if (self.op_prompt == 4 or self.op_prompt == 5) and self.pass_sav.get_active():
                             if self.setupuser_list[act_idx] == 'Yes':# or self.setupuser_list[act_idx] == None:
                                 self.box_auth.show()
                             else:
                                 self.box_auth.hide()
                                 self.auth_menu.set_active(0)
-                    if not self.scan_ip:
-                        self.na_instr.show()
-                    
-            elif self.view_state == 7:# and act_idx >= 0:
-                #index = self.sel_list[act_idx]
-                if act_idx in self.mbr_setup_list:
-                    self.na_instr.hide()
-                    self.op_instr.show()
-                    if self.VERSION != 0 and self.PBA_VERSION != 0:
-                        self.enable_entries_buttons()
-                    if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                        if self.check_pass_rd.get_active():
-                            self.pass_entry.set_text("")
-                            self.pass_entry.set_sensitive(False)
-                else:
-                    self.op_instr.hide()
-                    self.disable_entries_buttons()
-                    if act_idx in self.mbr_list and act_idx in self.nonsetup_list:
-                        self.na_instr.set_text('This drive has not been set up.')
-                    elif act_idx in self.tcg_list:
-                        self.na_instr.set_text('Preboot image is not supported on this drive.')
+                        #elif self.op_prompt == 5 and (self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1)) and self.pass_sav.get_active():
+                        #    if self.setupuser_list[act_idx] == 'Yes' or self.setupuser_list[act_idx] == None:
+                        #        self.box_auth.show()
+                        #    else:
+                        #        self.box_auth.hide()
+                        #        self.auth_menu.set_active(0)
                     else:
-                        self.na_instr.set_text('This drive is not a TCG drive.')
-                    if not self.scan_ip:
-                        self.na_instr.show()
-                #if self.pba_list[index] == 'Not Supported': #change to get rid of usb radio, disable mbr_radio
-                #    self.na_instr.set_text('Preboot image is not supported on this drive.')
-                #    self.na_instr.show()
-                #else:
-                #    self.na_instr.hide()
-            #self.dev_single.set_text(self.devs_list[index] + self.label_list[index])
-            if index >= 0:
-                self.devname = self.devs_list[index]
-                
-                self.dev_vendor.set_text(self.vendor_list[index])
-                self.dev_sn.set_text(self.sn_list[index])
-                if self.msid_list[index] != None:
-                    self.dev_msid.set_text(self.msid_list[index])
-                else:
-                    self.dev_msid.set_text('Loading...')
-                self.dev_series.set_text(self.series_list[index])
-                if self.pba_list[index] != None:
-                    self.dev_pbaVer.set_text(self.pba_list[index])
-                else:
-                    self.dev_pbaVer.set_text('Loading...')
-                
-                self.dev_opal_ver.set_text(self.opal_ver_list[index])
-                self.dev_status.set_text(self.lockstatus_list[index])
-                if self.setupstatus_list[index] != None:
-                    self.dev_setup.set_text(self.setupstatus_list[index])
-                else:
-                    self.dev_setup.set_text('Loading...')
-                self.dev_enc.set_text(self.encsup_list[index])
-                self.dev_blockSID.set_text(self.blockSID_list[index])
-                if self.setupuser_list[index] != None:
-                    self.dev_userSetup.set_text(self.setupuser_list[index])
-                else:
-                    self.dev_userSetup.set_text('Loading...')
-                
-                if self.opal_ver_list[index] != "None":
-                    self.scanning = True
-                    dialogs.query(None,self,1)
-                    self.scanning = False
-                else:
-                    self.dev_opal_ver.set_text("None")
-                    self.dev_status.set_text("N/A")
-                    self.dev_enc.set_text("N/A")
-                    self.dev_msid.set_text("N/A")
-                    self.dev_setup.set_text("N/A")
-                    if self.series_list[index] != None:
-                        self.dev_series.set_text(self.series_list[index])
-                    else:
-                        self.dev_series.set_text("N/A")
-                    self.dev_blockSID.set_text("N/A")
-                    self.dev_pbaVer.set_text("N/A")
-                    self.dev_userSetup.set_text('N/A')
-                if self.VERSION == 3 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                    if self.op_prompt == 4 or self.op_prompt == 7:
-                        i = self.dev_select.get_active()
-                        if self.setupuser_list[i] == 'Yes':# or self.setupuser_list[i] == None:
-                            self.box_auth.show()
+                        self.op_instr.hide()
+                        self.disable_entries_buttons()
+                        if self.op_prompt == 6 and self.setupuser_list[act_idx] == 'Yes':
+                            self.na_instr.set_text('User has already been set up for this drive.')
+                        elif self.op_prompt == 6 and self.setupuser_list[act_idx] == 'Not Supported':
+                            self.na_instr.set_text('User is not supported on this drive.')
+                        elif self.op_prompt == 12 and self.setupuser_list[act_idx] != 'Yes':
+                            self.na_instr.set_text('User is not set up for this drive.')
+                        elif self.op_prompt == 3 and self.datastore_list[act_idx] == 'Not Supported':
+                            self.na_instr.set_text('Preboot image is not supported on this drive.')
+                        
+                        elif act_idx in self.tcg_list:
+                            self.na_instr.set_text('This drive has not been set up.')
                         else:
-                            self.box_auth.hide()
-                            self.auth_menu.set_active(0)
+                            self.na_instr.set_text('This drive is not a TCG drive.')
+                        if (self.op_prompt == 4 or self.op_prompt == 5) and self.pass_sav.get_active():
+                            if self.setupuser_list[act_idx] == 'Yes':# or self.setupuser_list[act_idx] == None:
+                                self.box_auth.show()
+                            else:
+                                self.box_auth.hide()
+                                self.auth_menu.set_active(0)
+                        if not self.scan_ip:
+                            self.na_instr.show()
+                elif self.view_state == 4:
+                    if act_idx in self.nonsetup_list and (self.VERSION != 2 or self.datastore_list[act_idx] == 'Supported'):
+                        self.na_instr.hide()
+                        self.op_instr.show()
+                        if self.VERSION != 0 and self.PBA_VERSION != 0:
+                            self.enable_entries_buttons()
+                        #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                            if self.check_pass_rd.get_active():
+                                self.pass_entry.set_text("")
+                                self.pass_entry.set_sensitive(False)
+                    else:
+                        self.op_instr.hide()
+                        self.disable_entries_buttons()
+                        if act_idx in self.setup_list:
+                            self.na_instr.set_text('This drive is already set up.')
+                        elif act_idx in self.nonsetup_list:
+                            self.na_instr.set_text('Standard version only supports drives that support preboot image.')
+                        else:
+                            self.na_instr.set_text('This drive is not a TCG drive.')
+                        if not self.scan_ip:
+                            self.na_instr.show()
+                elif self.view_state == 5:
+                    if act_idx in self.tcg_list:
+                        self.na_instr.hide()
+                        self.op_instr.show()
+                        if self.VERSION != 0 and self.PBA_VERSION != 0:
+                            self.enable_entries_buttons()
+                        #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                            if self.check_pass_rd.get_active():
+                                self.pass_entry.set_text("")
+                                self.pass_entry.set_sensitive(False)
+                    else:
+                        self.op_instr.hide()
+                        self.disable_entries_buttons()
+                        self.na_instr.set_text('This drive is not a TCG drive.')
+                        if not self.scan_ip:
+                            self.na_instr.show()
+                elif self.view_state == 6:
+                    if act_idx in self.tcg_list and self.datastore_list[act_idx] == 'Supported':
+                        self.na_instr.hide()
+                        self.op_instr.show()
+                        if self.VERSION != 0 and self.PBA_VERSION != 0:
+                            self.enable_entries_buttons()
+                        #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                            if self.check_pass_rd.get_active():
+                                self.pass_entry.set_text("")
+                                self.pass_entry.set_sensitive(False)
+                            if self.op_prompt == 1:
+                                if self.setupuser_list[act_idx] == 'Yes':# or self.setupuser_list[act_idx] == None:
+                                    self.box_auth.show()
+                                else:
+                                    self.box_auth.hide()
+                                    self.auth_menu.set_active(0)
+                    else:
+                        self.op_instr.hide()
+                        self.disable_entries_buttons()
+                        if act_idx in self.tcg_list:
+                            self.na_instr.set_text('Audit Log is not supported on this drive.')
+                        else:
+                            self.na_instr.set_text('This drive is not a TCG drive.')
+                        if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                            if self.op_prompt == 1:
+                                if self.setupuser_list[act_idx] == 'Yes':# or self.setupuser_list[act_idx] == None:
+                                    self.box_auth.show()
+                                else:
+                                    self.box_auth.hide()
+                                    self.auth_menu.set_active(0)
+                        if not self.scan_ip:
+                            self.na_instr.show()
+                        
+                elif self.view_state == 7:# and act_idx >= 0:
+                    #index = self.sel_list[act_idx]
+                    if act_idx in self.mbr_setup_list:
+                        self.na_instr.hide()
+                        self.op_instr.show()
+                        if self.VERSION != 0 and self.PBA_VERSION != 0:
+                            self.enable_entries_buttons()
+                        #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                            if self.check_pass_rd.get_active():
+                                self.pass_entry.set_text("")
+                                self.pass_entry.set_sensitive(False)
+                    else:
+                        self.op_instr.hide()
+                        self.disable_entries_buttons()
+                        if act_idx in self.mbr_list and act_idx in self.nonsetup_list:
+                            self.na_instr.set_text('This drive has not been set up.')
+                        elif act_idx in self.tcg_list:
+                            self.na_instr.set_text('Preboot image is not supported on this drive.')
+                        else:
+                            self.na_instr.set_text('This drive is not a TCG drive.')
+                        if not self.scan_ip:
+                            self.na_instr.show()
+                    #if self.pba_list[index] == 'Not Supported': #change to get rid of usb radio, disable mbr_radio
+                    #    self.na_instr.set_text('Preboot image is not supported on this drive.')
+                    #    self.na_instr.show()
+                    #else:
+                    #    self.na_instr.hide()
+                #self.dev_single.set_text(self.devs_list[index] + self.label_list[index])
+                if index >= 0:
+                    self.devname = self.devs_list[index]
+                    
+                    self.dev_vendor.set_text(self.vendor_list[index])
+                    self.dev_sn.set_text(self.sn_list[index])
+                    if self.msid_list[index] != None:
+                        self.dev_msid.set_text(self.msid_list[index])
+                    else:
+                        self.dev_msid.set_text('Loading...')
+                    self.dev_series.set_text(self.series_list[index])
+                    if self.pba_list[index] != None:
+                        self.dev_pbaVer.set_text(self.pba_list[index])
+                    else:
+                        self.dev_pbaVer.set_text('Loading...')
+                    
+                    self.dev_opal_ver.set_text(self.opal_ver_list[index])
+                    self.dev_status.set_text(self.lockstatus_list[index])
+                    if self.setupstatus_list[index] != None:
+                        self.dev_setup.set_text(self.setupstatus_list[index])
+                    else:
+                        self.dev_setup.set_text('Loading...')
+                    self.dev_enc.set_text(self.encsup_list[index])
+                    self.dev_blockSID.set_text(self.blockSID_list[index])
+                    if self.setupuser_list[index] != None:
+                        self.dev_userSetup.set_text(self.setupuser_list[index])
+                    else:
+                        self.dev_userSetup.set_text('Loading...')
+                    
+                    if self.opal_ver_list[index] != "None":
+                        self.scanning = True
+                        dialogs.query(None,self,1)
+                        self.scanning = False
+                    else:
+                        self.dev_opal_ver.set_text("None")
+                        self.dev_status.set_text("N/A")
+                        self.dev_enc.set_text("N/A")
+                        self.dev_msid.set_text("N/A")
+                        self.dev_setup.set_text("N/A")
+                        if self.series_list[index] != None:
+                            self.dev_series.set_text(self.series_list[index])
+                        else:
+                            self.dev_series.set_text("N/A")
+                        self.dev_blockSID.set_text("N/A")
+                        self.dev_pbaVer.set_text("N/A")
+                        self.dev_userSetup.set_text('N/A')
+                    if self.VERSION == 3 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                        if self.op_prompt == 4 or self.op_prompt == 7:
+                            i = self.dev_select.get_active()
+                            if self.setupuser_list[i] == 'Yes':# or self.setupuser_list[i] == None:
+                                self.box_auth.show()
+                            else:
+                                self.box_auth.hide()
+                                self.auth_menu.set_active(0)
                            
         def auth_changed(self, *args):
-            verify.licCheck(self)
+            #print 'auth_changed'
+            #verify.licCheck(self)
             if self.op_prompt != 0:
                 self.pass_entry.set_text('')
                 self.new_pass_entry.set_text('')
@@ -1755,12 +1790,12 @@ if __name__ == "__main__":
             self.box_pass.pack_start(self.pass_entry, False, False, padding)
             
      
-            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                self.check_pass_rd = gtk.CheckButton("Read password from USB")
-                self.check_pass_rd.connect("toggled", self.check_passRead)
-                self.check_pass_rd.show()
-                self.check_pass_rd.set_tooltip_text('Authenticate using the drive\'s password file from USB')
-                self.box_pass.pack_end(self.check_pass_rd, False, False, padding)
+            #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+            self.check_pass_rd = gtk.CheckButton("Read password from USB")
+            self.check_pass_rd.connect("toggled", self.check_passRead)
+            self.check_pass_rd.show()
+            self.check_pass_rd.set_tooltip_text('Authenticate using the drive\'s password file from USB')
+            self.box_pass.pack_end(self.check_pass_rd, False, False, padding)
          
         def new_pass_dialog(self, *args):
             homogeneous = False
@@ -1781,84 +1816,85 @@ if __name__ == "__main__":
             self.new_pass_entry.set_width_chars(27)
             self.box_newpass.pack_start(self.new_pass_entry, False, False, padding)
      
-            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                self.pass_sav = gtk.CheckButton("Save to USB")
-                self.pass_sav.connect("clicked", self.showDrive)
-                self.pass_sav.show()
-                self.pass_sav.set_tooltip_text('Save the password to a file on a USB drive')
-                self.box_newpass.pack_end(self.pass_sav, False, False, padding)
+            #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+            self.pass_sav = gtk.CheckButton("Save to USB")
+            self.pass_sav.connect("clicked", self.showDrive)
+            self.pass_sav.show()
+            self.pass_sav.set_tooltip_text('Save the password to a file on a USB drive')
+            self.box_newpass.pack_end(self.pass_sav, False, False, padding)
             
         def openLog_prompt(self, *args):
-            verify.licCheck(self)
-            self.hideAll()
-            self.select_box.show()
-            self.box_dev.show()
-            if self.VERSION == 2 or self.PBA_VERSION == 1:
-                self.userSetup_box.hide()
-            self.op_label.set_text('View Audit Log')
-            self.op_instr.set_text('A drive\'s audit log stores a log of actions done on the drive by this application.\nEnter the drive\'s password to access its audit log.')
-            self.na_instr.set_text('Audit log is not available for non-TCG drives')
-            self.cancel_button.show()
-            
-            curr_idx = self.dev_select.get_active()
-            
-            self.op_prompt = 1
-            
-            self.mode_setupUSB = False
-            
-            if self.view_state != 6:
-                self.view_state = 6
-            
-            if len(self.devs_list) > 0:
-                self.select_instr.show()
+            verified = verify.licCheck(self)
+            if verified:
+                self.hideAll()
+                self.select_box.show()
+                self.box_dev.show()
+                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                    self.userSetup_box.hide()
+                self.op_label.set_text('View Audit Log')
+                self.op_instr.set_text('A drive\'s audit log stores a log of actions done on the drive by this application.\nEnter the drive\'s password to access its audit log.')
+                self.na_instr.set_text('Audit log is not available for non-TCG drives')
+                self.cancel_button.show()
                 
-            if len(self.devs_list) == 0:
-                self.naDev()
-            else:
-                self.box_pass.show()
+                curr_idx = self.dev_select.get_active()
+                
+                self.op_prompt = 1
+                
+                self.mode_setupUSB = False
+                
+                if self.view_state != 6:
+                    self.view_state = 6
+                
+                if len(self.devs_list) > 0:
+                    self.select_instr.show()
                     
-                self.box_newpass.show()
-                self.new_pass_label.hide()
-                self.new_pass_entry.hide()
-                
-                #if self.VERSION == 1 and self.PBA_VERSION == 1:
-                #    self.check_pass_rd.hide()
-                #    self.pass_sav.hide()
-                
-                self.box_drive.show()
-                self.drive_label.hide()
-                self.drive_menu.hide()
-                self.drive_refresh.hide()
-                #self.usb_menu.hide()
-                
-                self.check_exclusive = True
-                
-                self.viewLog.show()
-                
-                self.check_box_pass.show()
-
-
-                self.pass_entry.set_activates_default(True)
-                self.pass_entry.grab_focus()
-            
-                self.set_default(self.viewLog)
-                
-                if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                    i = self.dev_select.get_active()
-                    if self.setupuser_list[i] == 'Yes' or self.setupuser_list[i] == None:
-                        self.box_auth.show()
-                
-                if curr_idx in self.tcg_list:
-                    self.op_instr.show()
-                    self.na_instr.hide()
-                    if self.VERSION != 0 and self.PBA_VERSION != 0:
-                        self.enable_entries_buttons()
-                    else:
-                        self.disable_entries_buttons()
-                
+                if len(self.devs_list) == 0:
+                    self.naDev()
                 else:
-                    self.na_instr.show()
-                    self.disable_entries_buttons()
+                    self.box_pass.show()
+                        
+                    self.box_newpass.show()
+                    self.new_pass_label.hide()
+                    self.new_pass_entry.hide()
+                    
+                    #if self.VERSION == 1 and self.PBA_VERSION == 1:
+                    #    self.check_pass_rd.hide()
+                    #    self.pass_sav.hide()
+                    
+                    self.box_drive.show()
+                    self.drive_label.hide()
+                    self.drive_menu.hide()
+                    self.drive_refresh.hide()
+                    #self.usb_menu.hide()
+                    
+                    self.check_exclusive = True
+                    
+                    self.viewLog.show()
+                    
+                    self.check_box_pass.show()
+
+
+                    self.pass_entry.set_activates_default(True)
+                    self.pass_entry.grab_focus()
+                
+                    self.set_default(self.viewLog)
+                    
+                    if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                        i = self.dev_select.get_active()
+                        if self.setupuser_list[i] == 'Yes' or self.setupuser_list[i] == None:
+                            self.box_auth.show()
+                    
+                    if curr_idx in self.tcg_list:
+                        self.op_instr.show()
+                        self.na_instr.hide()
+                        if self.VERSION != 0 and self.PBA_VERSION != 0:
+                            self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
+                    
+                    else:
+                        self.na_instr.show()
+                        self.disable_entries_buttons()
                     
         def msg_err(self, msg):
             message = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK, parent = self)
@@ -1882,372 +1918,232 @@ if __name__ == "__main__":
             message.destroy()
 
         def returnToMain(self, button, reset, *args):
-            verify.licCheck(self)
-            self.hideAll()
-            self.select_box.show()
-            self.selectMulti_instr.hide()
-            self.select_instr.hide()
-            self.box_dev.show()
-            if self.VERSION == 2 or self.PBA_VERSION == 1:
-                self.userSetup_box.hide()
-            self.op_label.set_text('')
-            self.main_instr.show()
-            self.op_instr.hide()
-            self.op_prompt = 0
-            self.enable_menu()
-            
-            if self.view_state != 0:
-                self.view_state = 0
-            
-            length = 0
-                
-            length = len(self.devs_list)
-            
-            if reset:
-                model = self.dev_select.get_model()
-                
-                iter = gtk.TreeIter
-                for row in model:
-                    model.remove(row.iter)
-                
-                
-                for i in range(length):
-                    if self.label_list[i] != '':
-                        self.dev_select.append_text(self.devs_list[i] + ' ' + self.label_list[i])
-                    else:
-                        self.dev_select.append_text(self.devs_list[i])
-                
-                if len(self.devs_list) > 0:
-                    self.dev_select.set_active(0)
-                
-            dialogs.query(None,self,1)
-
-            if length == 0:
-                self.dev_vendor.set_text('N/A')
-                self.dev_sn.set_text('N/A')
-                self.dev_msid.set_text('N/A')
-                self.dev_opal_ver.set_text('N/A')
-                self.dev_status.set_text('N/A')
-                self.dev_setup.set_text('N/A')
-                self.dev_series.set_text('N/A')
-                self.dev_blockSID.set_text('N/A')
-                self.dev_enc.set_text('N/A')
-                self.dev_pbaVer.set_text('N/A')
-                
-            numTCG = len(self.tcg_list)
-            if numTCG == 0:
-                self.noTCG_instr.show()
-                self.main_instr.hide()
-            else:
-                self.noTCG_instr.hide()
+            verified = verify.licCheck(self)
+            if verified:
+                self.hideAll()
+                self.select_box.show()
+                self.selectMulti_instr.hide()
+                self.select_instr.hide()
+                self.box_dev.show()
+                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                    self.userSetup_box.hide()
+                self.op_label.set_text('')
                 self.main_instr.show()
+                self.op_instr.hide()
+                self.op_prompt = 0
+                self.enable_menu()
+                
+                if self.view_state != 0:
+                    self.view_state = 0
+                
+                length = 0
+                    
+                length = len(self.devs_list)
+                
+                if reset:
+                    model = self.dev_select.get_model()
+                    
+                    iter = gtk.TreeIter
+                    for row in model:
+                        model.remove(row.iter)
+                    
+                    
+                    for i in range(length):
+                        if self.label_list[i] != '':
+                            self.dev_select.append_text(self.devs_list[i] + ' ' + self.label_list[i])
+                        else:
+                            self.dev_select.append_text(self.devs_list[i])
+                    
+                    if len(self.devs_list) > 0:
+                        self.dev_select.set_active(0)
+                    
+                dialogs.query(None,self,1)
+
+                if length == 0:
+                    self.dev_vendor.set_text('N/A')
+                    self.dev_sn.set_text('N/A')
+                    self.dev_msid.set_text('N/A')
+                    self.dev_opal_ver.set_text('N/A')
+                    self.dev_status.set_text('N/A')
+                    self.dev_setup.set_text('N/A')
+                    self.dev_series.set_text('N/A')
+                    self.dev_blockSID.set_text('N/A')
+                    self.dev_enc.set_text('N/A')
+                    self.dev_pbaVer.set_text('N/A')
+                    
+                numTCG = len(self.tcg_list)
+                if numTCG == 0:
+                    self.noTCG_instr.show()
+                    self.main_instr.hide()
+                else:
+                    self.noTCG_instr.hide()
+                    self.main_instr.show()
                 
         def setup_prompt1(self, *args):
-            verify.licCheck(self)
-            self.hideAll()
-            self.select_box.show()
-            self.box_dev.show()
-            if self.VERSION == 2 or self.PBA_VERSION == 1:
-                self.userSetup_box.hide()
-            curr_idx = self.dev_select.get_active()
-            
-            self.mode_setupUSB = True
-            
-            self.op_prompt = 2
-            
-            self.cancel_button.show()
-            self.op_label.set_text('Set Up Drive')
-            if self.VERSION == 3:
-                self.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Set up Drive(s)\'.')
-            else:
-                self.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Set up Drive\'.')
-            
-            if self.view_state != 4:
-                self.view_state = 4
-            if len(self.devs_list) > 0 and len(self.nonsetup_list) <= 1:
-                self.select_instr.show()
-            elif len(self.nonsetup_list) > 1:
-                self.selectMulti_instr.show()
-            
-            if self.VERSION % 3 == 0:
-                self.toggleSingle_radio.show()
-                self.toggleMulti_radio.show()
-                if len(self.nonsetup_list) > 1:
-                    if self.toggleSingle_radio.get_active():
-                        self.toggleMulti_radio.set_active(True)
-                    else:
-                        self.mode_toggled(None)
-                else:
-                    if self.toggleMulti_radio.get_active():
-                        self.toggleSingle_radio.set_active(True)
-                    else:
-                        self.mode_toggled(None)
+            verified = verify.licCheck(self)
+            if verified:
+                self.hideAll()
+                self.select_box.show()
+                self.box_dev.show()
+                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                    self.userSetup_box.hide()
+                curr_idx = self.dev_select.get_active()
                 
-            
+                self.mode_setupUSB = True
                 
-            if len(self.devs_list) > 0:
-                self.box_newpass.show()
-                self.new_pass_label.show()
-                self.new_pass_entry.show()
+                self.op_prompt = 2
                 
-                self.box_drive.show()
-                self.drive_menu.hide()
-                self.drive_label.hide()
-                self.drive_refresh.hide()
-                #self.usb_menu.hide()
-                
-                count = 0
-                
+                self.cancel_button.show()
+                self.op_label.set_text('Set Up Drive')
                 if self.VERSION == 3:
+                    self.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Set up Drive(s)\'.')
+                else:
+                    self.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Set up Drive\'.')
+                
+                if self.view_state != 4:
+                    self.view_state = 4
+                if len(self.devs_list) > 0 and len(self.nonsetup_list) <= 1:
+                    self.select_instr.show()
+                elif len(self.nonsetup_list) > 1:
+                    self.selectMulti_instr.show()
+                
+                if self.VERSION % 3 == 0:
+                    self.toggleSingle_radio.show()
+                    self.toggleMulti_radio.show()
+                    if len(self.nonsetup_list) > 1:
+                        if self.toggleSingle_radio.get_active():
+                            self.toggleMulti_radio.set_active(True)
+                        else:
+                            self.mode_toggled(None)
+                    else:
+                        if self.toggleMulti_radio.get_active():
+                            self.toggleSingle_radio.set_active(True)
+                        else:
+                            self.mode_toggled(None)
                     
+                
+                    
+                if len(self.devs_list) > 0:
+                    self.box_newpass.show()
+                    self.new_pass_label.show()
+                    self.new_pass_entry.show()
+                    
+                    self.box_drive.show()
+                    self.drive_menu.hide()
+                    self.drive_label.hide()
+                    self.drive_refresh.hide()
+                    #self.usb_menu.hide()
+                    
+                    count = 0
+                    
+                    #if self.VERSION == 3:
+                        
                     self.pass_sav.set_active(True)
                     self.pass_sav.set_sensitive(False)
-                
-                self.box_newpass_confirm.show()
-                self.setup_next.show()
-                
-                self.check_box_pass.show()
-                
-                if len(self.nonsetup_list) <= 1:
-                    if curr_idx in self.nonsetup_list:# and (self.VERSION != 3 or count > 0):
-                        self.op_instr.show()
-                        self.na_instr.hide()
-                        if self.VERSION != 0 and self.PBA_VERSION != 0:
-                            self.enable_entries_buttons()
+                    
+                    self.box_newpass_confirm.show()
+                    self.setup_next.show()
+                    
+                    self.check_box_pass.show()
+                    
+                    if len(self.nonsetup_list) <= 1:
+                        if curr_idx in self.nonsetup_list:# and (self.VERSION != 3 or count > 0):
+                            self.op_instr.show()
+                            self.na_instr.hide()
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
                         else:
+                            if curr_idx in self.tcg_list and curr_idx in self.setup_list:
+                                #if count > 0:
+                                self.na_instr.set_text('This drive has already been set up.')
+                                #else:
+                                #    self.na_instr.set_text('No USB detected.  A USB is required for setting up a bootable USB, which can then be used as a way\nto unlock your drive(s).')
+                            elif self.blockSID_list[curr_idx] == 'Enabled':
+                                self.na_instr.set_text('This drive cannot be set up because BlockSID is enabled.\nBlockSID prevents the password from being set.')
+                            else:
+                                self.na_instr.set_text('This drive is not a TCG drive.')
+                            self.op_instr.hide()
+                            self.na_instr.show()
                             self.disable_entries_buttons()
                     else:
-                        if curr_idx in self.tcg_list and curr_idx in self.setup_list:
-                            #if count > 0:
-                            self.na_instr.set_text('This drive has already been set up.')
-                            #else:
-                            #    self.na_instr.set_text('No USB detected.  A USB is required for setting up a bootable USB, which can then be used as a way\nto unlock your drive(s).')
-                        elif self.blockSID_list[curr_idx] == 'Enabled':
-                            self.na_instr.set_text('This drive cannot be set up because BlockSID is enabled.\nBlockSID prevents the password from being set.')
-                        else:
-                            self.na_instr.set_text('This drive is not a TCG drive.')
-                        self.op_instr.hide()
-                        self.na_instr.show()
-                        self.disable_entries_buttons()
-                else:
-                    #if count > 0:
-                    self.op_instr.show()
-                    self.na_instr.hide()
-                    if self.VERSION % 3 == 0:
-                        if self.VERSION != 0 and self.PBA_VERSION != 0:
-                            self.enable_entries_buttons()
-                        else:
-                            self.disable_entries_buttons()
-                        if curr_idx not in self.nonsetup_list:
+                        #if count > 0:
+                        self.op_instr.show()
+                        self.na_instr.hide()
+                        if self.VERSION % 3 == 0:
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
+                            if curr_idx not in self.nonsetup_list:
+                                if curr_idx in self.tcg_list:
+                                    self.na_instr.set_text('This drive has already been set up.')
+                                elif self.blockSID_list[curr_idx] == 'Enabled':
+                                    self.na_instr.set_text('This drive cannot be set up because BlockSID is enabled.\nBlockSID prevents the password from being set.')
+                                else:
+                                    self.na_instr.set_text('This drive is not a TCG drive.')
+                        elif curr_idx not in self.nonsetup_list:
                             if curr_idx in self.tcg_list:
                                 self.na_instr.set_text('This drive has already been set up.')
                             elif self.blockSID_list[curr_idx] == 'Enabled':
                                 self.na_instr.set_text('This drive cannot be set up because BlockSID is enabled.\nBlockSID prevents the password from being set.')
                             else:
                                 self.na_instr.set_text('This drive is not a TCG drive.')
-                    elif curr_idx not in self.nonsetup_list:
-                        if curr_idx in self.tcg_list:
-                            self.na_instr.set_text('This drive has already been set up.')
-                        elif self.blockSID_list[curr_idx] == 'Enabled':
-                            self.na_instr.set_text('This drive cannot be set up because BlockSID is enabled.\nBlockSID prevents the password from being set.')
+                            self.op_instr.hide()
+                            self.na_instr.show()
+                            self.disable_entries_buttons()
                         else:
-                            self.na_instr.set_text('This drive is not a TCG drive.')
-                        self.op_instr.hide()
-                        self.na_instr.show()
-                        self.disable_entries_buttons()
-                    else:
-                        self.enable_entries_buttons()
-                    
-            else:
-                self.naDevices_instr.show()
+                            self.enable_entries_buttons()
+                        
+                else:
+                    self.naDevices_instr.show()
             
         def setupUser_prompt(self, *args):
-            verify.licCheck(self)
-            self.hideAll()
-            self.select_box.show()
-            self.box_dev.show()
-            if self.VERSION == 2 or self.PBA_VERSION == 1:
-                self.userSetup_box.hide()
-            self.cancel_button.show()
-            self.op_label.set_text('Set Up User Password')
-            self.op_instr.set_text('Setting up a user password creates a second password with limited authority.\nUser password can be used to unlock the drive and access the audit log.')
-            
-            curr_idx = self.dev_select.get_active()
-            
-            self.op_prompt = 6
-            
-            self.mode_setupUSB = False
-            
-            if self.view_state != 2:
-                self.view_state = 2
-            if len(self.devs_list) > 1:
-                self.select_instr.show()
+            verified = verify.licCheck(self)
+            if verified:
+                self.hideAll()
+                self.select_box.show()
+                self.box_dev.show()
+                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                    self.userSetup_box.hide()
+                self.cancel_button.show()
+                self.op_label.set_text('Set Up User Password')
+                self.op_instr.set_text('Setting up a user password creates a second password with limited authority.\nUser password can be used to unlock the drive and access the audit log.')
                 
-            if len(self.devs_list) > 0:
-                self.setupUserPW.show()
+                curr_idx = self.dev_select.get_active()
+                
+                self.op_prompt = 6
+                
+                self.mode_setupUSB = False
+                
+                if self.view_state != 2:
+                    self.view_state = 2
+                if len(self.devs_list) > 1:
+                    self.select_instr.show()
                     
-                self.pass_label.set_text('Enter Admin Password')
-                self.new_pass_label.set_text('Enter User Password')
-                self.confirm_pass_label.set_text('Confirm User Password')
-                self.box_pass.show()
-                self.box_newpass.show()
-                self.new_pass_label.show()
-                self.new_pass_entry.show()
-                self.box_newpass_confirm.show()
-                self.check_box_pass.show()
-                
-                self.box_drive.show()
-                self.drive_label.hide()
-                self.drive_menu.hide()
-                self.drive_refresh.hide()
-                #self.usb_menu.hide()
-                    
-                
-                
-                if curr_idx in self.setup_list and self.setupuser_list[curr_idx] != 'Yes':
-                    self.op_instr.show()
-                    self.na_instr.hide()
-                    if self.VERSION != 0 and self.PBA_VERSION != 0:
-                        self.enable_entries_buttons()
-                    else:
-                        self.disable_entries_buttons()
-                else:
-                    if self.setupuser_list[curr_idx] == 'Yes':
-                        self.na_instr.set_text('User has already been set up for this drive.')
-                    elif curr_idx in self.tcg_list:
-                        self.na_instr.set_text('This drive has not been set up.')
-                    else:
-                        self.na_instr.set_text('This drive is not a TCG drive.')
-                    self.na_instr.show()
-                    self.disable_entries_buttons()
-                
-            else:
-                self.naDevices_instr.show()
-                
-        def removeUser_prompt(self, *args):
-            verify.licCheck(self)
-            self.hideAll()
-            self.select_box.show()
-            self.box_dev.show()
-            if self.VERSION == 2 or self.PBA_VERSION == 1:
-                self.userSetup_box.hide()
-            self.cancel_button.show()
-            self.op_label.set_text('Remove User')
-            self.op_instr.set_text('Disable the limited authority user account.')
-            
-            curr_idx = self.dev_select.get_active()
-            
-            self.op_prompt = 12
-            
-            self.mode_setupUSB = False
-            
-            if self.view_state != 2:
-                self.view_state = 2
-            if len(self.devs_list) > 1:
-                self.select_instr.show()
-                
-            if len(self.devs_list) > 0:
-                self.removeUser_button.show()
-                    
-                self.pass_label.set_text('Enter Admin Password')
-                self.box_pass.show()
-                self.box_newpass.show()
-                self.new_pass_label.hide()
-                self.new_pass_entry.hide()
-
-                self.check_box_pass.show()
-                
-                self.box_drive.show()
-                self.drive_label.hide()
-                self.drive_menu.hide()
-                self.drive_refresh.hide()
-                #self.usb_menu.hide()
-                
-                if curr_idx in self.setup_list and (self.setupuser_list[curr_idx] == 'Yes' or self.setupuser_list[curr_idx] == None or self.setupuser_list[curr_idx] == 'Unknown'):
-                    self.op_instr.show()
-                    self.na_instr.hide()
-                    if self.VERSION != 0 and self.PBA_VERSION != 0:
-                        self.enable_entries_buttons()
-                    else:
-                        self.disable_entries_buttons()
-                else:
-                    if self.setupuser_list[curr_idx] != 'Yes':
-                        self.na_instr.set_text('User is not set up for this drive.')
-                    elif curr_idx in self.tcg_list:
-                        self.na_instr.set_text('This drive has not been set up.')
-                    else:
-                        self.na_instr.set_text('This drive is not a TCG drive.')
-                    self.na_instr.show()
-                    self.disable_entries_buttons()
-                
-            else:
-                self.naDevices_instr.show()
-            
-        def updatePBA_prompt(self, *args):
-            verify.licCheck(self)
-            self.hideAll()
-            self.select_box.show()
-            self.box_dev.show()
-            if self.VERSION == 2 or self.PBA_VERSION == 1:
-                self.userSetup_box.hide()
-            self.cancel_button.show()
-            
-            self.op_prompt = 3
-            
-            self.mode_setupUSB = False
-            
-            curr_idx = self.dev_select.get_active()
-            
-            if self.view_state != 7:
-                self.view_state = 7
-            if len(self.devs_list) > 1 and len(self.mbr_setup_list) <= 1:
-                self.select_instr.show()
-            elif len(self.mbr_setup_list) > 1:
-                self.selectMulti_instr.show()
-            
-            if self.VERSION % 3 == 0:
-                self.toggleSingle_radio.show()
-                self.toggleMulti_radio.show()
-                if len(self.mbr_setup_list) > 1:
-                    if self.toggleSingle_radio.get_active():
-                        self.toggleMulti_radio.set_active(True)
-                    else:
-                        self.mode_toggled(None)
-                else:
-                    if self.toggleMulti_radio.get_active():
-                        self.toggleSingle_radio.set_active(True)
-                    else:
-                        self.mode_toggled(None)
-            
-            self.op_label.set_text('Update Preboot Image')
-            self.op_instr.set_text('Use this to rewrite the Preboot Image or write the image to a set up drive.\nEnter the drive\'s password and press \'Update\'.')
-            
-            
-                
-            if len(self.devs_list) > 0:
-                self.updatePBA_button.show()
-                self.set_default(self.updatePBA_button)
-                
-                if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                if len(self.devs_list) > 0:
+                    self.setupUserPW.show()
+                        
                     self.pass_label.set_text('Enter Admin Password')
-                self.box_pass.show()
-                self.pass_entry.set_activates_default(True)
-                self.pass_entry.grab_focus()
-                self.box_newpass.show()
-                self.new_pass_label.hide()
-                self.new_pass_entry.hide()
-                
-                self.check_exclusive = True
-                
-                self.box_drive.show()
-                self.drive_label.hide()
-                self.drive_menu.hide()
-                self.drive_refresh.hide()
-                #self.usb_menu.hide()
-                self.check_box_pass.show()
+                    self.new_pass_label.set_text('Enter User Password')
+                    self.confirm_pass_label.set_text('Confirm User Password')
+                    self.box_pass.show()
+                    self.box_newpass.show()
+                    self.new_pass_label.show()
+                    self.new_pass_entry.show()
+                    self.box_newpass_confirm.show()
+                    self.check_box_pass.show()
                     
-                if len(self.mbr_setup_list) <= 1:
-                    if curr_idx in self.mbr_setup_list:
+                    self.box_drive.show()
+                    self.drive_label.hide()
+                    self.drive_menu.hide()
+                    self.drive_refresh.hide()
+                    #self.usb_menu.hide()
+                        
+                    
+                    
+                    if curr_idx in self.setup_list and self.setupuser_list[curr_idx] != 'Yes':
                         self.op_instr.show()
                         self.na_instr.hide()
                         if self.VERSION != 0 and self.PBA_VERSION != 0:
@@ -2255,108 +2151,327 @@ if __name__ == "__main__":
                         else:
                             self.disable_entries_buttons()
                     else:
-                        if curr_idx not in self.mbr_list and curr_idx in self.tcg_list:
-                            self.na_instr.set_text('Preboot image is not supported on this drive.')
-                        elif curr_idx in self.mbr_list and curr_idx in self.nonsetup_list:
+                        if self.setupuser_list[curr_idx] == 'Yes':
+                            self.na_instr.set_text('User has already been set up for this drive.')
+                        elif curr_idx in self.tcg_list:
                             self.na_instr.set_text('This drive has not been set up.')
                         else:
                             self.na_instr.set_text('This drive is not a TCG drive.')
-                        self.op_instr.hide()
                         self.na_instr.show()
                         self.disable_entries_buttons()
+                    
                 else:
-                    self.op_instr.show()
-                    self.na_instr.hide()
-                    if self.VERSION % 3 == 0:
+                    self.naDevices_instr.show()
+                
+        def removeUser_prompt(self, *args):
+            verified = verify.licCheck(self)
+            if verified:
+                self.hideAll()
+                self.select_box.show()
+                self.box_dev.show()
+                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                    self.userSetup_box.hide()
+                self.cancel_button.show()
+                self.op_label.set_text('Remove User')
+                self.op_instr.set_text('Disable the limited authority user account.')
+                
+                curr_idx = self.dev_select.get_active()
+                
+                self.op_prompt = 12
+                
+                self.mode_setupUSB = False
+                
+                if self.view_state != 2:
+                    self.view_state = 2
+                if len(self.devs_list) > 1:
+                    self.select_instr.show()
+                    
+                if len(self.devs_list) > 0:
+                    self.removeUser_button.show()
+                        
+                    self.pass_label.set_text('Enter Admin Password')
+                    self.box_pass.show()
+                    self.box_newpass.show()
+                    self.new_pass_label.hide()
+                    self.new_pass_entry.hide()
+
+                    self.check_box_pass.show()
+                    
+                    self.box_drive.show()
+                    self.drive_label.hide()
+                    self.drive_menu.hide()
+                    self.drive_refresh.hide()
+                    #self.usb_menu.hide()
+                    
+                    if curr_idx in self.setup_list and (self.setupuser_list[curr_idx] == 'Yes' or self.setupuser_list[curr_idx] == None or self.setupuser_list[curr_idx] == 'Unknown'):
+                        self.op_instr.show()
+                        self.na_instr.hide()
                         if self.VERSION != 0 and self.PBA_VERSION != 0:
                             self.enable_entries_buttons()
                         else:
                             self.disable_entries_buttons()
-                        if curr_idx not in self.mbr_setup_list:
+                    else:
+                        if self.setupuser_list[curr_idx] != 'Yes':
+                            self.na_instr.set_text('User is not set up for this drive.')
+                        elif curr_idx in self.tcg_list:
+                            self.na_instr.set_text('This drive has not been set up.')
+                        else:
+                            self.na_instr.set_text('This drive is not a TCG drive.')
+                        self.na_instr.show()
+                        self.disable_entries_buttons()
+                    
+                else:
+                    self.naDevices_instr.show()
+            
+        def updatePBA_prompt(self, *args):
+            verified = verify.licCheck(self)
+            if verified:
+                self.hideAll()
+                self.select_box.show()
+                self.box_dev.show()
+                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                    self.userSetup_box.hide()
+                self.cancel_button.show()
+                
+                self.op_prompt = 3
+                
+                self.mode_setupUSB = False
+                
+                curr_idx = self.dev_select.get_active()
+                
+                if self.view_state != 7:
+                    self.view_state = 7
+                if len(self.devs_list) > 1 and len(self.mbr_setup_list) <= 1:
+                    self.select_instr.show()
+                elif len(self.mbr_setup_list) > 1:
+                    self.selectMulti_instr.show()
+                
+                if self.VERSION % 3 == 0:
+                    self.toggleSingle_radio.show()
+                    self.toggleMulti_radio.show()
+                    if len(self.mbr_setup_list) > 1:
+                        if self.toggleSingle_radio.get_active():
+                            self.toggleMulti_radio.set_active(True)
+                        else:
+                            self.mode_toggled(None)
+                    else:
+                        if self.toggleMulti_radio.get_active():
+                            self.toggleSingle_radio.set_active(True)
+                        else:
+                            self.mode_toggled(None)
+                
+                self.op_label.set_text('Update Preboot Image')
+                self.op_instr.set_text('Use this to rewrite the Preboot Image or write the image to a set up drive.\nEnter the drive\'s password and press \'Update\'.')
+                
+                
+                    
+                if len(self.devs_list) > 0:
+                    self.updatePBA_button.show()
+                    self.set_default(self.updatePBA_button)
+                    
+                    if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                        self.pass_label.set_text('Enter Admin Password')
+                    self.box_pass.show()
+                    self.pass_entry.set_activates_default(True)
+                    self.pass_entry.grab_focus()
+                    self.box_newpass.show()
+                    self.new_pass_label.hide()
+                    self.new_pass_entry.hide()
+                    
+                    self.check_exclusive = True
+                    
+                    self.box_drive.show()
+                    self.drive_label.hide()
+                    self.drive_menu.hide()
+                    self.drive_refresh.hide()
+                    #self.usb_menu.hide()
+                    self.check_box_pass.show()
+                        
+                    if len(self.mbr_setup_list) <= 1:
+                        if curr_idx in self.mbr_setup_list:
+                            self.op_instr.show()
+                            self.na_instr.hide()
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
+                        else:
                             if curr_idx not in self.mbr_list and curr_idx in self.tcg_list:
                                 self.na_instr.set_text('Preboot image is not supported on this drive.')
                             elif curr_idx in self.mbr_list and curr_idx in self.nonsetup_list:
                                 self.na_instr.set_text('This drive has not been set up.')
                             else:
                                 self.na_instr.set_text('This drive is not a TCG drive.')
-                    elif curr_idx not in self.mbr_setup_list:
-                        if curr_idx not in self.mbr_list and curr_idx in self.tcg_list:
-                            self.na_instr.set_text('Preboot image is not supported on this drive.')
-                        elif curr_idx in self.mbr_list and curr_idx in self.nonsetup_list:
-                            self.na_instr.set_text('This drive has not been set up.')
-                        else:
-                            self.na_instr.set_text('This drive is not a TCG drive.')
-                        self.op_instr.hide()
-                        self.na_instr.show()
-                        self.disable_entries_buttons()
+                            self.op_instr.hide()
+                            self.na_instr.show()
+                            self.disable_entries_buttons()
                     else:
-                        self.enable_entries_buttons()
-            else:
-                self.naDevices_instr.show()
+                        self.op_instr.show()
+                        self.na_instr.hide()
+                        if self.VERSION % 3 == 0:
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
+                            if curr_idx not in self.mbr_setup_list:
+                                if curr_idx not in self.mbr_list and curr_idx in self.tcg_list:
+                                    self.na_instr.set_text('Preboot image is not supported on this drive.')
+                                elif curr_idx in self.mbr_list and curr_idx in self.nonsetup_list:
+                                    self.na_instr.set_text('This drive has not been set up.')
+                                else:
+                                    self.na_instr.set_text('This drive is not a TCG drive.')
+                        elif curr_idx not in self.mbr_setup_list:
+                            if curr_idx not in self.mbr_list and curr_idx in self.tcg_list:
+                                self.na_instr.set_text('Preboot image is not supported on this drive.')
+                            elif curr_idx in self.mbr_list and curr_idx in self.nonsetup_list:
+                                self.na_instr.set_text('This drive has not been set up.')
+                            else:
+                                self.na_instr.set_text('This drive is not a TCG drive.')
+                            self.op_instr.hide()
+                            self.na_instr.show()
+                            self.disable_entries_buttons()
+                        else:
+                            self.enable_entries_buttons()
+                else:
+                    self.naDevices_instr.show()
 
         def changePW_prompt(self, *args):
-            verify.licCheck(self)
-            self.hideAll()
-            self.select_box.show()
-            self.box_dev.show()
-            if self.VERSION == 2 or self.PBA_VERSION == 1:
-                self.userSetup_box.hide()
-            self.cancel_button.show()
-            
-            self.op_prompt = 4
-            
-            self.mode_setupUSB = False
-            
-            curr_idx = self.dev_select.get_active()
-            
-            if self.view_state != 2:
-                self.view_state = 2
-            
-            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                self.toggleSingle_radio.show()
-                self.toggleMulti_radio.show()
-                if len(self.setup_list) > 1:
-                    if self.toggleSingle_radio.get_active():
-                        self.toggleMulti_radio.set_active(True)
+            verified = verify.licCheck(self)
+            if verified:
+                self.hideAll()
+                self.select_box.show()
+                self.box_dev.show()
+                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                    self.userSetup_box.hide()
+                self.cancel_button.show()
+                
+                self.op_prompt = 4
+                
+                self.mode_setupUSB = False
+                
+                curr_idx = self.dev_select.get_active()
+                
+                if self.view_state != 2:
+                    self.view_state = 2
+                
+                if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                    self.toggleSingle_radio.show()
+                    self.toggleMulti_radio.show()
+                    if len(self.setup_list) > 1:
+                        if self.toggleSingle_radio.get_active():
+                            self.toggleMulti_radio.set_active(True)
+                        else:
+                            self.mode_toggled(None)
                     else:
-                        self.mode_toggled(None)
-                else:
-                    if self.toggleMulti_radio.get_active():
-                        self.toggleSingle_radio.set_active(True)
-                    else:
-                        self.mode_toggled(None)
-            
-            self.op_label.set_text('Change Password')
-            self.op_instr.set_text('To change the password of the selected drive, enter the drive\'s current password\nand the new password.')
-            
-            
-            
-            if len(self.devs_list) > 1 and len(self.setup_list) <= 1:
-                self.select_instr.show()
-            elif len(self.setup_list) > 1:
-                self.selectMulti_instr.show()
+                        if self.toggleMulti_radio.get_active():
+                            self.toggleSingle_radio.set_active(True)
+                        else:
+                            self.mode_toggled(None)
                 
-            if len(self.devs_list) > 0:
-                self.box_pass.show()
-                self.box_newpass.show()
-                self.new_pass_label.show()
-                self.new_pass_entry.show()
-                self.box_newpass_confirm.show()
-                self.changePW_button.show()
-                
-                self.check_both = True
-                
-                self.box_drive.show()
-                self.drive_label.hide()
-                self.drive_menu.hide()
-                self.drive_refresh.hide()
-                self.check_box_pass.show()
-                
-                #self.usb_menu.hide()
+                self.op_label.set_text('Change Password')
+                self.op_instr.set_text('To change the password of the selected drive, enter the drive\'s current password\nand the new password.')
                 
                 
+                
+                if len(self.devs_list) > 1 and len(self.setup_list) <= 1:
+                    self.select_instr.show()
+                elif len(self.setup_list) > 1:
+                    self.selectMulti_instr.show()
                     
-                if len(self.setup_list) <= 1:
+                if len(self.devs_list) > 0:
+                    self.box_pass.show()
+                    self.box_newpass.show()
+                    self.new_pass_label.show()
+                    self.new_pass_entry.show()
+                    self.box_newpass_confirm.show()
+                    self.changePW_button.show()
+                    
+                    self.check_both = True
+                    
+                    self.box_drive.show()
+                    self.drive_label.hide()
+                    self.drive_menu.hide()
+                    self.drive_refresh.hide()
+                    self.check_box_pass.show()
+                    
+                    #self.usb_menu.hide()
+                    
+                    
+                        
+                    if len(self.setup_list) <= 1:
+                        if curr_idx in self.setup_list:
+                            self.op_instr.show()
+                            self.na_instr.hide()
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
+                        else:
+                            if curr_idx in self.tcg_list:
+                                self.na_instr.set_text('This drive has not been set up.')
+                            else:
+                                self.na_instr.set_text('This drive is not a TCG drive.')
+                            self.na_instr.show()
+                            self.op_instr.hide()
+                            self.disable_entries_buttons()
+                    else:
+                        self.op_instr.show()
+                        self.na_instr.hide()
+                        if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
+                            if curr_idx not in self.setup_list:
+                                if curr_idx in self.tcg_list:
+                                    self.na_instr.set_text('This drive has not been set up.')
+                                else:
+                                    self.na_instr.set_text('This drive is not a TCG drive.')
+                        elif curr_idx not in self.setup_list:
+                            if curr_idx in self.tcg_list:
+                                self.na_instr.set_text('This drive has not been set up.')
+                            else:
+                                self.na_instr.set_text('This drive is not a TCG drive.')
+                            self.na_instr.show()
+                            self.op_instr.hide()
+                            self.disable_entries_buttons()
+                        else:
+                            self.enable_entries_buttons()
+                else:
+                    self.naDevices_instr.show()
+                
+        def setupUSB_prompt(self, *args):
+            verified = verify.licCheck(self)
+            if verified:
+                self.hideAll()
+                self.select_box.show()
+                self.box_dev.show()
+                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                    self.userSetup_box.hide()
+                self.cancel_button.show()
+                self.op_label.set_text('Set up USB')
+                markupString = 'This will write the bootable image to a USB drive.\nYou can then use the USB drive to unlock the selected drive.\n <span foreground="red">WARNING: Setting up the USB will erase its contents, use an empty USB.</span>' 
+
+                self.op_instr.set_markup(markupString)
+                
+                self.op_prompt = 5
+                
+                curr_idx = self.dev_select.get_active()
+                
+                self.mode_setupUSB = True
+                
+                if self.view_state != 2:
+                    self.view_state = 2
+                if len(self.devs_list) > 0:
+                    if len(self.devs_list) > 1:
+                        self.select_instr.show()
+                        
+                    self.setupUSB_button.show()
+                    
+                    self.box_newpass.show()
+                    self.new_pass_label.hide()
+                    self.new_pass_entry.hide()
+                    
                     if curr_idx in self.setup_list:
                         self.op_instr.show()
                         self.na_instr.hide()
@@ -2370,408 +2485,340 @@ if __name__ == "__main__":
                         else:
                             self.na_instr.set_text('This drive is not a TCG drive.')
                         self.na_instr.show()
-                        self.op_instr.hide()
                         self.disable_entries_buttons()
                 else:
-                    self.op_instr.show()
-                    self.na_instr.hide()
+                    self.naDevices_instr.show()
+                    self.select_instr.hide()
+            
+        def revert_erase_prompt(self, *args):
+            verified = verify.licCheck(self)
+            if verified:
+                self.hideAll()
+                self.select_box.show()
+                self.box_dev.show()
+                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                    self.userSetup_box.hide()
+                self.op_prompt = 10
+                
+                curr_idx = self.dev_select.get_active()
+                
+                if self.view_state != 5:
+                    self.view_state = 5
+                    
+                self.mode_setupUSB = False
+                
+                if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                    self.toggleSingle_radio.show()
+                    self.toggleMulti_radio.show()
+                    if len(self.tcg_list) > 1:
+                        if self.toggleSingle_radio.get_active():
+                            self.toggleMulti_radio.set_active(True)
+                        else:
+                            self.mode_toggled(None)
+                    else:
+                        if self.toggleMulti_radio.get_active():
+                            self.toggleSingle_radio.set_active(True)
+                        else:
+                            self.mode_toggled(None)
+                
+                self.op_label.set_text('Revert Setup and Erase Data')
+                self.op_instr.set_text('Revert with Password reverts the drive\'s LockingSP.\nThis resets the drive\'s password and disables locking.\nEnter the drive\'s password and choose whether or not to erase all data.')
+                self.cancel_button.show()
+                
+                if len(self.devs_list) > 1 and len(self.tcg_list) <= 1:
+                    self.select_instr.show()
+                elif len(self.tcg_list) > 1:
+                    self.selectMulti_instr.show()
+                    
+                if len(self.devs_list) > 0:
                     if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                        self.pass_label.set_text('Enter Admin Password')
+                    self.box_pass.show()
+                    #if self.VERSION == 1 and self.PBA_VERSION == 1:
+                    #    self.check_pass_rd.hide()
+                    self.box_revert_agree.show()
+                    self.pass_entry.set_activates_default(True)
+                    self.pass_entry.grab_focus()
+                    
+                    self.revertUser_button.show()
+                    self.set_default(self.revertUser_button)
+                    
+                    self.box_drive.show()
+                    self.drive_label.hide()
+                    self.drive_menu.hide()
+                    self.drive_refresh.hide()
+                    #self.usb_menu.hide()
+                    self.check_box_pass.show()
+                    
+                    if len(self.tcg_list) <= 1:
+                        if curr_idx in self.tcg_list:
+                            self.op_instr.show()
+                            self.na_instr.hide()
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
+                        else:
+                            self.na_instr.set_text('This drive is not a TCG drive.')
+                            self.na_instr.show()
+                            self.disable_entries_buttons()
+                    else:
+                        self.op_instr.show()
+                        self.na_instr.hide()
+                        if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
+                            if curr_idx not in self.tcg_list:
+                                self.na_instr.set_text('This drive is not a TCG drive.')
+                        elif curr_idx not in self.tcg_list:
+                            self.na_instr.set_text('This drive is not a TCG drive.')
+                            self.op_instr.hide()
+                            self.na_instr.show()
+                            self.disable_entries_buttons()
+                        else:
+                            self.enable_entries_buttons()
+                else:
+                    self.naDevices_instr.show()
+            
+        def revert_psid_prompt(self, *args):
+            verified = verify.licCheck(self)
+            if verified:
+                self.hideAll()
+                self.select_box.show()
+                self.box_dev.show()
+                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                    self.userSetup_box.hide()
+                self.cancel_button.show()
+                self.op_label.set_text('Revert Setup and Erase Data with PSID')
+                self.op_instr.set_text('Reverting with PSID reverts the drive to manufacturer settings and erases all data.\nEnter the drive\'s PSID and press \'Revert Setup with PSID\'. \n \n You can find the PSID on the label of the drive')
+                
+                self.op_prompt = 11
+                
+                self.mode_setupUSB = False
+                
+                curr_idx = self.dev_select.get_active()
+                
+                if self.view_state != 5:
+                    self.view_state = 5
+                if len(self.devs_list) > 1:
+                    self.select_instr.show()
+                    
+                if len(self.devs_list) > 0:
+                    self.box_psid.show()
+                    self.box_revert_agree.show()
+                    self.revertPSID_button.show()
+                    self.revert_psid_entry.set_text("")
+                    if curr_idx in self.tcg_list:
+                        self.op_instr.show()
+                        self.na_instr.hide()
+                        if self.VERSION != 0 and self.PBA_VERSION != 0:
+                            self.enable_entries_buttons()
+                        else:
+                            self.disable_entries_buttons()
+                    else:
+                        self.na_instr.set_text('This drive is not a TCG drive.')
+                        self.na_instr.show()
+                        self.disable_entries_buttons()
+                else:
+                    self.naDevices_instr.show()
+            
+        def unlock_prompt(self, *args):
+            verified = verify.licCheck(self)
+            if verified:
+                self.hideAll()
+                self.select_box.show()
+                self.box_dev.show()
+                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                    self.userSetup_box.hide()
+                self.op_prompt = 7
+                
+                curr_idx = self.dev_select.get_active()
+                
+                if self.view_state != 1:
+                    self.view_state = 1
+                    
+                self.mode_setupUSB = False
+                
+                if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                    self.toggleSingle_radio.show()
+                    self.toggleMulti_radio.show()
+                    if len(self.locked_list) > 1:
+                        if self.toggleSingle_radio.get_active():
+                            self.toggleMulti_radio.set_active(True)
+                        else:
+                            self.mode_toggled(None)
+                    else:
+                        if self.toggleMulti_radio.get_active():
+                            self.toggleSingle_radio.set_active(True)
+                        else:
+                            self.mode_toggled(None)
+                
+                self.op_label.set_text('Preboot Unlock')
+                self.op_instr.set_text('Preboot Unlock unlocks a drive for bootup.\nEnter the drive\'s password and press \'Preboot Unlock\'\nAfterwards, reboot into the unlocked drive.')
+                self.cancel_button.show()
+                
+                
+                    
+                if len(self.devs_list) > 1 and len(self.locked_list) <= 1:
+                    self.select_instr.show()
+                elif len(self.locked_list) > 1:
+                    self.selectMulti_instr.show()
+                    
+                if len(self.devs_list) > 0:
+                    self.box_pass.show()
+                        
+                    self.pass_entry.set_activates_default(True)
+                    self.pass_entry.grab_focus()
+                    
+                    #if self.VERSION == 1 and self.PBA_VERSION == 1:
+                    #    self.check_pass_rd.hide()
+                    #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                    self.box_newpass.show()
+                    self.new_pass_label.hide()
+                    self.new_pass_entry.hide()
+                    
+                    self.check_exclusive = True
+                    self.pbaUnlockOnly.show()
+                    if self.VERSION == 1:
+                        self.pbaUnlockReboot.show()
+                        self.set_default(self.pbaUnlockReboot)
+                    else:
+                        self.set_default(self.pbaUnlockOnly)
+                    
+                    self.box_drive.show()
+                    self.drive_label.hide()
+                    self.drive_menu.hide()
+                    self.drive_refresh.hide()
+                    #self.usb_menu.hide()
+                    self.check_box_pass.show()
+                    
+                    if len(self.locked_list) <= 1:
+                        if curr_idx in self.locked_list:
+                            self.op_instr.show()
+                            self.na_instr.hide()
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
+                        else:
+                            if curr_idx in self.tcg_list:
+                                self.na_instr.set_text('This drive is not locked.')
+                            else:
+                                self.na_instr.set_text('This drive is not a TCG drive.')
+                            self.na_instr.show()
+                            self.disable_entries_buttons()
+                    else:
+                        self.op_instr.show()
+                        self.na_instr.hide()
                         if self.VERSION != 0 and self.PBA_VERSION != 0:
                             self.enable_entries_buttons()
                         else:
                             self.disable_entries_buttons()
                         if curr_idx not in self.setup_list:
                             if curr_idx in self.tcg_list:
-                                self.na_instr.set_text('This drive has not been set up.')
+                                self.na_instr.set_text('This drive is not locked.')
                             else:
                                 self.na_instr.set_text('This drive is not a TCG drive.')
-                    elif curr_idx not in self.setup_list:
-                        if curr_idx in self.tcg_list:
-                            self.na_instr.set_text('This drive has not been set up.')
-                        else:
-                            self.na_instr.set_text('This drive is not a TCG drive.')
-                        self.na_instr.show()
-                        self.op_instr.hide()
-                        self.disable_entries_buttons()
-                    else:
-                        self.enable_entries_buttons()
-            else:
-                self.naDevices_instr.show()
-                
-        def setupUSB_prompt(self, *args):
-            verify.licCheck(self)
-            self.hideAll()
-            self.select_box.show()
-            self.box_dev.show()
-            if self.VERSION == 2 or self.PBA_VERSION == 1:
-                self.userSetup_box.hide()
-            self.cancel_button.show()
-            self.op_label.set_text('Set up USB')
-            markupString = 'This will write the bootable image to a USB drive.\nYou can then use the USB drive to unlock the selected drive.\n <span foreground="red">WARNING: Setting up the USB will erase its contents, use an empty USB.</span>'
-            self.op_instr.set_markup(markupString)
-           
-            self.op_prompt = 5
-            
-            curr_idx = self.dev_select.get_active()
-            
-            self.mode_setupUSB = True
-            
-            if self.view_state != 2:
-                self.view_state = 2
-            if len(self.devs_list) > 0:
-                if len(self.devs_list) > 1:
-                    self.select_instr.show()
-                    
-                self.setupUSB_button.show()
-                
-                self.box_newpass.show()
-                self.new_pass_label.hide()
-                self.new_pass_entry.hide()
-                
-                if curr_idx in self.setup_list:
-                    self.op_instr.show()
-                    self.na_instr.hide()
-                    if self.VERSION != 0 and self.PBA_VERSION != 0:
-                        self.enable_entries_buttons()
-                    else:
-                        self.disable_entries_buttons()
                 else:
-                    if curr_idx in self.tcg_list:
-                        self.na_instr.set_text('This drive has not been set up.')
-                    else:
-                        self.na_instr.set_text('This drive is not a TCG drive.')
-                    self.na_instr.show()
-                    self.disable_entries_buttons()
-            else:
-                self.naDevices_instr.show()
-                self.select_instr.hide()
-            
-        def revert_erase_prompt(self, *args):
-            verify.licCheck(self)
-            self.hideAll()
-            self.select_box.show()
-            self.box_dev.show()
-            if self.VERSION == 2 or self.PBA_VERSION == 1:
-                self.userSetup_box.hide()
-            self.op_prompt = 10
-            
-            curr_idx = self.dev_select.get_active()
-            
-            if self.view_state != 5:
-                self.view_state = 5
-                
-            self.mode_setupUSB = False
-            
-            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                self.toggleSingle_radio.show()
-                self.toggleMulti_radio.show()
-                if len(self.tcg_list) > 1:
-                    if self.toggleSingle_radio.get_active():
-                        self.toggleMulti_radio.set_active(True)
-                    else:
-                        self.mode_toggled(None)
-                else:
-                    if self.toggleMulti_radio.get_active():
-                        self.toggleSingle_radio.set_active(True)
-                    else:
-                        self.mode_toggled(None)
-            
-            self.op_label.set_text('Revert Setup and Erase Data')
-            self.op_instr.set_text('Revert with Password reverts the drive\'s LockingSP.\nThis resets the drive\'s password and disables locking.\nEnter the drive\'s password and choose whether or not to erase all data.')
-            self.cancel_button.show()
-            
-            if len(self.devs_list) > 1 and len(self.tcg_list) <= 1:
-                self.select_instr.show()
-            elif len(self.tcg_list) > 1:
-                self.selectMulti_instr.show()
-                
-            if len(self.devs_list) > 0:
-                if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                    self.pass_label.set_text('Enter Admin Password')
-                self.box_pass.show()
-                #if self.VERSION == 1 and self.PBA_VERSION == 1:
-                #    self.check_pass_rd.hide()
-                self.box_revert_agree.show()
-                self.pass_entry.set_activates_default(True)
-                self.pass_entry.grab_focus()
-                
-                self.revertUser_button.show()
-                self.set_default(self.revertUser_button)
-                
-                self.box_drive.show()
-                self.drive_label.hide()
-                self.drive_menu.hide()
-                self.drive_refresh.hide()
-                #self.usb_menu.hide()
-                self.check_box_pass.show()
-                
-                if len(self.tcg_list) <= 1:
-                    if curr_idx in self.tcg_list:
-                        self.op_instr.show()
-                        self.na_instr.hide()
-                        if self.VERSION != 0 and self.PBA_VERSION != 0:
-                            self.enable_entries_buttons()
-                        else:
-                            self.disable_entries_buttons()
-                    else:
-                        self.na_instr.set_text('This drive is not a TCG drive.')
-                        self.na_instr.show()
-                        self.disable_entries_buttons()
-                else:
-                    self.op_instr.show()
-                    self.na_instr.hide()
-                    if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                        if self.VERSION != 0 and self.PBA_VERSION != 0:
-                            self.enable_entries_buttons()
-                        else:
-                            self.disable_entries_buttons()
-                        if curr_idx not in self.tcg_list:
-                            self.na_instr.set_text('This drive is not a TCG drive.')
-                    elif curr_idx not in self.tcg_list:
-                        self.na_instr.set_text('This drive is not a TCG drive.')
-                        self.op_instr.hide()
-                        self.na_instr.show()
-                        self.disable_entries_buttons()
-                    else:
-                        self.enable_entries_buttons()
-            else:
-                self.naDevices_instr.show()
-            
-        def revert_psid_prompt(self, *args):
-            verify.licCheck(self)
-            self.hideAll()
-            self.select_box.show()
-            self.box_dev.show()
-            if self.VERSION == 2 or self.PBA_VERSION == 1:
-                self.userSetup_box.hide()
-            self.cancel_button.show()
-            self.op_label.set_text('Revert Setup and Erase Data with PSID')
-            self.op_instr.set_text('Reverting with PSID reverts the drive to manufacturer settings and erases all data.\nEnter the drive\'s PSID and press \'Revert Setup with PSID\'.')
-            
-            self.op_prompt = 11
-            
-            self.mode_setupUSB = False
-            
-            curr_idx = self.dev_select.get_active()
-            
-            if self.view_state != 5:
-                self.view_state = 5
-            if len(self.devs_list) > 1:
-                self.select_instr.show()
-                
-            if len(self.devs_list) > 0:
-                self.box_psid.show()
-                self.box_revert_agree.show()
-                self.revertPSID_button.show()
-                self.revert_psid_entry.set_text("")
-                if curr_idx in self.tcg_list:
-                    self.op_instr.show()
-                    self.na_instr.hide()
-                    if self.VERSION != 0 and self.PBA_VERSION != 0:
-                        self.enable_entries_buttons()
-                    else:
-                        self.disable_entries_buttons()
-                else:
-                    self.na_instr.set_text('This drive is not a TCG drive.')
-                    self.na_instr.show()
-                    self.disable_entries_buttons()
-            else:
-                self.naDevices_instr.show()
-            
-        def unlock_prompt(self, *args):
-            verify.licCheck(self)
-            self.hideAll()
-            self.select_box.show()
-            self.box_dev.show()
-            if self.VERSION == 2 or self.PBA_VERSION == 1:
-                self.userSetup_box.hide()
-            self.op_prompt = 7
-            
-            curr_idx = self.dev_select.get_active()
-            
-            if self.view_state != 1:
-                self.view_state = 1
-                
-            self.mode_setupUSB = False
-            
-            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                self.toggleSingle_radio.show()
-                self.toggleMulti_radio.show()
-                if len(self.locked_list) > 1:
-                    if self.toggleSingle_radio.get_active():
-                        self.toggleMulti_radio.set_active(True)
-                    else:
-                        self.mode_toggled(None)
-                else:
-                    if self.toggleMulti_radio.get_active():
-                        self.toggleSingle_radio.set_active(True)
-                    else:
-                        self.mode_toggled(None)
-            
-            self.op_label.set_text('Preboot Unlock')
-            self.op_instr.set_text('Preboot Unlock unlocks a drive for bootup.\nEnter the drive\'s password and press \'Preboot Unlock\'\nAfterwards, reboot into the unlocked drive.')
-            self.cancel_button.show()
-            
-            
-                
-            if len(self.devs_list) > 1 and len(self.locked_list) <= 1:
-                self.select_instr.show()
-            elif len(self.locked_list) > 1:
-                self.selectMulti_instr.show()
-                
-            if len(self.devs_list) > 0:
-                self.box_pass.show()
-                    
-                self.pass_entry.set_activates_default(True)
-                self.pass_entry.grab_focus()
-                
-                #if self.VERSION == 1 and self.PBA_VERSION == 1:
-                #    self.check_pass_rd.hide()
-                if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                    self.box_newpass.show()
-                    self.new_pass_label.hide()
-                    self.new_pass_entry.hide()
-                
-                self.check_exclusive = True
-                self.pbaUnlockOnly.show()
-                if self.VERSION == 1:
-                    self.pbaUnlockReboot.show()
-                    self.set_default(self.pbaUnlockReboot)
-                else:
-                    self.set_default(self.pbaUnlockOnly)
-                
-                self.box_drive.show()
-                self.drive_label.hide()
-                self.drive_menu.hide()
-                self.drive_refresh.hide()
-                #self.usb_menu.hide()
-                self.check_box_pass.show()
-                
-                if len(self.locked_list) <= 1:
-                    if curr_idx in self.locked_list:
-                        self.op_instr.show()
-                        self.na_instr.hide()
-                        if self.VERSION != 0 and self.PBA_VERSION != 0:
-                            self.enable_entries_buttons()
-                        else:
-                            self.disable_entries_buttons()
-                    else:
-                        if curr_idx in self.tcg_list:
-                            self.na_instr.set_text('This drive is not locked.')
-                        else:
-                            self.na_instr.set_text('This drive is not a TCG drive.')
-                        self.na_instr.show()
-                        self.disable_entries_buttons()
-                else:
-                    self.op_instr.show()
-                    self.na_instr.hide()
-                    if self.VERSION != 0 and self.PBA_VERSION != 0:
-                        self.enable_entries_buttons()
-                    else:
-                        self.disable_entries_buttons()
-                    if curr_idx not in self.setup_list:
-                        if curr_idx in self.tcg_list:
-                            self.na_instr.set_text('This drive is not locked.')
-                        else:
-                            self.na_instr.set_text('This drive is not a TCG drive.')
-            else:
-                self.naDevices_instr.show()
+                    self.naDevices_instr.show()
                     
         def revert_keep_prompt(self, *args):
-            verify.licCheck(self)
-            self.hideAll()
-            self.select_box.show()
-            self.box_dev.show()
-            if self.VERSION == 2 or self.PBA_VERSION == 1:
-                self.userSetup_box.hide()
-            self.op_prompt = 9
-            
-            self.mode_setupUSB = False
-            
-            curr_idx = self.dev_select.get_active()
-            
-            if self.view_state != 5:
-                self.view_state = 5
-            
-            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                self.toggleSingle_radio.show()
-                self.toggleMulti_radio.show()
-                if len(self.tcg_list) > 1:
-                    if self.toggleSingle_radio.get_active():
-                        self.toggleMulti_radio.set_active(True)
-                    else:
-                        self.mode_toggled(None)
-                else:
-                    if self.toggleMulti_radio.get_active():
-                        self.toggleSingle_radio.set_active(True)
-                    else:
-                        self.mode_toggled(None)
-            
-            self.op_label.set_text('Revert Setup and Keep Data')
-            self.op_instr.set_text('Reverting a drive disables locking and resets the drive password.\nEnter the password and press \'Revert Setup\'.')
-            self.cancel_button.show()
-            
-            
-
-            if len(self.devs_list) > 1 and len(self.tcg_list) <= 1:
-                self.select_instr.show()
-            elif len(self.tcg_list) > 1:
-                self.selectMulti_instr.show()
+            verified = verify.licCheck(self)
+            if verified:
+                self.hideAll()
+                self.select_box.show()
+                self.box_dev.show()
+                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                    self.userSetup_box.hide()
+                self.op_prompt = 9
                 
-            if len(self.devs_list) > 0:
+                self.mode_setupUSB = False
+                
+                curr_idx = self.dev_select.get_active()
+                
+                if self.view_state != 5:
+                    self.view_state = 5
+                
                 if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                    self.pass_label.set_text('Enter Admin Password')
-                self.box_pass.show()
+                    self.toggleSingle_radio.show()
+                    self.toggleMulti_radio.show()
+                    if len(self.tcg_list) > 1:
+                        if self.toggleSingle_radio.get_active():
+                            self.toggleMulti_radio.set_active(True)
+                        else:
+                            self.mode_toggled(None)
+                    else:
+                        if self.toggleMulti_radio.get_active():
+                            self.toggleSingle_radio.set_active(True)
+                        else:
+                            self.mode_toggled(None)
                 
-                #if self.VERSION == 1 and self.PBA_VERSION == 1:
-                #    self.check_pass_rd.hide()
+                self.op_label.set_text('Revert Setup and Keep Data')
+                self.op_instr.set_text('Reverting a drive disables locking and resets the drive password.\nEnter the password and press \'Revert Setup\'.')
+                self.cancel_button.show()
                 
-                self.pass_entry.set_activates_default(True)
-                self.pass_entry.grab_focus()
                 
-                self.revertOnly_button.show()
-                self.set_default(self.revertOnly_button)
-                
-                self.box_drive.show()
-                self.drive_label.hide()
-                self.drive_menu.hide()
-                self.drive_refresh.hide()
-                #self.usb_menu.hide()
-                self.check_box_pass.show()
-                if len(self.tcg_list) <= 1:
-                    if curr_idx in self.tcg_list:
+
+                if len(self.devs_list) > 1 and len(self.tcg_list) <= 1:
+                    self.select_instr.show()
+                elif len(self.tcg_list) > 1:
+                    self.selectMulti_instr.show()
+                    
+                if len(self.devs_list) > 0:
+                    if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                        self.pass_label.set_text('Enter Admin Password')
+                    self.box_pass.show()
+                    
+                    #if self.VERSION == 1 and self.PBA_VERSION == 1:
+                    #    self.check_pass_rd.hide()
+                    
+                    self.pass_entry.set_activates_default(True)
+                    self.pass_entry.grab_focus()
+                    
+                    self.revertOnly_button.show()
+                    self.set_default(self.revertOnly_button)
+                    
+                    self.box_drive.show()
+                    self.drive_label.hide()
+                    self.drive_menu.hide()
+                    self.drive_refresh.hide()
+                    #self.usb_menu.hide()
+                    self.check_box_pass.show()
+                    if len(self.tcg_list) <= 1:
+                        if curr_idx in self.tcg_list:
+                            self.op_instr.show()
+                            self.na_instr.hide()
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
+                        else:
+                            self.na_instr.set_text('This drive is not a TCG drive.')
+                            self.na_instr.show()
+                            self.disable_entries_buttons()
+                    else:
                         self.op_instr.show()
                         self.na_instr.hide()
-                        if self.VERSION != 0 and self.PBA_VERSION != 0:
-                            self.enable_entries_buttons()
-                        else:
-                            self.disable_entries_buttons()
-                    else:
-                        self.na_instr.set_text('This drive is not a TCG drive.')
-                        self.na_instr.show()
-                        self.disable_entries_buttons()
-                else:
-                    self.op_instr.show()
-                    self.na_instr.hide()
-                    if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                        if self.VERSION != 0 and self.PBA_VERSION != 0:
-                            self.enable_entries_buttons()
-                        else:
-                            self.disable_entries_buttons()
-                        if curr_idx not in self.tcg_list:
+                        if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
+                            if curr_idx not in self.tcg_list:
+                                self.na_instr.set_text('This drive is not a TCG drive.')
+                        elif curr_idx not in self.tcg_list:
                             self.na_instr.set_text('This drive is not a TCG drive.')
-                    elif curr_idx not in self.tcg_list:
-                        self.na_instr.set_text('This drive is not a TCG drive.')
-                        self.op_instr.hide()
-                        self.na_instr.show()
-                        self.disable_entries_buttons()
-                    else:
-                        self.enable_entries_buttons()
-            else:
-                self.naDevices_instr.show()
+                            self.op_instr.hide()
+                            self.na_instr.show()
+                            self.disable_entries_buttons()
+                        else:
+                            self.enable_entries_buttons()
+                else:
+                    self.naDevices_instr.show()
                 
         def hideAll(self, *args):
-            verify.licCheck(self)
             self.select_box.hide()
             self.box_dev.hide()
             
@@ -2846,11 +2893,11 @@ if __name__ == "__main__":
             self.no_license_instr.hide()
             self.licManager_button.hide()
             
-            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                self.pass_sav.set_sensitive(True)
-                self.pass_sav.set_active(False)
-                self.check_pass_rd.set_sensitive(True)
-                self.check_pass_rd.set_active(False)
+            #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+            self.pass_sav.set_sensitive(True)
+            self.pass_sav.set_active(False)
+            self.check_pass_rd.set_sensitive(True)
+            self.check_pass_rd.set_active(False)
             
             self.waitSpin.hide()
             
@@ -2887,202 +2934,207 @@ if __name__ == "__main__":
             self.multi_wait_instr.hide()
             self.canDestroyMain = True
             
+            #self.pass_dialog()
+            #self.driveCount.set_text("Total number of drives : " + str(len(self.devs_list)))
+            #self.tcgCount.set_text("Total number of TCG drives : " + str(len(self.tcg_list)))
+            
         def mode_toggled(self, button):
-            verify.licCheck(self)
-            if self.toggleSingle_radio.get_active():
-                self.scrolledWin_grid.hide()
-                self.select_box.show()
-                self.box_dev.show()
-                if self.VERSION == 2 or self.PBA_VERSION == 1:
-                    self.userSetup_box.hide()
-                self.naDevices_instr.hide()
-                self.op_instr.hide()
-                self.selectMulti_instr.hide()
-                
-                self.selectAll_check.hide()
-                if len(self.devs_list) > 1:
-                    self.select_instr.show()
-                #idx = self.dev_select.get_active()
-                #if (self.view_state == 1 and idx in self.locked_list) or (self.view_state == 4 and idx in self.nonsetup_list) or (self.view_state == 2 and idx in self.setup_list) or (self.view_state == 5 and idx in self.tcg_list):
-                #    if self.VERSION != 0 and self.PBA_VERSION != 0:
-                #        self.enable_entries_buttons()
-                #    self.op_instr.show()
-                #    self.na_instr.hide()
-                #else:
-                #    self.disable_entries_buttons()
-                #    self.na_instr.show()
-                #if self.op_prompt == 4 or self.op_prompt == 7:
-                #    i = self.dev_select.get_active()
-                #    if self.setupuser_list[i] == 'Yes' or self.setupuser_list[i] == None:
-                #        self.box_auth.show()
-                #    else:
-                #        self.box_auth.hide()
-                #        self.auth_menu.set_active(0)
-                self.changed_cb(self.dev_select)
-            else:
-                self.na_instr.hide()
-                self.op_instr.hide()
-                self.select_instr.hide()
-                self.box_dev.hide()
-                
-                self.select_box.hide()
-                self.scrolledWin_grid.show()
-                self.liststore.clear()
-                self.selectAll_check.set_inconsistent(False)
-                self.selectAll_check.set_active(False)
-                self.selectAll_check.show()
-                
-                if self.view_state == 1 and self.auth_menu.get_active() == 0:# and len(self.locked_list) > 0:
-                    #for i in self.locked_list:
-                    for i in range(len(self.devs_list)):
-                        if i in self.locked_list:
-                            self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], True])
-                        else:
-                            self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
-                    if len(self.locked_list) > 0:
-                        if self.VERSION != 0 and self.PBA_VERSION != 0:
-                            self.enable_entries_buttons()
-                        else:
-                            self.disable_entries_buttons()
-                        self.op_instr.show()
-                        self.na_instr.hide()
-                        self.selectMulti_instr.show()
-                    else:
-                        self.disable_entries_buttons()
-                        self.selectMulti_instr.hide()
-                        self.naDevices_instr.show()
-                elif self.view_state == 1 and self.auth_menu.get_active() == 1:# and len(self.ulocked_list) > 0:
-                    #for i in self.ulocked_list:
-                    for i in range(len(self.devs_list)):
-                        if i in self.ulocked_list:
-                            self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], True])
-                        else:
-                            self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
-                    if len(self.ulocked_list) > 0:
-                        if self.VERSION != 0 and self.PBA_VERSION != 0:
-                            self.enable_entries_buttons()
-                        else:
-                            self.disable_entries_buttons()
-                        self.op_instr.show()
-                        self.na_instr.hide()
-                        self.selectMulti_instr.show()
-                    else:
-                        self.disable_entries_buttons()
-                        self.selectMulti_instr.hide()
-                        self.naDevices_instr.show()
-                elif self.view_state == 2 and self.auth_menu.get_active() == 0:# and len(self.setup_list) > 0:
-                    #for i in self.setup_list:
-                    for i in range(len(self.devs_list)):
-                        if i in self.setup_list:
-                            self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], True])
-                        else:
-                            self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
-                    if len(self.setup_list) > 0:
-                        if self.VERSION != 0 and self.PBA_VERSION != 0:
-                            self.enable_entries_buttons()
-                        else:
-                            self.disable_entries_buttons()
-                        self.op_instr.show()
-                        self.na_instr.hide()
-                        self.selectMulti_instr.show()
-                    else:
-                        self.disable_entries_buttons()
-                        self.selectMulti_instr.hide()
-                        self.naDevices_instr.show()
-                elif self.view_state == 2 and self.auth_menu.get_active() == 1:# and len(self.usetup_list) > 0:
-                    #for i in self.usetup_list:
-                    for i in range(len(self.devs_list)):
-                        if i in self.usetup_list:
-                            self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], True])
-                        else:
-                            self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
-                    if len(self.usetup_list) > 0:
-                        if self.VERSION != 0 and self.PBA_VERSION != 0:
-                            self.enable_entries_buttons()
-                        else:
-                            self.disable_entries_buttons()
-                        self.op_instr.show()
-                        self.na_instr.hide()
-                        self.selectMulti_instr.show()
-                    else:
-                        self.disable_entries_buttons()
-                        self.selectMulti_instr.hide()
-                        self.naDevices_instr.show()
-                elif self.view_state == 4:# and len(self.nonsetup_list) > 0:
-                    #for i in self.nonsetup_list:
-                    for i in range(len(self.devs_list)):
-                        if i in self.nonsetup_list:
-                            self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], True])
-                        else:
-                            self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
-                    if len(self.nonsetup_list) > 0:
-                        if self.VERSION != 0 and self.PBA_VERSION != 0:# and (self.VERSION != 3 or len(self.usb_list) != 0):
-                            self.enable_entries_buttons()
+            verified = verify.licCheck(self)
+            if verified:
+                if self.toggleSingle_radio.get_active():
+                    self.scrolledWin_grid.hide()
+                    self.select_box.show()
+                    self.box_dev.show()
+                    if self.VERSION == 2 or self.PBA_VERSION == 1:
+                        self.userSetup_box.hide()
+                    self.naDevices_instr.hide()
+                    self.op_instr.hide()
+                    self.selectMulti_instr.hide()
+                    
+                    self.selectAll_check.hide()
+                    if len(self.devs_list) > 1:
+                        self.select_instr.show()
+                    #idx = self.dev_select.get_active()
+                    #if (self.view_state == 1 and idx in self.locked_list) or (self.view_state == 4 and idx in self.nonsetup_list) or (self.view_state == 2 and idx in self.setup_list) or (self.view_state == 5 and idx in self.tcg_list):
+                    #    if self.VERSION != 0 and self.PBA_VERSION != 0:
+                    #        self.enable_entries_buttons()
+                    #    self.op_instr.show()
+                    #    self.na_instr.hide()
+                    #else:
+                    #    self.disable_entries_buttons()
+                    #    self.na_instr.show()
+                    #if self.op_prompt == 4 or self.op_prompt == 7:
+                    #    i = self.dev_select.get_active()
+                    #    if self.setupuser_list[i] == 'Yes' or self.setupuser_list[i] == None:
+                    #        self.box_auth.show()
+                    #    else:
+                    #        self.box_auth.hide()
+                    #        self.auth_menu.set_active(0)
+                    self.changed_cb(self.dev_select)
+                else:
+                    self.na_instr.hide()
+                    self.op_instr.hide()
+                    self.select_instr.hide()
+                    self.box_dev.hide()
+                    
+                    self.select_box.hide()
+                    self.scrolledWin_grid.show()
+                    self.liststore.clear()
+                    self.selectAll_check.set_inconsistent(False)
+                    self.selectAll_check.set_active(False)
+                    self.selectAll_check.show()
+                    
+                    if self.view_state == 1 and self.auth_menu.get_active() == 0:# and len(self.locked_list) > 0:
+                        #for i in self.locked_list:
+                        for i in range(len(self.devs_list)):
+                            if i in self.locked_list:
+                                self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], True])
+                            else:
+                                self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
+                        if len(self.locked_list) > 0:
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
                             self.op_instr.show()
                             self.na_instr.hide()
+                            self.selectMulti_instr.show()
                         else:
                             self.disable_entries_buttons()
-                            self.na_instr.show()
-                        self.selectMulti_instr.show()
-                    else:
-                        self.disable_entries_buttons()
-                        self.selectMulti_instr.hide()
-                        self.naDevices_instr.show()
-                elif self.view_state == 5:# and len(self.tcg_list) > 0:
-                    #for i in self.tcg_list:
-                    for i in range(len(self.devs_list)):
-                        if i in self.tcg_list:
-                            self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], True])
-                        else:
-                            self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
-                    if len(self.tcg_list) > 0:
-                        if self.VERSION != 0 and self.PBA_VERSION != 0:
-                            self.enable_entries_buttons()
-                        else:
-                            self.disable_entries_buttons()
-                        self.op_instr.show()
-                        self.na_instr.hide()
-                        self.selectMulti_instr.show()
-                    else:
-                        self.disable_entries_buttons()
-                        self.selectMulti_instr.hide()
-                        self.naDevices_instr.show()
-                elif self.view_state == 7:# and len(self.mbr_setup_list) > 0:
-                    #for i in self.mbr_setup_list:
-                    for i in range(len(self.devs_list)):
-                        if i in self.mbr_setup_list:
-                            self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], True])
-                        else:
-                            self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
-                    if len(self.mbr_setup_list) > 0:
-                        if self.VERSION != 0 and self.PBA_VERSION != 0:
-                            self.enable_entries_buttons()
+                            self.selectMulti_instr.hide()
+                            self.naDevices_instr.show()
+                    elif self.view_state == 1 and self.auth_menu.get_active() == 1:# and len(self.ulocked_list) > 0:
+                        #for i in self.ulocked_list:
+                        for i in range(len(self.devs_list)):
+                            if i in self.ulocked_list:
+                                self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], True])
+                            else:
+                                self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
+                        if len(self.ulocked_list) > 0:
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
+                            self.op_instr.show()
+                            self.na_instr.hide()
+                            self.selectMulti_instr.show()
                         else:
                             self.disable_entries_buttons()
-                        self.op_instr.show()
-                        self.na_instr.hide()
-                        self.selectMulti_instr.show()
-                    else:
-                        self.disable_entries_buttons()
-                        self.selectMulti_instr.hide()
-                        self.naDevices_instr.show()
-                #elif self.view_state != 0:
-                #    self.disable_entries_buttons()
-                #    self.selectMulti_instr.hide()
-                #    self.naDevices_instr.show()
-                if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                    if self.op_prompt == 4 or self.op_prompt == 7:
-                        if 'Yes' in self.setupuser_list:
-                            self.box_auth.show()
+                            self.selectMulti_instr.hide()
+                            self.naDevices_instr.show()
+                    elif self.view_state == 2 and self.auth_menu.get_active() == 0:# and len(self.setup_list) > 0:
+                        #for i in self.setup_list:
+                        for i in range(len(self.devs_list)):
+                            if i in self.setup_list:
+                                self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], True])
+                            else:
+                                self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
+                        if len(self.setup_list) > 0:
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
+                            self.op_instr.show()
+                            self.na_instr.hide()
+                            self.selectMulti_instr.show()
                         else:
-                            self.box_auth.hide()
-                            self.auth_menu.set_active(0)
-                selection = self.treeview.get_selection()
-                selection.set_select_function(
-                    # Row selectable only if sensitive
-                    lambda path: self.liststore[path][4]
-                )
-                selection.set_mode(gtk.SELECTION_MULTIPLE)
+                            self.disable_entries_buttons()
+                            self.selectMulti_instr.hide()
+                            self.naDevices_instr.show()
+                    elif self.view_state == 2 and self.auth_menu.get_active() == 1:# and len(self.usetup_list) > 0:
+                        #for i in self.usetup_list:
+                        for i in range(len(self.devs_list)):
+                            if i in self.usetup_list:
+                                self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], True])
+                            else:
+                                self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
+                        if len(self.usetup_list) > 0:
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
+                            self.op_instr.show()
+                            self.na_instr.hide()
+                            self.selectMulti_instr.show()
+                        else:
+                            self.disable_entries_buttons()
+                            self.selectMulti_instr.hide()
+                            self.naDevices_instr.show()
+                    elif self.view_state == 4:# and len(self.nonsetup_list) > 0:
+                        #for i in self.nonsetup_list:
+                        for i in range(len(self.devs_list)):
+                            if i in self.nonsetup_list:
+                                self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], True])
+                            else:
+                                self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
+                        if len(self.nonsetup_list) > 0:
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:# and (self.VERSION != 3 or len(self.usb_list) != 0):
+                                self.enable_entries_buttons()
+                                self.op_instr.show()
+                                self.na_instr.hide()
+                            else:
+                                self.disable_entries_buttons()
+                                self.na_instr.show()
+                            self.selectMulti_instr.show()
+                        else:
+                            self.disable_entries_buttons()
+                            self.selectMulti_instr.hide()
+                            self.naDevices_instr.show()
+                    elif self.view_state == 5:# and len(self.tcg_list) > 0:
+                        #for i in self.tcg_list:
+                        for i in range(len(self.devs_list)):
+                            if i in self.tcg_list:
+                                self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], True])
+                            else:
+                                self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
+                        if len(self.tcg_list) > 0:
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
+                            self.op_instr.show()
+                            self.na_instr.hide()
+                            self.selectMulti_instr.show()
+                        else:
+                            self.disable_entries_buttons()
+                            self.selectMulti_instr.hide()
+                            self.naDevices_instr.show()
+                    elif self.view_state == 7:# and len(self.mbr_setup_list) > 0:
+                        #for i in self.mbr_setup_list:
+                        for i in range(len(self.devs_list)):
+                            if i in self.mbr_setup_list:
+                                self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], True])
+                            else:
+                                self.liststore.append([False, self.devs_list[i], self.vendor_list[i], self.sn_list[i], False])
+                        if len(self.mbr_setup_list) > 0:
+                            if self.VERSION != 0 and self.PBA_VERSION != 0:
+                                self.enable_entries_buttons()
+                            else:
+                                self.disable_entries_buttons()
+                            self.op_instr.show()
+                            self.na_instr.hide()
+                            self.selectMulti_instr.show()
+                        else:
+                            self.disable_entries_buttons()
+                            self.selectMulti_instr.hide()
+                            self.naDevices_instr.show()
+                    #elif self.view_state != 0:
+                    #    self.disable_entries_buttons()
+                    #    self.selectMulti_instr.hide()
+                    #    self.naDevices_instr.show()
+                    if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                        if self.op_prompt == 4 or self.op_prompt == 7:
+                            if 'Yes' in self.setupuser_list:
+                                self.box_auth.show()
+                            else:
+                                self.box_auth.hide()
+                                self.auth_menu.set_active(0)
+                    selection = self.treeview.get_selection()
+                    selection.set_select_function(
+                        # Row selectable only if sensitive
+                        lambda path: self.liststore[path][4]
+                    )
+                    selection.set_mode(gtk.SELECTION_MULTIPLE)
                 
         def hideUSB(self, *args):
             self.box_drive.hide()
@@ -3134,9 +3186,9 @@ if __name__ == "__main__":
             
             #self.box_pass.set_sensitive(False)
             self.pass_entry.set_sensitive(False)
-            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                self.check_pass_rd.set_sensitive(False)
-                self.pass_sav.set_sensitive(False)
+            #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+            self.check_pass_rd.set_sensitive(False)
+            self.pass_sav.set_sensitive(False)
             #self.box_newpass.set_sensitive(False)
             self.new_pass_entry.set_sensitive(False)
             
@@ -3187,12 +3239,12 @@ if __name__ == "__main__":
             self.dev_blockSID.set_sensitive(True)
             self.dev_userSetup.set_sensitive(True)
             
-            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                self.check_pass_rd.set_active(False)
-                self.check_pass_rd.set_sensitive(True)
-                self.pass_sav.set_active(False)
-                self.pass_sav.set_sensitive(True)
-                self.pass_entry.set_sensitive(True)
+            #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+            self.check_pass_rd.set_active(False)
+            self.check_pass_rd.set_sensitive(True)
+            self.pass_sav.set_active(False)
+            self.pass_sav.set_sensitive(True)
+            self.pass_entry.set_sensitive(True)
             
         def enable_entries_buttons(self, *args):
             
@@ -3202,20 +3254,20 @@ if __name__ == "__main__":
             #self.usb_radio.set_sensitive(True)
             self.skip_radio.set_sensitive(True)
             
-            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                if not self.check_pass_rd.get_active() or self.op_prompt == 5 or self.op_prompt == 6:
-                    self.check_box_pass.set_sensitive(True)
-            else:
+            #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+            if not self.check_pass_rd.get_active() or self.op_prompt == 5 or self.op_prompt == 6:
                 self.check_box_pass.set_sensitive(True)
+            #else:
+            #    self.check_box_pass.set_sensitive(True)
             
             #self.box_pass.set_sensitive(True)
             self.pass_entry.set_sensitive(True)
-            if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
-                self.check_pass_rd.set_sensitive(True)
-                self.check_pass_rd.set_active(False)
-                if self.op_prompt != 2:
-                    self.pass_sav.set_sensitive(True)
-                    self.pass_sav.set_active(False)
+            #if self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+            self.check_pass_rd.set_sensitive(True)
+            self.check_pass_rd.set_active(False)
+            if self.op_prompt != 2:
+                self.pass_sav.set_sensitive(True)
+                self.pass_sav.set_active(False)
             #self.box_newpass.set_sensitive(True)
             self.new_pass_entry.set_sensitive(True)
             #if self.op_prompt != 2 and (self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1)):
@@ -3367,13 +3419,27 @@ if __name__ == "__main__":
             if t1 != 0:
                 is_admin = True
         if is_admin or platform.system() == 'Linux':
-            #Run the app no other instance is running 
-            fw = open("checkInstance.txt", "w+") 
-            fw.write('InstanceIsRunning!') 
-            fw.close() 
-            app = LockApp()
-            app.run()
-            #LockApp.connect('destroy_event', LockApp.on_destroy(self)) 
+            proceed = True
+            if platform.system() == 'Windows':
+                rsig = vfysig.vfysig()
+                if rsig != 0 :
+                    proceed = False
+                    theme = os.path.join(os.getcwd(), 'gtkrc')
+                    gtk.rc_set_default_files([theme])
+                    gtk.rc_reparse_all_for_settings(gtk.settings_get_default(), True)
+                    info  =  'One of the software components is not signed properly. Please make sure you get the authentic files from Fidelity Height LLC!' 
+                    dialog = gtk.MessageDialog(type=gtk.MESSAGE_INFO,message_format=info,buttons=gtk.BUTTONS_OK) 
+                    dialog.set_title('') 
+                    dialog.run() 
+                    dialog.destroy()
+            if proceed:
+                #Run the app no other instance is running 
+                fw = open("checkInstance.txt", "w+") 
+                fw.write('InstanceIsRunning!') 
+                fw.close() 
+                app = LockApp()
+                app.run()
+                #LockApp.connect('destroy_event', LockApp.on_destroy(self)) 
         else:
             theme = os.path.join(os.getcwd(), 'gtkrc')
             gtk.rc_set_default_files([theme])

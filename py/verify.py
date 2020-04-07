@@ -3,7 +3,7 @@ import gtk
 import platform
 import os
 import re
-import requests
+
 import sys
 
 from HTMLParser import HTMLParser
@@ -12,7 +12,7 @@ import lockhash
 
 if platform.system() == 'Windows':
     import PyExtLic
-    import vfysig
+    import requests
 import PyExtOb
 
 class MyHTMLParser(HTMLParser):
@@ -135,7 +135,7 @@ def pbaVerify(self, *args):
             self.invalid_pba = True
 
 def licCheck(self, *args):
-    if self.VERSION != 1 and self.VERSION != -1 and self.VERSION != 1:
+    if self.VERSION != 1:
         version_text = os.popen(self.prefix + 'sedutil-cli --version').read()
         regex_license = '0:([0-9]+);'
         f = re.search(regex_license, version_text)
@@ -170,26 +170,23 @@ def licCheck(self, *args):
             if v_check != self.VERSION and md_check != self.MAX_DEV:
                 self.msg_err('License change detected. Closing the application.')
                 self.exitFL(self)
+                return False
             else:
-                return
+                return True
         else:
             self.msg_err('License not detected. Closing the application.')
             self.exitFL(self)
+            return False
+    else:
+        return True
 
 def initCheck(self, *args):
     version_text = ''
     #if self.DEV_OS == 'Windows':
     #    version_text = PyExtLic.get_lic()
     #else:
-    if platform.system() == 'Windows':
-        rsig = vfysig.vfysig()
-        if rsig == 0 :
-            info  =  'One of software component is not signed properly Please make sure you get the authentic files from Fidelity Height LLC!!' 
-            dialog = gtk.MessageDialog(type=gtk.MESSAGE_INFO,message_format=info,buttons=gtk.BUTTONS_OK) 
-            dialog.set_title('') 
-            dialog.run() 
-            dialog.destroy()
- 
+    
+    
     version_text = os.popen(self.prefix + 'sedutil-cli --version').read()
     regex_license = '0:([0-9]+);'
     f = re.search(regex_license, version_text)

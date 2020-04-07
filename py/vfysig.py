@@ -11,18 +11,15 @@ def vfysig():
         r = os.system('sign-32bit\signtool verify /pa ' + f + ' >NUL 2>NUL 1>NUL')
         #r = os.system('sign-32bit\signtool verify /pa ' + f )
         #print r
-        if r == 0 :
-            print (f + ' signature authenticate OK')
-        else :
-            print (f + ' signature authenticate NG')
+        if r != 0 :
             rr = rr + r
     return rr
     
     
-if vfysig() == 0:
-    print 'All signature authenicate successfully'
-else :
-    print 'One of the signature authenticate incorrectly'
+#if vfysig() == 0:
+#    print 'All signature authenicate successfully'
+#else :
+#    print 'One of the signature authenticate incorrectly'
 
 
             
