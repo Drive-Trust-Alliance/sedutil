@@ -744,9 +744,12 @@ class USBDialog(gtk.Dialog):
             self.usb_menu = gtk.ComboBox()
         else:
             self.usb_menu = gtk.combo_box_new_text()
-            
+
+        self.rescanImage = gtk.Image()
+        self.rescanImage.set_from_icon_name('rescan.ico', 2)
         button_box = gtk.HBox(False, 0)
-        self.refresh_button = gtk.Button('Rescan')
+        self.refresh_button = gtk.Button()
+        self.refresh_button.add(self.rescanImage)
         self.refresh_button.connect('clicked', self.refreshUSB, parent)
         self.refresh_button.set_sensitive(False)
         button_box.pack_start(self.usb_menu, True, True)
