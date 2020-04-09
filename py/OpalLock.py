@@ -1191,9 +1191,14 @@ if __name__ == "__main__":
             self.tvcolumn[3] = gtk.TreeViewColumn(column_names[3], cell_sn, text=3)
             self.tvcolumn[3].set_alignment(0.5)
             self.treeview.append_column(self.tvcolumn[3])
-            
-            self.scrolledWin_grid = gtk.ScrolledWindow()
-            self.scrolledWin_grid.add(self.treeview)
+
+            if(len(self.devs_list)  > 9 ):
+                self.scrolledWin_grid = gtk.ScrolledWindow()
+                self.scrolledWin_grid.add(self.treeview)
+
+            else:
+                self.scrolledWin_grid = self.treeview
+
             self.vbox.pack_start(self.selectAll_check, False, False, 0)
             self.vbox.pack_start(self.scrolledWin_grid, True, True, 0)
             
