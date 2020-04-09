@@ -98,7 +98,7 @@ class QueryDialog(gtk.Dialog):
         if parent.VERSION == 0 or parent.PBA_VERSION == 0:
             self.submitPass.set_sensitive(False)
         hbox1.pack_start(passLabel, False, False, 0)
-        hbox1.pack_start(self.queryPass, True, True, 0)
+        hbox1.pack_start(self.queryPass, True, True, 20)
         hbox1.pack_start(self.submitPass, False, False, 0)
         self.passBoxQ.pack_start(hbox1, False, False, 0)
         queryVbox.pack_start(self.passBoxQ, False, False, 0)
