@@ -89,18 +89,68 @@ if __name__ == "__main__":
         
         bad_pw = dict({'password': 1,
                        '12345678': 1,
+                       '12341234': 1,
+                       '12344321': 1,
+                       '11223344': 1,
+                       '12121212': 1,
                        '123456789': 1,
                        'football': 1,
                        'baseball': 1,
                        '1234567890': 1,
+                       '0123456789': 1,
                        '1qaz2wsx': 1,
                        'princess': 1,
                        'qwertyuiop': 1,
                        'passw0rd': 1,
                        'starwars': 1,
                        '11111111': 1,
+                       '22222222': 1,
+                       '33333333': 1,
+                       '44444444': 1,
+                       '55555555': 1,
+                       '66666666': 1,
+                       '77777777': 1,
+                       '88888888': 1,
+                       '99999999': 1,
+                       '00000000': 1,
+                       '87654321': 1,
+                       '987654321': 1,
+                       '0987654321': 1,
+                       '9876543210': 1,
+                       'opallock': 1,
+                       'drive123': 1,
                        'sunshine': 1,
                        'zaq1zaq1': 1,
+                       'g_czechout': 1,
+                       'aa123456': 1,
+                       'iloveyou': 1,
+                       'dubsmash': 1,
+                       'bvttest123': 1,
+                       'livetest': 1,
+                       'asdfghjkl': 1,
+                       'q1w2e3r4t5y6': 1,
+                       'q1w2e3r4t5': 1,
+                       'q1w2e3r4': 1,
+                       'chocolate': 1,
+                       'michelle': 1,
+                       'qwerty123': 1,
+                       '1234qwer': 1,
+                       'superman': 1,
+                       'butterfly': 1,
+                       'jennifer': 1,
+                       'basketball': 1,
+                       'shopping': 1,
+                       'abcd1234': 1,
+                       'asdf1234': 1,
+                       'samantha': 1,
+                       'whatever': 1,
+                       '1qaz2wsx3edc': 1,
+                       'babygirl': 1,
+                       'chegg123': 1,
+                       '12345678910': 1,
+                       '1q2w3e4r5t6y': 1,
+                       '1q2w3e4r': 1,
+                       '1q2w3e4r5t': 1,
                        'password1': 1,
                        'password12': 1,
                        'password1234': 1,
@@ -331,7 +381,7 @@ if __name__ == "__main__":
             self.passwordErrorLabel = gtk.Label('')
             self.passwordErrorLabel.set_alignment(0, 0.5)
             self.passwordErrorLabel.show()
-
+            
             self.menuBar = gtk.MenuBar()
             
             self.navMenu = gtk.Menu()
@@ -1153,7 +1203,11 @@ if __name__ == "__main__":
 
             self.externalCount = gtk.Label("")
             self.externalCount.set_alignment(0, 0.5)
-            self.externalCount.set_text("Total External Drives: " +str(len(self.tcg_usb_list)))
+            tcg_usb_count = 0
+            for tul in self.tcg_usb_list:
+                if tul:
+                    tcg_usb_count = tcg_usb_count + 1
+            self.externalCount.set_text("Total External Drives: " +str(tcg_usb_count))
 
             self.driveInformation.pack_start(self.driveCount, False, False, 0) 
             self.driveInformation.pack_start(self.tcgCount, False, False, 10)
@@ -1197,14 +1251,14 @@ if __name__ == "__main__":
             self.tvcolumn[3] = gtk.TreeViewColumn(column_names[3], cell_sn, text=3)
             self.tvcolumn[3].set_alignment(0.5)
             self.treeview.append_column(self.tvcolumn[3])
-
+            
             if(len(self.devs_list)  > 9 ):
                 self.scrolledWin_grid = gtk.ScrolledWindow()
                 self.scrolledWin_grid.add(self.treeview)
 
             else:
                 self.scrolledWin_grid = self.treeview
-
+                
             self.vbox.pack_start(self.selectAll_check, False, False, 0)
             self.vbox.pack_start(self.scrolledWin_grid, True, True, 0)
             

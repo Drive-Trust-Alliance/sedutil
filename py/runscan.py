@@ -1466,7 +1466,11 @@ def finddev(ui, fullscan):
             ui.firstscan = False
         ui.driveCount.set_text("Total Drives : " + str(len(ui.devs_list)))
         ui.tcgCount.set_text("Total TCG Drives : " + str(len(ui.tcg_list)))
-        ui.externalCount.set_text("Total External Drives: " + str(len(ui.tcg_usb_list)))
+        tcg_usb_count = 0
+        for tul in ui.tcg_usb_list:
+            if tul:
+                tcg_usb_count = tcg_usb_count + 1
+        ui.externalCount.set_text("Total External Drives: " + str(tcg_usb_count))
         ui.scan_ip = False
         
         ui.posthibern = False

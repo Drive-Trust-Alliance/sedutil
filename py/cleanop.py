@@ -1605,7 +1605,7 @@ def openLog_cleanup(parent, index, statusAW, password, txt, no_pw, no_USB, not_d
         parent.msg_err('No password found for the drive.')
     elif no_USB:
         #parent.pass_entry.set_sensitive(False)
-        parent.msg_err('No USB selected.')
+        parent.msg_warn('No USB selected.')
     elif not_detected:
         parent.msg_err('Selected USB not detected')
     else:

@@ -62,13 +62,14 @@ def run_setupFull(button, ui):
             ui.passwordErrorLabel.set_markup('<span foreground="red">Enter and confirm a password</span>')
             return
         ui.passwordErrorLabel.set_markup('')
-            
+        
         
             
         if not ui.warned:
             pw = ui.new_pass_entry.get_text()
             pw_confirm = ui.confirm_pass_entry.get_text()
             pw_trim = re.sub('\s', '', pw)
+            pw_trim_lower = pw_trim.lower()
             pw_trim_confirm = re.sub(r'\s+', '', pw_confirm)
             usb_dir = ''
             if len(pw_trim) < 8:
@@ -76,7 +77,7 @@ def run_setupFull(button, ui):
                 ui.passwordErrorLabel.set_markup(
                     '<span foreground="red">This password is too short.  Please enter a password at least 8 characters long excluding whitespace.</span>')
                 return
-            elif ui.bad_pw.has_key(pw_trim):
+            elif ui.bad_pw.has_key(pw_trim_lower):
                 # ui.msg_err("This password is on the blacklist of bad passwords, please enter a stronger password.")
                 ui.passwordErrorLabel.set_markup(
                     '<span foreground="red">This password is on the blacklist of bad passwords, please enter a stronger password.</span>')
@@ -85,11 +86,10 @@ def run_setupFull(button, ui):
                 # ui.msg_err("The entered passwords do not match.")
                 ui.passwordErrorLabel.set_markup('<span foreground="red">The entered passwords do not match.</span>')
                 return
-        
+            
             message = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_YES_NO, parent = ui)
             message.set_markup("Warning: If you lose or forget your password, all data will be lost. Do you want to proceed?")
             ui.passwordErrorLabel.set_markup('')
-
             res = message.run()
             if res == gtk.RESPONSE_YES:
                 message.destroy()
@@ -109,7 +109,7 @@ def run_setupFull(button, ui):
         if ui.warned and ui.orig != ui.confirm_pass_entry.get_text():
             ui.orig = ''
             ui.warned = False
-
+            
             # ui.msg_err('The passwords entered do not match. Try again.')
             ui.passwordErrorLabel.set_markup('<span foreground="red">The passwords entered do not match. Try again.</span>')
             ui.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Continue\'.')
@@ -146,7 +146,7 @@ def run_setupFull(button, ui):
                         proceed = False
                     msg_usb.destroy()
                 else:
-                    ui.msg_err('No USB selected')
+                    ui.msg_warn('No USB selected')
                     ui.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Continue\'.')
                     usb_dialog.destroy()
                     ui.setup_prompt1()
@@ -298,7 +298,7 @@ def run_pbaWrite(button, ui):
             ui.passwordErrorLabel.set_markup('<span foreground="red">Invalid password. Passwords must have non-whitespace characters</span>')
             return
         if ui.pass_sav.get_active() and len(ui.drive_list) == 0:
-            ui.msg_err('No USB selected for Save to USB.')
+            ui.msg_warn('No USB selected for Save to USB.')
             return
         if ui.pass_sav.get_active():
             drive = ui.drive_menu.get_active_text()
@@ -308,7 +308,7 @@ def run_pbaWrite(button, ui):
             if not os.path.isdir(drive):
                 ui.msg_err('Selected USB could not be detected.')
                 return
-
+            
         ui.passwordErrorLabel.set_markup('')
         selected_list = []
         if ui.toggleSingle_radio.get_active():
@@ -351,7 +351,7 @@ def run_pbaWrite(button, ui):
                 # ui.msg_err('Admin password not found for ' + d_list[2] + '.')
                 ui.passwordErrorLabel.set_markup('<span foreground="red">Admin password not found for ' + d_list[2] + '.</span>')
                 return
-
+            
         ui.passwordErrorLabel.set_markup('')
         ui.start_spin()
         ui.pba_wait_instr.show()
@@ -376,7 +376,7 @@ def run_changePW(button, ui):
             ui.passwordErrorLabel.set_markup('<span foreground="red">Invalid password. Passwords must have non-whitespace characters.</span>')
             return
         if ui.pass_sav.get_active() and not ui.check_pass_rd.get_active() and len(ui.drive_list) == 0:
-            ui.msg_err('No USB selected for Save to USB.')
+            ui.msg_warn('No USB selected for Save to USB.')
             return
         ui.passwordErrorLabel.set_markup('')
         devs = []
@@ -434,12 +434,13 @@ def run_changePW(button, ui):
         new_pass_confirm = ui.confirm_pass_entry.get_text()
         
         pw_trim = re.sub('\s', '', new_pass)
+        pw_trim_lower = pw_trim.lower()
         pw_trim_confirm = re.sub(r'\s+', '', new_pass_confirm)
         if len(pw_trim) < 8:
             # ui.msg_err("The new password is too short.  Please enter a password at least 8 characters long excluding whitespace.")
             ui.passwordErrorLabel.set_markup('<span foreground="red">The new password is too short.  Please enter a password at least 8 characters long excluding whitespace.</span>')
             return
-        elif ui.bad_pw.has_key(pw_trim):
+        elif ui.bad_pw.has_key(pw_trim_lower):
             # ui.msg_err("The new password is on the blacklist of weak passwords, please enter a stronger password.")
             ui.passwordErrorLabel.set_markup('<span foreground="red">The new password is on the blacklist of weak passwords, please enter a stronger password.</span>')
             return
@@ -612,7 +613,7 @@ def run_setupUSB(button, ui, *args):
                     message.destroy()
                     usb_dialog.destroy()
             else:
-                ui.msg_err('No USB selected.')
+                ui.msg_warn('No USB selected.')
                 usb_dialog.destroy()
         else:
             usb_dialog.destroy()
@@ -634,7 +635,7 @@ def run_setupUser(button, ui):
             ui.passwordErrorLabel.set_markup('<span foreground="red">Enter and confirm the new User Password</span>')
             return
         if ui.pass_sav.get_active() and len(ui.drive_list) == 0:
-            ui.msg_err('No USB selected for Save to USB.')
+            ui.msg_warn('No USB selected for Save to USB.')
             return
         ui.passwordErrorLabel.set_markup('')
         index = ui.dev_select.get_active()
@@ -660,12 +661,13 @@ def run_setupUser(button, ui):
         pw_u = ui.new_pass_entry.get_text()
         pw_u_confirm = ui.confirm_pass_entry.get_text()
         pw_u_trim = re.sub('\s', '', pw_u)
+        pw_u_lower = pw_u_trim.lower()
         pw_u_trim_confirm = re.sub(r'\s+', '', pw_u_confirm)
         if len(pw_u_trim) < 8:
             #ui.msg_err("This password is too short.  Please enter a password at least 8 characters long excluding whitespace.")
             ui.passwordErrorLabel.set_markup('<span foreground="red">This password is too short.  Please enter a password at least 8 characters long excluding whitespace.</span>')
             return
-        elif ui.bad_pw.has_key(pw_u_trim):
+        elif ui.bad_pw.has_key(pw_u_lower):
             # ui.msg_err("This password is on the blacklist of bad passwords, please enter a stronger password.")
             ui.passwordErrorLabel.set_markup('<span foreground="red">This password is on the blacklist of bad passwords, please enter a stronger password.</span>')
             return
@@ -701,7 +703,7 @@ def run_removeUser(button, ui):
             ui.passwordErrorLabel.set_markup('<span foreground="red">Invalid password.Passwords must have non-whitespace characters.</span>')
             return
         if ui.pass_sav.get_active() and len(ui.drive_list) == 0:
-            ui.msg_err('No USB selected for Save to USB.')
+            ui.msg_warn('No USB selected for Save to USB.')
             return
         ui.passwordErrorLabel.set_markup('')
         index = ui.dev_select.get_active()
@@ -782,7 +784,7 @@ def run_unlockPBA(button, ui, reboot, autounlock, msg):
             #print ui.PBA_VERSION
             #print ui.drive_list
             if ui.pass_sav.get_active() and len(ui.drive_list) == 0:
-                ui.msg_err('No USB selected for Save to USB.')
+                ui.msg_warn('No USB selected for Save to USB.')
                 return
             if ui.pass_sav.get_active():
                 drive = ui.drive_menu.get_active_text()
