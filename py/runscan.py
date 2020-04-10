@@ -1464,8 +1464,9 @@ def finddev(ui, fullscan):
                 if len(ui.tcg_list) > 0 and not verified:
                     dialogs.mngPower_prompt(None, ui, 0)
             ui.firstscan = False
-        ui.driveCount.set_text("Total number of drives : " + str(len(ui.devs_list)))
-        ui.tcgCount.set_text("Total number of TCG drives : " + str(len(ui.tcg_list)))
+        ui.driveCount.set_text("Total Drives : " + str(len(ui.devs_list)))
+        ui.tcgCount.set_text("Total TCG Drives : " + str(len(ui.tcg_list)))
+        ui.externalCount.set_text("Total External Drives: " + str(len(ui.tcg_usb_list)))
         ui.scan_ip = False
         
         ui.posthibern = False

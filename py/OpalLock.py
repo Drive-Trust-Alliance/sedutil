@@ -1145,13 +1145,19 @@ if __name__ == "__main__":
 
             self.driveCount = gtk.Label("") 
             self.driveCount.set_alignment(0,0.5) 
-            self.driveCount.set_text("Total number of drives : " + str(len(self.devs_list))) 
+            self.driveCount.set_text("Total Drives : " + str(len(self.devs_list)))
 
             self.tcgCount = gtk.Label("") 
             self.tcgCount.set_alignment(0, 0.5) 
-            self.tcgCount.set_text("Total number of TCG drives : " + str(len(self.tcg_list))) 
+            self.tcgCount.set_text("Total TCG Drives : " + str(len(self.tcg_list)))
+
+            self.externalCount = gtk.Label("")
+            self.externalCount.set_alignment(0, 0.5)
+            self.externalCount.set_text("Total External Drives: " +str(len(self.tcg_usb_list)))
+
             self.driveInformation.pack_start(self.driveCount, False, False, 0) 
-            self.driveInformation.pack_start(self.tcgCount, False, False, 10) 
+            self.driveInformation.pack_start(self.tcgCount, False, False, 10)
+            self.driveInformation.pack_start(self.externalCount, False, False, 0)
             self.vbox.pack_start(self.driveInformation, False, False, 0)
             
         def display_grid(self,*args):
