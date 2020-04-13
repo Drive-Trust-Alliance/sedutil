@@ -916,7 +916,7 @@ def run_revertKeep(button, ui):
             # ui.msg_err('Invalid password. Passwords must have non-whitespace characters.')
             ui.passwordErrorLabel.set_markup('<span foreground="red">Invalid password. Passwords must have non-whitespace characters</span>')
             return
-        ui.passowrdErrorLabel.set_markup('')
+        ui.passwordErrorLabel.set_markup('')
         selected_list = []
         devs = []
         list_mn = []
