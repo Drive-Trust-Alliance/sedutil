@@ -1284,13 +1284,18 @@ def finddev(ui, fullscan):
         if model != None:
             for row in model:
                 model.remove(row.iter)
+        display_dev_list = []
+        for x in ui.devs_list:
+            newx = x.replace('\\', '')
+            newx = newx.replace('.', '')
+            newx = newx.replace('/', '')
+            display_dev_list.append(newx)
         for i in range(len(ui.devs_list)):
             if ui.label_list[i] != None:
-                ui.dev_select.append_text(ui.devs_list[i] + ' ' + ui.label_list[i])
+                ui.dev_select.append_text(display_dev_list[i] + ' ' + ui.label_list[i])
             else:
                 ui.label_list[i] = ''
-                ui.dev_select.append_text(ui.devs_list[i])
-                
+                ui.dev_select.append_text(display_dev_list[i])
         ui.dev_select.set_active(old_idx)
     
         length = len(ui.devs_list)
