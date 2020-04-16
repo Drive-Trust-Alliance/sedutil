@@ -1292,10 +1292,10 @@ def finddev(ui, fullscan):
             display_dev_list.append(newx)
         for i in range(len(ui.devs_list)):
             if ui.label_list[i] != None:
-                ui.dev_select.append_text(display_dev_list[i] + ' ' + ui.label_list[i])
+                ui.dev_select.append_text(display_dev_list[i] + ' ' + ui.label_list[i] + '('+ str(ui.opal_ver_list[i]) +')')
             else:
                 ui.label_list[i] = ''
-                ui.dev_select.append_text(display_dev_list[i])
+                ui.dev_select.append_text(display_dev_list[i] + '('+ str(ui.opal_ver_list[i]) +')' )
         ui.dev_select.set_active(old_idx)
     
         length = len(ui.devs_list)
