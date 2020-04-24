@@ -852,11 +852,11 @@ int main(int argc, char * argv[])
 		if (m_lv->ValidateLicenseAtStartup(licenseBinding, needsActivation, returnMsg) == FALSE)
 		{
 			// no valid license 
-			//char url[250] = "https://fidelityl.test.onfastspring.com/"; // old 
-			char url[250] = "https://fidelityheight.test.onfastspring.com/"; // new 12/1/2017
+
+			//char url[250] = "https://fidelityheight.test.onfastspring.com/"; // new 12/1/2017
 			printf("No valid license of Fidelity Lock found, please register to get demo license or buy basic/premium license\n");
-			ShellExecute(0, 0, url, 0, 0, SW_SHOWNORMAL);
-			return 0;
+			//ShellExecute(0, 0, url, 0, 0, SW_SHOWNORMAL);
+			return LICENSE_NOT_ACIVATED;
 			//this->LaunchLicenseWizard();
 			//if (m_lv->ValidateLicenseAtStartup(licenseBinding, needsActivation, returnMsg) == FALSE)
 			//{
