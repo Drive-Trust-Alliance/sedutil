@@ -442,7 +442,7 @@ def query(button, parent, mode):
                 queryTextList.append("Single User Mode Support: " + singleUser + "\n")
                 queryTextList.append("Number of Locking Ranges Supported: " + nbr_Objects + "\n\nDataStore information\n")
                 queryTextList.append("DataStore Table Size: " + tblsz + "\n")
-                queryTextList.append("Number of DataStore Tables: " + nbr_MaxTables + "\n\nOpal information\n")
+                queryTextList.append("Number of DataStore Tables: " + nbr_MaxTables + "\n\nTCG information\n")
                 queryTextList.append("Number of Admins: " + nbr_Admins + "\n")
                 queryTextList.append("Number of Users: " + nbr_Users + "\n")
                 queryTextList.append("Base comID: " + comID_base + "\n")
@@ -939,7 +939,7 @@ def show_about(button, parent, *args):
         hboxThird.show()
 
         appFirstLabel = gtk.Label()
-        firstString = '<span size="20" weight="bold">Opal Lock GUI v0.25.2</span>'
+        firstString = '<span size="20" weight="bold">Opal Lock GUI v0.26.0</span>'
         appFirstLabel.set_markup(firstString)
         appFirstLabel.show()
         appIcon = gtk.Image()
@@ -950,7 +950,7 @@ def show_about(button, parent, *args):
         appSecondLabel.set_text(secondStr)
         appSecondLabel.show()
         appThirdLabel = gtk.Label()
-        appThirdLabel.set_text("(c) 2019 Fidelity Height LLC. All rights reserved.")
+        appThirdLabel.set_text("(c) 2020 Fidelity Height LLC. All rights reserved.")
         appThirdLabel.show()
 
         hboxIcon.pack_start(appIcon, True, True, 20)

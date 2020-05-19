@@ -40,6 +40,13 @@ def exitMV(self, mode):
     if mode > 0:
         subprocess.call(['mountvol', '/n'])
         subprocess.call(['mountvol', '/r'])
+    f1 = open('retrycounter.txt', 'w')
+    sn_idx = 0
+    for sn in self.sn_list:
+        if sn_idx in self.tcg_list:
+            f1.write(sn + ' ' + str(self.admin_aol_list[sn_idx]) + ' ' + str(self.user_aol_list[sn_idx]) + '\n')
+        sn_idx = sn_idx + 1
+    f1.close()
     return
     
 def unmountPC(self, mode):
@@ -162,8 +169,9 @@ def devChange(self, wParam,lParam):
                     while self.pbawrite_ip or self.op_inprogress:
                         time.sleep(5)
                     runscan.run_scan(None, self, False)
-            t = threading.Thread(target=t_run, args=())
-            t.start()
+            if not self.firstscan:
+                t = threading.Thread(target=t_run, args=())
+                t.start()
             
 
     if wParam == DBT_DEVICEREMOVECOMPLETE:

@@ -147,6 +147,7 @@ if __name__ == "__main__":
                        '1qaz2wsx3edc': 1,
                        'babygirl': 1,
                        'chegg123': 1,
+                       'abcdefgh': 1,
                        '12345678910': 1,
                        '1q2w3e4r5t6y': 1,
                        '1q2w3e4r': 1,
@@ -344,7 +345,7 @@ if __name__ == "__main__":
             #    self.set_title('Opal Lock Premium100')
             else:
             #    self.set_title('Opal Lock PremiumUnlimited')
-                self.set_title('Opal Lock (no license)')
+                self.set_title('Opal Lock (No License)')
                 
             if os.path.isfile('icon.ico'):
                 self.set_icon_from_file('icon.ico')

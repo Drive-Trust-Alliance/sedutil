@@ -85,7 +85,6 @@ def run_scan(button, ui, fullscan):
                         ui.usb_mv_list.append(entry)
                 #print '\n'
                 #print ui.usb_mv_list
-        
         #if fullscan:
         finddev(ui, fullscan)
 
@@ -1288,7 +1287,7 @@ def finddev(ui, fullscan):
         for x in ui.devs_list:
             newx = x.replace('\\', '')
             newx = newx.replace('.', '')
-            newx = newx.replace('/', '')
+            #newx = newx.replace('/', '')
             display_dev_list.append(newx)
         for i in range(len(ui.devs_list)):
             if ui.label_list[i] != None:
@@ -1465,6 +1464,19 @@ def finddev(ui, fullscan):
                     ui.update_link.show()
             
             if ui.DEV_OS == 'Windows':
+                if os.path.isfile('retrycounter.txt'):
+                    f = open('retrycounter.txt')
+                    txt = f.read()
+                    f.close()
+                    regex = '(\S+) ([0-9]+) ([0-9]+)'
+                    rc_tuples = re.findall(regex, txt)
+                    for t in rc_tuples:
+                        sn_idx = 0
+                        for sn in ui.sn_list:
+                            if t[0] == sn:
+                                ui.admin_aol_list[sn_idx] = int(t[1])
+                                ui.user_aol_list[sn_idx] = int(t[2])
+                            sn_idx = sn_idx + 1
                 verified = powerset.verify_power()
                 if len(ui.tcg_list) > 0 and not verified:
                     dialogs.mngPower_prompt(None, ui, 0)
