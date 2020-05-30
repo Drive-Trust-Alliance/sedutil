@@ -56,7 +56,7 @@ def setupFull_cleanup(ui, max_time, start_time, op_procs, res_list, e_to, select
     
     #no_usb = False
     
-    if status_usb.value != 0:
+    if ui.VERSION != 4 and status_usb.value != 0:
         if status_list[0] != 1:
             ui.msg_err('USB setup failed. Setup aborted.')
         else:
@@ -163,7 +163,7 @@ def setupFull_cleanup(ui, max_time, start_time, op_procs, res_list, e_to, select
                         f.close()
                         ui.pba_list[selected_list[y]] = pv.strip('\0')
                         act_idx = ui.dev_select.get_active()
-                        if selected_list[y] == act_idx:
+                        if ui.VERSION != 4 and selected_list[y] == act_idx:
                             ui.dev_pbaVer.set_text(pv.strip('\0'))
                         try:
                             os.remove('datawrite' + ui.sn_list[selected_list[y]] + '.txt')
@@ -220,13 +220,16 @@ def setupFull_cleanup(ui, max_time, start_time, op_procs, res_list, e_to, select
             if list_p == '':
                 if list_f != '':
                     ui.msg_err('Password set up failed for ' + list_f + '.')
-                    ui.msg_ok('USB setup complete.')
+                    if ui.VERSION != 4:
+                        ui.msg_ok('USB setup complete.')
                 elif list_to != '':
                     ui.msg_err('Password set up timed out for ' + list_to + '.')
-                    ui.msg_ok('USB setup complete.')
+                    if ui.VERSION != 4:
+                        ui.msg_ok('USB setup complete.')
                 else:
                     ui.msg_err('Password set up failed for ' + list_f + ', and timed out for ' + list_to + '.')
-                    ui.msg_ok('USB setup complete.')
+                    if ui.VERSION != 4:
+                        ui.msg_ok('USB setup complete.')
                 ui.op_instr.show()
                 ui.box_newpass.show()
                 ui.box_newpass_confirm.show()
@@ -236,14 +239,17 @@ def setupFull_cleanup(ui, max_time, start_time, op_procs, res_list, e_to, select
             else:
                 if list_to == '':
                     ui.msg_err('Password successfully set up for ' + list_p + ', but failed for ' + list_f + '.')
-                    ui.msg_ok('USB setup complete.')
+                    if ui.VERSION != 4:
+                        ui.msg_ok('USB setup complete.')
                 elif list_f == '':
                     ui.msg_err('Password successfully set up for ' + list_p + ', but timed out for ' + list_to + '.')
-                    ui.msg_ok('USB setup complete.')
+                    if ui.VERSION != 4:
+                        ui.msg_ok('USB setup complete.')
                 else:
                     ui.msg_err('Password successfully set up for ' + list_p + ', but failed for ' + list_f + ' and timed out for ' + list_to + '.')
-                    ui.msg_ok('USB setup complete.')
-                if list_p0 != '' or list_f0 != '':
+                    if ui.VERSION != 4:
+                        ui.msg_ok('USB setup complete.')
+                if ui.VERSION != 4 and (list_p0 != '' or list_f0 != ''):
                     if list_p0 == '':
                         ui.msg_err('Preboot image setup failed for ' + list_f0 + '.')
                     elif list_f0 == '':
@@ -277,22 +283,22 @@ def setupFull_cleanup(ui, max_time, start_time, op_procs, res_list, e_to, select
                     f.close()
                     ui.pba_list[d] = pv.strip('\0')
                     act_idx = ui.dev_select.get_active()
-                    if d == act_idx:
+                    if ui.VERSION != 4 and d == act_idx:
                         ui.dev_pbaVer.set_text(pv.strip('\0'))
                     try:
                         os.remove('datawrite' + ui.sn_list[d] + '.txt')
                     except WindowsError:
                         print 'file removal failed'
                 y = y + 1
-                
-            ui.msg_ok('Password successfully set up for ' + liststr + '. Bootable USB set up successfully.')
-            if list_p0 != '' or list_f0 != '':
-                if list_p0 == '':
-                    ui.msg_err('Preboot image setup failed for ' + list_f0 + '.')
-                elif list_f0 == '':
-                    ui.msg_ok('Preboot image set up successfully for ' + list_p0 + '.')
-                else:
-                    ui.msg_err('Preboot image set up successfully for ' + list_p0 + ', but failed for ' + list_f0 + '.')
+            if ui.VERSION != 4:
+                ui.msg_ok('Password successfully set up for ' + liststr + '. Bootable USB set up successfully.')
+                if list_p0 != '' or list_f0 != '':
+                    if list_p0 == '':
+                        ui.msg_err('Preboot image setup failed for ' + list_f0 + '.')
+                    elif list_f0 == '':
+                        ui.msg_ok('Preboot image set up successfully for ' + list_p0 + '.')
+                    else:
+                        ui.msg_err('Preboot image set up successfully for ' + list_p0 + ', but failed for ' + list_f0 + '.')
             ui.returnToMain(None, True)
         ui.stop_spin()
         if rescan_needed:
@@ -397,7 +403,7 @@ def pbaWrite_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selec
                     pv = f.read()
                     f.close()
                     ui.pba_list[y] = pv.strip('\0')
-                    if y == act_idx:
+                    if ui.VERSION != 4 and y == act_idx:
                         ui.dev_pbaVer.set_text(pv.strip('\0'))
                     try:
                         os.remove('datawrite' + ui.sn_list[y] + '.txt')
@@ -482,7 +488,7 @@ def pbaWrite_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selec
                 pv = f.read()
                 f.close()
                 ui.pba_list[d] = pv.strip('\0')
-                if d == act_idx:
+                if ui.VERSION != 4 and d == act_idx:
                     ui.dev_pbaVer.set_text(pv.strip('\0'))
                 try:
                     os.remove('datawrite' + ui.sn_list[d] + '.txt')

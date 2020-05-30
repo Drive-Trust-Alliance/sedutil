@@ -134,15 +134,25 @@ def devChange(self, wParam,lParam):
                     txt = os.popen(self.prefix + 'sedutil-cli --scan n').read()
                     for x in range(dl_len):
                         runop.postlock(x)
-                    rgx = 'PhysicalDrive[0-9]+\s+([12ELPR]+|No)\s+[^\s:]+(?:\s+[^:]+)*\s*:\s*[^:]+\s*:\s*(\S+)'
+                    rgx = '(PhysicalDrive[0-9]+)\s+([12ELPR]+|No)\s+[^\s:]+(?:\s+[^:]+)*\s*:\s*[^:]+\s*:\s*(\S+)'
                     list_d = re.findall(rgx, txt)
                     d_present = [False] * len(self.devs_list)
                     for entry in list_d:
-                        if entry[1] in self.sn_list:
-                            d_idx = self.sn_list.index(entry[1])
-                            d_present[d_idx] = True
-                        elif entry[0] != 'No':
-                            fullscan_needed = True
+                        proceed = True
+                        if self.VERSION == 4:
+                            txt_q = os.popen(self.prefix + 'sedutil-cli --query \\\\.\\' + entry[0]).read()
+                            rgx_q = 'PhysicalDrive[0-9]+\s+USB'
+                            m_usb = re.search(rgx_q, txt_q)
+                            if m_usb:
+                                proceed = True
+                            else:
+                                proceed = False
+                        if proceed:
+                            if entry[2] in self.sn_list:
+                                d_idx = self.sn_list.index(entry[2])
+                                d_present[d_idx] = True
+                            elif entry[1] != 'No':
+                                fullscan_needed = True
                     gobject.idle_add(cleanup,d_present,rescan_needed, fullscan_needed)
                 else:
                     self.dnc_ip = False
@@ -185,13 +195,23 @@ def devChange(self, wParam,lParam):
             txt = os.popen(self.prefix + 'sedutil-cli --scan n').read()
             for x in range(dl_len):
                 runop.postlock(x)
-            rgx = 'PhysicalDrive[0-9]+\s+[12ELPR]+|No\s+\S+(?:\s+[^:]+)*\s*:\s*[^:]+\s*:\s*(\S+)'
+            rgx = '(PhysicalDrive[0-9]+)\s+(?:[12ELP]+|No)\s+[^\:\s]+(?:\s[^\:\s]+)*\s*:\s*[^:]+\s*:\s*(\S+)'
             list_d = re.findall(rgx, txt)
             d_present = [False] * len(self.devs_list)
             for entry in list_d:
-                if entry in self.sn_list:
-                    d_idx = self.sn_list.index(entry)
-                    d_present[d_idx] = True
+                proceed = True
+                if self.VERSION == 4:
+                    txt_q = os.popen(self.prefix + 'sedutil-cli --query \\\\.\\' + entry[0]).read()
+                    rgx_q = 'PhysicalDrive[0-9]+\s+USB'
+                    m_usb = re.search(rgx_q, txt_q)
+                    if m_usb:
+                        proceed = True
+                    else:
+                        proceed = False
+                if proceed:
+                    if entry[1] in self.sn_list:
+                        d_idx = self.sn_list.index(entry[1])
+                        d_present[d_idx] = True
             gobject.idle_add(cleanup, d_present)
         def cleanup(d_present):
             fullscan_needed = False
@@ -306,11 +326,21 @@ def devChange(self, wParam,lParam):
             txt = os.popen(self.prefix + 'sedutil-cli --scan n').read()
             for x in range(dl_len):
                 runop.postlock(x)
-            rgx = 'PhysicalDrive[0-9]+\s+([12ELPR]+|No)\s+[^\s:]+(?:\s+[^:]+)*\s*:\s*[^:]+\s*:\s*(\S+)'
+            rgx = '(PhysicalDrive[0-9]+)\s+([12ELPR]+|No)\s+[^\s:]+(?:\s+[^:]+)*\s*:\s*[^:]+\s*:\s*(\S+)'
             list_d = re.findall(rgx, txt)
             for entry in list_d:
-                if entry[1] not in self.sn_list and entry[0] != 'No':
-                    fullscan_needed = True
+                proceed = True
+                if self.VERSION == 4:
+                    txt_q = os.popen(self.prefix + 'sedutil-cli --query \\\\.\\' + entry[0]).read()
+                    rgx_q = 'PhysicalDrive[0-9]+\s+USB'
+                    m_usb = re.search(rgx_q, txt_q)
+                    if m_usb:
+                        proceed = True
+                    else:
+                        proceed = False
+                if proceed:
+                    if entry[2] not in self.sn_list and entry[1] != 'No':
+                        fullscan_needed = True
             #print self.mv_list
             if not self.dnc_ip:
                 self.da_ip = False

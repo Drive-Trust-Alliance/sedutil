@@ -123,7 +123,6 @@ class QueryDialog(gtk.Dialog):
         if parent.VERSION != 1:
             self.queryPass.set_text('')
         
-        self.add(queryVbox)
         self.show_all()
         
         self.spinQ.hide()
@@ -277,10 +276,11 @@ def query(button, parent, mode):
             parent.dev_msid.set_text(parent.msid_list[index])
         else:
             parent.dev_msid.set_text('Loading...')
-        if parent.pba_list[index] != None:
-            parent.dev_pbaVer.set_text(parent.pba_list[index])
-        else:
-            parent.dev_pbaVer.set_text('Loading...')
+        if parent.VERSION != 4:
+            if parent.pba_list[index] != None:
+                parent.dev_pbaVer.set_text(parent.pba_list[index])
+            else:
+                parent.dev_pbaVer.set_text('Loading...')
         
         parent.dev_opal_ver.set_text(parent.opal_ver_list[index])
         parent.dev_status.set_text(parent.lockstatus_list[index])
@@ -939,7 +939,7 @@ def show_about(button, parent, *args):
         hboxThird.show()
 
         appFirstLabel = gtk.Label()
-        firstString = '<span size="20" weight="bold">Opal Lock GUI v0.26.0</span>'
+        firstString = '<span size="20" weight="bold">Opal Lock GUI v0.26.1</span>'
         appFirstLabel.set_markup(firstString)
         appFirstLabel.show()
         appIcon = gtk.Image()

@@ -186,7 +186,7 @@ if __name__ == "__main__":
         #}
          
         try:
-            opts, args = getopt.getopt(sys.argv[1:], [""], ["pba", "demo", "standard", "premium"])
+            opts, args = getopt.getopt(sys.argv[1:], [""], ["pba", "demo", "usb", "standard", "premium"])
         except getopt.GetoptError, err:
             exit(2)
 
@@ -202,6 +202,9 @@ if __name__ == "__main__":
                 MAX_DEV = 5
             elif o in ("--premium"):
                 VERSION = 3
+                MAX_DEV = 5
+            elif o in ("--usb"):
+                VERSION = 4
                 MAX_DEV = 5
         
         full_devs_list = []
@@ -337,8 +340,10 @@ if __name__ == "__main__":
                 self.set_title('Opal Lock PBA')
             elif self.VERSION == 2:
                 self.set_title('Opal Lock Standard')
-            elif self.MAX_DEV == 5:
+            elif self.VERSION == 3:
                 self.set_title('Opal Lock Premium')
+            elif self.VERSION == 4:
+                self.set_title('Opal Lock USB')
             #elif self.MAX_DEV == 25:
             #    self.set_title('Opal Lock Premium25')
             #elif self.MAX_DEV == 100:
@@ -444,20 +449,21 @@ if __name__ == "__main__":
                 self.setupFull.connect("activate", self.setup_prompt1)
                 self.setupFull.set_tooltip_text('Set up password and preboot image for a drive')
                 self.setupMenu.append(self.setupFull)
-                self.updatePBA = gtk.MenuItem("Update Preboot Image")
-                self.updatePBA.connect("activate", self.updatePBA_prompt)
-                self.updatePBA.set_tooltip_text('Update a drive\'s preboot image')
-                self.setupMenu.append(self.updatePBA)
+                if self.VERSION != 4:
+                    self.updatePBA = gtk.MenuItem("Update Preboot Image")
+                    self.updatePBA.connect("activate", self.updatePBA_prompt)
+                    self.updatePBA.set_tooltip_text('Update a drive\'s preboot image')
+                    self.setupMenu.append(self.updatePBA)
             
                 self.changePassword = gtk.MenuItem("Change Password")
                 self.changePassword.connect("activate", self.changePW_prompt)
                 self.changePassword.set_tooltip_text('Change a drive\'s password')
                 self.setupMenu.append(self.changePassword)
-                
-                self.setupUSB = gtk.MenuItem("Setup Bootable USB")
-                self.setupUSB.connect("activate", self.setupUSB_prompt)
-                self.setupUSB.set_tooltip_text('Set up bootable USB')
-                self.setupMenu.append(self.setupUSB)
+                if self.VERSION != 4:
+                    self.setupUSB = gtk.MenuItem("Setup Bootable USB")
+                    self.setupUSB.connect("activate", self.setupUSB_prompt)
+                    self.setupUSB.set_tooltip_text('Set up bootable USB')
+                    self.setupMenu.append(self.setupUSB)
                 
                 if self.VERSION % 3 == 0:
                     self.setupUser = gtk.MenuItem("Setup User")
@@ -537,6 +543,9 @@ if __name__ == "__main__":
                 self.openLicense.connect('activate', self.openLicenseManager)
                 self.upgradeMenu.append(self.openLicense)
                 if self.VERSION == 0:
+                    upgradeUSB = gtk.MenuItem("Upgrade to USB")
+                    self.upgradeMenu.append(upgradeUSB)
+                if self.VERSION == 0 or self.VERSION == 4:
                     self.upgradeBasic = gtk.MenuItem("Upgrade to Standard")
                     self.upgradeMenu.append(self.upgradeBasic)
                 if self.VERSION != 3:
@@ -871,7 +880,7 @@ if __name__ == "__main__":
             
             self.select_box.show()
             self.box_dev.show()
-            if self.VERSION == 2 or self.PBA_VERSION == 1:
+            if (self.VERSION % 2 == 0 and self.VERSION != 0) or self.PBA_VERSION == 1:
                 self.userSetup_box.hide()
             
             
@@ -1057,22 +1066,24 @@ if __name__ == "__main__":
             
             dev_info.pack_start(series_box, False, False, 1)
             
-            dev_pbalabel = gtk.Label("Preboot Image")
-            dev_pbalabel.set_alignment(0,0.5)
-            #dev_pbalabel.set_width_chars(14)
-            dev_pbalabel.show()
-            pbaver_box.pack_start(dev_pbalabel, False, False, 5)
             
-            self.dev_pbaVer = gtk.Entry()
-            self.dev_pbaVer.set_property("editable", False)
-            #self.dev_pbaVer.set_sensitive(False)
-            self.dev_pbaVer.set_width_chars(40)
-            self.dev_pbaVer.show()
-            pbaver_box.pack_end(self.dev_pbaVer, False, False, 5)
-            
-            
-            
-            dev_info.pack_start(pbaver_box, False, False, 1)
+            if self.VERSION != 4:
+                dev_pbalabel = gtk.Label("Preboot Image")
+                dev_pbalabel.set_alignment(0,0.5)
+                #dev_pbalabel.set_width_chars(14)
+                dev_pbalabel.show()
+                pbaver_box.pack_start(dev_pbalabel, False, False, 5)
+                
+                self.dev_pbaVer = gtk.Entry()
+                self.dev_pbaVer.set_property("editable", False)
+                #self.dev_pbaVer.set_sensitive(False)
+                self.dev_pbaVer.set_width_chars(40)
+                self.dev_pbaVer.show()
+                pbaver_box.pack_end(self.dev_pbaVer, False, False, 5)
+                
+                
+                
+                dev_info.pack_start(pbaver_box, False, False, 1)
             
             
             
@@ -1479,7 +1490,7 @@ if __name__ == "__main__":
                     if b_entry_checkbox:
                         if self.op_prompt != 2:
                             i = self.dev_select.get_active()
-                            if self.setupuser_list[i] == 'Yes' or self.setupuser_list[i] == None:
+                            if (self.VERSION % 3 == 0 or (self.VERSION == 1 and self.PBA_VERSION != 1)) and (self.setupuser_list[i] == 'Yes' or self.setupuser_list[i] == None):
                                 self.box_auth.show()
                             self.box_pass.show()
                         self.box_drive.show()
@@ -1529,11 +1540,12 @@ if __name__ == "__main__":
                             if self.check_pass_rd.get_active():
                                 self.pass_entry.set_text("")
                                 self.pass_entry.set_sensitive(False)
-                        if self.setupuser_list[act_idx] == 'Yes':# or self.setupuser_list[act_idx] == None:
-                            self.box_auth.show()
-                        else:
-                            self.box_auth.hide()
-                            self.auth_menu.set_active(0)
+                        if self.VERSION == 3 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                            if self.setupuser_list[act_idx] == 'Yes':# or self.setupuser_list[act_idx] == None:
+                                self.box_auth.show()
+                            else:
+                                self.box_auth.hide()
+                                self.auth_menu.set_active(0)
                     else:
                         self.op_instr.hide()
                         self.disable_entries_buttons()
@@ -1559,7 +1571,7 @@ if __name__ == "__main__":
                             if self.check_pass_rd.get_active():
                                 self.pass_entry.set_text("")
                                 self.pass_entry.set_sensitive(False)
-                        if (self.op_prompt == 4 or self.op_prompt == 5) and self.pass_sav.get_active():
+                        if (self.VERSION == 3 or (self.VERSION == 1 and self.PBA_VERSION != 1)) and(self.op_prompt == 4 or self.op_prompt == 5) and self.pass_sav.get_active():
                             if self.setupuser_list[act_idx] == 'Yes':# or self.setupuser_list[act_idx] == None:
                                 self.box_auth.show()
                             else:
@@ -1587,7 +1599,7 @@ if __name__ == "__main__":
                             self.na_instr.set_text('This drive has not been set up.')
                         else:
                             self.na_instr.set_text('This drive is not a TCG drive.')
-                        if (self.op_prompt == 4 or self.op_prompt == 5) and self.pass_sav.get_active():
+                        if (self.VERSION == 3 or (self.VERSION == 1 and self.PBA_VERSION != 1)) and (self.op_prompt == 4 or self.op_prompt == 5) and self.pass_sav.get_active():
                             if self.setupuser_list[act_idx] == 'Yes':# or self.setupuser_list[act_idx] == None:
                                 self.box_auth.show()
                             else:
@@ -1642,12 +1654,13 @@ if __name__ == "__main__":
                             if self.check_pass_rd.get_active():
                                 self.pass_entry.set_text("")
                                 self.pass_entry.set_sensitive(False)
-                            if self.op_prompt == 1:
-                                if self.setupuser_list[act_idx] == 'Yes':# or self.setupuser_list[act_idx] == None:
-                                    self.box_auth.show()
-                                else:
-                                    self.box_auth.hide()
-                                    self.auth_menu.set_active(0)
+                            if self.VERSION == 3 or (self.VERSION == 1 and self.PBA_VERSION != 1):
+                                if self.op_prompt == 1:
+                                    if self.setupuser_list[act_idx] == 'Yes':# or self.setupuser_list[act_idx] == None:
+                                        self.box_auth.show()
+                                    else:
+                                        self.box_auth.hide()
+                                        self.auth_menu.set_active(0)
                     else:
                         self.op_instr.hide()
                         self.disable_entries_buttons()
@@ -1703,10 +1716,11 @@ if __name__ == "__main__":
                     else:
                         self.dev_msid.set_text('Loading...')
                     self.dev_series.set_text(self.series_list[index])
-                    if self.pba_list[index] != None:
-                        self.dev_pbaVer.set_text(self.pba_list[index])
-                    else:
-                        self.dev_pbaVer.set_text('Loading...')
+                    if self.VERSION != 4:
+                        if self.pba_list[index] != None:
+                            self.dev_pbaVer.set_text(self.pba_list[index])
+                        else:
+                            self.dev_pbaVer.set_text('Loading...')
                     
                     self.dev_opal_ver.set_text(self.opal_ver_list[index])
                     self.dev_status.set_text(self.lockstatus_list[index])
@@ -1736,7 +1750,8 @@ if __name__ == "__main__":
                         else:
                             self.dev_series.set_text("N/A")
                         self.dev_blockSID.set_text("N/A")
-                        self.dev_pbaVer.set_text("N/A")
+                        if self.VERSION != 4:
+                            self.dev_pbaVer.set_text("N/A")
                         self.dev_userSetup.set_text('N/A')
                     if self.VERSION == 3 or (self.VERSION == 1 and self.PBA_VERSION != 1):
                         if self.op_prompt == 4 or self.op_prompt == 7:
@@ -1900,7 +1915,7 @@ if __name__ == "__main__":
                 self.hideAll()
                 self.select_box.show()
                 self.box_dev.show()
-                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                if (self.VERSION % 2 == 0 and self.VERSION != 0) or self.PBA_VERSION == 1:
                     self.userSetup_box.hide()
                 self.op_label.set_text('View Audit Log')
                 self.op_instr.set_text('A drive\'s audit log stores a log of actions done on the drive by this application.\nEnter the drive\'s password to access its audit log.')
@@ -1996,7 +2011,7 @@ if __name__ == "__main__":
                 self.selectMulti_instr.hide()
                 self.select_instr.hide()
                 self.box_dev.show()
-                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                if (self.VERSION % 2 == 0 and self.VERSION != 0) or self.PBA_VERSION == 1:
                     self.userSetup_box.hide()
                 self.op_label.set_text('')
                 self.main_instr.show()
@@ -2056,11 +2071,13 @@ if __name__ == "__main__":
                 self.hideAll()
                 self.select_box.show()
                 self.box_dev.show()
-                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                if (self.VERSION % 2 == 0 and self.VERSION != 0) or self.PBA_VERSION == 1:
                     self.userSetup_box.hide()
                 curr_idx = self.dev_select.get_active()
-                
-                self.mode_setupUSB = True
+                if self.VERSION != 4:
+                    self.mode_setupUSB = True
+                else:
+                    self.mode_setupUSB = False
                 
                 self.op_prompt = 2
                 
@@ -2100,9 +2117,10 @@ if __name__ == "__main__":
                     self.new_pass_entry.show()
                     
                     self.box_drive.show()
-                    self.drive_menu.hide()
-                    self.drive_label.hide()
-                    self.drive_refresh.hide()
+                    if self.VERSION != 4:
+                        self.drive_menu.hide()
+                        self.drive_label.hide()
+                        self.drive_refresh.hide()
                     #self.usb_menu.hide()
                     
                     count = 0
@@ -2176,7 +2194,7 @@ if __name__ == "__main__":
                 self.hideAll()
                 self.select_box.show()
                 self.box_dev.show()
-                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                if (self.VERSION % 2 == 0 and self.VERSION != 0) or self.PBA_VERSION == 1:
                     self.userSetup_box.hide()
                 self.cancel_button.show()
                 self.op_label.set_text('Set Up User Password')
@@ -2240,7 +2258,7 @@ if __name__ == "__main__":
                 self.hideAll()
                 self.select_box.show()
                 self.box_dev.show()
-                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                if (self.VERSION % 2 == 0 and self.VERSION != 0) or self.PBA_VERSION == 1:
                     self.userSetup_box.hide()
                 self.cancel_button.show()
                 self.op_label.set_text('Remove User')
@@ -2300,7 +2318,7 @@ if __name__ == "__main__":
                 self.hideAll()
                 self.select_box.show()
                 self.box_dev.show()
-                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                if (self.VERSION % 2 == 0 and self.VERSION != 0) or self.PBA_VERSION == 1:
                     self.userSetup_box.hide()
                 self.cancel_button.show()
                 
@@ -2412,7 +2430,7 @@ if __name__ == "__main__":
                 self.hideAll()
                 self.select_box.show()
                 self.box_dev.show()
-                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                if (self.VERSION % 2 == 0 and self.VERSION != 0) or self.PBA_VERSION == 1:
                     self.userSetup_box.hide()
                 self.cancel_button.show()
                 
@@ -2517,7 +2535,7 @@ if __name__ == "__main__":
                 self.hideAll()
                 self.select_box.show()
                 self.box_dev.show()
-                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                if (self.VERSION % 2 == 0 and self.VERSION != 0) or self.PBA_VERSION == 1:
                     self.userSetup_box.hide()
                 self.cancel_button.show()
                 self.op_label.set_text('Set up USB')
@@ -2567,7 +2585,7 @@ if __name__ == "__main__":
                 self.hideAll()
                 self.select_box.show()
                 self.box_dev.show()
-                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                if (self.VERSION % 2 == 0 and self.VERSION != 0) or self.PBA_VERSION == 1:
                     self.userSetup_box.hide()
                 self.op_prompt = 10
                 
@@ -2659,7 +2677,7 @@ if __name__ == "__main__":
                 self.hideAll()
                 self.select_box.show()
                 self.box_dev.show()
-                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                if (self.VERSION % 2 == 0 and self.VERSION != 0) or self.PBA_VERSION == 1:
                     self.userSetup_box.hide()
                 self.cancel_button.show()
                 self.op_label.set_text('Revert Setup and Erase Data with PSID')
@@ -2701,7 +2719,7 @@ if __name__ == "__main__":
                 self.hideAll()
                 self.select_box.show()
                 self.box_dev.show()
-                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                if (self.VERSION % 2 == 0 and self.VERSION != 0) or self.PBA_VERSION == 1:
                     self.userSetup_box.hide()
                 self.op_prompt = 7
                 
@@ -2801,7 +2819,7 @@ if __name__ == "__main__":
                 self.hideAll()
                 self.select_box.show()
                 self.box_dev.show()
-                if self.VERSION == 2 or self.PBA_VERSION == 1:
+                if (self.VERSION % 2 == 0 and self.VERSION != 0) or self.PBA_VERSION == 1:
                     self.userSetup_box.hide()
                 self.op_prompt = 9
                 
@@ -3005,9 +3023,6 @@ if __name__ == "__main__":
             self.multi_wait_instr.hide()
             self.canDestroyMain = True
             
-            #self.pass_dialog()
-            #self.driveCount.set_text("Total number of drives : " + str(len(self.devs_list)))
-            #self.tcgCount.set_text("Total number of TCG drives : " + str(len(self.tcg_list)))
             
         def mode_toggled(self, button):
             verified = verify.licCheck(self)
@@ -3016,7 +3031,7 @@ if __name__ == "__main__":
                     self.scrolledWin_grid.hide()
                     self.select_box.show()
                     self.box_dev.show()
-                    if self.VERSION == 2 or self.PBA_VERSION == 1:
+                    if (self.VERSION % 2 == 0 and self.VERSION != 0) or self.PBA_VERSION == 1:
                         self.userSetup_box.hide()
                     self.naDevices_instr.hide()
                     self.op_instr.hide()
@@ -3236,7 +3251,8 @@ if __name__ == "__main__":
             self.dev_sn.set_sensitive(False)
             self.dev_msid.set_sensitive(False)
             self.dev_series.set_sensitive(False)
-            self.dev_pbaVer.set_sensitive(False)
+            if self.VERSION != 4:
+                self.dev_pbaVer.set_sensitive(False)
             
             self.dev_opal_ver.set_sensitive(False)
             self.dev_status.set_sensitive(False)
@@ -3301,7 +3317,8 @@ if __name__ == "__main__":
             self.dev_sn.set_sensitive(True)
             self.dev_msid.set_sensitive(True)
             self.dev_series.set_sensitive(True)
-            self.dev_pbaVer.set_sensitive(True)
+            if self.VERSION != 4:
+                self.dev_pbaVer.set_sensitive(True)
             
             self.dev_opal_ver.set_sensitive(True)
             self.dev_status.set_sensitive(True)

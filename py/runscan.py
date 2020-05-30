@@ -38,7 +38,8 @@ def run_scan(button, ui, fullscan):
             ui.dev_sn.set_text('')
             ui.dev_msid.set_text('')
             ui.dev_series.set_text('')
-            ui.dev_pbaVer.set_text('')
+            if ui.VERSION != 4:
+                ui.dev_pbaVer.set_text('')
             
             ui.dev_opal_ver.set_text('')
             ui.dev_status.set_text('')
@@ -260,8 +261,7 @@ def finddev(ui, fullscan):
                 m = re.search(names[index] + ".*", txt)
                 
                 if m:
-                    
-                    txt11 = names[index] + "\s+.[A-z0-9]+\s+.*"
+                    txt11 = names[index] + "\s+[A-z0-9]+\s+.*"
                     m1 = re.findall(txt11, txt)
                     if m1:
                         
@@ -329,35 +329,45 @@ def finddev(ui, fullscan):
                             
                             
                             if md:
-                                full_devs_new.append(ui.devname)
-                                full_sn_new.append(md.group(4).replace(' ', ''))
-                                full_salt_new.append(md.group(4).ljust(20))
-                                full_vendor.append(md.group(2))
-                                full_series.append(md.group(3))
-                                if md.group(1) == 'No':
-                                    full_opalver.append('None')
-                                    full_ver_new.append(False)
-                                    full_encsup.append('N/A')
-                                else:
-                                    tcg_count = tcg_count + 1
-                                    full_ver_new.append(True)
-                                    if md.group(1) == 'P':
-                                        full_opalver.append("Pyrite")
-                                        full_encsup.append("Not Supported")
+                                proceed = True
+                                if ui.VERSION == 4:
+                                    txt_q = os.popen(ui.prefix + 'sedutil-cli --query ' + ui.devname).read()
+                                    regex_usb = m2.group() + " USB"
+                                    m_usb = re.search(regex_usb, txt_q)
+                                    if m_usb:
+                                        proceed = True
                                     else:
-                                        full_encsup.append("Supported")
-                                        if md.group(1) == '1' or md.group(1) == '2':
-                                            full_opalver.append("Opal " + md.group(1) + ".0")
-                                        elif md.group(1) == '12':
-                                            full_opalver.append("Opal 1.0/2.0")
-                                        elif md.group(1) == 'E':
-                                            full_opalver.append("Enterprise")
-                                        elif md.group(1) == 'L':
-                                            full_opalver.append("Opallite")
-                                        elif md.group(1) == 'R':
-                                            full_opalver.append("Ruby")
+                                        proceed = False
+                                if proceed:
+                                    full_devs_new.append(ui.devname)
+                                    full_sn_new.append(md.group(4).replace(' ', ''))
+                                    full_salt_new.append(md.group(4).ljust(20))
+                                    full_vendor.append(md.group(2))
+                                    full_series.append(md.group(3))
+                                    if md.group(1) == 'No':
+                                        full_opalver.append('None')
+                                        full_ver_new.append(False)
+                                        full_encsup.append('N/A')
+                                    else:
+                                        tcg_count = tcg_count + 1
+                                        full_ver_new.append(True)
+                                        if md.group(1) == 'P':
+                                            full_opalver.append("Pyrite")
+                                            full_encsup.append("Not Supported")
                                         else:
-                                            full_opalver.append(md.group(1))
+                                            full_encsup.append("Supported")
+                                            if md.group(1) == '1' or md.group(1) == '2':
+                                                full_opalver.append("Opal " + md.group(1) + ".0")
+                                            elif md.group(1) == '12':
+                                                full_opalver.append("Opal 1.0/2.0")
+                                            elif md.group(1) == 'E':
+                                                full_opalver.append("Enterprise")
+                                            elif md.group(1) == 'L':
+                                                full_opalver.append("Opallite")
+                                            elif md.group(1) == 'R':
+                                                full_opalver.append("Ruby")
+                                            else:
+                                                full_opalver.append(md.group(1))
             if tcg_count > ui.MAX_DEV:
                 selection_map = [0] * len(full_devs_new)
                 tcg_track = 0
@@ -1306,10 +1316,11 @@ def finddev(ui, fullscan):
                 ui.dev_msid.set_text(ui.msid_list[old_idx])
             else:
                 ui.dev_msid.set_text('Loading...')
-            if ui.pba_list[old_idx] != None:
-                ui.dev_pbaVer.set_text(ui.pba_list[old_idx])
-            else:
-                ui.dev_pbaVer.set_text('Loading...')
+            if ui.VERSION != 4:
+                if ui.pba_list[old_idx] != None:
+                    ui.dev_pbaVer.set_text(ui.pba_list[old_idx])
+                else:
+                    ui.dev_pbaVer.set_text('Loading...')
             ui.dev_opal_ver.set_text(ui.opal_ver_list[old_idx])
             ui.dev_status.set_text(ui.lockstatus_list[old_idx])
             if ui.setupstatus_list[old_idx] != None:

@@ -271,7 +271,7 @@ def rp_setupFull(e, i, result_list, status_list, trylimit_list, count, rc_list, 
                         statusTest = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--setAdmin1Pwd', msid, msid, dev], stdout=pipe)
                         if statusTest == 0:
                             valid = True
-                    if valid:
+                    if valid and version != 4:
                         status_tmp = subprocess.call([prefix + 'sedutil-cli', '--createUSB', 'UEFI', dev, '\\\\.\\PhysicalDrive' + usb], stdout=pipe)#stderr=log)
                         if status_tmp == 0:
                             if usb_dir == '':
@@ -307,10 +307,12 @@ def rp_setupFull(e, i, result_list, status_list, trylimit_list, count, rc_list, 
                                     timeStr = timeStr[2:]
                                     statusAW = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '23' + timeStr, msid, 'Admin1', dev], stdout=pipe)#stderr=log)
                         status_usb.value = status_tmp
-                    else:
+                    elif version != 4:
                         status_final = 1
                         status_usb.value = -2
-                elif count != 0 and not e.is_set():
+                    else:
+                        status_usb.value = 0
+                elif count != 0 and not e.is_set() and version != 4:
                     while status_usb.value == -1:
                         time.sleep(1)
                     if status_usb.value == 0:
@@ -339,12 +341,12 @@ def rp_setupFull(e, i, result_list, status_list, trylimit_list, count, rc_list, 
                                 timeStr = timeStr[2:]
                                 statusAW = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '23' + timeStr, msid, 'Admin1', dev], stdout=pipe)#stderr=log)
                 if status_usb.value == 0 and not e.is_set(): 
-                    if mbr_sup != 'Not Supported':
+                    if version != 4 and mbr_sup != 'Not Supported':
                         rc = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--loadpbaimage', msid, 'n', dev], stdout=pipe)#stderr=log)
                     
                     
                     #if not supported or written successfully
-                    if rc == 0 or mbr_sup == 'Not Supported':
+                    if rc == 0 or mbr_sup == 'Not Supported' or version == 4:
                         s1 = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--setSIDPassword', msid, password, dev], stdout=pipe)#stderr=log)
                         if e.is_set():
                             if not s1:
@@ -406,7 +408,13 @@ def rp_setupFull(e, i, result_list, status_list, trylimit_list, count, rc_list, 
                         f.close()
                         s = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--datastorewrite', password, 'Admin1', 'datawrite' + sn + '.txt', '0', '130000', '130', dev], stdout=pipe)#stderr=log)
                         #os.remove('datawrite' + ui.sn_list[i] + '.txt')
-                            
+                        if version == 4:
+                            pass_usb = ''
+                            save_status = passSaveUSB(password, usb_dir, model, sn, pass_usb, 'Admin')
+                            #if ds_sup == 'Supported' and save_status == 0:
+                            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                            timeStr = timeStr[2:]
+                            statusAW = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '23' + timeStr, password, 'Admin1', dev], stdout=pipe)#stderr=log)
                     
                                 
         if os.path.isfile('datawrite' + sn + '.txt'):

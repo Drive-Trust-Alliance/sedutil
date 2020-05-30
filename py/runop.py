@@ -72,6 +72,11 @@ def run_setupFull(button, ui):
             pw_trim_lower = pw_trim.lower()
             pw_trim_confirm = re.sub(r'\s+', '', pw_confirm)
             usb_dir = ''
+            if ui.VERSION == 4 and ui.pass_sav.get_active() and len(ui.drive_list) == 0:
+                # ui.msg_warn('No USB selected for Save to USB.')
+                ui.passwordErrorLabel.set_markup(
+                    '<span foreground="red">No USB selected for Save to USB.</span>')
+                return
             if len(pw_trim) < 8:
                 # ui.msg_err("This password is too short.  Please enter a password at least 8 characters long excluding whitespace.")
                 ui.passwordErrorLabel.set_markup(
@@ -114,6 +119,10 @@ def run_setupFull(button, ui):
             ui.passwordErrorLabel.set_markup('<span foreground="red">The passwords entered do not match. Try again.</span>')
             ui.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Continue\'.')
             return
+        elif ui.warned and ui.VERSION == 4 and ui.pass_sav.get_active() and len(ui.drive_list) == 0:
+            ui.passwordErrorLabel.set_markup('<span foreground="red">No USB selected for Save to USB.</span>')
+            ui.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Continue\'.')
+            return
         ui.passwordErrorLabel.set_markup('')
         #ui.treeview.grab_focus()
         #ui.treeview.emit('toggle-cursor-row')
@@ -126,147 +135,151 @@ def run_setupFull(button, ui):
         res2 = message2.run()
         if res2 == gtk.RESPONSE_OK:
             message2.destroy()
-            
-            proceed = True
-            usb_dialog = None
-            
-            usb_dialog = dialogs.USBDialog(ui)
-            res = usb_dialog.run()
-            if res != gtk.RESPONSE_OK:
-                proceed = False
-            else:
-                if usb_dialog.usb_menu.get_active() >= 0:
-                    msg_usb = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK_CANCEL, parent = ui)
-                    markupString='<span foreground="red">WARNING: All data on the USB will be erased (except for any previously saved password files).  Are you sure you want to proceed?</span> ' 
-
-                    msg_usb.set_markup(markupString)
-                    
-                    res2 = msg_usb.run()
-                    if res2 != gtk.RESPONSE_OK:
-                        proceed = False
-                    msg_usb.destroy()
+            index2 = -1
+            preserved_files = []
+            if ui.VERSION != 4:
+                proceed = True
+                usb_dialog = None
+                
+                usb_dialog = dialogs.USBDialog(ui)
+                res = usb_dialog.run()
+                if res != gtk.RESPONSE_OK:
+                    proceed = False
                 else:
-                    ui.msg_warn('No USB selected')
+                    if usb_dialog.usb_menu.get_active() >= 0:
+                        msg_usb = gtk.MessageDialog(type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK_CANCEL, parent = ui)
+                        markupString='<span foreground="red">WARNING: All data on the USB will be erased (except for any previously saved password files).  Are you sure you want to proceed?</span> ' 
+
+                        msg_usb.set_markup(markupString)
+                        
+                        res2 = msg_usb.run()
+                        if res2 != gtk.RESPONSE_OK:
+                            proceed = False
+                        msg_usb.destroy()
+                    else:
+                        ui.msg_warn('No USB selected')
+                        ui.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Continue\'.')
+                        usb_dialog.destroy()
+                        ui.setup_prompt1()
+                        return
+                
+                if not proceed:
                     ui.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Continue\'.')
                     usb_dialog.destroy()
-                    ui.setup_prompt1()
                     return
-            
-            if not proceed:
-                ui.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Continue\'.')
-                usb_dialog.destroy()
-                return
-            index2 = -1
-            index2 = usb_dialog.usb_menu.get_active()
-            usb_dialog.destroy()
-            
-            preserved_files = []
-            
-            if ui.pass_sav.get_active():
                 
-                drive = ''
-                if ui.DEV_OS == 'Windows':
-                    usb_dev = ui.usb_list[index2][1]
-                    for j in range(len(ui.devs_list)):
-                        prelock(j)
-                    p = subprocess.Popen(["diskpart"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-                    res1 = p.stdin.write('select disk ' + usb_dev + b'\n')
-                    res1 = p.stdin.write('detail disk\n')
-                    res1 = p.stdin.write('exit\n')
-
-                    output = p.communicate()[0]
-                    for j in range(len(ui.devs_list)):
-                        postlock(j)
+                index2 = usb_dialog.usb_menu.get_active()
+                usb_dialog.destroy()
+                
+                
+                
+                if ui.pass_sav.get_active():
                     
-                    vol_re = 'Volume [0-9]+\s+([A-Z])\s+'
+                    drive = ''
+                    if ui.DEV_OS == 'Windows':
+                        usb_dev = ui.usb_list[index2][1]
+                        for j in range(len(ui.devs_list)):
+                            prelock(j)
+                        p = subprocess.Popen(["diskpart"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+                        res1 = p.stdin.write('select disk ' + usb_dev + b'\n')
+                        res1 = p.stdin.write('detail disk\n')
+                        res1 = p.stdin.write('exit\n')
 
-                    list_v = re.findall(vol_re, output)
-                    if list_v != []:
-                        drive = list_v[0] + ':\\'
-                        ui.pass_dir = list_v[0] + ':'
+                        output = p.communicate()[0]
+                        for j in range(len(ui.devs_list)):
+                            postlock(j)
                         
-                    #else:
+                        vol_re = 'Volume [0-9]+\s+([A-Z])\s+'
+
+                        list_v = re.findall(vol_re, output)
+                        if list_v != []:
+                            drive = list_v[0] + ':\\'
+                            ui.pass_dir = list_v[0] + ':'
+                            
+                        #else:
+                        #    ui.msg_err('Selected USB could not be detected.')
+                        #    return
+                    elif ui.DEV_OS == 'Linux':
+                        drive = ui.usb_list[index2][1]
+                        ui.pass_dir = drive
+                    #if not os.path.isdir(drive):
                     #    ui.msg_err('Selected USB could not be detected.')
                     #    return
+                    #else:
+                    if drive != '' and os.path.isdir(drive):
+                        dir_fl = drive + 'OpalLock\\'
+                        if os.path.isdir(dir_fl):
+                            existingfiles = [f for f in os.listdir(dir_fl) if os.path.isfile(dir_fl + f)]
+                            if len(existingfiles) > 0:
+                                for p in existingfiles:
+                                    try:
+                                        f = open(dir_fl + p, 'r')
+                                        txt = f.read()
+                                        f.close()
+                                        tp = (dir_fl + p, txt)
+                                        preserved_files.append(tp)
+                                    except IOError:
+                                        pass
+                                    
+                usb_check = []
+                
+                if ui.DEV_OS == 'Windows':
+                    txt = os.popen(ui.prefix + 'wmic diskdrive where "mediatype=\'Removable Media\'" get caption,deviceid').read()
+                    mod_regex = '\n([^\\\\]+)[^0-9]+([0-9]+)'
+                    usb_check = re.findall(mod_regex, txt)
+                    
+                    length = len(usb_check)
+                    
+                    if length > 0:
+                        count = 0
+                        usb_final = []
+                        for d in usb_check:
+                            #if dev_os == 'Windows':
+                            mod = '\\\\.\\PhysicalDrive' + d[1]
+                            if mod not in ui.devs_list:
+                                usb_final.append(d)
+                                count = count + 1
+                            #elif dev_os == 'Linux':
+                            #    if d[0] not in ui.devs_list:
+                            #        usb_final.append(d)
+                            #        count = count + 1
+                        usb_check = usb_final
+                    
+                    found = False
+                    for entry in usb_check:
+                        if ui.usb_list[index2][0] == entry[0] and ui.usb_list[index2][1] == entry[1]:
+                            found = True
+                    if not found:
+                        ui.msg_err('Selected USB could not be found. Setup aborted.')
+                        ui.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Continue\'.')
+                        ui.setup_prompt1()
+                        return
                 elif ui.DEV_OS == 'Linux':
-                    drive = ui.usb_list[index2][1]
-                    ui.pass_dir = drive
-                #if not os.path.isdir(drive):
-                #    ui.msg_err('Selected USB could not be detected.')
-                #    return
-                #else:
-                if drive != '' and os.path.isdir(drive):
-                    dir_fl = drive + 'OpalLock\\'
-                    if os.path.isdir(dir_fl):
-                        existingfiles = [f for f in os.listdir(dir_fl) if os.path.isfile(dir_fl + f)]
-                        if len(existingfiles) > 0:
-                            for p in existingfiles:
-                                try:
-                                    f = open(dir_fl + p, 'r')
-                                    txt = f.read()
-                                    f.close()
-                                    tp = (dir_fl + p, txt)
-                                    preserved_files.append(tp)
-                                except IOError:
-                                    pass
-                                
-            usb_check = []
+                    txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d\" \" -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do\necho $DLIST\ndone ").read()
+                    txt_regex = 'sd[a-z]'
+                    list_u = re.findall(txt_regex,txt)
+                    for u in list_u:
+                        txt1 = os.popen(ui.prefix + 'mount').read()
+                        m = re.search(u,txt1)
+                        if not m:
+                            txt2 = os.popen(ui.prefix + 'blkid').read()
+                            rgx = u + '.+'
+                            m1 = re.search(rgx,txt2)
+                            if m1:
+                                r2 = '\s+TYPE="([a-z]+)"'
+                                txt3 = m1.group(0)
+                                m2 = re.search(r2,txt3)
+                                type_a = m2.group(1)
+                                s = os.system(ui.prefix + 'mount -t ' + type_a + ' /dev/' + u + '1')
             
-            if ui.DEV_OS == 'Windows':
-                txt = os.popen(ui.prefix + 'wmic diskdrive where "mediatype=\'Removable Media\'" get caption,deviceid').read()
-                mod_regex = '\n([^\\\\]+)[^0-9]+([0-9]+)'
-                usb_check = re.findall(mod_regex, txt)
-                
-                length = len(usb_check)
-                
-                if length > 0:
-                    count = 0
-                    usb_final = []
-                    for d in usb_check:
-                        #if dev_os == 'Windows':
-                        mod = '\\\\.\\PhysicalDrive' + d[1]
-                        if mod not in ui.devs_list:
-                            usb_final.append(d)
-                            count = count + 1
-                        #elif dev_os == 'Linux':
-                        #    if d[0] not in ui.devs_list:
-                        #        usb_final.append(d)
-                        #        count = count + 1
-                    usb_check = usb_final
-                
-                found = False
-                for entry in usb_check:
-                    if ui.usb_list[index2][0] == entry[0] and ui.usb_list[index2][1] == entry[1]:
-                        found = True
-                if not found:
-                    ui.msg_err('Selected USB could not be found. Setup aborted.')
-                    ui.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Continue\'.')
-                    ui.setup_prompt1()
-                    return
-            elif ui.DEV_OS == 'Linux':
-                txt = os.popen("for DLIST in `dmesg  | grep \"Attached SCSI removable disk\" | cut -d\" \" -f 3  | sed -e 's/\[//' -e 's/\]//'` ; do\necho $DLIST\ndone ").read()
-                txt_regex = 'sd[a-z]'
-                list_u = re.findall(txt_regex,txt)
-                for u in list_u:
-                    txt1 = os.popen(ui.prefix + 'mount').read()
-                    m = re.search(u,txt1)
-                    if not m:
-                        txt2 = os.popen(ui.prefix + 'blkid').read()
-                        rgx = u + '.+'
-                        m1 = re.search(rgx,txt2)
-                        if m1:
-                            r2 = '\s+TYPE="([a-z]+)"'
-                            txt3 = m1.group(0)
-                            m2 = re.search(r2,txt3)
-                            type_a = m2.group(1)
-                            s = os.system(ui.prefix + 'mount -t ' + type_a + ' /dev/' + u + '1')
-            
-            
+            else:
+                ui.pass_dir = ui.drive_menu.get_active_text()
             
             ui.start_spin()
             ui.setup_wait_instr.show()
-            ui.progress_bar.set_fraction(0.0)
-            ui.progress_bar.show()
+            if ui.VERSION != 4:
+                ui.progress_bar.set_fraction(0.0)
+                ui.progress_bar.show()
             
             ui.op_inprogress = True
             ui.pbawrite_ip = True
@@ -835,7 +848,7 @@ def run_unlockPBA(button, ui, reboot, autounlock, msg):
                 elif f_list[2] != '':
                     if ui.auth_menu.get_active() == 0:
                         # ui.msg_err('Admin password not found for ' + f_list[2] + '.')
-                        ui.passwordErrorLabel.set_markup('<span foreground="red>Admin password not found for ' + f_list[2] + '.</span>')
+                        ui.passwordErrorLabel.set_markup('<span foreground="red">Admin password not found for ' + f_list[2] + '.</span>')
                     else:
                         # ui.msg_err('User password not found for ' + f_list[2] + '.')
                         ui.passwordErrorLabel.set_markup('<span foreground="red">User password not found for ' + f_list[2] + '.</span>')
@@ -1019,7 +1032,9 @@ def run_revertErase(button, ui):
                 ui.orig = ''
                 # ui.msg_err('The passwords entered do not match')
                 ui.passwordErrorLabel.set_markup('<span foreground="red">The passwords entered do not match</span>')
-                ui.revert_erase_prompt()
+                ui.op_instr.set_text('Revert with Password reverts the drive\'s LockingSP.\nThis resets the drive\'s password and disables locking.\nEnter the drive\'s password and choose whether or not to erase all data.')
+                ui.pass_entry.set_text('')
+                ui.revert_agree_entry.set_text('')
                 return
             ui.passwordErrorLabel.set_markup('')
             ui.orig = ''
@@ -1100,14 +1115,20 @@ def run_revertErase(button, ui):
                     f_list = runprocess.findUSB("Admin", devs, list_mn, list_sn)
                     if len(f_list[1]) == 0:
                         ui.msg_err('No USB detected.')
+                        ui.op_instr.set_text('Revert with Password reverts the drive\'s LockingSP.\nThis resets the drive\'s password and disables locking.\nEnter the drive\'s password and choose whether or not to erase all data.')
+                        ui.revert_agree_entry.set_text('')
                         return
                     elif len(f_list[0]) == 0:
                         # ui.msg_err('No password files found on USB.')
                         ui.passwordErrorLabel.set_markup('<span foreground="red">No password files found on USB</span>')
+                        ui.op_instr.set_text('Revert with Password reverts the drive\'s LockingSP.\nThis resets the drive\'s password and disables locking.\nEnter the drive\'s password and choose whether or not to erase all data.')
+                        ui.revert_agree_entry.set_text('')
                         return
                     elif f_list[2] != '':
                         # ui.msg_err('Admin password not found for ' + f_list[2] + '.')
                         ui.passwordErrorLabel.set_markup('<span foreground="red">Admin password not found for ' + f_list[2] + '.</span>')
+                        ui.op_instr.set_text('Revert with Password reverts the drive\'s LockingSP.\nThis resets the drive\'s password and disables locking.\nEnter the drive\'s password and choose whether or not to erase all data.')
+                        ui.revert_agree_entry.set_text('')
                         return
                 ui.passwordErrorLabel.set_markup('')
                 ui.start_spin()

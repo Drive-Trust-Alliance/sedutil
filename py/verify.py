@@ -189,7 +189,9 @@ def initCheck(self, *args):
     
     version_text = os.popen(self.prefix + 'sedutil-cli --version').read()
     regex_license = '0:([0-9]+);'
+    regex_usb = '3:1';
     f = re.search(regex_license, version_text)
+    f_usb = re.search(regex_usb, version_text)
     regex_build = 'FL\.([0-9]+)\.([0-9]+)\.([0-9]+)'
     f1 = re.search(regex_build, version_text)
     if f or self.VERSION != -1:
@@ -225,6 +227,19 @@ def initCheck(self, *args):
             pbaVerify(self)
             
         
+        res = lockhash.testPBKDF2()
+        
+        status = res[0]
+        
+        hash_v = os.popen(self.prefix + 'sedutil-cli --validatePBKDF2').read()
+        f = re.search(res[1], hash_v)
+
+        if status != 0 or not f:
+            self.msg_err("Hash validation failed")
+            gtk.main_quit()
+    elif f_usb:
+        self.VERSION = 4
+        self.MAX_DEV = 5
         res = lockhash.testPBKDF2()
         
         status = res[0]

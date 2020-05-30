@@ -132,13 +132,18 @@ def rt_setupFull(ui, selected_list, index2, preserved_files):
                     os.remove(fn)
                 #thread_list[count] = threading.Thread(target=t1_run, args=(e_to, i, thread_list, result_list, status_list, count, rc_list, password, status_usb, usb_dir))
                 #thread_list[count].start()
-            
-                proc_list[count] = Process(target=runprocess.rp_setupFull, args=(e_to, i, result_list, status_list, trylimit_list, count, rc_list, password, status_usb, ui.pass_dir, actual_d[count], ui.prefix, ui.msid_list[i], ui.vendor_list[i], ui.sn_list[i], ui.usb_list[index2][1], ui.pba_list[i], ui.admin_list[i], ui.user_list[i], ui.VERSION, preserved_files, au_pwd))
+                usb_idx = -1
+                if ui.VERSION != 4:
+                    usb_idx = ui.usb_list[index2][1]
+                proc_list[count] = Process(target=runprocess.rp_setupFull, args=(e_to, i, result_list, status_list, trylimit_list, count, rc_list, password, status_usb, ui.pass_dir, actual_d[count], ui.prefix, ui.msid_list[i], ui.vendor_list[i], ui.sn_list[i], usb_idx, ui.pba_list[i], ui.admin_list[i], ui.user_list[i], ui.VERSION, preserved_files, au_pwd))
                 proc_list[count].start()
             count = count + 1
         
         t2 = None
-        t2 = threading.Thread(target=runthread.timeout_track, args=(ui, 1800.0 * len(selected_list), start_time, proc_list, result_list, e_to, selected_list, status_list, cleanop.setupFull_cleanup, rc_list, status_usb, trylimit_list, rescan_needed))
+        if ui.VERSION == 4:
+            t2 = threading.Thread(target=runthread.timeout_track, args=(ui, 60.0 * len(selected_list), start_time, proc_list, result_list, e_to, selected_list, status_list, cleanop.setupFull_cleanup, rc_list, status_usb, trylimit_list, rescan_needed))
+        else:
+            t2 = threading.Thread(target=runthread.timeout_track, args=(ui, 1800.0 * len(selected_list), start_time, proc_list, result_list, e_to, selected_list, status_list, cleanop.setupFull_cleanup, rc_list, status_usb, trylimit_list, rescan_needed))
         t2.start()
         
         def t_pb_run(sel_list, res_list):
@@ -255,9 +260,9 @@ def rt_setupFull(ui, selected_list, index2, preserved_files):
                 if os.path.isfile(fn):
                     os.remove(fn)
             ui.progress_bar.hide();
-    
-        t_pb = threading.Thread(target=t_pb_run, args=(selected_list, result_list))
-        t_pb.start()
+        if ui.VERSION != 4:
+            t_pb = threading.Thread(target=t_pb_run, args=(selected_list, result_list))
+            t_pb.start()
     else:
         gobject.idle_add(cleanop.setupFull_abort, ui)
         
