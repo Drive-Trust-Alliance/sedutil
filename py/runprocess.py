@@ -178,6 +178,44 @@ def passSaveUSB(hashed_pwd, drive, mnum, snum, pass_usb, auth):
     else:
         return 1
         
+def passSaveAppData(hashed_pwd, mnum, snum, auth):
+    hashed_pwd = hashed_pwd.strip('\0')
+    dev_os = platform.system()
+    timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+    f = None
+    adDir = 'C:\\Users\\' + os.getenv('username') + '\\AppData\\Local\\OpalLock'
+    if dev_os == 'Windows':
+        if not os.path.isdir(adDir):
+            os.makedirs(adDir)
+        adFile = adDir + '\\' + mnum + '_' + snum + '.psw'
+        if os.path.isfile(adFile):
+            try:
+                f = open(adFile, 'r+')
+                txt = f.read()
+                f.seek(0)
+                f.write('Model Number: ' + mnum + '\nSerial Number: ' + snum + '\n')
+                entryReg = '(Timestamp: [0-9]{14}\r?\n([A-z0-9]+): \S+)'
+                entries = re.findall(entryReg, txt)
+                for e in entries:
+                    if auth != e[1]:
+                        f.write('\n' + e[0])
+                f.write('\n\nTimestamp: ' + timestamp + '\n' + auth + ': ' + hashed_pwd)
+                
+                f.truncate()
+                f.close()
+            except IOError:
+                pass
+        else:
+            try:
+                f = open(adFile, 'w')
+                f.write('Model Number: ' + mnum + '\nSerial Number: ' + snum + '\n')
+                f.write('\n\nTimestamp: ' + timestamp + '\n' + auth + ': ' + hashed_pwd)
+                
+                f.close()
+            except IOError:
+                pass
+    return
+        
 def removeUserUSB(prefix, model, sn, *args):
     folder_list = []
     latest_pw = ""
@@ -248,6 +286,11 @@ def removeUserUSB(prefix, model, sn, *args):
                 except IOError:
                     pass
         return
+        
+#def removeUserAppData(mnum, snum):
+#    adDir = 'C:\\Users\\' + os.getenv('username') + '\\AppData\\Local\\OpalLock'
+#    if dev_os == 'Windows' and os.path.isdir(adDir):
+        
 
 def rp_setupFull(e, i, result_list, status_list, trylimit_list, count, rc_list, password, status_usb, usb_dir, dev, prefix, msid, model, sn, usb, mbr_sup, admin, user, version, preserved_files, au_pwd):
     usb_failed = False
@@ -408,13 +451,15 @@ def rp_setupFull(e, i, result_list, status_list, trylimit_list, count, rc_list, 
                         f.close()
                         s = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--datastorewrite', password, 'Admin1', 'datawrite' + sn + '.txt', '0', '130000', '130', dev], stdout=pipe)#stderr=log)
                         #os.remove('datawrite' + ui.sn_list[i] + '.txt')
-                        if version == 4:
+                        passSaveAppData(password, model, sn, 'Admin')
+                        
+                        if version == 4 and usb_dir != '':
                             pass_usb = ''
                             save_status = passSaveUSB(password, usb_dir, model, sn, pass_usb, 'Admin')
-                            #if ds_sup == 'Supported' and save_status == 0:
-                            timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                            timeStr = timeStr[2:]
-                            statusAW = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '23' + timeStr, password, 'Admin1', dev], stdout=pipe)#stderr=log)
+                            if save_status == 0:
+                                timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                                timeStr = timeStr[2:]
+                                statusAW = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '23' + timeStr, password, 'Admin1', dev], stdout=pipe)#stderr=log)
                     
                                 
         if os.path.isfile('datawrite' + sn + '.txt'):

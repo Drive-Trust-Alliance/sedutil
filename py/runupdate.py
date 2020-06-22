@@ -176,7 +176,45 @@ def passSaveUSB(hashed_pwd, drive, mnum, snum, pass_usb, auth):
         return 0
     else:
         return 1
-
+        
+def passSaveAppData(hashed_pwd, mnum, snum, auth):
+    hashed_pwd = hashed_pwd.strip('\0')
+    dev_os = platform.system()
+    timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+    f = None
+    adDir = 'C:\\Users\\' + os.getenv('username') + '\\AppData\\Local\\OpalLock'
+    if dev_os == 'Windows':
+        if not os.path.isdir(adDir):
+            os.makedirs(adDir)
+        adFile = adDir + '\\' + mnum + '_' + snum + '.psw'
+        if os.path.isfile(adFile):
+            try:
+                f = open(adFile, 'r+')
+                txt = f.read()
+                f.seek(0)
+                f.write('Model Number: ' + mnum + '\nSerial Number: ' + snum + '\n')
+                entryReg = '(Timestamp: [0-9]{14}\r?\n([A-z0-9]+): \S+)'
+                entries = re.findall(entryReg, txt)
+                for e in entries:
+                    if auth != e[1]:
+                        f.write('\n' + e[0])
+                f.write('\n\nTimestamp: ' + timestamp + '\n' + auth + ': ' + hashed_pwd)
+                
+                f.truncate()
+                f.close()
+            except IOError:
+                pass
+        else:
+            try:
+                f = open(adFile, 'w')
+                f.write('Model Number: ' + mnum + '\nSerial Number: ' + snum + '\n')
+                f.write('\n\nTimestamp: ' + timestamp + '\n' + auth + ': ' + hashed_pwd)
+                
+                f.close()
+            except IOError:
+                pass
+    return
+        
 def rp_pbaWrite(e_to, i, result_list, status_list, count, password, au_pwd, dev, prefix, model, sn, ds_sup, user, version, admin_counter, pass_sav, sel_drive):
     pass_usb = ''
     rc = -1
@@ -237,6 +275,7 @@ def rp_pbaWrite(e_to, i, result_list, status_list, count, password, au_pwd, dev,
                     timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
                     timeStr = timeStr[2:]
                     statusAW = subprocess.call([prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '25' + timeStr, password, 'Admin1', dev], stdout=pipe)#stderr=log)
+            passSaveAppData(password, model, sn, 'Admin')
             if pass_sav:
                 save_status = passSaveUSB(password, sel_drive, model, sn, pass_usb, 'Admin')
                 if ds_sup == 'Supported' and save_status == 0:

@@ -236,7 +236,7 @@ def get_power():
     hibern_regex = 'Power Setting GUID: 9d7815a6-7ee4-497e-8888-515a05f02364\s*\(Hibernate after\).*\n.+\n.+\n.+\n.+\n.+\n\s+Current AC Power Setting Index: (0x\S+)'
     power_regex = 'Power Setting GUID: 7648efa3-dd9c-4e3e-b566-50f929386280\s*\(Power button action\).*\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n\s+Current AC Power Setting Index: 0x0000000([0-4])'
     sleep_regex = 'Power Setting GUID: 96996bc0-ad50-47ec-923b-6f41874dd9eb\s*\(Sleep button action\).*\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n\s+Current AC Power Setting Index: 0x0000000([0-4])'
-    lid_regex = 'Power Setting GUID: 5ca83367-6e45-459f-a27b-476b1d01c936\s*\(Lid close action\).*\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n\s+Current AC Power Setting Index: 0x0000000([0-3])'
+    lid_regex = 'Power Setting GUID: 5ca83367-6e45-459f-a27b-476b1d01c936\s*\(Lid close action\).*\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n.+\n\s+Current AC Power Setting Index: 0x0000000([0-3])'
     
     m_screen = re.search(screen_regex, s_screen)
     m_hibern = re.search(hibern_regex, s_hibern)

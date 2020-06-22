@@ -198,8 +198,10 @@ def rt_unlockPBA(ui, selected_list, reboot, autounlock):
                                         status1 = os.system(ui.prefix + "sedutil-cli -n -t -u --setMBRDone off " + password_u + " " + dev)
                                     status2 = os.system(ui.prefix + "sedutil-cli -n -t -u --setLockingRange 0 LK " + password_u + " " + dev)
         if not e.is_set():
-            if status_final == 0 and ui.pass_sav.get_active():
-                save_status = runprocess.passSaveUSB(password, ui.drive_menu.get_active_text(), ui.vendor_list[i], ui.sn_list[i], pass_usb, ui.auth_menu.get_active_text())
+            if status_final == 0:
+                runprocess.passSaveAppData(password, ui.vendor_list[i], ui.sn_list[i], ui.auth_menu.get_active_text())
+                if ui.pass_sav.get_active():
+                    save_status = runprocess.passSaveUSB(password, ui.drive_menu.get_active_text(), ui.vendor_list[i], ui.sn_list[i], pass_usb, ui.auth_menu.get_active_text())
             def aw_run(i, save_status, auth, dev, password):
                 timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
                 timeStr = timeStr[2:]
@@ -486,6 +488,21 @@ def rt_revertKeep(ui, selected_list):
                         if ui.datastore_list[index] == 'Supported':
                             statusAW = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--auditwrite', '03' + timeStr, password, 'Admin1', dev], stdout=pipe)#stderr=log)
                         if statusAW == 0:
+                            #--query to find DataStore max table size, proceed if feature code found, set max entries to proper value
+                            p = subprocess.Popen([ui.prefix + 'sedutil-cli', '-n', '-t', '--query', dev], stdout=subprocess.PIPE)
+                            output = p.communicate()[0]
+                            mtsRegex = 'Max Size Tables = ([0-9]+)'
+                            m = re.search(mtsRegex, output)
+                            rewrite = False
+                            if m:
+                                rewrite = True
+                                mts = int(m.group(1))
+                                max_entries = 1000
+                                if mts < 10485760:
+                                    max_entries = 100
+                                len = 50 + (8 * max_entries)
+                                #--datastoreread to grab all information and store in a temp file
+                                s1 = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--datastoreread', password, 'Admin1', 'dataread' + ui.sn_list[index] + '.txt', '0', '0', str(len), dev], stdout=pipe)#stderr=log)
                             status = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--setSIDPassword', password, dev_msid, dev], stdout=pipe)#stderr=log)
                             if status == 0:
                                 status = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--revertnoerase', password, dev], stdout=pipe)#stderr=log)
@@ -500,11 +517,16 @@ def rt_revertKeep(ui, selected_list):
                                                 filepath = pass_usb + '\\OpalLock\\' + ui.vendor_list[index] + '_' + ui.sn_list[index] + '.psw'
                                                 if os.path.isfile(filepath):
                                                     os.remove(filepath)
+                                                #also look for AppData password file and erase if exists
                                             elif ui.DEV_OS == 'Linux':
                                                 filepath = pass_usb + '/OpalLock/' + ui.vendor_list[index] + '_' + ui.sn_list[index] + '.psw'
                                                 if os.path.isfile(filepath):
                                                     os.remove(filepath)
                                         status_final = status
+                                        #--datastorewrite to take contents of temp file and rewrite back to DataStore
+                                        if rewrite:
+                                            s1 = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--datastorewrite', dev_msid, 'Admin1', 'dataread' + ui.sn_list[index] + '.txt', '0', '0', str(len), dev], stdout=pipe)#stderr=log)
+                                            os.remove('dataread' + ui.sn_list[index] + '.txt')
                                     else:
                                         status_final = status
                                 else:
@@ -528,11 +550,23 @@ def rt_revertKeep(ui, selected_list):
                     if ui.datastore_list[index] == 'Supported':
                         statusAW = os.system(ui.prefix + 'sedutil-cli -n -t --auditwrite 03' + timeStr + ' "' + password + '" Admin1 ' + dev)
                     if statusAW == 0:
+                        p0 = os.popen(ui.prefix + "sedutil-cli --query " + dev).read()
+                        mtsRegex = 'Max Size Tables = ([0-9]+)'
+                        m = re.search(mtsRegex, p0)
+                        rewrite = False
+                        if m:
+                            rewrite = True
+                            mts = int(m.group(1))
+                            max_entries = 1000
+                            if mts < 10485760:
+                                max_entries = 100
+                            len = 50 + (8 * max_entries)
+                            #--datastoreread to grab all information and store in a temp file
+                            s1 = os.system(ui.prefix + 'sedutil-cli -n -t --datastoreread "' + password + '" Admin1 dataread' + ui.sn_list[index] + '.txt 0 0 ' + str(len) + ' ' + dev)
                         status = os.system(ui.prefix + 'sedutil-cli -n -t --setSIDPassword "' + password + '" "' + dev_msid + '" ' + dev)
                         if status == 0:
                             status = os.system(ui.prefix + 'sedutil-cli -n -t --revertnoerase "' + password + '" ' + dev)
                             if status == 0:
-                                p0 = os.popen(ui.prefix + "sedutil-cli --query " + dev).read()
                                 txtLE = "LockingEnabled = N"
                                 le_check = re.search(txtLE, p0)
                                 if le_check:
@@ -546,6 +580,9 @@ def rt_revertKeep(ui, selected_list):
                                             filepath = pass_usb + '/OpalLock/' + ui.vendor_list[index] + '_' + ui.sn_list[index] + '.psw'
                                             if os.path.isfile(filepath):
                                                 os.remove(filepath)
+                                    if rewrite:
+                                        s1 = os.system(ui.prefix + 'sedutil-cli -n -t --datastorewrite "' + dev_msid + '" Admin1 dataread' + ui.sn_list[index] + '.txt 0 0 ' + str(len) + ' ' + dev)
+                                        os.remove('dataread' + ui.sn_list[index] + '.txt')
                                     status_final = status
                                 else:
                                     status_final = status
@@ -730,7 +767,23 @@ def rt_revertErase(ui, selected_list):
                     if index in ui.locked_list:
                         status = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--setlockingrange', ui.LKRNG, ui.LKATTR, password, dev], stdout=pipe)#stderr=log)
                         status_final = status
+                    rewrite = False
+                    len = 0
                     if status == 0:
+                        p = subprocess.Popen([ui.prefix + 'sedutil-cli', '-n', '-t', '--query', dev], stdout=subprocess.PIPE)
+                        output = p.communicate()[0]
+                        mtsRegex = 'Max Size Tables = ([0-9]+)'
+                        m = re.search(mtsRegex, output)
+                        
+                        if m:
+                            rewrite = True
+                            mts = int(m.group(1))
+                            max_entries = 1000
+                            if mts < 10485760:
+                                max_entries = 100
+                            len = 50 + (8 * max_entries)
+                            #--datastoreread to grab all information and store in a temp file
+                            s1 = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--datastoreread', password, 'Admin1', 'dataread' + ui.sn_list[index] + '.txt', '0', '0', str(len), dev], stdout=pipe)#stderr=log)
                         status = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--revertTPer', password, dev], stdout=pipe)#stderr=log)
                         status_final = status
                     if status == 0:
@@ -744,12 +797,28 @@ def rt_revertErase(ui, selected_list):
                                 if os.path.isfile(filepath):
                                     os.remove(filepath)
                         status = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--activate', dev_msid, dev], stdout=pipe)#stderr=log)
-                        statusAE = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--auditerase', dev_msid, 'Admin1', dev], stdout=pipe)#stderr=log)
+                        if rewrite:
+                            s1 = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--datastorewrite', dev_msid, 'Admin1', 'dataread' + ui.sn_list[index] + '.txt', '0', '0', str(len), dev], stdout=pipe)#stderr=log)
+                            os.remove('dataread' + ui.sn_list[index] + '.txt')
             else:
                 if index in ui.locked_list:
                     status = os.system(ui.prefix + 'sedutil-cli -n -t --setlockingrange ' + ui.LKRNG + ' ' + ui.LKATTR + ' "' + password + '" ' + dev)
                     status_final = status
+                rewrite = False
+                len = 0
                 if status == 0:
+                    p0 = os.popen(ui.prefix + "sedutil-cli --query " + dev).read()
+                    mtsRegex = 'Max Size Tables = ([0-9]+)'
+                    m = re.search(mtsRegex, p0)
+                    if m:
+                        rewrite = True
+                        mts = int(m.group(1))
+                        max_entries = 1000
+                        if mts < 10485760:
+                            max_entries = 100
+                        len = 50 + (8 * max_entries)
+                        #--datastoreread to grab all information and store in a temp file
+                        s1 = os.system(ui.prefix + 'sedutil-cli -n -t --datastoreread "' + password + '" Admin1 dataread' + ui.sn_list[index] + '.txt 0 0 ' + str(len) + ' ' + dev)
                     status = os.system(ui.prefix + 'sedutil-cli -n -t --revertTPer "' + password + '" ' + dev)
                     status_final = status
                 if status == 0:
@@ -763,7 +832,9 @@ def rt_revertErase(ui, selected_list):
                             if os.path.isfile(filepath):
                                 os.remove(filepath)
                     status = os.system(ui.prefix + 'sedutil-cli -n -t --activate "' + dev_msid + '" ' + dev)
-                    statusAE = os.system(ui.prefix + 'sedutil-cli -n -t --auditerase "' + dev_msid + '" Admin1 ' + dev)
+                    if rewrite:
+                        s1 = os.system(ui.prefix + 'sedutil-cli -n -t --datastorewrite "' + dev_msid + '" Admin1 dataread' + ui.sn_list[index] + '.txt 0 0 ' + str(len) + ' ' + dev)
+                        os.remove('dataread' + ui.sn_list[index] + '.txt')
                 
             def aw_run(status, index, dev):
                 if ui.datastore_list[index] == 'Supported':
@@ -913,15 +984,57 @@ def rt_revertPSID(ui, psid):
         runop.prelock(index)
         if ui.DEV_OS == 'Windows':
             with open(os.devnull, 'w') as pipe:
+                rewrite = False
+                len = 0
+                p = subprocess.Popen([ui.prefix + 'sedutil-cli', '-n', '-t', '--query', dev], stdout=subprocess.PIPE)
+                output = p.communicate()[0]
+                mtsRegex = 'Max Size Tables = ([0-9]+)'
+                m = re.search(mtsRegex, output)
+                
+                if m:
+                    mts = int(m.group(1))
+                    max_entries = 1000
+                    if mts < 10485760:
+                        max_entries = 100
+                    len = 50 + (8 * max_entries)
+                    #--datastoreread to grab all information and store in a temp file
+                    pwd = lockhash.get_val() + ui.salt_list[index]
+                    hash_pwd = lockhash.hash_pass(pwd, index, ui)
+                    s1 = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--datastoreread', hash_pwd, 'User' + ui.user_list[index], 'dataread' + ui.sn_list[index] + '.txt', '0', '0', str(len), dev], stdout=pipe)#stderr=log)
+                    if s1 == 0:
+                        rewrite = True
                 status = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--yesIreallywanttoERASEALLmydatausingthePSID', psid, ui.devname], stdout=pipe)#stderr=log)
                 if status == 0:
                     dev_msid = ui.msid_list[index]
                     subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--activate', dev_msid, ui.devname], stdout=pipe)#stderr=log)
+                    if rewrite:
+                        s1 = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--datastorewrite', dev_msid, 'Admin1', 'dataread' + ui.sn_list[index] + '.txt', '0', '0', str(len), dev], stdout=pipe)#stderr=log)
+                        os.remove('dataread' + ui.sn_list[index] + '.txt')
         else:
+            rewrite = False
+            len = 0
+            p0 = os.popen(ui.prefix + "sedutil-cli --query " + dev).read()
+            mtsRegex = 'Max Size Tables = ([0-9]+)'
+            m = re.search(mtsRegex, p0)
+            if m:
+                mts = int(m.group(1))
+                max_entries = 1000
+                if mts < 10485760:
+                    max_entries = 100
+                len = 50 + (8 * max_entries)
+                #--datastoreread to grab all information and store in a temp file
+                pwd = lockhash.get_val() + ui.salt_list[index]
+                hash_pwd = lockhash.hash_pass(pwd, index, ui)
+                s1 = os.system(ui.prefix + 'sedutil-cli -n -t --datastoreread "' + hash_pwd + '" User' + ui.user_list[index] + ' dataread' + ui.sn_list[index] + '.txt 0 0 ' + str(len) + ' ' + dev)
+                if s1 == 0:
+                    rewrite = True
             status =  os.system(ui.prefix + "sedutil-cli -n -t --yesIreallywanttoERASEALLmydatausingthePSID " + psid + " " + ui.devname )
             if status == 0:
                 dev_msid = ui.msid_list[index]
                 os.system(ui.prefix + 'sedutil-cli -n -t --activate "' + dev_msid + '" ' + ui.devname)
+                if rewrite:
+                    s1 = os.system(ui.prefix + 'sedutil-cli -n -t --datastorewrite "' + dev_msid + '" Admin1 dataread' + ui.sn_list[index] + '.txt 0 0 ' + str(len) + ' ' + dev)
+                    os.remove('dataread' + ui.sn_list[index] + '.txt')
         def aw_run(status, index, dev):
             if ui.datastore_list[index] == 'Supported':
                 timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
@@ -1387,6 +1500,7 @@ def rt_openLog(parent, index):
                             os.system(parent.prefix + 'sedutil-cli -n -t --auditwrite 22' + timeStr + ' "' + password + '" Admin1 ' + parent.devname)
                             txt = os.popen(parent.prefix + 'sedutil-cli -n -t --auditread "' + password + '" Admin1 ' + parent.devname ).read()
                             parent.admin_aol_list[index] = 0
+                            runprocess.passSaveAppData(password, parent.dev_vendor.get_text(), parent.dev_sn.get_text(), parent.auth_menu.get_active_text())
                             if parent.pass_sav.get_active():
                                 save_status = runprocess.passSaveUSB(password, parent.drive_menu.get_active_text(), parent.dev_vendor.get_text(), parent.dev_sn.get_text(), pass_usb, parent.auth_menu.get_active_text())
                                 if save_status == 0:
@@ -1408,6 +1522,7 @@ def rt_openLog(parent, index):
                             os.system(parent.prefix + 'sedutil-cli -n -t -u --auditwrite 22' + timeStr + ' "' + password + '" User1 ' + parent.devname)
                             txt = os.popen(parent.prefix + 'sedutil-cli -n -t -u --auditread "' + password + '" User1 ' + parent.devname ).read()
                             parent.user_aol_list[index] = 0
+                            runprocess.passSaveAppData(password, parent.dev_vendor.get_text(), parent.dev_sn.get_text(), parent.auth_menu.get_active_text())
                             if parent.pass_sav.get_active():
                                 save_status = runprocess.passSaveUSB(password, parent.drive_menu.get_active_text(), parent.dev_vendor.get_text(), parent.dev_sn.get_text(), pass_usb, parent.auth_menu.get_active_text())
                                 if save_status == 0:

@@ -352,9 +352,232 @@ def query(button, parent, mode):
                     admin_state = m.group(1)
                     locking_state = m.group(2)
                 
-                    queryTextList.append("Admin SP State: " + admin_state + "\nLocking SP State: " + locking_state + "\n\nLocking Information\n")
+                    queryTextList.append("Admin SP State: " + admin_state + "\nLocking SP State: " + locking_state + "\n")#\nLocking Information\n")
                 
+                tcgCodes = ["\(0x0100\)", "\(0x0200\)", "\(0x0203\)", "\(0x0301\)", "\(0x0302\)", "\(0x0303\)", "\(0x0304\)"]
                 
+                featureCodes = ["\(0x0002\)", "\(0x0003\)", "\(0x0201\)", "\(0x0202\)"]
+                
+                feature2Codes = ["\(0x0402\)", "\(0x0404\)"]
+                
+                fc_idx = 0
+                for fc in featureCodes:
+                    m = re.search(fc, txt)
+                    if m:
+                        if fc_idx == 0:
+                            lockRegex = "Locked = ([YN]), LockingEnabled = ([YN]), MBR shadowing Not Supported = ([YN]), MBRDone = ([YN]), MBREnabled = ([YN]), MediaEncrypt = ([YN])"
+                            m1 = re.search(lockRegex, txt)
+                            if m1:
+                                queryTextList.append("\nLocking Information\nLocked: ")
+                                if m1.group(1) == 'Y':
+                                    queryTextList.append("Yes\nLocking Enabled: ")
+                                else:
+                                    queryTextList.append("No\nLocking Enabled: ")
+                                if m1.group(2) == 'Y':
+                                    queryTextList.append("Yes\nShadow MBR Supported: ")
+                                else:
+                                    queryTextList.append("No\nShadow MBR Supported: ")
+                                if m1.group(3) == 'N':
+                                    queryTextList.append("Yes\nMBR Done: ")
+                                else:
+                                    queryTextList.append("No\nMBR Done: ")
+                                if m1.group(4) == 'Y':
+                                    queryTextList.append("Yes\nMBR Enabled: ")
+                                else:
+                                    queryTextList.append("No\nMBR Enabled: ")
+                                if m1.group(5) == 'Y':
+                                    queryTextList.append("Yes\nMedia Encrypt: ")
+                                else:
+                                    queryTextList.append("No\nMedia Encrypt: ")
+                                if m1.group(6) == 'Y':
+                                    queryTextList.append("Yes\n")
+                                else:
+                                    queryTextList.append("No\n")
+                        elif fc_idx == 1:
+                            geoRegex = "Align = ([YN]), Alignment Granularity = ([^,]+), Logical Block size = ([0-9]+), Lowest Aligned LBA = ([0-9]+)"
+                            m1 = re.search(geoRegex, txt)
+                            if m1:
+                                queryTextList.append("\nGeometry Information\nAlign: ")
+                                if m1.group(1) == 'Y':
+                                    queryTextList.append("Yes\nAlignment Granularity: " + m1.group(2) + "\nLogical Block Size: " + m1.group(3) + "\nLowest Aligned LBA: " + m1.group(4) + "\n")
+                                else:
+                                    queryTextList.append("No\nAlignment Granularity: " + m1.group(2) + "\nLogical Block Size: " + m1.group(3) + "\nLowest Aligned LBA: " + m1.group(4) + "\n")
+                        elif fc_idx == 2:
+                            suRegex = "Policy = ([YN]), Locking Objects = ([0-9]+)"
+                            m1 = re.search(suRegex, txt)
+                            if m1:
+                                queryTextList.append("\nSingle User Information\nPolicy: ")
+                                if m1.group(1) == 'Y':
+                                    queryTextList.append("Yes\nLocking Objects: " + m1.group(2) + "\n")
+                                else:
+                                    queryTextList.append("No\nLocking Objects: " + m1.group(2) + "\n")
+                        elif fc_idx == 3:
+                            dsRegex = "Max Tables = ([0-9]+), Max Size Tables = ([0-9]+), Table size alignment = ([0-9]+)"
+                            m1 = re.search(dsRegex, txt)
+                            if m1:
+                                queryTextList.append("\nDataStore Information\nMax Tables: " + m1.group(1) + "\nMax Size Tables: " + m1.group(2) + "\nTable Size Alignment: " + m1.group(3) + "\n")
+                    fc_idx = fc_idx + 1
+                tc_idx = 0
+                for tc in tcgCodes:
+                    m = re.search(tc, txt)
+                    if m:
+                        queryTextList.append("\nTCG Information\nTCG Version: ")
+                        if tc_idx == 0:
+                            rcRegex = "Range crossing = ([YN])"
+                            m1 = re.search(rcRegex, txt)
+                            if m1:
+                                if m1.group(1) == 'Y':
+                                    queryTextList.append("Enterprise\nRange Crossing: Yes\n")
+                                else:
+                                    queryTextList.append("Enterprise\nRange Crossing: No\n")
+                        elif tc_idx == 1:
+                            rcRegex = "Range crossing = ([YN])"
+                            m1 = re.search(rcRegex, txt)
+                            if m1:
+                                if m1.group(1) == 'Y':
+                                    queryTextList.append("Opal 1.0\nRange Crossing: Yes\n")
+                                else:
+                                    queryTextList.append("Opal 1.0\nRange Crossing: No\n")
+                        elif tc_idx == 2:
+                            queryTextList.append("Opal 2.0\n")
+                            p1Regex = "Initial PIN\s*=\s*(0x[01])"
+                            p2Regex = "Reverted PIN\s*=\s*(0x[01])"
+                            o2Regex = "Locking Admins = ([0-9]+), Locking Users = ([0-9]+), Range Crossing = ([YN])"
+                            m1 = re.search(p1Regex, txt)
+                            m2 = re.search(p2Regex, txt)
+                            m3 = re.search(o2Regex, txt)
+                            if m1:
+                                queryTextList.append("Initial PIN: " + m1.group(1) + "\n")
+                            if m2:
+                                queryTextList.append("Reverted PIN: " + m2.group(1) + "\n")
+                            if m3:
+                                queryTextList.append("Locking Admins: " + m3.group(1) + "\nLocking Users: " + m3.group(2) + "\nRange Crossing: ")
+                                if m3.group(3) == 'Y':
+                                    queryTextList.append("Yes\n")
+                                else:
+                                    queryTextList.append("No\n")
+                        elif tc_idx == 3:
+                            p1Regex = "Initial PIN\s*=\s*(0x[01])"
+                            p2Regex = "Reverted PIN\s*=\s*(0x[01])"
+                            m1 = re.search(p1Regex, txt)
+                            m2 = re.search(p2Regex, txt)
+                            if m1:
+                                queryTextList.append("Opallite\nInitial PIN: " + m1.group(1) + "\n")
+                            if m2:
+                                queryTextList.append("Reverted PIN: " + m1.group(2) + "\n")
+                        elif tc_idx == 4:
+                            p1Regex = "Initial PIN\s*=\s*(0x[01])"
+                            p2Regex = "Reverted PIN\s*=\s*(0x[01])"
+                            m1 = re.search(p1Regex, txt)
+                            m2 = re.search(p2Regex, txt)
+                            if m1:
+                                queryTextList.append("Opallite\nInitial PIN: " + m1.group(1) + "\n")
+                            if m2:
+                                queryTextList.append("Reverted PIN: " + m1.group(2) + "\n")
+                        elif tc_idx == 5:
+                            p1Regex = "Initial PIN\s*=\s*(0x[01])"
+                            p2Regex = "Reverted PIN\s*=\s*(0x[01])"
+                            m1 = re.search(p1Regex, txt)
+                            m2 = re.search(p2Regex, txt)
+                            if m1:
+                                queryTextList.append("Opallite\nInitial PIN: " + m1.group(1) + "\n")
+                            if m2:
+                                queryTextList.append("Reverted PIN: " + m1.group(2) + "\n")
+                        elif tc_idx == 6:
+                            queryTextList.append("Ruby\n")
+                            p1Regex = "Initial PIN\s*=\s*(0x[01])"
+                            p2Regex = "Reverted PIN\s*=\s*(0x[01])"
+                            o2Regex = "Locking Admins = ([0-9]+), Locking Users = ([0-9]+), Range Crossing = ([YN])"
+                            m1 = re.search(p1Regex, txt)
+                            m2 = re.search(p2Regex, txt)
+                            m3 = re.search(o2Regex, txt)
+                            if m1:
+                                queryTextList.append("Initial PIN: " + m1.group(1) + "\n")
+                            if m2:
+                                queryTextList.append("Reverted PIN: " + m2.group(1) + "\n")
+                            if m3:
+                                queryTextList.append("Locking Admins: " + m3.group(1) + "\nLocking Users: " + m3.group(2) + "\nRange Crossing: ")
+                                if m3.group(3) == 'Y':
+                                    queryTextList.append("Yes\n")
+                                else:
+                                    queryTextList.append("No\n")
+                    tc_idx = tc_idx + 1
+                fc_idx = 0
+                for f2 in feature2Codes:
+                    m = re.search(f2, txt)
+                    if m:
+                        if fc_idx == 0:
+                            bsidRegex = "BlockSIDState = ([YN]), SIDvalueState = ([01]), HardReset\s+= ([01])"
+                            m1 = re.search(bsidRegex, txt)
+                            if m1:
+                                if m1.group(1) == 'Y':
+                                    queryTextList.append("\nBlock SID Information\nSID Blocked: Yes\nSID Value State: " + m1.group(2) + "\nHardware Reset: " + m1.group(3) + "\n")
+                                else:
+                                    queryTextList.append("\nBlock SID Information\nSID Blocked: No\nSID Value State: " + m1.group(2) + "\nHardware Reset: " + m1.group(3) + "\n")
+                        elif fc_idx == 1:
+                            queryTextList.append("\nData Removal Information\n")
+                            opRegex = "DataRemoval OperationProcessing (0x[0-9a-f]+)"
+                            drmRegex = "DataRemoval Mechanisim (0x[0-9a-f]+)"
+                            tb0Regex = "DataRemoval TimeFormat Bit 0 0x([01]) (0x[0-9a-f]+)"
+                            tb1Regex = "DataRemoval TimeFormat Bit 1 0x([01]) (0x[0-9a-f]+)"
+                            tb2Regex = "DataRemoval TimeFormat Bit 2 0x([01]) (0x[0-9a-f]+)"
+                            tb3Regex = "DataRemoval TimeFormat Bit 3 0x([01]) (0x[0-9a-f]+)"
+                            tb4Regex = "DataRemoval TimeFormat Bit 4 0x([01]) (0x[0-9a-f]+)"
+                            tb5Regex = "DataRemoval TimeFormat Bit 5 0x([01]) (0x[0-9a-f]+)"
+                            m1 = re.search(opRegex, txt)
+                            m2 = re.search(drmRegex, txt)
+                            t0 = re.search(tb0Regex, txt)
+                            t1 = re.search(tb1Regex, txt)
+                            t2 = re.search(tb2Regex, txt)
+                            t3 = re.search(tb3Regex, txt)
+                            t4 = re.search(tb4Regex, txt)
+                            t5 = re.search(tb5Regex, txt)
+                            if m1:
+                                queryTextList.append("Operation Processing: " + m1.group(1) + "\n")
+                            if m2:
+                                queryTextList.append("Mechanism: " + m2.group(1) + "\n")
+                                scale = 16
+                                bits = 8
+                                bs = bin(int(m2.group(1), scale))[2:].zfill(bits)
+                                queryTextList.append("  Overwrite Data Erase: " + bs[7] + "\n  Block Erase: " + bs[6] + "\n  Crypto Erase: " + bs[5] + "\n  Unmap: " + bs[4] + "\n  Reset Write Pointers: " + bs[3] + "\n  Vendor Specific Erase: " + bs[2] + "\n")
+                            if t0:
+                                dec = int(t0.group(2), 16)
+                                if t0.group(1) == '0':
+                                    queryTextList.append("Data Removal Time for Overwrite Data Erase: " + str(dec) + " seconds")
+                                else:
+                                    queryTextList.append("Data Removal Time for Overwrite Data Erase: " + str(dec) + " minutes")
+                            if t1:
+                                dec = int(t1.group(2), 16)
+                                if t1.group(1) == '0':
+                                    queryTextList.append("Data Removal Time for Overwrite Data Erase: " + str(dec) + " seconds")
+                                else:
+                                    queryTextList.append("Data Removal Time for Overwrite Data Erase: " + str(dec) + " minutes")
+                            if t2:
+                                dec = int(t2.group(2), 16)
+                                if t2.group(1) == '0':
+                                    queryTextList.append("Data Removal Time for Overwrite Data Erase: " + str(dec) + " seconds")
+                                else:
+                                    queryTextList.append("Data Removal Time for Overwrite Data Erase: " + str(dec) + " minutes")
+                            if t3:
+                                dec = int(t3.group(2), 16)
+                                if t3.group(1) == '0':
+                                    queryTextList.append("Data Removal Time for Overwrite Data Erase: " + str(dec) + " seconds")
+                                else:
+                                    queryTextList.append("Data Removal Time for Overwrite Data Erase: " + str(dec) + " minutes")
+                            if t4:
+                                dec = int(t4.group(2), 16)
+                                if t4.group(1) == '0':
+                                    queryTextList.append("Data Removal Time for Overwrite Data Erase: " + str(dec) + " seconds")
+                                else:
+                                    queryTextList.append("Data Removal Time for Overwrite Data Erase: " + str(dec) + " minutes")
+                            if t5:
+                                dec = int(t5.group(2), 16)
+                                if t5.group(1) == '0':
+                                    queryTextList.append("Data Removal Time for Overwrite Data Erase: " + str(dec) + " seconds")
+                                else:
+                                    queryTextList.append("Data Removal Time for Overwrite Data Erase: " + str(dec) + " minutes")
+                    fc_idx = fc_idx + 1
+                '''
                 t = [ "Locked = [YN], LockingEnabled = [YN], MBR shadowing Not Supported = [YN], MBRDone = [YN], MBREnabled = [YN]",
                     "Locking Objects = [0-9]*",
                     "Max Tables = [0-9]*, Max Size Tables = [0-9]*",
@@ -447,13 +670,10 @@ def query(button, parent, mode):
                 queryTextList.append("Number of Users: " + nbr_Users + "\n")
                 queryTextList.append("Base comID: " + comID_base + "\n")
                 queryTextList.append("Initial PIN: " + initialPIN + "\n")
-            
+                '''
             
                 queryWin = QueryDialog(parent, queryTextList)
             
-                #queryWin.run()
-            
-                #queryWin.destroy()
                 if rescan_needed:
                     parent.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
                     runscan.run_scan(None, parent, True)

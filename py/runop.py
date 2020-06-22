@@ -18,22 +18,28 @@ import pango
 def define_lock_t():
     global lock_t 
     global sync_thread
+    global dnc_lock
     sync_thread = True
     lock_t = [None] * 256
     for i in range(256):
         lock_t[i] = threading.Lock()
+    dnc_lock = threading.Lock()
 
 def prelock(dev_idx):
-    if sync_thread == True:
+    if sync_thread == True and dev_idx != -1:
         lock_t[dev_idx].acquire()
+    elif dev_idx == -1:
+        dnc_lock.acquire()
        
 def postlock(dev_idx):	
-    if sync_thread == True:
+    if sync_thread == True and dev_idx != -1:
         try : 
             if lock_t[dev_idx].locked:
                 lock_t[dev_idx].release()
         except Exception, e:
             print type(e)
+    elif dev_idx == -1:
+        dnc_lock.release()
 
 def run_setupFull(button, ui):
     verified = verify.licCheck(ui)
@@ -118,10 +124,16 @@ def run_setupFull(button, ui):
             # ui.msg_err('The passwords entered do not match. Try again.')
             ui.passwordErrorLabel.set_markup('<span foreground="red">The passwords entered do not match. Try again.</span>')
             ui.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Continue\'.')
+            ui.new_pass_entry.show()
+            ui.new_pass_label.show()
+            ui.confirm_pass_entry.get_buffer().delete_text(0,-1)
             return
         elif ui.warned and ui.VERSION == 4 and ui.pass_sav.get_active() and len(ui.drive_list) == 0:
             ui.passwordErrorLabel.set_markup('<span foreground="red">No USB selected for Save to USB.</span>')
             ui.op_instr.set_text('Setting up a drive includes setting a password which you can use to unlock the drive.\nEnter the new password for the drive and click \'Continue\'.')
+            ui.new_pass_entry.show()
+            ui.new_pass_label.show()
+            ui.confirm_pass_entry.get_buffer().delete_text(0,-1)
             return
         ui.passwordErrorLabel.set_markup('')
         #ui.treeview.grab_focus()
@@ -272,8 +284,10 @@ def run_setupFull(button, ui):
                                 type_a = m2.group(1)
                                 s = os.system(ui.prefix + 'mount -t ' + type_a + ' /dev/' + u + '1')
             
-            else:
+            elif ui.pass_sav.get_active():
                 ui.pass_dir = ui.drive_menu.get_active_text()
+            else:
+                ui.pass_dir = ''
             
             ui.start_spin()
             ui.setup_wait_instr.show()

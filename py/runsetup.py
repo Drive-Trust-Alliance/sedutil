@@ -598,12 +598,15 @@ def rt_changePW(ui, selected_list, level):
         #print status_final
         if not e.is_set():
             if status_final == 0:
-                if ui.auth_menu.get_active() == 0:
-                    if ui.pass_sav.get_active():
-                        save_status = runprocess.passSaveUSB(new_hash, ui.drive_menu.get_active_text(), ui.vendor_list[index], ui.sn_list[index], pass_usb, ui.auth_menu.get_active_text())
-                else:
-                    if ui.pass_sav.get_active():
-                        save_status = runprocess.passSaveUSB(new_hash, ui.drive_menu.get_active_text(), ui.vendor_list[index], ui.sn_list[index], pass_usb, ui.auth_menu.get_active_text())
+                runprocess.passSaveAppData(new_hash, ui.vendor_list[index], ui.sn_list[index], ui.auth_menu.get_active_text())
+                if ui.pass_sav.get_active():
+                    save_status = runprocess.passSaveUSB(new_hash, ui.drive_menu.get_active_text(), ui.vendor_list[index], ui.sn_list[index], pass_usb, ui.auth_menu.get_active_text())
+                #if ui.auth_menu.get_active() == 0:
+                #    if ui.pass_sav.get_active():
+                #        save_status = runprocess.passSaveUSB(new_hash, ui.drive_menu.get_active_text(), ui.vendor_list[index], ui.sn_list[index], pass_usb, ui.auth_menu.get_active_text())
+                #else:
+                #    if ui.pass_sav.get_active():
+                #        save_status = runprocess.passSaveUSB(new_hash, ui.drive_menu.get_active_text(), ui.vendor_list[index], ui.sn_list[index], pass_usb, ui.auth_menu.get_active_text())
             def aw_run(dev, i, status_final, save_status, auth, new_hash):
                 timeStr = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
                 timeStr = timeStr[2:]
@@ -910,6 +913,7 @@ def rt_setupUSB(ui, index, index2, e, preserved_files):
                                         f.close()
                                     except IOError:
                                         pass
+                                runprocess.passSaveAppData(hash_pwd, ui.dev_vendor.get_text(), ui.dev_sn.get_text(), ui.auth_menu.get_active_text())
                                 if ui.pass_sav.get_active():
                                     save_status = runprocess.passSaveUSB(hash_pwd, usb_drive, ui.dev_vendor.get_text(), ui.dev_sn.get_text(), pass_usb, ui.auth_menu.get_active_text())
                                     if save_status == 0:
@@ -1028,8 +1032,9 @@ def rt_setupUser(ui, index, e):
                     with open(os.devnull, 'w') as pipe:
                         s3 = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--setpassword', password_a, 'User1', password_u, ui.devname], stdout=pipe)#stderr=log)
                         if s3 == 0:
+                            ui.auth_menu.set_active(1)
+                            runprocess.passSaveAppData(password_u, ui.dev_vendor.get_text(), ui.dev_sn.get_text(), ui.auth_menu.get_active_text())
                             if ui.pass_sav.get_active():
-                                ui.auth_menu.set_active(1)
                                 save_status = runprocess.passSaveUSB(password_u, ui.drive_menu.get_active_text(), ui.dev_vendor.get_text(), ui.dev_sn.get_text(), pass_usb, ui.auth_menu.get_active_text())
                 else:
                     s3 = os.system(ui.prefix + 'sedutil-cli -n -t --setpassword "' + password_a + '" User1 "' + password_u + '" ' + ui.devname)
@@ -1198,8 +1203,9 @@ def rt_removeUser(ui, index, e):
                         rc = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--setpassword', password_a, 'User1', 'USER1', ui.devname], stdout=pipe)#stderr=log)
                         if rc == 0:
                             runprocess.removeUserUSB(ui.prefix, ui.dev_vendor.get_text(), ui.dev_sn.get_text())
+                            ui.auth_menu.set_active(0)
+                            runprocess.passSaveAppData(password_a, ui.dev_vendor.get_text(), ui.dev_sn.get_text(), ui.auth_menu.get_active_text())
                             if ui.pass_sav.get_active():
-                                ui.auth_menu.set_active(0)
                                 save_status = runprocess.passSaveUSB(password_a, ui.drive_menu.get_active_text(), ui.dev_vendor.get_text(), ui.dev_sn.get_text(), pass_usb, ui.auth_menu.get_active_text())
                 else:
                     rc = os.system(ui.prefix + 'sedutil-cli -n -t --setpassword "' + password_a + '" User1 USER1 ' + ui.devname)

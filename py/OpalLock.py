@@ -2125,10 +2125,9 @@ if __name__ == "__main__":
                     
                     count = 0
                     
-                    #if self.VERSION == 3:
-                        
-                    self.pass_sav.set_active(True)
-                    self.pass_sav.set_sensitive(False)
+                    if self.VERSION != 4:
+                        self.pass_sav.set_active(True)
+                        self.pass_sav.set_sensitive(False)
                     
                     self.box_newpass_confirm.show()
                     self.setup_next.show()
@@ -3424,26 +3423,44 @@ if __name__ == "__main__":
                 return True
 
         def reboot(self, *args):
-            self.reboot_req = True
-            if self.DEV_OS == 'Windows':
-                background.exitMV(self, 0)
-                self.unhookWndProc()
-            if path.exists('checkInstance.txt'):
-                os.remove('checkInstance.txt')
-            gtk.main_quit()
+            message = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_YES_NO, parent = self)
+            message.set_markup('Are you sure you want to reboot your system?')
+            
+            res = message.run()
+            message.destroy()
+            if res == gtk.RESPONSE_YES:
+                self.reboot_req = True
+                if self.DEV_OS == 'Windows':
+                    background.exitMV(self, 0)
+                    self.unhookWndProc()
+                if path.exists('checkInstance.txt'):
+                    os.remove('checkInstance.txt')
+                gtk.main_quit()
                 
         def shutdown(self, *args):
-            self.shutdown_req = True
-            if self.DEV_OS == 'Windows':
-                background.unmountPC(self, 0)
-                background.exitMV(self, 1)
-                self.unhookWndProc()
-            if path.exists('checkInstance.txt'):
-                os.remove('checkInstance.txt')
-            gtk.main_quit()
+            message = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_YES_NO, parent = self)
+            message.set_markup('Are you sure you want to shut down your system?')
+            
+            res = message.run()
+            message.destroy()
+            if res == gtk.RESPONSE_YES:
+                self.shutdown_req = True
+                if self.DEV_OS == 'Windows':
+                    background.unmountPC(self, 0)
+                    background.exitMV(self, 1)
+                    self.unhookWndProc()
+                if path.exists('checkInstance.txt'):
+                    os.remove('checkInstance.txt')
+                gtk.main_quit()
             
         def hibernate(self, *args):
-            background.unmountPC(self, 1)
+            message = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_YES_NO, parent = self)
+            message.set_markup('Are you sure you want to hibernate your system?')
+            
+            res = message.run()
+            message.destroy()
+            if res == gtk.RESPONSE_YES:
+                background.unmountPC(self, 1)
 
         def on_delete_event(self, widget, event = None):
             if self.canDestroyMain == True:

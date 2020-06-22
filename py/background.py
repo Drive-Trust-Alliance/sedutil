@@ -72,16 +72,14 @@ def unmountPC(self, mode):
         subprocess.call(['mountvol', '/r'])
         subprocess.call(['shutdown', '-h'])
         
-
-    
-    
-
 def devChange(self, wParam,lParam):
     #print "WM_DEVICECHANGE [WPARAM:%i][LPARAM:%i]"%(wParam,lParam)
     
     if wParam == DBT_DEVNODES_CHANGED:
-        if not self.dnc_ip:
+        runop.prelock(-1)
+        if not self.dnc_ip and not self.drc_ip and not self.da_ip:
             self.dnc_ip = True
+            runop.postlock(-1)
             def t_run():
                 #print 'got in'
                 #def t_run():
@@ -173,197 +171,210 @@ def devChange(self, wParam,lParam):
                 if fullscan_needed:
                     while self.pbawrite_ip or self.op_inprogress:
                         time.sleep(5)
-                    self.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
-                    runscan.run_scan(None, self, True)
+                    if not self.scan_ip:
+                        self.scan_ip = True
+                        self.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
+                        runscan.run_scan(None, self, True)
                 elif rescan_needed:
                     while self.pbawrite_ip or self.op_inprogress:
                         time.sleep(5)
-                    runscan.run_scan(None, self, False)
+                    if not self.scan_ip:
+                        self.scan_ip = True
+                        runscan.run_scan(None, self, False)
             if not self.firstscan:
                 t = threading.Thread(target=t_run, args=())
                 t.start()
-            
+        else:
+            runop.postlock(-1)
 
     if wParam == DBT_DEVICEREMOVECOMPLETE:
-        self.drc_ip = True
-        def t_run():
-            dl_len = len(self.devs_list)
-            for x in range(dl_len):
-                runop.prelock(x)
-            subprocess.call(['mountvol', '/n'])
-            subprocess.call(['mountvol', '/r'])
-            txt = os.popen(self.prefix + 'sedutil-cli --scan n').read()
-            for x in range(dl_len):
-                runop.postlock(x)
-            rgx = '(PhysicalDrive[0-9]+)\s+(?:[12ELP]+|No)\s+[^\:\s]+(?:\s[^\:\s]+)*\s*:\s*[^:]+\s*:\s*(\S+)'
-            list_d = re.findall(rgx, txt)
-            d_present = [False] * len(self.devs_list)
-            for entry in list_d:
-                proceed = True
-                if self.VERSION == 4:
-                    txt_q = os.popen(self.prefix + 'sedutil-cli --query \\\\.\\' + entry[0]).read()
-                    rgx_q = 'PhysicalDrive[0-9]+\s+USB'
-                    m_usb = re.search(rgx_q, txt_q)
-                    if m_usb:
-                        proceed = True
-                    else:
-                        proceed = False
-                if proceed:
-                    if entry[1] in self.sn_list:
-                        d_idx = self.sn_list.index(entry[1])
-                        d_present[d_idx] = True
-            gobject.idle_add(cleanup, d_present)
-        def cleanup(d_present):
-            fullscan_needed = False
-            for i in range(len(self.devs_list)):
-                if not d_present[i]:
-                    self.admin_aol_list[i] = 0
-                    self.user_aol_list[i] = 0
-                    if self.opal_ver_list[i] != 'None':
-                        fullscan_needed = True
-            if not self.dnc_ip:
-                self.drc_ip = False
-            if fullscan_needed:
-                while self.pbawrite_ip or self.op_inprogress:
-                    time.sleep(5)
-                self.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
-                runscan.run_scan(None, self, True)
-        t = threading.Thread(target=t_run, args=())
-        t.start()
-    elif wParam == DBT_DEVICEARRIVAL and not self.scan_ip and not self.arrival_hold:
-        self.da_ip = True
-        def t_run():
-            self.arrival_hold = True
-            time.sleep(2)
-            while self.pbawrite_ip or self.op_inprogress:
-                time.sleep(5)
-                
-            self.arrival_hold = False
-            dl_len = len(self.devs_list)
-            for x in range(dl_len):
-                runop.prelock(x)
-            txt = os.popen(self.prefix + 'sedutil-cli --scan n').read()
-            for x in range(dl_len):
-                runop.postlock(x)
-            rgx = 'PhysicalDrive([0-9]+)\s+([12ELPR]+|No)\s+\S+(?:\s+[^:]+)*\s*:\s*[^:]+\s*:(.+)'
-            list_d = re.findall(rgx, txt)
-            rescan_needed = False
-            fullscan_needed = False
-            for i in range(len(list_d)):
-                drive_num = list_d[i][0]
-                drive_tcg = list_d[i][1]
-                drive_ser = list_d[i][2].replace(' ', '')
+        if not self.drc_ip:
+            self.drc_ip = True
+            def t_run():
+                dl_len = len(self.devs_list)
                 for x in range(dl_len):
                     runop.prelock(x)
-                txt_q = os.popen(self.prefix + 'sedutil-cli --query \\\\.\\PhysicalDrive' + drive_num).read()
+                subprocess.call(['mountvol', '/n'])
+                subprocess.call(['mountvol', '/r'])
+                txt = os.popen(self.prefix + 'sedutil-cli --scan n').read()
                 for x in range(dl_len):
                     runop.postlock(x)
-                drive_UL = 'Locked = N'
-                m_UL = re.search(drive_UL, txt_q)
-                if drive_tcg == 'No' or m_UL:
-                    vol_list = []
-                    i = -1
-                    try:
-                        i = self.sn_list.index(drive_ser)
-                    except ValueError:
-                        i = -1
-                    if i != -1:
-                        if i < len(self.label_list) and self.label_list[i] != '':
-                            regex = '[A-Z]:'
-                            vol_list = re.findall(regex, self.label_list[i])
-                        #runop.prelock(i)
-                        for j in range(len(self.devs_list)):
-                            runop.prelock(j)
-                        p = subprocess.Popen(["diskpart"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-                        res1 = p.stdin.write('select disk ' + drive_num + '\n')
-                        res1 = p.stdin.write('detail disk\n')
-                        res1 = p.stdin.write('exit\n')
-
-                        output = p.communicate()[0]
-                        #runop.postlock(i)
-                        for j in range(len(self.devs_list)):
-                            runop.postlock(j)
-                        
-                        vol_re = 'Volume [0-9]+\s+([A-Z])\s+'
-
-                        list_v = re.findall(vol_re, output)
-                        for vol in list_v:
-                            dir = vol + ':'
-                            if dir not in vol_list:
-                                vol_list.append(dir)
-                                rescan_needed = True
-                        for v in vol_list:
-                            if v != 'C:':
-                                txt_m = os.popen('mountvol ' + v + ' /l').read()
-                                regex_m = '[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}'
-                                m = re.search(regex_m, txt_m)
-                                if m != None:
-                                    exists = False
-                                    diffdir = -1
-                                    idx = 0
-                                    for e in self.mv_list:
-                                        #if e[0] == m.group(0) and e[1] == v and e[2] == self.sn_list[i]:
-                                        #    exists = True
-                                        #el
-                                        if e[0] == m.group(0) and e[2] == self.sn_list[i]:
-                                            #diffdir = idx
-                                            exists = True
-                                        idx = idx + 1
-                                    #if diffdir >= 0:
-                                        #print 'pop outdated entry'
-                                        #print self.mv_list[diffdir]
-                                    #    self.mv_list.pop(diffdir)
-                                    if not exists:
-                                        entry = [m.group(0),v,self.sn_list[i]]
-                                        #print 'new entry'
-                                        #print entry
-                                        self.mv_list.append(entry)
-                                        
-            ###compare scan output to current list
-            dl_len = len(self.devs_list)
-            for x in range(dl_len):
-                runop.prelock(x)
-            txt = os.popen(self.prefix + 'sedutil-cli --scan n').read()
-            for x in range(dl_len):
-                runop.postlock(x)
-            rgx = '(PhysicalDrive[0-9]+)\s+([12ELPR]+|No)\s+[^\s:]+(?:\s+[^:]+)*\s*:\s*[^:]+\s*:\s*(\S+)'
-            list_d = re.findall(rgx, txt)
-            for entry in list_d:
-                proceed = True
-                if self.VERSION == 4:
-                    txt_q = os.popen(self.prefix + 'sedutil-cli --query \\\\.\\' + entry[0]).read()
-                    rgx_q = 'PhysicalDrive[0-9]+\s+USB'
-                    m_usb = re.search(rgx_q, txt_q)
-                    if m_usb:
-                        proceed = True
-                    else:
-                        proceed = False
-                if proceed:
-                    if entry[2] not in self.sn_list and entry[1] != 'No':
-                        fullscan_needed = True
-            #print self.mv_list
-            if not self.dnc_ip:
-                self.da_ip = False
-                
-            gobject.idle_add(cleanup, rescan_needed, fullscan_needed)
-        def cleanup(rescan_needed, fullscan_needed):
-            if fullscan_needed:
-                while self.pbawrite_ip or self.op_inprogress:
-                    time.sleep(5)
-                self.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
-                runscan.run_scan(None, self, True)
-            elif rescan_needed:
-                while self.pbawrite_ip or self.op_inprogress:
-                    time.sleep(5)
-                runscan.run_scan(None, self, False)
-        if not self.dnc_mount and not self.unlock_mount:
-            #print 'spawning thread'
+                rgx = '(PhysicalDrive[0-9]+)\s+(?:[12ELP]+|No)\s+[^\:\s]+(?:\s[^\:\s]+)*\s*:\s*[^:]+\s*:\s*(\S+)'
+                list_d = re.findall(rgx, txt)
+                d_present = [False] * len(self.devs_list)
+                for entry in list_d:
+                    proceed = True
+                    if self.VERSION == 4:
+                        txt_q = os.popen(self.prefix + 'sedutil-cli --query \\\\.\\' + entry[0]).read()
+                        rgx_q = 'PhysicalDrive[0-9]+\s+USB'
+                        m_usb = re.search(rgx_q, txt_q)
+                        if m_usb:
+                            proceed = True
+                        else:
+                            proceed = False
+                    if proceed:
+                        if entry[1] in self.sn_list:
+                            d_idx = self.sn_list.index(entry[1])
+                            d_present[d_idx] = True
+                gobject.idle_add(cleanup, d_present)
+            def cleanup(d_present):
+                fullscan_needed = False
+                for i in range(len(self.devs_list)):
+                    if not d_present[i]:
+                        self.admin_aol_list[i] = 0
+                        self.user_aol_list[i] = 0
+                        if self.opal_ver_list[i] != 'None':
+                            fullscan_needed = True
+                if not self.dnc_ip:
+                    self.drc_ip = False
+                if fullscan_needed:
+                    while self.pbawrite_ip or self.op_inprogress:
+                        time.sleep(5)
+                    if not self.scan_ip:
+                        self.scan_ip = True
+                        self.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
+                        runscan.run_scan(None, self, True)
             t = threading.Thread(target=t_run, args=())
             t.start()
-        else:
-            #print 'not spawning thread'
-            self.dnc_mount = False
-            self.unlock_mount = False
+    elif wParam == DBT_DEVICEARRIVAL and not self.scan_ip and not self.arrival_hold:
+        if not self.da_ip:
+            self.da_ip = True
+            def t_run():
+                self.arrival_hold = True
+                time.sleep(2)
+                while self.pbawrite_ip or self.op_inprogress:
+                    time.sleep(5)
+                    
+                self.arrival_hold = False
+                dl_len = len(self.devs_list)
+                for x in range(dl_len):
+                    runop.prelock(x)
+                txt = os.popen(self.prefix + 'sedutil-cli --scan n').read()
+                for x in range(dl_len):
+                    runop.postlock(x)
+                rgx = 'PhysicalDrive([0-9]+)\s+([12ELPR]+|No)\s+\S+(?:\s+[^:]+)*\s*:\s*[^:]+\s*:(.+)'
+                list_d = re.findall(rgx, txt)
+                rescan_needed = False
+                fullscan_needed = False
+                for i in range(len(list_d)):
+                    drive_num = list_d[i][0]
+                    drive_tcg = list_d[i][1]
+                    drive_ser = list_d[i][2].replace(' ', '')
+                    for x in range(dl_len):
+                        runop.prelock(x)
+                    txt_q = os.popen(self.prefix + 'sedutil-cli --query \\\\.\\PhysicalDrive' + drive_num).read()
+                    for x in range(dl_len):
+                        runop.postlock(x)
+                    drive_UL = 'Locked = N'
+                    m_UL = re.search(drive_UL, txt_q)
+                    if drive_tcg == 'No' or m_UL:
+                        vol_list = []
+                        i = -1
+                        try:
+                            i = self.sn_list.index(drive_ser)
+                        except ValueError:
+                            i = -1
+                        if i != -1:
+                            if i < len(self.label_list) and self.label_list[i] != '':
+                                regex = '[A-Z]:'
+                                vol_list = re.findall(regex, self.label_list[i])
+                            #runop.prelock(i)
+                            for j in range(len(self.devs_list)):
+                                runop.prelock(j)
+                            p = subprocess.Popen(["diskpart"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+                            res1 = p.stdin.write('select disk ' + drive_num + '\n')
+                            res1 = p.stdin.write('detail disk\n')
+                            res1 = p.stdin.write('exit\n')
+
+                            output = p.communicate()[0]
+                            #runop.postlock(i)
+                            for j in range(len(self.devs_list)):
+                                runop.postlock(j)
+                            
+                            vol_re = 'Volume [0-9]+\s+([A-Z])\s+'
+
+                            list_v = re.findall(vol_re, output)
+                            for vol in list_v:
+                                dir = vol + ':'
+                                if dir not in vol_list:
+                                    vol_list.append(dir)
+                                    rescan_needed = True
+                            for v in vol_list:
+                                if v != 'C:':
+                                    txt_m = os.popen('mountvol ' + v + ' /l').read()
+                                    regex_m = '[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}'
+                                    m = re.search(regex_m, txt_m)
+                                    if m != None:
+                                        exists = False
+                                        diffdir = -1
+                                        idx = 0
+                                        for e in self.mv_list:
+                                            #if e[0] == m.group(0) and e[1] == v and e[2] == self.sn_list[i]:
+                                            #    exists = True
+                                            #el
+                                            if e[0] == m.group(0) and e[2] == self.sn_list[i]:
+                                                #diffdir = idx
+                                                exists = True
+                                            idx = idx + 1
+                                        #if diffdir >= 0:
+                                            #print 'pop outdated entry'
+                                            #print self.mv_list[diffdir]
+                                        #    self.mv_list.pop(diffdir)
+                                        if not exists:
+                                            entry = [m.group(0),v,self.sn_list[i]]
+                                            #print 'new entry'
+                                            #print entry
+                                            self.mv_list.append(entry)
+                                            
+                ###compare scan output to current list
+                dl_len = len(self.devs_list)
+                for x in range(dl_len):
+                    runop.prelock(x)
+                txt = os.popen(self.prefix + 'sedutil-cli --scan n').read()
+                for x in range(dl_len):
+                    runop.postlock(x)
+                rgx = '(PhysicalDrive[0-9]+)\s+([12ELPR]+|No)\s+[^\s:]+(?:\s+[^:]+)*\s*:\s*[^:]+\s*:\s*(\S+)'
+                list_d = re.findall(rgx, txt)
+                for entry in list_d:
+                    proceed = True
+                    if self.VERSION == 4:
+                        txt_q = os.popen(self.prefix + 'sedutil-cli --query \\\\.\\' + entry[0]).read()
+                        rgx_q = 'PhysicalDrive[0-9]+\s+USB'
+                        m_usb = re.search(rgx_q, txt_q)
+                        if m_usb:
+                            proceed = True
+                        else:
+                            proceed = False
+                    if proceed:
+                        if entry[2] not in self.sn_list and entry[1] != 'No':
+                            fullscan_needed = True
+                #print self.mv_list
+                if not self.dnc_ip:
+                    self.da_ip = False
+                    
+                gobject.idle_add(cleanup, rescan_needed, fullscan_needed)
+            def cleanup(rescan_needed, fullscan_needed):
+                if fullscan_needed:
+                    while self.pbawrite_ip or self.op_inprogress:
+                        time.sleep(5)
+                    if not self.scan_ip:
+                        self.scan_ip = True
+                        self.msg_ok('A rescan is needed to update the drive list, press OK to proceed.')
+                        runscan.run_scan(None, self, True)
+                elif rescan_needed:
+                    while self.pbawrite_ip or self.op_inprogress:
+                        time.sleep(5)
+                    if not self.scan_ip:
+                        self.scan_ip = True
+                        runscan.run_scan(None, self, False)
+            if not self.dnc_mount and not self.unlock_mount:
+                #print 'spawning thread'
+                t = threading.Thread(target=t_run, args=())
+                t.start()
+            else:
+                #print 'not spawning thread'
+                self.dnc_mount = False
+                self.unlock_mount = False
     
 def powerBroadcast(self, wParam,lParam):
     #print "WM_POWERBROADCAST [WPARAM:%i][LPARAM:%i]"%(wParam,lParam)
