@@ -179,12 +179,12 @@ def passSaveUSB(hashed_pwd, drive, mnum, snum, pass_usb, auth):
         return 1
         
 def passSaveAppData(hashed_pwd, mnum, snum, auth):
-    hashed_pwd = hashed_pwd.strip('\0')
     dev_os = platform.system()
-    timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-    f = None
-    adDir = 'C:\\Users\\' + os.getenv('username') + '\\AppData\\Local\\OpalLock'
     if dev_os == 'Windows':
+        hashed_pwd = hashed_pwd.strip('\0')
+        timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        f = None
+        adDir = 'C:\\Users\\' + os.getenv('username') + '\\AppData\\Local\\OpalLock'
         if not os.path.isdir(adDir):
             os.makedirs(adDir)
         adFile = adDir + '\\' + mnum + '_' + snum + '.psw'

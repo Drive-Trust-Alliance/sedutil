@@ -507,9 +507,10 @@ def rt_revertKeep(ui, selected_list):
                             if status == 0:
                                 status = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--revertnoerase', password, dev], stdout=pipe)#stderr=log)
                                 if status == 0:
-                                    p0 = os.popen(ui.prefix + "sedutil-cli --query " + dev).read()
+                                    p = subprocess.Popen([ui.prefix + 'sedutil-cli', '-n', '-t', '--query', dev], stdout=subprocess.PIPE)
+                                    output = p.communicate()[0]
                                     txtLE = "LockingEnabled = N"
-                                    le_check = re.search(txtLE, p0)
+                                    le_check = re.search(txtLE, output)
                                     if le_check:
                                         status = subprocess.call([ui.prefix + 'sedutil-cli', '-n', '-t', '--activate', dev_msid, dev], stdout=pipe)#stderr=log)
                                         if pass_usb != '':
@@ -567,6 +568,7 @@ def rt_revertKeep(ui, selected_list):
                         if status == 0:
                             status = os.system(ui.prefix + 'sedutil-cli -n -t --revertnoerase "' + password + '" ' + dev)
                             if status == 0:
+                                p0 = os.popen(ui.prefix + "sedutil-cli --query " + dev).read()
                                 txtLE = "LockingEnabled = N"
                                 le_check = re.search(txtLE, p0)
                                 if le_check:

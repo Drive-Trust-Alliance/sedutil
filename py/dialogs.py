@@ -1159,8 +1159,14 @@ def show_about(button, parent, *args):
         hboxThird.show()
 
         appFirstLabel = gtk.Label()
-        firstString = '<span size="20" weight="bold">Opal Lock GUI v0.26.1</span>'
-        appFirstLabel.set_markup(firstString)
+        if parent.DEV_OS == 'Windows':
+            firstString = '<span size="20" weight="bold">Opal Lock GUI v0.26.2</span>'
+            appFirstLabel.set_markup(firstString)
+        else:
+            firstString = 'Opal Lock GUI v0.26.2'
+            appFirstLabel.set_text(firstString)
+        
+        
         appFirstLabel.show()
         appIcon = gtk.Image()
         appIcon.set_from_file('icon.ico')
