@@ -1169,7 +1169,10 @@ def show_about(button, parent, *args):
         
         appFirstLabel.show()
         appIcon = gtk.Image()
-        appIcon.set_from_file('icon.ico')
+        if parent.VERSION != 1 or parent.DEV_OS == 'Windows':
+            appIcon.set_from_file('icon.ico')
+        else:
+            appIcon.set_from_file('/usr/local/bin/icon.ico')
         appIcon.show()
         appSecondLabel = gtk.Label()
         secondStr = 'Opal Lock Version: ' + ver_parse

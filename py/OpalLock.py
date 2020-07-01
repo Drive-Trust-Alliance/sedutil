@@ -2034,11 +2034,24 @@ if __name__ == "__main__":
                         model.remove(row.iter)
                     
                     
-                    for i in range(length):
-                        if self.label_list[i] != '':
-                            self.dev_select.append_text(self.devs_list[i] + ' ' + self.label_list[i])
+                    #for i in range(length):
+                    #    if self.label_list[i] != '':
+                    #        self.dev_select.append_text(self.devs_list[i] + ' ' + self.label_list[i])
+                    #    else:
+                    #        self.dev_select.append_text(self.devs_list[i])
+                            
+                    display_dev_list = []
+                    for x in self.devs_list:
+                        newx = x.replace('\\', '')
+                        newx = newx.replace('.', '')
+                        #newx = newx.replace('/', '')
+                        display_dev_list.append(newx)
+                    for i in range(len(self.devs_list)):
+                        if self.label_list[i] != None:
+                            self.dev_select.append_text(display_dev_list[i] + ' ' + self.label_list[i] + '('+ str(self.opal_ver_list[i]) +')')
                         else:
-                            self.dev_select.append_text(self.devs_list[i])
+                            self.label_list[i] = ''
+                            self.dev_select.append_text(display_dev_list[i] + '('+ str(self.opal_ver_list[i]) +')' )
                     
                     if len(self.devs_list) > 0:
                         self.dev_select.set_active(0)
