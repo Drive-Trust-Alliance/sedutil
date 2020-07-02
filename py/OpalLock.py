@@ -252,6 +252,8 @@ if __name__ == "__main__":
         dnc_mount = False
         unlock_mount = False
         
+        auto_reboot = False
+        
         user_list = []
         admin_list = []
         
@@ -3436,12 +3438,21 @@ if __name__ == "__main__":
                 return True
 
         def reboot(self, *args):
-            message = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_YES_NO, parent = self)
-            message.set_markup('Are you sure you want to reboot your system?')
-            
-            res = message.run()
-            message.destroy()
-            if res == gtk.RESPONSE_YES:
+            if not self.auto_reboot:
+                message = gtk.MessageDialog(type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_YES_NO, parent = self)
+                message.set_markup('Are you sure you want to reboot your system?')
+                
+                res = message.run()
+                message.destroy()
+                if res == gtk.RESPONSE_YES:
+                    self.reboot_req = True
+                    if self.DEV_OS == 'Windows':
+                        background.exitMV(self, 0)
+                        self.unhookWndProc()
+                    if path.exists('checkInstance.txt'):
+                        os.remove('checkInstance.txt')
+                    gtk.main_quit()
+            else:
                 self.reboot_req = True
                 if self.DEV_OS == 'Windows':
                     background.exitMV(self, 0)

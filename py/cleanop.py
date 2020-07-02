@@ -876,6 +876,7 @@ def unlockPBA_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, sele
     #ui.scan_ip = False
     if res_sum == 0 and reboot:
         ui.stop_spin()
+        ui.auto_reboot = True
         ui.reboot(None, ui)
 
 def revertKeep_cleanup(ui, max_time, start_time, op_threads, res_list, e_to, selected_list, status_list, rescan_needed, val2, val3, val4):
