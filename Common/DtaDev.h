@@ -38,6 +38,8 @@ public:
 	DtaDev();
 	/** Default destructor, does nothing*/
 	virtual ~DtaDev();
+	/** Does the device conform to the Ruby 1.0 SSC */
+	uint8_t isRuby1();
 	/** Does the device conform to the Pyrite 2.0 SSC */
 	uint8_t isPyrite2();
 	/** Does the device conform to the Pyrite 1.0 SSC */

@@ -25,6 +25,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevOpalite.h"
 #include "DtaDevPyrite1.h"
 #include "DtaDevPyrite2.h"
+#include "DtaDevRuby1.h"
 
 #include <dirent.h>
 #include <fnmatch.h>
@@ -67,13 +68,15 @@ uint8_t UnlockSEDs(char * password) {
         }
         if ((!tempDev->isOpal1()) && (!tempDev->isOpal2()) &&
             (!tempDev->isOpalite()) && (!tempDev->isPyrite1()) &&
-            (!tempDev->isPyrite2())) {
+            (!tempDev->isPyrite2()) && (!tempDev->isRuby1())) {
             printf("Drive %-10s %-40s not OPAL  \n", devref, tempDev->getModelNum());
 
             delete tempDev;
             continue;
         }
-        if (tempDev->isOpal2())
+        if (tempDev->isRuby1())
+            d = new DtaDevRuby1(devref);
+        else if (tempDev->isOpal2())
             d = new DtaDevOpal2(devref);
         else if (tempDev->isOpalite())
             d = new DtaDevOpalite(devref);

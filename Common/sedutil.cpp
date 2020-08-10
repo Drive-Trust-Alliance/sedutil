@@ -28,6 +28,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevOpalite.h"
 #include "DtaDevPyrite1.h"
 #include "DtaDevPyrite2.h"
+#include "DtaDevRuby1.h"
 #include "DtaDevEnterprise.h"
 
 using namespace std;
@@ -42,12 +43,12 @@ int isValidSEDDisk(char *devname)
 	if (d->isPresent()) {
 		printf("%s", devname);
 		if (d->isAnySSC())
-			printf(" SED %s%s%s%s%s%s ", (d->isOpal1() ? "1" : "-"),
+			printf(" SED %s%s%s%s%s%s%s ", (d->isOpal1() ? "1" : "-"),
 			(d->isOpal2() ? "2" : "-"), (d->isEprise() ? "E" : "-"),
 			(d->isOpalite() ? "L" : "-"), (d->isPyrite1() ? "p" : "-"),
-			(d->isPyrite2() ? "P" : "-"));
+			(d->isPyrite2() ? "P" : "-"), (d->isRuby1() ? "r" : "-"));
 		else
-			printf("%s", " NO ------ ");
+			printf("%s", " NO  ------- ");
 		cout << d->getModelNum() << " " << d->getFirmwareRev();
 		cout << std::endl;
 	}
@@ -77,7 +78,9 @@ int main(int argc, char * argv[])
 			delete tempDev;
 			return DTAERROR_COMMAND_ERROR;
 		}
-		if (tempDev->isOpal2())
+		if (tempDev->isRuby1())
+			d = new DtaDevRuby1(argv[opts.device]);
+		else if (tempDev->isOpal2())
 			d = new DtaDevOpal2(argv[opts.device]);
 		else if (tempDev->isOpalite())
 			d = new DtaDevOpalite(argv[opts.device]);

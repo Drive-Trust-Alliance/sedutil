@@ -12,6 +12,7 @@ SEDUTIL_COMMON_CODE = \
 	Common/DtaDevOpalite.cpp Common/DtaDevOpalite.h \
 	Common/DtaDevPyrite1.cpp Common/DtaDevPyrite1.h \
 	Common/DtaDevPyrite2.cpp Common/DtaDevPyrite2.h \
+	Common/DtaDevRuby1.cpp Common/DtaDevRuby1.h \
 	Common/DtaDevOpal.cpp Common/DtaDevOpal.h \
 	Common/DtaDiskType.cpp Common/DtaDiskType.h \
 	Common/DtaHashPwd.cpp Common/DtaHashPwd.h \

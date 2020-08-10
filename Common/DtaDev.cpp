@@ -44,6 +44,11 @@ DtaDev::DtaDev()
 DtaDev::~DtaDev()
 {
 }
+uint8_t DtaDev::isRuby1()
+{
+	LOG(D1) << "Entering DtaDev::isRuby1 " << (uint16_t) disk_info.Ruby10;
+	return disk_info.Ruby10;
+}
 uint8_t DtaDev::isPyrite2()
 {
 	LOG(D1) << "Entering DtaDev::isPyrite2 " << (uint16_t) disk_info.Pyrite20;
@@ -257,6 +262,18 @@ void DtaDev::discovery0()
 			disk_info.Pyrite20_initialPIN = body->pyrite20.initialPIN;
 			disk_info.Pyrite20_revertedPIN = body->pyrite20.revertedPIN;
 			break;
+		case FC_RUBYV100: /* Ruby V1.00 */
+			disk_info.Ruby10 = 1;
+			disk_info.ANY_OPAL_SSC = 1;
+			disk_info.Ruby10_basecomID = SWAP16(body->ruby10.baseCommID);
+			disk_info.Ruby10_numcomIDs = SWAP16(body->ruby10.numCommIDs);
+			disk_info.Ruby10_rangeCrossing = body->ruby10.rangeCrossing;
+			disk_info.Ruby10_numAdmins = SWAP16(body->ruby10.numlockingAdminAuth);
+			disk_info.Ruby10_numUsers = SWAP16(body->ruby10.numlockingUserAuth);
+			disk_info.Ruby10_initialPIN = body->ruby10.initialPIN;
+			disk_info.Ruby10_revertedPIN = body->ruby10.revertedPIN;
+			disk_info.Ruby10_PINonTPerRevert = body->ruby10.PINonTPerRevert;
+			break;
 		case FC_DATAREM: /* Supported Data Removal Mechanism */
 			disk_info.DataRem = 1;
 			disk_info.DataRem_processing = body->dataRem.processing;
@@ -264,6 +281,13 @@ void DtaDev::discovery0()
 			disk_info.DataRem_format = body->dataRem.format;
 			for (int i = 0; i < 6; i++)
 				disk_info.DataRem_time[i] = SWAP16(body->dataRem.time[i]);
+			break;
+		case FC_NSGEOMETRY: /* Namespace Geometry Reporting */
+			disk_info.NSGeometry = 1;
+			disk_info.NSGeometry_align = body->nsgeometry.align;
+			disk_info.NSGeometry_alignmentGranularity = SWAP64(body->nsgeometry.alignmentGranularity);
+			disk_info.NSGeometry_logicalBlockSize = SWAP32(body->nsgeometry.logicalBlockSize);
+			disk_info.NSGeometry_lowestAlignedLBA = SWAP64(body->nsgeometry.lowestAlighedLBA);
 			break;
         default:
 			if (0xbfff < (SWAP16(body->TPer.featureCode))) {
@@ -415,6 +439,19 @@ void DtaDev::puke()
 		cout << ", Reverted PIN = " << HEXON(2) << disk_info.Pyrite20_revertedPIN << HEXOFF;
 		cout << std::endl;
 	}
+	if (disk_info.Ruby10) {
+		cout << "Ruby 1.0 function (" << HEXON(4) << FC_RUBYV100 << ")" << HEXOFF << std::endl;
+		cout << "    Base comID = " << HEXON(4) << disk_info.Ruby10_basecomID << HEXOFF;
+		cout << ", comIDs = " << disk_info.Ruby10_numcomIDs;
+		cout << ", Initial PIN = " << HEXON(2) << disk_info.Ruby10_initialPIN << HEXOFF;
+		cout << ", Reverted PIN = " << HEXON(2) << disk_info.Ruby10_revertedPIN << HEXOFF;
+		cout << ", PINonTPerRevert = " << HEXON(2)  << disk_info.Ruby10_PINonTPerRevert << HEXOFF;
+		cout << std::endl;
+		cout << "    Locking Admins = " << disk_info.Ruby10_numAdmins;
+		cout << ", Locking Users = " << disk_info.Ruby10_numUsers;
+		cout << ", Range Crossing = " << (disk_info.Ruby10_rangeCrossing ? "Y" : "N");
+		cout << std::endl;
+	}
 	if (disk_info.DataRem) {
 		cout << "Supported Data Removal Mechanism function (" << HEXON(4) << FC_DATAREM << ")" << HEXOFF << std::endl;
 		cout << "    Processing = " << (disk_info.DataRem_processing ? "Y" : "N");
@@ -427,6 +464,18 @@ void DtaDev::puke()
 			    (((disk_info.DataRem_format & (1 << i)) == 0) ? "s " : "m ");
 		}
 		cout << std::endl;
+	}
+	if (disk_info.NSGeometry) {
+		cout << "Namespace Geometry function (" << HEXON(4) << FC_NSGEOMETRY << HEXOFF << ")" << std::endl;
+		cout << "    Align = " << (disk_info.NSGeometry_align ? "Y, " : "N, ")
+			<< "Alignment Granularity = " << disk_info.NSGeometry_alignmentGranularity
+			<< " (" << // display bytes
+			(disk_info.NSGeometry_alignmentGranularity *
+			disk_info.NSGeometry_logicalBlockSize)
+			<< ")"
+			<< ", Logical Block size = " << disk_info.NSGeometry_logicalBlockSize
+			<< ", Lowest Aligned LBA = " << disk_info.NSGeometry_lowestAlignedLBA
+			<< std::endl;
 	}
 	if (disk_info.Unknown)
 		cout << "**** " << (uint16_t)disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
