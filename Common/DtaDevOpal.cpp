@@ -207,6 +207,7 @@ DtaDevOpal::lrStatus_t DtaDevOpal::getLockingRange_status(uint8_t lockingrange, 
 }
 uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 {
+	uint32_t i, numRanges;
 	uint8_t lastRC;
 	LOG(D1) << "Entering DtaDevOpal:listLockingRanges()" << rangeid;
 	vector<uint8_t> LR;
@@ -224,23 +225,29 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 		delete session;
 		return lastRC;
 	}
-	vector<uint8_t> table;
-	table.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	for (int i = 0; i < 8; i++) {
-		table.push_back(OPALUID[OPAL_UID::OPAL_LOCKING_INFO_TABLE][i]);
-	}
-	if ((lastRC = getTable(table, _OPAL_TOKEN::MAXRANGES, _OPAL_TOKEN::MAXRANGES)) != 0) {
-		delete session;
-		return lastRC;
-	}
-	if (response.tokenIs(4) != _OPAL_TOKEN::DTA_TOKENID_UINT) {
-		LOG(E) << "Unable to determine number of ranges ";
-		delete session;
-		return DTAERROR_NO_LOCKING_INFO;
+	if (rangeid == -1) {
+		vector<uint8_t> table;
+		table.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+		for (int i = 0; i < 8; i++) {
+			table.push_back(OPALUID[OPAL_UID::OPAL_LOCKING_INFO_TABLE][i]);
+		}
+		if ((lastRC = getTable(table, _OPAL_TOKEN::MAXRANGES, _OPAL_TOKEN::MAXRANGES)) != 0) {
+			delete session;
+			return lastRC;
+		}
+		if (response.tokenIs(4) != _OPAL_TOKEN::DTA_TOKENID_UINT) {
+			LOG(E) << "Unable to determine number of ranges ";
+			delete session;
+			return DTAERROR_NO_LOCKING_INFO;
+		}
+		numRanges = response.getUint32(4) + 1;
+		i = 0;
+	} else {
+		numRanges = rangeid + 1;
+		i = rangeid;
 	}
 	LOG(I) << "Locking Range Configuration for " << dev;
-	uint32_t numRanges = response.getUint32(4) + 1;
-	for (uint32_t i = 0; i < numRanges; i++){
+	for (; i < numRanges; i++){
 		if(0 != i) LR[8] = i & 0xff;
 		if ((lastRC = getTable(LR, _OPAL_TOKEN::RANGESTART, _OPAL_TOKEN::WRITELOCKED)) != 0) {
 			delete session;
