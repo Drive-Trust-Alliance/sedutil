@@ -49,10 +49,10 @@ void usage()
 	printf("                                Rekey Locking Range\n");
     printf("--setBandsEnabled <password> <device>\n");
 	printf("                                Set Enabled for all Locking Ranges\n");
-	printf("                                (passwort = \"\" for MSID) \n");
+	printf("                                (password = \"\" for MSID) \n");
     printf("--setBandEnabled <0...n> <password> <device>\n");
 	printf("                                Set Enabled for Locking Range[n]\n");
-	printf("                                (passwort = \"\" for MSID) \n");
+	printf("                                (password = \"\" for MSID) \n");
     printf("--eraseLockingRange <0...n> <password> <device>\n");
 	printf("                                Erase a Locking Range\n");
 	printf("                                0 = GLobal 1..n  = LRn \n");
