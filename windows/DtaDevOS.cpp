@@ -115,8 +115,10 @@ void DtaDevOS::init(const char * devref)
 			if (disk_info.devType == DEVICE_TYPE_OTHER)
 			{
 				LOG(D) << "Device on RAID not identified";
-				delete disk;
-				return;
+				delete disk; 
+				disk = new DtaDiskUSB; // assume USB bus even it can not be identified
+				disk_info.devType = DEVICE_TYPE_USB;
+				break; 
 			}
 		}
 		break;
