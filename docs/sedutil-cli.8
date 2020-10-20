@@ -64,9 +64,14 @@ set the device back to factory defaults.
 .B This **ERASES ALL DATA**
 .IP "\-\-revertNoErase <Admin1password> <device>"
 deactivate the Locking SP without erasing the data on GLOBAL RANGE *ONLY*
-.IP "\-\---yesIreallywanttoERASEALLmydatausingthePSID <PSID> <device>"
+.IP "\-\-PSIDrevert <PSID> <device>"
+.IP "\-\-yesIreallywanttoERASEALLmydatausingthePSID <PSID> <device>"
 revert the device using the PSID. 
 .B *ERASING* *ALL* the data
+.IP "\-\-PSIDrevertAdminSP <PSID> <device>"
+Alike to PSIDrevert, but on Enterprise calls AdminSP->Revert instead of
+ThisSP->RevertSP.  There are no PSID or Revert standards for Enterprise
+and different devices support different methods.
 .IP "\-\-printDefaultPassword <device>"
 print MSID
 

@@ -90,8 +90,13 @@ void usage()
 	printf("                                deactivate the Locking SP \n");
 	printf("                                without erasing the data \n");
 	printf("                                on GLOBAL RANGE *ONLY* \n");
-    printf("--yesIreallywanttoERASEALLmydatausingthePSID <PSID> <device>\n");
-    printf("                                revert the device using the PSID *ERASING* *ALL* the data \n");
+	printf("--PSIDrevert <PSID> <device>\n");
+	printf("--yesIreallywanttoERASEALLmydatausingthePSID <PSID> <device>\n");
+	printf("                                revert the device using the PSID *ERASING*\n");
+	printf("                                *ALL* the data\n");
+	printf("--PSIDrevertAdminSP <PSID> <device>\n");
+	printf("                                Alike to PSIDrevert, but on Enterprise calls\n");
+	printf("                                AdminSP->Revert instead of ThisSP->RevertSP\n");
     printf("--printDefaultPassword <device>\n");
     printf("                                print MSID \n");
     printf("\n");
