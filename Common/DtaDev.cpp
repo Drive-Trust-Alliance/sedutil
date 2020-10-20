@@ -139,6 +139,8 @@ void DtaDev::discovery0()
     uint8_t * epos, *cpos;
     Discovery0Header * hdr;
     Discovery0Features * body;
+	uint32_t len;
+
 	d0Response = discovery0buffer + IO_BUFFER_ALIGNMENT;
 	d0Response = (void *)((uintptr_t)d0Response & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
 	memset(d0Response, 0, MIN_BUFFER_LENGTH);
@@ -149,9 +151,14 @@ void DtaDev::discovery0()
 
     epos = cpos = (uint8_t *) d0Response;
     hdr = (Discovery0Header *) d0Response;
+    len = SWAP32(hdr->length);
+    if (len > MIN_BUFFER_LENGTH) {
+	LOG(D) << "Too long Discovery0 response: " << SWAP32(hdr->length);
+	len = MIN_BUFFER_LENGTH;
+    }
     LOG(D3) << "Dumping D0Response";
-    IFLOG(D3) DtaHexDump(hdr, SWAP32(hdr->length));
-    epos = epos + SWAP32(hdr->length);
+    IFLOG(D3) DtaHexDump(hdr, len);
+    epos = epos + len;
     cpos = cpos + 48; // TODO: check header version
 
     do {
