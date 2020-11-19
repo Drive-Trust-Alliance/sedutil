@@ -1,0 +1,75 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+
+Files: *
+Copyright: > ${LOGFILE} 2>&1
+           2014-2017, Bright Plaza Inc <drivetrust@drivetrust.com>
+License: UnknownCopyrighted
+
+Files: Common/*
+Copyright: 2014-2017, Bright Plaza Inc <drivetrust@drivetrust.com>
+           2007, Free Software Foundation, Inc. <http://fsf.org/>
+           2017, Spectra Logic Corporation
+           2014-2017, \n", GIT_VERSION
+License: GPL-3+
+
+Files: LinuxPBA/GetPassPhrase.cpp
+       LinuxPBA/GetPassPhrase.h
+       LinuxPBA/LinuxPBA.cpp
+       LinuxPBA/UnlockSEDs.cpp
+       LinuxPBA/UnlockSEDs.h
+       README.md
+       freebsd/DtaDevFreeBSDCAM.cpp
+       freebsd/DtaDevFreeBSDCAM.h
+       freebsd/DtaDevFreeBSDDrive.h
+       freebsd/DtaDevFreeBSDNvme.cpp
+       freebsd/DtaDevFreeBSDNvme.h
+       freebsd/DtaDevOS.cpp
+       freebsd/DtaDevOS.h
+       freebsd/os.h
+       linux/DtaDevLinuxDrive.h
+       linux/DtaDevLinuxNvme.cpp
+       linux/DtaDevLinuxNvme.h
+       linux/DtaDevLinuxSata.cpp
+       linux/DtaDevLinuxSata.h
+       linux/DtaDevOS.cpp
+       linux/DtaDevOS.h
+       linux/os.h
+       windows/DtaDevOS.cpp
+       windows/DtaDevOS.h
+       windows/DtaDiskATA.cpp
+       windows/DtaDiskATA.h
+       windows/DtaDiskNVMe.cpp
+       windows/DtaDiskNVMe.h
+       windows/DtaDiskUSB.cpp
+       windows/DtaDiskUSB.h
+       windows/ReadMe_Windows.txt
+Copyright: 2016-2018, Alexander Motin <mav@FreeBSD.org>
+           2014-2017, Bright Plaza Inc <drivetrust@drivetrust.com>
+License: GPL-3+
+
+Files: Common/pbkdf2/*
+License: CC0
+
+Files: Common/pbkdf2/COPYING
+       Common/pbkdf2/handy.h
+License: GPL-3+
+Comment: No explicit license found, using license(s) from:
+ Common/LICENSE.txt
+
+Files: Common/log.h
+Copyright: 2007, Petru Marginean <petru.marginean@gmail.com>
+           laws, the author or authors
+License: Unlicense
+
+Files: debian/*
+License: Unknown
+
+License: CC0
+Comment: Add the corresponding license text here
+
+License: GPL-3+
+Comment: Add the corresponding license text here
+
+License: Unlicense
+Comment: Add the corresponding license text here
+
