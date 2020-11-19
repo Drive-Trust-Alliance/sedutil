@@ -1,0 +1,20 @@
+Source: sedutil
+Section: admin
+Priority: optional
+Maintainer: Waqar Ahmed <waqar@ixsystems.com>
+Build-Depends:	build-essential,
+		make,
+		debhelper-compat (= 12),
+		gcc-multilib,
+		g++-multilib
+Standards-Version: 4.4.0
+Homepage: https://github.com/Drive-Trust-Alliance/sedutil
+
+Package: sedutil
+Architecture: any
+Depends:	${misc:Depends}, ${shlibs:Depends}
+Description: sedutil - The Drive Trust Alliance Self Encrypting Drive Utility
+
+This program and it's accompanying Pre-Boot Authorization image allow you
+to enable the locking in SED's that comply with the TCG OPAL 2.00 standard
+on bios machines.
