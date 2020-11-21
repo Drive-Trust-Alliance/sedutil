@@ -14,6 +14,5 @@ Package: sedutil
 Architecture: any
 Depends:	${misc:Depends}, ${shlibs:Depends}
 Description: The Drive Trust Alliance Self Encrypting Drive Utility
- This program and it's accompanying Pre Boot Authorization image allow you
- to enable the locking in SED's that comply with the TCG OPAL 2.00 standard
- on bios machines.
+ This program allows you to enable the locking in SED's that comply
+ with the TCG OPAL 2.00 standard on bios machines.

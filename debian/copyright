@@ -1,15 +1,13 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
 Files: *
-Copyright: > ${LOGFILE} 2>&1
-           2014-2017, Bright Plaza Inc <drivetrust@drivetrust.com>
+Copyright: 2014-2017, Bright Plaza Inc <drivetrust@drivetrust.com>
 License: UnknownCopyrighted
 
 Files: Common/*
 Copyright: 2014-2017, Bright Plaza Inc <drivetrust@drivetrust.com>
            2007, Free Software Foundation, Inc. <http://fsf.org/>
            2017, Spectra Logic Corporation
-           2014-2017, \n", GIT_VERSION
 License: GPL-3+
 
 Files: LinuxPBA/GetPassPhrase.cpp
@@ -62,14 +60,10 @@ Copyright: 2007, Petru Marginean <petru.marginean@gmail.com>
 License: Unlicense
 
 Files: debian/*
-License: Unknown
+License: GPL-3+
 
 License: CC0
-Comment: Add the corresponding license text here
 
 License: GPL-3+
-Comment: Add the corresponding license text here
 
 License: Unlicense
-Comment: Add the corresponding license text here
-
