@@ -114,7 +114,7 @@
     <ProjectGuid>{267E9D28-7245-4182-9740-F386F4299E83}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CLI</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -201,6 +201,7 @@
       <Command>powershell -ExecutionPolicy ByPass -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
 copy  "..\..\rc\QlmLicenseLib.*"  "$(TargetDir)"
 copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
+$(SolutionDir)..\..\windows\PyExtuD.bat
 
 </Command>
     </PreBuildEvent>
@@ -306,7 +307,8 @@ $(SolutionDir)..\..\windows\PyExtuD.bat
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy ByPass -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
 copy  "..\..\rc\QlmLicenseLib.*"  "$(TargetDir)"
-copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"</Command>
+copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
+$(SolutionDir)..\..\windows\PyExtuD.bat</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Create version header from git --version dirty</Message>
