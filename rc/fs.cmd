@@ -29,19 +29,19 @@ if "%1"=="" (
 )
 
 if "%1"=="win32" (
-	if %2=="Release" (
+	if "%2"=="Release" (
 		goto L2
 	)
-	if %2=="Debug" (
+	if "%2"=="Debug" (
 		goto L2
 	)
 	goto L1
 )
 if "%1"=="x64" (
-	if %2=="Release" (
+	if "%2"=="Release" (
 		goto L2
 	)
-	if %2=="Debug" (
+	if "%2"=="Debug" (
 		goto L2
 	)
 	@echo *******************************
@@ -74,8 +74,9 @@ set P2=%2
 goto exec
 
 :exec
-fs.exe ..\windows\CLI\%P1%\%P2%\sedutil-cli.exe
-
+fs.exe ..\windows\CLI\%P1%\%P2%\sedutil-cli.exe 
+dir ..\windows\CLI\%P1%\%P2%\sedutil-cli.exe
+type ..\Common\sedsize.h
 :end
 @REM end of fs.exe UEFI 
 @echo ********************************************************
