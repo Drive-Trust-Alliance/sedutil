@@ -4185,15 +4185,20 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 		//	progress_bar[1] = spinner[spinnertick.i++];
 			//printf("\r%s %i(%I64d) %s", progress_bar,filepos, DecompressedBufferSize, dev);
 			//
-			
-			printf("\r %c %i(%I64d) %d%% BklSz=%ld %s ", spinner[spinnertick.i++],  filepos, DecompressedBufferSize, (uint16_t)(((float)filepos / (float)DecompressedBufferSize) * 100), blockSize , dev);
+			if (sizeof(SIZE_T) == 8)
+				printf("\r%c %i(%I64d) %d%% BklSz=%ld %s ", spinner[spinnertick.i++],  filepos, (DecompressedBufferSize), (uint16_t)(((float)filepos / (float)DecompressedBufferSize) * 100), blockSize , dev);
+			else
+				printf("\r%c %i(%ld) %d%% BklSz=%ld %s ", spinner[spinnertick.i++], filepos, (DecompressedBufferSize), (uint16_t)(((float)filepos / (float)DecompressedBufferSize) * 100), blockSize, dev);
 			fflush(stdout);
 
 			// open progress output file at slower rate
 			if (!(filepos % (blockSize * 50))) {
 				progfile.open(sernum, ios::out);
 				memset(progbuf, 0, 50);
-				sprintf(progbuf, "\r%i(%I64d)", filepos, DecompressedBufferSize);
+				if (sizeof(SIZE_T) == 8)
+					sprintf(progbuf, "\r%i(%I64d)", filepos, DecompressedBufferSize);
+				else
+					sprintf(progbuf, "\r%i(%ld)", filepos, DecompressedBufferSize);
 				progfile.write(progbuf, strlen(progbuf));
 				progfile.close();
 			}
@@ -4235,11 +4240,17 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 	} // end of while 
 
 	//printf("\r%s %i(%I64d) bytes written \n", progress_bar, filepos, DecompressedBufferSize);
-	printf("\n%I64d(%I64d) bytes written to %s \n", filepos - blockSize + sz, DecompressedBufferSize, dev);
+	if (sizeof(SIZE_T) == 8)
+		printf("\n%Id(%I64d) bytes written to %s \n", (int32_t)(filepos - blockSize + sz), DecompressedBufferSize, dev);
+	else
+		printf("\n%Id(%ld) bytes written to %s \n", (int32_t)(filepos - blockSize + sz), DecompressedBufferSize, dev);
 	// open progress output file
 	progfile.open(sernum, ios::out);
 	memset(progbuf, 0, 50);
-	sprintf(progbuf, "\r%i(%I64d) Complete PBA write", filepos, DecompressedBufferSize);
+	if (sizeof(SIZE_T) == 8)
+		sprintf(progbuf, "\r%i(%I64d) Complete PBA write", filepos, DecompressedBufferSize);
+	else
+		sprintf(progbuf, "\r%i(%ld) Complete PBA write", filepos, DecompressedBufferSize);
 	progfile.write(progbuf, strlen(progbuf));
 	progfile.close();
 
