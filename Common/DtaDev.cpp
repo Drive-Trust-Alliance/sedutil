@@ -365,7 +365,14 @@ OK101:
 			printf("disk_info.BlockSID_HardReset= %d\n", disk_info.BlockSID_HardReset);
 #endif
 			break;
-		case FC_DataRemoval: /* Data Remove mechanism 0x403 */
+		case FC_NSLocking:
+			disk_info.NSLocking = 1;
+			disk_info.NSLocking_version = body->Configurable_Namespace_LockingFeature.version;
+			disk_info.Max_Key_Count = body->Configurable_Namespace_LockingFeature.Max_Key_Count;
+			disk_info.Unused_Key_Count = body->Configurable_Namespace_LockingFeature.Unused_Key_Count;
+			disk_info.Max_Range_Per_NS = body->Configurable_Namespace_LockingFeature.Max_Range_Per_NS;
+			break;
+		case FC_DataRemoval: /* Data Remove mechanism 0x404 */
 			disk_info.DataRemoval = 1;
 			disk_info.DataRemoval_version = body->dataremoval.version;
 			disk_info.DataRemoval_Mechanism = body->dataremoval.DataRemoval_Mechanism;
@@ -381,6 +388,7 @@ OK101:
 			disk_info.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit1;
 			disk_info.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit0;
 			disk_info.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit0;
+			break;
         default:
 			if (0xbfff < (SWAP16(body->TPer.featureCode))) {
 				// silently ignore vendor specific segments as there is no public doc on them

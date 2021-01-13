@@ -84,8 +84,16 @@ DWORD GetIDFY(HANDLE hDev, PStorageQueryWithBuffer Qry)
 	Qry->ProtocolSpecific.DataType = NVMeDataTypeIdentify;
 	Qry->ProtocolSpecific.ProtocolDataOffset = sizeof(STORAGE_PROTOCOL_SPECIFIC_DATA);
 	Qry->ProtocolSpecific.ProtocolDataLength  = IO_BUFFER_LENGTH;
+		Qry->ProtocolSpecific.ProtocolDataRequestValue = 1 ; // 0-511, only 1 OK other fail ;  1:0-> OK; 2:0->NG 0:0 -> NG cdw10 maybe CNS value either 0 or 1 ; cdw0 = opcode = 06
+		Qry->ProtocolSpecific.ProtocolDataRequestSubValue = 0 ; // nsid 0 - 0ffffh all OK , this is don't care value
 	Qry->Query.PropertyId = StorageAdapterProtocolSpecificProperty;
 	Qry->Query.QueryType = PropertyStandardQuery;
+	// from smartmontools project os_win32.cpp
+	/*
+	  spsq->ProtocolSpecific.DataType = win10::NVMeDataTypeIdentify;
+      spsq->ProtocolSpecific.ProtocolDataRequestValue = in.cdw10;
+      spsq->ProtocolSpecific.ProtocolDataRequestSubValue = in.nsid;
+	*/
 	IFLOG(D4) {
 		LOG(I) << "Qry data before DeviceIoControl";
 		DtaHexDump(Qry, 128);

@@ -34,6 +34,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define FC_PYRITE2    0x0303
 #define FC_RUBY       0x0304
 #define FC_BlockSID   0x0402
+#define FC_NSLocking 0x0403 // Mandatory 2018 TCG feature set  1.32
 #define FC_DataRemoval 0x0404
 /** The Discovery 0 Header. As defined in
 * Opal SSC Documentation
@@ -350,6 +351,21 @@ typedef struct _Discovery0DataRemovalMechanismFeatures {
 	uint8_t reserved16[16]; // byte 20 - 35
 } Discovery0DataRemovalMechanismFeatures;
 
+//=====
+/** Configuable Namespace Locking features 
+*/
+typedef struct _Discovery0Configurable_Namespace_LockingFeature {
+	uint16_t featureCode; /* 0x0403 */
+	uint8_t reserved_v : 4;
+	uint8_t version : 4;
+	uint8_t reserved; 
+	uint32_t Max_Key_Count;
+	uint32_t Unused_Key_Count;
+	uint32_t Max_Range_Per_NS;
+} Discovery0Configurable_Namespace_LockingFeature;
+
+// =====
+
 /** Union of features used to parse the discovery 0 response */
 union Discovery0Features {
     Discovery0TPerFeatures TPer;
@@ -366,6 +382,7 @@ union Discovery0Features {
     Discovery0DatastoreTable datastore;
 	Discovery0BlockSIDFeatures blocksidauth;
 	Discovery0DataRemovalMechanismFeatures dataremoval;
+	Discovery0Configurable_Namespace_LockingFeature  Configurable_Namespace_LockingFeature;
 };
 
 /** ComPacket (header) for transmissions. */
@@ -443,6 +460,8 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t RUBY : 1;
 	uint8_t BlockSID : 1;
 	uint8_t DataRemoval : 1; 
+	uint8_t NSLocking : 1;
+
     // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
     uint8_t TPer_ACKNACK : 1;
     uint8_t TPer_async : 1;
@@ -511,6 +530,7 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t BlockSID_BlockSIDState : 1;
 	uint8_t BlockSID_SIDvalueState : 1;
 	uint8_t BlockSID_HardReset : 1;
+	// FC 403
 
 	uint8_t DataRemoval_version;
 	uint8_t DataRemoval_OperationProcessing;
@@ -527,6 +547,14 @@ typedef struct _OPAL_DiskInfo {
 	uint16_t DataRemoval_Time_Bit1;
 	uint8_t DataRemoval_TimeFormat_Bit0;
 	uint16_t DataRemoval_Time_Bit0;
+	// NSLocking 
+	uint8_t NSLocking_version;
+	uint8_t range_C : 1;
+	uint8_t range_P : 1;
+	uint8_t Max_Key_Count;
+	uint8_t Unused_Key_Count;
+	uint8_t Max_Range_Per_NS;
+
 
     // IDENTIFY information
     DTA_DEVICE_TYPE devType;
