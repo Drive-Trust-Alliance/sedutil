@@ -43,5 +43,8 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * device, unsigne
  */
 void DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
         unsigned int iter = 75000, uint8_t hashsize = 32);
+void DtaHashPasswordLogging(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
+	unsigned int iter = 123, uint8_t hashsize = 32);
 /** Test the hshing function using publicly available test cased and report */
 int TestPBKDF2();
+void data2ascii(vector<uint8_t> &h, vector<uint8_t>  &password);

@@ -97,6 +97,39 @@ exit:	// add the token overhead
 	LOG(D1) << " Exited DtaHashPassword";
 }
 
+// hashing for logging ON OFF command
+
+
+void DtaHashPasswordLogging(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
+	unsigned int iter, uint8_t hashsize) {
+
+	hash.clear();
+	hash.reserve(hashsize); // hope this will prevent reallocation
+	for (uint8_t i = 0; i < hashsize; i++) {
+		hash.push_back(' ');
+	}
+#if 1 // defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+	cf_pbkdf2_hmac((uint8_t *)password, strnlen(password, 256),
+		salt.data(), salt.size(),
+		iter,
+		hash.data(), hash.size(),
+		&cf_sha1);
+#endif
+	//	gc_pbkdf2_sha1(password, strnlen(password, 256), (const char *)salt.data(), salt.size(), iter,
+	//		(char *)hash.data(), hash.size());
+	//exit:	// add the token overhead
+#if 0
+	hash.insert(hash.begin(), (uint8_t)hash.size());
+	hash.insert(hash.begin(), 0xd0);
+#endif
+	//LOG(D1) << " Exited DtaHashPassword";
+}
+
+
+
+
+
+
 // credit
 // https://www.codeproject.com/articles/99547/hex-strings-to-raw-data-and-back
 //
@@ -159,7 +192,49 @@ vector<uint8_t> hex2data(char * password)
 	return h;
 }
 
+// hex data to asci Upper case 
+inline unsigned char hex_nibble_to_ascii(uint8_t ch)
+{
+	switch (ch)
+	{
+	case 0: return '0';
+	case 1: return '1';
+	case 2: return '2';
+	case 3: return '3';
+	case 4: return '4';
+	case 5: return '5';
+	case 6: return '6';
+	case 7: return '7';
+	case 8: return '8';
+	case 9: return '9';
+	case 0xA: return 'A';
+	case 0xB: return 'B';
+	case 0xC: return 'C';
+	case 0xD: return 'D';
+	case 0xE: return 'E';
+	case 0xF: return 'F';
+	default: return '?';  // throw std::invalid_argument();
+	}
+}
 
+void data2ascii(vector<uint8_t> &h , vector<uint8_t> &password)
+{
+	// 32-byte hash hex to 64 byte ascii 
+	for (uint16_t i = 0; i < h.size(); i += 1)
+	{
+		password.push_back(hex_nibble_to_ascii((h[i] >> 4) & 0x0f));
+		password.push_back(hex_nibble_to_ascii(h[i] & 0x0f));
+		//password[i * 2] = hex_nibble_to_ascii((h[i]>>4) & 0x0f); // high nibble
+		//password[i * 2 + 1] = hex_nibble_to_ascii(h[i] & 0x0f); // low nibble
+	}
+#if 0
+	printf("32-byte hex to 64-byte ascii : ");
+	for (uint16_t i = 0; i < password.size(); i++)
+		printf("%02X", password[i]);
+	printf("\n");
+#endif
+
+}
 #ifndef PYEXTHASH
 //void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int iter){}
 void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int iter)

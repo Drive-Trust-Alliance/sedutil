@@ -47,6 +47,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 //#include <msclr\marshal_cppstd.h>
 #endif
 #include "ob.h"
+#include "regtry.h"
 
 void setlic(char * lic_level, const char * LicenseLevel);
 
@@ -820,11 +821,42 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	return 0;
 }
 
+inline void logc(int argc, char * argv[])
+{
+	LSTATUS ls;
+	regMgr m;
+	ls = m.registry_readex(HKEY_LOCAL_MACHINE, "SOFTWARE\\Fidelity Height LLC\\SEDUTIL LOG", "LOGGING", REG_SZ);
+	if (ls) {
+		//std::cout << "registry_writeex error" << std::endl;
+		return ;
+	}
+	if (m.get_logging()) { //logging ON 
+		char filename[] = "sedutil.log";
+		fstream uidlFile(filename, std::fstream::in | std::fstream::out | std::fstream::app);
+		string s;
+		s = "- "; s.append(NowTime()); s.append(" LOG: ");
+		for (int i = 0; i < argc; i++) {
+			//uidlFile << argv[i];
+			s.append(argv[i]); s.append(" ");
+		}
+		s.append("\n");
+		if (uidlFile.is_open()) {
+			//uidlFile << "- " << NowTime() << " LOG: " ;
+			uidlFile << s.c_str();
+			uidlFile.close();
+		}
+	}
+}
+
 int main(int argc, char * argv[])
 {
 	string st1;
 	DTA_OPTIONS opts;
 	DtaDev *tempDev = NULL, *d = NULL;
+	// Log command here
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+	logc(argc, argv);
+#endif
 	if (DtaOptions(argc, argv, &opts)) {
 		return DTAERROR_COMMAND_ERROR;
 	}
@@ -971,9 +1003,9 @@ int main(int argc, char * argv[])
 	*/
 #endif
 
-	for (int i = 0; i < argc; i++)
-		printf("%s ", argv[i]);
-	printf("\n");
+	//for (int i = 0; i < argc; i++)
+	//	printf("%s ", argv[i]);
+	//printf("\n");
 
 	if ((opts.action != sedutiloption::scan) && 
 		(opts.action != sedutiloption::validatePBKDF2) &&
@@ -1268,7 +1300,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-		printf("Opal Lock Version : 0.8.5.%s.%s 20210112-A001\n", st1.c_str(),GIT_VERSION);
+		printf("Opal Lock Version : 0.8.7.%s.%s 20210201-A001\n", st1.c_str(),GIT_VERSION);
 
 		return 0;
 		break;

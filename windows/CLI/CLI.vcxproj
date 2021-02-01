@@ -84,6 +84,7 @@
     <ClCompile Include="..\..\Common\pbkdf2\hmac.c" />
     <ClCompile Include="..\..\Common\pbkdf2\pbkdf2.c" />
     <ClCompile Include="..\..\Common\pbkdf2\sha1.c" />
+    <ClCompile Include="..\..\Common\regtry.cpp" />
     <ClCompile Include="..\..\Common\sedutil.cpp" />
     <ClCompile Include="..\..\License\LicenseValidator.cpp" />
     <ClCompile Include="..\..\License\stdafx.cpp" />
