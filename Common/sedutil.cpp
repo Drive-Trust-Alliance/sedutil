@@ -65,6 +65,8 @@ int diskScan(char * devskip)
 	printf("\nScanning for Opal compliant disks\n");
 	while (TRUE) {
 		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i);
+		LOG(D1) << devname << " " << atoi(devname + 17);
+		
 		d = new DtaDevGeneric(devname);
 		if (d->isPresent()) {
 			printf("%s", devname);
@@ -1300,7 +1302,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-		printf("Opal Lock Version : 0.8.7.%s.%s 20210201-A001\n", st1.c_str(),GIT_VERSION);
+		printf("Opal Lock Version : 0.8.8.%s.%s 20210208-A001\n", st1.c_str(),GIT_VERSION);
 
 		return 0;
 		break;

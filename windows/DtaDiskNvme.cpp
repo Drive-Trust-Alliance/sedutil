@@ -123,6 +123,106 @@ DWORD GetIDFY(HANDLE hDev, PStorageQueryWithBuffer Qry)
 	return dwRet;
 }
 
+
+BOOL GetScsiAddress(const TCHAR* Path, BYTE* PortNumber, BYTE* PathId, BYTE* TargetId, BYTE* Lun)
+{
+	HANDLE hDevice = CreateFile(Path,
+		GENERIC_READ | GENERIC_WRITE,
+		FILE_SHARE_READ | FILE_SHARE_WRITE,
+		nullptr,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL,
+		nullptr);
+	DWORD dwReturned;
+	SCSI_ADDRESS ScsiAddr;
+	BOOL bRet = DeviceIoControl(hDevice, IOCTL_SCSI_GET_ADDRESS,
+		nullptr, 0, &ScsiAddr, sizeof(ScsiAddr), &dwReturned, NULL);
+
+	CloseHandle(hDevice);
+
+	*PortNumber = ScsiAddr.PortNumber;
+	*PathId = ScsiAddr.PathId;
+	*TargetId = ScsiAddr.TargetId;
+	*Lun = ScsiAddr.Lun;
+
+	return bRet == TRUE;
+}
+
+/////  Intel RST driver use nvme pass through 
+// use scsi address instead of physicaldrive
+BOOL DoIdentifyDeviceNVMeIntelRst(BYTE physicalDriveId, BYTE scsiPort, BYTE scsiTargetId, IDENTIFY_DEVICE* data);
+BOOL DoIdentifyDeviceNVMeIntelRst(BYTE physicalDriveId, BYTE scsiPort, BYTE scsiTargetId, IDENTIFY_DEVICE* data)
+{
+	//CString path;
+	//path.Format(L"\\\\.\\PhysicalDrive%d", physicalDriveId);
+	TCHAR path[64] = TEXT("\0");
+	sprintf_s(path, "\\\\.\\PhysicalDrive%d", physicalDriveId);
+
+	/*
+	uint8_t physicalDriveId = 0;
+	uint8_t scsiTargetId;
+	uint8_t scsiPort;
+	uint8_t lun;
+	*/
+	BYTE portNumber, pathId, targetId, lun;
+	// translate physical address to scsi port number,
+	GetScsiAddress(path, &portNumber, &pathId, &targetId, &lun);
+	//CString drive;
+	TCHAR drive[64] = TEXT("\0");
+	
+	sprintf_s(drive, TEXT("\\\\.\\Scsi%d:"), portNumber);
+	// LOG(I) << "drive = " << drive ;
+	
+	HANDLE hIoCtrl = CreateFile(drive,
+		GENERIC_READ | GENERIC_WRITE,
+		FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr,
+		OPEN_EXISTING, 0, nullptr);
+
+	if (hIoCtrl != INVALID_HANDLE_VALUE)
+	{
+		INTEL_NVME_PASS_THROUGH NVMeData;
+		memset(&NVMeData, 0, sizeof(NVMeData));
+
+		NVMeData.SRB.HeaderLength = sizeof(SRB_IO_CONTROL);
+		memcpy(NVMeData.SRB.Signature, "IntelNvm", 8);
+		NVMeData.SRB.Timeout = 10;
+		NVMeData.SRB.ControlCode = IOCTL_INTEL_NVME_PASS_THROUGH;
+		NVMeData.SRB.Length = sizeof(INTEL_NVME_PASS_THROUGH) - sizeof(SRB_IO_CONTROL);
+
+		NVMeData.Payload.Version = 1;
+		NVMeData.Payload.PathId = pathId;
+		NVMeData.Payload.Cmd.CDW0.Opcode = 0x06; // ADMIN_IDENTIFY
+		NVMeData.Payload.Cmd.NSID = 0;
+		NVMeData.Payload.Cmd.u.IDENTIFY.CDW10.CNS = 1;
+		NVMeData.Payload.ParamBufLen = sizeof(INTEL_NVME_PAYLOAD) + sizeof(SRB_IO_CONTROL); //0xA4;
+		NVMeData.Payload.ReturnBufferLen = 0x1000;
+		NVMeData.Payload.CplEntry[0] = 0;
+
+		DWORD dummy;
+		if (DeviceIoControl(hIoCtrl, IOCTL_SCSI_MINIPORT,
+			&NVMeData,
+			sizeof(NVMeData),
+			&NVMeData,
+			sizeof(NVMeData),
+			&dummy, nullptr))
+		{
+			memcpy_s(data, sizeof(IDENTIFY_DEVICE), NVMeData.DataBuffer, sizeof(IDENTIFY_DEVICE));
+			LOG(D1) << "DeviceIoControl(hIoCtrl, IOCTL_SCSI_MINIPORT, OK " << "sizeof(ADMIN_IDENTIFY_CONTROLLER)=" << sizeof(ADMIN_IDENTIFY_CONTROLLER);
+			//DtaHexDump(data, 512);
+			//DtaHexDump(NVMeData.DataBuffer, 512);
+			return TRUE;
+		}
+		else {
+			LOG(D1) << "DeviceIoControl(hIoCtrl, IOCTL_SCSI_MINIPORT, FAIL";
+		}
+
+		CloseHandle(hIoCtrl);
+	}
+	LOG(D1) << "DeviceIoControl(hIoCtrl, IOCTL_SCSI_MINIPORT, FAIL to OPEN";
+	return FALSE;
+}
+
+
 //////////////////////////////////////////////////////////////////////////////////////
 
 using namespace std;
@@ -131,6 +231,11 @@ DtaDiskNVME::DtaDiskNVME() { LOG(D1) << "DtaDiskNVME Constructor"; };
 void DtaDiskNVME::init(const char * devref)
 {
 	LOG(D1) << "Creating DtaDiskNVME::DtaDiskNVME() " << devref;
+	// find interger value of drive numver fron devref
+	// buf is \\\\.\\PhysicaldriveNN at position 20 -> NG, try 17
+	physicalDriveId = atoi(devref + 17);
+	// printf("physical drive numere is %d\n", physicalDriveId);
+
 	//DtaHexDump((void *)devref, 23);
 	SDWA * scsi =
 		(SDWA *)_aligned_malloc((sizeof(SDWA)), 4096);
@@ -309,8 +414,36 @@ void DtaDiskNVME::identify(OPAL_DiskInfo& disk_info)
 		}
 	}
 	else {
-		LOG(D4) << "GetIDFY fail, no device info";
-		return;
+		// try Intel RST before claim fail 
+		LOG(D1) << "Nvme IDFY FAIL, Try Nvme Intel RST";
+		IDENTIFY_DEVICE*  id = (IDENTIFY_DEVICE*)identifyResp;
+		//if (DoIdentifyDeviceNVMeIntelRst(INT physicalDriveId, INT scsiPort, INT scsiTargetId, IDENTIFY_DEVICE* data))
+		if (DoIdentifyDeviceNVMeIntelRst(physicalDriveId, scsiPort, scsiTargetId, (IDENTIFY_DEVICE*) identifyResp))
+		{
+			LOG(D1) << "DoIdentifyDeviceNVMeIntelRst(physicalDriveId, scsiPort, scsiTargetId, (IDENTIFY_DEVICE*) identifyResp) OK";
+			// identifyResponse point to data structure NVME_IDENTIFY_DEVICE
+			// save it to disk_ifo
+			disk_info.devType = DEVICE_TYPE_NVME;
+			for (int i = 0; i < sizeof(disk_info.serialNum); i += 1) {
+				disk_info.serialNum[i] = id->N.SerialNumber[i];
+			}
+			for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 1) {
+				disk_info.firmwareRev[i] = id->N.FirmwareRev[i];
+			}
+			for (int i = 0; i < sizeof(disk_info.modelNum); i += 1) {
+				disk_info.modelNum[i] = id->N.Model[i];
+			}
+			_aligned_free(identifyResp);
+			return;
+
+
+		}
+		else {
+			;
+			LOG(I) << "GetIDFY fail, no device info";
+			_aligned_free(identifyResp);
+			return;
+		}
 	}
 	
 	ADMIN_IDENTIFY_CONTROLLER * id = (ADMIN_IDENTIFY_CONTROLLER *)Q->Buffer;
