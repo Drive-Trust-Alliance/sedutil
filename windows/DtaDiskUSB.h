@@ -20,6 +20,11 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 #include "os.h"
 #include "DtaDiskType.h"
+#include "IntelRST.h"
+
+// specific ////////////////////////////////////////////////////
+
+
 /** Device specific implementation of disk access functions. */
 typedef struct _SDWB {
 	SCSI_PASS_THROUGH_DIRECT sd;
@@ -59,8 +64,16 @@ public:
 	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, void * buffer, uint32_t bufferlen);
 	/** OS specific routine to send an ATA identify to the device */
 	void identify(OPAL_DiskInfo& disk_info);
+	BOOL DoIdentifyDevicePd(INT physicalDriveId, BYTE target, IDENTIFY_DEVICE * data);
+	HANDLE GetIoCtrlHandle(BYTE index);
+	BOOL SendAtaCommandPd(INT physicalDriveId, BYTE target, BYTE main, BYTE sub, BYTE param, PBYTE data, DWORD dataSize);
+
 private:
 	void * scsiPointer;
 	HANDLE hDev; /**< Windows device handle */
 	uint8_t isOpen = FALSE;
+public:
+	BYTE physicalDriveId = 0;
+	BYTE scsiTargetId;
+	BYTE scsiPort;
 };

@@ -37,6 +37,7 @@ DtaDiskUSB::DtaDiskUSB() {};
 void DtaDiskUSB::init(const char * devref)
 {
     LOG(D1) << "Creating DtaDiskUSB::DtaDiskUSB() " << devref;
+	physicalDriveId = atoi(devref + 17);
     SDWB * scsi =
             (SDWB *) _aligned_malloc((sizeof (SDWB)), 4096);
     scsiPointer = (void *) scsi;
@@ -139,6 +140,41 @@ void DtaDiskUSB::identify(OPAL_DiskInfo& disk_info)
     }
 	if (!(memcmp(identifyResp, nullz.data(), 512))) {
 		disk_info.devType = DEVICE_TYPE_OTHER;
+		// before give up, try identifyPd
+		////////////////////////////////////////
+		IDENTIFY_DEVICE identify = { 0 };
+		if (DoIdentifyDevicePd(physicalDriveId, 0xA0, &identify)) {
+			// success
+			USB_INQUIRY_DATA * id = (USB_INQUIRY_DATA *) &identify;
+			//DtaHexDump(id, 512);
+			disk_info.devType = DEVICE_TYPE_USB;
+			uint8_t non_ascii = 0;
+			for (int i = 0; i < sizeof(disk_info.serialNum); i += 2) {
+				disk_info.serialNum[i] = id->ProductSerial[i + 1];
+				disk_info.serialNum[i + 1] = id->ProductSerial[i];
+				if (!isprint(disk_info.serialNum[i])) { non_ascii = 1; ; break; };
+				if (!isprint(disk_info.serialNum[i + 1])) { non_ascii = 1; ; break; };
+			}
+			for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 2) {
+				disk_info.firmwareRev[i] = id->ProductRev[i + 1];
+				disk_info.firmwareRev[i + 1] = id->ProductRev[i];
+				if (!isprint(disk_info.firmwareRev[i])) { non_ascii = 1; ; break; }
+				if (!isprint(disk_info.firmwareRev[i + 1])) { non_ascii = 1; ; break; }
+			}
+			for (int i = 0; i < sizeof(disk_info.modelNum); i += 2) {
+				disk_info.modelNum[i] = id->ProductID[i + 1];
+				disk_info.modelNum[i + 1] = id->ProductID[i];
+				if (!isprint(disk_info.modelNum[i])) { non_ascii = 1; ; break; };
+				if (!isprint(disk_info.modelNum[i + 1])) { non_ascii = 1; ; break; };
+			}
+
+		}
+		else {
+			// fail again 
+
+		}
+
+		/////////////////////////////////////////
 		_aligned_free(identifyResp);
 		return;
 	}
@@ -197,4 +233,181 @@ DtaDiskUSB::~DtaDiskUSB()
     LOG(D1) << "Destroying DtaDiskUSB";
     CloseHandle(hDev);
     _aligned_free(scsiPointer);
+}
+
+HANDLE DtaDiskUSB::GetIoCtrlHandle(BYTE index)
+{
+	char strDevice[64] = { 0 };
+
+	sprintf_s(strDevice, "\\\\.\\PhysicalDrive%d",index);
+
+	return ::CreateFile(strDevice, GENERIC_READ | GENERIC_WRITE,
+		FILE_SHARE_READ | FILE_SHARE_WRITE,
+		NULL, OPEN_EXISTING, 0, NULL);
+}
+
+/////////////////////////////////////////////
+
+BOOL DtaDiskUSB::DoIdentifyDevicePd(INT physicalDriveId, BYTE target, IDENTIFY_DEVICE * data)
+{
+	BOOL	bRet = FALSE;
+	HANDLE	hIoCtrl;
+	DWORD	dwReturned;
+	CHAR * cstr;
+
+	IDENTIFY_DEVICE_OUTDATA	sendCmdOutParam;
+	SENDCMDINPARAMS	sendCmd;
+	LOG(D1) << "Enetring DoIdentifyDevicePd";
+	if (data == NULL)
+	{
+		LOG(D1) << "Enetring DoIdentifyDevicePd data == Null return FALSE";
+		return	FALSE;
+	}
+
+	LOG(D1) << "SendAtaCommandPd - IDENTIFY_DEVICE (ATA_PASS_THROUGH) - EC";
+	// SendAtaCommandPd(INT physicalDriveId, target, main, sub,  param, PBYTE data, DWORD dataSize)
+	bRet = SendAtaCommandPd(physicalDriveId, target, 0xEC, 0x00, 0x00, (PBYTE)data, sizeof(IDENTIFY_DEVICE));
+	cstr = data->A.Model;
+
+	if (bRet == FALSE || strlen(cstr) == 0 )
+	{
+		LOG(D1) << "SendAtaCommandPd - IDENTIFY_DEVICE (ATA_PASS_THROUGH) - EC return FALSE or no mdoel number";
+		::ZeroMemory(data, sizeof(IDENTIFY_DEVICE));
+		hIoCtrl = GetIoCtrlHandle(physicalDriveId);
+		if (hIoCtrl == INVALID_HANDLE_VALUE)
+		{
+			return	FALSE;
+		}
+		::ZeroMemory(&sendCmdOutParam, sizeof(IDENTIFY_DEVICE_OUTDATA));
+		::ZeroMemory(&sendCmd, sizeof(SENDCMDINPARAMS));
+
+		sendCmd.irDriveRegs.bCommandReg = ID_CMD;
+		sendCmd.irDriveRegs.bSectorCountReg = 1;
+		sendCmd.irDriveRegs.bSectorNumberReg = 1;
+		sendCmd.irDriveRegs.bDriveHeadReg = target;
+		sendCmd.cBufferSize = IDENTIFY_BUFFER_SIZE;
+
+		LOG(D1) << "SendAtaCommandPd - IDENTIFY_DEVICE - DFP_RECEIVE_DRIVE_DATA";
+		bRet = ::DeviceIoControl(hIoCtrl, DFP_RECEIVE_DRIVE_DATA,
+			&sendCmd, sizeof(SENDCMDINPARAMS),
+			&sendCmdOutParam, sizeof(IDENTIFY_DEVICE_OUTDATA),
+			&dwReturned, NULL);
+
+		::CloseHandle(hIoCtrl);
+
+		if (bRet == FALSE || dwReturned != sizeof(IDENTIFY_DEVICE_OUTDATA))
+		{
+			LOG(D1) << "SendAtaCommandPd - IDENTIFY_DEVICE - DFP_RECEIVE_DRIVE_DATA return FALSE";
+			return	FALSE;
+		}
+		else {
+			LOG(D1) << "SendAtaCommandPd - IDENTIFY_DEVICE - DFP_RECEIVE_DRIVE_DATA return TRUE";
+		}
+
+		memcpy_s(data, sizeof(IDENTIFY_DEVICE), sendCmdOutParam.SendCmdOutParam.bBuffer, sizeof(IDENTIFY_DEVICE));
+	}
+
+	return	TRUE;
+}
+
+
+BOOL m_bAtaPassThrough = TRUE;
+
+BOOL DtaDiskUSB::SendAtaCommandPd(INT physicalDriveId, BYTE target, BYTE main, BYTE sub, BYTE param, PBYTE data, DWORD dataSize)
+{
+	BOOL	bRet;
+	HANDLE	hIoCtrl;
+	DWORD	dwReturned;
+	LOG(D1) << "Entering SendAtaCommandPd(INT physicalDriveId, BYTE target, BYTE main, BYTE sub, BYTE param, PBYTE data, DWORD dataSize)";
+	hIoCtrl = GetIoCtrlHandle(physicalDriveId);
+	if (hIoCtrl == INVALID_HANDLE_VALUE)
+	{
+		return	FALSE;
+	}
+
+	if (m_bAtaPassThrough)
+	{
+		ATA_PASS_THROUGH_EX_WITH_BUFFERS ab;
+		::ZeroMemory(&ab, sizeof(ab));
+		ab.Apt.Length = sizeof(ATA_PASS_THROUGH_EX);
+		ab.Apt.TimeOutValue = 2;
+		DWORD size = offsetof(ATA_PASS_THROUGH_EX_WITH_BUFFERS, Buf);
+		ab.Apt.DataBufferOffset = size;
+
+		if (dataSize > 0)
+		{
+			if (dataSize > sizeof(ab.Buf))
+			{
+				return FALSE;
+			}
+			ab.Apt.AtaFlags = ATA_FLAGS_DATA_IN;
+			ab.Apt.DataTransferLength = dataSize;
+			ab.Buf[0] = 0xCF; // magic number
+			size += dataSize;
+		}
+
+		ab.Apt.CurrentTaskFile.bFeaturesReg = sub;
+		ab.Apt.CurrentTaskFile.bSectorCountReg = param;
+		ab.Apt.CurrentTaskFile.bDriveHeadReg = target;
+		ab.Apt.CurrentTaskFile.bCommandReg = main;
+
+		if (main == SMART_CMD)
+		{
+			ab.Apt.CurrentTaskFile.bCylLowReg = SMART_CYL_LOW;
+			ab.Apt.CurrentTaskFile.bCylHighReg = SMART_CYL_HI;
+			ab.Apt.CurrentTaskFile.bSectorCountReg = 1;
+			ab.Apt.CurrentTaskFile.bSectorNumberReg = 1;
+		}
+
+		bRet = ::DeviceIoControl(hIoCtrl, IOCTL_ATA_PASS_THROUGH,
+			&ab, size, &ab, size, &dwReturned, NULL);
+		::CloseHandle(hIoCtrl);
+		// If the operation completes successfully, the return value is nonzero.
+		if (bRet && dataSize && data != NULL)
+		{
+			LOG(D1) << "Entering SendAtaCommandPd(INT physicalDriveId, BYTE target, BYTE main, BYTE sub, BYTE param, PBYTE data, DWORD dataSize) - ::DeviceIoControl(hIoCtrl, IOCTL_ATA_PASS_THROUGH OK";
+			memcpy_s(data, dataSize, ab.Buf, dataSize);
+			//LOG(D) << "data = ";
+			//DtaHexDump(data, 512);
+			//LOG(D) << "ab.Buf = "; 
+			//DtaHexDump(ab.Buf, 512);
+		}
+		else { 
+			LOG(D1) << "Entering SendAtaCommandPd(INT physicalDriveId, BYTE target, BYTE main, BYTE sub, BYTE param, PBYTE data, DWORD dataSize) - ::DeviceIoControl(hIoCtrl, IOCTL_ATA_PASS_THROUGH FAIL"; 
+		}
+
+	}
+	//else if (m_Os.dwMajorVersion <= 4)
+	//{
+	//	return FALSE;
+	//}
+	else
+	{
+		DWORD size = sizeof(CMD_IDE_PATH_THROUGH) - 1 + dataSize;
+		CMD_IDE_PATH_THROUGH* buf = (CMD_IDE_PATH_THROUGH*)VirtualAlloc(NULL, size, MEM_COMMIT, PAGE_READWRITE);
+
+		buf->reg.bFeaturesReg = sub;
+		buf->reg.bSectorCountReg = param;
+		buf->reg.bSectorNumberReg = 0;
+		buf->reg.bCylLowReg = 0;
+		buf->reg.bCylHighReg = 0;
+		buf->reg.bDriveHeadReg = target;
+		buf->reg.bCommandReg = main;
+		buf->reg.bReserved = 0;
+		buf->length = dataSize;
+
+		bRet = ::DeviceIoControl(hIoCtrl, IOCTL_IDE_PASS_THROUGH,
+			buf, size, buf, size, &dwReturned, NULL);
+		::CloseHandle(hIoCtrl);
+		if (bRet && dataSize && data != NULL)
+		{
+			LOG(D1) << "Entering SendAtaCommandPd(INT physicalDriveId, BYTE target, BYTE main, BYTE sub, BYTE param, PBYTE data, DWORD dataSize) - DeviceIoControl(hIoCtrl, IOCTL_IDE_PASS_THROUGH, - OK";
+			memcpy_s(data, dataSize, buf->buffer, dataSize);
+		}
+		else { LOG(D1) << "Entering SendAtaCommandPd(INT physicalDriveId, BYTE target, BYTE main, BYTE sub, BYTE param, PBYTE data, DWORD dataSize) - DeviceIoControl(hIoCtrl, IOCTL_IDE_PASS_THROUGH, - FAIL"; }
+		VirtualFree(buf, 0, MEM_RELEASE);
+	}
+
+	LOG(D1) << "Exiting SendAtaCommandPd(INT physicalDriveId, BYTE target, BYTE main, BYTE sub, BYTE param, PBYTE data, DWORD dataSize) ";
+	return	bRet;
 }
