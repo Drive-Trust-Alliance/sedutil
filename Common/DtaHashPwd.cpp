@@ -172,7 +172,7 @@ vector<uint8_t> hex2data(char * password)
 		printf("strlen(password)=%d\n", (int)strlen(password));
 	if (strlen(password) != 64)
 	{
-		//LOG(I) << "Hashed Password length isn't 64-byte, no translation";
+		//LOG(D) << "Hashed Password length isn't 64-byte, no translation";
 		h.clear();
 		for (uint16_t i = 0; i < (uint16_t)strnlen(password, 32); i++)
 			h.push_back(password[i]);

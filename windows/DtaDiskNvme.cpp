@@ -95,7 +95,7 @@ DWORD GetIDFY(HANDLE hDev, PStorageQueryWithBuffer Qry)
       spsq->ProtocolSpecific.ProtocolDataRequestSubValue = in.nsid;
 	*/
 	IFLOG(D4) {
-		LOG(I) << "Qry data before DeviceIoControl";
+		LOG(D) << "Qry data before DeviceIoControl";
 		DtaHexDump(Qry, 128);
 	}
 	// bRet = nonzero if ok, else 0
@@ -106,7 +106,7 @@ DWORD GetIDFY(HANDLE hDev, PStorageQueryWithBuffer Qry)
 	{
 		IFLOG(D4) {
 			//dumphex(&Qry , sizeof(Qry));
-			LOG(I) << "DeviceIoControl IOCTL_STORAGE_QUERY_PROPERTY OK";
+			LOG(D) << "DeviceIoControl IOCTL_STORAGE_QUERY_PROPERTY OK";
 			DtaHexDump(&Qry, 128);
 		}
 	}
@@ -171,7 +171,7 @@ BOOL DoIdentifyDeviceNVMeIntelRst(BYTE physicalDriveId, BYTE scsiPort, BYTE scsi
 	TCHAR drive[64] = TEXT("\0");
 	
 	sprintf_s(drive, TEXT("\\\\.\\Scsi%d:"), portNumber);
-	// LOG(I) << "drive = " << drive ;
+	// LOG(D) << "drive = " << drive ;
 	
 	HANDLE hIoCtrl = CreateFile(drive,
 		GENERIC_READ | GENERIC_WRITE,
@@ -402,14 +402,14 @@ void DtaDiskNVME::identify(OPAL_DiskInfo& disk_info)
 	int s = GetIDFY(hDev, (StorageQueryWithBuffer *)identifyResp);
 	if (!s) {
 		IFLOG(D4) {
-			LOG(I) << "Nvme IDFY OK";
-			LOG(I) << "Q";
+			LOG(D1) << "Nvme IDFY OK";
+			LOG(D1) << "Q";
 			DtaHexDump(identifyResp, 128);
-			LOG(I) << "Q->ProtocolSpecific ";
+			LOG(D1) << "Q->ProtocolSpecific ";
 			DtaHexDump(&(Q->ProtocolSpecific), 128);
 
 			DtaHexDump(&(Q->Query), 128);
-			LOG(I) << "Q->Buffer ";
+			LOG(D1) << "Q->Buffer ";
 			DtaHexDump(Q->Buffer, 128);
 		}
 	}
@@ -440,7 +440,7 @@ void DtaDiskNVME::identify(OPAL_DiskInfo& disk_info)
 		}
 		else {
 			;
-			LOG(I) << "GetIDFY fail, no device info";
+			//LOG(D) << "GetIDFY fail, no device info";
 			_aligned_free(identifyResp);
 			return;
 		}

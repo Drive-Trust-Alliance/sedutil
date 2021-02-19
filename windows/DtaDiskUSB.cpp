@@ -137,43 +137,10 @@ void DtaDiskUSB::identify(OPAL_DiskInfo& disk_info)
 
     if (0x00 != iorc) {
         LOG(D) << "USB IDENTIFY Failed " << (uint16_t) iorc;
+		//RTS_SATA = 0; // not SATA
     }
 	if (!(memcmp(identifyResp, nullz.data(), 512))) {
 		disk_info.devType = DEVICE_TYPE_OTHER;
-		// before give up, try identifyPd
-		////////////////////////////////////////
-		IDENTIFY_DEVICE identify = { 0 };
-		if (DoIdentifyDevicePd(physicalDriveId, 0xA0, &identify)) {
-			// success
-			USB_INQUIRY_DATA * id = (USB_INQUIRY_DATA *) &identify;
-			//DtaHexDump(id, 512);
-			disk_info.devType = DEVICE_TYPE_USB;
-			uint8_t non_ascii = 0;
-			for (int i = 0; i < sizeof(disk_info.serialNum); i += 2) {
-				disk_info.serialNum[i] = id->ProductSerial[i + 1];
-				disk_info.serialNum[i + 1] = id->ProductSerial[i];
-				if (!isprint(disk_info.serialNum[i])) { non_ascii = 1; ; break; };
-				if (!isprint(disk_info.serialNum[i + 1])) { non_ascii = 1; ; break; };
-			}
-			for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 2) {
-				disk_info.firmwareRev[i] = id->ProductRev[i + 1];
-				disk_info.firmwareRev[i + 1] = id->ProductRev[i];
-				if (!isprint(disk_info.firmwareRev[i])) { non_ascii = 1; ; break; }
-				if (!isprint(disk_info.firmwareRev[i + 1])) { non_ascii = 1; ; break; }
-			}
-			for (int i = 0; i < sizeof(disk_info.modelNum); i += 2) {
-				disk_info.modelNum[i] = id->ProductID[i + 1];
-				disk_info.modelNum[i + 1] = id->ProductID[i];
-				if (!isprint(disk_info.modelNum[i])) { non_ascii = 1; ; break; };
-				if (!isprint(disk_info.modelNum[i + 1])) { non_ascii = 1; ; break; };
-			}
-
-		}
-		else {
-			// fail again 
-
-		}
-
 		/////////////////////////////////////////
 		_aligned_free(identifyResp);
 		return;
@@ -247,6 +214,51 @@ HANDLE DtaDiskUSB::GetIoCtrlHandle(BYTE index)
 }
 
 /////////////////////////////////////////////
+
+void DtaDiskUSB::identifyPd(OPAL_DiskInfo& disk_info) {
+	LOG(D1) << "Entering DtaDiskUSB::identifyPd()";
+	vector<uint8_t> nullz(512, 0x00);
+	void * identifyResp = NULL;
+	identifyResp = _aligned_malloc(IO_BUFFER_LENGTH, IO_BUFFER_ALIGNMENT);
+	if (NULL == identifyResp) return;
+	memset(identifyResp, 0, IO_BUFFER_LENGTH);
+
+	// before give up, try identifyDevicePd
+	////////////////////////////////////////
+	IDENTIFY_DEVICE identify = { 0 };
+	if (DoIdentifyDevicePd(physicalDriveId, 0xA0, &identify)) {
+		// success
+		LOG(D) << "USB IDENTIFY OK possible with Nvme ";
+		USB_INQUIRY_DATA * id = (USB_INQUIRY_DATA *)&identify;
+		//DtaHexDump(id, 512);
+		disk_info.devType = DEVICE_TYPE_NVME;
+		uint8_t non_ascii = 0;
+		for (int i = 0; i < sizeof(disk_info.serialNum); i += 2) {
+			disk_info.serialNum[i] = id->ProductSerial[i + 1];
+			disk_info.serialNum[i + 1] = id->ProductSerial[i];
+			if (!isprint(disk_info.serialNum[i])) { non_ascii = 1; ; break; };
+			if (!isprint(disk_info.serialNum[i + 1])) { non_ascii = 1; ; break; };
+		}
+		for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 2) {
+			disk_info.firmwareRev[i] = id->ProductRev[i + 1];
+			disk_info.firmwareRev[i + 1] = id->ProductRev[i];
+			if (!isprint(disk_info.firmwareRev[i])) { non_ascii = 1; ; break; }
+			if (!isprint(disk_info.firmwareRev[i + 1])) { non_ascii = 1; ; break; }
+		}
+		for (int i = 0; i < sizeof(disk_info.modelNum); i += 2) {
+			disk_info.modelNum[i] = id->ProductID[i + 1];
+			disk_info.modelNum[i + 1] = id->ProductID[i];
+			if (!isprint(disk_info.modelNum[i])) { non_ascii = 1; ; break; };
+			if (!isprint(disk_info.modelNum[i + 1])) { non_ascii = 1; ; break; };
+		}
+
+	}
+	//else {
+		// fail again 
+	//}
+	_aligned_free(identifyResp);
+	return;
+}
 
 BOOL DtaDiskUSB::DoIdentifyDevicePd(INT physicalDriveId, BYTE target, IDENTIFY_DEVICE * data)
 {

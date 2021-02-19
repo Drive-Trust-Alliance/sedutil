@@ -48,4 +48,7 @@ public:
 	* @param disk_info structure to fill in with drive information
 	*/
 	virtual void identify(OPAL_DiskInfo& disk_info);
+	virtual void identifyPd(OPAL_DiskInfo& disk_info);
+
+	//virtual BYTE getdisc0Sts(void);
 };

@@ -60,11 +60,15 @@ protected:
 	void osmsSleep(uint32_t milliseconds);
         /** OS specific routine to send an ATA identify to the device */
 	void identify(OPAL_DiskInfo& disk_info);
+	void identifyPd(OPAL_DiskInfo& disk_info);
 private:
 	GET_LENGTH_INFORMATION lengthInfo;
 	DWORD infoBytesReturned;
 	DtaDiskType * disk;
 	HANDLE hDev;
 	void *ataPointer; /**< pointer ro ATA_PASSTHROUGH_DIRECT structure */
-
+public:
+	BYTE disc0Sts = 1;// any error
+	uint8_t RTS_SATA = 0;
+	uint8_t RTS_NVME = 0;
 };

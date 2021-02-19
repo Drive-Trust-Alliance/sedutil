@@ -80,14 +80,14 @@ int diskScan(char * devskip)
 			//cout << d->getModelNum() << " " << d->getFirmwareRev() << std::endl;
 			cout << d->getModelNum() << ":" << d->getFirmwareRev() << ":" << d->getSerialNum() << std::endl; // GUI not work if no endl?
 			if (MAX_DISKS == i) {
-				LOG(I) << MAX_DISKS << " disks, really?";
+				LOG(D) << MAX_DISKS << " disks, really?";
 				delete d;
 				return 1;
 			}
 		}
 		else {
 			if (MAX_DISKS == i) {
-				LOG(I) << MAX_DISKS << " disks, really?";
+				LOG(D) << MAX_DISKS << " disks, really?";
 				delete d;
 				return 1;
 			}
@@ -203,7 +203,7 @@ int diskScan(char * devskip)
 
 			cout << d->getModelNum() << ":" << d->getFirmwareRev() << ":" << d->getSerialNum() << std::endl; // GUI not work if no endl?
 			if (MAX_DISKS == (i+j)) {
-				LOG(I) << MAX_DISKS << " disks, really?";
+				LOG(D) << MAX_DISKS << " disks, really?";
 				delete d;
 				return 1;
 			}
@@ -559,7 +559,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 		imgsize = pbafile.tellg();
 		pbafile.seekg(0, pbafile.beg);
 		pbafile.seekg(sedsize);
-		//LOG(I) << "read pointer=" << pbafile.tellg();
+		//LOG(D) << "read pointer=" << pbafile.tellg();
 		int comprss = 1;
 
 		if (comprss) {
@@ -626,7 +626,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 			if (!Success)
 			{
 				LOG(E) << "Cannot really decompress data: " << GetLastError();
-				//LOG(I) << ("DecompressedBufferSize=%I64d DecompressedDataSize=%I64d\n", DecompressedBufferSize, DecompressedDataSize);
+				//LOG(D) << ("DecompressedBufferSize=%I64d DecompressedDataSize=%I64d\n", DecompressedBufferSize, DecompressedDataSize);
 				goto done;
 			}
 
@@ -754,7 +754,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 		return DTAERROR_CREATE_USB;
 	}
 
-	LOG(I) << "Writing PBA to USB " << USBname;
+	LOG(D) << "Writing PBA to USB " << USBname;
 	vol_handle = INVALID_HANDLE_VALUE;
 	status = createvol(vol_handle, USBname);
 	if (!status)
@@ -795,7 +795,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 		if (retry_cnt < 6) { retry_cnt++; Sleep(200*retry_cnt);   goto again; }
 		//int err = GetLastError();
 		//printf("write image data to USB error %d\n", err);
-		LOG(I) << "Write image to USB error";
+		LOG(D) << "Write image to USB error";
 		FlushFileBuffers(vol_handle);
 		unlockvol(vol_handle);
 		CloseHandle(vol_handle);
@@ -805,7 +805,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 		return DTAERROR_CREATE_USB;
 	}
 	//printf("write image data to USB %ld OK; close handle %zd\n", n, (int64_t)vol_handle);
-	LOG(I) << "Write image to USB OK";
+	LOG(D) << "Write image to USB OK";
 	if (DecompressedBuffer != NULL) free(DecompressedBuffer);
 	/*
 	if (!FlushFileBuffers(f_handle)) {
@@ -1057,12 +1057,12 @@ int main(int argc, char * argv[])
 		memset((void *)(d->LicenseLevel), 0,32);
 		string tmp_str = _com_util::ConvertBSTRToString(m_lv->getf2s());
 		memcpy((char*)(d->LicenseLevel), tmp_str.c_str(),tmp_str.size()) ; //(_com_util::ConvertBSTRToString(m_lv->getf2s()), 3)).c_str();
-		//LOG(I) << "tmp_str.size()=" << tmp_str.size();
-		//LOG(I) << "m_lv->getf2s()=" << m_lv->getf2s();
-		//LOG(I) << "sizeof(m_lv->getf2s())=" << sizeof(m_lv->getf2s());
-		//LOG(I) << "d->LicenseLevel="  << d->LicenseLevel;
-		//LOG(I) << "_com_util::ConvertBSTRToString( m_lv->getf2s())=" << _com_util::ConvertBSTRToString(m_lv->getf2s());
-		//LOG(I) << "tmp_str = " << tmp_str;
+		//LOG(D) << "tmp_str.size()=" << tmp_str.size();
+		//LOG(D) << "m_lv->getf2s()=" << m_lv->getf2s();
+		//LOG(D) << "sizeof(m_lv->getf2s())=" << sizeof(m_lv->getf2s());
+		//LOG(D) << "d->LicenseLevel="  << d->LicenseLevel;
+		//LOG(D) << "_com_util::ConvertBSTRToString( m_lv->getf2s())=" << _com_util::ConvertBSTRToString(m_lv->getf2s());
+		//LOG(D) << "tmp_str = " << tmp_str;
 #endif	
 	}
 

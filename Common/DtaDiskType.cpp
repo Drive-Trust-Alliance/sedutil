@@ -33,6 +33,7 @@ uint8_t	DtaDiskType::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,	v
 	return 10;
 }
 void DtaDiskType::identify(OPAL_DiskInfo& disk_info) {}
+void DtaDiskType::identifyPd(OPAL_DiskInfo& disk_info) {}
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif

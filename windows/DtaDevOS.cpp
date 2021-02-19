@@ -38,6 +38,7 @@ using namespace std;
 DtaDevOS::DtaDevOS() { LOG(D1) << "Entering DtaDevOS Constructor"; };
 void DtaDevOS::init(const char * devref)
 {
+
 	LOG(D1) << "Creating DtaDevOS::DtaDevOS() " << devref;
 	dev = devref;
 	memset(&disk_info, 0, sizeof(OPAL_DiskInfo));
@@ -105,22 +106,88 @@ void DtaDevOS::init(const char * devref)
 		LOG(D1) << "Enter RAID bus type case";
 		disk = new DtaDiskUSB(); 
 		disk->init(dev);
-		identify(disk_info);
+		/////////////
+		LOG(D) << "Entering USB DtaDevOS::identify()";
+		identify(disk_info); // will come back either it is SATA or Nvme
+		LOG(D) << "Exiting USB returning DtaDevOS::identify()";
+		//uint8_t modelNum[40];
+		if (strlen((char *)disk_info.modelNum) == 0) // only usb dongle or non-sata non-nvme will return nothing here
+		{
+			// Not SATA, Not Nvme
+		}
+		else {
+			// do discovery0 
+			disk_info.devType = DEVICE_TYPE_USB;
+			discovery0(&disc0Sts);
+			return;
+		}
+		// what the discovery0 say, invalid or non-TCG/TCG
+		LOG(D) << "Entering USB DtaDevOS::identifyPd()";
+		identifyPd(disk_info);
+		LOG(D) << "Exiting USB DtaDevOS::identifyPd()";
+		if (strlen((char *)disk_info.modelNum) == 0) // only usb dongle or non-sata non-nvme will return nothing here
+		{
+			// Not SATA, Not Nvme
+			disk_info.devType = DEVICE_TYPE_OTHER;
+		}
+		else {
+			// do discovery0 
+			// Not SATA , potential Nvme
+			disk_info.devType = DEVICE_TYPE_NVME;
+			LOG(D) << "USB DtaDevOS::identifyPd() OK"; // need to be done in nvme
+			// usb device discovery0 command OK?   
+			delete disk;
+			disk = new DtaDiskNVME();
+			disk->init(dev);
+			discovery0(&disc0Sts);
+			LOG(D) << "end of USB DtaDevOS::discovery0()";
+			return;
+		}
+		// otherwise set it as USB type
+		delete disk;
+		disk = new DtaDiskUSB();
+		disk->init(dev);
+		break; // not SATA , not nvme lease it open 
+
+
+
+
+
+		/*
 		if (disk_info.devType == DEVICE_TYPE_OTHER)
 		{
+			LOG(D) << "Device on RAID is not identified as USB SATA";
 			delete disk;
 			disk = new DtaDiskNVME();
 			disk->init(dev);
 			identify(disk_info);
 			if (disk_info.devType == DEVICE_TYPE_OTHER)
 			{
-				LOG(D) << "Device on RAID not identified";
+				LOG(D) << "Device on RAID is not identified as nvme";
 				delete disk; 
 				disk = new DtaDiskUSB; // assume USB bus even it can not be identified
 				disk_info.devType = DEVICE_TYPE_USB;
 				break; 
 			}
 		}
+		else {
+			LOG(D) << "Device on RAID is identified at first galance but it can be a SATA or Nvme";
+			// find out if it is discovery work for SATA or Nvme
+			// discovery zero send disk->sendCmd(cmd, protocol, comID, buffer, bufferlen
+			// disk-> must point to either SATA or Nvme
+			discovery0(&disc0Sts);
+			if (!disc0Sts) {
+				disk_info.devType = DEVICE_TYPE_USB;
+				break; // OK
+			}
+			else { // try nvme again 
+				delete disk;
+				disk = new DtaDiskNVME();
+				disk->init(dev);
+				discovery0(&disc0Sts);
+				disk_info.devType = DEVICE_TYPE_NVME;
+			}
+		}*/
 		break;
 	case BusTypeSas:
 		LOG(D1) << "Enter Sas bus type case";
@@ -131,9 +198,11 @@ void DtaDevOS::init(const char * devref)
 		delete disk;
 		return;
 	}
-	LOG(D1) << "Before Entering disk->init";
-	disk->init(dev);
-	LOG(D1) << "Before Entering identify(disk_info)";
+	if (descriptor.BusType != BusTypeRAID) {
+		LOG(D1) << "Before Entering disk->init";
+		disk->init(dev);
+		LOG(D1) << "Before Entering identify(disk_info)";
+	}
 
 	uint8_t geometry[256];
 	uint32_t disksz;
@@ -166,11 +235,11 @@ void DtaDevOS::init(const char * devref)
 		LOG(D) << "disksz is less than 32GB treat it as flash usb drive";
 	}
 
-	LOG(D1) << "Before Entering disk->init";
+	LOG(D) << "Before Entering disk->init";
 	if (DEVICE_TYPE_OTHER != disk_info.devType)
 	{
 		if ((disksz > (32 * 1000)) || (descriptor.BusType != BusTypeUsb)) // only > 32GB consider as SSD otherwise treat it as usb thumb
-			discovery0();
+			if(descriptor.BusType != BusTypeRAID) discovery0(&disc0Sts);
 	}
 }
 
@@ -203,9 +272,11 @@ unsigned long long DtaDevOS::getSize() {
 
 void DtaDevOS::identify(OPAL_DiskInfo& di)
 {
-    LOG(D1) << "Entering DtaDevOS::identify()";
-	LOG(D1) << "Exiting DtaDevOS::identify()";
 	return(disk->identify(di)); 
+}
+void DtaDevOS::identifyPd(OPAL_DiskInfo& di)
+{
+	return(disk->identifyPd(di));
 }
 
 /** Close the filehandle so this object can be delete. */

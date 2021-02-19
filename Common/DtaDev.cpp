@@ -128,7 +128,7 @@ char *DtaDev::getSerialNum()
 {
 	return (char *)&disk_info.serialNum;
 }
-void DtaDev::discovery0()
+void DtaDev::discovery0(BYTE * disc0Sts)
 {
     LOG(D1) << "Entering DtaDev::discovery0()";
 	uint8_t lastRC;
@@ -148,7 +148,7 @@ void DtaDev::discovery0()
 	}
 	catch (char *error) // doesnt seem to catch any memory violation
 	{
-		printf("sendCmd Error : %s\n", error);
+		//printf("sendCmd Error : %s\n", error);
 		//ExitProcess(0);
 	}
     if ((lastRC) != 0) { 
@@ -178,7 +178,7 @@ OK101:
     LOG(D3) << "Dumping D0Response";
     if ( (SWAP32(hdr->length) > 8192) || (SWAP32(hdr->length) < 48) )
     {
-	LOG(E) << "Level 0 Discovery header length abnormal " << hex << SWAP32(hdr->length); 
+	  LOG(D) << "Level 0 Discovery header length abnormal " << hex << SWAP32(hdr->length); 
 	return;
     }
     IFLOG(D3) DtaHexDump(hdr, SWAP32(hdr->length));
@@ -355,7 +355,7 @@ OK101:
 			disk_info.BlockSID_SIDvalueState = body->blocksidauth.SIDvalueState;
 			disk_info.BlockSID_HardReset = body->blocksidauth.HardReset;
 #if 0
-			LOG(I) << "BLockSID buffer dump";
+			LOG(D) << "BLockSID buffer dump";
 			DtaHexDump(body, 64);
 			printf("body->blocksidauth.BlockSIDState= %d ", body->blocksidauth.BlockSIDState);
 			printf("disk_info.BlockSID_BlockSIDState= %d ", disk_info.BlockSID_BlockSIDState);
@@ -404,7 +404,7 @@ OK101:
         cpos = cpos + (body->TPer.length + 4);
     }
     while (cpos < epos);
-
+	disc0Sts = 0; 
 }
 uint8_t DtaDev::TperReset()
 {

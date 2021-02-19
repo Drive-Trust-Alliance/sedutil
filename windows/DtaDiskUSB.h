@@ -64,10 +64,10 @@ public:
 	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, void * buffer, uint32_t bufferlen);
 	/** OS specific routine to send an ATA identify to the device */
 	void identify(OPAL_DiskInfo& disk_info);
+	void identifyPd(OPAL_DiskInfo& disk_info);
 	BOOL DoIdentifyDevicePd(INT physicalDriveId, BYTE target, IDENTIFY_DEVICE * data);
 	HANDLE GetIoCtrlHandle(BYTE index);
 	BOOL SendAtaCommandPd(INT physicalDriveId, BYTE target, BYTE main, BYTE sub, BYTE param, PBYTE data, DWORD dataSize);
-
 private:
 	void * scsiPointer;
 	HANDLE hDev; /**< Windows device handle */

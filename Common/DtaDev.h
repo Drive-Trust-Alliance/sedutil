@@ -77,7 +77,7 @@ public:
 	 * the endianess conversions either via a bitswap in the structure or executing
 	 * a macro when the input buffer is read.
 	 */
-	void discovery0();
+	void discovery0(BYTE *);
 	uint8_t TperReset();
 	/*
 	 * virtual methods required in the OS specific

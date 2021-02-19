@@ -181,14 +181,14 @@ uint8_t DtaDevEnterprise::initialSetup(char * password)
 		return 0xff;
 	}
 	
-	LOG(I) << "Initial setup of TPer complete on " << dev;
+	LOG(D) << "Initial setup of TPer complete on " << dev;
 	LOG(D1) << "Exiting initialSetup()";
 	return 0;
 }
 uint8_t DtaDevEnterprise::setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::setup_SUM";
-	LOG(I) << "setup_SUM not supported on DtaDevEnterprise";
+	LOG(D) << "setup_SUM not supported on DtaDevEnterprise";
 	return 1;
 }
 uint8_t DtaDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t enabled, char * password)
@@ -252,7 +252,7 @@ uint8_t DtaDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t en
 	}
 	delete set;
 	delete session;
-	LOG(I) << "Locking range configured " << (uint16_t) enabled;
+	LOG(D) << "Locking range configured " << (uint16_t) enabled;
 	LOG(D1) << "Exiting DtaDevEnterprise::configureLockingRange()";
 	return 0;
 }
@@ -287,7 +287,7 @@ uint8_t DtaDevEnterprise::rekeyLockingRange(uint8_t lockingrange, char * passwor
 	std::vector<uint8_t> ActiveKey = response.getRawToken(5);
     if (is_NULL_UID(ActiveKey))
     {
-	    LOG(I) << "LockingRange" << (uint16_t)lockingrange << " remains in plaintext ";
+	    LOG(D) << "LockingRange" << (uint16_t)lockingrange << " remains in plaintext ";
 		delete session;
         return 0;
     }
@@ -310,7 +310,7 @@ uint8_t DtaDevEnterprise::rekeyLockingRange(uint8_t lockingrange, char * passwor
 	}
 	delete rekey;
 	delete session;
-	LOG(I) << "LockingRange" << (uint16_t)lockingrange << " reKeyed ";
+	LOG(D) << "LockingRange" << (uint16_t)lockingrange << " reKeyed ";
 	LOG(D1) << "Exiting DtaDevEnterprise::rekeyLockingRange()";
 	return 0;
 }
@@ -350,7 +350,7 @@ uint8_t DtaDevEnterprise::revertLockingSP(char * password, uint8_t keep)
 		delete session;
 		return lastRC;
 	}
-	LOG(I) << "revertLockingSP completed successfully";
+	LOG(D) << "revertLockingSP completed successfully";
 	delete cmd;
 	delete session;
 	LOG(D1) << "Exiting DtaDevEnterprise::revertLockingSP()";
@@ -416,7 +416,7 @@ uint8_t DtaDevEnterprise::setPassword(char * password, char * userid, char * new
 		delete session;
 		return 0xff;
 	}
-	LOG(I) << userid << " password changed";
+	LOG(D) << userid << " password changed";
 	delete session;
 	LOG(D1) << "Exiting DtaDevEnterprise::setPassword()";
 	return 0;
@@ -424,7 +424,7 @@ uint8_t DtaDevEnterprise::setPassword(char * password, char * userid, char * new
 uint8_t DtaDevEnterprise::setNewPassword_SUM(char * password, char * userid, char * newpassword)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::setNewPassword_SUM()";
-	LOG(I) << "setNewPassword_SUM is not in the Enterprise SSC and not supported";
+	LOG(D) << "setNewPassword_SUM is not in the Enterprise SSC and not supported";
 	LOG(D1) << "Exiting DtaDevEnterprise::setNewPassword_SUM()";
 	return 0;
 }
@@ -432,7 +432,7 @@ uint8_t DtaDevEnterprise::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::setMBREnable";
 	if (NULL == Admin1Password) { LOG(E) << "This shouldn't happen " << mbrstate; }
-	LOG(I) << "MBR shadowing is optional in the Enterprise SSC and not supported";
+	LOG(D) << "MBR shadowing is optional in the Enterprise SSC and not supported";
 	LOG(D1) << "Exiting DtaDevEnterprise::setMBREnable";
 	return 0;
 }
@@ -440,7 +440,7 @@ uint8_t DtaDevEnterprise::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::setMBRDone";
 	if (NULL == Admin1Password) { LOG(E) << "This shouldn't happen " << mbrstate; }
-	LOG(I) << "MBR shadowing is optional in the Enterprise SSC and not supported";
+	LOG(D) << "MBR shadowing is optional in the Enterprise SSC and not supported";
 	LOG(D1) << "Exiting DtaDevEnterprise::setMBRDone";
 	return 0;
 }
@@ -539,7 +539,7 @@ uint8_t DtaDevEnterprise::setupLockingRange(uint8_t lockingrange, uint64_t start
 	}
 	delete set;
 	delete session;
-	LOG(I) << "LockingRange" << (uint16_t)lockingrange << " starting block " << start <<
+	LOG(D) << "LockingRange" << (uint16_t)lockingrange << " starting block " << start <<
 		" for " << length << " blocks configured as unlocked range";
 	LOG(D1) << "Exiting DtaDevEnterprise::setupLockingRange";
 	return 0;
@@ -564,7 +564,7 @@ uint8_t DtaDevEnterprise::listLockingRanges(char * password, int16_t rangeid)
     if (MaxRanges >= 1024) return 0xff;
 
     if(rangeid == -1) {
-        LOG(I) << "Maximum ranges supported " << MaxRanges;
+        LOG(D) << "Maximum ranges supported " << MaxRanges;
     }
 
     //** BandMaster0 UID of Table 28 Locking SP Authority table, p. 70 of Enterprise SSC rev 3.00
@@ -583,18 +583,18 @@ uint8_t DtaDevEnterprise::listLockingRanges(char * password, int16_t rangeid)
         setband(user, i);
         setband(table, i);
 
-        LOG(I) << "Band[" << i << "]";
+        LOG(D) << "Band[" << i << "]";
 
 		session = new DtaSession(this);
 		if (session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, password, user))
         {
-			LOG(I) << "    could not establish session for row[" << i << "]";
+			LOG(D) << "    could not establish session for row[" << i << "]";
 			delete session;
 			continue;
 		}
 		if (getTable(table, "Name", "LockOnReset"))
         {
-			LOG(I) << "    row[" << i << "] not found in LOCKING table";
+			LOG(D) << "    row[" << i << "] not found in LOCKING table";
 			delete session;
 			continue;
 		}
@@ -652,15 +652,15 @@ uint8_t DtaDevEnterprise::listLockingRanges(char * password, int16_t rangeid)
                                         && response.tokenIs(5+4*8+1) == DTA_TOKENID_UINT;
         delete session;
 
-        LOG(I) << "    Name             " << Name;
-        LOG(I) << "    CommonName       " << CommonName;
-        LOG(I) << "    RangeStart       " << RangeStart;
-        LOG(I) << "    RangeLength      " << RangeLength;
-        LOG(I) << "    ReadLockEnabled  " << ReadLockEnabled;
-        LOG(I) << "    WriteLockEnabled " << WriteLockEnabled;
-        LOG(I) << "    ReadLocked       " << ReadLocked;
-        LOG(I) << "    WriteLocked      " << WriteLocked;
-        LOG(I) << "    LockOnReset      " << LockOnReset;
+        LOG(D) << "    Name             " << Name;
+        LOG(D) << "    CommonName       " << CommonName;
+        LOG(D) << "    RangeStart       " << RangeStart;
+        LOG(D) << "    RangeLength      " << RangeLength;
+        LOG(D) << "    ReadLockEnabled  " << ReadLockEnabled;
+        LOG(D) << "    WriteLockEnabled " << WriteLockEnabled;
+        LOG(D) << "    ReadLocked       " << ReadLocked;
+        LOG(D) << "    WriteLocked      " << WriteLocked;
+        LOG(D) << "    LockOnReset      " << LockOnReset;
 	}
 	LOG(D1) << "Exiting DtaDevEnterprise::listLockingRanges";
 	return 0;
@@ -746,7 +746,7 @@ uint8_t DtaDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t lockings
 	}
 	delete set;
 	delete session;
-	LOG(I) << "Locking range Read/Write set " << (uint16_t)locked;
+	LOG(D) << "Locking range Read/Write set " << (uint16_t)locked;
 	LOG(D1) << "Exiting DtaDevEnterprise::setLockingRange";
 	return 0;
 }
@@ -812,7 +812,7 @@ uint8_t DtaDevEnterprise::revertTPer(char * password, uint8_t PSID, uint8_t Admi
 		delete session;
 		return lastRC;
 	}
-	LOG(I) << "revertTper completed successfully";
+	LOG(D) << "revertTper completed successfully";
 	delete cmd;
 	delete session;
 	LOG(D1) << "Exiting DtaDevEnterprise::revertTPer()";
@@ -869,7 +869,7 @@ uint8_t DtaDevEnterprise::eraseLockingRange(uint8_t lockingrange, char * passwor
 	}
 	delete erase;
 	delete session;
-	LOG(I) << "LockingRange" << (uint16_t)lockingrange << " erased";
+	LOG(D) << "LockingRange" << (uint16_t)lockingrange << " erased";
 	LOG(D1) << "Exiting DtaDevEnterprise::eraseLockingRange";
 	return 0;
 }
@@ -918,8 +918,8 @@ uint8_t DtaDevEnterprise::getMBRsize(char * password) {
 
 uint8_t DtaDevEnterprise::createUSB(char * filename) {
 	LOG(D1) << "Entering DtaDevEnterprise::createUSB()" << filename << " " << dev;
-	LOG(I) << " createUSB is not implemented.  It is not a mandatory part of  ";
-	LOG(I) << "the enterprise SSC ";
+	LOG(D) << " createUSB is not implemented.  It is not a mandatory part of  ";
+	LOG(D) << "the enterprise SSC ";
 	LOG(D1) << "Exiting DtaDevEnterprise::createUSB()";
 	return 0;
 }
@@ -927,8 +927,8 @@ uint8_t DtaDevEnterprise::createUSB(char * filename) {
 uint8_t DtaDevEnterprise::loadPBA(char * password, char * filename) {
 	LOG(D1) << "Entering DtaDevEnterprise::loadPBAimage()" << filename << " " << dev;
 	if (password == NULL) { LOG(D4) << "Referencing formal parameters " << filename; }
-	LOG(I) << "loadPBA is not implemented.  It is not a mandatory part of  ";
-	LOG(I) << "the enterprise SSC ";
+	LOG(D) << "loadPBA is not implemented.  It is not a mandatory part of  ";
+	LOG(D) << "the enterprise SSC ";
 	LOG(D1) << "Exiting DtaDevEnterprise::loadPBAimage()";
 	return 0;
 }
@@ -973,7 +973,7 @@ uint8_t DtaDevEnterprise::takeOwnership(char * newpassword)
 		LOG(E) << "takeOwnership failed unable to set Locking SP user passwords";
 		return 0xff;
 	}
-	LOG(I) << "takeOwnership complete";
+	LOG(D) << "takeOwnership complete";
 	LOG(D1) << "Exiting takeOwnership()";
 	return 0;
 }
@@ -1094,12 +1094,12 @@ uint8_t DtaDevEnterprise::initLSPUsers(char * defaultPassword, char * newPasswor
 		delete session;
 		return 0xff;
 	}
-	LOG(I) << "EraseMaster  password set";
+	LOG(D) << "EraseMaster  password set";
 	delete session;
     // look up MaxRanges
 	const uint16_t MaxRanges = getMaxRanges((char *)NULL);
     if (MaxRanges == 0 || MaxRanges >= 1024) return 0xff;
-	LOG(I) << "Maximum ranges supported " << MaxRanges;
+	LOG(D) << "Maximum ranges supported " << MaxRanges;
 // do bandmasters
     set8(user, OPALUID[ENTERPRISE_BANDMASTER0_UID]);
 	for (uint16_t i = 0; i <= MaxRanges; i++) {
@@ -1118,7 +1118,7 @@ uint8_t DtaDevEnterprise::initLSPUsers(char * defaultPassword, char * newPasswor
 			delete session;
 			return 0xff;
 		}
-		LOG(I) << "BandMaster" << (uint16_t) i << " password set";
+		LOG(D) << "BandMaster" << (uint16_t) i << " password set";
 		delete session;
 
 	}
@@ -1306,7 +1306,7 @@ uint8_t DtaDevEnterprise::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t pro
     }
     hdr = (OPALHeader *) cmd->getRespBuffer();
     do {
-        //LOG(I) << "read loop";
+        //LOG(D) << "read loop";
         osmsSleep(25);
         memset(cmd->getRespBuffer(), 0, 2048); // IO_BUFFER_LENGTH
         rc = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), 2048); // IO_BUFFER_LENGTH
@@ -1463,14 +1463,14 @@ uint8_t DtaDevEnterprise::rawCmd(char *sp, char *hexauth, char *pass,
 		delete session;
 		return 0xff;
 	}
-	LOG(I) << "Command:";
+	LOG(D) << "Command:";
 	cmd->dumpCommand();
 	if (session->sendCommand(cmd, response)) {
 		delete cmd;
 		delete session;
 		return 0xff;
 	}
-	LOG(I) << "Response:";
+	LOG(D) << "Response:";
 	cmd->dumpResponse();
 	delete cmd;
 	delete session;
@@ -1512,7 +1512,7 @@ uint8_t DtaDevEnterprise::objDump(char *sp, char * auth, char *pass,
 	get->addToken(OPAL_TOKEN::ENDLIST);
 	get->addToken(OPAL_TOKEN::ENDLIST);
 	get->complete();
-	LOG(I) << "Command:";
+	LOG(D) << "Command:";
 	get->dumpCommand();
 	session = new DtaSession(this);
 	if (session->start((OPAL_UID)atoi(sp), pass, authority)) {
@@ -1525,7 +1525,7 @@ uint8_t DtaDevEnterprise::objDump(char *sp, char * auth, char *pass,
 		delete session;
 		return 0xff;
 	}
-	LOG(I) << "Response:";
+	LOG(D) << "Response:";
 	get->dumpResponse();
 	delete get;
 	delete session;
