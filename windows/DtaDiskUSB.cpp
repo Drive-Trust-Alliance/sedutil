@@ -146,6 +146,7 @@ void DtaDiskUSB::identify(OPAL_DiskInfo& disk_info)
 		return;
 	}
 	USB_INQUIRY_DATA * id = (USB_INQUIRY_DATA *) identifyResp;
+	IFLOG(D1) DtaHexDump(id, 512); // shall remove DEBUG
     disk_info.devType = DEVICE_TYPE_USB;
 	uint8_t non_ascii = 0;
     for (int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
@@ -216,7 +217,7 @@ HANDLE DtaDiskUSB::GetIoCtrlHandle(BYTE index)
 /////////////////////////////////////////////
 
 void DtaDiskUSB::identifyPd(OPAL_DiskInfo& disk_info) {
-	LOG(D1) << "Entering DtaDiskUSB::identifyPd()";
+	LOG(D1) << "Entering DtaDiskUSB::identifyPd(OPAL_DiskInfo& disk_info)";
 	vector<uint8_t> nullz(512, 0x00);
 	void * identifyResp = NULL;
 	identifyResp = _aligned_malloc(IO_BUFFER_LENGTH, IO_BUFFER_ALIGNMENT);
@@ -228,29 +229,49 @@ void DtaDiskUSB::identifyPd(OPAL_DiskInfo& disk_info) {
 	IDENTIFY_DEVICE identify = { 0 };
 	if (DoIdentifyDevicePd(physicalDriveId, 0xA0, &identify)) {
 		// success
-		LOG(D) << "USB IDENTIFY OK possible with Nvme ";
+		LOG(D) << "USB IDENTIFYPD OK possible with Nvme ";
 		USB_INQUIRY_DATA * id = (USB_INQUIRY_DATA *)&identify;
-		//DtaHexDump(id, 512);
+		IFLOG(D1) DtaHexDump(id, 512);
 		disk_info.devType = DEVICE_TYPE_NVME;
 		uint8_t non_ascii = 0;
+		memset(disk_info.serialNum, 32, sizeof(disk_info.serialNum));
 		for (int i = 0; i < sizeof(disk_info.serialNum); i += 2) {
-			disk_info.serialNum[i] = id->ProductSerial[i + 1];
-			disk_info.serialNum[i + 1] = id->ProductSerial[i];
+			disk_info.serialNum[i] = (id->ProductSerial[i + 1] == 0) ? 32 : id->ProductSerial[i + 1];
+			disk_info.serialNum[i + 1] = (id->ProductSerial[i] == 0) ? 32 : id->ProductSerial[i];
 			if (!isprint(disk_info.serialNum[i])) { non_ascii = 1; ; break; };
 			if (!isprint(disk_info.serialNum[i + 1])) { non_ascii = 1; ; break; };
 		}
+		//if (non_ascii) {
+		//	for (int i = 0; i < sizeof(disk_info.serialNum); i += 1) {
+		//		disk_info.serialNum[i] = ' ';
+		//	}
+		//}
+		non_ascii = 0;
+		memset(disk_info.firmwareRev, 32, sizeof(disk_info.firmwareRev));
 		for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 2) {
-			disk_info.firmwareRev[i] = id->ProductRev[i + 1];
-			disk_info.firmwareRev[i + 1] = id->ProductRev[i];
+			disk_info.firmwareRev[i] = (id->ProductRev[i + 1] == 0) ? 32 : id->ProductRev[i + 1];
+			disk_info.firmwareRev[i + 1] = (id->ProductRev[i] == 0) ? 32 : id->ProductRev[i]; //id->ProductRev[i];
 			if (!isprint(disk_info.firmwareRev[i])) { non_ascii = 1; ; break; }
 			if (!isprint(disk_info.firmwareRev[i + 1])) { non_ascii = 1; ; break; }
 		}
+		//if (non_ascii) {
+		//	for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 1) {
+		//		disk_info.firmwareRev[i] = ' ';
+		//	}
+		//}
+		non_ascii = 0;
+		memset(disk_info.modelNum, 32, sizeof(disk_info.modelNum));
 		for (int i = 0; i < sizeof(disk_info.modelNum); i += 2) {
-			disk_info.modelNum[i] = id->ProductID[i + 1];
-			disk_info.modelNum[i + 1] = id->ProductID[i];
+			disk_info.modelNum[i] = (id->ProductID[i + 1] == 0)? 32 : id->ProductID[i + 1];
+			disk_info.modelNum[i + 1] = (id->ProductID[i] == 0) ? 32 : id->ProductID[i]; // id->ProductID[i];
 			if (!isprint(disk_info.modelNum[i])) { non_ascii = 1; ; break; };
 			if (!isprint(disk_info.modelNum[i + 1])) { non_ascii = 1; ; break; };
 		}
+		//if (non_ascii) {
+		//	for (int i = 0; i < sizeof(disk_info.modelNum); i += 1) {
+		//		disk_info.modelNum[i] = ' ';
+		//	}
+		//}
 
 	}
 	//else {
