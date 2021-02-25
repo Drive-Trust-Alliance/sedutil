@@ -444,3 +444,173 @@ BOOL DtaDiskUSB::SendAtaCommandPd(INT physicalDriveId, BYTE target, BYTE main, B
 	LOG(D1) << "Exiting SendAtaCommandPd(INT physicalDriveId, BYTE target, BYTE main, BYTE sub, BYTE param, PBYTE data, DWORD dataSize) ";
 	return	bRet;
 }
+
+
+/*---------------------------------------------------------------------------*/
+//  NVMe ASMedia
+/*---------------------------------------------------------------------------*/
+
+//BOOL DtaDiskUSB::DoIdentifyDevicePd(INT physicalDriveId, BYTE target, IDENTIFY_DEVICE * data);
+void DtaDiskUSB::identifyNVMeASMedia(OPAL_DiskInfo& disk_info) {
+	LOG(D1) << "Entering DtaDiskUSB::identifyNVMeASMedia()";
+	vector<uint8_t> nullz(512, 0x00);
+	void * identifyResp = NULL;
+	identifyResp = _aligned_malloc(IO_BUFFER_LENGTH, IO_BUFFER_ALIGNMENT);
+	if (NULL == identifyResp) return;
+	memset(identifyResp, 0, IO_BUFFER_LENGTH);
+
+	// before give up, try identifyDevicePd
+	////////////////////////////////////////
+	IDENTIFY_DEVICE identify = { 0 };
+	//BOOL DtaDiskUSB::DoIdentifyDeviceNVMeASMedia(INT physicalDriveId, INT scsiPort, INT scsiTargetId, IDENTIFY_DEVICE* data)
+	if (DoIdentifyDeviceNVMeASMedia(physicalDriveId, 0xA0,0, &identify)) {
+		// success
+		LOG(D) << "USB IDENTIFY OK possible with NVMeASMedia ";
+		USB_INQUIRY_DATA * id = (USB_INQUIRY_DATA *)&identify;
+		DtaHexDump(id, 512);
+		disk_info.devType = DEVICE_TYPE_NVME;
+		uint8_t non_ascii = 0;
+		for (int i = 0; i < sizeof(disk_info.serialNum); i += 2) {
+			disk_info.serialNum[i] = id->ProductSerial[i ];
+			disk_info.serialNum[i + 1] = id->ProductSerial[i + 1];
+			if (!isprint(disk_info.serialNum[i])) { non_ascii = 1; ; break; };
+			if (!isprint(disk_info.serialNum[i + 1])) { non_ascii = 1; ; break; };
+		}
+		for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 2) {
+			disk_info.firmwareRev[i] = id->ProductRev[i ];
+			disk_info.firmwareRev[i + 1] = id->ProductRev[i + 1];
+			if (!isprint(disk_info.firmwareRev[i])) { non_ascii = 1; ; break; }
+			if (!isprint(disk_info.firmwareRev[i + 1])) { non_ascii = 1; ; break; }
+		}
+		for (int i = 0; i < sizeof(disk_info.modelNum); i += 2) {
+			disk_info.modelNum[i] = id->ProductID[i];
+			disk_info.modelNum[i + 1] = id->ProductID[i + 1];
+			if (!isprint(disk_info.modelNum[i])) { non_ascii = 1; ; break; };
+			if (!isprint(disk_info.modelNum[i + 1])) { non_ascii = 1; ; break; };
+		}
+
+	}
+	//else {
+	// fail again 
+	//}
+	_aligned_free(identifyResp);
+	return;
+}
+
+BOOL GetScsiAddressASMedia(const TCHAR* Path, BYTE* PortNumber, BYTE* PathId, BYTE* TargetId, BYTE* Lun)
+{
+	HANDLE hDevice = CreateFile(Path,
+		GENERIC_READ | GENERIC_WRITE,
+		FILE_SHARE_READ | FILE_SHARE_WRITE,
+		nullptr,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL,
+		nullptr);
+	DWORD dwReturned;
+	SCSI_ADDRESS ScsiAddr;
+	BOOL bRet = DeviceIoControl(hDevice, IOCTL_SCSI_GET_ADDRESS,
+		nullptr, 0, &ScsiAddr, sizeof(ScsiAddr), &dwReturned, NULL);
+
+	CloseHandle(hDevice);
+
+	*PortNumber = ScsiAddr.PortNumber;
+	*PathId = ScsiAddr.PathId;
+	*TargetId = ScsiAddr.TargetId;
+	*Lun = ScsiAddr.Lun;
+
+	return bRet == TRUE;
+}
+
+BOOL DtaDiskUSB::DoIdentifyDeviceNVMeASMedia(INT physicalDriveId, INT scsiPort, INT scsiTargetId, IDENTIFY_DEVICE* data)
+{
+	HANDLE	hIoCtrl;
+	printf("Entering DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)\n", physicalDriveId, scsiPort, scsiTargetId);
+	BYTE portNumber, pathId, targetId, lun;
+	TCHAR path[64] = TEXT("\0");
+	sprintf_s(path, "\\\\.\\PhysicalDrive%d", physicalDriveId);
+	// translate physical address to scsi port number,
+	GetScsiAddressASMedia(path, &portNumber, &pathId, &targetId, &lun);
+
+	TCHAR drive[64] = TEXT("\0");
+	sprintf_s(drive, TEXT("\\\\.\\Scsi%d:"), portNumber);
+	hIoCtrl = CreateFile(drive,
+		GENERIC_READ | GENERIC_WRITE,
+		FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr,
+		OPEN_EXISTING, 0, nullptr);
+
+
+	BOOL	bRet;
+	
+	DWORD	dwReturned;
+	DWORD	length;
+
+	SCSI_PASS_THROUGH_WITH_BUFFERS sptwb;
+
+	if (data == NULL)
+	{
+		printf("data == NULL Leaving DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)", physicalDriveId, scsiPort, scsiTargetId);
+
+		return	FALSE;
+	}
+
+	::ZeroMemory(data, sizeof(IDENTIFY_DEVICE));
+
+	hIoCtrl = GetIoCtrlHandle(physicalDriveId);
+
+	if (hIoCtrl == INVALID_HANDLE_VALUE)
+	{
+		//debug.Format(L"INVALID_HANDLE_VALUE Leaving DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)", physicalDriveId, scsiPort, scsiTargetId);
+		//DebugPrint(debug);
+		return	FALSE;
+	}
+
+	::ZeroMemory(&sptwb, sizeof(SCSI_PASS_THROUGH_WITH_BUFFERS));
+	sptwb.Spt.Length = sizeof(SCSI_PASS_THROUGH);
+	sptwb.Spt.PathId = 0;
+	sptwb.Spt.TargetId = 0;
+	sptwb.Spt.Lun = 0;
+	sptwb.Spt.SenseInfoLength = 24;
+	sptwb.Spt.DataTransferLength = 4096;
+	sptwb.Spt.TimeOutValue = 2;
+	sptwb.Spt.DataBufferOffset = offsetof(SCSI_PASS_THROUGH_WITH_BUFFERS, DataBuf);
+	sptwb.Spt.SenseInfoOffset = offsetof(SCSI_PASS_THROUGH_WITH_BUFFERS, SenseBuf);
+
+	sptwb.Spt.CdbLength = 16;
+	sptwb.Spt.Cdb[0] = 0xE6; // NVME PASS THROUGH
+	sptwb.Spt.Cdb[1] = 0x06; // IDENTIFY
+	sptwb.Spt.Cdb[3] = 0x01;
+
+	sptwb.Spt.DataIn = SCSI_IOCTL_DATA_IN;
+
+	length = offsetof(SCSI_PASS_THROUGH_WITH_BUFFERS, DataBuf) + sptwb.Spt.DataTransferLength;
+
+	bRet = ::DeviceIoControl(hIoCtrl, IOCTL_SCSI_PASS_THROUGH,
+		&sptwb, length,
+		&sptwb, length, &dwReturned, NULL);
+
+	if (bRet == FALSE)
+	{
+		::CloseHandle(hIoCtrl);
+		printf("IOCTL_SCSI_PASS_THROUGH FAIL Leaving DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)", physicalDriveId, scsiPort, scsiTargetId);
+		return	FALSE;
+	}
+
+	DWORD count = 0;
+	for (int i = 0; i < 512; i++)
+	{
+		count += sptwb.DataBuf[i];
+	}
+	if (count == 0)
+	{
+		::CloseHandle(hIoCtrl);
+		printf("counter == %d Leaving DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)", physicalDriveId, scsiPort, scsiTargetId);
+		return	FALSE;
+	}
+
+	memcpy_s(data, sizeof(IDENTIFY_DEVICE), sptwb.DataBuf, sizeof(IDENTIFY_DEVICE));
+	DtaHexDump((BYTE*)data, 512 );
+	::CloseHandle(hIoCtrl);
+
+	printf("Leaving DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)", physicalDriveId, scsiPort, scsiTargetId);
+	return TRUE;
+}

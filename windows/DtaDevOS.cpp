@@ -97,6 +97,65 @@ void DtaDevOS::init(const char * devref)
 	case BusTypeUsb:
 		LOG(D1) << "Enter USB bus type case";
 		disk = new DtaDiskUSB();
+		// now nvme is potentially on USB bus
+		disk->init(dev);
+		/////////////
+		LOG(D) << "Entering USB DtaDevOS::identify()";
+		identify(disk_info); // will come back either it is SATA or Nvme
+		LOG(D) << "Exiting USB returning DtaDevOS::identify()";
+		//uint8_t modelNum[40];
+		if (strlen((char *)disk_info.modelNum) == 0) // only usb dongle or non-sata non-nvme will return nothing here
+		{
+			// Not SATA, Not Nvme
+		}
+		else {
+			// do discovery0 
+			disk_info.devType = DEVICE_TYPE_USB;
+			discovery0(&disc0Sts);
+			return;
+		}
+		// check  if nvme
+		//DoIdentifyDeviceNVMeASMedia(INT physicalDriveId, INT scsiPort, INT scsiTargetId, IDENTIFY_DEVICE* data);
+		LOG(D) << "Entering USB DtaDevOS::identifyNVMeASMedia()";
+		
+		identifyNVMeASMedia(disk_info);
+		if (strlen((char *)disk_info.modelNum) == 0) // only usb dongle or non-sata non-nvme will return nothing here
+		{
+			// Not SATA, Not Nvme
+		} else {
+			// do discovery0 
+			
+			
+			delete disk;
+			disk = new DtaDiskNVME();
+			disk->init(dev);
+
+			identifyNVMeASMedia(disk_info);
+			disk_info.devType = DEVICE_TYPE_NVME;
+			discovery0(&disc0Sts);
+			return;
+		return;
+		}
+		
+		// assume it is nvme
+			/*
+		delete disk;
+		disk = new DtaDiskNVME();
+		disk->init(dev);
+		identify(disk_info);
+		if (strlen((char *)disk_info.modelNum) == 0) // only usb dongle or non-sata non-nvme will return nothing here
+		{
+			// Not SATA, Not Nvme
+		}
+		else {
+			// do discovery0 
+			disk_info.devType = DEVICE_TYPE_NVME;
+			discovery0(&disc0Sts);
+			return;
+		}*/
+		// doesn't matter any more since no nvme no ata
+
+
 		break;
 	case BusTypeNvme:
 		LOG(D1) << "Enter Nvme bus type case";
@@ -277,6 +336,11 @@ void DtaDevOS::identify(OPAL_DiskInfo& di)
 void DtaDevOS::identifyPd(OPAL_DiskInfo& di)
 {
 	return(disk->identifyPd(di));
+}
+
+void DtaDevOS::identifyNVMeASMedia(OPAL_DiskInfo& di)
+{
+	return(disk->identifyNVMeASMedia(di));
 }
 
 /** Close the filehandle so this object can be delete. */
