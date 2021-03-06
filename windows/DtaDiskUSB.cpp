@@ -524,7 +524,7 @@ BOOL GetScsiAddressASMedia(const TCHAR* Path, BYTE* PortNumber, BYTE* PathId, BY
 BOOL DtaDiskUSB::DoIdentifyDeviceNVMeASMedia(INT physicalDriveId, INT scsiPort, INT scsiTargetId, IDENTIFY_DEVICE* data)
 {
 	HANDLE	hIoCtrl;
-	printf("Entering DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)\n", physicalDriveId, scsiPort, scsiTargetId);
+	//printf("Entering DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)\n", physicalDriveId, scsiPort, scsiTargetId);
 	BYTE portNumber, pathId, targetId, lun;
 	TCHAR path[64] = TEXT("\0");
 	sprintf_s(path, "\\\\.\\PhysicalDrive%d", physicalDriveId);
@@ -548,7 +548,7 @@ BOOL DtaDiskUSB::DoIdentifyDeviceNVMeASMedia(INT physicalDriveId, INT scsiPort, 
 
 	if (data == NULL)
 	{
-		printf("data == NULL Leaving DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)", physicalDriveId, scsiPort, scsiTargetId);
+		//printf("data == NULL Leaving DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)", physicalDriveId, scsiPort, scsiTargetId);
 
 		return	FALSE;
 	}
@@ -591,7 +591,7 @@ BOOL DtaDiskUSB::DoIdentifyDeviceNVMeASMedia(INT physicalDriveId, INT scsiPort, 
 	if (bRet == FALSE)
 	{
 		::CloseHandle(hIoCtrl);
-		printf("IOCTL_SCSI_PASS_THROUGH FAIL Leaving DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)", physicalDriveId, scsiPort, scsiTargetId);
+		//printf("IOCTL_SCSI_PASS_THROUGH FAIL Leaving DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)", physicalDriveId, scsiPort, scsiTargetId);
 		return	FALSE;
 	}
 
@@ -603,14 +603,14 @@ BOOL DtaDiskUSB::DoIdentifyDeviceNVMeASMedia(INT physicalDriveId, INT scsiPort, 
 	if (count == 0)
 	{
 		::CloseHandle(hIoCtrl);
-		printf("counter == %d Leaving DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)", physicalDriveId, scsiPort, scsiTargetId);
+		//printf("counter == %d Leaving DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)", physicalDriveId, scsiPort, scsiTargetId);
 		return	FALSE;
 	}
 
 	memcpy_s(data, sizeof(IDENTIFY_DEVICE), sptwb.DataBuf, sizeof(IDENTIFY_DEVICE));
-	DtaHexDump((BYTE*)data, 512 );
+	//DtaHexDump((BYTE*)data, 512 );
 	::CloseHandle(hIoCtrl);
 
-	printf("Leaving DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)", physicalDriveId, scsiPort, scsiTargetId);
+	//printf("Leaving DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)", physicalDriveId, scsiPort, scsiTargetId);
 	return TRUE;
 }
