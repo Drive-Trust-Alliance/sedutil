@@ -176,7 +176,7 @@ void DtaDevOS::init(const char * devref)
 		}
 		else {
 			// do discovery0 
-			disk_info.devType = DEVICE_TYPE_USB;
+			disk_info.devType = DEVICE_TYPE_ATA;
 			discovery0(&disc0Sts);
 			return;
 		}

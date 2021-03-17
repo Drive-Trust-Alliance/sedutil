@@ -1302,7 +1302,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-		printf("Opal Lock Version : 0.9.0.%s.%s 20210225-A001\n", st1.c_str(),GIT_VERSION);
+		printf("Opal Lock Version : 0.9.1.%s.%s 20210317-A001\n", st1.c_str(),GIT_VERSION);
 
 		return 0;
 		break;
