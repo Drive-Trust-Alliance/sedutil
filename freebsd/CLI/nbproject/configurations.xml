@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="97">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <logicalFolder name="f1" displayName="pbkdf2" projectFiles="true">
+        <itemPath>../../Common/pbkdf2/bitops.h</itemPath>
+        <itemPath>../../Common/pbkdf2/blockwise.h</itemPath>
+        <itemPath>../../Common/pbkdf2/chash.h</itemPath>
+        <itemPath>../../Common/pbkdf2/handy.h</itemPath>
+        <itemPath>../../Common/pbkdf2/hmac.h</itemPath>
+        <itemPath>../../Common/pbkdf2/pbkdf2.h</itemPath>
+        <itemPath>../../Common/pbkdf2/sha1.h</itemPath>
+        <itemPath>../../Common/pbkdf2/tassert.h</itemPath>
+      </logicalFolder>
+      <itemPath>../../Common/DtaAnnotatedDump.h</itemPath>
+      <itemPath>../../Common/DtaCommand.h</itemPath>
+      <itemPath>../../Common/DtaConstants.h</itemPath>
+      <itemPath>../../Common/DtaDev.h</itemPath>
+      <itemPath>../../Common/DtaDevEnterprise.h</itemPath>
+      <itemPath>../DtaDevFreeBSDDrive.h</itemPath>
+      <itemPath>../DtaDevFreeBSDCAM.h</itemPath>
+      <itemPath>../DtaDevFreeBSDNvme.h</itemPath>
+      <itemPath>../../Common/DtaDevGeneric.h</itemPath>
+      <itemPath>../DtaDevOS.h</itemPath>
+      <itemPath>../../Common/DtaDevOpal.h</itemPath>
+      <itemPath>../../Common/DtaDevOpal1.h</itemPath>
+      <itemPath>../../Common/DtaDevOpal2.h</itemPath>
+      <itemPath>../../Common/DtaDevOpalite.h</itemPath>
+      <itemPath>../../Common/DtaDevPyrite1.h</itemPath>
+      <itemPath>../../Common/DtaDevPyrite2.h</itemPath>
+      <itemPath>../../Common/DtaDevRuby1.h</itemPath>
+      <itemPath>../../Common/DtaEndianFixup.h</itemPath>
+      <itemPath>../../Common/DtaHashPwd.h</itemPath>
+      <itemPath>../../Common/DtaHexDump.h</itemPath>
+      <itemPath>../../Common/DtaLexicon.h</itemPath>
+      <itemPath>../../Common/DtaOptions.h</itemPath>
+      <itemPath>../../Common/DtaResponse.h</itemPath>
+      <itemPath>../../Common/DtaSession.h</itemPath>
+      <itemPath>../../Common/DtaStructures.h</itemPath>
+      <itemPath>../../Common/log.h</itemPath>
+      <itemPath>../os.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <logicalFolder name="pbkdf2" displayName="pbkdf2" projectFiles="true">
+        <itemPath>../../Common/pbkdf2/blockwise.c</itemPath>
+        <itemPath>../../Common/pbkdf2/chash.c</itemPath>
+        <itemPath>../../Common/pbkdf2/hmac.c</itemPath>
+        <itemPath>../../Common/pbkdf2/pbkdf2.c</itemPath>
+        <itemPath>../../Common/pbkdf2/sha1.c</itemPath>
+      </logicalFolder>
+      <itemPath>../../Common/DtaAnnotatedDump.cpp</itemPath>
+      <itemPath>../../Common/DtaCommand.cpp</itemPath>
+      <itemPath>../../Common/DtaDev.cpp</itemPath>
+      <itemPath>../../Common/DtaDevEnterprise.cpp</itemPath>
+      <itemPath>../DtaDevFreeBSDCAM.cpp</itemPath>
+      <itemPath>../DtaDevFreeBSDNvme.cpp</itemPath>
+      <itemPath>../../Common/DtaDevGeneric.cpp</itemPath>
+      <itemPath>../DtaDevOS.cpp</itemPath>
+      <itemPath>../../Common/DtaDevOpal.cpp</itemPath>
+      <itemPath>../../Common/DtaDevOpal1.cpp</itemPath>
+      <itemPath>../../Common/DtaDevOpal2.cpp</itemPath>
+      <itemPath>../../Common/DtaDevOpalite.cpp</itemPath>
+      <itemPath>../../Common/DtaDevPyrite1.cpp</itemPath>
+      <itemPath>../../Common/DtaDevPyrite2.cpp</itemPath>
+      <itemPath>../../Common/DtaDevRuby1.cpp</itemPath>
+      <itemPath>../../Common/DtaHashPwd.cpp</itemPath>
+      <itemPath>../../Common/DtaHexDump.cpp</itemPath>
+      <itemPath>../../Common/DtaOptions.cpp</itemPath>
+      <itemPath>../../Common/DtaResponse.cpp</itemPath>
+      <itemPath>../../Common/DtaSession.cpp</itemPath>
+      <itemPath>../../Common/sedutil.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../Common/pbdkf2</Elem>
+    <Elem>../../Common/pbdkf2</Elem>
+    <Elem>../../Common/pbkdf2</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>CLang|CLang</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+          <standard>10</standard>
+          <commandlineTool>clang</commandlineTool>
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../../Common</pElem>
+            <pElem>../../Common/pbkdf2</pElem>
+          </incDir>
+          <commandLine>-Wall</commandLine>
+          <warningLevel>3</warningLevel>
+        </cTool>
+        <ccTool>
+          <developmentMode>0</developmentMode>
+          <standard>8</standard>
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../../Common</pElem>
+            <pElem>../../Common/pbkdf2</pElem>
+          </incDir>
+          <commandLine>-Wall</commandLine>
+          <warningLevel>3</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+          <commandLine>-Wall</commandLine>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/sedutil-cli</output>
+          <commandlineTool>clang++</commandlineTool>
+          <linkerLibItems>
+            <linkerOptionItem>-lcam</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="../../Common/DtaAnnotatedDump.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../Common/DtaAnnotatedDump.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaCommand.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaCommand.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaConstants.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaDev.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaDev.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaDevEnterprise.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaDevEnterprise.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaDevGeneric.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaDevGeneric.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaDevOpal.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaDevOpal.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaDevOpal1.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaDevOpal1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaDevOpal2.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaDevOpal2.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaDevOpalite.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaDevOpalite.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaDevPyrite1.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaDevPyrite1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaDevPyrite2.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaDevPyrite2.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaDevRuby1.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaDevRuby1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaEndianFixup.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaHashPwd.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaHashPwd.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaHexDump.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaHexDump.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaLexicon.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaOptions.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaOptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaResponse.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaResponse.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaSession.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../Common/DtaSession.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/DtaStructures.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/log.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbkdf2/bitops.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbkdf2/blockwise.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../../Common/pbkdf2/blockwise.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbkdf2/chash.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../../Common/pbkdf2/chash.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbkdf2/handy.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbkdf2/hmac.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../../Common/pbkdf2/hmac.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbkdf2/pbkdf2.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../../Common/pbkdf2/pbkdf2.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbkdf2/sha1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="../../Common/pbkdf2/sha1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/pbkdf2/tassert.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../Common/sedutil.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../DtaDevFreeBSDCAM.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../DtaDevFreeBSDCAM.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../DtaDevFreeBSDDrive.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../DtaDevFreeBSDNvme.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../DtaDevFreeBSDNvme.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../DtaDevOS.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../DtaDevOS.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../os.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

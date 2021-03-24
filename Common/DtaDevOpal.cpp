@@ -33,6 +33,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaResponse.h"
 #include "DtaSession.h"
 #include "DtaHexDump.h"
+#include "DtaAnnotatedDump.h"
 
 using namespace std;
 
@@ -70,13 +71,8 @@ uint8_t DtaDevOpal::initialSetup(char * password)
 		LOG(E) << "Initial setup failed - unable to set global locking range RW";
 		return lastRC;
 	}
-	if ((lastRC = setMBRDone(1, password)) != 0){
-		LOG(E) << "Initial setup failed - unable to Enable MBR shadow";
-		return lastRC;
-	}
-	if ((lastRC = setMBREnable(1, password)) != 0){
-		LOG(E) << "Initial setup failed - unable to Enable MBR shadow";
-		return lastRC;
+	if (!MBRAbsent()) {
+		setMBREnable(1, password);
 	}
 	
 	LOG(I) << "Initial setup of TPer complete on " << dev;
@@ -211,6 +207,7 @@ DtaDevOpal::lrStatus_t DtaDevOpal::getLockingRange_status(uint8_t lockingrange, 
 }
 uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 {
+	uint32_t i, numRanges;
 	uint8_t lastRC;
 	LOG(D1) << "Entering DtaDevOpal:listLockingRanges()" << rangeid;
 	vector<uint8_t> LR;
@@ -228,23 +225,29 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 		delete session;
 		return lastRC;
 	}
-	vector<uint8_t> table;
-	table.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	for (int i = 0; i < 8; i++) {
-		table.push_back(OPALUID[OPAL_UID::OPAL_LOCKING_INFO_TABLE][i]);
-	}
-	if ((lastRC = getTable(table, _OPAL_TOKEN::MAXRANGES, _OPAL_TOKEN::MAXRANGES)) != 0) {
-		delete session;
-		return lastRC;
-	}
-	if (response.tokenIs(4) != _OPAL_TOKEN::DTA_TOKENID_UINT) {
-		LOG(E) << "Unable to determine number of ranges ";
-		delete session;
-		return DTAERROR_NO_LOCKING_INFO;
+	if (rangeid == -1) {
+		vector<uint8_t> table;
+		table.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+		for (int i = 0; i < 8; i++) {
+			table.push_back(OPALUID[OPAL_UID::OPAL_LOCKING_INFO_TABLE][i]);
+		}
+		if ((lastRC = getTable(table, _OPAL_TOKEN::MAXRANGES, _OPAL_TOKEN::MAXRANGES)) != 0) {
+			delete session;
+			return lastRC;
+		}
+		if (response.tokenIs(4) != _OPAL_TOKEN::DTA_TOKENID_UINT) {
+			LOG(E) << "Unable to determine number of ranges ";
+			delete session;
+			return DTAERROR_NO_LOCKING_INFO;
+		}
+		numRanges = response.getUint32(4) + 1;
+		i = 0;
+	} else {
+		numRanges = rangeid + 1;
+		i = rangeid;
 	}
 	LOG(I) << "Locking Range Configuration for " << dev;
-	uint32_t numRanges = response.getUint32(4) + 1;
-	for (uint32_t i = 0; i < numRanges; i++){
+	for (; i < numRanges; i++){
 		if(0 != i) LR[8] = i & 0xff;
 		if ((lastRC = getTable(LR, _OPAL_TOKEN::RANGESTART, _OPAL_TOKEN::WRITELOCKED)) != 0) {
 			delete session;
@@ -638,6 +641,7 @@ uint8_t DtaDevOpal::revertLockingSP(char * password, uint8_t keep)
 	// empty list returned so rely on method status
 	LOG(I) << "Revert LockingSP complete";
 	session->expectAbort();
+	delete cmd;
 	delete session;
 	LOG(D1) << "Exiting DtaDevOpal::revertLockingSP()";
 	return 0;
@@ -1110,13 +1114,13 @@ uint8_t DtaDevOpal::revertTPer(char * password, uint8_t PSID, uint8_t AdminSP)
 	cmd->addToken(OPAL_TOKEN::STARTLIST);
 	cmd->addToken(OPAL_TOKEN::ENDLIST);
 	cmd->complete();
-	session->expectAbort();
 	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
 		delete cmd;
 		delete session;
 		return lastRC;
 	}
 	LOG(I) << "revertTper completed successfully";
+	session->expectAbort();
 	delete cmd;
 	delete session;
 	LOG(D1) << "Exiting DtaDevOpal::revertTPer()";
@@ -1484,6 +1488,7 @@ uint8_t DtaDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
 		delete session;
 		return lastRC;
 	}
+	LOG(I) << "SID password changed";
 	delete session;
 	LOG(D1) << "Exiting DtaDevOpal::setSIDPassword()";
 	return 0;
@@ -1567,6 +1572,7 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 	uint8_t lastRC;
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
     LOG(D3) << endl << "Dumping command buffer";
+    IFLOG(D) DtaAnnotatedDump(IF_SEND, cmd->getCmdBuffer(), cmd->outputBufferSize());
     IFLOG(D3) DtaHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
     if((lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), cmd->outputBufferSize())) != 0) {
 		LOG(E) << "Command failed on send " << (uint16_t) lastRC;
@@ -1581,6 +1587,7 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
     }
     while ((0 != hdr->cp.outstandingData) && (0 == hdr->cp.minTransfer));
     LOG(D3) << std::endl << "Dumping reply buffer";
+    IFLOG(D) DtaAnnotatedDump(IF_RECV, cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
     IFLOG(D3) DtaHexDump(cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
 	if (0 != lastRC) {
         LOG(E) << "Command failed on recv" << (uint16_t) lastRC;

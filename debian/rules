@@ -1,0 +1,25 @@
+#!/usr/bin/make -f
+export DH_VERBOSE = 1
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	sh -c "\
+		cd linux/CLI || exit 1; \
+		gmake || exit 1; \
+	"
+
+override_dh_auto_install:
+	sh -c "\
+		mkdir -p debian/sedutil/usr/local/bin; \
+		cp -a linux/CLI/dist/Debug_i686/GNU-Linux/sedutil-cli debian/sedutil/usr/local/bin/; \
+	"
+
+override_dh_shlibdeps:
+
+override_dh_usrlocal:
+
+override_dh_auto_clean:
+
+override_dh_auto_test:

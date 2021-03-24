@@ -28,6 +28,10 @@
     <ClInclude Include="..\..\Common\DtaDevOpal.h" />
     <ClInclude Include="..\..\Common\DtaDevOpal1.h" />
     <ClInclude Include="..\..\Common\DtaDevOpal2.h" />
+    <ClInclude Include="..\..\Common\DtaDevOpalite.h" />
+    <ClInclude Include="..\..\Common\DtaDevPyrite1.h" />
+    <ClInclude Include="..\..\Common\DtaDevPyrite2.h" />
+    <ClInclude Include="..\..\Common\DtaDevRuby1.h" />
     <ClInclude Include="..\..\Common\DtaDiskType.h" />
     <ClInclude Include="..\..\Common\DtaEndianFixup.h" />
     <ClInclude Include="..\..\Common\DtaHashPwd.h" />
@@ -60,6 +64,10 @@
     <ClCompile Include="..\..\Common\DtaDevOpal.cpp" />
     <ClCompile Include="..\..\Common\DtaDevOpal1.cpp" />
     <ClCompile Include="..\..\Common\DtaDevOpal2.cpp" />
+    <ClCompile Include="..\..\Common\DtaDevOpalite.cpp" />
+    <ClCompile Include="..\..\Common\DtaDevPyrite1.cpp" />
+    <ClCompile Include="..\..\Common\DtaDevPyrite2.cpp" />
+    <ClCompile Include="..\..\Common\DtaDevRuby1.cpp" />
     <ClCompile Include="..\..\Common\DtaDiskType.cpp" />
     <ClCompile Include="..\..\Common\DtaHashPwd.cpp" />
     <ClCompile Include="..\..\Common\DtaHexDump.cpp" />
