@@ -25,7 +25,7 @@ void usage()
 {
     printf("sedutil v%s Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>\n", GIT_VERSION);
     printf("a utility to manage self encrypting drives that conform\n");
-    printf("to the Trusted Computing Group OPAL 2.0 SSC specification\n");
+    printf("to the TCG Enterprise, Opal, Opalite and Pyrite SSC specs\n");
     printf("General Usage:                     (see readme for extended commandset)\n");
     printf("sedutil-cli <-v> <-n> <action> <options> <device>\n");
     printf("-v (optional)                       increase verbosity, one to five v's\n");
@@ -49,10 +49,10 @@ void usage()
 	printf("                                Rekey Locking Range\n");
     printf("--setBandsEnabled <password> <device>\n");
 	printf("                                Set Enabled for all Locking Ranges\n");
-	printf("                                (passwort = \"\" for MSID) \n");
+	printf("                                (password = \"\" for MSID) \n");
     printf("--setBandEnabled <0...n> <password> <device>\n");
 	printf("                                Set Enabled for Locking Range[n]\n");
-	printf("                                (passwort = \"\" for MSID) \n");
+	printf("                                (password = \"\" for MSID) \n");
     printf("--eraseLockingRange <0...n> <password> <device>\n");
 	printf("                                Erase a Locking Range\n");
 	printf("                                0 = GLobal 1..n  = LRn \n");
@@ -64,11 +64,10 @@ void usage()
 	printf("                                <SIDpassword> is new SID and Admin1 password\n");
 	printf("--setSIDPassword <SIDpassword> <newSIDpassword> <device> \n");
 	printf("                                Change the SID password\n");
-	printf("--setAdmin1Pwd <Admin1password> <newAdmin1password> <device> \n");
-	printf("                                Change the Admin1 password\n");
 	printf("--setPassword <oldpassword, \"\" for MSID> <userid> <newpassword> <device> \n");
-	printf("                                Change the Enterprise password for userid\n");
-	printf("                                \"EraseMaster\" or \"BandMaster<n>\", 0 <= n <= 1023\n");
+	printf("                                Change password for userid:\n");
+	printf("                                Enteprise: \"EraseMaster\" or \"BandMaster<n>\"\n");
+	printf("                                Opal: \"Admin<n>\" or \"User<n>\"\n");
 	printf("--setLockingRange <0...n> <RW|RO|LK> <Admin1password> <device> \n");
 	printf("                                Set the status of a Locking Range\n");
 	printf("                                0 = GLobal 1..n  = LRn \n");
@@ -91,15 +90,20 @@ void usage()
 	printf("                                deactivate the Locking SP \n");
 	printf("                                without erasing the data \n");
 	printf("                                on GLOBAL RANGE *ONLY* \n");
-    printf("--yesIreallywanttoERASEALLmydatausingthePSID <PSID> <device>\n");
-    printf("                                revert the device using the PSID *ERASING* *ALL* the data \n");
+	printf("--PSIDrevert <PSID> <device>\n");
+	printf("--yesIreallywanttoERASEALLmydatausingthePSID <PSID> <device>\n");
+	printf("                                revert the device using the PSID *ERASING*\n");
+	printf("                                *ALL* the data\n");
+	printf("--PSIDrevertAdminSP <PSID> <device>\n");
+	printf("                                Alike to PSIDrevert, but on Enterprise calls\n");
+	printf("                                AdminSP->Revert instead of ThisSP->RevertSP\n");
     printf("--printDefaultPassword <device>\n");
     printf("                                print MSID \n");
     printf("\n");
     printf("Examples \n");
     printf("sedutil-cli --scan \n");
 	printf("sedutil-cli --query %s \n", DEVICEEXAMPLE);
-	printf("sedutil-cli --yesIreallywanttoERASEALLmydatausingthePSID <PSIDALLCAPSNODASHED> %s \n", DEVICEEXAMPLE);
+	printf("sedutil-cli --yesIreallywanttoERASEALLmydatausingthePSID <PSIDNODASHED> %s \n", DEVICEEXAMPLE);
 	printf("sedutil-cli --initialSetup <newSIDpassword> %s \n", DEVICEEXAMPLE);
     return;
 }

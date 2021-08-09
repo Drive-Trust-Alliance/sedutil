@@ -38,6 +38,14 @@ public:
 	DtaDev();
 	/** Default destructor, does nothing*/
 	virtual ~DtaDev();
+	/** Does the device conform to the Ruby 1.0 SSC */
+	uint8_t isRuby1();
+	/** Does the device conform to the Pyrite 2.0 SSC */
+	uint8_t isPyrite2();
+	/** Does the device conform to the Pyrite 1.0 SSC */
+	uint8_t isPyrite1();
+	/** Does the device conform to the Opalite SSC */
+	uint8_t isOpalite();
 	/** Does the device conform to the OPAL 2.0 SSC */
 	uint8_t isOpal2();
 	/** Does the device conform to the OPAL 1.0 SSC */
@@ -50,6 +58,8 @@ public:
 	uint8_t MBREnabled();
 	/** Is the MBRDone flag set */
 	uint8_t MBRDone();
+	/** Is the MBRAbsent flag set */
+	uint8_t MBRAbsent();
 	/** Is the Locked flag set */
 	uint8_t Locked();
 	/** Is the Locking SP enabled */
@@ -251,16 +261,16 @@ public:
 	virtual uint8_t eraseLockingRange(uint8_t lockingrange, char * password) = 0;
 	/** Dumps an object for diagnostic purposes
 	 * @param sp index into the OPALUID table for the SP the object is in
-	 * @param auth the authority ti use for the dump
-	 * @param pass the password for the suthority
+	 * @param auth the authority to use for the dump
+	 * @param pass the password for the authority
 	 * @param objID the UID of the object to dump
 	 *  */
 	virtual uint8_t objDump(char *sp, char * auth, char *pass,
 		char * objID) = 0;
 	/** Issue any command to the drive for diagnostic purposes
 	 * @param sp index into the OPALUID table for the SP the object is in
-	 * @param auth the authority ti use for the dump
-	 * @param pass the password for the suthority
+	 * @param auth the authority to use for the dump
+	 * @param pass the password for the authority
 	 * @param invoker caller of the method
 	 * @param method the method to call
 	 * @param plist  the parameter list for the command
