@@ -271,6 +271,7 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
 
     if (!(memcmp(nullz.data(), buffer, 512))) {
         disk_info.devType = DEVICE_TYPE_OTHER;
+        identify_SAS(&disk_info);
         return;
     }
     IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) buffer;
