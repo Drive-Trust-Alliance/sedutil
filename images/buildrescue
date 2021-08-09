@@ -13,7 +13,7 @@ elif [ x${1} == "xRescue64" ] ; then
 	BUILDTYPE="RESCUE64"
 	ROOTDIR="64bit"
 else 
-	echo "NO BUILDTYPE specified defalted to Rescue32"
+	echo "NO BUILDTYPE specified; defaulted to Rescue32"
 fi
 BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 echo "Building " $BUILDTYPE "image"
@@ -47,6 +47,39 @@ sudo rm etc/init.d/S99*
 sudo mkdir -p usr/sedutil
 sudo cp ../../UEFI64/UEFI64-*.img.gz usr/sedutil/
 sudo cp ../../BIOS32/BIOS32-*.img.gz usr/sedutil/
+
+## Optional:  There are Linux command-line utilities provided by vendors that could be helpful
+##      to have available on the rescue disk to supplement SEDutil.  Some specific notes:
+##      1. Micron Storage Executive has a Linux CLI version which can detect both SATA and /NVMe
+##         disks from Micron, Crucial, and other vendors; and can perform at least basic functions
+##         (e.g. PSID revert/erase) on Micron (documented) and Crucial MX500 (undocumented)
+##         drives.  It's also small enough to copy over - only two files are needed from the
+##         download, which can be found and copied over after install on a Linux system with a
+##         GUI.  The two files needed are "msecli" and "libstorelib.so" and as of October 2019
+##	   those files are under /opt/MicronTechnology/MicronMSECLI/ after install.
+##      2. Seagate SeaTools also has a Linux CLI version for download.  Unfortunately that download
+##         includes a complete JRE, and I didn't even try to get it slimmed down to something
+##         reasonable to fit in a small Rescue ISO.
+##	3. Samsung Magician (consumer/Opal drives) and Samsung DC Toolkit (datacenter/TCG Enterprise
+##	   drives) are known to exist but the exact capabilities and compatibility are untested
+##	   and their Linux support in the SEDutil rescue environment is unknown.
+##
+## Overall, the expected usage is:
+##  - If there are vendor files that you want placed on the Rescue ISO, create a subdirectory
+##    "vendor" under sedutil/images and copy the files there.
+##  - The files will be copied into the image used to build the ISO, and after boot will be
+##    available under /usr/vendor (considered /opt and /usr/local but the PBA was already in
+##    /usr/sedutil so I tried to be somewhat consistent).
+##  - If there is no "vendor" directory, then no changes from previous behavior.
+
+## if "vendor" directory exists, copy linux binaries from "vendor" to usr/vendor
+if [ -d ../../vendor ] ; then
+   sudo mkdir -p usr/vendor
+   sudo cp -r ../../vendor/* usr/vendor/
+fi
+
+echo "Compressing RescueFS"
+
 sudo find . | sudo cpio -o -H newc | xz -9 -C crc32 -c > ../buildroot/${ROOTDIR}/images/rescuefs.cpio.xz
 cd ../..
 sudo rm -rf scratch/rescuefs
