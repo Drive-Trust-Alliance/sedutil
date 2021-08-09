@@ -86,14 +86,14 @@ public:
          * @param name the column name to be set
          * @param value data to be stored the the column 
          */
-	uint8_t setTable(vector<uint8_t> table, OPAL_TOKEN name,
-		vector<uint8_t> value);
+	template<class T> uint8_t setTable(const vector<uint8_t>& table, OPAL_TOKEN name,
+		const T& value);
          /** set a single column in an object table 
          * @param table the UID of the table
          * @param name the column name to be set
          * @param value data to be stored the the column 
          */
-	uint8_t setTable(vector<uint8_t> table, OPAL_TOKEN name,
+	uint8_t setTable(const vector<uint8_t>& table, OPAL_TOKEN name,
 		OPAL_TOKEN value);
         /** Change state of the Locking SP to active.
          * Enables locking 
@@ -288,5 +288,4 @@ protected:
 	 *  @param password Admin1 Password for TPer
 	 */
 	lrStatus_t getLockingRange_status(uint8_t lockingrange, char * password);
-
 };

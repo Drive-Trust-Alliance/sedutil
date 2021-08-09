@@ -18,7 +18,7 @@ SEDUTIL_COMMON_CODE = \
 	Common/DtaStructures.h Common/log.h Common/DtaLexicon.h Common/DtaConstants.h Common/DtaEndianFixup.h \
 	Common/pbkdf2/blockwise.c Common/pbkdf2/blockwise.h Common/pbkdf2/chash.c Common/pbkdf2/chash.h Common/pbkdf2/handy.h \
 	Common/pbkdf2/hmac.c Common/pbkdf2/hmac.h Common/pbkdf2/pbkdf2.c Common/pbkdf2/pbkdf2.h Common/pbkdf2/sha1.c \
-	Common/pbkdf2/sha1.h Common/pbkdf2/tassert.h Common/pbkdf2/bitops.h
+	Common/pbkdf2/sha1.h Common/pbkdf2/tassert.h Common/pbkdf2/bitops.h Common/SecureContainer.h
 sbin_PROGRAMS = sedutil-cli linuxpba
 sedutil_cli_SOURCES = linux/Version.h Common/sedutil.cpp Common/DtaOptions.cpp Common/DtaOptions.h \
 	\
