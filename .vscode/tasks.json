@@ -1,0 +1,88 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "type": "shell",
+        "label": "sedutil_build64",
+        "command": "make",
+        "args": [
+          "CFLAGS='-m64 -O2'",
+          "CXXFLAGS='-m64 -O2'",
+          "sedutil-cli"
+        ],
+        "problemMatcher": [
+          "$gcc"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      },
+      {
+        "type": "shell",
+        "label": "sedutil_build64dbg",
+        "command": "make",
+        "args": [
+          "CFLAGS='-m64 -g'",
+          "CXXFLAGS='-m64 -g'",
+          "sedutil-cli"
+        ],
+        "problemMatcher": [
+          "$gcc"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": false,
+        }
+      },
+      {
+        "type": "shell",
+        "label": "pba_build64",
+        "command": "make",
+        "args": [
+          "CFLAGS='-m64 -O2'",
+          "CXXFLAGS='-m64 -O2'",
+          "linuxpba"
+        ],
+        "problemMatcher": [
+          "$gcc"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": false,
+        }
+      },
+      {
+        "type": "shell",
+        "label": "pba_build64dbg",
+        "command": "make",
+        "args": [
+          "CFLAGS='-m64 -g'",
+          "CXXFLAGS='-m64 -g'",
+          "linuxpba"
+        ],
+        "problemMatcher": [
+          "$gcc"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": false
+        }
+      },
+      {
+        "type": "shell",
+        "label": "clean ",
+        "command": "make",
+        "args": [
+          "clean"
+        ],
+        "problemMatcher": [
+          "$gcc"
+        ],
+        
+      }
+
+    ]
+  }
+  
+  
