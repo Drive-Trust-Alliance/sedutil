@@ -45,3 +45,10 @@ linux/Version.h:
 	./linux/GitVersion.sh > linux/Version.h
 .INTERMEDIATE: linux/Version.h
 
+distclean-local:
+	rm config.status configure config.log
+	rm Makefile
+	rm -r autom4te.cache/
+	rm aclocal.m4
+	rm compile install-sh missing Makefile.in
+	rm -rf depcomp
