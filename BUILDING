@@ -1,0 +1,11 @@
+sedutil is built using autotools and make.
+steps:
+autoreconf -i
+./configure --enable-silent-rules
+make
+------------------------
+This will also build the PBA ignore it.
+
+If you get an errot building that says Version.h is missing
+you need to make all. This is an issue with how autotools handles
+built sources and dependencies. 
