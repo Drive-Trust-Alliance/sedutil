@@ -8,12 +8,17 @@ exit 99
 cd scratch
 # clean up and start over
 rm -rf buildroot
-git clone ${BUILDROOT} || die
+git clone buildroot.git || die
 cd buildroot
 git checkout -b PBABUILD ${BUILDROOT_TAG}  || die
 git reset --hard
 git clean -df
+#add patches
+cd ..
+mkdir patches
+cp -r ../buildroot/patches/* patches/
 # add out of tree build directoried and files
+cd buildroot
 # 64 bit system
 mkdir 64bit
 cp ../../buildroot/64bit/.config 64bit/
@@ -27,10 +32,10 @@ cp -r ../../buildroot/32bit/overlay 32bit/
 # add the current buildroot packages
 sed -i '/sedutil/d' package/Config.in
 sed -i '/menu "System tools"/a \\tsource "package/sedutil/Config.in"' package/Config.in
-cp -r ../../buildroot/packages/sedutil/ package/
+cp -r ../../buildroot/package/sedutil/ package/
 # Make a distribution from the current source
 cd ../../..
-autoreconf 
+autoreconf -i 
 ./configure
 make dist
 mkdir images/scratch/buildroot/dl/
