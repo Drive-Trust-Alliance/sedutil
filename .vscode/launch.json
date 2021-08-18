@@ -5,13 +5,14 @@
 
         "version": "0.2.0",
         "configurations": [
+
           {
-            "name": "sedutil_debug64",
+            "name": "sedutil_debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/sedutil-cli",
+            "program": "sedutil-cli",
             "args": ["--query","/dev/sda"],
-            "stopAtEntry": true,
+            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
@@ -23,7 +24,7 @@
                 "ignoreFailures": true
               }
             ],
-            "preLaunchTask": "sedutil_build64",
+            "preLaunchTask": "sedutil_build",
             "miDebuggerPath": "/usr/bin/gdb"
           }
         ]

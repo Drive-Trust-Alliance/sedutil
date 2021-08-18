@@ -28,6 +28,7 @@ AC_CHECK_FUNCS([memset])
 
 # use automake
 AM_INIT_AUTOMAKE([-Wall -Werror])
+AM_SILENT_RULES 
 AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT

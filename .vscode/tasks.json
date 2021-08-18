@@ -3,11 +3,13 @@
     "tasks": [
       {
         "type": "shell",
-        "label": "sedutil_build64",
+        "label": "sedutil_build",
         "command": "make",
+        "options": {"cwd": "${workspaceFolder}"},
         "args": [
-          "CFLAGS='-m64 -O2'",
-          "CXXFLAGS='-m64 -O2'",
+          "V=0",
+          "CFLAGS='-g -Og'",
+          "CXXFLAGS='-g -Og'",
           "sedutil-cli"
         ],
         "problemMatcher": [
@@ -15,59 +17,7 @@
         ],
         "group": {
           "kind": "build",
-          "isDefault": true
-        }
-      },
-      {
-        "type": "shell",
-        "label": "sedutil_build64dbg",
-        "command": "make",
-        "args": [
-          "CFLAGS='-m64 -g'",
-          "CXXFLAGS='-m64 -g'",
-          "sedutil-cli"
-        ],
-        "problemMatcher": [
-          "$gcc"
-        ],
-        "group": {
-          "kind": "build",
-          "isDefault": false,
-        }
-      },
-      {
-        "type": "shell",
-        "label": "pba_build64",
-        "command": "make",
-        "args": [
-          "CFLAGS='-m64 -O2'",
-          "CXXFLAGS='-m64 -O2'",
-          "linuxpba"
-        ],
-        "problemMatcher": [
-          "$gcc"
-        ],
-        "group": {
-          "kind": "build",
-          "isDefault": false,
-        }
-      },
-      {
-        "type": "shell",
-        "label": "pba_build64dbg",
-        "command": "make",
-        "args": [
-          "CFLAGS='-m64 -g'",
-          "CXXFLAGS='-m64 -g'",
-          "linuxpba"
-        ],
-        "problemMatcher": [
-          "$gcc"
-        ],
-        "group": {
-          "kind": "build",
-          "isDefault": false
-        }
+          "isDefault": true         }
       },
       {
         "type": "shell",

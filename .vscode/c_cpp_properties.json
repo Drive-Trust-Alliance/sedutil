@@ -2,7 +2,7 @@
   "configurations": [
     {
       "name": "Linux",
-      "includePath" : ["${workspaceFolder}/Common/**","${workspaceFolder}/linux/**","${workspaceFolder}/LinuxPBA/** ],
+      "includePath" : ["${workspaceFolder}/Common/**","${workspaceFolder}/linux/**","${workspaceFolder}/LinuxPBA/**" ],
       "defines": [],
       "compilerPath": "/usr/bin/gcc",
       "cStandard": "c11",
