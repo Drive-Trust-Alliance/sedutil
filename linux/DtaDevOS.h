@@ -61,4 +61,6 @@ private:
     /** OS specific routine to send a SCSI INQUIRY to the device */
     void identify_SAS();
     DtaDevLinuxDrive *drive;
+public:
+	BYTE disc0Sts = 1;// any error
 };

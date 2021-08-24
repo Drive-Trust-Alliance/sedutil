@@ -34,6 +34,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevEnterprise.h"
 #include "Version.h"
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#include "regtry.h"
 #include "uuid.h"
 #define WRITE_RETRIES 3
 #include "sedsize.h"
@@ -47,7 +48,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 //#include <msclr\marshal_cppstd.h>
 #endif
 #include "ob.h"
-#include "regtry.h"
+
 
 void setlic(char * lic_level, const char * LicenseLevel);
 
@@ -822,7 +823,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 #endif
 	return 0;
 }
-
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 inline void logc(int argc, char * argv[])
 {
 	LSTATUS ls;
@@ -849,6 +850,7 @@ inline void logc(int argc, char * argv[])
 		}
 	}
 }
+#endif
 
 int main(int argc, char * argv[])
 {
@@ -1302,7 +1304,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-		printf("Opal Lock Version : 0.9.1.%s.%s 20210317-A001\n", st1.c_str(),GIT_VERSION);
+		printf("Opal Lock Version : 0.9.3.%s.%s 20210823-A001\n", st1.c_str(),GIT_VERSION);
 
 		return 0;
 		break;

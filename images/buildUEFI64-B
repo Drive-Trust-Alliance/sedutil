@@ -56,8 +56,10 @@ mkdir -p pure64
 cd pure64
 #cp -pv ../../clone-pure64/boot6.4.1/vmlinuz64 ../../clone-pure64/boot/
 #zcat ../../clone-pure64/boot6.4.1/corepure64.gz | sudo cpio -i -d -H newc
-cp -pv ../../clone-pure64/boot9/vmlinuz64 ../../clone-pure64/boot/ 
-zcat ../../clone-pure64/boot9/corepure64.gz | sudo cpio -i -d -H newc
+#cp -pv ../../clone-pure64/boot9/vmlinuz64 ../../clone-pure64/boot/ 
+#zcat ../../clone-pure64/boot9/corepure64.gz | sudo cpio -i -d -H newc
+cp -pv ../../clone-pure64/boot12.0/vmlinuz64 ../../clone-pure64/boot/ 
+zcat ../../clone-pure64/boot12.0/corepure64.gz | sudo cpio -i -d -H newc
 sudo cp ../../clone-pure64/misc1/tce-setup usr/bin/tc-setup
 mkdir -p tmp/tce
 mkdir -p tmp/h.d
@@ -70,14 +72,14 @@ cd ../${IMGDIR}/images
 # Start fresh
 sudo rm -rf UEFI64${BUILDTYPE} ; mkdir UEFI64${BUILDTYPE} ; cd UEFI64${BUILDTYPE}
 # make an image file
-dd if=/dev/zero of=${BUILDIMG}Y bs=1M count=80 # fr 67->85->68 72ok , 68 ok tmp to 80 for debug
+dd if=/dev/zero of=${BUILDIMG}Y bs=1M count=90 # fr 67->85->68 72ok , 68 ok tmp to 80 for debug
 
 # n: new partiotion; how many partion? default 1; 
 # 1st sector(34-20466): default 2048; 
 # last sector(2048-20466) : default 20466
 # hex code or GUID : default 8300(linux system)  
 # 
-(echo o;echo n;echo p;echo 1;echo "";echo "";echo a;echo t;echo e;echo w) | fdisk ${BUILDIMG}Y
+(echo o;echo n;echo p;echo 1;echo "";echo "";echo a;echo t;echo e;echo p; echo w) | fdisk ${BUILDIMG}Y
 #
 #
 
@@ -86,8 +88,10 @@ dd if=/dev/zero of=${BUILDIMG}Y bs=1M count=80 # fr 67->85->68 72ok , 68 ok tmp 
 # boot loader 0-1BDh 446-byte ; 1BE-1FD partition table 64-byte; signatur 1FE-1FF 2-byte
 # syslinux look at sectore 32776 of /dev/sda for its 2nd stage ccccc
 ##### mbr.bin only has 440-nyte with wc -c command
-cp ../../../../syslinux-6.04-pre1/bios/mbr/mbr.bin .
-
+# must use syslinux-4.05-pre1
+#cp ../../../../syslinux-4.05-pre1/bios/mbr/mbr.bin .
+cp ../../../syslinux-4.05-pre1/mbr/mbr.bin .
+pwd 
 dd if=${BUILDIMG}Y of=part skip=$((`cat mbr.bin | wc -c`)) bs=1 count=$((512 - `cat mbr.bin | wc -c`)) 
 
 
@@ -121,9 +125,10 @@ sudo cp -p --no-preserve=mode,ownership ../../../clone-pure64/isolinuxroot/*  im
 
 #sudo syslinux -m -a image  # NG
 #sudo ../../../../syslinux-6.04-pre1/extlinux/extlinux --install image # boot error can not find .c32 file
-sudo ../../../../syslinux-4.05-pre1/extlinux/extlinux --install image # ok
+sudo ../../../syslinux-4.05-pre1/extlinux/extlinux --install image # ok
 
 sudo cp -av --no-preserve=mode,ownership ../../../clone-pure64/boot image/
+
 sudo cp -av --no-preserve=mode,ownership ../../../clone-pure64/EFI  image/
 
 sudo cp -pv --no-preserve=mode,ownership ../../../clone-pure64/autorun.* image/
@@ -140,6 +145,7 @@ echo "check final used disk image size"
 sudo du -h image ; sudo du image
 echo "Last check before umount"
 ###################
+
 sudo umount image
 sudo losetup -d $LOOPDEV
 #gzip ${BUILDIMG}
