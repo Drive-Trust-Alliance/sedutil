@@ -2,40 +2,82 @@
 set -x
 ## define releases for tools
 . conf
-VERSIONINFO=`git describe --dirty`  || VERSIONINFO=tarball
-BUILDTYPE=RESCUE32
-ROOTDIR=32bit
 
-if [ x${1} == "xRescue32" ] ; then
-	BUILDTYPE="RESCUE32"
-	ROOTDIR="32bit"
-elif [ x${1} == "xRescue64" ] ; then
-	BUILDTYPE="RESCUE64"
-	ROOTDIR="64bit"
-else 
-	echo "NO BUILDTYPE specified defalted to Rescue32"
+
+if  [ x${1} == "xRescue64" ] ; then
+    BUILDTYPE="RESCUE64"
+    arch="64bit"
+elif [ x${1} == "xRescue32" ] ; then
+    BUILDTYPE="RESCUE32"
+    arch="32bit"
+elif [ x${1} == "x" ] ; then
+    echo "NO BUILDTYPE specified defaulted to Rescue32"
+    BUILDTYPE="RESCUE32"
+    arch="32bit"
+else
+    echo "Invalid parameter ${1}"
+    echo "Usage: $0 [Rescue32|Rescue64] -- defaults to Rescue32"
+    exit 1
 fi
+
+# IMAGES can be supplied;  defaults to $(realpath .), probably .../sedutil/images
+if [ -z "${IMAGES}" ] ; then
+    IMAGES=$(realpath .)
+    lasttwo="$(basename "$(dirname "$IMAGES")")/$(basename "$IMAGES")"
+    if [[ "${lasttwo}" != "sedutil/images" ]] ; then
+        echo "Run $0 from sedutil/images or supply env var IMAGES"
+        exit 1
+    fi
+fi
+# Real paths rooted at ${IMAGES}
+SYSLCFG=${IMAGES}/buildroot/syslinux.cfg
+SCRATCH=${IMAGES}/scratch
+SCRBLDROOT=${SCRATCH}/buildroot
+SYSLDIR=${SCRATCH}/${SYSLINUX}
+RESCUEFS=${SCRATCH}/rescuefs
+ARCHDIR=${SCRBLDROOT}/${arch}
+SCRIMAGES=${ARCHDIR}/images
+
+VERSIONINFO="$(git describe --dirty)"  || VERSIONINFO="tarball"
 BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
+
+
 echo "Building " $BUILDTYPE "image"
-[ -f scratch/${SYSLINUX}/bios/mbr/mbr.bin ] || { echo " prereqs are not available "; exit 1; }
-[ -x scratch/${SYSLINUX}/bios/extlinux/extlinux ] || { echo " prereqs are not available "; exit 1; }
-[ -f scratch/${SYSLINUX}/efi64/efi/syslinux.efi ] || { echo " prereqs are not available "; exit 1; }
-[ -f scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64 ] || { echo " prereqs are not available "; exit 1; }
-[ -f scratch/buildroot/${ROOTDIR}/images/bzImage ] || { echo " prereqs are not available "; exit 1; }
-[ -f scratch/buildroot/${ROOTDIR}/images/rootfs.cpio.xz  ] || { echo " prereqs are not available "; exit 1; }
-[ -x scratch/buildroot/${ROOTDIR}/target/sbin/linuxpba  ] || { echo " prereqs are not available "; exit 1; }
-[ -x scratch/buildroot/${ROOTDIR}/target/sbin/sedutil-cli  ] || { echo " prereqs are not available "; exit 1; }
-[ -f buildroot/syslinux.cfg ] || { echo " prereqs are not available "; exit 1; }
-[ -f UEFI64/UEFI64-*.img.gz ] || { echo " prereqs are not available "; exit 1; }
-[ -f BIOS32/BIOS32-*.img.gz ] || { echo " prereqs are not available "; exit 1; }
+
+# Check for prerequisites
+function chkpre {
+    test="${1}"
+    prereq="${2}"
+    if ! [ "${test}" "${prereq}" ] ; then
+        echo "${prereq} prereq not available"
+        exit 1
+    fi
+}
+
+if [ "${BUILDTYPE}" == "RESCUE32" ] ; then
+    chkpre -f ${SYSLDIR}/bios/mbr/mbr.bin
+    chkpre -x ${SYSLDIR}/bios/extlinux/extlinux
+else
+    chkpre -f ${SYSLDIR}/efi64/efi/syslinux.efi
+    chkpre -f ${SYSLDIR}/efi64/com32/elflink/ldlinux/ldlinux.e64
+fi
+chkpre -f ${IMAGES}/BIOS32/BIOS32-*.img.gz
+chkpre -f ${IMAGES}/UEFI64/UEFI64-*.img.gz
+chkpre -f ${SCRIMAGES}/bzImage
+chkpre -f ${SCRIMAGES}/rootfs.cpio.xz
+chkpre -x ${ARCHDIR}/target/usr/sbin/linuxpba
+chkpre -x ${ARCHDIR}/target/usr/sbin/sedutil-cli
+chkpre -f ${SYSLCFG}
+
+
 #
 # Remaster the root file system
-sudo rm -rf scratch/rescuefs
-sudo rm -f scratch/buildroot/${ROOTDIR}/images/rescuefs.cpio.xz 
-mkdir scratch/rescuefs
-cd scratch/rescuefs
-xz --decompress --stdout ../buildroot/${ROOTDIR}/images/rootfs.cpio.xz | sudo cpio -i -H newc -d
-#weird permission denied on etc/issue 
+sudo rm -f ${SCRIMAGES}/rescuefs.cpio.xz
+sudo rm -rf ${RESCUEFS}
+mkdir ${RESCUEFS}
+cd ${RESCUEFS}
+xz --decompress --stdout ${SCRIMAGES}/rootfs.cpio.xz | sudo cpio -i -H newc -d
+#weird permission denied on etc/issue
 echo "* ***********************************" > /tmp/issue
 echo "* DTA sedutil rescue image ${BUILDIMG}" >> /tmp/issue
 echo "*" >> /tmp/issue
@@ -45,43 +87,61 @@ echo "* ***********************************" >> /tmp/issue
 sudo mv /tmp/issue etc/issue
 sudo rm etc/init.d/S99*
 sudo mkdir -p usr/sedutil
-sudo cp ../../UEFI64/UEFI64-*.img.gz usr/sedutil/
-sudo cp ../../BIOS32/BIOS32-*.img.gz usr/sedutil/
-sudo find . | sudo cpio -o -H newc | xz -9 -C crc32 -c > ../buildroot/${ROOTDIR}/images/rescuefs.cpio.xz
-cd ../..
-sudo rm -rf scratch/rescuefs
+sudo cp ${IMAGES}/UEFI64/UEFI64-*.img.gz usr/sedutil/
+sudo cp ${IMAGES}/BIOS32/BIOS32-*.img.gz usr/sedutil/
+sudo find . | sudo cpio -o -H newc | xz -9 -C crc32 -c > ${SCRIMAGES}/rescuefs.cpio.xz
+cd ${IMAGES}
+sudo rm -rf ${RESCUEFS}
+
 #
-sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE}
-dd if=/dev/zero of=${BUILDIMG} bs=1M count=75
+sudo rm -rf ${BUILDTYPE}
+mkdir ${BUILDTYPE}
+cd ${BUILDTYPE}
+dd if=/dev/zero of=${BUILDIMG} bs=1M count=120
 if [ ${BUILDTYPE} == "RESCUE32" ] ; then
-	(echo o;echo n;echo p;echo 1;echo "";echo "";echo a;echo 1;echo w) | fdisk -C 100 ${BUILDIMG}
-	dd if=../scratch/${SYSLINUX}/bios/mbr/mbr.bin of=${BUILDIMG} count=1 conv=notrunc bs=512
+	fdisk -C 100 ${BUILDIMG} <<EOF
+o
+n
+p
+1
+
+
+a
+1
+w
+EOF
+	dd if=${SYSLDIR}/bios/mbr/mbr.bin of=${BUILDIMG} count=1 conv=notrunc bs=512
 else
-	(echo "n";echo "";echo "";echo "";echo "ef00";echo w;echo Y) | gdisk ${BUILDIMG}
+	gdisk ${BUILDIMG} <<EOF
+n
+
+
+
+ef00
+w
+Y
+EOF
 fi
-LOOPDEV=`sudo losetup --show -f -o 1048576 ${BUILDIMG}`
-if [ ${BUILDTYPE} == "RESCUE32" ] ; then
-	sudo mkfs.ext4 $LOOPDEV -L ${BUILDTYPE}
-else
-	sudo mkfs.vfat $LOOPDEV -n ${BUILDTYPE}
-fi
+
+LOOPDEV=$(sudo losetup --show -f -o 1048576 ${BUILDIMG})
+sudo mkfs.vfat $LOOPDEV -n ${BUILDTYPE} # Just use vfat for both types
 mkdir image
 sudo mount $LOOPDEV image
 sudo chmod 777 image
 if [ ${BUILDTYPE} == "RESCUE32" ] ; then
 	sudo mkdir -p image/boot/extlinux
-	sudo ../scratch/${SYSLINUX}/bios/extlinux/extlinux --install image/boot/extlinux
-	sudo cp ../scratch/buildroot/32bit/images/bzImage  image/boot/extlinux/
-	sudo cp ../scratch/buildroot/32bit/images/rescuefs.cpio.xz image/boot/extlinux/rootfs.cpio.xz
-	sudo cp ../buildroot/syslinux.cfg image/boot/extlinux/extlinux.conf
+	sudo ${SYSLDIR}/bios/extlinux/extlinux --install image/boot/extlinux
+	sudo cp ${SCRIMAGES}/bzImage  image/boot/extlinux/
+	sudo cp ${SCRIMAGES}/rescuefs.cpio.xz image/boot/extlinux/rootfs.cpio.xz
+	sudo cp ${SYSLCFG} image/boot/extlinux/extlinux.conf
 else
 	sudo mkdir -p image/EFI/boot
-	sudo cp ../scratch/${SYSLINUX}/efi64/efi/syslinux.efi image/EFI/boot/bootx64.efi
-	sudo cp ../scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64 image/EFI/boot/
-	sudo cp ../scratch/buildroot/64bit/images/bzImage image/EFI/boot/
-	sudo cp ../scratch/buildroot/64bit/images/rescuefs.cpio.xz image/EFI/boot/rootfs.cpio.xz
-	sudo cp ../buildroot/syslinux.cfg image/EFI/boot/
-fi	
+	sudo cp ${SYSLDIR}/efi64/efi/syslinux.efi image/EFI/boot/bootx64.efi
+	sudo cp ${SYSLDIR}/efi64/com32/elflink/ldlinux/ldlinux.e64 image/EFI/boot/
+	sudo cp ${SCRIMAGES}/bzImage image/EFI/boot/
+	sudo cp ${SCRIMAGES}/rescuefs.cpio.xz image/EFI/boot/rootfs.cpio.xz
+	sudo cp ${SYSLCFG} image/EFI/boot/
+fi
 sudo umount image
 sudo losetup -d $LOOPDEV
 gzip ${BUILDIMG}

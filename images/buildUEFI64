@@ -8,14 +8,14 @@ BUILDTYPE=UEFI64
 BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 
 ## check that everything is available
-[  -f scratch/${SYSLINUX}/efi64/efi/syslinux.efi ] || { echo " prereqs are not available "; exit 1; }
-[  -f scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64 ] || { echo " prereqs are not available "; exit 1; }
-[  -f scratch/buildroot/64bit/images/bzImage ] || { echo " prereqs are not available "; exit 1; }
-[  -f scratch/buildroot/64bit/images/rootfs.cpio.xz ] || { echo " prereqs are not available "; exit 1; }
-[  -f scratch/buildroot/64bit/target/sbin/linuxpba  ] || { echo " prereqs are not available "; exit 1; }
-[  -f scratch/buildroot/64bit/target/sbin/sedutil-cli  ] || { echo " prereqs are not available "; exit 1; }
-[  -f buildroot/syslinux.cfg ] || { echo " prereqs are not available "; exit 1; }
-  
+chkpre -f scratch/${SYSLINUX}/efi64/efi/syslinux.efi
+chkpre -f scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64
+chkpre -f scratch/buildroot/64bit/images/bzImage
+chkpre -f scratch/buildroot/64bit/images/rootfs.cpio.xz
+chkpre -f scratch/buildroot/64bit/target/usr/sbin/linuxpba
+chkpre -f scratch/buildroot/64bit/target/usr/sbin/sedutil-cli
+chkpre -f buildroot/syslinux.cfg
+
 # Start fresh
 sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE}
 # make an image file
@@ -32,6 +32,8 @@ sudo cp ../scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64 image/EFI
 sudo cp ../scratch/buildroot/64bit/images/bzImage image/EFI/boot/
 sudo cp ../scratch/buildroot/64bit/images/rootfs.cpio.xz image/EFI/boot/
 sudo cp ../buildroot/syslinux.cfg image/EFI/boot/
+sudo mkdir -p image/.fseventsd
+sudo touch image/.fseventsd/no-log
 sudo umount image
 sudo losetup -d $LOOPDEV
 gzip ${BUILDIMG}

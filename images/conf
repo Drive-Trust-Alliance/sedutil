@@ -2,6 +2,16 @@
 #  Setup versions for image components
 #  This script should be sourced by the other scripts
 SYSLINUX=syslinux-6.03
-#BUILDROOT=git://git.buildroot.net/buildroot
-BUILDROOT=git@github.com:buildroot/buildroot.git
-BUILDROOT_TAG=2017.05.1
+BUILDROOT=git://git.buildroot.net/buildroot
+BUILDROOT_TAG=2021.02
+
+# Check for prerequisites
+function chkpre {
+    test="${1}"
+    prereq="${2}"
+    if ! [ "${test}" "${prereq}" ] ; then
+        echo "${prereq} prereq not available"
+        exit 1
+    fi
+}
+w

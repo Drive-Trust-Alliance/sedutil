@@ -15,9 +15,9 @@ Build the PBA kernels and root filesystems
 ./buildpbaroot
 
 Build the image files.
-Rescue -> ./buildrescue
-biosLinux -> ./buildbios 
-uefi64 -> ./buildUEFI64 
+biosLinux -> ./buildbios
+uefi64 -> ./buildUEFI64
+Rescue -> ./buildrescue [Rescue32|Rescue64]  (build one of those above first)
 
 Building the syslinux based system:
 The scripts assume that the syslinux repo is at the same level in the filesystem as sedutil
@@ -27,9 +27,3 @@ make
 cd ../sedutil/images
 ./legacypba Release
 ./legacypba Debug
-
-
-
-
-
-	
