@@ -20,4 +20,4 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 #include <string>
 using namespace std;
-string GetPassPhrase(const char *prompt, bool show_asterisk=true);
+string GetPassPhrase();
