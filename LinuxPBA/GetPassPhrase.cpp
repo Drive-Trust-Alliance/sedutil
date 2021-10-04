@@ -63,6 +63,7 @@ string GetPassPhrase()
   FILE* uuid_file;
   char uuid[100];
   char* temp;
+  char ch;
   uuid_file = fopen("/sys/devices/virtual/dmi/id/product_uuid", "r");
   if(uuid_file) {
     temp = fgets(uuid, 100, uuid_file);
@@ -74,9 +75,13 @@ string GetPassPhrase()
         }
       }
    } 
+  } else {
+    printf("Cannot open\n");
   }
+  printf("%s\n", uuid);
   string password(uuid);
-
+  printf("size: %d\n", password.size());
+  ch = getchar();
   return password;
 }
 
