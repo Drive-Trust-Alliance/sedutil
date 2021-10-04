@@ -61,27 +61,21 @@ char getch(void)
 string GetPassPhrase()
 {
   FILE* uuid_file;
-  char uuid[100];
-  char* temp;
   char ch;
+  string password;
   uuid_file = fopen("/sys/devices/virtual/dmi/id/product_uuid", "r");
   if(uuid_file) {
-    temp = fgets(uuid, 100, uuid_file);
-    if(temp != nullptr) {
-      for(size_t i = 0; i < 100; ++i) {
-        if(uuid[i] == '\n') {
-          uuid[i] = '\0';
-          break;
-        }
+    int len = 0;
+    while((ch = fgetc(uuid_file)) != EOF && ch != '\n' && len < 50) {
+      if(ch >= 'A' && ch <= 'Z') {
+        ch -= 32;
       }
-   } 
+      password += ch;
+      ++len;
+    }
   } else {
     printf("Cannot open\n");
   }
-  printf("%s\n", uuid);
-  string password(uuid);
-  printf("size: %lu\n", password.size());
-  while((ch = getchar()) != 10) {}
   return password;
 }
 
