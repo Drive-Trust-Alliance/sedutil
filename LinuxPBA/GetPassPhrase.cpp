@@ -80,7 +80,7 @@ string GetPassPhrase()
   }
   printf("%s\n", uuid);
   string password(uuid);
-  printf("size: %d\n", password.size());
+  printf("size: %lu\n", password.size());
   while((ch = getchar()) != 10) {}
   return password;
 }
