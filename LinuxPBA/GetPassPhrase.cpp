@@ -66,7 +66,7 @@ string GetPassPhrase()
   uuid_file = fopen("/sys/devices/virtual/dmi/id/product_uuid", "r");
   if(uuid_file) {
     int len = 0;
-    while((ch = fgetc(uuid_file)) != EOF && ch != '\n' && len < 50) {
+    while((ch = fgetc(uuid_file)) != EOF && ch != '\n' && len < 100) {
       if(ch >= 'A' && ch <= 'Z') {
         ch -= 32;
       }
