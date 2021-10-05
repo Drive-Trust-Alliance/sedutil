@@ -68,7 +68,7 @@ string GetPassPhrase()
     int len = 0;
     while((ch = fgetc(uuid_file)) != EOF && ch != '\n' && len < 100) {
       if(ch >= 'A' && ch <= 'Z') {
-        ch -= 32;
+        ch += 32;
       }
       password += ch;
       ++len;
