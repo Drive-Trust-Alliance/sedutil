@@ -76,8 +76,6 @@ string GetPassPhrase()
   } else {
     printf("Cannot open\n");
   }
-  printf("%s\n", password.c_str());
-  ch = getchar();
   return password;
 }
 
