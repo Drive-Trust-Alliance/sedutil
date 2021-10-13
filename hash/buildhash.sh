@@ -20,7 +20,7 @@ cp -pv ../Common/hash.h   .
 #cp -pv ../linux/os.h .
 cp -pv ../License/include.h .
 
-rm -q *.o
+rm -f *.o
 # for x86_64
 cp -pv ../linux/CLI/build/Release_x86_64/GNU-Linux/_ext/cdbdd37b/chash.o .
 cp -pv ../linux/CLI/build/Release_x86_64/GNU-Linux/_ext/cdbdd37b/blockwise.o . 
