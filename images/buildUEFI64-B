@@ -121,7 +121,8 @@ sudo mount $LOOPDEV image
 #####  syslinux does not seems to boot properly, go back to isolinux
 sudo mkdir -p image/boot/isolinux
 sudo cp -p --no-preserve=mode,ownership ../../../clone-pure64/isolinuxroot/*  image/
-#### move under boot #sudo cp -av --no-preserve=mode,ownership ../../../clone-pure64/isolinux image/boot/
+#### move under boot 
+sudo cp -av --no-preserve=mode,ownership ../../../clone-pure64/isolinux image/boot/
 
 #sudo syslinux -m -a image  # NG
 #sudo ../../../../syslinux-6.04-pre1/extlinux/extlinux --install image # boot error can not find .c32 file
@@ -133,12 +134,14 @@ sudo cp -av --no-preserve=mode,ownership ../../../clone-pure64/EFI  image/
 
 sudo cp -pv --no-preserve=mode,ownership ../../../clone-pure64/autorun.* image/
 
-# no more cde directory
-# sudo cp -a ../../../clone-pure64/cde  image/
+# cde is compressed to corepure64.gz 
+#sudo cp -a ../../../clone-pure64/cde  image/
+#
 for f in Xprogs aterm
 do 
 sudo rm -v image/cde/optional/$f-original.tcz
 done
+read x # debug only 
 # sudo cp -av ../../../clone-pure64/misc1  image/
 #chmod -R 777 image/cde
 echo "check final used disk image size"
