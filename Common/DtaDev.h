@@ -18,9 +18,6 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
-#ifndef BYTE
-typedef unsigned char       BYTE;
-#endif
 #include "DtaStructures.h"
 #include "DtaLexicon.h"
 #include <vector>
@@ -46,6 +43,8 @@ public:
 	/** Does the device conform to the PYRITE SSC */
 	uint8_t isPyrite();
 	uint8_t isPyrite2();
+	uint8_t isOpal2_minor_v(); /* OPAL 2 subversion */
+	uint8_t isOpal2_version(); /* descriptor version */
 	/** Does the device conform to the OPAL 2.0 SSC */
 	uint8_t isOpal2();
 	/** Does the device conform to the OPAL 1.0 SSC */

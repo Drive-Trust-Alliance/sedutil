@@ -65,6 +65,16 @@ uint8_t DtaDev::isPyrite()
 	LOG(D1) << "Entering DtaDev::isPyrite " << (uint16_t) disk_info.PYRITE;
 	return disk_info.PYRITE;
 }
+uint8_t DtaDev::isOpal2_minor_v()
+{
+	LOG(D1) << "Entering DtaDev::isOpal2_minor " << (uint16_t)disk_info.OPAL20_minor_v;
+	return disk_info.OPAL20_minor_v;
+}
+uint8_t DtaDev::isOpal2_version()
+{
+	LOG(D1) << "Entering DtaDev::isOpal2_version " << (uint16_t)disk_info.OPAL20_version;
+	return disk_info.OPAL20_version;
+}
 uint8_t DtaDev::isOpal2()
 {
 	LOG(D1) << "Entering DtaDev::isOpal2 " << (uint16_t) disk_info.OPAL20;
@@ -253,6 +263,8 @@ OK101:
             disk_info.OPAL20_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
             disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
 			disk_info.OPAL20_version = body->opalv200.version;
+			disk_info.OPAL20_minor_v = body->opalv200.minor_v;
+			//printf("body->opalv200.version=%X body->opalv200.minor_v=%X\n", body->opalv200.version, body->opalv200.minor_v);
             break;
         case FC_OPALITE: /* OPALITE 0x301 */
             disk_info.OPALITE = 1;
