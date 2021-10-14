@@ -104,7 +104,7 @@ int diskScan(char * devskip)
 
 #else
 				printf(" %s%s%s%s%s%s ", (d->isOpal1() ? "1" : " "),
-					(d->isOpal2() ? "2 " : " "), (d->isEprise() ? "E" : " "),
+					(d->isOpal2() ? "2 " : "  "), (d->isEprise() ? "E" : " "),
 					(d->isPyrite2() ? "Y" : d->isPyrite() ? "P" : " "), (d->isOpalite() ? "L" : " "), (d->isRuby() ? "R" : " ") );
 #endif
 
