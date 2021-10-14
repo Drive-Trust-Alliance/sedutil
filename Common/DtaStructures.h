@@ -207,8 +207,9 @@ typedef struct _Discovery0DatastoreTable {
  */
 typedef struct _Discovery0OPALV200 {
     uint16_t featureCode; /* 0x0203 */
-    uint8_t reserved_v : 4;
-    uint8_t version : 4;
+	uint8_t minor_v : 4; // minor version low bibble first
+    uint8_t version : 4; 
+
     uint8_t length;
     uint16_t baseCommID;
     uint16_t numCommIDs;
@@ -497,6 +498,7 @@ typedef struct _OPAL_DiskInfo {
     uint8_t OPAL20_initialPIN;
     uint8_t OPAL20_revertedPIN;
 	uint8_t OPAL20_version;
+	uint8_t OPAL20_minor_v;
     uint16_t OPAL20_numAdmins;
     uint16_t OPAL20_numUsers;
     uint8_t OPAL20_rangeCrossing;

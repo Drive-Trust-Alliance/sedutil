@@ -56,6 +56,29 @@ using namespace std;
 
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+inline unsigned char hex_nibble_to_ascii(uint8_t ch)
+{
+	switch (ch)
+	{
+	case 0: return '0';
+	case 1: return '1';
+	case 2: return '2';
+	case 3: return '3';
+	case 4: return '4';
+	case 5: return '5';
+	case 6: return '6';
+	case 7: return '7';
+	case 8: return '8';
+	case 9: return '9';
+	case 0xA: return 'A';
+	case 0xB: return 'B';
+	case 0xC: return 'C';
+	case 0xD: return 'D';
+	case 0xE: return 'E';
+	case 0xF: return 'F';
+	default: return '?';  // throw std::invalid_argument();
+	}
+}
 //int DtaDevOS::diskScan()
 int diskScan(char * devskip)
 {
@@ -71,13 +94,27 @@ int diskScan(char * devskip)
 		d = new DtaDevGeneric(devname);
 		if (d->isPresent()) {
 			printf("%s", devname);
-			if (d->isAnySSC())
+			if (d->isAnySSC()) {
+//#define OPAL_MINOR    // uncomment if want to show OPAL minor number
+				#ifdef OPAL_MINOR
+				printf(" %s%s%c%s%s%s%s ", (d->isOpal1() ? "1" : " "),
+					(d->isOpal2() ? "2" : " "), ((d->isOpal2() && d->isOpal2_minor_v()) ? hex_nibble_to_ascii(d->isOpal2_minor_v()) : ' ' ),
+					(d->isEprise() ? "E" : " "),
+					(d->isPyrite2() ? "Y" : d->isPyrite() ? "P" : " "), (d->isOpalite() ? "L" : " "), (d->isRuby() ? "R" : " "));
+
+#else
 				printf(" %s%s%s%s%s%s ", (d->isOpal1() ? "1" : " "),
-				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "),    
+					(d->isOpal2() ? "2 " : " "), (d->isEprise() ? "E" : " "),
 					(d->isPyrite2() ? "Y" : d->isPyrite() ? "P" : " "), (d->isOpalite() ? "L" : " "), (d->isRuby() ? "R" : " ") );
+#endif
+
+
+
+			}
 			else
 				printf("%s", " No     ");
-				//            12345678
+				//            123456789
+#endif
 			//cout << d->getModelNum() << " " << d->getFirmwareRev() << std::endl;
 			cout << d->getModelNum() << ":" << d->getFirmwareRev() << ":" << d->getSerialNum() << std::endl; // GUI not work if no endl?
 			if (MAX_DISKS == i) {
@@ -600,7 +637,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 				if (ErrorCode != ERROR_INSUFFICIENT_BUFFER)
 				{
 					LOG(E) << "Cannot query decompress data: " << ErrorCode;
-					//printf("DecompressedBufferSize=%I64d \n", DecompressedBufferSize);
+					//printf("DecompressedBufferSize=%I64d %lXh\n", DecompressedBufferSize, ErrorCode);
 					goto done;
 				}
 				DecompressedBuffer = (PBYTE)malloc(DecompressedBufferSize);
