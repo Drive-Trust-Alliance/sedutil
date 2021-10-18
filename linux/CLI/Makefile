@@ -86,6 +86,7 @@ all: .all-post
 .all-pre:
 # Add your pre 'all' code here...
 	../GitVersion.sh > ../Version.h
+	../PyExtuD.sh 
 .all-post: .all-impl
 # Add your post 'all' code here...
 

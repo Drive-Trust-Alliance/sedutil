@@ -18,6 +18,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
+#ifndef BYTE
+typedef unsigned char       BYTE;
+#endif
 #include "DtaStructures.h"
 #include "DtaLexicon.h"
 #include <vector>
