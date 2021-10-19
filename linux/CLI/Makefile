@@ -56,6 +56,8 @@ build: .build-post
 .build-pre:
 # Add your pre 'build' code here...
 	../GitVersion.sh > ../Version.h
+	cd .. && ./PyExtuD.sh && cd CLI
+	
 .build-post: .build-impl
 # Add your post 'build' code here...
 	${RM} ../Version.h
@@ -86,7 +88,7 @@ all: .all-post
 .all-pre:
 # Add your pre 'all' code here...
 	../GitVersion.sh > ../Version.h
-	../PyExtuD.sh 
+	cd .. && ./PyExtuD.sh && cd CLI
 .all-post: .all-impl
 # Add your post 'all' code here...
 
