@@ -1334,14 +1334,18 @@ int main(int argc, char * argv[])
         #endif
         #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 		st1 = "window";
+		#include <..\linux\VersionPBA.h>
         #endif
 
         #if defined(APPLE) || defined(_APPLE) || defined(__APPLE__)
 		st1 = "macOS";
         #endif
 
-		printf("Opal Lock Version : 0.9.3.%s.%s 20211013-A001\n", st1.c_str(),GIT_VERSION);
-
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+		printf("Opal Lock Version : 0.9.3.%s.%s 20211103-B001\n", st1.c_str(), GIT_VERSION);
+#else
+		printf("Opal Lock Version : 0.9.3.%s.%s 20211103-A001 PBA.0.9.3.linux.%s 20211103-B001\n", st1.c_str(),GIT_VERSION,GIT_VERSION_PBA);
+#endif
 		return 0;
 		break;
 	case sedutiloption::hashvalidation:

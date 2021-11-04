@@ -72,7 +72,7 @@ cd ../${IMGDIR}/images
 # Start fresh
 sudo rm -rf UEFI64${BUILDTYPE} ; mkdir UEFI64${BUILDTYPE} ; cd UEFI64${BUILDTYPE}
 # make an image file
-dd if=/dev/zero of=${BUILDIMG}Y bs=1M count=90 # fr 67->85->68 72ok , 68 ok tmp to 80 for debug
+dd if=/dev/zero of=${BUILDIMG}Y bs=1M count=80 # fr 67->85->68 72ok , 68 ok tmp to 80 for debug
 
 # n: new partiotion; how many partion? default 1; 
 # 1st sector(34-20466): default 2048; 
@@ -141,7 +141,7 @@ for f in Xprogs aterm
 do 
 sudo rm -v image/cde/optional/$f-original.tcz
 done
-read x # debug only 
+# read VAR # debug only 
 # sudo cp -av ../../../clone-pure64/misc1  image/
 #chmod -R 777 image/cde
 echo "check final used disk image size"

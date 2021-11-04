@@ -56,11 +56,12 @@ build: .build-post
 .build-pre:
 # Add your pre 'build' code here...
 	../GitVersion.sh > ../Version.h
+	../GitVersionPBA.sh > ../VersionPBA.h
 	cd .. && ./PyExtuD.sh && cd CLI
 	
 .build-post: .build-impl
 # Add your post 'build' code here...
-	${RM} ../Version.h
+#	${RM} ../Version.h
 
 # clean
 clean: .clean-post
@@ -88,6 +89,7 @@ all: .all-post
 .all-pre:
 # Add your pre 'all' code here...
 	../GitVersion.sh > ../Version.h
+	../GitVersionPBA.sh > ../VersionPBA.h
 	cd .. && ./PyExtuD.sh && cd CLI
 .all-post: .all-impl
 # Add your post 'all' code here...
