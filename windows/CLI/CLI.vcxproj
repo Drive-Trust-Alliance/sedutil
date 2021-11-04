@@ -52,6 +52,7 @@
     <ClInclude Include="..\..\License\LicenseValidator.h" />
     <ClInclude Include="..\..\License\PyExt.h" />
     <ClInclude Include="..\..\License\stdafx.h" />
+    <ClInclude Include="..\..\linux\VersionPBA.h" />
     <ClInclude Include="..\DtaDevOS.h" />
     <ClInclude Include="..\DtaDiskATA.h" />
     <ClInclude Include="..\DtaDiskNvme.h" />
