@@ -142,7 +142,7 @@ void DtaDiskUSB::identify(OPAL_DiskInfo& disk_info)
 		_aligned_free(identifyResp);
 		return;
 	}
-	USB_INQUIRY_DATA * id = (USB_INQUIRY_DATA *) identifyResp;
+	UASP_INQUIRY_RESPONSE * id = (UASP_INQUIRY_RESPONSE *) identifyResp;
     disk_info.devType = DEVICE_TYPE_USB;
     for (int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
         disk_info.serialNum[i] = id->ProductSerial[i + 1];

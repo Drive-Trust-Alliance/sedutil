@@ -28,13 +28,6 @@ typedef struct _SDWB {
 
 } SDWB;
 
-typedef struct _USB_INQUIRY_DATA {
-	uint8_t fill1[20];
-	char ProductSerial[20];
-	uint8_t fill2[6];
-	char ProductRev[8];
-	char ProductID[40];
-} USB_INQUIRY_DATA;
 
 class DtaDiskUSB : public DtaDiskType {
 public:
