@@ -1,0 +1,5 @@
+Package: sedutil
+Version: 1.15.1-4
+Architecture: amd64
+Maintainer: ops-team@kentik.com
+Description: Forked and locally-modified DTA sedutil-cli package.

@@ -1,0 +1,23 @@
+[Unit]
+Description=Unlock Opal-encrypted (SED) drives.
+Documentation=https://github.com/Drive-Trust-Alliance/sedutil
+DefaultDependencies=no
+After=systemd-udev-settle.target
+After=systemd-tmpfiles-setup-dev.service
+After=local-fs-pre.target
+After=tmp.mount
+Before=zfs-import-cache.service
+Before=zfs-import-scan.service
+Before=zfs-import.target
+ConditionKernelCommandLine=libata.allow_tpm=1
+ConditionFileIsExecutable=/usr/sbin/linuxpba
+RequiresMountsFor=/tmp
+
+[Service]
+Type=oneshot
+TimeoutSec=600
+RemainAfterExit=yes
+ExecStart=/bin/sh -c "/usr/sbin/dmidecode -s system-serial-number | /bin/egrep -v '^#' | /usr/sbin/linuxpba 2>/tmp/linuxpba.debug"
+
+[Install]
+WantedBy=basic.target local-fs.target
