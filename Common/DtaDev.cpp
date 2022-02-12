@@ -416,6 +416,10 @@ OK101:
         cpos = cpos + (body->TPer.length + 4);
     }
     while (cpos < epos);
+	// do adjustment for No Additional data store case 
+	if (!disk_info.DataStore  || !disk_info.DataStore_maxTables || !disk_info.DataStore_maxTableSize) {
+		disk_info.DataStore_maxTableSize = 10 * 1024 * 1024;
+	}
 	disc0Sts = 0; 
 }
 uint8_t DtaDev::TperReset()

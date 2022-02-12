@@ -2810,8 +2810,6 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 	uint32_t newSize;
 	uint8_t oper = 0;
 
-	//printf("dsnum = %d startpos=%ld len=%ld\n", dsnum, startpos, len);
-
 	if (dsnum > disk_info.DataStore_maxTables)
 	{
 		LOG(E) << "Data Store number must be " << disk_info.DataStore_maxTables << " or less";
@@ -2827,11 +2825,10 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 		LOG(E) << "Data Store Startpos must be " << disk_info.DataStore_maxTableSize << " or less";
 		return 1;
 	}
-
 	if ((startpos + len) > disk_info.DataStore_maxTableSize)
 	{
-		LOG(E) << "Data Store write exceed maxTableSize " << disk_info.DataStore_maxTableSize;
-		return 1;
+			LOG(E) << "Data Store write exceed maxTableSize " << disk_info.DataStore_maxTableSize;
+			return 1;
 	}
 
 	//buffer = (char *)malloc(blockSize);
@@ -3093,7 +3090,6 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	uint32_t newSize;
 
 	//printf("dsnum = %d startpos=%ld len=%ld\n", dsnum, startpos, len);
-
 	if (dsnum > disk_info.DataStore_maxTables)
 	{
 		LOG(E) << "Data Store number must be " << disk_info.DataStore_maxTables << " or less";
@@ -3109,12 +3105,10 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 		LOG(E) << "Data Store Startpos must be " << disk_info.DataStore_maxTableSize << " or less";
 		return 1;
 	}
-
 	if ((startpos + len) > disk_info.DataStore_maxTableSize)
 	{
 		len = disk_info.DataStore_maxTableSize - startpos - len;
 		LOG(D) << "Data Store read exceed Data Store max Table Size " << disk_info.DataStore_maxTableSize << " truncated Len to " << len;
-
 	}
 
 	// need to determine blockSize now
@@ -3142,10 +3136,6 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	//datafile.seekg(0, datafile.end);
 	//imgsize = datafile.tellg();
 	//printf("datafile size %I64Xh", imgsize);
-
-
-
-
 
 	fivepercent = (uint64_t)((disk_info.DataStore_maxTableSize / 20) / blockSize) * blockSize;
 	if (0 == fivepercent) fivepercent++;

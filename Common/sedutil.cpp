@@ -911,6 +911,10 @@ int main(int argc, char * argv[])
 	{
 		m_lv = new LicenseValidator();
 
+		//long timeout = m_lv->license->GetTimeout();
+		//long graceperiod = m_lv->license->GetDateTamperingGracePeriod();
+		//printf("Debug : timeout=%ld graceperiod=%ld\n", timeout, graceperiod);
+
 		m_lv->SetCustomData1(_T("C++"));
 		m_lv->SetCustomData2(_T("Desktop"));
 		m_lv->SetCustomData3(_T("QlmLicenseWizardVC_NoMFC"));
@@ -1344,7 +1348,7 @@ int main(int argc, char * argv[])
 #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
 		printf("Opal Lock Version : 0.9.3.%s.%s 20211103-B001\n", st1.c_str(), GIT_VERSION);
 #else
-		printf("Opal Lock Version : 0.9.3.%s.%s 20211103-A001 PBA.0.9.3.linux.%s 20211103-B001\n", st1.c_str(),GIT_VERSION,GIT_VERSION_PBA);
+		printf("Opal Lock Version : 0.9.4.%s.%s 20220211-A001 PBA.0.9.3.linux.%s 20211103-B001\n", st1.c_str(),GIT_VERSION,GIT_VERSION_PBA);
 #endif
 		return 0;
 		break;
