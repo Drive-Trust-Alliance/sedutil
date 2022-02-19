@@ -1346,9 +1346,9 @@ int main(int argc, char * argv[])
         #endif
 
 #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-		printf("Opal Lock Version : 0.9.3.%s.%s 20211103-B001\n", st1.c_str(), GIT_VERSION);
+		printf("Opal Lock Version : 0.9.5.%s.%s 20220218-B001\n", st1.c_str(), GIT_VERSION);
 #else
-		printf("Opal Lock Version : 0.9.4.%s.%s 20220211-A001 PBA.0.9.3.linux.%s 20211103-B001\n", st1.c_str(),GIT_VERSION,GIT_VERSION_PBA);
+		printf("Opal Lock Version : 0.9.5.%s.%s 20220211-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(),GIT_VERSION,GIT_VERSION_PBA);
 #endif
 		return 0;
 		break;
