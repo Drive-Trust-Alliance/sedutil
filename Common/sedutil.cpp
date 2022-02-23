@@ -103,9 +103,9 @@ int diskScan(char * devskip)
 					(d->isPyrite2() ? "Y" : d->isPyrite() ? "P" : " "), (d->isOpalite() ? "L" : " "), (d->isRuby() ? "R" : " "));
 
 #else
-				printf(" %s%s%s%s%s%s ", (d->isOpal1() ? "1" : " "),
+				printf(" %s%s%s%s%s%s%s ", (d->isOpal1() ? "1" : " "),
 					(d->isOpal2() ? "2 " : "  "), (d->isEprise() ? "E" : " "),
-					(d->isPyrite2() ? "Y" : d->isPyrite() ? "P" : " "), (d->isOpalite() ? "L" : " "), (d->isRuby() ? "R" : " ") );
+					(d->isPyrite2() ? "Y" : d->isPyrite() ? "P" : " "), (d->isOpalite() ? "L" : " "), (d->isRuby() ? "R" : " "), (d->isFIPS() ? "F" : " "));
 #endif
 
 
@@ -1348,7 +1348,8 @@ int main(int argc, char * argv[])
 #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
 		printf("Opal Lock Version : 0.9.5.%s.%s 20220218-B001\n", st1.c_str(), GIT_VERSION);
 #else
-		printf("Opal Lock Version : 0.9.5.%s.%s 20220211-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(),GIT_VERSION,GIT_VERSION_PBA);
+		//printf("Opal Lock Version : 0.9.5.%s.%s 20220211-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(),GIT_VERSION,GIT_VERSION_PBA);
+		printf("Opal Lock Version : 0.9.6.%s.%s 20220223-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(), GIT_VERSION, GIT_VERSION_PBA);
 #endif
 		return 0;
 		break;

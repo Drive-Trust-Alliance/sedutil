@@ -50,6 +50,12 @@ uint8_t DtaDev::isRuby()
 	return disk_info.RUBY;
 }
 
+uint8_t DtaDev::isFIPS()
+{
+	LOG(D1) << "Entering DtaDev::isFIPS " << (uint16_t)disk_info.fips;
+	return disk_info.fips;
+}
+
 uint8_t DtaDev::isOpalite()
 {
 	LOG(D1) << "Entering DtaDev::isOpalite " << (uint16_t) disk_info.OPALITE;

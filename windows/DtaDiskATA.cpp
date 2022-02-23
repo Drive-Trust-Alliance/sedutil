@@ -123,7 +123,7 @@ void DtaDiskATA::identify(OPAL_DiskInfo& disk_info)
 		disk_info.devType = DEVICE_TYPE_OTHER;
 		return;
 	}
-    IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) identifyResp;
+    IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) identifyResp; 
     disk_info.devType = DEVICE_TYPE_ATA;
     for (int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
         disk_info.serialNum[i] = id->serialNum[i + 1];
@@ -137,6 +137,7 @@ void DtaDiskATA::identify(OPAL_DiskInfo& disk_info)
         disk_info.modelNum[i] = id->modelNum[i + 1];
         disk_info.modelNum[i + 1] = id->modelNum[i];
     }
+	disk_info.fips = * (((uint8_t *) identifyResp) + 506) & 0x02 ; 
 	_aligned_free(identifyResp);
     return;
 }

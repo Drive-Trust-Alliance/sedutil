@@ -41,6 +41,7 @@ public:
 	/** Default destructor, does nothing*/
 	virtual ~DtaDev();
 	uint8_t isRuby();
+	uint8_t isFIPS();
 	/** Does the device conform to the OPALITE SSC */
 	uint8_t isOpalite();
 	/** Does the device conform to the PYRITE SSC */

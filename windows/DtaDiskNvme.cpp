@@ -433,6 +433,8 @@ void DtaDiskNVME::identify(OPAL_DiskInfo& disk_info)
 			for (int i = 0; i < sizeof(disk_info.modelNum); i += 1) {
 				disk_info.modelNum[i] = id->N.Model[i];
 			}
+			disk_info.fips = *(((uint8_t *)identifyResp) + 4093) & 0x02 ;
+
 			_aligned_free(identifyResp);
 			return;
 
@@ -457,6 +459,7 @@ void DtaDiskNVME::identify(OPAL_DiskInfo& disk_info)
 	for (int i = 0; i < sizeof(disk_info.modelNum); i += 1) {
 		disk_info.modelNum[i] = id->modelNum[i];
 	}
+	disk_info.fips = *(((uint8_t *)identifyResp) + 4093) & 0x02;
 	_aligned_free(identifyResp);
 	return;
 }

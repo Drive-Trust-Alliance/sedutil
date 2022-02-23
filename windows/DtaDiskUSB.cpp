@@ -186,6 +186,8 @@ void DtaDiskUSB::identify(OPAL_DiskInfo& disk_info)
 			disk_info.modelNum[i] = ' ';
 		}
 	}
+	disk_info.fips = *(((uint8_t *)identifyResp) + 506) & 0x02; // Byte 506 bit 1
+	printf("disk_info.fips=%02X\n", disk_info.fips);
 
 	//DtaHexDump(disk_info.serialNum, sizeof(disk_info.serialNum));
 	//DtaHexDump(disk_info.firmwareRev, sizeof(disk_info.firmwareRev));
@@ -277,6 +279,7 @@ void DtaDiskUSB::identifyPd(OPAL_DiskInfo& disk_info) {
 	//else {
 		// fail again 
 	//}
+	disk_info.fips = *(((uint8_t *)identifyResp) + 506) & 0x02;
 	_aligned_free(identifyResp);
 	return;
 }

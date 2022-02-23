@@ -462,6 +462,7 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t BlockSID : 1;
 	uint8_t DataRemoval : 1; 
 	uint8_t NSLocking : 1;
+	uint8_t FIPS : 1;
 
     // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
     uint8_t TPer_ACKNACK : 1;
@@ -566,6 +567,7 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t null1;  // make firmware rev a cstring
     uint8_t modelNum[40];
 	uint8_t null2;  // make model number a cstring
+	uint8_t fips; // FIPS Approval mode
 } OPAL_DiskInfo;
 /** Response returned by ATA Identify */
 typedef struct _IDENTIFY_RESPONSE {
