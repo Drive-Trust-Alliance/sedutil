@@ -1949,12 +1949,18 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 	
 	if ((len > 1950) &&  (Tper_sz_MaxComPacketSize > 2048) ) {
 	// adjust host property 
-		printf("\nread data lengtn = %ld Tper_sz_MaxComPacketSize = %ld\n", len , Tper_sz_MaxComPacketSize);
+		// printf("\nread data length = %ld Tper_sz_MaxComPacketSize = %ld\n", len , Tper_sz_MaxComPacketSize);
 		if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1; else adj_host = 2;
 		lastRC = properties();
 		if (lastRC != 0) {
 			LOG(E) << "adjust host property fail ; go back to MINIMUM packet size";
-			// improve later on with MINIMUM packet size 
+			// improve later on with MINIMUM packet size
+			adj_host = 0; 
+			lastRC = properties();
+			if (lastRC != 0) {
+				LOG(E) << "unable to go back to MINIMUM packet size";
+				return lastRC;
+			}
 		}
 		else {
 			fill_prop(false);
@@ -2013,7 +2019,7 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 			//		adj_io_buffer_length = newSize + 60 + 56; // payload heasdrr size 
 			//	}
 		}
-		printf("filepos=%ld startpop=%ld blockSize=%ld newSize=%ld  len=%ld\n", filepos, startpos, blockSize, newSize, len);
+		// printf("filepos=%ld startpop=%ld blockSize=%ld newSize=%ld  len=%ld\n", filepos, startpos, blockSize, newSize, len);
 
 		cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::GET);
 		cmd->addToken(OPAL_TOKEN::STARTLIST);
@@ -2065,7 +2071,7 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	// determin the blockSize from Tper packet size
 	if ((len > 1950) && (Tper_sz_MaxComPacketSize > 2048)) {
 		// adjust host property 
-		printf("\nread data lengtn = %ld Tper_sz_MaxComPacketSize = %ld\n", len, Tper_sz_MaxComPacketSize);
+		// printf("\nread data length = %ld Tper_sz_MaxComPacketSize = %ld\n", len, Tper_sz_MaxComPacketSize);
 		if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1; else adj_host = 2;
 		lastRC = properties();
 		if (lastRC != 0) {
@@ -2087,7 +2093,7 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 			//bufferA.resize(len); // need to resize bufferA due to truncated size of data length by user 
 		}
 	}
-	printf("After Tper size exchange , blockSize=%ld bufferA.size()=%ld len=%ld\n", blockSize, (uint32_t)bufferA.size(), len);
+	// printf("After Tper size exchange , blockSize=%ld bufferA.size()=%ld len=%ld\n", blockSize, (uint32_t)bufferA.size(), len);
 
 	LOG(D) << "Writing datafile to " << dev;
 
@@ -2133,19 +2139,19 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 		if (filepos + blockSize + startpos > disk_info.DataStore_maxTableSize)
 		{
 			newSize = disk_info.DataStore_maxTableSize - filepos - startpos;
-			printf("***** A filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
+			// printf("***** A filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
 		}
 		else if (filepos + blockSize > len) {
 			newSize = len - filepos; //filepos + blockSize - (filepos + blockSize - len);
-			printf("***** B filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
+			// printf("***** B filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
 
 		}
 		else {
 			newSize = blockSize;
-			printf("***** C filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
+			// printf("***** C filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
 
 		}
-		printf("blockSize=%ld newSize=%ld bufferA.size()=%ld\n", blockSize, newSize, (uint32_t)bufferA.size());
+		// printf("blockSize=%ld newSize=%ld bufferA.size()=%ld\n", blockSize, newSize, (uint32_t)bufferA.size());
 
 		//bufferA.resize(newSize);
 		//printf("Before read from file , blockSize=%ld bufferA.size()=%ld newSize=%ld\n", blockSize, (uint32_t)bufferA.size(), newSize);
@@ -2154,7 +2160,7 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 		bufferA.insert(bufferA.begin(), buffer + filepos, buffer + filepos + newSize); 
 		//datafile.read((char *)bufferA.data(), blockSize);
 		//printf("After read from file , blockSize=%ld bufferA.size()=%ld newSize=%ld\n", blockSize, (uint32_t)bufferA.size(), newSize);
-		printf("writing %ld of %ld \n", filepos, len);
+		// printf("writing %ld of %ld \n", filepos, len);
 
 		lengthtoken.clear();
 		lengthtoken.push_back(0xe2); // 8k = 8192 (0x2000)
@@ -2877,7 +2883,10 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 	if ((len > 1950) && (Tper_sz_MaxComPacketSize > 2048)) {
 		// adjust host property 
 		printf("\nwrite data lengtn = %ld Tper_sz_MaxComPacketSize = %ld\n", len, Tper_sz_MaxComPacketSize);
-		if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1; else adj_host = 2;
+		if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1;
+		else if ((Tper_sz_MaxComPacketSize > 2048) && (Tper_sz_MaxComPacketSize <= IO_BUFFER_LENGTH_MI) && disk_info.asmedia) // make sure it is T7
+			adj_host = 3; 
+		else adj_host = 2;
 		lastRC = properties();
 		if (lastRC != 0) {
 			LOG(E) << "adjust host property fail ; go back to MINIMUM packet size";
@@ -2898,7 +2907,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 			bufferA.resize(len); // need to resize bufferA due to truncated size of data length by user 
 		}
 	}
-	printf("After Tper size exchange , blockSize=%ld bufferA.size()=%ld len=%ld\n", blockSize, (uint32_t)bufferA.size(), len);
+	printf("DataStoreWrite : After Tper size exchange , blockSize=%ld bufferA.size()=%ld len=%ld\n", blockSize, (uint32_t)bufferA.size(), len);
 
 	LOG(D) << "Writing datafile to " << dev;
 
@@ -2980,7 +2989,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 			fflush(stdout);
 		}
 		*/
-		printf("writing %ld of %ld \n", filepos, len); 
+		// printf("writing %ld of %ld \n", filepos, len); 
 
 		//bufferA.insert(bufferA.begin(), buffer, buffer + len);
 		//////////////////////////////////////////////
@@ -3114,8 +3123,11 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	// need to determine blockSize now
 	if ((len > 1950) && (Tper_sz_MaxComPacketSize > 2048)) {
 		// adjust host property 
-		printf("\nread data lengtn = %ld Tper_sz_MaxComPacketSize = %ld\n", len, Tper_sz_MaxComPacketSize);
-		if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1; else adj_host = 2;
+		// printf("\nread data length = %ld Tper_sz_MaxComPacketSize = %ld\n", len, Tper_sz_MaxComPacketSize);
+		if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1;
+		else if ((Tper_sz_MaxComPacketSize > 2048) && (Tper_sz_MaxComPacketSize <= IO_BUFFER_LENGTH_MI) && disk_info.asmedia) // make sure it is T7
+			adj_host = 3; // t7 specific 
+		else adj_host = 2;
 		lastRC = properties();
 		if (lastRC != 0) {
 			LOG(E) << "adjust host property fail ; go back to MINIMUM packet size";
@@ -3723,7 +3735,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 }
 // from original
 uint8_t DtaDevOpal::loadPBA_O(char * password, char * filename) {
-	LOG(D1) << "Entering DtaDevOpal::loadPBAimage()" << filename << " " << dev;
+	LOG(D) << "Entering DtaDevOpal::loadPBAimage_O()" << filename << " " << dev;
 	uint8_t lastRC;
 	uint32_t blockSize;
 	uint32_t filepos = 0;
@@ -3731,19 +3743,22 @@ uint8_t DtaDevOpal::loadPBA_O(char * password, char * filename) {
 	ifstream pbafile;
 
 	if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1; else adj_host = 2;
+	// printf("adj_host=%d\n", adj_host); // JERRY JERRY T7
 	lastRC = properties();
 	if (lastRC != 0) {
 		LOG(E) << "adjust host property fail ; go back to MINIMUM packet size";
 		// improve later on with MINIMUM packet size 
+		adj_host = 0; 
+		properties(); 
 	}
 	else {
 		fill_prop(false);
-		blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 110; // 60;
+		blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 110  ; // 60;
 	}
 
 #define MAX_BUFFER_LENGTH IO_BUFFER_LENGTH_HI
-	uint32_t tperMaxPacket = Tper_sz_MaxComPacketSize;
-	uint32_t tperMaxToken = Tper_sz_MaxIndTokenSize;
+	uint32_t tperMaxPacket = Tper_sz_MaxComPacketSize  ;
+	uint32_t tperMaxToken = Tper_sz_MaxIndTokenSize ;
 	(MAX_BUFFER_LENGTH > tperMaxPacket) ? blockSize = tperMaxPacket : blockSize = MAX_BUFFER_LENGTH;
 	if (blockSize > (tperMaxToken - 4)) blockSize = tperMaxToken - 4;
 	//printf("tperMaxPacket=%ld  tperMaxToken=%ld before blockSize=%ld\n", tperMaxPacket, tperMaxToken, blockSize);
@@ -3821,7 +3836,7 @@ uint8_t DtaDevOpal::loadPBA_O(char * password, char * filename) {
 	delete session;
 	pbafile.close();
 	LOG(D) << "PBA image  " << filename << " written to " << dev;
-	LOG(D1) << "Exiting DtaDevOpal::loadPBAimage()";
+	LOG(D) << "Exiting DtaDevOpal::loadPBAimage_O()";
 	return 0;
 }
 
@@ -3833,7 +3848,7 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
         LOG(D1) << "DtaDevOpal::loadPBAimage() isn't supported in Linux";
 	return 0;
         #else
-	LOG(D1) << "Entering DtaDevOpal::loadPBAimage()" << filename << " " << dev;
+	LOG(D) << "Entering DtaDevOpal::loadPBAimage_M()" << filename << " " << dev;
 	if (disk_info.Locking_MBRshadowingNotSupported) {
 		LOG(E) << "SSC device does not support shadow MBR";
 		return DTAERROR_INVALID_COMMAND;
@@ -3872,6 +3887,10 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 	vector <uint8_t> buffer; // 0 buffer  (57344, 0x00),
 	vector <uint8_t> lengthtoken;
 
+	//printf("\nEntering loadPBA_M before decompression : Tper_sz_MaxComPacketSize(16-bit) = %d or Tper_sz_MaxComPacketSize(32-bit) = %ld\n",
+	//	Tper_sz_MaxComPacketSize, Tper_sz_MaxComPacketSize);
+	//printf("Tper_sz_MaxComPacketSize=%d Tper_sz_MaxResponseComPacketSize=%d Tper_sz_MaxPacketSize=%d Tper_sz_MaxIndTokenSize=%d\n ",
+	//	Tper_sz_MaxComPacketSize, Tper_sz_MaxResponseComPacketSize, Tper_sz_MaxPacketSize, Tper_sz_MaxIndTokenSize);  // JERRY JERRY T7
 
 
 	if (embed == 0) {
@@ -3985,6 +4004,7 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 				_aligned_free(CompressedBuffer);
 			}
 		} // end cmprss
+		// printf("\nend of decompression Tper_sz_MaxComPacketSize = %d\n", Tper_sz_MaxComPacketSize);
 
 		if (!Success)
 		{
@@ -4082,16 +4102,38 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 	// decompressed file size is established at this moment
 	if ((DecompressedBufferSize > 1950) && (Tper_sz_MaxComPacketSize > 2048)) {
 		// adjust host property 
-		printf("\nwrite MBR lengtn = %lld Tper_sz_MaxComPacketSize = %ld\n", DecompressedBufferSize, Tper_sz_MaxComPacketSize);
-		if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1; else adj_host = 2;
+	//	printf("\nwrite MBR lengtn = %ld Tper_sz_MaxComPacketSize = %d\n", DecompressedBufferSize, Tper_sz_MaxComPacketSize);
+		if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1; 
+		else if ((Tper_sz_MaxComPacketSize > 2048) && (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_MI) && disk_info.asmedia) // make sure it is T7
+		{
+			adj_host = 3; // force to minimum 3;
+			printf("set adj_host to 3\n"); 
+		}
+		else {
+			printf("set adj_host to 2\n");
+			adj_host = 2;
+		}
 		lastRC = properties();
 		if (lastRC != 0) {
 			LOG(E) << "adjust host property fail ; go back to MINIMUM packet size";
 			// improve later on with MINIMUM packet size 
+			adj_host = 0;
+			lastRC = properties();
+			blockSize = 1950; // Minimum block size; 
+			if (lastRC != 0) LOG(E) << "unable to adjust host property back to original MINIMUM setting";
+		}
+		else if ((adj_host == 3) && disk_info.asmedia ) { // make sure it is T7 
+			fill_prop(false);
+			blockSize = BLOCKSIZE_MI ; //  110; // 60; - 512, 1024 NG
+			if (DecompressedBufferSize < blockSize) {
+				blockSize = DecompressedBufferSize; // truncate blockSize to len 
+			}
+			buffer.resize(blockSize);
 		}
 		else {
+			// adj_io_buffer_length = Tper_sz_MaxComPacketSize - adjust_more_t7
 			fill_prop(false);
-			blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 110; // 60;
+			blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 110 ; //  110; // 60; - 512, 1024 NG
 			if (DecompressedBufferSize < blockSize) {  
 				blockSize = DecompressedBufferSize; // truncate blockSize to len 
 			}
@@ -4104,7 +4146,12 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 			buffer.resize(blockSize); // need to resize buffer due to truncated size of data length by user 
 		}
 	}
-	printf("After Tper size exchange , blockSize=%ld len=%lld\n", blockSize,  DecompressedBufferSize);
+	
+	printf("loadPBAimage : After Tper size exchange , blockSize=%d len=%d sizeof(SIZE_T)=%d adj_io_buffer_length=%d \
+		adj_host=%d disk_info.asmedia=%d\n", 
+		blockSize,  DecompressedBufferSize, sizeof(SIZE_T), adj_io_buffer_length,
+		adj_host, disk_info.asmedia
+		);
 
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
@@ -4268,7 +4315,7 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
     _aligned_free(DecompressedBuffer);
         #endif
 	adj_host_prop(0); // reset host properties to smaller size
-	LOG(D1) << "Exiting DtaDevOpal::loadPBAimage() " << dev;
+	LOG(D) << "Exiting DtaDevOpal::loadPBAimage_M() " << dev;
 
 	return 0;
 }
@@ -4777,7 +4824,7 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol,
 		printf("Host_sz_MaxComPacketSize = %ld\n", Host_sz_MaxComPacketSize);
 	}
 	#endif
-	//printf("adj_io_buffer_length=%d ; oper = %d ; cmd->outputBufferSize()=%d \n", adj_io_buffer_length, oper, cmd->outputBufferSize());
+	// printf("\n\n ***** adj_io_buffer_length=%d ; oper = %d ; cmd->outputBufferSize()=%d *****\n\n", adj_io_buffer_length, oper, cmd->outputBufferSize());
 	if (oper == 1)
 		lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), cmd->outputBufferSize());
 	else
@@ -4902,15 +4949,33 @@ uint8_t DtaDevOpal::properties()
 		sz_MaxIndTokenSize = 1992; //  10184; //  16384;
 		adj_io_buffer_length = 2048; // -> 2048 IO_BUFFER_LENGTH; // 10240; //  17408;
 	}
+	else if (adj_host == 3) {// T7 specific
+		uint16_t adjust_more_t7 = 512; // T7 adjust size , 256,  NG >= 512 OK 
+		sz_MaxComPacketSize = 30720  ; // 30K  - adjust_more_t7  ; // 10240; // 17408; 
+		sz_MaxResponseComPacketSize = 30720; // 10240; // 17108;
+		sz_MaxPacketSize = 30700 ; // - adjust_more_t7; //  10220; // 17180;
+		sz_MaxIndTokenSize = 30700 - 56 ; // - adjust_more_t7; //  10184; //  16384;
+		adj_io_buffer_length = 30720;   // Tper_sz_MaxComPacketSize - adjust_more_t7; // +IO_BUFFER_ALIGNMENT; //  17408;
+																		  // adj_io_buffer_length must not exceed TperMaxComPacketSize 
+	}
 	else if (adj_host == 2) {// anything less than 64K but greater than 2K, will adjust according to TPer returned size
-		sz_MaxComPacketSize = Tper_sz_MaxComPacketSize; // 10240; // 17408; 
+		uint16_t adjust_more_t7 = 512 ; // T7 adjust size , 256,  NG >= 512 OK 
+		sz_MaxComPacketSize = Tper_sz_MaxComPacketSize ; // - adjust_more_t7  ; // 10240; // 17408; 
 		sz_MaxResponseComPacketSize = Tper_sz_MaxResponseComPacketSize; // 10240; // 17108;
-		sz_MaxPacketSize = Tper_sz_MaxPacketSize; //  10220; // 17180;
-		sz_MaxIndTokenSize = Tper_sz_MaxIndTokenSize; //  10184; //  16384;
-		adj_io_buffer_length = Tper_sz_MaxComPacketSize; // +IO_BUFFER_ALIGNMENT; //  17408;
+		sz_MaxPacketSize = Tper_sz_MaxPacketSize ; // - adjust_more_t7; //  10220; // 17180;
+		sz_MaxIndTokenSize = Tper_sz_MaxIndTokenSize; // - adjust_more_t7; //  10184; //  16384;
+		adj_io_buffer_length = Tper_sz_MaxComPacketSize - adjust_more_t7; // +IO_BUFFER_ALIGNMENT; //  17408;
 		// adj_io_buffer_length must not exceed TperMaxComPacketSize 
 	}
-	//printf("adj_host = %d adj_io_buffer_length = %d\n", adj_host, adj_io_buffer_length);
+
+
+
+	// printf("adj_host = %d adj_io_buffer_length = %d\n", adj_host, adj_io_buffer_length); // JERRY JERRY T7
+	//printf("sz_MaxComPacketSize=%d sz_MaxResponseComPacketSize=%d sz_MaxPacketSize=%d sz_MaxIndTokenSize=%d\n ",
+	//  	sz_MaxComPacketSize, sz_MaxResponseComPacketSize, sz_MaxPacketSize, sz_MaxIndTokenSize);  // JERRY JERRY T7
+	//printf("Tper_sz_MaxComPacketSize=%d Tper_sz_MaxResponseComPacketSize=%d Tper_sz_MaxPacketSize=%d Tper_sz_MaxIndTokenSize=%d\n ",
+	//	Tper_sz_MaxComPacketSize, Tper_sz_MaxResponseComPacketSize, Tper_sz_MaxPacketSize, Tper_sz_MaxIndTokenSize);  // JERRY JERRY T7
+
 
 	set_prop(props, sz_MaxComPacketSize, sz_MaxResponseComPacketSize, sz_MaxPacketSize, sz_MaxIndTokenSize);
 

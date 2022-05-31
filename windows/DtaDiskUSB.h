@@ -92,6 +92,14 @@ typedef struct _USB_INQUIRY_DATA {
 	char ProductID[40];
 } USB_INQUIRY_DATA;
 
+typedef struct _USB_INQUIRY_DATA_NVME {
+	uint8_t fill1[4];
+	char ProductSerial[20];
+	char ProductID[40];
+	char ProductRev[8];
+
+} USB_INQUIRY_DATA_NVME;
+
 class DtaDiskUSB : public DtaDiskType {
 public:
 	DtaDiskUSB();

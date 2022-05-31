@@ -20,8 +20,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 /** Length of the IO buffers used */
 #define IO_BUFFER_LENGTH 12288 // 15360 // 17408
 #define IO_BUFFER_LENGTH_HI 61440
+#define IO_BUFFER_LENGTH_MI 28672 // 28K 32768 // 33280 // T7 is 33280
 #define IO_BUFFER_LENGTH_LO 12288 // 15360 // 17408 
 #define BLOCKSIZE_HI 57344  // 56K
+#define BLOCKSIZE_MI 28672  // 30K->28K(28672 7000h) -> 24K(24576 6000h) NG
 #define BLOCKSIZE_LO 10240 //  10K
 /** Alignment of the IO buffers.
 * generic align on 1k boundary probably not needed
