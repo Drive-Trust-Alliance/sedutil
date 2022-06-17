@@ -185,15 +185,52 @@ void DtaDevFreeBSDCAM::identify(OPAL_DiskInfo& disk_info)
 		return;
 	}
 
+#ifndef ATA_SUPPORT_TCG
+#define	ATA_SUPPORT_TCG		0x0001
+#define	tcg			usedmovsd
+#endif
 	if (ccb.cgd.protocol == PROTO_SCSI) {
 		isSCSI = 1;
-		disk_info.devType = DEVICE_TYPE_SAS;
 		safecopy(disk_info.serialNum, sizeof(disk_info.serialNum),
 		    (uint8_t *)ccb.cgd.serial_num, ccb.cgd.serial_num_len);
 		safecopy(disk_info.firmwareRev, sizeof(disk_info.firmwareRev),
 		    (uint8_t *)ccb.cgd.inq_data.revision, sizeof(ccb.cgd.inq_data.revision));
 		safecopy(disk_info.modelNum, sizeof(disk_info.modelNum),
 		    (uint8_t *)ccb.cgd.inq_data.vendor, sizeof(ccb.cgd.inq_data.vendor) + sizeof(ccb.cgd.inq_data.product));
+
+		/*
+		 * Some SATL bridges are broken.  If the device is SATL,
+		 * check its ATA IDENTIFY DATA for TCG support.
+		 */
+		char buf[572];
+		bzero(&ccb, sizeof(union ccb));
+		scsi_inquiry(&ccb.csio, 1, NULL, MSG_SIMPLE_Q_TAG,
+		    (uint8_t *)&buf, sizeof(buf), 1, 0x89, SSD_FULL_SIZE,
+		    60 * 1000);
+		ccb.ccb_h.flags |= CAM_PASS_ERR_RECOVER;
+		if (cam_send_ccb(camdev, &ccb) < 0) {
+			LOG(D4) << "cam_send_ccb failed";
+			disk_info.devType = DEVICE_TYPE_OTHER;
+			return;
+		}
+		if ((ccb.ccb_h.status & CAM_STATUS_MASK) != CAM_REQ_CMP) {
+			IFLOG(D4)
+				cam_error_print(camdev, &ccb, CAM_ESF_ALL, CAM_EPF_ALL, stderr);
+			LOG(D4) << "Device is not SATL";
+			disk_info.devType = DEVICE_TYPE_SAS;
+			return;
+		}
+		struct ata_params *ident_data = (struct ata_params *)&buf[60];
+		if ((ident_data->tcg & 0xc000) == 0x4000 &&
+		    (ident_data->tcg & ATA_SUPPORT_TCG) != 0) {
+			LOG(D4) << "Trusted Computing feature set is supported: "
+			    << std::hex << ident_data->tcg;
+			disk_info.devType = DEVICE_TYPE_SAS;
+		} else {
+			LOG(D4) << "Trusted Computing feature set is not supported: "
+			    << std::hex << ident_data->tcg;
+			disk_info.devType = DEVICE_TYPE_OTHER;
+		}
 	} else if (ccb.cgd.protocol == PROTO_NVME) {
 		isNVMe = 1;
 		if (nvme_get_cdata(camdev, &cdata)) {
@@ -226,17 +263,13 @@ void DtaDevFreeBSDCAM::identify(OPAL_DiskInfo& disk_info)
 		    sizeof(disk_info.firmwareRev));
 		memcpy(disk_info.modelNum, ccb.cgd.ident_data.model,
 		    sizeof(disk_info.modelNum));
-#ifndef ATA_SUPPORT_TCG
-#define	ATA_SUPPORT_TCG		0x0001
-#define	tcg			usedmovsd
-#endif
 		if ((ccb.cgd.ident_data.tcg & 0xc000) == 0x4000 &&
 		    (ccb.cgd.ident_data.tcg & ATA_SUPPORT_TCG) != 0) {
-			LOG(D4) << "Trusted Computing feature set is supported "
+			LOG(D4) << "Trusted Computing feature set is supported: "
 			    << std::hex << ccb.cgd.ident_data.tcg;
 			disk_info.devType = DEVICE_TYPE_ATA;
 		} else {
-			LOG(D4) << "Trusted Computing feature set is not supported "
+			LOG(D4) << "Trusted Computing feature set is not supported: "
 			    << std::hex << ccb.cgd.ident_data.tcg;
 			disk_info.devType = DEVICE_TYPE_OTHER;
 		}
