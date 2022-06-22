@@ -125,8 +125,11 @@ public:
 	void identify(OPAL_DiskInfo& disk_info);
 	void identifyPd(OPAL_DiskInfo& disk_info);
 	void identifyNVMeASMedia(OPAL_DiskInfo& disk_info);
+	void identifyNVMeRealtek(OPAL_DiskInfo& disk_info);
 	BOOL DoIdentifyDevicePd(INT physicalDriveId, BYTE target, IDENTIFY_DEVICE * data);
 	BOOL DoIdentifyDeviceNVMeASMedia(INT physicalDriveId, INT scsiPort, INT scsiTargetId, IDENTIFY_DEVICE* data);
+	BOOL DoIdentifyDeviceNVMeRealtek(INT physicalDriveId, INT scsiPort, INT scsiTargetId, IDENTIFY_DEVICE* data);
+
 	HANDLE GetIoCtrlHandle(BYTE index);
 	BOOL SendAtaCommandPd(INT physicalDriveId, BYTE target, BYTE main, BYTE sub, BYTE param, PBYTE data, DWORD dataSize);
 private:

@@ -50,6 +50,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define DTAERROR_NO_LOCKING_INFO			0x8a
 #define DTAERROR_CREATE_USB				0x8b
 #define LICENSE_NOT_ACIVATED			0x90
+#define NOT_SUPPORT_LARGE_PBA_WRITE_TO_ENCLOSURE_DRIVE 0x91
 /** Locking Range Configurations */
 #define DTA_DISABLELOCKING		0x00
 #define DTA_READLOCKINGENABLED		0x01

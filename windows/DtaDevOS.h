@@ -62,6 +62,8 @@ protected:
 	void identify(OPAL_DiskInfo& disk_info);
 	void identifyPd(OPAL_DiskInfo& disk_info);
 	void identifyNVMeASMedia(OPAL_DiskInfo& disk_info);
+	void identifyNVMeRealtek(OPAL_DiskInfo& disk_info);
+
 private:
 	GET_LENGTH_INFORMATION lengthInfo;
 	DWORD infoBytesReturned;

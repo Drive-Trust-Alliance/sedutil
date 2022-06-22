@@ -100,6 +100,26 @@ void DtaDevOS::init(const char * devref)
 		// now nvme is potentially on USB bus
 		disk->init(dev);
 		/////////////
+		LOG(D) << "Entering USB DtaDevOS::identifyNVMeRealtec()";
+		identifyNVMeRealtek(disk_info);
+		LOG(D) << "Exiting USB DtaDevOS::identifyNVMeRealtec()";
+		if (strlen((char *)disk_info.modelNum) == 0) // only usb dongle or non-sata non-nvme will return nothing here
+		{
+			// Not Nvme Realtec, continue
+		}
+		else {
+			LOG(D) << " find Nvme Realtec Enclosure on device : " << devref;
+			disk_info.enclosure = 1;
+			// do discovery0 
+			delete disk;
+			disk = new DtaDiskNVME();
+			disk->init(dev);
+			identifyNVMeRealtek(disk_info);
+			disk_info.devType = DEVICE_TYPE_NVME;
+			discovery0(&disc0Sts);
+			return;
+		}
+
 		LOG(D) << "Entering USB DtaDevOS::identify()";
 		identify(disk_info); // will come back either it is SATA or Nvme
 		LOG(D) << "Exiting USB returning DtaDevOS::identify()";
@@ -114,6 +134,7 @@ void DtaDevOS::init(const char * devref)
 			discovery0(&disc0Sts);
 			return;
 		}
+
 		// check  if nvme
 		//DoIdentifyDeviceNVMeASMedia(INT physicalDriveId, INT scsiPort, INT scsiTargetId, IDENTIFY_DEVICE* data);
 		LOG(D) << "Entering USB DtaDevOS::identifyNVMeASMedia()";
@@ -124,8 +145,6 @@ void DtaDevOS::init(const char * devref)
 			// Not SATA, Not Nvme
 		} else {
 			// do discovery0 
-			
-			
 			delete disk;
 			disk = new DtaDiskNVME();
 			disk->init(dev);
@@ -134,7 +153,6 @@ void DtaDevOS::init(const char * devref)
 			disk_info.devType = DEVICE_TYPE_NVME;
 			discovery0(&disc0Sts);
 			return;
-		return;
 		}
 		
 		// assume it is nvme
@@ -342,6 +360,12 @@ void DtaDevOS::identifyNVMeASMedia(OPAL_DiskInfo& di)
 {
 	return(disk->identifyNVMeASMedia(di));
 }
+void DtaDevOS::identifyNVMeRealtek(OPAL_DiskInfo& di)
+{
+	return(disk->identifyNVMeRealtek(di));
+}
+
+// DoIdentifyDeviceNVMeRealtek(INT physicalDriveId, INT scsiPort, INT scsiTargetId, IDENTIFY_DEVICE* data)
 
 /** Close the filehandle so this object can be delete. */
 

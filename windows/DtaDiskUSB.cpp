@@ -146,7 +146,7 @@ void DtaDiskUSB::identify(OPAL_DiskInfo& disk_info)
 		return;
 	}
 	USB_INQUIRY_DATA * id = (USB_INQUIRY_DATA *) identifyResp;
-	IFLOG(D1) DtaHexDump(id, 512); // shall remove DEBUG
+	IFLOG(D2) DtaHexDump(id, 512); // shall remove DEBUG
     disk_info.devType = DEVICE_TYPE_USB;
 	uint8_t non_ascii = 0;
     for (int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
@@ -481,13 +481,14 @@ void DtaDiskUSB::identifyNVMeASMedia(OPAL_DiskInfo& disk_info) {
 	////////////////////////////////////////
 	IDENTIFY_DEVICE identify = { 0 };
 	disk_info.asmedia = 0; 
+	disk_info.enclosure = 0;
 	//BOOL DtaDiskUSB::DoIdentifyDeviceNVMeASMedia(INT physicalDriveId, INT scsiPort, INT scsiTargetId, IDENTIFY_DEVICE* data)
 	if (DoIdentifyDeviceNVMeASMedia(physicalDriveId, 0xA0,0, &identify)) {
 		// success
 		LOG(D1) << "DtaDiskUSB::identifyNVMeASMedia : USB IDENTIFYNVMeASMedia OK possible with NVMeASMedia ";
 		// try if T7  Samsung Portable SSD 
 		USB_INQUIRY_DATA_NVME * idn = (USB_INQUIRY_DATA_NVME *)&identify;
-		DtaHexDump(idn, 512);
+		IFLOG(D2) DtaHexDump(idn, 512);
 		uint8_t non_ascii = 0;
 		for (int i = 0; i < sizeof(disk_info.modelNum); i += 2) {
 			disk_info.modelNum[i] = idn->ProductID[i];
@@ -530,10 +531,11 @@ void DtaDiskUSB::identifyNVMeASMedia(OPAL_DiskInfo& disk_info) {
 				if (!isprint(disk_info.firmwareRev[i + 1])) { non_ascii = 1; ; break; }
 			}
 		}
-		else {
+		else { // Possible Nvme enclosure
+			disk_info.enclosure = 1; 
 			LOG(D1) << "DtaDiskUSB::identifyNVMeASMedia : Does NOT Find Samsung Portable SSD for Nvme or Nvme Idfy data format";
 			USB_INQUIRY_DATA * id = (USB_INQUIRY_DATA *)&identify;
-			DtaHexDump(id, 512);
+			IFLOG(D2) DtaHexDump(id, 512);
 			disk_info.devType = DEVICE_TYPE_NVME;
 
 			for (int i = 0; i < sizeof(disk_info.serialNum); i += 2) {
@@ -679,5 +681,177 @@ BOOL DtaDiskUSB::DoIdentifyDeviceNVMeASMedia(INT physicalDriveId, INT scsiPort, 
 	::CloseHandle(hIoCtrl);
 
 	//printf("Leaving DoIdentifyDeviceNVMeASmedia(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)", physicalDriveId, scsiPort, scsiTargetId);
+	return TRUE;
+}
+
+void DtaDiskUSB::identifyNVMeRealtek(OPAL_DiskInfo& disk_info) {
+	LOG(D1) << "Entering DtaDiskUSB::identifyNVMeASMedia()";
+	vector<uint8_t> nullz(512, 0x00);
+	void * identifyResp = NULL;
+	identifyResp = _aligned_malloc(IO_BUFFER_LENGTH, IO_BUFFER_ALIGNMENT);
+	if (NULL == identifyResp) return;
+	memset(identifyResp, 0, IO_BUFFER_LENGTH);
+
+	// before give up, try identifyDevicePd
+	////////////////////////////////////////
+	IDENTIFY_DEVICE identify = { 0 };
+	disk_info.asmedia = 0;
+	disk_info.enclosure = 0;
+	//BOOL DtaDiskUSB::DoIdentifyDeviceNVMeASMedia(INT physicalDriveId, INT scsiPort, INT scsiTargetId, IDENTIFY_DEVICE* data)
+	if (DoIdentifyDeviceNVMeRealtek(physicalDriveId, 0xA0, 0, &identify)) {
+		// success
+		LOG(D1) << "DtaDiskUSB::identifyNVMeRealtek : USB IDENTIFYNVMeRealtek OK possible with NVMeASMedia ";
+		// try if T7  Samsung Portable SSD 
+		USB_INQUIRY_DATA_NVME * idn = (USB_INQUIRY_DATA_NVME *)&identify;
+		IFLOG(D2) DtaHexDump(idn, 512);
+		uint8_t non_ascii = 0;
+		for (int i = 0; i < sizeof(disk_info.modelNum); i += 2) {
+			disk_info.modelNum[i] = idn->ProductID[i];
+			disk_info.modelNum[i + 1] = idn->ProductID[i + 1];
+			if (!isprint(disk_info.modelNum[i])) { non_ascii = 1; ; break; };
+			if (!isprint(disk_info.modelNum[i + 1])) { non_ascii = 1; ; break; };
+		}
+
+		string str_id; str_id.append((char *)disk_info.modelNum);
+		size_t str_found = str_id.find("Samsung Portable SSD");
+		//printf("***** str_found = %d\n", str_found);
+		if (str_found != string::npos) {
+			LOG(D1) << "DtaDiskUSB::identifyNVMeRealtek : Find Samsung Portable SSD for Nvme ";
+			disk_info.asmedia = 1;
+			for (int i = 0; i < sizeof(disk_info.serialNum); i += 2) {
+				disk_info.serialNum[i] = idn->ProductSerial[i];
+				disk_info.serialNum[i + 1] = idn->ProductSerial[i + 1];
+				if (!isprint(disk_info.serialNum[i])) { non_ascii = 1; ; break; };
+				if (!isprint(disk_info.serialNum[i + 1])) { non_ascii = 1; ; break; };
+			}
+			for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 2) {
+				disk_info.firmwareRev[i] = idn->ProductRev[i];
+				disk_info.firmwareRev[i + 1] = idn->ProductRev[i + 1];
+				if (!isprint(disk_info.firmwareRev[i])) { non_ascii = 1; ; break; }
+				if (!isprint(disk_info.firmwareRev[i + 1])) { non_ascii = 1; ; break; }
+			}
+		}
+		else if (!chkprintable((uint8_t *)idn, 4, 72)) { // check byte 4 to 71(47h) printable ascii , return 1 if find non printable , 0 if all printable 
+			LOG(D1) << "DtaDiskUSB::identifyNVMeASMedia : Find Nvme idfy data format ";
+			disk_info.asmedia = 1;
+			for (int i = 0; i < sizeof(disk_info.serialNum); i += 2) {
+				disk_info.serialNum[i] = idn->ProductSerial[i];
+				disk_info.serialNum[i + 1] = idn->ProductSerial[i + 1];
+				if (!isprint(disk_info.serialNum[i])) { non_ascii = 1; ; break; };
+				if (!isprint(disk_info.serialNum[i + 1])) { non_ascii = 1; ; break; };
+			}
+			for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 2) {
+				disk_info.firmwareRev[i] = idn->ProductRev[i];
+				disk_info.firmwareRev[i + 1] = idn->ProductRev[i + 1];
+				if (!isprint(disk_info.firmwareRev[i])) { non_ascii = 1; ; break; }
+				if (!isprint(disk_info.firmwareRev[i + 1])) { non_ascii = 1; ; break; }
+			}
+		}
+		else { // Possible Nvme enclosure
+			disk_info.enclosure = 1;
+			LOG(D1) << "DtaDiskUSB::identifyNVMeASMedia : Does NOT Find Samsung Portable SSD for Nvme or Nvme Idfy data format";
+			USB_INQUIRY_DATA * id = (USB_INQUIRY_DATA *)&identify;
+			IFLOG(D2) DtaHexDump(id, 512);
+			disk_info.devType = DEVICE_TYPE_NVME;
+
+			for (int i = 0; i < sizeof(disk_info.serialNum); i += 2) {
+				disk_info.serialNum[i] = id->ProductSerial[i];
+				disk_info.serialNum[i + 1] = id->ProductSerial[i + 1];
+				if (!isprint(disk_info.serialNum[i])) { non_ascii = 1; ; break; };
+				if (!isprint(disk_info.serialNum[i + 1])) { non_ascii = 1; ; break; };
+			}
+			for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 2) {
+				disk_info.firmwareRev[i] = id->ProductRev[i];
+				disk_info.firmwareRev[i + 1] = id->ProductRev[i + 1];
+				if (!isprint(disk_info.firmwareRev[i])) { non_ascii = 1; ; break; }
+				if (!isprint(disk_info.firmwareRev[i + 1])) { non_ascii = 1; ; break; }
+			}
+			for (int i = 0; i < sizeof(disk_info.modelNum); i += 2) {
+				disk_info.modelNum[i] = id->ProductID[i];
+				disk_info.modelNum[i + 1] = id->ProductID[i + 1];
+				if (!isprint(disk_info.modelNum[i])) { non_ascii = 1; ; break; };
+				if (!isprint(disk_info.modelNum[i + 1])) { non_ascii = 1; ; break; };
+			}
+		}
+	}
+	//else {
+	// fail again 
+	//}
+	LOG(D) << "Exiting DtaDiskUSB::identifyNVMeRealtek";
+	_aligned_free(identifyResp);
+	return;
+}
+
+BOOL DtaDiskUSB::DoIdentifyDeviceNVMeRealtek(INT physicalDriveId, INT scsiPort, INT scsiTargetId, IDENTIFY_DEVICE* data)
+{
+	BOOL	bRet;
+	HANDLE	hIoCtrl;
+	DWORD	dwReturned;
+	DWORD	length;
+
+	SCSI_PASS_THROUGH_WITH_BUFFERS sptwb;
+	//printf("Entering DtaDiskUSB::DoIdentifyDeviceNVMeRealtek(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)\n", physicalDriveId, scsiPort, scsiTargetId);
+	if (data == NULL)
+	{
+		LOG(E) << "DtaDiskUSB:: No identify data buffer available";
+		return	FALSE;
+	}
+
+	::ZeroMemory(data, sizeof(IDENTIFY_DEVICE));
+
+	hIoCtrl = GetIoCtrlHandle(physicalDriveId);
+
+	if (hIoCtrl == INVALID_HANDLE_VALUE)
+	{
+		return	FALSE;
+	}
+
+	::ZeroMemory(&sptwb, sizeof(SCSI_PASS_THROUGH_WITH_BUFFERS));
+	sptwb.Spt.Length = sizeof(SCSI_PASS_THROUGH);
+	sptwb.Spt.PathId = 0;
+	sptwb.Spt.TargetId = 0;
+	sptwb.Spt.Lun = 0;
+	sptwb.Spt.CdbLength = 16;
+	sptwb.Spt.SenseInfoLength = 32;
+	sptwb.Spt.DataIn = SCSI_IOCTL_DATA_IN;
+	sptwb.Spt.DataTransferLength = 4096;
+	sptwb.Spt.TimeOutValue = 2;
+	sptwb.Spt.DataBufferOffset = offsetof(SCSI_PASS_THROUGH_WITH_BUFFERS, DataBuf);
+	sptwb.Spt.SenseInfoOffset = offsetof(SCSI_PASS_THROUGH_WITH_BUFFERS, SenseBuf);
+
+	sptwb.Spt.Cdb[0] = 0xE4; // NVME READ
+	sptwb.Spt.Cdb[1] = BYTE(4096);
+	sptwb.Spt.Cdb[2] = BYTE(4096 >> 8);
+	sptwb.Spt.Cdb[3] = 0x06; // IDENTIFY
+	sptwb.Spt.Cdb[4] = 0x01;
+
+	length = offsetof(SCSI_PASS_THROUGH_WITH_BUFFERS, DataBuf) + sptwb.Spt.DataTransferLength;
+
+	bRet = ::DeviceIoControl(hIoCtrl, IOCTL_SCSI_PASS_THROUGH,
+		&sptwb, length,
+		&sptwb, length, &dwReturned, NULL);
+
+	if (bRet == FALSE)
+	{
+		::CloseHandle(hIoCtrl);
+		return	FALSE;
+	}
+
+	DWORD count = 0;
+	for (int i = 0; i < 512; i++)
+	{
+		count += sptwb.DataBuf[i];
+	}
+	if (count == 0)
+	{
+		::CloseHandle(hIoCtrl);
+		return	FALSE;
+	}
+
+	memcpy_s(data, sizeof(IDENTIFY_DEVICE), sptwb.DataBuf, sizeof(IDENTIFY_DEVICE));
+
+	::CloseHandle(hIoCtrl);
+	//printf("Leaving DtaDiskUSB::DoIdentifyDeviceNVMeRealtek(physicalDriveId=%d,scsiPort=%d,scsiTargetId=%d)\n", physicalDriveId, scsiPort, scsiTargetId);
+
 	return TRUE;
 }

@@ -441,7 +441,7 @@ uint8_t DtaDev::TperReset()
 		LOG(D1) << "Send TperReset to device failed " << (uint16_t)lastRC;
 		return lastRC;
 	}
-	DtaHexDump((char *)tpResponse,64);
+	IFLOG(D2) DtaHexDump((char *)tpResponse,64);
 	return 0;
 }
 

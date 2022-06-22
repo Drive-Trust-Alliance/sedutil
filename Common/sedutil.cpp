@@ -1127,12 +1127,12 @@ int main(int argc, char * argv[])
                             argv[opts.newpassword]);
 		break;
 	case sedutiloption::auditWrite:
-		LOG(D) << "audit log write" << argv[opts.device];;
+		LOG(D) << "audit log write " << argv[opts.device];;
 		//printf("argv[opts.eventid]=%s\n", argv[opts.eventid]);
 		return d->auditWrite(argv[opts.password], argv[opts.eventid], argv[opts.userid]);
 		break;
 	case sedutiloption::auditRead:
-		LOG(D) << "audit log read" << argv[opts.device];;
+		LOG(D) << "audit log read " << argv[opts.device];;
 		return d->auditRead(argv[opts.password], argv[opts.userid]);
 		break;
 	case sedutiloption::auditErase:
@@ -1140,21 +1140,21 @@ int main(int argc, char * argv[])
 		return d->auditErase(argv[opts.password], argv[opts.userid]);
 		break;
 	case sedutiloption::getmfgstate:
-		LOG(D) << "get manufacture life cycle state" << argv[opts.device];;
+		LOG(D) << "get manufacture life cycle state " << argv[opts.device];;
 		return d->getmfgstate();
 		break;
-	case sedutiloption::activate:
-		LOG(D) << "activate LockingSP with MSID" << argv[opts.device];;
+	case sedutiloption::activate: 
+		LOG(D) << "activate LockingSP with MSID " << argv[opts.device];;
 		return d->activate(argv[opts.password]);
 		break;
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 	case sedutiloption::pbaValid:
-		LOG(D) << "PBA image validation" << argv[opts.device];;
+		LOG(D) << "PBA image validation " << argv[opts.device];;
 		return d->pbaValid(argv[opts.password]);
 		break;
 
 	case sedutiloption::MBRRead:
-		LOG(D) << "Read shadow MBR to file" << argv[opts.device];;
+		LOG(D) << "Read shadow MBR to file " << argv[opts.device];;
 		return d->MBRRead(argv[opts.password], argv[opts.pbafile], atol(argv[opts.startpos]), atol(argv[opts.len]));
 		break;
 
@@ -1165,11 +1165,11 @@ int main(int argc, char * argv[])
 		break;
     #endif
 	case sedutiloption::DataStoreWrite:
-		LOG(D) << "Write to Data Store" << argv[opts.device];;
+		LOG(D) << "Write to Data Store " << argv[opts.device];;
 		return d->DataStoreWrite(argv[opts.password], argv[opts.userid], argv[opts.pbafile], (uint8_t)atoi(argv[opts.dsnum]), atol(argv[opts.startpos]), atol(argv[opts.len]));
 		break;
 	case sedutiloption::DataStoreRead:
-		LOG(D) << "Read Data Store to file" << argv[opts.device];;
+		LOG(D) << "Read Data Store to file " << argv[opts.device];;
 		return d->DataStoreRead(argv[opts.password], argv[opts.userid], argv[opts.pbafile], (uint8_t)atoi(argv[opts.dsnum]), atol(argv[opts.startpos]), atol(argv[opts.len]));
 		break;
 	case sedutiloption::getMBRsize:
@@ -1250,7 +1250,7 @@ int main(int argc, char * argv[])
 		return d->enableUserRead(opts.mbrstate, argv[opts.password], argv[opts.userid]);
 		break;
 	case sedutiloption::activateLockingSP:
-		LOG(D) << "Activating the LockingSP on" << argv[opts.device];
+		LOG(D) << "Activating the LockingSP on " << argv[opts.device];
         return d->activateLockingSP(argv[opts.password]);
         break;
 	case sedutiloption::activateLockingSP_SUM:
@@ -1275,7 +1275,7 @@ int main(int argc, char * argv[])
         return isValidSEDDisk(argv[opts.device]);
         break;
 	case sedutiloption::takeOwnership:
-		LOG(D) << "Taking Ownership of the drive at" << argv[opts.device];
+		LOG(D) << "Taking Ownership of the drive at " << argv[opts.device];
         return d->takeOwnership(argv[opts.password]);
         break;
  	case sedutiloption::revertLockingSP:
@@ -1350,7 +1350,7 @@ int main(int argc, char * argv[])
 #else
 		//printf("Opal Lock Version : 0.9.5.%s.%s 20220211-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(),GIT_VERSION,GIT_VERSION_PBA);
 		//printf("Opal Lock Version : 0.9.6.%s.%s 20220223-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(), GIT_VERSION, GIT_VERSION_PBA);
-		printf("Opal Lock Version : 0.9.7.%s.%s 20220527-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(), GIT_VERSION, GIT_VERSION_PBA);
+		printf("Opal Lock Version : 0.9.8.%s.%s 20220621-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(), GIT_VERSION, GIT_VERSION_PBA);
 #endif
 		return 0;
 		break;

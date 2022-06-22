@@ -151,7 +151,7 @@ void DtaDevOpal::gethuser(char * buf)
 		rekey->addToken(OPAL_TOKEN::ENDNAME);
 		rekey->addToken(OPAL_TOKEN::ENDLIST);
 		rekey->complete();
-		rekey->dumpCommand(); // JERRY 
+		rekey->dumpCommand(); 
 
 		if ((lastRC = session->sendCommand(rekey, response)) != 0) {
 			LOG(E) << "setTPerResetEnable  " << (enable ? "ON" : "OFF") << " Failed " << dev;
@@ -334,8 +334,6 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 	#else
 	strcat_s(p1, getSerialNum());
 	#endif
-	//LOG(D) << p1;  // JERRY 
-	//DtaHexDump(p1, 80); // JERRY 
 	// setpassword has flag -n -t from GUI
 	if (no_hash_passwords) { // do it only when -n is set
 		bool saved_flag = no_hash_passwords;
@@ -358,8 +356,6 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 			}
 			printf("  %s \n",  dev);
 		} 
-		//LOG(D) << "setuphuser() : new hash size = " << (uint16_t)hash.size(); 
-		//DtaHexDump(p1, 80);
 		translate_req = saved_t_flag;
 		no_hash_passwords = saved_flag ;
 	}
@@ -517,7 +513,7 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 		LOG(E) << "Unable to create session object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG JERRY
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { 
 	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete session;
 		return lastRC;
@@ -531,7 +527,7 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 		delete session;
 		return lastRC;
 	}
-	// JERRY dump raw token info 
+	// dump raw token info 
 	uint32_t tc = response.getTokenCount();
 	//if (0) {
 	//	printf("***** getTokenCount()=%ld\n", (long)tc);
@@ -543,7 +539,6 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 	//	}
 	//}
 
-	// JERRY
 	if (response.tokenIs(4) != _OPAL_TOKEN::DTA_TOKENID_UINT) {
 		LOG(E) << "Unable to determine number of ranges " << dev;
 		delete session;
@@ -553,33 +548,19 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 	uint32_t numRanges = response.getUint32(4) + 1;
 	for (uint32_t i = 0; i < numRanges; i++){
 		if(0 != i) LR[8] = i & 0xff;
-		// JERRY 
-		//if (0) {
-		//	for (uint8_t k = 0; k < LR.size(); k++) printf("%02X ", LR[k]);
-		//	cout << endl;
-		//}
-		// JERRY
+
 		if ((lastRC = getTable(LR, _OPAL_TOKEN::RANGESTART, _OPAL_TOKEN::WRITELOCKED)) != 0) {
 			delete session;
 			return lastRC;
 		}
-		// JERRY dump raw token info 
+		
 		tc = response.getTokenCount();
-		//if (0) {
-		//	printf("***** getTokenCount()=%ld\n", (long)tc);
-		//	for (uint32_t i = 0; i < tc; i++) {
-		//		printf("token %ld = ", (long)i);
-		//		for (uint32_t j = 0; j < response.getRawToken(i).size(); j++)
-		//			printf("%02X ", response.getRawToken(i)[j]);
-		//		cout << endl;
-		//	}
-		//}
+
 		if (tc != 34) { // why ?????
 			cout << endl;
 			LOG(E) << "token count is wrong. Exit loop " << dev;
 			break;
 		}
-		// JERRY
 
 		LR[6] = 0x03;  // non global ranges are 00000802000300nn 
 		//LOG(D) << "LR" << i << " Begin " << response.getUint64(4) <<
@@ -617,7 +598,7 @@ uint8_t DtaDevOpal::setupLockingRange(uint8_t lockingrange, uint64_t start,
 		LOG(E) << "Unable to create session object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
-	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG : JERRY 
+	
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete session;
 		return lastRC;
@@ -787,8 +768,7 @@ uint8_t DtaDevOpal::configureLockingRange(uint8_t lockingrange, uint8_t enabled,
 		LOG(E) << "Unable to create session object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG : JERRY 
-	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { 
 		delete session;
 		return lastRC;
 	}
@@ -1016,7 +996,7 @@ uint8_t DtaDevOpal::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<u
 			userData.push_back(atoi(&userid[5]) & 0xff );
 		}
 		else {
-			LOG(E) << "Invalid Userid "; // JERRY gabble data << userid;
+			LOG(E) << "Invalid Userid "; // gabble data << userid;
 			//for (int ii=0; ii < 5; ii++) { printf("%02X", userid[ii]); } 
 			userData.clear();
 			return DTAERROR_INVALID_PARAMETER;
@@ -1042,7 +1022,7 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 	gethuser(buf);
 	if (!memcmp(userid , buf, (disk_info.OPAL20_numUsers < 10) ? 5 : 6 ) ) idx = disk_info.OPAL20_numUsers -1 ;
 	// if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? (OPAL_UID)(OPAL_USER1_UID + idx) : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // ok work : JERRY can user set its own password ?????
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? (OPAL_UID)(OPAL_USER1_UID + idx) : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { 
 		delete session;
 		return lastRC;
 	}
@@ -1296,7 +1276,7 @@ uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
 		LOG(E) << "Unable to create session object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, Admin1Password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // JERRY can User1 set Lockingrange RW ??????
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, Admin1Password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { 
 		delete session;
 		return lastRC;
 	}
@@ -1452,7 +1432,7 @@ uint8_t DtaDevOpal::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode()? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // JERRY ADMIN1 or USER1 ?????
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode()? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { 
 		delete session;
 		return lastRC;
 	}
@@ -1942,11 +1922,17 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 	LOG(D) << "Entering DtaDevOpal::DataRead() " << dev;
 	uint8_t lastRC;
 	vector<uint8_t> LR;
-	uint32_t filepos = startpos;
+	uint32_t filepos = 0; 
 	uint32_t blockSize = 1950;
-	uint32_t newSize = 1950;
+	uint32_t newSize;
 
-	
+	if (disk_info.enclosure) {
+		// do not change host property for enclosure
+		adj_host = 0;
+		blockSize = (len > 1950) ? 1950 : len;
+		//printf("disk_info.enclosure=%d Do not change host property at all ; blockSize=%d\n", disk_info.enclosure, blockSize);
+	}
+	else
 	if ((len > 1950) &&  (Tper_sz_MaxComPacketSize > 2048) ) {
 	// adjust host property 
 		// printf("\nread data length = %ld Tper_sz_MaxComPacketSize = %ld\n", len , Tper_sz_MaxComPacketSize);
@@ -1988,38 +1974,45 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 		//printf(" ***** start LOCKINGSP with %s  Token = %d\n", userid, getUIDtoken(userid));
 		vector<uint8_t> auth,auth2,auth3;
 		auth = getUID(userid,auth2,auth3,disk_info.OPAL20_numUsers); // pass vector directly, not enum index of vector table
-		//for (int i = 0; i < 9; i++) {
-		//	printf("%02X ", auth[i]);
-		//} 
-		//printf("\n");
-		//LOG(D) << "audit data read password" << password; // JERRY
-		//for (int i = 0; i < auth.size(); i++) printf("%02", auth.at(i)); printf("\n"); // JERRY
+		//for (int i = 0; i < 9; i++) { printf("%02X ", auth[i]);} printf("\n");
+		//LOG(D) << "audit data read password" << password; 
+		//for (int i = 0; i < auth.size(); i++) printf("%02", auth.at(i)); printf("\n"); // 
 
-		if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth)) != 0) { // JERRY OPAL_UID::OPAL_ADMIN1_UID ->OK getUID() --> OK too; getUIDtoken-->NG ????
+		if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth)) != 0) { //  OPAL_UID::OPAL_ADMIN1_UID ->OK getUID() --> OK too; getUIDtoken-->NG ????
 			delete cmd;
 			delete session;
 			return lastRC;
 		}
 
-	LOG(D) << "***** start read data store " << dev;
-
-	// need a loop here to handle len > blocksize 
+	LOG(D) << "***** start read data store" << dev; 
 
 	while ((filepos + startpos ) < disk_info.DataStore_maxTableSize && (filepos < len)) {
-
-		newSize = ((filepos + startpos + blockSize) <= disk_info.DataStore_maxTableSize) ?
-			blockSize : (disk_info.DataStore_maxTableSize - filepos - startpos);
-		if (len < newSize) // newSize : 1950 to BLOCKSIZE_HI
+		if (((filepos + startpos + blockSize) > disk_info.DataStore_maxTableSize))
 		{
-			newSize = len;
-			if (newSize < 1950) adj_io_buffer_length = 2048; 
-			//else 
-			//	if (newSize < Tper_sz_MaxIndTokenSize -60 ) {
-			//		// what is the adj_io_buffer_length, round up to  
-			//		adj_io_buffer_length = newSize + 60 + 56; // payload heasdrr size 
-			//	}
+			newSize = disk_info.DataStore_maxTableSize - filepos - startpos;
+			//printf("\n((filepos + startpos + blockSize) > disk_info.DataStore_maxTableSize)\n");
 		}
-		// printf("filepos=%ld startpop=%ld blockSize=%ld newSize=%ld  len=%ld\n", filepos, startpos, blockSize, newSize, len);
+		else {
+			//printf("\n((filepos + startpos + blockSize) <= disk_info.DataStore_maxTableSize)\n");
+			if (filepos + blockSize > len) { // 
+				//printf("within table boundary but beyond the total length, last block to read\n");
+				newSize = len - filepos;
+			} else { // within boundary not last block 
+				//printf("within table boundary NOT last block to read\n");
+				newSize = blockSize;
+			}
+		}
+
+		//printf("newSize=%d filepos=%d startpos=%d blockSize=%d filepos + startpos=%d\n", newSize, filepos, startpos, blockSize, filepos + startpos);
+
+		LOG(D1) << "***** start read datastore";
+		vector<uint8_t> DstoreUid, getUid;
+		DstoreUid.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+		for (uint8_t i = 0; i<7; i++) {
+			DstoreUid.push_back(OPALUID[OPAL_UID::OPAL_DATA_STORE][i]);
+		}
+
+		//printf("filepos=%ld startpop=%ld blockSize=%ld newSize=%ld  len=%ld\n", filepos, startpos, blockSize, newSize, len);
 
 		cmd->reset(OPAL_UID::OPAL_DATA_STORE, OPAL_METHOD::GET);
 		cmd->addToken(OPAL_TOKEN::STARTLIST);
@@ -2042,10 +2035,17 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 			delete session;
 			return lastRC;
 		}
-		response.getBytes(1, (uint8_t *) (buffer)); // data is token 1, save read data to new buffer position
-		LOG(D1) << "raw data after data store read response data " << dev;
+ 
+		response.getBytes(1, (uint8_t *) (buffer + filepos)); // data is token 1, save read data to new buffer position
+		//LOG(I) << "read Data store into buffer + filepos ";
+		//DtaHexDump(buffer + filepos, newSize); 
+		//LOG(I) << "read Data store into buffer" ;
+		//DtaHexDump(buffer, newSize);
+		//LOG(D1) << "raw data after data store read response data " << dev;
 		filepos += blockSize;
 	}
+	//LOG(D1) << "finish data store read, all buffer contents";
+	//DtaHexDump(buffer, len);
 
 	IFLOG(D4) DtaHexDump(buffer, gethdrsize()); // contain header and entries
 	LOG(D1) << "***** end of send read data store command " << dev;
@@ -2065,10 +2065,17 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	vector <uint8_t> lengthtoken;
 	uint32_t filepos = 0; // startpos;
 	uint32_t blockSize = 1950; // default data write 
-	uint32_t newSize = 1950;
+	uint32_t newSize ;
 	uint8_t oper = 0;
 
 	// determin the blockSize from Tper packet size
+	if (disk_info.enclosure) {
+		// do not change host property for enclosure
+		adj_host = 0;
+		blockSize = (len > 1950) ? 1950 : len;
+		//printf("disk_info.enclosure=%d Do not change host property at all ; blockSize=%d\n", disk_info.enclosure, blockSize);
+	}
+	else
 	if ((len > 1950) && (Tper_sz_MaxComPacketSize > 2048)) {
 		// adjust host property 
 		// printf("\nread data length = %ld Tper_sz_MaxComPacketSize = %ld\n", len, Tper_sz_MaxComPacketSize);
@@ -2135,23 +2142,25 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	LOG(D) << "filepos= " << filepos << " length= " << len << " " << dev;
 
 	while ((filepos + startpos) < disk_info.DataStore_maxTableSize && (filepos < len)) {
-
 		if (filepos + blockSize + startpos > disk_info.DataStore_maxTableSize)
 		{
 			newSize = disk_info.DataStore_maxTableSize - filepos - startpos;
-			// printf("***** A filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
+			LOG(D1) << "***** datastorewrite A ((filepos + startpos + blockSize) > disk_info.DataStore_maxTableSize)";
+			//printf("***** A5 filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
+		} else {
+			LOG(D1) << "***** B5 datastore write ((filepos + startpos + blockSize) <= disk_info.DataStore_maxTableSize)";
+			if (filepos + blockSize > len) { // 
+				//printf("***** B51 within table boundary but beyond the total length, last block to write\n");
+				newSize = len - filepos;
+			}
+			else { // within boundary not last block 
+				//printf("***** B52 within table boundary NOT last block to write\n");
+				newSize = blockSize;
+			}
+			//printf("***** C5 filepos(%ld) - startpos(%ld) = %ld,  len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, filepos - startpos, len, blockSize, newSize);
 		}
-		else if (filepos + blockSize > len) {
-			newSize = len - filepos; //filepos + blockSize - (filepos + blockSize - len);
-			// printf("***** B filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
 
-		}
-		else {
-			newSize = blockSize;
-			// printf("***** C filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
-
-		}
-		// printf("blockSize=%ld newSize=%ld bufferA.size()=%ld\n", blockSize, newSize, (uint32_t)bufferA.size());
+		//printf("blockSize=%ld newSize=%ld bufferA.size()=%ld\n", blockSize, newSize, (uint32_t)bufferA.size());
 
 		//bufferA.resize(newSize);
 		//printf("Before read from file , blockSize=%ld bufferA.size()=%ld newSize=%ld\n", blockSize, (uint32_t)bufferA.size(), newSize);
@@ -2230,7 +2239,7 @@ uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len,
 		MAX_ENTRY = 100;
 	}
 
-	LOG(D1) << "***** Entering DtaDevOpal::auditlogwr ***** " << dev;
+	LOG(D) << "***** Entering DtaDevOpal::auditlogwr ***** " << dev;
 
 	ptr = (audit_t *)buffer;
 	LOG(D1) << "copy passing buffer to entryA ";
@@ -2355,7 +2364,7 @@ uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len,
 
 uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len, char * buf, char * userid) // read audit log to Data Store
 {
-	LOG(D1) << "entering DtaDevOpal::auditlogrd " << dev;
+	LOG(D) << "entering DtaDevOpal::auditlogrd " << dev;
 	//uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, char * buffer)
 	uint8_t lastRC;
 
@@ -2368,7 +2377,7 @@ uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len,
 		
 		if ((lastRC = (uint8_t)memcmp(A->header.signature, str1, strlen(str1))) != 0)
 		{
-			printf("Invalid Audit Signature or No Audit Entry log\n");
+			LOG(E) << "Invalid Audit Signature or No Audit Entry log";
 			IFLOG(D4) DtaHexDump(buf, gethdrsize());
 			return 0; // ERRCHKSUM;
 		}
@@ -2438,7 +2447,7 @@ uint16_t gethdrsize() {
 //uint8_t DtaDevOpal::auditRec(char * password, uint8_t id)
 uint8_t DtaDevOpal::auditRec(char * password, entry_t * pent, char * userid)
 {
-	
+	LOG(D) << "***** Entering DtaDevOpal::auditRec ***** " << dev;
 	char * buffer;
 	uint8_t lastRC;
 
@@ -2513,6 +2522,8 @@ uint8_t DtaDevOpal::auditRec(char * password, entry_t * pent, char * userid)
 	IFLOG(D4) DtaHexDump((char*)&hdrtmp, sizeof(audit_hdr));
 	LOG(D1) << "buffer header info : ";
 	IFLOG(D4) DtaHexDump(buffer, sizeof(audit_hdr));
+	IFLOG(D4) DtaHexDump((char*)&hdrtmp, sizeof(audit_hdr));
+	IFLOG(D4) DtaHexDump(buffer, sizeof(audit_hdr));
 
 	// only for testing purpose
 	//srand((uint16_t)time(NULL));
@@ -2521,18 +2532,20 @@ uint8_t DtaDevOpal::auditRec(char * password, entry_t * pent, char * userid)
 	lastRC = auditlogwr(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buffer, pent, userid); // use rand id for test
 	if (lastRC)
 	{
-		LOG(E) << "audit write error : " << hex << lastRC << " " << dev;
+		LOG(E) << "auditlogwr() error : " << hex << lastRC << " " << dev;
 		return lastRC;
 	}
 	else
 	{
 		LOG(D1) << "audit write success " << dev;
+		LOG(D) << "***** Exiting DtaDevOpal:auditRec " << dev;
 		return 0;
 	}
 }
 
 uint8_t DtaDevOpal::auditErase(char * password, char * userid)
 {
+	LOG(D) << "***** Entering DtaDevOpal:auditErase " << dev;
 	char * buffer;
 	uint8_t lastRC;
 	audit_hdr hdr;
@@ -2550,6 +2563,7 @@ uint8_t DtaDevOpal::auditErase(char * password, char * userid)
 	wrtchksum(buffer,genchksum(buffer));
 	*/
 	lastRC = DataWrite(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buffer,userid); 
+	LOG(D) << "***** Exiting DtaDevOpal:auditErase " << dev;
 	return lastRC;
 }
 
@@ -2558,7 +2572,7 @@ uint8_t DtaDevOpal::auditRead(char * password, char * userid)
 	char * buf;
 	uint8_t lastRC;
 	uint32_t MAX_ENTRY;
-	LOG(D) << "***** enter audit read " << dev;
+	LOG(D) << "***** Entering DtaDevOpal:auditRead " << dev;
 	MAX_ENTRY = 1000; // default size
 	if (disk_info.DataStore_maxTableSize < 10485760) {
 		MAX_ENTRY = 100;
@@ -2567,6 +2581,8 @@ uint8_t DtaDevOpal::auditRead(char * password, char * userid)
 	buf = (char *)malloc(8 * MAX_ENTRY + gethdrsize());
 	memset(buf, 0, (MAX_ENTRY * 8) + gethdrsize());
 	lastRC = auditlogrd(password, 0, (MAX_ENTRY * 8) + gethdrsize(), buf,userid);
+	free(buf); // 
+	LOG(D) << "***** Exiting DtaDevOpal:auditRead " << dev;
 	return lastRC;
 }
 
@@ -2636,6 +2652,7 @@ vector<uint8_t> hex2data_a(char * password)
 }
 uint8_t DtaDevOpal::auditWrite(char * password, char * idstr, char * userid)
 {
+	LOG(D) << "***** Entering DtaDevOpal::auditWrite ***** " << dev;
 	uint8_t lastRC, rc, rc1, rc2;
 	entry_t ent;
 	uint8_t * pent;
@@ -2674,35 +2691,8 @@ uint8_t DtaDevOpal::auditWrite(char * password, char * idstr, char * userid)
 		DtaHexDump(&ent, 8);
 	}
 
-	//DtaHexDump(pent, 16);
-	//DtaHexDump(&ent, 16);
-
-	/*
-	memcpy(t, idstr, 2);
-	DtaHexDump(t, 3);
-	ent.event = (uint8_t)atoi(t);
-	memset(t, 0, 3);
-	memcpy(t, idstr+2, 2);
-	ent.yy = (uint8_t)atoi(t);
-	memset(t, 0, 3);
-	memcpy(t, idstr+4, 2);
-	ent.mm = (uint8_t)atoi(t);
-	memset(t, 0, 3);
-	memcpy(t, idstr+6, 2);
-	ent.dd = (uint8_t)atoi(t);
-	memset(t, 0, 3);
-	memcpy(t, idstr+8, 2);
-	ent.hh = (uint8_t)atoi(t);
-	memset(t, 0, 3);
-	memcpy(t, idstr+10, 2);
-	ent.min = (uint8_t)atoi(t);
-	memset(t, 0, 3);
-	memcpy(t, idstr+12, 2);
-	ent.sec = (uint8_t)atoi(t);
-	ent.reserved = 0;
-	*/
-
 	lastRC = auditRec(password, &ent, userid);
+	LOG(D) << "***** Exiting DtaDevOpal::auditWrite ***** " << dev;
 	return lastRC;
 }
 
@@ -2845,7 +2835,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 	}
 	datafile.seekg(0, datafile.end);
 	imgsize = datafile.tellg();
-	printf("datafile size %I64Xh\n", imgsize);
+	//printf("datafile size %I64Xh\n", imgsize);
 	if (imgsize < len)
 	{
 		len = (uint32_t)imgsize; // Min(imgsize,len)
@@ -2878,11 +2868,18 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 
 	// initial accessment of blockSize
 	// need to determine blockSize now
-	printf("\nwrite data length = %ld Tper_sz_MaxComPacketSize = %ld\n", len, Tper_sz_MaxComPacketSize);
+	//printf("\nwrite data length = %ld Tper_sz_MaxComPacketSize = %ld\n", len, Tper_sz_MaxComPacketSize);
+	if (disk_info.enclosure) {
+		// do not change host property for enclosure
 
+		adj_host = 0;
+		blockSize = (len > 1950) ? 1950 : len;
+		//printf("disk_info.enclosure=%d Do not change host property at all ; blockSize=%d\n", disk_info.enclosure, blockSize);
+	}
+	else
 	if ((len > 1950) && (Tper_sz_MaxComPacketSize > 2048)) {
 		// adjust host property 
-		printf("\nwrite data lengtn = %ld Tper_sz_MaxComPacketSize = %ld\n", len, Tper_sz_MaxComPacketSize);
+		//printf("\nwrite data lengtn = %ld Tper_sz_MaxComPacketSize = %ld\n", len, Tper_sz_MaxComPacketSize);
 		if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1;
 		else if ((Tper_sz_MaxComPacketSize > 2048) && (Tper_sz_MaxComPacketSize <= IO_BUFFER_LENGTH_MI) && disk_info.asmedia) // make sure it is T7
 			adj_host = 3; 
@@ -2907,7 +2904,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 			bufferA.resize(len); // need to resize bufferA due to truncated size of data length by user 
 		}
 	}
-	printf("DataStoreWrite : After Tper size exchange , blockSize=%ld bufferA.size()=%ld len=%ld\n", blockSize, (uint32_t)bufferA.size(), len);
+	//printf("DataStoreWrite : After Tper size exchange , blockSize=%ld bufferA.size()=%ld len=%ld\n", blockSize, (uint32_t)bufferA.size(), len);
 
 	LOG(D) << "Writing datafile to " << dev;
 
@@ -2952,30 +2949,28 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 		if (filepos + blockSize + startpos > disk_info.DataStore_maxTableSize)
 		{
 			newSize = disk_info.DataStore_maxTableSize - filepos - startpos;
-			printf("***** A filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
-
-			//printf("***** filepos=%ld - startpos = %ld *****\n", filepos, startpos);
-			//printf("***** newSize = disk_info.DataStore_maxTableSize - filepos - startpos = %ld ; bufferA.size()=%I64d *****\n", newSize, bufferA.size());
-
-			//printf("***** newSize = disk_info.DataStore_maxTableSize - filepos - startpos = %ld ; bufferA.size()=%I64d tmpbuf.size()=%I64d *****\n", newSize, bufferA.size(), tmpbuf.size());
-		}
-		else if (filepos + blockSize > len) {
-			newSize = len - filepos; //filepos + blockSize - (filepos + blockSize - len);
-			printf("***** B filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
-
+			LOG(D1) << "***** datastorewrite A ((filepos + startpos + blockSize) > disk_info.DataStore_maxTableSize)";
+			//printf("***** A filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
 		}
 		else {
-			newSize = blockSize;
-			printf("***** C filepos=%ld - startpos = %ld len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, len, blockSize, newSize);
-
+			LOG(D1) << "***** B datastore write ((filepos + startpos + blockSize) <= disk_info.DataStore_maxTableSize)" ;
+			if (filepos + blockSize > len) { // 
+				//printf("***** B1 within table boundary but beyond the total length, last block to write\n");
+				newSize = len - filepos;
+			}
+			else { // within boundary not last block 
+				//printf("***** B2 within table boundary NOT last block to write\n");
+				newSize = blockSize; 
+			}
+			//printf("***** B filepos(%ld) - startpos(%ld) = %ld,  len=%ld blockSize=%ld newSize=%ld *****\n", filepos, startpos, filepos-startpos, len, blockSize, newSize);
 		}
 
-		printf("blockSize=%ld newSize=%ld bufferA.size()=%ld\n", blockSize, newSize, (uint32_t)bufferA.size());
+		//printf("blockSize=%ld newSize=%ld bufferA.size()=%ld\n", blockSize, newSize, (uint32_t)bufferA.size());
 
 		bufferA.resize(newSize);
-		printf("Before read from file , blockSize=%ld bufferA.size()=%ld newSize=%ld\n", blockSize, (uint32_t)bufferA.size(), newSize);
+		//printf("Before read from file , blockSize=%ld bufferA.size()=%ld newSize=%ld\n", blockSize, (uint32_t)bufferA.size(), newSize);
 		datafile.read((char *)bufferA.data(), blockSize);
-		printf("After read from file , blockSize=%ld bufferA.size()=%ld newSize=%ld\n", blockSize, (uint32_t)bufferA.size(), newSize);
+		//printf("After read from file , blockSize=%ld bufferA.size()=%ld newSize=%ld\n", blockSize, (uint32_t)bufferA.size(), newSize);
 		/*
 		if (!(filepos % fivepercent)) {
 			if (complete <24)
@@ -2994,7 +2989,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 		//bufferA.insert(bufferA.begin(), buffer, buffer + len);
 		//////////////////////////////////////////////
 		LOG(D) << "bufferA contents after copy passed buffer content";
-		IFLOG(D) DtaHexDump(bufferA.data(), 128 );
+		IFLOG(D2) DtaHexDump(bufferA.data(), (int)blockSize );
 		//////////////////////////////////////////////
 		lengthtoken.clear();
 		lengthtoken.push_back(0xe2); // 8k = 8192 (0x2000)
@@ -3004,7 +2999,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 		
 		// cmd buffer before write 
 		LOG(D) << "bufferA before send write data command";
-		IFLOG(D) DtaHexDump(bufferA.data(), 256);
+		IFLOG(D2) DtaHexDump(bufferA.data(), (int)newSize);
 
 		LOG(D) << "Writing to data store " << hex << dsnum << " of " << dev;
 		//printf(" ***** dsnum = %d *****\n", dsnum);
@@ -3116,11 +3111,17 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	}
 	if ((startpos + len) > disk_info.DataStore_maxTableSize)
 	{
-		len = disk_info.DataStore_maxTableSize - startpos - len;
+		len = disk_info.DataStore_maxTableSize - startpos; // -len;
 		LOG(D) << "Data Store read exceed Data Store max Table Size " << disk_info.DataStore_maxTableSize << " truncated Len to " << len;
 	}
 
-	// need to determine blockSize now
+	if (disk_info.enclosure) {
+		// do not change host property for enclosure
+
+		adj_host = 0;
+		blockSize = (len > 1950) ? 1950 : len; 
+		//printf("disk_info.enclosure=%d Do not change host property at all ; blockSize=%d\n", disk_info.enclosure, blockSize);
+	} else
 	if ((len > 1950) && (Tper_sz_MaxComPacketSize > 2048)) {
 		// adjust host property 
 		// printf("\nread data length = %ld Tper_sz_MaxComPacketSize = %ld\n", len, Tper_sz_MaxComPacketSize);
@@ -3150,6 +3151,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	//printf("datafile size %I64Xh", imgsize);
 
 	fivepercent = (uint64_t)((disk_info.DataStore_maxTableSize / 20) / blockSize) * blockSize;
+
 	if (0 == fivepercent) fivepercent++;
 
 	vector<uint8_t> LR;
@@ -3166,8 +3168,6 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	LOG(D1) << "start lockingSP session";
-	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
-	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // JERRY TEST User 1 
 	vector<uint8_t> auth,auth2,auth3;
 	auth = getUID(userid,auth2,auth3,disk_info.OPAL20_numUsers); // pass vector directly, not enum index of vector table
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth)) != 0) { 
@@ -3190,15 +3190,23 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 			printf("\r%s %i", progress_bar, filepos);
 			fflush(stdout);
 		}
-		// Max Tables = disk_info.DataStore_maxTables
-		// Max Size Tables = " disk_info.DataStore_maxTableSize
-		newSize = ((filepos + startpos + blockSize) <= disk_info.DataStore_maxTableSize) ? 
-			blockSize : (disk_info.DataStore_maxTableSize - filepos - startpos);
-		if (len < newSize)
+		if (((filepos + startpos + blockSize) > disk_info.DataStore_maxTableSize))
 		{
-			newSize = len;
-		}
-		//printf("newSize=%d filepos=%d\n", newSize,filepos); 
+			newSize = disk_info.DataStore_maxTableSize - filepos - startpos;
+			//printf("\n((filepos + startpos + blockSize) > disk_info.DataStore_maxTableSize)\n");
+		} else {
+			//printf("\n((filepos + startpos + blockSize) <= disk_info.DataStore_maxTableSize)\n");
+			if (filepos + blockSize > len) { // 
+				//printf("within table boundary but beyond the total length, last block to read\n");
+				newSize = len - filepos;
+			}
+			else { // within boundary not last block 
+				//printf("within table boundary NOT last block to read\n");
+				newSize = blockSize; 
+			}
+		} 
+
+		//printf("\nnewSize=%d filepos=%d startpos=%d blockSize=%d filepos + startpos=%d\n", newSize,filepos, startpos, blockSize, filepos + startpos);
 		memset(buffer, 0, blockSize);
 
 		LOG(D1) << "***** start read datastore";
@@ -3246,11 +3254,15 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 
 		// DtaResponse::getBytes(uint32_t tokenNum, uint8_t bytearray[])
 		response.getBytes(1, (uint8_t *)buffer); // data is token 1
-												 //IFLOG(D4) DtaHexDump(buffer, 8192); // contain header and entries
+		//IFLOG(D4) DtaHexDump(buffer, 8192); // contain header and entries
 		LOG(D1) << "raw data after data store read response data";
 
 		IFLOG(D4) DtaHexDump(buffer, gethdrsize()); // contain header and entries
 		LOG(D1) << "***** end of send read data store command ";
+
+		//printf("blockSize=%d newSize=%d\n", blockSize, newSize); 
+		IFLOG(D4) DtaHexDump(buffer, blockSize); // Debug 
+
 
 		if (lastRC) {
 			LOG(E) << "DataStore Read Error " << dev;
@@ -3290,6 +3302,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	//#endif
 }
 
+
 uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len)
 {
 	LOG(D1) << "Entering DtaDevOpal::MBRRead() with filename " << dev;
@@ -3304,7 +3317,7 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 	char star[] = "*";
 	char spinner[] = "|/-\\";
 	char progress_bar[] = "   [                     ]";
-	uint32_t blockSize = 14336; // 15360; // 16384;  // 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
+	uint32_t blockSize = 1950; // 14336; // 15360; // 16384;  // 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
 	uint32_t filepos = 0;
 	uint32_t newSize;
 	uint32_t maxMBRSize;
@@ -3337,6 +3350,13 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 		LOG(D) << "MBR read exceed MBR max Table Size " << maxMBRSize << " truncated Len to " << len;
 
 	}
+
+	//if (disk_info.enclosure) {
+		// do not change host property for enclosure
+		adj_host = 0;
+		blockSize = (len > 1950) ? 1950 : len;
+		//printf("disk_info.enclosure=%d Do not change host property at all ; blockSize=%d\n", disk_info.enclosure, blockSize);
+	//}
 
 	buffer = (char *)malloc(1024 * 58);
 	datafile.open(filename, ios::out | ios::binary);
@@ -3375,7 +3395,7 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 
 	LOG(D) << "Reading MBR from " << dev << " to " << filename;
 	while ((filepos + startpos) < maxMBRSize && (filepos < len)) {
-
+		
 		if (!(filepos % fivepercent)) {
 			progress_bar[complete++] = star[0];
 		}
@@ -3384,15 +3404,13 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 			printf("\r%s %i", progress_bar, filepos);
 			fflush(stdout);
 		}
+
 		// Max Tables = disk_info.DataStore_maxTables
 		// Max Size Tables = " maxMBRSize
 		newSize = ((filepos + startpos + blockSize) <= maxMBRSize) ?
-			blockSize : (maxMBRSize - filepos - startpos);
-		if (len < newSize)
-		{
-			newSize = len;
-		}
-		//printf("newSize=%d filepos=%d\n", newSize, filepos); 
+			( (( filepos + blockSize ) > len ) ? len - filepos : blockSize ): (maxMBRSize - filepos - startpos);
+
+		//printf("newSize=%d filepos=%d blockSize=%d maxMBRSize=%d len=%d\n", newSize, filepos,blockSize, maxMBRSize, len);
 		memset(buffer, 0, blockSize);
 
 		LOG(D1) << "***** start Read MBR";
@@ -3451,6 +3469,7 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 	if (newSize != blockSize)
 	{
 		printf("\r%s %i bytes read \n", progress_bar, filepos - blockSize + newSize);
+		//printf("\r%s %i bytes read \n", progress_bar, filepos + newSize);
 	}
 	else {
 		printf("\r%s %i bytes read \n", progress_bar, filepos);
@@ -3491,7 +3510,6 @@ uint8_t DtaDevOpal::getMBRsize(char * password, uint32_t * msize)
 		LOG(E) << "Unable to create session object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
-	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG : JERRY 
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete session;
 		return lastRC;
@@ -3541,7 +3559,6 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 
 	}
 
-	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { // NG : JERRY 
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete session;
 		return lastRC;
@@ -3742,29 +3759,41 @@ uint8_t DtaDevOpal::loadPBA_O(char * password, char * filename) {
 	uint32_t eofpos;
 	ifstream pbafile;
 
+	if (disk_info.enclosure) {
+		// do not change host property for enclosure
+		adj_host = 0;
+		blockSize = 1950;
+		//printf("disk_info.enclosure=%d Do not change host property at all ; blockSize=%d\n", disk_info.enclosure, blockSize);
+	}
+	else
 	if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1; else adj_host = 2;
-	// printf("adj_host=%d\n", adj_host); // JERRY JERRY T7
-	lastRC = properties();
-	if (lastRC != 0) {
-		LOG(E) << "adjust host property fail ; go back to MINIMUM packet size";
-		// improve later on with MINIMUM packet size 
-		adj_host = 0; 
-		properties(); 
+	if (!disk_info.enclosure) { // only if not enclosure need recovery of property
+		lastRC = properties();
+		if (lastRC != 0) {
+			LOG(E) << "adjust host property fail ; go back to MINIMUM packet size";
+			// improve later on with MINIMUM packet size 
+			adj_host = 0;
+			properties();
+		}
+		else {
+			fill_prop(false);
+			blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 110; // 60;
+		}
 	}
-	else {
-		fill_prop(false);
-		blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 110  ; // 60;
-	}
+	vector <uint8_t> buffer, lengthtoken; 
 
+	if (!disk_info.enclosure) { // only if not enclosure need packet size change 
 #define MAX_BUFFER_LENGTH IO_BUFFER_LENGTH_HI
-	uint32_t tperMaxPacket = Tper_sz_MaxComPacketSize  ;
-	uint32_t tperMaxToken = Tper_sz_MaxIndTokenSize ;
-	(MAX_BUFFER_LENGTH > tperMaxPacket) ? blockSize = tperMaxPacket : blockSize = MAX_BUFFER_LENGTH;
-	if (blockSize > (tperMaxToken - 4)) blockSize = tperMaxToken - 4;
-	//printf("tperMaxPacket=%ld  tperMaxToken=%ld before blockSize=%ld\n", tperMaxPacket, tperMaxToken, blockSize);
-	vector <uint8_t> buffer, lengthtoken;
-	blockSize -= sizeof(OPALHeader) + 50;  // packet overhead
-	printf("tperMaxPacket=%ld  tperMaxToken=%ld After blockSize=%ld\n", tperMaxPacket, tperMaxToken, blockSize);
+		uint32_t tperMaxPacket = Tper_sz_MaxComPacketSize;
+		uint32_t tperMaxToken = Tper_sz_MaxIndTokenSize;
+		(MAX_BUFFER_LENGTH > tperMaxPacket) ? blockSize = tperMaxPacket : blockSize = MAX_BUFFER_LENGTH;
+		if (blockSize > (tperMaxToken - 4)) blockSize = tperMaxToken - 4;
+		//printf("tperMaxPacket=%ld  tperMaxToken=%ld before blockSize=%ld\n", tperMaxPacket, tperMaxToken, blockSize);
+		//vector <uint8_t> buffer, lengthtoken;
+		blockSize -= sizeof(OPALHeader) + 50;  // packet overhead
+		printf("tperMaxPacket=%ld  tperMaxToken=%ld After blockSize=%ld\n", tperMaxPacket, tperMaxToken, blockSize);
+	}
+ 
 	buffer.resize(blockSize);
 	pbafile.open(filename, ios::in | ios::binary);
 	if (!pbafile) {
@@ -3854,6 +3883,10 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 		return DTAERROR_INVALID_COMMAND;
 	}
 
+	if (disk_info.enclosure) {
+		LOG(E) << "Does Not Support Large PBA write to Enclosure Drive"; 
+		return NOT_SUPPORT_LARGE_PBA_WRITE_TO_ENCLOSURE_DRIVE; 
+	}
 
 	uint8_t embed = 1;
 	uint8_t lastRC;
@@ -3886,12 +3919,6 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 	uint8_t oper = 0; 
 	vector <uint8_t> buffer; // 0 buffer  (57344, 0x00),
 	vector <uint8_t> lengthtoken;
-
-	//printf("\nEntering loadPBA_M before decompression : Tper_sz_MaxComPacketSize(16-bit) = %d or Tper_sz_MaxComPacketSize(32-bit) = %ld\n",
-	//	Tper_sz_MaxComPacketSize, Tper_sz_MaxComPacketSize);
-	//printf("Tper_sz_MaxComPacketSize=%d Tper_sz_MaxResponseComPacketSize=%d Tper_sz_MaxPacketSize=%d Tper_sz_MaxIndTokenSize=%d\n ",
-	//	Tper_sz_MaxComPacketSize, Tper_sz_MaxResponseComPacketSize, Tper_sz_MaxPacketSize, Tper_sz_MaxIndTokenSize);  // JERRY JERRY T7
-
 
 	if (embed == 0) {
 		pbafile.open(filename, ios::in | ios::binary);
@@ -4103,41 +4130,54 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 	if ((DecompressedBufferSize > 1950) && (Tper_sz_MaxComPacketSize > 2048)) {
 		// adjust host property 
 	//	printf("\nwrite MBR lengtn = %ld Tper_sz_MaxComPacketSize = %d\n", DecompressedBufferSize, Tper_sz_MaxComPacketSize);
-		if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1; 
+		if (disk_info.enclosure) { // do not change host property for enclosure
+			adj_host = 0;
+			blockSize = 1950 ;
+			lastRC = 0;
+			buffer.resize(blockSize);
+			//printf("disk_info.enclosure=%d Do not change host property at all ; blockSize=%d\n", disk_info.enclosure, blockSize);
+		}
+		else if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) {
+			adj_host = 1;
+			lastRC = properties();
+		}
 		else if ((Tper_sz_MaxComPacketSize > 2048) && (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_MI) && disk_info.asmedia) // make sure it is T7
 		{
 			adj_host = 3; // force to minimum 3;
+			lastRC = properties();
 			printf("set adj_host to 3\n"); 
-		}
+		} 
 		else {
 			printf("set adj_host to 2\n");
 			adj_host = 2;
-		}
-		lastRC = properties();
-		if (lastRC != 0) {
-			LOG(E) << "adjust host property fail ; go back to MINIMUM packet size";
-			// improve later on with MINIMUM packet size 
-			adj_host = 0;
 			lastRC = properties();
-			blockSize = 1950; // Minimum block size; 
-			if (lastRC != 0) LOG(E) << "unable to adjust host property back to original MINIMUM setting";
 		}
-		else if ((adj_host == 3) && disk_info.asmedia ) { // make sure it is T7 
-			fill_prop(false);
-			blockSize = BLOCKSIZE_MI ; //  110; // 60; - 512, 1024 NG
-			if (DecompressedBufferSize < blockSize) {
-				blockSize = DecompressedBufferSize; // truncate blockSize to len 
+		if (disk_info.enclosure == 0) {
+			if (lastRC != 0) {
+				LOG(E) << "adjust host property fail ; go back to MINIMUM packet size";
+				// improve later on with MINIMUM packet size 
+				adj_host = 0;
+				lastRC = properties();
+				blockSize = 1950; // Minimum block size; 
+				if (lastRC != 0) LOG(E) << "unable to adjust host property back to original MINIMUM setting";
 			}
-			buffer.resize(blockSize);
-		}
-		else {
-			// adj_io_buffer_length = Tper_sz_MaxComPacketSize - adjust_more_t7
-			fill_prop(false);
-			blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 110 ; //  110; // 60; - 512, 1024 NG
-			if (DecompressedBufferSize < blockSize) {  
-				blockSize = DecompressedBufferSize; // truncate blockSize to len 
+			else if ((adj_host == 3) && disk_info.asmedia) { // make sure it is T7 
+				fill_prop(false);
+				blockSize = BLOCKSIZE_MI; //  110; // 60; - 512, 1024 NG
+				if (DecompressedBufferSize < blockSize) {
+					blockSize = DecompressedBufferSize; // truncate blockSize to len 
+				}
+				buffer.resize(blockSize);
 			}
-			buffer.resize(blockSize);
+			else {
+				// adj_io_buffer_length = Tper_sz_MaxComPacketSize - adjust_more_t7
+				fill_prop(false);
+				blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 110; //  110; // 60; - 512, 1024 NG
+				if (DecompressedBufferSize < blockSize) {
+					blockSize = DecompressedBufferSize; // truncate blockSize to len 
+				}
+				buffer.resize(blockSize);
+			}
 		}
 	}
 	else { // len <= 1950
@@ -4147,11 +4187,11 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 		}
 	}
 	
-	printf("loadPBAimage : After Tper size exchange , blockSize=%d len=%d sizeof(SIZE_T)=%d adj_io_buffer_length=%d \
-		adj_host=%d disk_info.asmedia=%d\n", 
-		blockSize,  DecompressedBufferSize, sizeof(SIZE_T), adj_io_buffer_length,
-		adj_host, disk_info.asmedia
-		);
+	//printf("loadPBAimage : After Tper size exchange , blockSize=%d len=%d sizeof(SIZE_T)=%d adj_io_buffer_length=%d \
+	//	adj_host=%d disk_info.asmedia=%d disk_info.enclosure=%d\n", 
+	//	blockSize,  DecompressedBufferSize, sizeof(SIZE_T), adj_io_buffer_length,
+	//	adj_host, disk_info.asmedia, disk_info.enclosure
+	//	);
 
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
@@ -4187,8 +4227,9 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 	} */
 	
 	LOG(D) << "Writing PBA to " << dev;
-	
-	while ( (filepos < DecompressedBufferSize)) {
+	uint32_t startpos;
+	startpos = 0; // no effect of startpos 34020000;  // add startpos for debug purpose, delete after done debug
+	while ( (filepos + startpos < DecompressedBufferSize)) {
 		if (embed == 0) {
 			pbafile.read((char *)buffer.data(), blockSize);
 		}
@@ -4215,19 +4256,19 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 				}
 		}
 
-		//if (!(filepos % fivepercent))
-		//	progress_bar[complete++] = star[0];
 
 		if (!(filepos % (blockSize * 5))) {
+#if 1 // temp take out spinner 
 		//	progress_bar[1] = spinner[spinnertick.i++];
 			//printf("\r%s %i(%I64d) %s", progress_bar,filepos, DecompressedBufferSize, dev);
 			//
+
 			if (sizeof(SIZE_T) == 8)
 				printf("\r%c %i(%I64d) %d%% BklSz=%ld %s ", spinner[spinnertick.i++],  filepos, (DecompressedBufferSize), (uint16_t)(((float)filepos / (float)DecompressedBufferSize) * 100), blockSize , dev);
 			else
 				printf("\r%c %i(%ld) %d%% BklSz=%ld %s ", spinner[spinnertick.i++], filepos, (DecompressedBufferSize), (uint16_t)(((float)filepos / (float)DecompressedBufferSize) * 100), blockSize, dev);
 			fflush(stdout);
-
+#endif
 			// open progress output file at slower rate
 			if (!(filepos % (blockSize * 50))) {
 				progfile.open(sernum, ios::out);
@@ -4250,7 +4291,7 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 		cmd->addToken(OPAL_TOKEN::STARTLIST);
 		cmd->addToken(OPAL_TOKEN::STARTNAME);
 		cmd->addToken(OPAL_TOKEN::WHERE);
-		cmd->addToken(filepos);
+		cmd->addToken(filepos + startpos ); // remove startpos after done debug
 		cmd->addToken(OPAL_TOKEN::ENDNAME);
 		cmd->addToken(OPAL_TOKEN::STARTNAME);
 		cmd->addToken(OPAL_TOKEN::VALUES);
@@ -4269,11 +4310,10 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 		}
 
 		filepos += blockSize;
-		if (filepos > DecompressedBufferSize)
-		{
-			//LOG(D) << "filepos > DecompressedBufferSize";
-			break;
-		}
+		//printf("filepos=%ld blockSize=%ld sz=%ld DecompressedBufferSize=%I64d \
+		//	startpos=%ld filepos + startpos =%ld\n",
+		//	filepos , blockSize, sz, DecompressedBufferSize, startpos, filepos + startpos);
+
 	} // end of while 
 
 	//printf("\r%s %i(%I64d) bytes written \n", progress_bar, filepos, DecompressedBufferSize);
@@ -4824,12 +4864,12 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol,
 		printf("Host_sz_MaxComPacketSize = %ld\n", Host_sz_MaxComPacketSize);
 	}
 	#endif
-	// printf("\n\n ***** adj_io_buffer_length=%d ; oper = %d ; cmd->outputBufferSize()=%d *****\n\n", adj_io_buffer_length, oper, cmd->outputBufferSize());
+	
 	if (oper == 1)
 		lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), cmd->outputBufferSize());
 	else
 		lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), adj_io_buffer_length);
-	if ((lastRC) != 0) { // Tper_sz_MaxComPacketSize -> NG IO_BUFFER_LENGTH -> JERRY
+	if ((lastRC) != 0) { 
 		LOG(E) << "Command failed on send " << (uint16_t) lastRC << dev;
         return lastRC;
     }
@@ -4968,15 +5008,6 @@ uint8_t DtaDevOpal::properties()
 		// adj_io_buffer_length must not exceed TperMaxComPacketSize 
 	}
 
-
-
-	// printf("adj_host = %d adj_io_buffer_length = %d\n", adj_host, adj_io_buffer_length); // JERRY JERRY T7
-	//printf("sz_MaxComPacketSize=%d sz_MaxResponseComPacketSize=%d sz_MaxPacketSize=%d sz_MaxIndTokenSize=%d\n ",
-	//  	sz_MaxComPacketSize, sz_MaxResponseComPacketSize, sz_MaxPacketSize, sz_MaxIndTokenSize);  // JERRY JERRY T7
-	//printf("Tper_sz_MaxComPacketSize=%d Tper_sz_MaxResponseComPacketSize=%d Tper_sz_MaxPacketSize=%d Tper_sz_MaxIndTokenSize=%d\n ",
-	//	Tper_sz_MaxComPacketSize, Tper_sz_MaxResponseComPacketSize, Tper_sz_MaxPacketSize, Tper_sz_MaxIndTokenSize);  // JERRY JERRY T7
-
-
 	set_prop(props, sz_MaxComPacketSize, sz_MaxResponseComPacketSize, sz_MaxPacketSize, sz_MaxIndTokenSize);
 
 	//props->complete();
@@ -5085,12 +5116,12 @@ void DtaDevOpal::puke()
 void DtaDevOpal::adj_host_prop(uint8_t act)
 {
 	LOG(D1) << "Enter adj_host_prop";
-	//fill_prop(FALSE); // JERRY why there are two fill_property
+	//fill_prop(FALSE); // why there are two fill_property
 	//printf("act =  %d\n", act);
 
 	adj_host = act;
 	properties();
-	fill_prop(FALSE); // JERRY must re-stuff the host property because properties() only exchange property with Tper but not set host_sz_Maxxxxxxxx
+	fill_prop(FALSE); // must re-stuff the host property because properties() only exchange property with Tper but not set host_sz_Maxxxxxxxx
 	LOG(D1) << "Exit adj_host_prop";
 }
 
