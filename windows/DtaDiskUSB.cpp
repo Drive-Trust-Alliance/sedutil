@@ -233,7 +233,7 @@ void DtaDiskUSB::identifyPd(OPAL_DiskInfo& disk_info) {
 		// success
 		LOG(D) << "USB IDENTIFYPD OK possible with Nvme ";
 		USB_INQUIRY_DATA * id = (USB_INQUIRY_DATA *)&identify;
-		IFLOG(D1) DtaHexDump(id, 512);
+		IFLOG(D1) DtaHexDump(id, 4096); // 512 -> 4096
 		disk_info.devType = DEVICE_TYPE_NVME;
 		uint8_t non_ascii = 0;
 		memset(disk_info.serialNum, 32, sizeof(disk_info.serialNum));
