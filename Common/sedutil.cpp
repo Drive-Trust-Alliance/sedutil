@@ -1350,7 +1350,7 @@ int main(int argc, char * argv[])
 #else
 		//printf("Opal Lock Version : 0.9.5.%s.%s 20220211-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(),GIT_VERSION,GIT_VERSION_PBA);
 		//printf("Opal Lock Version : 0.9.6.%s.%s 20220223-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(), GIT_VERSION, GIT_VERSION_PBA);
-		printf("Opal Lock Version : 0.9.8.%s.%s 20220621-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(), GIT_VERSION, GIT_VERSION_PBA);
+		printf("Opal Lock Version : 0.10.0.%s.%s 20220705-A001-MergeFIPS PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(), GIT_VERSION, GIT_VERSION_PBA);
 #endif
 		return 0;
 		break;
