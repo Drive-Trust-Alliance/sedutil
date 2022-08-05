@@ -189,7 +189,7 @@ uint8_t DtaDevOS::prepareForS3Sleep(uint8_t lockingrange, char* password)
     DtaHashPwd(hash, password, this);
     hash.erase(hash.begin(), hash.begin()+2);
 
-    err = drive->prepareForS3Sleep(0, hash);
+    err = drive->prepareForS3Sleep(lockingrange, hash);
     if (err)
     {
         LOG(E) << "Error saving the password to  the kernel errno = " << errno;
