@@ -31,7 +31,7 @@ uint8_t DtaDevLinuxDrive::prepareForS3Sleep(uint8_t lockingrange, const vector<u
     opal_lock_unlock opal_ioctl_data={};
     opal_ioctl_data.l_state = OPAL_RW;
     opal_ioctl_data.session.who = OPAL_ADMIN1;
-    opal_ioctl_data.session.opal_key.lr = 0;
+    opal_ioctl_data.session.opal_key.lr = lockingrange;
 
     size_t hash_len=min(password_hash.size(), sizeof(opal_ioctl_data.session.opal_key.key));
     LOG(D2) << "Setting a hash of length" << hash_len;
