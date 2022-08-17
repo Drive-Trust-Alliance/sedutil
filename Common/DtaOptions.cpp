@@ -71,6 +71,8 @@ void usage()
 	printf("--setPassword <oldpassword, \"\" for MSID> <userid> <newpassword> <device> \n");
 	printf("                                Change the Enterprise password for userid\n");
 	printf("                                \"EraseMaster\" or \"BandMaster<n>\", 0 <= n <= 1023\n");
+    printf("--verifySIDPassword <SIDpassword> <device>\n");
+    printf("                                Verify the SID password for given device\n");
 	printf("--setLockingRange <0...n> <RW|RO|LK> <Admin1password> <device> \n");
 	printf("                                Set the status of a Locking Range\n");
 	printf("                                0 = GLobal 1..n  = LRn \n");
@@ -171,6 +173,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 		BEGIN_OPTION(initialSetup, 2, 1) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(setSIDPassword, 3, 1) OPTION_IS(password) OPTION_IS(newpassword)
 		         OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(verifySIDPassword, 2 /*num_args_non_secure*/, 1/*num_args_secure*/) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(setup_SUM, 6, 4)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)

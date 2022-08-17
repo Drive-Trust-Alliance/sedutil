@@ -76,6 +76,13 @@ public:
          */ 
 	 uint8_t setSIDPassword(char * oldpassword, char * newpassword,
 		uint8_t hasholdpwd = 1, uint8_t hashnewpwd = 1, bool securemode = false) ;
+        /** Verify the SID pasword.
+         * Requires special handling because password is not always hashed.
+         * @param password      SID password to be tested
+         * @param hashpwdd      Should the password be hashed. See comments in function Impl.
+         * @param securemode    Should the password be interactively obtained.
+         */
+    uint8_t verifySIDPassword(char const * const password, uint8_t hashpwd, bool securemode);
          /** Set the password of a locking SP user.
           * @param password  current password
          * @param userid the userid whose password is to be changed 

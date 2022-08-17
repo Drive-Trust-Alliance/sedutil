@@ -85,6 +85,13 @@ public:
          */ 
 	uint8_t setSIDPassword(char * oldpassword, char * newpassword,
 		uint8_t hasholdpwd = 1, uint8_t hashnewpwd = 1, bool securemode = false);
+        /** Verify the SID pasword.
+         * Requires special handling because password is not always hashed.
+         * @param password      SID password to be tested
+         * @param hashpwdd      Should the password be hashed. See comments in function Impl.
+         * @param securemode    Should the password be interactively obtained.
+         */
+    uint8_t verifySIDPassword(char const * const password, uint8_t hashpwd, bool securemode);
         /** set a single column in an object table 
          * @param table the UID of the table
          * @param name the column name to be set

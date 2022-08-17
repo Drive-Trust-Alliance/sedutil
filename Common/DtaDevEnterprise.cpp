@@ -1346,6 +1346,12 @@ uint8_t DtaDevEnterprise::setSIDPassword(char * oldpassword, char * newpassword,
 	LOG(D1) << "Exiting DtaDevEnterprise::setSIDPassword()";
 	return 0;
 }
+uint8_t DtaDevEnterprise::verifySIDPassword(char const * const, uint8_t, bool)
+{
+    LOG(E) << "DtaDevEnterprise does not support verifySIDPassword" << std::endl;
+    return DTAERROR_INVALID_COMMAND;
+}
+
 uint8_t DtaDevEnterprise::setTable(vector<uint8_t> table, const char *name,
 	OPAL_TOKEN value)
 {

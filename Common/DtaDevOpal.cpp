@@ -1545,6 +1545,32 @@ uint8_t DtaDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
 	return 0;
 }
 
+uint8_t DtaDevOpal::verifySIDPassword(char const * const password, uint8_t hashpwd, bool securemode)
+{
+	LOG(D1) << "Entering DtaDevOpal::setSIDPassword()";
+	uint8_t lastRC;
+	session = new DtaSession(this);
+
+    if (!session) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	if (!hashpwd)
+        session->dontHashPwd();
+	if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID,
+		const_cast<char*>(password), OPAL_UID::OPAL_SID_UID)) != 0) {
+		delete session;
+		return lastRC;
+	}
+	delete session;
+	LOG(D1) << "Exiting DtaDevOpal::VerifySIDPassword";
+
+    // Logging to ERROR on success is weird, but this is an easy way to force
+    // output to console without mucking around the internals of this codebase.
+    LOG(E)  << "Successfully verified SIDPassword";
+	return 0;
+}
+
 uint8_t DtaDevOpal::setTable(vector<uint8_t> table, OPAL_TOKEN name,
 	OPAL_TOKEN value)
 {

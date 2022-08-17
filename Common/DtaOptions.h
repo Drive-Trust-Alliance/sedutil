@@ -60,6 +60,7 @@ typedef enum _sedutiloption {
 	deadbeef,    // 0 should indicate no action specified
 	initialSetup,
 	setSIDPassword,
+    verifySIDPassword,
 	setup_SUM,
 	setAdmin1Pwd,
 	setPassword,
