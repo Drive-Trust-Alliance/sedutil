@@ -84,8 +84,9 @@ public:
     /** send a command to the device in this session 
      * @param cmd  The DtaCommand object 
      * @param response The MesdResponse object 
+     * @param logerr Log errors or leave them to caller
      */
-    uint8_t sendCommand(DtaCommand * cmd, DtaResponse & response);
+    uint8_t sendCommand(DtaCommand * cmd, DtaResponse & response, bool logerr = TRUE);
 private:
     /** Default constructor, private should never be called */
     DtaSession();

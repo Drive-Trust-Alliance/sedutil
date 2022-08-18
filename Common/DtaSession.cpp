@@ -142,7 +142,7 @@ again:
 
     cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
-	if ((lastRC = sendCommand(cmd, response)) != 0) {
+	if ((lastRC = sendCommand(cmd, response, FALSE)) != 0) {
 		delete cmd;
 		if (settimeout) {
 			LOG(D2) << "Session start with timeout failed rc = " << (int)lastRC;
@@ -210,8 +210,10 @@ DtaSession::authenticate(vector<uint8_t> Authority, char * Challenge)
 	return 0;
 }
 uint8_t
-DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response)
+DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response, bool logerr)
 {
+	enum TLogLevel l = logerr ? E : D1;
+
     LOG(D1) << "Entering DtaSession::sendCommand()";
     cmd->setHSN(HSN);
     cmd->setTSN(TSN);
@@ -220,7 +222,7 @@ DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response)
     uint8_t exec_rc = d->exec(cmd, response, SecurityProtocol);
     if (0 != exec_rc)
     {
-        LOG(E) << "Command failed on exec " << (uint16_t) exec_rc;
+        LOG(l) << "Command failed on exec " << (uint16_t) exec_rc;
         return exec_rc;
     }
     /*
@@ -237,7 +239,7 @@ DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response)
     if ((0 == response.h.cp.length) ||
         (0 == response.h.pkt.length) ||
         (0 == response.h.subpkt.length)) {
-        LOG(E) << "One or more header fields have 0 length";
+        LOG(l) << "One or more header fields have 0 length";
 		return DTAERROR_COMMAND_ERROR;
     }
     // if we get an endsession response return 0
@@ -248,11 +250,11 @@ DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response)
     if (!((OPAL_TOKEN::ENDLIST == response.tokenIs(response.getTokenCount() - 1)) &&
         (OPAL_TOKEN::STARTLIST == response.tokenIs(response.getTokenCount() - 5)))) {
         // no method status so we hope we reported the error someplace else
-        LOG(E) << "Method Status missing";
+        LOG(l) << "Method Status missing";
 		return DTAERROR_NO_METHOD_STATUS;
     }
     if (OPALSTATUSCODE::SUCCESS != response.getUint8(response.getTokenCount() - 4)) {
-        LOG(E) << "method status code " <<
+        LOG(l) << "method status code " <<
                 methodStatus(response.getUint8(response.getTokenCount() - 4));
     }
     return response.getUint8(response.getTokenCount() - 4);
