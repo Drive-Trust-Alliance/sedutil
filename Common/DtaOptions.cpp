@@ -27,8 +27,10 @@ void usage()
     printf("a utility to manage self encrypting drives that conform\n");
     printf("to the Trusted Computing Group OPAL 2.0 SSC specification\n");
     printf("General Usage:                     (see readme for extended commandset)\n");
-    printf("sedutil-cli <-v> <-n> <action> <options> <device>\n");
+    printf("sedutil-cli <-v> <-n> <-s> <action> <options> <device>\n");
     printf("-v (optional)                       increase verbosity, one to five v's\n");
+    printf("-s (optional)                       secure mode. Passwords will be asked interactively to the user.\n");
+    printf("                                    Available only on linux.\n");
     printf("-n (optional)                       no password hashing. Passwords will be sent in clear text!\n");
     printf("-l (optional)                       log style output to stderr only\n");
     printf("actions \n");
@@ -69,6 +71,8 @@ void usage()
 	printf("--setPassword <oldpassword, \"\" for MSID> <userid> <newpassword> <device> \n");
 	printf("                                Change the Enterprise password for userid\n");
 	printf("                                \"EraseMaster\" or \"BandMaster<n>\", 0 <= n <= 1023\n");
+    printf("--verifySIDPassword <SIDpassword> <device>\n");
+    printf("                                Verify the SID password for given device\n");
 	printf("--setLockingRange <0...n> <RW|RO|LK> <Admin1password> <device> \n");
 	printf("                                Set the status of a Locking Range\n");
 	printf("                                0 = GLobal 1..n  = LRn \n");
@@ -130,11 +134,31 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			LOG(D) << "Log level set to " << CLog::ToString(CLog::FromInt(loggingLevel));
 			LOG(D) << "sedutil version : " << GIT_VERSION;
 		}
+        else if (!(strcmp("-s", argv[i]))) {
+            baseOptions += 1;
+#ifdef __linux__
+            opts->secure_mode = true;
+            opts->no_hash_passwords = false;
+#else
+            LOG(E) << "Secure mode not implemented";
+#endif //__linux__
+        }
 		else if (!(strcmp("-n", argv[i]))) {
-                        baseOptions += 1;
-			opts->no_hash_passwords = true;
-			LOG(D) << "Password hashing is disabled";
-                }
+            baseOptions += 1;
+#ifdef __linux__
+            if (!opts->secure_mode) {
+#endif //__linux__
+                opts->no_hash_passwords = true;
+                LOG(D) << "Password hashing is disabled";
+#ifdef __linux__
+            }
+            else {
+                LOG(D) << "No password hashing incompatible with secure mode";
+            }
+            LOG(D) << "Disabling password hashing in secure mode (-s)";
+            opts->no_hash_passwords = true;
+#endif //__linux__
+        }
 		else if (!strcmp("-l", argv[i])) {
 			baseOptions += 1;
 			opts->output_format = sedutilNormal;
@@ -146,10 +170,11 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			LOG(E) << "Argument " << (uint16_t) i << " (" << argv[i] << ") should be a command";
 			return DTAERROR_INVALID_COMMAND;
 		}
-		BEGIN_OPTION(initialSetup, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(setSIDPassword, 3) OPTION_IS(password) OPTION_IS(newpassword) 
+		BEGIN_OPTION(initialSetup, 2, 1) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(setSIDPassword, 3, 1) OPTION_IS(password) OPTION_IS(newpassword)
 		         OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(setup_SUM, 6)
+        BEGIN_OPTION(verifySIDPassword, 2 /*num_args_non_secure*/, 1/*num_args_secure*/) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(setup_SUM, 6, 4)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)
 			TESTARG(2, lockingrange, 2)
@@ -173,20 +198,20 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(newpassword)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(setAdmin1Pwd, 3) OPTION_IS(password) OPTION_IS(newpassword) 
+		BEGIN_OPTION(setAdmin1Pwd, 3, 1) OPTION_IS(password) OPTION_IS(newpassword)
 			OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(loadPBAimage, 3) OPTION_IS(password) OPTION_IS(pbafile) 
+		BEGIN_OPTION(loadPBAimage, 3, 2) OPTION_IS(password) OPTION_IS(pbafile)
 			OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(revertTPer, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(revertNoErase, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(PSIDrevert, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(PSIDrevertAdminSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2) OPTION_IS(password) 
+		BEGIN_OPTION(revertTPer, 2, 1) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(revertNoErase, 2, 1) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(PSIDrevert, 2, 1) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(PSIDrevertAdminSP, 2, 1) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2, 1) OPTION_IS(password)
 			OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(enableuser, 2) OPTION_IS(password) OPTION_IS(userid) 
+		BEGIN_OPTION(enableuser, 3, 2) OPTION_IS(password) OPTION_IS(userid)
 			OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(activateLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(activateLockingSP_SUM, 3)
+		BEGIN_OPTION(activateLockingSP, 2, 1) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(activateLockingSP_SUM, 3, 2)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)
 			TESTARG(2, lockingrange, 2)
@@ -205,7 +230,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			TESTARG(15, lockingrange, 15)
 			TESTFAIL("Invalid Locking Range (0-15)")
 			OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(eraseLockingRange_SUM, 3)
+		BEGIN_OPTION(eraseLockingRange_SUM, 3, 2)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)
 			TESTARG(2, lockingrange, 2)
@@ -224,10 +249,10 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			TESTARG(15, lockingrange, 15)
 			TESTFAIL("Invalid Locking Range (1-15)")
 			OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(query, 1) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(scan, 0)  END_OPTION
-		BEGIN_OPTION(isValidSED, 1) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(eraseLockingRange, 3)
+		BEGIN_OPTION(query, 1, 1) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(scan, 0, 0)  END_OPTION
+		BEGIN_OPTION(isValidSED, 1, 1) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(eraseLockingRange, 3, 2)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)
 			TESTARG(2, lockingrange, 2)
@@ -248,14 +273,14 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(takeOwnership, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(revertLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(setPassword, 4) OPTION_IS(password) OPTION_IS(userid)
+		BEGIN_OPTION(takeOwnership, 2, 1) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(revertLockingSP, 2, 1) OPTION_IS(password) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(setPassword, 4, 2) OPTION_IS(password) OPTION_IS(userid)
 			OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(setPassword_SUM, 4) OPTION_IS(password) OPTION_IS(userid)
+		BEGIN_OPTION(setPassword_SUM, 4, 2) OPTION_IS(password) OPTION_IS(userid)
 			OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(validatePBKDF2, 0) END_OPTION
-		BEGIN_OPTION(setMBREnable, 3)
+		BEGIN_OPTION(validatePBKDF2, 0, 0) END_OPTION
+		BEGIN_OPTION(setMBREnable, 3, 2)
 			TESTARG(ON, mbrstate, 1)
 			TESTARG(on, mbrstate, 1)
 			TESTARG(off, mbrstate, 0)
@@ -264,7 +289,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(setMBRDone, 3)
+		BEGIN_OPTION(setMBRDone, 3, 2)
 			TESTARG(ON, mbrstate, 1)
 			TESTARG(on, mbrstate, 1)
 			TESTARG(off, mbrstate, 0)
@@ -273,7 +298,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(setLockingRange, 4)
+		BEGIN_OPTION(setLockingRange, 4, 3)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)
 			TESTARG(2, lockingrange, 2)
@@ -301,7 +326,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(setLockingRange_SUM, 4)
+		BEGIN_OPTION(setLockingRange_SUM, 4, 3)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)
 			TESTARG(2, lockingrange, 2)
@@ -329,7 +354,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(enableLockingRange, 3)
+		BEGIN_OPTION(enableLockingRange, 3, 2)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)
 			TESTARG(2, lockingrange, 2)
@@ -350,7 +375,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(disableLockingRange, 3)
+		BEGIN_OPTION(disableLockingRange, 3, 2)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)
 			TESTARG(2, lockingrange, 2)
@@ -371,30 +396,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(setupLockingRange, 5)
-			TESTARG(0, lockingrange, 0)
-			TESTARG(1, lockingrange, 1)
-			TESTARG(2, lockingrange, 2)
-			TESTARG(3, lockingrange, 3)
-			TESTARG(4, lockingrange, 4)
-			TESTARG(5, lockingrange, 5)
-			TESTARG(6, lockingrange, 6)
-			TESTARG(7, lockingrange, 7)
-			TESTARG(8, lockingrange, 8)
-			TESTARG(9, lockingrange, 9)
-			TESTARG(10, lockingrange, 10)
-			TESTARG(11, lockingrange, 11)
-			TESTARG(12, lockingrange, 12)
-			TESTARG(13, lockingrange, 13)
-			TESTARG(14, lockingrange, 14)
-			TESTARG(15, lockingrange, 15)
-			TESTFAIL("Invalid Locking Range (0-15)")
-			OPTION_IS(lrstart)
-			OPTION_IS(lrlength)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(setupLockingRange_SUM, 5)
+		BEGIN_OPTION(setupLockingRange, 5, 4)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)
 			TESTARG(2, lockingrange, 2)
@@ -417,7 +419,30 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(readonlyLockingRange, 3)
+		BEGIN_OPTION(setupLockingRange_SUM, 5, 4)
+			TESTARG(0, lockingrange, 0)
+			TESTARG(1, lockingrange, 1)
+			TESTARG(2, lockingrange, 2)
+			TESTARG(3, lockingrange, 3)
+			TESTARG(4, lockingrange, 4)
+			TESTARG(5, lockingrange, 5)
+			TESTARG(6, lockingrange, 6)
+			TESTARG(7, lockingrange, 7)
+			TESTARG(8, lockingrange, 8)
+			TESTARG(9, lockingrange, 9)
+			TESTARG(10, lockingrange, 10)
+			TESTARG(11, lockingrange, 11)
+			TESTARG(12, lockingrange, 12)
+			TESTARG(13, lockingrange, 13)
+			TESTARG(14, lockingrange, 14)
+			TESTARG(15, lockingrange, 15)
+			TESTFAIL("Invalid Locking Range (0-15)")
+			OPTION_IS(lrstart)
+			OPTION_IS(lrlength)
+			OPTION_IS(password)
+			OPTION_IS(device)
+			END_OPTION
+		BEGIN_OPTION(readonlyLockingRange, 3, 2)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)
 			TESTARG(2, lockingrange, 2)
@@ -438,11 +463,11 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(listLockingRanges, 2)
+		BEGIN_OPTION(listLockingRanges, 2, 1)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(listLockingRange, 3)
+		BEGIN_OPTION(listLockingRange, 3, 2)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)
 			TESTARG(2, lockingrange, 2)
@@ -463,7 +488,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(rekeyLockingRange, 3)
+		BEGIN_OPTION(rekeyLockingRange, 3, 2)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)
 			TESTARG(2, lockingrange, 2)
@@ -484,11 +509,11 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(setBandsEnabled, 2)
+		BEGIN_OPTION(setBandsEnabled, 2, 1)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(setBandEnabled, 3)
+		BEGIN_OPTION(setBandEnabled, 3, 2)
 			TESTARG(0, lockingrange, 0)
 			TESTARG(1, lockingrange, 1)
 			TESTARG(2, lockingrange, 2)
@@ -509,9 +534,9 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(objDump, 5) i += 4; OPTION_IS(device) END_OPTION
-        BEGIN_OPTION(printDefaultPassword, 1) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(rawCmd, 7) i += 6; OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(objDump, 5, 5) i += 4; OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(printDefaultPassword, 1, 1) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(rawCmd, 7, 7) i += 6; OPTION_IS(device) END_OPTION
 		else {
             LOG(E) << "Invalid command line argument " << argv[i];
 			return DTAERROR_INVALID_COMMAND;

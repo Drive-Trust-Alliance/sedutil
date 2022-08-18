@@ -171,12 +171,12 @@ DtaDevEnterprise::DtaDevEnterprise(const char * devref)
 DtaDevEnterprise::~DtaDevEnterprise()
 {
 }
-uint8_t DtaDevEnterprise::initialSetup(char * password)
+uint8_t DtaDevEnterprise::initialSetup(char * password, bool securemode)
 {
 	LOG(D1) << "Entering initialSetup()";
 	uint8_t lastRC;
 
-	if ((lastRC = takeOwnership(password)) != 0) {
+	if ((lastRC = takeOwnership(password, securemode)) != 0) {
 		LOG(E) << "Initial setup failed - unable to take ownership";
 		return lastRC;
 	}
@@ -196,7 +196,7 @@ uint8_t DtaDevEnterprise::initialSetup(char * password)
 	LOG(D1) << "Exiting initialSetup()";
 	return 0;
 }
-uint8_t DtaDevEnterprise::setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password)
+uint8_t DtaDevEnterprise::setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password, bool securemode)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::setup_SUM";
 	LOG(I) << "setup_SUM not supported on DtaDevEnterprise";
@@ -377,12 +377,17 @@ uint8_t DtaDevEnterprise::revertLockingSP(char * password, uint8_t keep)
 	LOG(D1) << "Exiting DtaDevEnterprise::revertLockingSP()";
 	return 0;
 }
-uint8_t DtaDevEnterprise::setPassword(char * password, char * userid, char * newpassword)
+uint8_t DtaDevEnterprise::setPassword(char * password, char * userid, char * newpassword, bool securemode)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::setPassword" ;
-	uint8_t lastRC;
+	uint8_t lastRC = 0;
 	string defaultPassword;
 	char *pwd = password, *newpwd = newpassword;
+
+    if (securemode) {
+        LOG(I) << "setSIDPassword in secure mode in the Enterprise SSC is not supported";
+        return lastRC;
+    }
 
 	if (11 > strnlen(userid, 15)) {
 		LOG(E) << "Invalid Userid " << userid;
@@ -463,7 +468,7 @@ uint8_t DtaDevEnterprise::setPassword(char * password, char * userid, char * new
 	LOG(D1) << "Exiting DtaDevEnterprise::setPassword()";
 	return 0;
 }
-uint8_t DtaDevEnterprise::setNewPassword_SUM(char * password, char * userid, char * newpassword)
+uint8_t DtaDevEnterprise::setNewPassword_SUM(char * password, char * userid, char * newpassword, bool securemode)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::setNewPassword_SUM()";
 	LOG(I) << "setNewPassword_SUM is not in the Enterprise SSC and not supported";
@@ -1022,7 +1027,7 @@ uint8_t DtaDevEnterprise::eraseLockingRange_SUM(uint8_t lockingrange, char * pas
 	LOG(D1) << "Exiting DtaDevEnterprise::eraseLockingRange_SUM()";
 	return DTAERROR_INVALID_PARAMETER;
 }
-uint8_t DtaDevEnterprise::takeOwnership(char * newpassword)
+uint8_t DtaDevEnterprise::takeOwnership(char * newpassword, bool securemode)
 {
 	string defaultPassword;
 	uint8_t lastRC;
@@ -1033,7 +1038,7 @@ uint8_t DtaDevEnterprise::takeOwnership(char * newpassword)
 		return lastRC;
 	}
 	defaultPassword = response.getString(5);
-	if ((lastRC = setSIDPassword((char *)defaultPassword.c_str(), newpassword, 0)) != 0) {
+	if ((lastRC = setSIDPassword((char *)defaultPassword.c_str(), newpassword, 0, 1, securemode)) != 0) {
 		LOG(E) << "takeOwnership failed unable to set new SID password";
 		return lastRC;
 	}
@@ -1270,10 +1275,15 @@ uint8_t DtaDevEnterprise::printDefaultPassword()
     return 0;
 }
 uint8_t DtaDevEnterprise::setSIDPassword(char * oldpassword, char * newpassword,
-	uint8_t hasholdpwd, uint8_t hashnewpwd)
+	uint8_t hasholdpwd, uint8_t hashnewpwd, bool securemode)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::setSIDPassword()";
-	uint8_t lastRC;
+	uint8_t lastRC = 0;
+
+    if (securemode) {
+        LOG(I) << "setSIDPassword in the Enterprise SSC is not supported";
+        return lastRC;
+    }
 
 	vector<uint8_t> user;
     set8(user, OPALUID[OPAL_SID_UID]);
@@ -1336,6 +1346,12 @@ uint8_t DtaDevEnterprise::setSIDPassword(char * oldpassword, char * newpassword,
 	LOG(D1) << "Exiting DtaDevEnterprise::setSIDPassword()";
 	return 0;
 }
+uint8_t DtaDevEnterprise::verifySIDPassword(char const * const, uint8_t, bool)
+{
+    LOG(E) << "DtaDevEnterprise does not support verifySIDPassword" << std::endl;
+    return DTAERROR_INVALID_COMMAND;
+}
+
 uint8_t DtaDevEnterprise::setTable(vector<uint8_t> table, const char *name,
 	OPAL_TOKEN value)
 {

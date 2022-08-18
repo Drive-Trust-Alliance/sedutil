@@ -43,6 +43,8 @@ typedef struct _DTA_OPTIONS {
 	uint8_t lrlength;		/** the length in blocks of a lockingrange */
 
 	bool no_hash_passwords; /** global parameter, disables hashing of passwords */
+    bool secure_mode; /** global parameter, enable the secure mode */
+    bool ask_password; /** global parameter, to know if the password needs to be interactively asked to the user */
 	sedutiloutput output_format;
 } DTA_OPTIONS;
 /** Print a usage message */
@@ -58,6 +60,7 @@ typedef enum _sedutiloption {
 	deadbeef,    // 0 should indicate no action specified
 	initialSetup,
 	setSIDPassword,
+    verifySIDPassword,
 	setup_SUM,
 	setAdmin1Pwd,
 	setPassword,
@@ -98,16 +101,18 @@ typedef enum _sedutiloption {
 	rawCmd,
 
 } sedutiloption;
+
 /** verify the number of arguments passed */
-#define CHECKARGS(x) \
-if((x+baseOptions) != argc) { \
-	LOG(E) << "Incorrect number of paramaters for " << argv[i] << " command"; \
-	return 100; \
-	}
+#define CHECKARGS(x1, x2) \
+    int a = opts->secure_mode? x2: x1;\
+    if((a+baseOptions) != argc) { \
+        LOG(E) << "Incorrect number of paramaters for " << argv[i] << " command"; \
+        return 100; \
+    }
 /** Test the command input for a recognized argument */
-#define BEGIN_OPTION(cmdstring,args) \
+#define BEGIN_OPTION(cmdstring,args,args_secure) \
 				else if (!(strcasecmp(#cmdstring, &argv[i][2]))) { \
-				CHECKARGS(args) \
+				CHECKARGS(args, args_secure) \
 				opts->action = sedutiloption::cmdstring; \
 
 /** end of an OPTION */
@@ -126,6 +131,22 @@ i++;
 
 /** set the argc value for this parameter in the options structure */
 #define OPTION_IS(option_field) \
-				opts->option_field = ++i; 
+                if (opts->secure_mode && \
+                        (!(strcasecmp(#option_field, "password")) || \
+                        !(strcasecmp(#option_field, "newpassword")))) { \
+                    opts->option_field = 255; \
+                    if (opts->action != sedutiloption::initialSetup)\
+                        opts->ask_password = true; \
+                } \
+                else { \
+                    opts->option_field = ++i; \
+                }\
+
+/** Return the interactive password in secure mode or command line arg*/
+#define GET_PASSWORD() \
+    opts.secure_mode? (char*) interactive_password.c_str() : argv[opts.password]\
+
+#define GET_NEW_PASSWORD() \
+    opts.secure_mode? (char*)"" : argv[opts.newpassword]\
 
 #endif /* _DTAOPTIONS_H */

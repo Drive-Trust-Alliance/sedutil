@@ -50,31 +50,43 @@ void DtaDevOpal::init(const char * devref)
 	if((lastRC = properties()) != 0) { LOG(E) << "Properties exchange failed";}
 }
 
-uint8_t DtaDevOpal::initialSetup(char * password)
+uint8_t DtaDevOpal::initialSetup(char * password, bool securemode)
 {
 	LOG(D1) << "Entering initialSetup()";
+    std::string newpwd;
 	uint8_t lastRC;
-	if ((lastRC = takeOwnership(password)) != 0) {
+
+#ifdef __linux__
+    if (securemode) {
+        if (askNewPassword(newpwd, true) != OPALSTATUSCODE::SUCCESS) {
+            LOG(E) << "Wrong password confirmation. Failure of password update.";
+            lastRC =  OPALSTATUSCODE::FAIL;
+            return lastRC;
+        }
+    }
+#endif
+
+	if ((lastRC = takeOwnership((securemode)?(char*)newpwd.c_str():password)) != 0) {
 		LOG(E) << "Initial setup failed - unable to take ownership";
 		return lastRC;
 	}
-	if ((lastRC = activateLockingSP(password)) != 0) {
+	if ((lastRC = activateLockingSP((securemode)?(char*)newpwd.c_str():password)) != 0) {
 		LOG(E) << "Initial setup failed - unable to activate LockingSP";
 		return lastRC;
 	}
-	if ((lastRC = configureLockingRange(0, DTA_DISABLELOCKING, password)) != 0) {
+	if ((lastRC = configureLockingRange(0, DTA_DISABLELOCKING, (securemode)?(char*)newpwd.c_str():password)) != 0) {
 		LOG(E) << "Initial setup failed - unable to configure global locking range";
 		return lastRC;
 	}
-	if ((lastRC = setLockingRange(0, OPAL_LOCKINGSTATE::READWRITE, password)) != 0) {
+	if ((lastRC = setLockingRange(0, OPAL_LOCKINGSTATE::READWRITE, (securemode)?(char*)newpwd.c_str():password)) != 0) {
 		LOG(E) << "Initial setup failed - unable to set global locking range RW";
 		return lastRC;
 	}
-	if ((lastRC = setMBRDone(1, password)) != 0){
+	if ((lastRC = setMBRDone(1, (securemode)?(char*)newpwd.c_str():password)) != 0){
 		LOG(E) << "Initial setup failed - unable to Enable MBR shadow";
 		return lastRC;
 	}
-	if ((lastRC = setMBREnable(1, password)) != 0){
+	if ((lastRC = setMBREnable(1, (securemode)?(char*)newpwd.c_str():password)) != 0){
 		LOG(E) << "Initial setup failed - unable to Enable MBR shadow";
 		return lastRC;
 	}
@@ -84,7 +96,7 @@ uint8_t DtaDevOpal::initialSetup(char * password)
 	return 0;
 }
 
-uint8_t DtaDevOpal::setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password)
+uint8_t DtaDevOpal::setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password, bool securemode)
 {
 	LOG(D1) << "Entering setup_SUM()";
 	uint8_t lastRC;
@@ -108,7 +120,7 @@ uint8_t DtaDevOpal::setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t len
 	if (!disk_info.Locking_lockingEnabled)
 	{
 		LOG(D1) << "LockingSP not enabled. Beginning initial setup flow.";
-		if ((lastRC = takeOwnership(Admin1Password)) != 0) {
+		if ((lastRC = takeOwnership(Admin1Password, securemode)) != 0) {
 			LOG(E) << "Setup_SUM failed - unable to take ownership";
 			return lastRC;
 		}
@@ -147,7 +159,7 @@ uint8_t DtaDevOpal::setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t len
 		LOG(E) << "Setup_SUM failed - unable to enable locking range";
 		return lastRC;
 	}
-	if ((lastRC = setNewPassword_SUM(defaultPW, (char *)userId.c_str(), password)) != 0) {
+	if ((lastRC = setNewPassword_SUM(defaultPW, (char *)userId.c_str(), password, securemode)) != 0) {
 		LOG(E) << "Setup_SUM failed - unable to set new locking range password";
 		return lastRC;
 	}
@@ -688,12 +700,13 @@ uint8_t DtaDevOpal::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<u
 	LOG(D1) << "Exiting DtaDevOpal::getAuth4User()";
 	return 0;
 }
-uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpassword)
+uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpassword, bool securemode)
 {
 	LOG(D1) << "Entering DtaDevOpal::setPassword" ;
 	uint8_t lastRC;
 	std::vector<uint8_t> userCPIN, hash;
 	session = new DtaSession(this);
+
 	if (NULL == session) {
 		LOG(E) << "Unable to create session object ";
 		return DTAERROR_OBJECT_CREATE_FAILED;
@@ -707,7 +720,28 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 		delete session;
 		return lastRC;
 	}
-	DtaHashPwd(hash, newpassword, this);
+
+    // Ask and confirm new password
+#ifdef __linux__
+    if (securemode) {
+        std::string newpwd;
+        if (askNewPassword(newpwd, true) == OPALSTATUSCODE::SUCCESS) {
+            DtaHashPwd(hash, (char*)newpwd.c_str(), this);
+        }
+        else {
+            LOG(E) << "Wrong password confirmation. Failure of password update.";
+            delete session;
+            lastRC =  OPALSTATUSCODE::FAIL;
+            return lastRC;
+        }
+    }
+    else {
+#endif //__linux__
+        DtaHashPwd(hash, newpassword, this);
+#ifdef __linux__
+    }
+#endif //__linux__
+
 	if ((lastRC = setTable(userCPIN, OPAL_TOKEN::PIN, hash)) != 0) {
 		LOG(E) << "Unable to set user " << userid << " new password ";
 		delete session;
@@ -718,7 +752,7 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 	LOG(D1) << "Exiting DtaDevOpal::setPassword()";
 	return 0;
 }
-uint8_t DtaDevOpal::setNewPassword_SUM(char * password, char * userid, char * newpassword)
+uint8_t DtaDevOpal::setNewPassword_SUM(char * password, char * userid, char * newpassword, bool securemode)
 {
 	LOG(D1) << "Entering DtaDevOpal::setNewPassword_SUM";
 	uint8_t lastRC;
@@ -1391,7 +1425,7 @@ uint8_t DtaDevOpal::eraseLockingRange_SUM(uint8_t lockingrange, char * password)
 	return 0;
 }
 
-uint8_t DtaDevOpal::takeOwnership(char * newpassword)
+uint8_t DtaDevOpal::takeOwnership(char * newpassword, bool securemode)
 {
 	LOG(D1) << "Entering DtaDevOpal::takeOwnership()";
 	uint8_t lastRC;
@@ -1399,7 +1433,7 @@ uint8_t DtaDevOpal::takeOwnership(char * newpassword)
 		LOG(E) << "Unable to read MSID password ";
 		return lastRC;
 	}
-	if ((lastRC = setSIDPassword((char *)response.getString(4).c_str(), newpassword, 0)) != 0) {
+	if ((lastRC = setSIDPassword((char *)response.getString(4).c_str(), newpassword, 0, 1, securemode)) != 0) {
 		LOG(E) << "takeOwnership failed";
 		return lastRC;
 	}
@@ -1447,7 +1481,7 @@ uint8_t DtaDevOpal::printDefaultPassword()
     return 0;
 }
 uint8_t DtaDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
-	uint8_t hasholdpwd, uint8_t hashnewpwd)
+	uint8_t hasholdpwd, uint8_t hashnewpwd, bool securemode)
 {
 	vector<uint8_t> hash, table;
 	LOG(D1) << "Entering DtaDevOpal::setSIDPassword()";
@@ -1468,17 +1502,39 @@ uint8_t DtaDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
 	for (int i = 0; i < 8; i++) {
 		table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_SID][i]);
 	}
+
 	hash.clear();
-	if (hashnewpwd) {
-		DtaHashPwd(hash, newpassword, this);
-	}
-	else {
-		hash.push_back(0xd0);
-		hash.push_back((uint8_t)strnlen(newpassword, 255));
-		for (uint16_t i = 0; i < strnlen(newpassword, 255); i++) {
-			hash.push_back(newpassword[i]);
-		}
-	}
+
+#ifdef __linux__
+    if (securemode) {
+        // In secure mode, the password hashing is mandatory
+        std::string newpwd;
+        if (askNewPassword(newpwd, true) == OPALSTATUSCODE::SUCCESS) {
+            DtaHashPwd(hash, (char*)newpwd.c_str(), this);
+        }
+        else {
+            LOG(E) << "Wrong password confirmation. Failure of password update.";
+            delete session;
+            lastRC =  DTAERROR_INVALID_PARAMETER;
+            return lastRC;
+        }
+    }
+    else {
+#endif //__linux__
+        if (hashnewpwd) {
+            DtaHashPwd(hash, newpassword, this);
+        }
+        else {
+            hash.push_back(0xd0);
+            hash.push_back((uint8_t)strnlen(newpassword, 255));
+            for (uint16_t i = 0; i < strnlen(newpassword, 255); i++) {
+                hash.push_back(newpassword[i]);
+            }
+        }
+#ifdef __linux__
+    }
+#endif //__linux__
+
 	if ((lastRC = setTable(table, OPAL_TOKEN::PIN, hash)) != 0) {
 		LOG(E) << "Unable to set new SID password ";
 		delete session;
@@ -1486,6 +1542,32 @@ uint8_t DtaDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
 	}
 	delete session;
 	LOG(D1) << "Exiting DtaDevOpal::setSIDPassword()";
+	return 0;
+}
+
+uint8_t DtaDevOpal::verifySIDPassword(char const * const password, uint8_t hashpwd, bool securemode)
+{
+	LOG(D1) << "Entering DtaDevOpal::setSIDPassword()";
+	uint8_t lastRC;
+	session = new DtaSession(this);
+
+    if (!session) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	if (!hashpwd)
+        session->dontHashPwd();
+	if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID,
+		const_cast<char*>(password), OPAL_UID::OPAL_SID_UID)) != 0) {
+		delete session;
+		return lastRC;
+	}
+	delete session;
+	LOG(D1) << "Exiting DtaDevOpal::VerifySIDPassword";
+
+    // Logging to ERROR on success is weird, but this is an easy way to force
+    // output to console without mucking around the internals of this codebase.
+    LOG(E)  << "Successfully verified SIDPassword";
 	return 0;
 }
 
@@ -1834,3 +1916,21 @@ uint8_t DtaDevOpal::rawCmd(char *sp, char * hexauth, char *pass,
 	LOG(D1) << "Exiting DtaDevEnterprise::rawCmd";
 	return 0;
 }
+#ifdef __linux__
+uint8_t DtaDevOpal::askNewPassword(std::string &password, bool confirm) {
+    uint8_t lastRC = OPALSTATUSCODE::SUCCESS;
+    password = GetPassPhrase("Please enter the new password ");
+
+    if (confirm) {
+        std::string pwdcheck = GetPassPhrase("Please confirm the new password ");
+
+        if (password != pwdcheck) {
+            password.clear();
+            lastRC = OPALSTATUSCODE::FAIL;
+        }
+    }
+
+    return lastRC;
+}
+#endif //__linux__
+

@@ -61,8 +61,9 @@ public:
 	virtual uint16_t comID() = 0;
         /** Change the SID password from it's MSID default 
          * @param newpassword  new password for SID 
+         * @param securemode is the new password should be interactively asked
          */
-	uint8_t takeOwnership(char * newpassword);
+	uint8_t takeOwnership(char * newpassword, bool securemode = false);
         /** retrieve the MSID password */
 	uint8_t printDefaultPassword();
         /** retrieve a single row from a table 
@@ -78,9 +79,18 @@ public:
          * @param newpassword  value password is to be changed to
          * @param hasholdpwd  is the old password to be hashed before being added to the bytestream
          * @param hashnewpwd  is the new password to be hashed before being added to the bytestream
+         * @param securemode is the new password should be interactively asked
          */ 
 	uint8_t setSIDPassword(char * oldpassword, char * newpassword,
-		uint8_t hasholdpwd = 1, uint8_t hashnewpwd = 1);
+		uint8_t hasholdpwd = 1, uint8_t hashnewpwd = 1, bool securemode = false);
+        /** Verify the SID pasword.
+         * Requires special handling because password is not always hashed.
+         * @param password      SID password to be tested
+         * @param hashpwdd      Should the password be hashed. See comments in function Impl.
+         * @param securemode    Should the password be interactively obtained.
+         */
+    uint8_t verifySIDPassword(char const * const password, uint8_t hashpwd, bool securemode);
+
          /** set a single column in an object table 
          * @param table the UID of the table
          * @param name the column name to be set
@@ -143,14 +153,16 @@ public:
          * @param password  current password
          * @param userid the userid whose password is to be changed 
          * @param newpassword  value password is to be changed to
+         * @param securemode is the new password should be interactively asked
          */
-	uint8_t setPassword(char * password, char * userid, char * newpassword);
+	uint8_t setPassword(char * password, char * userid, char * newpassword, bool securemode = false);
 	/** Set the password of a locking SP user in Single User Mode.
          * @param password  current user password
          * @param userid the userid whose password is to be changed
          * @param newpassword  value password is to be changed to
+         * @param securemode is the new password should be interactively asked
          */
-	uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword);
+	uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword, bool securemode = false);
         /** User command to manipulate the state of a locking range.
          * RW|RO|LK are the supported states @see OPAL_LOCKINGSTATE
          * @param lockingrange locking range number
@@ -229,16 +241,18 @@ public:
         /** User command to prepare the device for management by sedutil. 
          * Specific to the SSC that the device supports
          * @param password the password that is to be assigned to the SSC master entities 
+         * @param securemode is the new password should be interactively asked
          */
-	uint8_t initialSetup(char * password);
+	uint8_t initialSetup(char * password, bool securemode);
 	/** User command to prepare the drive for Single User Mode and rekey a SUM locking range.
          * @param lockingrange locking range number to enable
          * @param start LBA to start locking range
          * @param length length (in blocks) for locking range
          * @param Admin1Password admin1 password for TPer
          * @param password User password to set for locking range
+         * @param securemode is the new password should be interactively asked
          */
-        uint8_t setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password);
+        uint8_t setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password, bool securemode = false);
           /** Displays the identify and discovery 0 information */
 	void puke();
          /** Dumps an object for diagnostic purposes
@@ -289,4 +303,12 @@ protected:
 	 */
 	lrStatus_t getLockingRange_status(uint8_t lockingrange, char * password);
 
+    /** Ask the user to input a new password.
+      * This function fails if the first password and it's confirmation differs
+      * @param password The new password entered by the user
+      * @param confirm Is a double check necessary
+      */
+#ifdef __linux__
+    uint8_t askNewPassword(std::string &password, bool confirm = false);
+#endif //__linux__
 };

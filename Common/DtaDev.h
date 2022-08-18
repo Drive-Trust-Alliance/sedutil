@@ -111,8 +111,9 @@ public:
 	/** User command to prepare the device for management by sedutil.
 	 * Specific to the SSC that the device supports
 	 * @param password the password that is to be assigned to the SSC master entities
+     * @param securemode is the new password should be interactively asked
 	 */
-	virtual uint8_t initialSetup(char * password) = 0;
+	virtual uint8_t initialSetup(char * password, bool securemode = false) = 0;
 	/** User command to prepare the drive for Single User Mode and rekey a SUM locking range.
 	 * @param lockingrange locking range number to enable
 	 * @param start LBA to start locking range
@@ -120,28 +121,37 @@ public:
 	 * @param Admin1Password admin1 password for TPer
 	 * @param password User password to set for locking range
 	 */
-	virtual uint8_t setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password) = 0;
+	virtual uint8_t setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password, bool securemode = false) = 0;
 	/** Set the SID password.
 	 * Requires special handling because password is not always hashed.
 	 * @param oldpassword  current SID password
 	 * @param newpassword  value password is to be changed to
 	 * @param hasholdpwd  is the old password to be hashed before being added to the bytestream
 	 * @param hashnewpwd  is the new password to be hashed before being added to the bytestream
+     * @param securemode is the new password should be interactively asked
 	 */
 	virtual uint8_t setSIDPassword(char * oldpassword, char * newpassword,
-		uint8_t hasholdpwd = 1, uint8_t hashnewpwd = 1) = 0;
+		uint8_t hasholdpwd = 1, uint8_t hashnewpwd = 1, bool securemode = false) = 0;
+	/** Verify the SID pasword.
+	 * Requires special handling because password is not always hashed.
+	 * @param password      SID password to be tested
+	 * @param hashpwd      Should the password be hashed. See comments in function Impl.
+     * @param securemode    Should the password be interactively obtained.
+	 */
+    virtual uint8_t verifySIDPassword(char const * const password, uint8_t hashpwd, bool securemode) = 0;
 	/** Set the password of a locking SP user.
 	 * @param password  current password
 	 * @param userid the userid whose password is to be changed
 	 * @param newpassword  value password is to be changed to
+     * @param securemode is the new password shoulb be interactively asked
 	 */
-	virtual uint8_t setPassword(char * password, char * userid, char * newpassword) = 0;
+	virtual uint8_t setPassword(char * password, char * userid, char * newpassword, bool securemode = false) = 0;
 	/** Set the password of a locking SP user in Single User Mode.
          * @param password  current user password
          * @param userid the userid whose password is to be changed
          * @param newpassword  value password is to be changed to
          */
-	virtual uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword) = 0;
+	virtual uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword, bool securemode = false) = 0;
 	/** Loads a disk image file to the shadow MBR table.
 	 * @param password the password for the administrative authority with access to the table
 	 * @param filename the filename of the disk image
@@ -230,8 +240,9 @@ public:
 	virtual uint8_t eraseLockingRange_SUM(uint8_t lockingrange, char * password) = 0;
 	/** Change the SID password from it's MSID default
 	 * @param newpassword  new password for SID and locking SP admins
+     * @param securemode is the new password should be interactively asked
 	 */
-	virtual uint8_t takeOwnership(char * newpassword) = 0;
+	virtual uint8_t takeOwnership(char * newpassword, bool securemode = false) = 0;
 	/** Reset the Locking SP to its factory default condition
 	 * ERASES ALL DATA!
 	 * @param password of Administrative user

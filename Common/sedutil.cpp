@@ -54,10 +54,17 @@ int main(int argc, char * argv[])
 {
 	DTA_OPTIONS opts;
 	DtaDev *tempDev = NULL, *d = NULL;
+    std::string interactive_password;
 	if (DtaOptions(argc, argv, &opts)) {
 		return DTAERROR_COMMAND_ERROR;
 	}
 	
+#ifdef __linux__
+    if (opts.secure_mode && opts.ask_password) {
+        interactive_password = GetPassPhrase("Please enter password ");
+    }
+#endif //__linux__
+
 	if ((opts.action != sedutiloption::scan) && 
 		(opts.action != sedutiloption::validatePBKDF2) &&
 		(opts.action != sedutiloption::isValidSED)) {
@@ -99,101 +106,105 @@ int main(int argc, char * argv[])
     switch (opts.action) {
  	case sedutiloption::initialSetup:
 		LOG(D) << "Performing initial setup to use sedutil on drive " << argv[opts.device];
-        return (d->initialSetup(argv[opts.password]));
+        return (d->initialSetup(GET_PASSWORD(), opts.secure_mode));
 	case sedutiloption::setup_SUM:
 		LOG(D) << "Performing SUM setup on drive " << argv[opts.device];
 		return (d->setup_SUM(opts.lockingrange, atoll(argv[opts.lrstart]),
-			atoll(argv[opts.lrlength]), argv[opts.password], argv[opts.newpassword]));
+			atoll(argv[opts.lrlength]), GET_PASSWORD(), GET_NEW_PASSWORD(), opts.secure_mode));
 		break;
 	case sedutiloption::setSIDPassword:
         LOG(D) << "Performing setSIDPassword ";
-        return d->setSIDPassword(argv[opts.password], argv[opts.newpassword]);
+        return d->setSIDPassword(GET_PASSWORD(), GET_NEW_PASSWORD(), opts.no_hash_passwords? 0 : 1, opts.no_hash_passwords? 0 : 1, opts.secure_mode);
 		break;
+    case sedutiloption::verifySIDPassword:
+        LOG(D) << "Performing verifySIDPassword ";
+        return d->verifySIDPassword(GET_PASSWORD(), !opts.no_hash_passwords, opts.secure_mode);
+        break;
 	case sedutiloption::setAdmin1Pwd:
         LOG(D) << "Performing setPAdmin1Pwd ";
-        return d->setPassword(argv[opts.password], (char *) "Admin1",
-                            argv[opts.newpassword]);
+        return d->setPassword(GET_PASSWORD(), (char *) "Admin1",
+                            GET_NEW_PASSWORD(), opts.secure_mode);
 		break;
 	case sedutiloption::loadPBAimage:
         LOG(D) << "Loading PBA image " << argv[opts.pbafile] << " to " << opts.device;
-        return d->loadPBA(argv[opts.password], argv[opts.pbafile]);
+        return d->loadPBA(GET_PASSWORD(), argv[opts.pbafile]);
 		break;
 	case sedutiloption::setLockingRange:
         LOG(D) << "Setting Locking Range " << (uint16_t) opts.lockingrange << " " << (uint16_t) opts.lockingstate;
-        return d->setLockingRange(opts.lockingrange, opts.lockingstate, argv[opts.password]);
+        return d->setLockingRange(opts.lockingrange, opts.lockingstate, GET_PASSWORD());
 		break;
 	case sedutiloption::setLockingRange_SUM:
 		LOG(D) << "Setting Locking Range " << (uint16_t)opts.lockingrange << " " << (uint16_t)opts.lockingstate << " in Single User Mode";
-		return d->setLockingRange_SUM(opts.lockingrange, opts.lockingstate, argv[opts.password]);
+		return d->setLockingRange_SUM(opts.lockingrange, opts.lockingstate, GET_PASSWORD());
 		break;
 	case sedutiloption::enableLockingRange:
         LOG(D) << "Enabling Locking Range " << (uint16_t) opts.lockingrange;
         return (d->configureLockingRange(opts.lockingrange,
-			(DTA_READLOCKINGENABLED | DTA_WRITELOCKINGENABLED), argv[opts.password]));
+			(DTA_READLOCKINGENABLED | DTA_WRITELOCKINGENABLED), GET_PASSWORD()));
         break;
 	case sedutiloption::disableLockingRange:
 		LOG(D) << "Disabling Locking Range " << (uint16_t) opts.lockingrange;
 		return (d->configureLockingRange(opts.lockingrange, DTA_DISABLELOCKING,
-			argv[opts.password]));
+			GET_PASSWORD()));
 		break;
 	case sedutiloption::readonlyLockingRange:
 		LOG(D) << "Enabling Locking Range " << (uint16_t)opts.lockingrange;
 		return (d->configureLockingRange(opts.lockingrange,
-			DTA_WRITELOCKINGENABLED, argv[opts.password]));
+			DTA_WRITELOCKINGENABLED, GET_PASSWORD()));
 		break;
 	case sedutiloption::setupLockingRange:
 		LOG(D) << "Setup Locking Range " << (uint16_t)opts.lockingrange;
 		return (d->setupLockingRange(opts.lockingrange, atoll(argv[opts.lrstart]),
-			atoll(argv[opts.lrlength]), argv[opts.password]));
+			atoll(argv[opts.lrlength]), GET_PASSWORD()));
 		break;
 	case sedutiloption::setupLockingRange_SUM:
 		LOG(D) << "Setup Locking Range " << (uint16_t)opts.lockingrange << " in Single User Mode";
 		return (d->setupLockingRange_SUM(opts.lockingrange, atoll(argv[opts.lrstart]),
-			atoll(argv[opts.lrlength]), argv[opts.password]));
+			atoll(argv[opts.lrlength]), GET_PASSWORD()));
 		break;
 	case sedutiloption::listLockingRanges:
 		LOG(D) << "List Locking Ranges ";
-		return (d->listLockingRanges(argv[opts.password], -1));
+		return (d->listLockingRanges(GET_PASSWORD(), -1));
 		break;
 	case sedutiloption::listLockingRange:
 		LOG(D) << "List Locking Range[" << opts.lockingrange << "]";
-		return (d->listLockingRanges(argv[opts.password], opts.lockingrange));
+		return (d->listLockingRanges(GET_PASSWORD(), opts.lockingrange));
 		break;
     case sedutiloption::rekeyLockingRange:
 		LOG(D) << "Rekey Locking Range[" << opts.lockingrange << "]";
-		return (d->rekeyLockingRange(opts.lockingrange, argv[opts.password]));
+		return (d->rekeyLockingRange(opts.lockingrange, GET_PASSWORD()));
         break;
     case sedutiloption::setBandsEnabled:
         LOG(D) << "Set bands Enabled";
-        return (d->setBandsEnabled(-1, argv[opts.password]));
+        return (d->setBandsEnabled(-1, GET_PASSWORD()));
         break;
     case sedutiloption::setBandEnabled:
         LOG(D) << "Set band[" << opts.lockingrange << "] enabled";
-        return (d->setBandsEnabled(opts.lockingrange, argv[opts.password]));
+        return (d->setBandsEnabled(opts.lockingrange, GET_PASSWORD()));
         break;
 	case sedutiloption::setMBRDone:
 		LOG(D) << "Setting MBRDone " << (uint16_t)opts.mbrstate;
-		return (d->setMBRDone(opts.mbrstate, argv[opts.password]));
+		return (d->setMBRDone(opts.mbrstate, GET_PASSWORD()));
 		break;
 	case sedutiloption::setMBREnable:
 		LOG(D) << "Setting MBREnable " << (uint16_t)opts.mbrstate;
-		return (d->setMBREnable(opts.mbrstate, argv[opts.password]));
+		return (d->setMBREnable(opts.mbrstate, GET_PASSWORD()));
 		break;
 	case sedutiloption::enableuser:
         LOG(D) << "Performing enable user for user " << argv[opts.userid];
-        return d->enableUser(argv[opts.password], argv[opts.userid]);
+        return d->enableUser(GET_PASSWORD(), argv[opts.userid]);
         break;
 	case sedutiloption::activateLockingSP:
 		LOG(D) << "Activating the LockingSP on" << argv[opts.device];
-        return d->activateLockingSP(argv[opts.password]);
+        return d->activateLockingSP(GET_PASSWORD());
         break;
 	case sedutiloption::activateLockingSP_SUM:
 		LOG(D) << "Activating the LockingSP on" << argv[opts.device];
-		return d->activateLockingSP_SUM(opts.lockingrange, argv[opts.password]);
+		return d->activateLockingSP_SUM(opts.lockingrange, GET_PASSWORD());
 		break;
 	case sedutiloption::eraseLockingRange_SUM:
 		LOG(D) << "Erasing LockingRange " << opts.lockingrange << " on" << argv[opts.device];
-		return d->eraseLockingRange_SUM(opts.lockingrange, argv[opts.password]);
+		return d->eraseLockingRange_SUM(opts.lockingrange, GET_PASSWORD());
 		break;
     case sedutiloption::query:
 		LOG(D) << "Performing diskquery() on " << argv[opts.device];
@@ -210,29 +221,29 @@ int main(int argc, char * argv[])
         break;
 	case sedutiloption::takeOwnership:
 		LOG(D) << "Taking Ownership of the drive at" << argv[opts.device];
-        return d->takeOwnership(argv[opts.password]);
+        return d->takeOwnership(GET_PASSWORD(), opts.secure_mode);
         break;
  	case sedutiloption::revertLockingSP:
 		LOG(D) << "Performing revertLockingSP on " << argv[opts.device];
-        return d->revertLockingSP(argv[opts.password], 0);
+        return d->revertLockingSP(GET_PASSWORD(), 0);
         break;
 	case sedutiloption::setPassword:
         LOG(D) << "Performing setPassword for user " << argv[opts.userid];
-        return d->setPassword(argv[opts.password], argv[opts.userid],
-                              argv[opts.newpassword]);
+        return d->setPassword(GET_PASSWORD(), argv[opts.userid],
+                              GET_NEW_PASSWORD(), opts.secure_mode);
         break;
 	case sedutiloption::setPassword_SUM:
 		LOG(D) << "Performing setPassword in SUM mode for user " << argv[opts.userid];
-		return d->setNewPassword_SUM(argv[opts.password], argv[opts.userid],
-			argv[opts.newpassword]);
+		return d->setNewPassword_SUM(GET_PASSWORD(), argv[opts.userid],
+			GET_NEW_PASSWORD(), opts.secure_mode);
 		break;
 	case sedutiloption::revertTPer:
 		LOG(D) << "Performing revertTPer on " << argv[opts.device];
-        return d->revertTPer(argv[opts.password], 0, 0);
+        return d->revertTPer(GET_PASSWORD(), 0, 0);
         break;
 	case sedutiloption::revertNoErase:
 		LOG(D) << "Performing revertLockingSP  keep global locking range on " << argv[opts.device];
-		return d->revertLockingSP(argv[opts.password], 1);
+		return d->revertLockingSP(GET_PASSWORD(), 1);
 		break;
 	case sedutiloption::validatePBKDF2:
         LOG(D) << "Performing PBKDF2 validation ";
@@ -240,16 +251,16 @@ int main(int argc, char * argv[])
         break;
 	case sedutiloption::yesIreallywanttoERASEALLmydatausingthePSID:
 	case sedutiloption::PSIDrevert:
-		LOG(D) << "Performing a PSID Revert on " << argv[opts.device] << " with password " << argv[opts.password];
-        return d->revertTPer(argv[opts.password], 1, 0);
+		LOG(D) << "Performing a PSID Revert on " << argv[opts.device] << " with password " << GET_PASSWORD();
+        return d->revertTPer(GET_PASSWORD(), 1, 0);
         break;
 	case sedutiloption::PSIDrevertAdminSP:
-		LOG(D) << "Performing a PSID RevertAdminSP on " << argv[opts.device] << " with password " << argv[opts.password];
-        return d->revertTPer(argv[opts.password], 1, 1);
+		LOG(D) << "Performing a PSID RevertAdminSP on " << argv[opts.device] << " with password " << GET_PASSWORD();
+        return d->revertTPer(GET_PASSWORD(), 1, 1);
         break;
 	case sedutiloption::eraseLockingRange:
 		LOG(D) << "Erase Locking Range " << (uint16_t)opts.lockingrange;
-		return (d->eraseLockingRange(opts.lockingrange, argv[opts.password]));
+		return (d->eraseLockingRange(opts.lockingrange, GET_PASSWORD()));
 		break;
 	case sedutiloption::objDump:
 		LOG(D) << "Performing objDump " ;

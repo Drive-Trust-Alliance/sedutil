@@ -62,13 +62,13 @@ DtaDevGeneric::~DtaDevGeneric()
 void DtaDevGeneric::init(const char * devref)
 {
 }
-uint8NOCODE(initialSetup, char *password)
+uint8NOCODE(initialSetup, char *password, bool securemode)
 uint8NOCODE(configureLockingRange,uint8_t lockingrange, 
 	uint8_t enabled, char * password)
 uint8NOCODE(revertLockingSP,char * password, uint8_t keep)
-uint8NOCODE(setup_SUM, uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password)
-uint8NOCODE(setPassword,char * password, char * userid, char * newpassword)
-uint8NOCODE(setNewPassword_SUM,char * password, char * userid, char * newpassword)
+uint8NOCODE(setup_SUM, uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password, bool securemode)
+uint8NOCODE(setPassword,char * password, char * userid, char * newpassword, bool securemode)
+uint8NOCODE(setNewPassword_SUM,char * password, char * userid, char * newpassword, bool securemode)
 uint8NOCODE(setMBREnable,uint8_t mbrstate, char * Admin1Password)
 uint8NOCODE(setMBRDone,uint8_t mbrstate, char * Admin1Password)
 uint8NOCODE(setLockingRange,uint8_t lockingrange, uint8_t lockingstate,
@@ -90,9 +90,10 @@ uint8NOCODE(loadPBA,char * password, char * filename)
 uint8NOCODE(activateLockingSP,char * password)
 uint8NOCODE(activateLockingSP_SUM,uint8_t lockingrange, char * password)
 uint8NOCODE(eraseLockingRange_SUM, uint8_t lockingrange, char * password)
-uint8NOCODE(takeOwnership, char * newpassword)
+uint8NOCODE(takeOwnership, char * newpassword, bool securemode)
 uint8NOCODE(setSIDPassword,char * oldpassword, char * newpassword,
-	uint8_t hasholdpwd, uint8_t hashnewpwd)
+	uint8_t hasholdpwd, uint8_t hashnewpwd, bool securemode)
+uint8NOCODE(verifySIDPassword, char const * const password, uint8_t hashpwd, bool securemode)
 uint16_t DtaDevGeneric::comID()
 {
 	LOG(E) << "Generic Device class does not support function " << "comID" << std::endl; 

@@ -28,7 +28,8 @@ SEDUTIL_LINUX_CODE = \
 	linux/Version.h linux/os.h linux/DtaDevLinuxDrive.h \
 	linux/DtaDevLinuxNvme.cpp linux/DtaDevLinuxSata.cpp \
 	linux/DtaDevLinuxNvme.h linux/DtaDevLinuxSata.h \
-	linux/DtaDevOS.cpp linux/DtaDevOS.h 
+	linux/DtaDevOS.cpp linux/DtaDevOS.h \
+	LinuxPBA/GetPassPhrase.cpp LinuxPBA/GetPassPhrase.h
 sbin_PROGRAMS = sedutil-cli linuxpba
 sedutil_cli_SOURCES = Common/sedutil.cpp Common/DtaOptions.cpp \
 	Common/DtaOptions.h \
@@ -37,8 +38,7 @@ sedutil_cli_SOURCES = Common/sedutil.cpp Common/DtaOptions.cpp \
 CLEANFILES = linux/Version.h
 BUILT_SOURCES = linux/Version.h
 #
-linuxpba_SOURCES = LinuxPBA/LinuxPBA.cpp LinuxPBA/GetPassPhrase.cpp LinuxPBA/UnlockSEDs.cpp \
-	LinuxPBA/GetPassPhrase.h LinuxPBA/UnlockSEDs.h \
+linuxpba_SOURCES = LinuxPBA/LinuxPBA.cpp LinuxPBA/UnlockSEDs.cpp LinuxPBA/UnlockSEDs.h \
 	$(SEDUTIL_LINUX_CODE) \
 	$(SEDUTIL_COMMON_CODE)
 EXTRA_DIST = linux/GitVersion.sh linux/PSIDRevert_LINUX.txt linux/TestSuite.sh README.md docs/sedutil-cli.8
