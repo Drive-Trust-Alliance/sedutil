@@ -572,6 +572,8 @@ typedef struct _IDENTIFY_RESPONSE {
     uint8_t reserved3[6];
     uint8_t firmwareRev[8];
     uint8_t modelNum[40];
+    uint16_t sectors_intr;
+    uint16_t tcg;
 } IDENTIFY_RESPONSE;
 
 

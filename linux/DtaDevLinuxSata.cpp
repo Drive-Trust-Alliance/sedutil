@@ -162,19 +162,28 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
     /*
      * Do the IO
      */
-    if (ioctl(fd, SG_IO, &sg) < 0) {
-        LOG(D4) << "cdb after ";
-        IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
-        LOG(D4) << "sense after ";
-        IFLOG(D4) DtaHexDump(sense, sizeof (sense));
-        return 0xff;
+	if (ioctl(fd, SG_IO, &sg) < 0) {
+		LOG(D4) << "SG_IO ioctl error: " << strerror(errno);
+		return 0xff;
+	}
+	if ((sg.info & SG_INFO_OK_MASK) != SG_INFO_OK) {
+		if (sg.sb_len_wr > 0) {
+			LOG(D4) << "sense data";
+			IFLOG(D4) DtaHexDump(sense, sizeof (sense));
+		}
+		if (sg.masked_status) {
+			LOG(D4) << "SCSI status: " << std::hex << (u_int)sg.status;
+		}
+		if (sg.host_status) {
+			LOG(D4) << "host_status: " << std::hex << sg.host_status;
+		}
+		if (sg.driver_status) {
+			LOG(D4) << "driver_status: " << std::hex << sg.driver_status;
+		}
+		if (sg.host_status) {
+			return 0xff;
+		}
     }
-    //    LOG(D4) << "cdb after ";
-    //    IFLOG(D4) hexDump(cdb, sizeof (cdb));
-    //    LOG(D4) << "sg after ";
-    //    IFLOG(D4) hexDump(&sg, sizeof (sg));
-    //    LOG(D4) << "sense after ";
-    //    IFLOG(D4) hexDump(sense, sizeof (sense));
     if (!((0x00 == sense[0]) && (0x00 == sense[1])))
         if (!((0x72 == sense[0]) && (0x0b == sense[1]))) return 0xff; // not ATA response
     return (sense[11]);
@@ -240,21 +249,32 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
     /*
      * Do the IO
      */
-    if (ioctl(fd, SG_IO, &sg) < 0) {
-        LOG(D4) << "cdb after ";
-        IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
-        LOG(D4) << "sense after ";
-        IFLOG(D4) DtaHexDump(sense, sizeof (sense));
-        disk_info.devType = DEVICE_TYPE_OTHER;
-        identify_SAS(&disk_info);
-        return;
+	if (ioctl(fd, SG_IO, &sg) < 0) {
+		LOG(D4) << "SG_IO ioctl error: " << strerror(errno);
+		disk_info.devType = DEVICE_TYPE_OTHER;
+		free(buffer);
+		identify_SAS(&disk_info);
+		return;
+	}
+	if ((sg.info & SG_INFO_OK_MASK) != SG_INFO_OK) {
+		if (sg.sb_len_wr > 0) {
+			LOG(D4) << "sense data";
+			IFLOG(D4) DtaHexDump(sense, sizeof (sense));
+		}
+		if (sg.masked_status) {
+			LOG(D4) << "SCSI status: " << std::hex << (u_int)sg.status;
+		}
+		if (sg.host_status) {
+			LOG(D4) << "host_status: " << std::hex << sg.host_status;
+		}
+		if (sg.driver_status) {
+			LOG(D4) << "driver_status: " << std::hex << sg.driver_status;
+		}
+		disk_info.devType = DEVICE_TYPE_OTHER;
+		free(buffer);
+		identify_SAS(&disk_info);
+		return;
     }
-    //    LOG(D4) << "cdb after ";
-    //    IFLOG(D4) hexDump(cdb, sizeof (cdb));
-    //    LOG(D4) << "sg after ";
-    //    IFLOG(D4) hexDump(&sg, sizeof (sg));
-    //    LOG(D4) << "sense after ";
-    //    IFLOG(D4) hexDump(sense, sizeof (sense));
 
     ifstream kopts;
     kopts.open("/sys/module/libata/parameters/allow_tpm", ios::in);
@@ -269,11 +289,15 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
         kopts.close();
     }
 
-    if (!(memcmp(nullz.data(), buffer, 512))) {
-        disk_info.devType = DEVICE_TYPE_OTHER;
-        return;
-    }
     IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) buffer;
+	if ((id->tcg & 0xc000) != 0x4000 || (id->tcg & 0x0001) == 0) {
+		LOG(D4) << "Trusted Computing feature set is not supported: "
+		    << std::hex << id->tcg;
+		disk_info.devType = DEVICE_TYPE_OTHER;
+		free(buffer);
+		return;
+	}
+
 //    disk_info->devType = id->devType;
     disk_info.devType = DEVICE_TYPE_ATA;
 //   memcpy(disk_info.serialNum, id->serialNum, sizeof (disk_info.serialNum));
@@ -354,29 +378,34 @@ uint8_t DtaDevLinuxSata::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t 
         sg.pack_id = 0;
         sg.usr_ptr = NULL;
 
-        // execute I/O
-        if (ioctl(fd, SG_IO, &sg) < 0) {
-            LOG(D4) << "cdb after ";
-            IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
-            LOG(D4) << "sense after ";
-            IFLOG(D4) DtaHexDump(sense, sizeof (sense));
-            return 0xff;
-        }
-    
-        // check for successful target completion
-        if (sg.masked_status != GOOD)
-        {
-            LOG(D4) << "cdb after ";
-            IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
-            LOG(D4) << "sense after ";
-            IFLOG(D4) DtaHexDump(sense, sizeof (sense));
-            return 0xff;
-        }
+	// execute I/O
+	if (ioctl(fd, SG_IO, &sg) < 0) {
+		LOG(D4) << "SG_IO ioctl error: " << strerror(errno);
+		return 0xff;
+	}
 
-        // success
-        return 0x00;
-    }
-    
+	// check for successful target completion
+	if ((sg.info & SG_INFO_OK_MASK) != SG_INFO_OK) {
+		if (sg.sb_len_wr > 0) {
+			LOG(D4) << "sense data";
+			IFLOG(D4) DtaHexDump(sense, sizeof (sense));
+		}
+		if (sg.masked_status) {
+			LOG(D4) << "SCSI status: " << std::hex << (u_int)sg.status;
+		}
+		if (sg.host_status) {
+			LOG(D4) << "host_status: " << std::hex << sg.host_status;
+		}
+		if (sg.driver_status) {
+			LOG(D4) << "driver_status: " << std::hex << sg.driver_status;
+		}
+		return 0xff;
+	}
+
+	// success
+	return 0x00;
+}
+
 static void safecopy(uint8_t * dst, size_t dstsize, uint8_t * src, size_t srcsize)
 {
     const size_t size = min(dstsize, srcsize);
@@ -417,28 +446,33 @@ void DtaDevLinuxSata::identify_SAS(OPAL_DiskInfo *disk_info)
     sg.pack_id = 0;
     sg.usr_ptr = NULL;
 
-    // execute I/O
-    if (ioctl(fd, SG_IO, &sg) < 0) {
-        LOG(D4) << "cdb after ";
-        IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
-        LOG(D4) << "sense after ";
-        IFLOG(D4) DtaHexDump(sense, sizeof (sense));
-        disk_info->devType = DEVICE_TYPE_OTHER;
-        free(buffer);
-        return;
-    }
+	// execute I/O
+	if (ioctl(fd, SG_IO, &sg) < 0) {
+		LOG(D4) << "SG_IO ioctl error: " << strerror(errno);
+		disk_info->devType = DEVICE_TYPE_OTHER;
+		free(buffer);
+		return;
+	}
 
-    // check for successful target completion
-    if (sg.masked_status != GOOD)
-    {
-        LOG(D4) << "cdb after ";
-        IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
-        LOG(D4) << "sense after ";
-        IFLOG(D4) DtaHexDump(sense, sizeof (sense));
-        disk_info->devType = DEVICE_TYPE_OTHER;
-        free(buffer);
-        return;
-    }
+	// check for successful target completion
+	if ((sg.info & SG_INFO_OK_MASK) != SG_INFO_OK) {
+		if (sg.sb_len_wr > 0) {
+			LOG(D4) << "sense data";
+			IFLOG(D4) DtaHexDump(sense, sizeof (sense));
+		}
+		if (sg.masked_status) {
+			LOG(D4) << "SCSI status: " << std::hex << (u_int)sg.status;
+		}
+		if (sg.host_status) {
+			LOG(D4) << "host_status: " << std::hex << sg.host_status;
+		}
+		if (sg.driver_status) {
+			LOG(D4) << "driver_status: " << std::hex << sg.driver_status;
+		}
+		disk_info->devType = DEVICE_TYPE_OTHER;
+		free(buffer);
+		return;
+	}
 
     // response is a standard INQUIRY (at least 36 bytes)
     auto resp = (CScsiCmdInquiry_StandardData *) buffer;
@@ -447,10 +481,6 @@ void DtaDevLinuxSata::identify_SAS(OPAL_DiskInfo *disk_info)
     if (sg.dxfer_len - sg.resid != sizeof(CScsiCmdInquiry_StandardData)
         || resp->m_PeripheralDeviceType != 0x0)
     {
-        LOG(D4) << "cdb after ";
-        IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
-        LOG(D4) << "sense after ";
-        IFLOG(D4) DtaHexDump(sense, sizeof (sense));
         disk_info->devType = DEVICE_TYPE_OTHER;
         free(buffer);
         return;
