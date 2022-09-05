@@ -1583,7 +1583,7 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
     LOG(D3) << std::endl << "Dumping reply buffer";
     IFLOG(D3) DtaHexDump(cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
 	if (0 != lastRC) {
-        LOG(E) << "Command failed on recv" << (uint16_t) lastRC;
+        LOG(E) << "Command failed on recv, returned " << (uint16_t) lastRC;
         return lastRC;
     }
     resp.init(cmd->getRespBuffer());

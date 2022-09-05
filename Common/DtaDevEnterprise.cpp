@@ -1439,7 +1439,7 @@ uint8_t DtaDevEnterprise::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t pro
     IFLOG(D) DtaAnnotatedDump(IF_RECV, cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
     IFLOG(D3) DtaHexDump(cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
     if (0 != rc) {
-        LOG(E) << "Command failed on recv" << (uint16_t) rc;
+        LOG(E) << "Command failed on recv, returned " << (uint16_t) rc;
         return rc;
     }
     resp.init(cmd->getRespBuffer());
