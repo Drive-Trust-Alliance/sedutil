@@ -133,7 +133,7 @@ public:
 	uint8_t enableUser(uint8_t mbrstate, char * password, char * userid);
 
 	uint8_t enableUserRead(uint8_t mbrstate, char * password, char * userid);
-	uint8_t userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * userid);
+	uint8_t userAccessEnable(uint8_t mbrstate, OPAL_UID UID, char * userid);
     /**
          * @param state 0 or 1
          * @param Admin1Password Locking SP authority with access to flag

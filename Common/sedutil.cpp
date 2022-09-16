@@ -53,7 +53,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-int isValidSEDDisk(char *devname)
+static int isValidSEDDisk(char *devname)
 {
 	DtaDev * d;
 	d = new DtaDevGeneric(devname);
@@ -260,7 +260,7 @@ BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 #endif
 
 
-int hashvalidate(char * password, char *devname)
+static int hashvalidate(char * password, char *devname)
 {
     vector <uint8_t> hash;
     DtaDev * d;
@@ -272,12 +272,13 @@ int hashvalidate(char * password, char *devname)
     LOG(D1) << "start hashing random password";
     DtaHashPwd(hash, password, d);
     printf("hashed password : ");
-    for (int i = 2; i < (int)(hash.size()); i++) printf("%02X",hash.at(i));
+    for (unsigned long i = 2; i < hash.size(); i++) printf("%02X",hash.at(i));
     printf("\n");
     return 0;
 }
 
-int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+static int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 {
 #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || (WINDOWS7) || defined(__APPLE__)
 #pragma unused(devname)
@@ -603,7 +604,8 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 #endif
 	return 0;
 }
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+
+
 inline void logc(int argc, char * argv[])
 {
 	LSTATUS ls;
@@ -630,7 +632,8 @@ inline void logc(int argc, char * argv[])
 		}
 	}
 }
-#endif
+
+#endif  // Windows-only
 
 int main(int argc, char * argv[])
 {
@@ -640,6 +643,8 @@ int main(int argc, char * argv[])
 	// Log command here
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 	logc(argc, argv);
+#elif __APPLE__
+    turnOffLogging();
 #endif
 	if (DtaOptions(argc, argv, &opts)) {
 		return DTAERROR_COMMAND_ERROR;
@@ -791,9 +796,6 @@ int main(int argc, char * argv[])
 	*/
 #endif
 
-	//for (int i = 0; i < argc; i++)
-	//	printf("%s ", argv[i]);
-	//printf("\n");
 
 	if ((opts.action != sedutiloption::scan) &&
 		(opts.action != sedutiloption::validatePBKDF2) &&
@@ -844,8 +846,8 @@ int main(int argc, char * argv[])
         return (d->initialSetup(argv[opts.password]));
 	case sedutiloption::setup_SUM:
 		LOG(D) << "Performing SUM setup on drive " << argv[opts.device];
-		return (d->setup_SUM(opts.lockingrange, atoll(argv[opts.lrstart]),
-			atoll(argv[opts.lrlength]), argv[opts.password], argv[opts.newpassword]));
+		return (d->setup_SUM(opts.lockingrange, (unsigned long long)atoll(argv[opts.lrstart]),
+                             (unsigned long long)atoll(argv[opts.lrlength]), argv[opts.password], argv[opts.newpassword]));
 		break;
 	case sedutiloption::setSIDPassword:
         LOG(D) << "Performing setSIDPassword " << argv[opts.device];;
@@ -935,13 +937,17 @@ int main(int argc, char * argv[])
 		break;
 	case sedutiloption::setupLockingRange:
 		LOG(D) << "Setup Locking Range " << (uint16_t)opts.lockingrange << " " << argv[opts.device];
-		return (d->setupLockingRange(opts.lockingrange, atoll(argv[opts.lrstart]),
-			atoll(argv[opts.lrlength]), argv[opts.password]));
+		return (d->setupLockingRange(opts.lockingrange,
+                                     (unsigned long long)atoll(argv[opts.lrstart]),
+                                     (unsigned long long)atoll(argv[opts.lrlength]),
+                                     argv[opts.password]));
 		break;
 	case sedutiloption::setupLockingRange_SUM:
 		LOG(D) << "Setup Locking Range " << (uint16_t)opts.lockingrange << " in Single User Mode " << argv[opts.device];
-		return (d->setupLockingRange_SUM(opts.lockingrange, atoll(argv[opts.lrstart]),
-			atoll(argv[opts.lrlength]), argv[opts.password]));
+		return (d->setupLockingRange_SUM(opts.lockingrange,
+                                         (unsigned long long)atoll(argv[opts.lrstart]),
+                                         (unsigned long long)atoll(argv[opts.lrlength]),
+                                         argv[opts.password]));
 		break;
 	case sedutiloption::listLockingRanges:
 		LOG(D) << "List Locking Ranges " << argv[opts.device];

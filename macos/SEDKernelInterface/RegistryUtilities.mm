@@ -6,12 +6,9 @@
 //  Copyright © 2016 Bright Plaza Inc. All rights reserved.
 //
 
-#import "RegistryUtilities.h"
 
-#import <IOKit/IOBSD.h>
 #import "UserKernelShared.h"
-#import "debug.h"
-#import <Foundation/Foundation.h>
+#import "RegistryUtilities.h"
 
 
 mach_port_t default_port ()
@@ -142,17 +139,6 @@ io_registry_entry_t findParent(io_registry_entry_t service)
         return IO_OBJECT_NULL;
     }
     return parent;
-}
-
-CFMutableDictionaryRef copyProperties(io_registry_entry_t service) {
-    CFMutableDictionaryRef cfproperties = NULL;
-    if (KERN_SUCCESS != IORegistryEntryCreateCFProperties(service,
-                                                          &cfproperties,
-                                                          CFAllocatorGetDefault(),
-                                                          0)) {
-        return NULL;
-    }
-    return cfproperties;
 }
 
 io_iterator_t findMatchingServices(const char * className) {

@@ -32,10 +32,10 @@ uint8_t	DtaDiskType::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 	void * buffer, uint32_t bufferlen) {
 	return 10;
 }
-void DtaDiskType::identify(OPAL_DiskInfo& disk_info) {}
-void DtaDiskType::identifyPd(OPAL_DiskInfo& disk_info) {}
-void DtaDiskType::identifyNVMeASMedia(OPAL_DiskInfo& disk_info) {}
-void DtaDiskType::identifyNVMeRealtek(OPAL_DiskInfo& disk_info) {}
+void DtaDiskType::identify(DTA_DEVICE_INFO& disk_info) {}
+void DtaDiskType::identifyPd(DTA_DEVICE_INFO& disk_info) {}
+void DtaDiskType::identifyNVMeASMedia(DTA_DEVICE_INFO& disk_info) {}
+void DtaDiskType::identifyNVMeRealtek(DTA_DEVICE_INFO& disk_info) {}
 
 #ifdef _MSC_VER
 #pragma warning(pop)

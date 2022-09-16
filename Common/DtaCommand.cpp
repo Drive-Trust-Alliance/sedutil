@@ -29,20 +29,24 @@ using namespace std;
 DtaCommand::DtaCommand()
 {
     LOG(D1) << "Creating DtaCommand()";
-	cmdbuf = commandbuffer + IO_BUFFER_ALIGNMENT;
+	cmdbuf = commandbuffer + IO_BUFFER_ALIGNMENT - 1;
 	cmdbuf = (uint8_t*)((uintptr_t)cmdbuf & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
-	respbuf = responsebuffer + IO_BUFFER_ALIGNMENT;
+    assert(cmdbuf + MAX_BUFFER_LENGTH <= commandbuffer + sizeof(commandbuffer));
+	respbuf = responsebuffer + IO_BUFFER_ALIGNMENT - 1;
 	respbuf = (uint8_t*)((uintptr_t)respbuf & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+    assert(respbuf + MIN_BUFFER_LENGTH <= responsebuffer + sizeof(responsebuffer));
 }
 
 /* Fill in the header information and format the call */
 DtaCommand::DtaCommand(OPAL_UID InvokingUid, OPAL_METHOD method)
 {
     LOG(D1) << "Creating DtaCommand(ID, InvokingUid, method)";
-	cmdbuf = commandbuffer + IO_BUFFER_ALIGNMENT;
+	cmdbuf = commandbuffer + IO_BUFFER_ALIGNMENT - 1;
 	cmdbuf = (uint8_t*)((uintptr_t)cmdbuf & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
-	respbuf = responsebuffer + IO_BUFFER_ALIGNMENT;
+    assert(cmdbuf + MAX_BUFFER_LENGTH <= commandbuffer + sizeof(commandbuffer));
+	respbuf = responsebuffer + IO_BUFFER_ALIGNMENT - 1;
 	respbuf = (uint8_t*)((uintptr_t)respbuf & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+    assert(respbuf + MIN_BUFFER_LENGTH <= responsebuffer + sizeof(responsebuffer));
 	reset(InvokingUid, method);
 }
 

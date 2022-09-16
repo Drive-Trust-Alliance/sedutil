@@ -2,6 +2,18 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../../../../../../../bin/reload">
+   </FileRef>
+   <FileRef
+      location = "group:../SEDDriver.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "container:sedutil.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:sedutil-cli.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:../sedutil-cli project/reenumerate/reenumerate.xcodeproj">
    </FileRef>
 </Workspace>

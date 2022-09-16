@@ -116,7 +116,7 @@ public:
 	 */
 	virtual void osmsSleep(uint32_t milliseconds) = 0;
 	/** OS specific routine to send an ATA identify to the device */
-	virtual void identify(OPAL_DiskInfo& disk_info) = 0;
+	virtual void identify(DTA_DEVICE_INFO& disk_info) = 0;
 	/** OS specific routine to get size of the device */
 	virtual unsigned long long getSize() = 0;
 	/*
@@ -321,7 +321,7 @@ public:
     sedutiloutput output_format; /** standard, readable, JSON */  // TODO: really an attribute of the program, not the TPer
 	char LicenseLevel[32];  // TODO ???
 
-    static void parseDiscovery0Features(const uint8_t * d0Response, OPAL_DiskInfo & di);
+    static void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di);
 protected:
 	const char * dev;   /**< character string representing the device in the OS lexicon */
     
@@ -329,7 +329,7 @@ protected:
 	uint8_t isNVME = FALSE;  /**< This device is NVME */
 	uint8_t adj_host = FALSE; 
 	uint16_t adj_io_buffer_length = 2048; // 10240; // 17408; // user safe low buffer length
-	OPAL_DiskInfo disk_info;  /**< Structure containing info from identify and discovery 0 */
+	DTA_DEVICE_INFO disk_info;  /**< Structure containing info from identify and discovery 0 */
 	DtaResponse response;   /**< shared response object */
 	DtaResponse propertiesResponse;  /**< response from properties exchange */
 	DtaSession *session;  /**< shared session object pointer */

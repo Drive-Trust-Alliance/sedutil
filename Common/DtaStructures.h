@@ -37,11 +37,13 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define FC_BlockSID   0x0402
 #define FC_NSLocking 0x0403 // Mandatory 2018 TCG feature set  1.32
 #define FC_DataRemoval 0x0404
+#define FC_Min_Vendor_Specific 0xC000
+
 /** The Discovery 0 Header. As defined in
 * Opal SSC Documentation
 */
 typedef struct _Discovery0Header {
-    uint32_t length; /**< the lenght of the header 48 in 2.00.100*/
+    uint32_t length; /**< the length of the header 48 in 2.00.100*/
     uint32_t revision; /**< revision of the header 1 in 2.00.100 */
     uint32_t reserved01;
     uint32_t reserved02;
@@ -431,12 +433,12 @@ typedef enum _DTA_DEVICE_TYPE {
     DEVICE_TYPE_ATA,
     DEVICE_TYPE_SAS,
     DEVICE_TYPE_NVME,
-	DEVICE_TYPE_USB,
+    DEVICE_TYPE_USB,
     DEVICE_TYPE_OTHER,
 } DTA_DEVICE_TYPE;
 
 /** structure to store Disk information. */
-typedef struct _OPAL_DiskInfo {
+typedef struct _DTA_DEVICE_INFO {
     // parsed the Function block?
 	uint8_t Unknown;
 	uint8_t VendorSpecific;
@@ -562,20 +564,40 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t null1;  // make firmware rev a cstring
     uint8_t modelNum[40];
 	uint8_t null2;  // make model number a cstring
-	uint8_t fips; // FIPS Approval mode
+    uint8_t vendorName[8];
+    uint8_t null3;
+    
+    uint8_t worldWideName[8];    // bytes, not a cstring
+	
+    uint8_t fips; // FIPS Approval mode
 	uint8_t asmedia; 
 	uint8_t enclosure;
-} OPAL_DiskInfo;
+} DTA_DEVICE_INFO;
+
 /** Response returned by ATA Identify */
 typedef struct _IDENTIFY_RESPONSE {
-    uint8_t reserved0;
-    uint8_t reserved1 : 7;
-    uint8_t devType : 1;
-    uint8_t reserved2[18];
-    uint8_t serialNum[20];
-    uint8_t reserved3[6];
-    uint8_t firmwareRev[8];
-    uint8_t modelNum[40];
+    uint8_t ignore1;             //word 0
+    uint8_t ignore2 : 7;         //word 0
+    uint8_t devType : 1;         //word 0
+    
+    uint8_t ignore3[18];         //words 1-9
+    uint8_t serialNumber[20];    //words 10-19
+    uint8_t ignore4[6];          //words 20-22
+    uint8_t firmwareRevision[8]; //words 23-26
+    uint8_t modelNum[40];        //words 27-46
+    uint8_t readMultFlags[2];    //word 47
+    uint8_t TCGOptions[2];       //word 48
+    uint8_t ignore5[102];        //words 49-99
+    uint8_t maxLBA[8];           //words 100-103
+    uint8_t ignore6[8];          //words 104-107
+    uint8_t worldWideName[8];    //words 108-111
+    uint8_t ignore7[32];         //words 112-127
+    uint8_t securityStatus[2];   //word 128
+    uint8_t vendorSpecific[62];  //words 129-159
+    uint8_t ignored8[32];        //words 160-175
+    uint8_t mediaSerialNum[60];  //words 176-205
+    uint8_t ignored9[96];        //words 206-254
+    uint8_t integrityWord[2];    //word 255
 } IDENTIFY_RESPONSE;
 
 typedef struct _UASP_INQUIRY_RESPONSE {

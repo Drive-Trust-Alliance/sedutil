@@ -8,108 +8,145 @@
 
 #include "TPerKernelInterface.h"
 
-#include "PrintBuffer.h"
 #include <unistd.h>
 #define _POSIX_SOURCE
 #include <sys/stat.h>
-#include "ATAStructures.h"
+#include "InterfaceCommandCodes.h"
 
 
-kern_return_t SCSIPassThroughInterface(io_connect_t connect,
-                                       SCSICommandDescriptorBlock cdb,
-                                       const void * buffer,
-                                       const uint64_t * pBufferLen)
+// ************
+// *** TCG functions
+// ************
+
+kern_return_t PerformSCSICommand(io_connect_t connect,
+                                 SCSICommandDescriptorBlock cdb,
+                                 const void * buffer,
+                                 const uint64_t bufferLen,
+                                 const uint64_t requestedTransferLength,
+                                 uint64_t *pActualTransferLength)
 {
-    uint64_t	input[4];
 
     // *** check arguments
- 
+    if (connect == IO_OBJECT_NULL)
+        return kIOReturnBadArgument;
+    
     // check for NULL pointers
-    if ( buffer == NULL )
+    if ( NULL==buffer || 0==bufferLen )
         return kIOReturnBadArgument;
     
-    if ( pBufferLen == NULL )
-        return kIOReturnBadArgument;
-    
-    // check buffer alignment
-    if ( 0 != ((uint64_t)buffer & (uint64_t)(getpagesize()-1) ) )
-        return kIOReturnNotAligned;
+    enum IODirection  // TODO: import this, a la ATAProtocolDirections.cpp
+    {
+        kIODirectionNone  = 0x0,//                    same as VM_PROT_NONE
+        kIODirectionIn    = 0x1,// User land 'read',  same as VM_PROT_READ
+        kIODirectionOut   = 0x2,// User land 'write', same as VM_PROT_WRITE
+        kIODirectionOutIn = kIODirectionOut | kIODirectionIn,
+        kIODirectionInOut = kIODirectionIn  | kIODirectionOut,
 
+        // these flags are valid for the prepare() method only
+        kIODirectionPrepareToPhys32   = 0x00000004,
+        kIODirectionPrepareNoFault    = 0x00000008,
+        kIODirectionPrepareReserved1  = 0x00000010,
+    #define IODIRECTIONPREPARENONCOHERENTDEFINED    1
+        kIODirectionPrepareNonCoherent = 0x00000020,
+
+        // these flags are valid for the complete() method only
+    #define IODIRECTIONCOMPLETEWITHERRORDEFINED             1
+        kIODirectionCompleteWithError = 0x00000040,
+    #define IODIRECTIONCOMPLETEWITHDATAVALIDDEFINED 1
+        kIODirectionCompleteWithDataValid = 0x00000080,
+    } direction = kIODirectionNone;
+
+    if ( 0 != ((uint64_t)buffer & (uint64_t)(sysconf(_SC_PAGESIZE)-1) ) )
+        return kIOReturnNotAligned;
     // check for inconsistent cdb
     // add more conditions as we need them
-
-    uint8_t protocol = (cdb[1] >> 1) & 0x0f ;
-    uint8_t command = cdb[9];
-
-    switch (command) {
-        case IDENTIFY:
-            if ( protocol != (uint8_t)PIO_DATA_IN )     // IDENTIFY -- PIO-DataIn  (userland read)
-                return kIOReturnBadArgument;
-            if ( cdb[2] != 0x0E )                       // T_DIR = 1, BYTE_BLOCK = 1, Length in Sector Count
-                return kIOReturnBadArgument;
-            break;
-                
-        case IF_RECV:
-            if ( protocol != (uint8_t)PIO_DATA_IN )     // IF_RECV  -- PIO-DataIn  (userland read)
-                return kIOReturnBadArgument;
-            if ( cdb[2] != 0x0E )                       // T_DIR = 1, BYTE_BLOCK = 1, Length in Sector Count
-                return kIOReturnBadArgument;
-            break;
-
-        case IF_SEND:
-            if ( protocol != (uint8_t)PIO_DATA_OUT )    // IF_SEND  -- PIO-DataOut (userland write)
-                return kIOReturnBadArgument;
-            if ( cdb[2] != 0x06 )                       // T_DIR = 0, BYTE_BLOCK = 1, Length in Sector Count
-                return kIOReturnBadArgument;
+    switch (cdb[0]) {
+        case kSCSICmd_ATA_PASS_THROUGH: // ATA PASS-THROUGH
+            {
+                const uint8_t ATACommand = cdb[9];
+                const uint8_t protocol = (cdb[1] >> 1) & 0x0f ;
+                switch (ATACommand) {
+                    case kATACmd_IDENTIFY_DEVICE: // IDENTIFY
+                    case kATACmd_TRUSTED_RECEIVE_PIO: // TRUSTED RECEIVE
+                        if (protocol != PIO_DataIn)
+                            return kIOReturnBadArgument;
+                        direction = kIODirectionIn;
+                        break;
+                    case kATACmd_TRUSTED_SEND_PIO: // TRUSTED SEND
+                        if (protocol != PIO_DataOut)
+                            return kIOReturnBadArgument;
+                        direction = kIODirectionOut;
+                        break;
+                    default:
+                        return kIOReturnBadArgument;
+                }
+            }
             break;
 
+        case kSCSICmd_INQUIRY: // INQUIRY
+        case kSCSICmd_SECURITY_PROTOCOL_IN:     // SECURITY PROTOCOL IN
+            direction = kIODirectionIn;
+            break;
+
+        case kSCSICmd_SECURITY_PROTOCOL_OUT:    // SECURITY PROTOCOL OUT
+            direction = kIODirectionOut;
+            break;
         default:
             return kIOReturnBadArgument;
     }
-    
-    assert( sizeof( SCSICommandDescriptorBlockAsTwoQuads ) == sizeof( SCSICommandDescriptorBlock ) ) ;
-    
-    *( SCSICommandDescriptorBlockAsTwoQuads *)(& input[0] )=
-        *( SCSICommandDescriptorBlockAsTwoQuads *)cdb ; // HACKATRONIC!
-    
-    assert( sizeof( SCSICommandDescriptorBlockAsTwoQuads ) == 2 * sizeof( input[0])) ;
 
-    
-    input[2] = (const uint64_t)buffer;                     // void * == uint64_t
-    input[3] = (const uint64_t)*pBufferLen;                 // size_t == uint64_t
-    
-#if DEBUG
-    
-//    printf("\nTPerKernelInterface::%s(cdb = %16p)\n", __FUNCTION__, (void *)cdb);
-//    printBuffer(cdb, sizeof( SCSICommandDescriptorBlock));
-//
-//    printf("%s(buffer = %16p , &bufferLen = %16p -> %llu)\n\n\n",
-//           __FUNCTION__, buffer,  (void *)pBufferLen, *pBufferLen);
-//
-//    printBuffer(buffer, *pBufferLen);
-//    printf("\n\n\n");
-//
-//    fflush(stdout);
+    {
+        uint64_t    input[6];
+        uint64_t   output[1];
+        assert( sizeof( SCSICommandDescriptorBlockAsTwoQuads ) == sizeof( SCSICommandDescriptorBlock ) ) ;
+        assert( sizeof( SCSICommandDescriptorBlockAsTwoQuads ) == 2 * sizeof( input[0])) ;
 
-#endif
-    
-    kern_return_t kernResult =
-        IOConnectCallScalarMethod(connect,					      // an io_connect_t returned from IOServiceOpen().
-                                  kSedUserClientSCSIPassThrough,  // selector of the function to be called via the user client.
-                                  input,                          // input scalar parameters.
-                                  4,                              // number of scalar input parms.
-                                  NULL,                           // output scalar parameters.
-                                  0);                             // pointer to the number of output scalar parms.
+        *( SCSICommandDescriptorBlockAsTwoQuads *)(& input[0] )=
+            *( SCSICommandDescriptorBlockAsTwoQuads *)cdb ; // HACKATRONIC!
+        input[2] = (const uint64_t)buffer;                  // void * == uint64_t
+        input[3] = (const uint64_t)bufferLen;               // size_t == uint64_t
+        input[4] = (const uint64_t)direction;               // size_t == uint64_t
+        input[5] = (const uint64_t)requestedTransferLength; // size_t == uint64_t
 
-#if DEBUG
-//    printf("%s(buffer = %16p , pBufferLen = %16p -> %llu)\n",
-//           __FUNCTION__, buffer,  (void *)pBufferLen, (long long)*pBufferLen);
-//    if ( buffer ) printBuffer(buffer, *pBufferLen);
-//    printf("%s(kernResult = %d = 0x%X)\n\n",
-//           __FUNCTION__, kernResult, (unsigned)kernResult);
-#endif
-    return kernResult;
+        uint32_t outputCount = 1;
+        kern_return_t kernResult =
+            IOConnectCallScalarMethod(connect,					      // an io_connect_t returned from IOServiceOpen().
+                                      kSedUserClientPerformSCSICommand,  // selector of the function to be called via the user client.
+                                      input,                          // input scalar parameters.
+                                      6,                              // number of scalar input parms.
+                                      output,                         // output scalar parameters.
+                                      &outputCount);                  // pointer to number of output scalar parms.
+        
+        if (1 <= outputCount) {
+            *pActualTransferLength = output[0];
+        }
+        return kernResult;
+    }
 }
+
+
+
+kern_return_t updatePropertiesInIORegistry(io_connect_t connect) {
+    return IOConnectCallScalarMethod(connect, kSedUserClientUpdatePropertiesInIORegistry, NULL, 0, NULL, NULL);
+}
+
+kern_return_t TPerUpdate(io_connect_t connect, void /* DTA_DEVICE_INFO */ * pdi) {
+    kern_return_t ret = updatePropertiesInIORegistry(connect);
+    if (ret == KERN_SUCCESS && pdi != NULL ) {
+        CFDataRef data = (CFDataRef)IORegistryEntryCreateCFProperty(connect,
+                                                                    CFSTR(IOOPALDiskInfoKey),
+                                                                    CFAllocatorGetDefault(), 0);
+        if ( data == NULL )
+            return KERN_FAILURE;
+        
+        CFDataGetBytes(data, CFRangeMake(0,CFDataGetLength(data)), pdi);
+        
+        CFRelease(data);
+    }
+    return ret;
+}
+
+
 
 kern_return_t OpenUserClient(io_service_t service, io_connect_t *pConnect)
 {
@@ -162,41 +199,4 @@ kern_return_t CloseUserClient(io_connect_t connect)
 //    fprintf(stderr, "CloseUserClient -- IOServiceCloseResult is %d.\n", IOServiceCloseResult);
 //#endif
     return SedUserClientCloseResult ? SedUserClientCloseResult : IOServiceCloseResult;
-}
-
-// ************
-// *** TCG functions
-// ************
-
-void IdentifyDevice(io_registry_entry_t driverService, UInt8 * buffer) {
-    
-    CFDataRef data = IORegistryEntryCreateCFProperty(driverService,
-                                                     CFSTR( IOIdentifyDeviceResponseKey ),
-                                                     kCFAllocatorDefault, 0);
-    
-    CFDataGetBytes(data, CFRangeMake(0,CFDataGetLength(data)), buffer);
-    
-    CFRelease(data);
-    
-}
-
-
-
-bool Discovery0(io_registry_entry_t driverService, UInt8 * buffer) {
-
-    CFDataRef data = (CFDataRef)IORegistryEntryCreateCFProperty(driverService,
-                                                                CFSTR(IODiscovery0ResponseKey),
-                                                                CFAllocatorGetDefault(), 0);
-    
-    if ( data == NULL )
-        return false;
-    CFDataGetBytes(data, CFRangeMake(0,CFDataGetLength(data)), buffer);
-    CFRelease(data);
-    return true;
-    
-}
-
-
-kern_return_t updateLockingPropertiesInIORegistry(io_connect_t connect) {
-    return IOConnectCallScalarMethod(connect, kSedUserClientUpdateLockingPropertiesInIORegistry, NULL, 0, NULL, NULL);
 }

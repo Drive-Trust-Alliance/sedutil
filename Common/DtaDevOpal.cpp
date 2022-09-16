@@ -37,6 +37,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "compressapi-8.1.h"
 #include "sedsize.h" 
 #endif
+
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
@@ -51,7 +52,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaSession.h"
 #include "DtaHexDump.h"
 #include <signal.h>
+
+
 #include "ob.h"
+
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 #include "uuid.h"
 #endif
@@ -80,10 +84,9 @@ DtaDevOpal::~DtaDevOpal()
 }
 void DtaDevOpal::init(const char * devref)
 {
-	uint8_t lastRC;
 	DtaDevOS::init(devref);
 	adj_host = 0; 
-	if((lastRC = properties()) != 0) { LOG(E) << "Properties exchange failed " << dev;}
+	if(properties() != 0) { LOG(E) << "Properties exchange failed " << dev;}
 	else fill_prop(false);
 }
 
@@ -330,9 +333,9 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 	auditpass((unsigned char *)p1);
 
 	#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
-	strcat((char *)p1, getSerialNum());
+	strncat((char *)p1, getSerialNum(), sizeof(disk_info.serialNum));
 	#else
-	strcat_s(p1, getSerialNum());
+	strncat_s(p1, getSerialNum(), sizeof(disk_info.serialNum));
 	#endif
 	// setpassword has flag -n -t from GUI
 	if (no_hash_passwords) { // do it only when -n is set
@@ -378,9 +381,9 @@ uint8_t DtaDevOpal::setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t len
 	LOG(D1) << "Entering setup_SUM() " << dev;;
 	uint8_t lastRC;
 	char defaultPW[] = ""; //OPAL defines the default initial User password as 0x00
-	std::string userId;
+	string userId;
 	userId.append("User");
-	userId.append(std::to_string(lockingrange + 1)); //OPAL defines LR0 to User1, LR1 to User2, etc.
+	userId.append(to_string(lockingrange + 1)); //OPAL defines LR0 to User1, LR1 to User2, etc.
 
 	//verify opal SUM support and status
 	if (!disk_info.Locking || !disk_info.SingleUser)
@@ -527,8 +530,9 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 		delete session;
 		return lastRC;
 	}
+    uint32_t tc;
 	// dump raw token info 
-	uint32_t tc = response.getTokenCount();
+	//tc = response.getTokenCount();
 	//if (0) {
 	//	printf("***** getTokenCount()=%ld\n", (long)tc);
 	//	for (uint32_t i = 0; i < tc; i++) {
@@ -966,7 +970,7 @@ uint8_t DtaDevOpal::eraseLockingRange(uint8_t lockingrange, char * password)
 	LOG(D1) << "Exiting DtaDevOpal::eraseLockingRange() " << dev;
 	return 0;
 }
-uint8_t DtaDevOpal::getAuth4User(char * userid, uint8_t uidorcpin, std::vector<uint8_t> &userData)
+uint8_t DtaDevOpal::getAuth4User(char * userid, uint8_t uidorcpin, vector<uint8_t> &userData)
 {
 	LOG(D1) << "Entering DtaDevOpal::getAuth4User() " << dev;
 	userData.clear();
@@ -1009,7 +1013,7 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 {
 	LOG(D1) << "Entering DtaDevOpal::setPassword " << dev;
 	uint8_t lastRC;
-	std::vector<uint8_t> userCPIN, hash;
+	vector<uint8_t> userCPIN, hash;
 	session = new DtaSession(this);
 	if (NULL == session) {
 		LOG(E) << "Unable to create session object " << dev;
@@ -1021,6 +1025,7 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 	memset(buf, 0, 20);
 	gethuser(buf);
 	if (!memcmp(userid , buf, (disk_info.OPAL20_numUsers < 10) ? 5 : 6 ) ) idx = disk_info.OPAL20_numUsers -1 ;
+    free(buf);
 	// if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? (OPAL_UID)(OPAL_USER1_UID + idx) : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { 
 		delete session;
@@ -1061,7 +1066,7 @@ uint8_t DtaDevOpal::setNewPassword_SUM(char * password, char * userid, char * ne
 {
 	LOG(D1) << "Entering DtaDevOpal::setNewPassword_SUM " << dev;
 	uint8_t lastRC; 
-	std::vector<uint8_t> userCPIN, hash;
+	vector<uint8_t> userCPIN, hash;
 	session = new DtaSession(this);
 	if (NULL == session) {
 		LOG(E) << "Unable to create session object " << dev;
@@ -1564,7 +1569,7 @@ vector<uint8_t> getUID(char * userid, vector<uint8_t> &auth2, vector<uint8_t> &a
 }
 
 
-uint8_t DtaDevOpal::userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * userid)
+uint8_t DtaDevOpal::userAccessEnable(uint8_t mbrstate, OPAL_UID UID, char * userid)
 {
 	uint8_t lastRC;
 	// Give UserN read access to the DataStore table
@@ -1687,19 +1692,22 @@ uint8_t DtaDevOpal::enableUserRead(uint8_t mbrstate, char * password, char * use
 		OPAL_ACE_LOCKINGRANGE_WRLOCKED,
 	*/
 	error = 0;
-	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_DataStore_Get_All for " << userid; 
-	error = userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_DataStore_Get_All,userid);
-	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "enable OPAL_ACE_DataStore_Set_All for " << userid;
-	error = userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_DataStore_Set_All, userid);
-	if (!disk_info.Locking_MBRshadowingNotSupported) {
-		LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "enable OPAL_ACE_MBRControl_Set_Done for " << userid;
-		error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_MBRControl_Set_Done, userid);
+	
+    LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_DataStore_Get_All for " << userid;
+	error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_DataStore_Get_All,userid);
+	
+    LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_DataStore_Set_All for " << userid;
+	error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_DataStore_Set_All, userid);
+	
+    if (!disk_info.Locking_MBRshadowingNotSupported) {
+		LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_MBRControl_Set_Done for " << userid;
+		error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_MBRControl_Set_Done, userid);
 	}
 	// DO NOT turn on lockingrange 1
-	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "enable OPAL_ACE_LOCKINGRANGE1_RDLOCKED for " << userid;
-	//error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_LOCKINGRANGE1_RDLOCKED, userid);
-	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "enable OPAL_ACE_LOCKINGRANGE1_WRLOCKED for " << userid;
-	//error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_LOCKINGRANGE1_WRLOCKED, userid);
+	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "enable OPAL_ACE_LOCKINGRANGE1_RDLOCKED for " << userid;
+	//error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_LOCKINGRANGE1_RDLOCKED, userid);
+	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "enable OPAL_ACE_LOCKINGRANGE1_WRLOCKED for " << userid;
+	//error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_LOCKINGRANGE1_WRLOCKED, userid);
 	/*
 	OPAL_ACE_MBRControl_Set_Enable,
 	ACE_Locking_GlobalRange_Get_RangeStartToActiveKey,
@@ -1708,23 +1716,23 @@ uint8_t DtaDevOpal::enableUserRead(uint8_t mbrstate, char * password, char * use
 	ACE_Locking_GlobalRange_Admin_Set,	// allow to set/reset
 	ACE_Locking_GlobalRange_Admin_Start, // allow to set/reset range start and length
 	*/
-	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_MBRControl_Set_Enable for " << userid;
-	//error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_MBRControl_Set_Enable, userid); // NG6
+	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_MBRControl_Set_Enable for " << userid;
+	//error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_MBRControl_Set_Enable, userid); // NG6
 	if ( isOpal2() && !( isPyrite() || isOpalite() || isRuby()) ) {
-		LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey for " << userid;
-		error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey, userid);
+		LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey for " << userid;
+		error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey, userid);
 	}
-	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_Locking_GlobalRange_Set_ReadLocked for " << userid;
-	error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Set_ReadLocked, userid);
-	LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_Locking_GlobalRange_Set_WriteLocked for " << userid;
-	error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Set_WriteLocked, userid);
-	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_Locking_GlobalRange_Admin_Set for " << userid;
-	//error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Admin_Set, userid); // NG10
-	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disbale ") << "OPAL_ACE_Locking_GlobalRange_Admin_Start for " << userid;
-	//error |= userAcccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Admin_Start, userid); // NG11
+	LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Set_ReadLocked for " << userid;
+	error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Set_ReadLocked, userid);
+	LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Set_WriteLocked for " << userid;
+	error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Set_WriteLocked, userid);
+	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Admin_Set for " << userid;
+	//error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Admin_Set, userid); // NG10
+	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Admin_Start for " << userid;
+	//error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Admin_Start, userid); // NG11
 
 	if (error) {
-		LOG(E) << (mbrstate ? "enable " : "disbale ") << "one of user accese fail" << dev;
+		LOG(E) << (mbrstate ? "enable " : "disable ") << "one of user accesses fail" << dev;
 		delete session;
 		return error;
 	}
@@ -1950,7 +1958,7 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 		else {
 			fill_prop(false);
 			blockSize = (adj_host == 1) ? BLOCKSIZE_HI : Tper_sz_MaxIndTokenSize - 60;
-			newSize = blockSize;
+//			newSize = blockSize;  // not used
 		}
 	}
 
@@ -2376,7 +2384,8 @@ uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len,
 		entry_t * ent;
 		char str1[] = SIGNATURE;
 		
-		if ((lastRC = (uint8_t)memcmp(A->header.signature, str1, strlen(str1))) != 0)
+        lastRC = (uint8_t)memcmp(A->header.signature, str1, strlen(str1));
+        if (lastRC != 0)
 		{
 			LOG(E) << "Invalid Audit Signature or No Audit Entry log";
 			IFLOG(D4) DtaHexDump(buf, gethdrsize());
@@ -2408,16 +2417,14 @@ uint8_t DtaDevOpal::auditlogrd(char * password, uint32_t startpos, uint32_t len,
 
 uint16_t genchksum(char * buffer)
 {
-	audit_hdr * hdr;
-	hdr = (audit_hdr *)buffer;
-	uint16_t sum ;
-	//printf("sizeof(audit_hdr)=0x%Xh; sizeof(hdr->chksum)=0x%Xh \n", (int)sizeof(audit_hdr), (int)sizeof(hdr->chksum));
-	sum = 0;
+	audit_hdr * hdr = (audit_hdr *)buffer;
+//	printf("sizeof(audit_hdr)=0x%Xh; sizeof(hdr->chksum)=0x%Xh \n", (int)sizeof(audit_hdr), (int)sizeof(hdr->chksum));
+    uint16_t sum = 0;
 	for (unsigned int i=0; i < (gethdrsize() - sizeof(hdr->chksum)) ;i++ ) 
 	{
 		sum += buffer[i];
 	}
-	//printf("generated checksum = 0x%Xh\n",sum);
+//	printf("generated checksum = 0x%Xh\n",sum);
 	return sum;
 
 }
@@ -2618,7 +2625,7 @@ inline unsigned char hex_digit_to_nybble(char ch)
 	case 'E': return 0xe;
 	case 'f': return 0xf;
 	case 'F': return 0xf;
-	default: return 0xff;  // throw std::invalid_argument();
+	default: return 0xff;  // throw invalid_argument();
 	}
 }
 
@@ -3145,6 +3152,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	datafile.open(filename, ios::out | ios::binary);
 	if (!datafile) {
 		LOG(E) << "Unable to open Data file " << filename << dev ;
+        free(buffer);
 		return DTAERROR_OPEN_ERR;
 	}
 	//datafile.seekg(0, datafile.end);
@@ -3160,12 +3168,14 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
 		LOG(E) << "Unable to create command object " << dev;
+        free(buffer);
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 
 	session = new DtaSession(this);
 	if (NULL == session) {
 		LOG(E) << "Unable to create session object " << dev;
+        free(buffer);
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	LOG(D1) << "start lockingSP session";
@@ -3268,9 +3278,9 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 		if (lastRC) {
 			LOG(E) << "DataStore Read Error " << dev;
 			datafile.close();
-			free(buffer);
 			delete cmd;
 			delete session;
+            free(buffer);
 			return lastRC;
 		}
 		datafile.write(buffer, newSize);
@@ -3363,6 +3373,7 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 	datafile.open(filename, ios::out | ios::binary);
 	if (!datafile) {
 		LOG(E) << "Unable to open Data file " << filename;
+        free(buffer);
 		return DTAERROR_OPEN_ERR;
 	}
 	//datafile.seekg(0, datafile.end);
@@ -3376,12 +3387,14 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
 		LOG(E) << "Unable to create command object " << dev;
+        free(buffer);
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 
 	session = new DtaSession(this);
 	if (NULL == session) {
 		LOG(E) << "Unable to create session object " << dev;
+        free(buffer);
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
 	LOG(D1) << "start lockingSP session";
@@ -3450,9 +3463,9 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 		if (lastRC) {
 			LOG(E) << "MBR Read Error " << dev;
 			datafile.close();
-			free(buffer);
 			delete cmd;
 			delete session;
+            free(buffer);
 			return lastRC;
 		}
 		datafile.write(buffer, newSize);
@@ -4876,7 +4889,8 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
     lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), cmd->outputBufferSize());
 #endif
 	if ((lastRC) != 0) {
-		LOG(E) << "Command failed on send " << (uint16_t) lastRC << dev;
+        LOG(E) << "Command failed on send to " << dev << " --  result was 0x"
+               << hex << setw(2) << setfill('0') << uppercase << (uint16_t)lastRC;
         return lastRC;
     }
 
@@ -4891,24 +4905,24 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 
     do {
         osmsSleep(25); // could it be too fast if multiple drive situation ?????, 25->250 does not help; 25->50 better, ->100
-        memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
-		LOG(D) << "Entering DtaDevOpal::exec sendCmd(IF_RECV, IO_BUFFER_LENGTH) " << dev ; 
+        bzero(cmd->getRespBuffer(), IO_BUFFER_LENGTH);
 # if USING_OPER
         if (oper == 1 )
             lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), 2048); //  IO_BUFFER_LENGTH);
         else
             lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), adj_io_buffer_length); //  IO_BUFFER_LENGTH);
 #else
-        lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
+        lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), MIN_BUFFER_LENGTH);
 #endif
 
 		//LOG(D) << "hdr->cp.outstandingData)=" << hdr->cp.outstandingData << " hdr->cp.minTransfer=" << hdr->cp.minTransfer << dev;
 	}
     while ((0 != hdr->cp.outstandingData) && (0 == hdr->cp.minTransfer));  // add timer --> advice from Joe
-    LOG(D3) << std::endl << "Dumping reply buffer";
+    LOG(D3) << endl << "Dumping reply buffer";
     IFLOG(D3) DtaHexDump(cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
 	if (0 != lastRC) {
-        LOG(E) << "Command failed on recv" << (uint16_t) lastRC << dev;
+        LOG(E) << "Command failed on recv from " << dev << " --  result was 0x"
+               << hex << setw(2) << setfill('0') << uppercase << (uint16_t)lastRC;
         return lastRC;
     }
     resp.init(cmd->getRespBuffer());
@@ -5034,14 +5048,14 @@ uint8_t DtaDevOpal::properties()
 // fill  property 
 void DtaDevOpal::fill_prop(uint8_t show)
 {
-		if (show) cout << std::endl << "TPer Properties: " << dev;
+		if (show) cout << endl << "TPer Properties: " << dev;
 		uint8_t tper_flag;
 		tper_flag = 1;
 		for (uint32_t i = 0; i < propertiesResponse.getTokenCount(); i++) {
 			if (OPAL_TOKEN::STARTNAME == propertiesResponse.tokenIs(i)) {
 				if (OPAL_TOKEN::DTA_TOKENID_BYTESTRING != propertiesResponse.tokenIs(i + 1))
 				{
-					if (show) cout << std::endl << "Host Properties: " << std::endl;
+					if (show) cout << endl << "Host Properties: " << endl;
 					tper_flag = 0;
 				}
 				else //
@@ -5095,7 +5109,7 @@ void DtaDevOpal::fill_prop(uint8_t show)
 				} // 
 				i += 2;
 			}
-			if (show) if (!(i % 6)) cout << std::endl;
+			if (show) if (!(i % 6)) cout << endl;
 		}
 		#if 0
 			printf("Tper_sz_MaxComPacketSize=%ld\n", Tper_sz_MaxComPacketSize);
@@ -5151,10 +5165,12 @@ uint8_t DtaDevOpal::objDump(char *sp, char * auth, char *pass,
 	uint8_t work;
 	if (16 != strnlen(auth, 32)) {
 		LOG(E) << "Authority must be 16 byte ascii string of hex authority uid";
+        delete get;
 		return DTAERROR_INVALID_PARAMETER;
 	}
 	if (16 != strnlen(objID, 32)) {
 		LOG(E) << "ObjectID must be 16 byte ascii string of hex object uid";
+        delete get;
 		return DTAERROR_INVALID_PARAMETER;
 	}
 	authority.push_back(OPAL_SHORT_ATOM::BYTESTRING8);

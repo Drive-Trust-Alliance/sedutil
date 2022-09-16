@@ -19,19 +19,19 @@ __TPerDriverMethod__(kSedUserClientClose,
 
 
 // TPer Methods
-__TPerDriverMethod__(kSedUserClientSCSIPassThrough,
+__TPerDriverMethod__(kSedUserClientPerformSCSICommand,
 
-                        sUserClientSCSIPassthrough,
-                        4,																// 4 scalar input values, cdb[2], addresses/sizes of buffers
+                        sUserClientPerformSCSICommand,
+                        6,																// 6 scalar input values, cdb[2], addresses/sizes of buffers
                         0,                                                              // No input struct.
-                        0,   															// 0 scalar output values.
+                        1,   															// 1 scalar output value.
                         0                                                               // No output struct.
                      )
 
 
-__TPerDriverMethod__(kSedUserClientUpdateLockingPropertiesInIORegistry,
+__TPerDriverMethod__(kSedUserClientUpdatePropertiesInIORegistry,
 
-                        sUserClientUpdateLockingPropertiesInIORegistry,
+                        sUserClientUpdatePropertiesInIORegistry,
                         0,																// No scalar input values, address of bool
                         0,                                                              // No input struct.
                         0,   															// 0 scalar output values.

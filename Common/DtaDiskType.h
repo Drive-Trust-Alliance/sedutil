@@ -47,9 +47,9 @@ public:
 	/** OS specific routine to send an ATA identify to the device 
 	* @param disk_info structure to fill in with drive information
 	*/
-	virtual void identify(OPAL_DiskInfo& disk_info);
-	virtual void identifyPd(OPAL_DiskInfo& disk_info);
-	virtual void identifyNVMeASMedia(OPAL_DiskInfo& disk_info);
-	virtual void identifyNVMeRealtek(OPAL_DiskInfo& disk_info);
+	virtual void identify(DTA_DEVICE_INFO& disk_info);
+	virtual void identifyPd(DTA_DEVICE_INFO& disk_info);
+	virtual void identifyNVMeASMedia(DTA_DEVICE_INFO& disk_info);
+	virtual void identifyNVMeRealtek(DTA_DEVICE_INFO& disk_info);
 	//virtual BYTE getdisc0Sts(void);
 };

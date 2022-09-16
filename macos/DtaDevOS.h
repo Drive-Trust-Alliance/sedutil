@@ -18,9 +18,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
+
 #include "DtaDev.h"
-#include "DtaDevMacOSDrive.h"
-#include "RegistryUtilities.h"
+#include "DtaDevMacOSTPer.h"
 
 /** MacOS specific implementation of DtaDevOS.
  */
@@ -41,30 +41,30 @@ public:
      */
     void init(const char * devref);
     
-    /** OS specific initialization.
-     * This function should perform the necessary authority and environment checking
-     * to allow proper functioning of the program, open the device, perform an ATA
-     * identify, add the fields from the identify response to the disk info structure
-     * and if the device is an ATA device perform a call to Discovery0() to complete
-     * the disk_info structure.  This version is used to create a DtaDev object from the
-     * OS specific parts already under use.
-     * @param devref character representation of the device is standard OS lexicon
-     * @param driverService an IO Registry entry for the driver
-     * @param connect an io_connect_t for the existing connection
-     * @param diskInfo reference to possibly partially filled out OPAL_DiskInfo
-     */
-void init(const char * devref,
-              io_registry_entry_t driverService,
-              io_connect_t connect,
-              const OPAL_DiskInfo& diskInfo);
-
-    /** OS specific method to send an ATA command to the device
-     * @param cmd ATA command to be sent to the device
-     * @param protocol security protocol to be used in the command
-     * @param comID communications ID to be used
-     * @param buffer input/output buffer
-     * @param bufferlen length of the input/output buffer
-     */
+//    /** OS specific initialization.
+//     * This function should perform the necessary authority and environment checking
+//     * to allow proper functioning of the program, open the device, perform an ATA
+//     * identify, add the fields from the identify response to the disk info structure
+//     * and if the device is an ATA device perform a call to Discovery0() to complete
+//     * the disk_info structure.  This version is used to create a DtaDev object from the
+//     * OS specific parts already under use.
+//     * @param devref character representation of the device is standard OS lexicon
+//     * @param driverService an IO Registry entry for the driver
+//     * @param connect an io_connect_t for the existing connection
+//     * @param diskInfo reference to possibly partially filled out DTA_DEVICE_INFO
+//     */
+//void init(const char * devref,
+//              io_registry_entry_t driverService,
+//              io_connect_t connect,
+//              const DTA_DEVICE_INFO& diskInfo);
+//
+//    /** OS specific method to send an ATA command to the device
+//     * @param cmd ATA command to be sent to the device
+//     * @param protocol security protocol to be used in the command
+//     * @param comID communications ID to be used
+//     * @param buffer input/output buffer
+//     * @param bufferlen length of the input/output buffer
+//     */
     uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                     void * buffer, uint32_t bufferlen);
     /** A static class to scan for supported drives */
@@ -75,25 +75,12 @@ protected:
      */
     void osmsSleep(uint32_t ms);
     /* OS specific routine to send an ATA identify to the device */
-    void identify(OPAL_DiskInfo& disk_info);
+    void identify(DTA_DEVICE_INFO& disk_info);
     
-    /* OS specific routine to read the Level 0 Discovery data*
-     * The MacOS version has the side effect on the I/O Registry driver
-     * entry of caching the Discovery0 data and
-     * setting the Locking Feature flags dir
-     *
-     * @param d0Response  buffer into which the D0 response is stored
-     */
-    virtual uint8_t acquireDiscovery0Response(uint8_t * d0Response);
 
     /** return drive size in bytes */
     unsigned long long getSize();
-//    int fd; /**< MacOS handle for the device  */
+
 private:
-    /** OS specific routine to send a SCSI INQUIRY to the device */
-    void identify_SAS();
-    DtaDevMacOSDrive *drive;
-    /** Common code used by init variants */
-    template<typename Callable>
-    void _init (Callable driveFn, const char * devref);
+    DtaDevMacOSTPer *tPer;
 };

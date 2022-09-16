@@ -9,10 +9,10 @@
 #ifndef RegistryUtilities_h
 #define RegistryUtilities_h
 
-#include <IOKit/IOKitLib.h>
 #import <Availability.h>
-
-
+#if !defined(SED_KERNEL) || !(SED_KERNEL)
+#import <IOKit/IOKitLib.h>
+#endif
 
 #if defined(__cplusplus)
 extern "C" {
@@ -29,7 +29,6 @@ extern io_registry_entry_t findBrightPlazaDriverInChildren(io_registry_entry_t s
 
 extern io_registry_entry_t findBSDName(const char *bsdName);
 extern io_registry_entry_t findParent(io_registry_entry_t service);
-extern CFMutableDictionaryRef copyProperties(io_registry_entry_t service);
 extern io_iterator_t findMatchingServices(const char * className) ;
 extern void GetName(io_registry_entry_t service, char * nameBuffer);
 

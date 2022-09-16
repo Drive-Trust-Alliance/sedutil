@@ -3,842 +3,2536 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D21322F4283B06F70076B62F /* DtaDevMacOSDrive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D21322F3283B06500076B62F /* DtaDevMacOSDrive.cpp */; };
-		D226505F27FB54D600BA5499 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D226505E27FB54D600BA5499 /* CoreFoundation.framework */; };
-		D226506027FB550600BA5499 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D226505C27FB545500BA5499 /* IOKit.framework */; };
-		D226506127FB552400BA5499 /* TPerKernelInterface.c in Sources */ = {isa = PBXBuildFile; fileRef = D226505927FB531F00BA5499 /* TPerKernelInterface.c */; };
-		D226506227FB553100BA5499 /* RegistryUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = D226505727FB531F00BA5499 /* RegistryUtilities.mm */; };
-		D23F351D2845B22E00708384 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D23F351C2845B22E00708384 /* main.cpp */; };
-		D27F65D127F432FE0091C6ED /* DtaDevMacOS_UAS_SAT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27F65D027F42DC50091C6ED /* DtaDevMacOS_UAS_SAT.cpp */; };
-		D27F65D727F437860091C6ED /* PrintBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = D27F65D627F437860091C6ED /* PrintBuffer.c */; };
-		D293C2DD289ED926005E7AA8 /* DtaDevMacOS_ATA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D293C2DC289ED926005E7AA8 /* DtaDevMacOS_ATA.cpp */; };
-		D2C42ADB2845BC2800D3B958 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D226505C27FB545500BA5499 /* IOKit.framework */; };
-		D2C42ADC2845C0DD00D3B958 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D226505E27FB54D600BA5499 /* CoreFoundation.framework */; };
-		D2D0018F27FB4F95007679E3 /* reenumerate.c in Sources */ = {isa = PBXBuildFile; fileRef = D2D0018E27FB4F95007679E3 /* reenumerate.c */; };
-		D2DE3A432845440B00B4F78E /* DtaBlockStorageDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2DE3A422845440B00B4F78E /* DtaBlockStorageDevice.cpp */; };
-		D2ED0EFB27D55FE20053115F /* DtaDevOpal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EC827D55FE20053115F /* DtaDevOpal.cpp */; };
-		D2ED0EFC27D55FE20053115F /* DtaAnnotatedDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0ECA27D55FE20053115F /* DtaAnnotatedDump.cpp */; };
-		D2ED0EFD27D55FE20053115F /* hmac.c in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0ED127D55FE20053115F /* hmac.c */; };
-		D2ED0EFE27D55FE20053115F /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0ED427D55FE20053115F /* sha1.c */; };
-		D2ED0EFF27D55FE20053115F /* blockwise.c in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0ED927D55FE20053115F /* blockwise.c */; };
-		D2ED0F0027D55FE20053115F /* chash.c in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EDB27D55FE20053115F /* chash.c */; };
-		D2ED0F0127D55FE20053115F /* pbkdf2.c in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EDC27D55FE20053115F /* pbkdf2.c */; };
-		D2ED0F0227D55FE20053115F /* DtaCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EDD27D55FE20053115F /* DtaCommand.cpp */; };
-		D2ED0F0327D55FE20053115F /* DtaOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EDE27D55FE20053115F /* DtaOptions.cpp */; };
-		D2ED0F0427D55FE20053115F /* DtaDevOpal2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EE127D55FE20053115F /* DtaDevOpal2.cpp */; };
-		D2ED0F0527D55FE20053115F /* DtaDevOpal1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EE327D55FE20053115F /* DtaDevOpal1.cpp */; };
-		D2ED0F0627D55FE20053115F /* DtaDevEnterprise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EE527D55FE20053115F /* DtaDevEnterprise.cpp */; };
-		D2ED0F0727D55FE20053115F /* DtaDevGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EE627D55FE20053115F /* DtaDevGeneric.cpp */; };
-		D2ED0F0827D55FE20053115F /* DtaHashPwd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EE927D55FE20053115F /* DtaHashPwd.cpp */; };
-		D2ED0F0927D55FE20053115F /* DtaDiskType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EEA27D55FE20053115F /* DtaDiskType.cpp */; };
-		D2ED0F0A27D55FE20053115F /* DtaHexDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EEE27D55FE20053115F /* DtaHexDump.cpp */; };
-		D2ED0F0B27D55FE20053115F /* sedutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EF027D55FE20053115F /* sedutil.cpp */; };
-		D2ED0F0C27D55FE20053115F /* DtaSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EF127D55FE20053115F /* DtaSession.cpp */; };
-		D2ED0F0D27D55FE20053115F /* DtaDev.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EF227D55FE20053115F /* DtaDev.cpp */; };
-		D2ED0F0E27D55FE20053115F /* DtaResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EF327D55FE20053115F /* DtaResponse.cpp */; };
-		D2ED0F4A27D564D20053115F /* DtaDevOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0F4227D564D20053115F /* DtaDevOS.cpp */; };
+		D20A63AB1F73204000F154AC /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D20A63AA1F73204000F154AC /* log.cpp */; settings = {COMPILER_FLAGS = "-Wno-missing-field-initializers -Wno-missing-prototypes"; }; };
+		D2466AF328B5876C009F55D9 /* DtaDevOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D2466A4B28B585F8009F55D9 /* DtaDevOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D271A1FB28054AFE00BF043A /* DtaStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F528054AFD00BF043A /* DtaStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D271A1FC28054AFE00BF043A /* DtaDev.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F628054AFD00BF043A /* DtaDev.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D271A1FD28054AFE00BF043A /* DtaOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F728054AFD00BF043A /* DtaOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D271A1FE28054AFE00BF043A /* DtaConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F828054AFD00BF043A /* DtaConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D271A1FF28054AFE00BF043A /* DtaLexicon.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F928054AFE00BF043A /* DtaLexicon.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D271A20028054AFE00BF043A /* DtaResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1FA28054AFE00BF043A /* DtaResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D274DB7228B7FC9D00B9CD1F /* SEDKernelInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */; };
+		D27591BA28B579F1005B9081 /* DtaDevOpal2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */; };
+		D2772AD228BBFF8C0005E001 /* DtaDevOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2772AD128BBFF8C0005E001 /* DtaDevOS.cpp */; };
+		D2772ADA28BBFFB70005E001 /* DtaDevMacOSTPer_SAT.h in Headers */ = {isa = PBXBuildFile; fileRef = D2772AD328BBFFB60005E001 /* DtaDevMacOSTPer_SAT.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2772ADB28BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = D2772AD428BBFFB60005E001 /* DtaDevMacOSBlockStorageDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2772ADC28BBFFB70005E001 /* DtaDevMacOSTPer_SAT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2772AD528BBFFB60005E001 /* DtaDevMacOSTPer_SAT.cpp */; };
+		D2772ADD28BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2772AD628BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.cpp */; };
+		D2772ADE28BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2772AD728BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.cpp */; };
+		D2772ADF28BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h in Headers */ = {isa = PBXBuildFile; fileRef = D2772AD828BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2772AE028BBFFB70005E001 /* DtaDevMacOSTPer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2772AD928BBFFB70005E001 /* DtaDevMacOSTPer.cpp */; };
+		D2772B1C28BC32330005E001 /* os.h in Headers */ = {isa = PBXBuildFile; fileRef = D2466A4528B58518009F55D9 /* os.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2772B1E28BC345A0005E001 /* ATAStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BDDC9128A5B23600001E26 /* ATAStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2A06C9628B5D88800C0DDB6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9528B5D88800C0DDB6 /* Foundation.framework */; };
+		D2A06C9C28B5D8FE00C0DDB6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */; };
+		D2A06C9D28B5DC7900C0DDB6 /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
+		D2B2036528BBFF1D004C88FF /* DtaDevMacOSTPer.h in Headers */ = {isa = PBXBuildFile; fileRef = D2B2036428BBFF1D004C88FF /* DtaDevMacOSTPer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2BDDC9828A6361600001E26 /* ob.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BDDC9628A6361600001E26 /* ob.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2BDDC9928A6361600001E26 /* ob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2BDDC9728A6361600001E26 /* ob.cpp */; };
+		D2BDDC9C28A6369A00001E26 /* pyexthash.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BDDC9A28A6369900001E26 /* pyexthash.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2BDDC9D28A6369A00001E26 /* ReadMe.txt in Resources */ = {isa = PBXBuildFile; fileRef = D2BDDC9B28A6369A00001E26 /* ReadMe.txt */; };
+		D2BDDC9F28A63B9200001E26 /* pyextob.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BDDC9E28A63B9200001E26 /* pyextob.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2D1379C28B55BAE003FD51F /* DtaOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D2D1379B28B55B9E003FD51F /* DtaOptions.h */; };
+		D2D137A128B56329003FD51F /* log.h in Sources */ = {isa = PBXBuildFile; fileRef = D20A63A81F731FDB00F154AC /* log.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA844728053B4C00A0F685 /* DtaDevOpal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83D628053B3400A0F685 /* DtaDevOpal.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EA844A28053B4C00A0F685 /* DtaDevEnterprise.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA840628053B3600A0F685 /* DtaDevEnterprise.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA844B28053B4C00A0F685 /* DtaAnnotatedDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83D828053B3400A0F685 /* DtaAnnotatedDump.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EA844E28053B4C00A0F685 /* DtaDevOpal1.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA841128053B3B00A0F685 /* DtaDevOpal1.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA844F28053B4C00A0F685 /* Copyright.txt in Resources */ = {isa = PBXBuildFile; fileRef = D2EA83DA28053B3400A0F685 /* Copyright.txt */; };
+		D2EA845228053B4C00A0F685 /* DtaDevOpal.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA842828053B3F00A0F685 /* DtaDevOpal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA847D28053B4D00A0F685 /* DtaCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83EB28053B3400A0F685 /* DtaCommand.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EA848028053B4D00A0F685 /* DtaOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA841528053B3D00A0F685 /* DtaOptions.cpp */; };
+		D2EA848128053B4D00A0F685 /* DtaDiskType.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA83ED28053B3400A0F685 /* DtaDiskType.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA848428053B4D00A0F685 /* DtaDevGeneric.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA843728053B4600A0F685 /* DtaDevGeneric.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA848528053B4D00A0F685 /* DtaDevOpal1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83EF28053B3400A0F685 /* DtaDevOpal1.cpp */; };
+		D2EA848C28053B4D00A0F685 /* DtaDevEnterprise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA840A28053B3700A0F685 /* DtaDevEnterprise.cpp */; settings = {COMPILER_FLAGS = "-Wno-unused-parameter -Wno-sign-conversion"; }; };
+		D2EA848D28053B4D00A0F685 /* DtaDevGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83F228053B3400A0F685 /* DtaDevGeneric.cpp */; settings = {COMPILER_FLAGS = "-Wno-unused-parameter"; }; };
+		D2EA849028053B4D00A0F685 /* DtaDevOpal2.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA840C28053B3800A0F685 /* DtaDevOpal2.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA849128053B4D00A0F685 /* DtaHashPwd.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA83F428053B3400A0F685 /* DtaHashPwd.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA849428053B4D00A0F685 /* DtaHashPwd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA842728053B3F00A0F685 /* DtaHashPwd.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EA849528053B4D00A0F685 /* DtaDiskType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83F628053B3400A0F685 /* DtaDiskType.cpp */; settings = {COMPILER_FLAGS = "-Wno-unused-parameter "; }; };
+		D2EA849928053B4D00A0F685 /* DtaSession.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA83F828053B3400A0F685 /* DtaSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA849C28053B4D00A0F685 /* DtaHexDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83F928053B3400A0F685 /* DtaHexDump.cpp */; };
+		D2EA84A328053B4E00A0F685 /* DtaSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83FC28053B3400A0F685 /* DtaSession.cpp */; };
+		D2EA84A628053B4E00A0F685 /* DtaDev.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA840928053B3700A0F685 /* DtaDev.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EA84A728053B4E00A0F685 /* DtaResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83FE28053B3400A0F685 /* DtaResponse.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EA84AA28053B4E00A0F685 /* DtaAnnotatedDump.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA843228053B4400A0F685 /* DtaAnnotatedDump.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA84AB28053B4E00A0F685 /* DtaEndianFixup.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA840028053B3400A0F685 /* DtaEndianFixup.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA84AF28053B4E00A0F685 /* DtaHexDump.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA840228053B3400A0F685 /* DtaHexDump.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA84B228053B4E00A0F685 /* DtaCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA840F28053B3A00A0F685 /* DtaCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4931F055579002F8780 /* cifra.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4911F055579002F8780 /* cifra.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4AC1F055590002F8780 /* bitops.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA49E1F055590002F8780 /* bitops.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4AD1F055590002F8780 /* blockwise.c in Sources */ = {isa = PBXBuildFile; fileRef = D2EBA49F1F055590002F8780 /* blockwise.c */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EBA4AE1F055590002F8780 /* blockwise.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4A01F055590002F8780 /* blockwise.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4AF1F055590002F8780 /* chash.c in Sources */ = {isa = PBXBuildFile; fileRef = D2EBA4A11F055590002F8780 /* chash.c */; };
+		D2EBA4B01F055590002F8780 /* chash.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4A21F055590002F8780 /* chash.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4B11F055590002F8780 /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = D2EBA4A31F055590002F8780 /* COPYING */; };
+		D2EBA4B21F055590002F8780 /* handy.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4A41F055590002F8780 /* handy.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4B31F055590002F8780 /* hmac.c in Sources */ = {isa = PBXBuildFile; fileRef = D2EBA4A51F055590002F8780 /* hmac.c */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EBA4B41F055590002F8780 /* hmac.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4A61F055590002F8780 /* hmac.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4B51F055590002F8780 /* pbkdf2.c in Sources */ = {isa = PBXBuildFile; fileRef = D2EBA4A71F055590002F8780 /* pbkdf2.c */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EBA4B61F055590002F8780 /* pbkdf2.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4A81F055590002F8780 /* pbkdf2.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4B71F055590002F8780 /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = D2EBA4A91F055590002F8780 /* sha1.c */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EBA4B81F055590002F8780 /* sha1.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4AA1F055590002F8780 /* sha1.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4B91F055590002F8780 /* tassert.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4AB1F055590002F8780 /* tassert.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		D21322EF283AC7D70076B62F /* PBXContainerItemProxy */ = {
+		D2A06C9728B5D8BC00C0DDB6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = D2ED0EB427D55FBD0053115F /* Project object */;
+			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D21322EB283AAA110076B62F;
-			remoteInfo = version;
+			remoteGlobalIDString = D20A63961F731F3600F154AC;
+			remoteInfo = log;
+		};
+		D2A06C9928B5D8BE00C0DDB6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2EBA48E1F055579002F8780;
+			remoteInfo = cifra;
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		D23F35182845B22E00708384 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-		D2D0018A27FB4F95007679E3 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-		D2ED0EBA27D55FBD0053115F /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
-		D21322F3283B06500076B62F /* DtaDevMacOSDrive.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSDrive.cpp; sourceTree = "<group>"; };
-		D226503A27FB52A100BA5499 /* MakeVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = MakeVersion.sh; sourceTree = "<group>"; };
-		D226503B27FB52A100BA5499 /* CleanVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CleanVersion.sh; sourceTree = "<group>"; };
-		D226503D27FB52C000BA5499 /* GitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GitVersion.sh; sourceTree = "<group>"; };
-		D226505327FB531F00BA5499 /* SEDKernelInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SEDKernelInterface.h; sourceTree = "<group>"; };
-		D226505427FB531F00BA5499 /* UserKernelShared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserKernelShared.h; sourceTree = "<group>"; };
-		D226505527FB531F00BA5499 /* TPerDriverDispatchTable.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = TPerDriverDispatchTable.inc; sourceTree = "<group>"; };
-		D226505627FB531F00BA5499 /* TPerKernelInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TPerKernelInterface.h; sourceTree = "<group>"; };
-		D226505727FB531F00BA5499 /* RegistryUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RegistryUtilities.mm; sourceTree = "<group>"; };
-		D226505827FB531F00BA5499 /* RegistryUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RegistryUtilities.h; sourceTree = "<group>"; };
-		D226505927FB531F00BA5499 /* TPerKernelInterface.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = TPerKernelInterface.c; sourceTree = "<group>"; };
-		D226505A27FB531F00BA5499 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D226505C27FB545500BA5499 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
-		D226505E27FB54D600BA5499 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
-		D23F351A2845B22E00708384 /* IORegistryTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = IORegistryTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D23F351C2845B22E00708384 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		D27F65CF27F42DC50091C6ED /* DtaDevMacOS_UAS_SAT.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOS_UAS_SAT.h; sourceTree = "<group>"; };
-		D27F65D027F42DC50091C6ED /* DtaDevMacOS_UAS_SAT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOS_UAS_SAT.cpp; sourceTree = "<group>"; };
-		D27F65D627F437860091C6ED /* PrintBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PrintBuffer.c; sourceTree = "<group>"; };
-		D27F65D827F4381C0091C6ED /* PrintBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintBuffer.h; path = ../include/PrintBuffer.h; sourceTree = "<group>"; };
-		D27F65DD27F43B350091C6ED /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debug.h; path = include/debug.h; sourceTree = "<group>"; };
-		D293C2DC289ED926005E7AA8 /* DtaDevMacOS_ATA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOS_ATA.cpp; sourceTree = "<group>"; };
-		D293C2DE289ED93D005E7AA8 /* DtaDevMacOS_ATA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOS_ATA.h; sourceTree = "<group>"; };
-		D293C2DF289EEA3D005E7AA8 /* ATAStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATAStructures.h; sourceTree = "<group>"; };
-		D2AEC69A27F499F20050D42F /* DtaMacOSConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaMacOSConstants.h; path = ../macos/DtaMacOSConstants.h; sourceTree = "<group>"; };
-		D2D0018C27FB4F95007679E3 /* reenumerate */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = reenumerate; sourceTree = BUILT_PRODUCTS_DIR; };
-		D2D0018E27FB4F95007679E3 /* reenumerate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = reenumerate.c; sourceTree = "<group>"; };
-		D2D0019327FB5003007679E3 /* IOUSBFamilyInfoPlist.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOUSBFamilyInfoPlist.pch; sourceTree = "<group>"; };
-		D2DE3A412845436B00B4F78E /* DtaBlockStorageDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaBlockStorageDevice.h; sourceTree = "<group>"; };
-		D2DE3A422845440B00B4F78E /* DtaBlockStorageDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaBlockStorageDevice.cpp; sourceTree = "<group>"; };
-		D2ED0EBC27D55FBD0053115F /* sedutil-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "sedutil-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D2ED0EC727D55FE20053115F /* DtaResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaResponse.h; sourceTree = "<group>"; };
-		D2ED0EC827D55FE20053115F /* DtaDevOpal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal.cpp; sourceTree = "<group>"; };
-		D2ED0EC927D55FE20053115F /* DtaDevEnterprise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevEnterprise.h; sourceTree = "<group>"; };
-		D2ED0ECA27D55FE20053115F /* DtaAnnotatedDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAnnotatedDump.cpp; sourceTree = "<group>"; };
-		D2ED0ECB27D55FE20053115F /* DtaDevOpal1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOpal1.h; sourceTree = "<group>"; };
-		D2ED0ECC27D55FE20053115F /* Copyright.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Copyright.txt; sourceTree = "<group>"; };
-		D2ED0ECD27D55FE20053115F /* DtaDevOpal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOpal.h; sourceTree = "<group>"; };
-		D2ED0ECF27D55FE20053115F /* tassert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tassert.h; sourceTree = "<group>"; };
-		D2ED0ED027D55FE20053115F /* blockwise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blockwise.h; sourceTree = "<group>"; };
-		D2ED0ED127D55FE20053115F /* hmac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hmac.c; sourceTree = "<group>"; };
-		D2ED0ED227D55FE20053115F /* bitops.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitops.h; sourceTree = "<group>"; };
-		D2ED0ED327D55FE20053115F /* chash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chash.h; sourceTree = "<group>"; };
-		D2ED0ED427D55FE20053115F /* sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha1.c; sourceTree = "<group>"; };
-		D2ED0ED527D55FE20053115F /* pbkdf2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pbkdf2.h; sourceTree = "<group>"; };
-		D2ED0ED627D55FE20053115F /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
-		D2ED0ED727D55FE20053115F /* hmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hmac.h; sourceTree = "<group>"; };
-		D2ED0ED827D55FE20053115F /* handy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = handy.h; sourceTree = "<group>"; };
-		D2ED0ED927D55FE20053115F /* blockwise.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blockwise.c; sourceTree = "<group>"; };
-		D2ED0EDA27D55FE20053115F /* sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha1.h; sourceTree = "<group>"; };
-		D2ED0EDB27D55FE20053115F /* chash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = chash.c; sourceTree = "<group>"; };
-		D2ED0EDC27D55FE20053115F /* pbkdf2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pbkdf2.c; sourceTree = "<group>"; };
-		D2ED0EDD27D55FE20053115F /* DtaCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaCommand.cpp; sourceTree = "<group>"; };
-		D2ED0EDE27D55FE20053115F /* DtaOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaOptions.cpp; sourceTree = "<group>"; };
-		D2ED0EDF27D55FE20053115F /* DtaDiskType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDiskType.h; sourceTree = "<group>"; };
-		D2ED0EE027D55FE20053115F /* DtaDevGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevGeneric.h; sourceTree = "<group>"; };
-		D2ED0EE127D55FE20053115F /* DtaDevOpal2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal2.cpp; sourceTree = "<group>"; };
-		D2ED0EE227D55FE20053115F /* DtaOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
-		D2ED0EE327D55FE20053115F /* DtaDevOpal1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal1.cpp; sourceTree = "<group>"; };
-		D2ED0EE427D55FE20053115F /* DtaLexicon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaLexicon.h; sourceTree = "<group>"; };
-		D2ED0EE527D55FE20053115F /* DtaDevEnterprise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevEnterprise.cpp; sourceTree = "<group>"; };
-		D2ED0EE627D55FE20053115F /* DtaDevGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevGeneric.cpp; sourceTree = "<group>"; };
-		D2ED0EE727D55FE20053115F /* DtaDevOpal2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOpal2.h; sourceTree = "<group>"; };
-		D2ED0EE827D55FE20053115F /* DtaHashPwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaHashPwd.h; sourceTree = "<group>"; };
-		D2ED0EE927D55FE20053115F /* DtaHashPwd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaHashPwd.cpp; sourceTree = "<group>"; };
-		D2ED0EEA27D55FE20053115F /* DtaDiskType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDiskType.cpp; sourceTree = "<group>"; };
-		D2ED0EEB27D55FE20053115F /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
-		D2ED0EEC27D55FE20053115F /* DtaSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaSession.h; sourceTree = "<group>"; };
-		D2ED0EED27D55FE20053115F /* DtaStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaStructures.h; sourceTree = "<group>"; };
-		D2ED0EEE27D55FE20053115F /* DtaHexDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaHexDump.cpp; sourceTree = "<group>"; };
-		D2ED0EEF27D55FE20053115F /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
-		D2ED0EF027D55FE20053115F /* sedutil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sedutil.cpp; sourceTree = "<group>"; };
-		D2ED0EF127D55FE20053115F /* DtaSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaSession.cpp; sourceTree = "<group>"; };
-		D2ED0EF227D55FE20053115F /* DtaDev.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDev.cpp; sourceTree = "<group>"; };
-		D2ED0EF327D55FE20053115F /* DtaResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaResponse.cpp; sourceTree = "<group>"; };
-		D2ED0EF427D55FE20053115F /* DtaAnnotatedDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaAnnotatedDump.h; sourceTree = "<group>"; };
-		D2ED0EF527D55FE20053115F /* DtaEndianFixup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaEndianFixup.h; sourceTree = "<group>"; };
-		D2ED0EF627D55FE20053115F /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
-		D2ED0EF727D55FE20053115F /* DtaConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaConstants.h; sourceTree = "<group>"; };
-		D2ED0EF827D55FE20053115F /* DtaHexDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaHexDump.h; sourceTree = "<group>"; };
-		D2ED0EF927D55FE20053115F /* DtaCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaCommand.h; sourceTree = "<group>"; };
-		D2ED0EFA27D55FE20053115F /* DtaDev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDev.h; sourceTree = "<group>"; };
-		D2ED0F3927D564D20053115F /* DtaDevOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOS.h; sourceTree = "<group>"; };
-		D2ED0F3A27D564D20053115F /* PSIDRevert_MACOS.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PSIDRevert_MACOS.txt; sourceTree = "<group>"; };
-		D2ED0F3B27D564D20053115F /* os.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = os.h; sourceTree = "<group>"; };
-		D2ED0F3D27D564D20053115F /* TestSuite.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = TestSuite.sh; sourceTree = "<group>"; };
-		D2ED0F3E27D564D20053115F /* DtaDevMacOSDrive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSDrive.h; sourceTree = "<group>"; };
-		D2ED0F4227D564D20053115F /* DtaDevOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOS.cpp; sourceTree = "<group>"; };
-		D2ED0F5027D6703B0053115F /* Version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
+		D20A63A81F731FDB00F154AC /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = log.h; path = ../../../Common/log.h; sourceTree = "<group>"; };
+		D20A63AA1F73204000F154AC /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = log.cpp; path = ../../log.cpp; sourceTree = "<group>"; };
+		D23F3DF728B57BB400741CC0 /* sedutil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sedutil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D23F3DF828B57BB400741CC0 /* log.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D23F3DF928B57BB400741CC0 /* cifra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = cifra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SEDKernelInterface.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2466A4528B58518009F55D9 /* os.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = os.h; path = ../os.h; sourceTree = "<group>"; };
+		D2466A4B28B585F8009F55D9 /* DtaDevOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaDevOS.h; sourceTree = "<group>"; };
+		D271A1F528054AFD00BF043A /* DtaStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaStructures.h; sourceTree = "<group>"; };
+		D271A1F628054AFD00BF043A /* DtaDev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDev.h; sourceTree = "<group>"; };
+		D271A1F728054AFD00BF043A /* DtaOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
+		D271A1F828054AFD00BF043A /* DtaConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaConstants.h; sourceTree = "<group>"; };
+		D271A1F928054AFE00BF043A /* DtaLexicon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaLexicon.h; sourceTree = "<group>"; };
+		D271A1FA28054AFE00BF043A /* DtaResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaResponse.h; sourceTree = "<group>"; };
+		D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal2.cpp; sourceTree = "<group>"; };
+		D2772AD128BBFF8C0005E001 /* DtaDevOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOS.cpp; sourceTree = "<group>"; };
+		D2772AD328BBFFB60005E001 /* DtaDevMacOSTPer_SAT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer_SAT.h; sourceTree = "<group>"; };
+		D2772AD428BBFFB60005E001 /* DtaDevMacOSBlockStorageDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSBlockStorageDevice.h; sourceTree = "<group>"; };
+		D2772AD528BBFFB60005E001 /* DtaDevMacOSTPer_SAT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSTPer_SAT.cpp; sourceTree = "<group>"; };
+		D2772AD628BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSBlockStorageDevice.cpp; sourceTree = "<group>"; };
+		D2772AD728BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSTPer_SCSI.cpp; sourceTree = "<group>"; };
+		D2772AD828BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer_SCSI.h; sourceTree = "<group>"; };
+		D2772AD928BBFFB70005E001 /* DtaDevMacOSTPer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSTPer.cpp; sourceTree = "<group>"; };
+		D29C45F328C185150093AC75 /* GitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GitVersion.sh; sourceTree = "<group>"; };
+		D29C45F528C185590093AC75 /* MakeVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = MakeVersion.sh; sourceTree = "<group>"; };
+		D29C45F628C185590093AC75 /* CleanVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CleanVersion.sh; sourceTree = "<group>"; };
+		D29C45F828C186920093AC75 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Version.h; path = ../Version.h; sourceTree = "<group>"; };
+		D2A06C9528B5D88800C0DDB6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		D2B2036428BBFF1D004C88FF /* DtaDevMacOSTPer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer.h; sourceTree = "<group>"; };
+		D2BDDC9128A5B23600001E26 /* ATAStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATAStructures.h; path = "/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/Common/ATAStructures.h"; sourceTree = "<absolute>"; };
+		D2BDDC9628A6361600001E26 /* ob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ob.h; sourceTree = "<group>"; };
+		D2BDDC9728A6361600001E26 /* ob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ob.cpp; sourceTree = "<group>"; };
+		D2BDDC9A28A6369900001E26 /* pyexthash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pyexthash.h; sourceTree = "<group>"; };
+		D2BDDC9B28A6369A00001E26 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
+		D2BDDC9E28A63B9200001E26 /* pyextob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pyextob.h; sourceTree = "<group>"; };
+		D2D1379B28B55B9E003FD51F /* DtaOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaOptions.h; path = "/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/Common/DtaOptions.h"; sourceTree = "<absolute>"; };
+		D2D1379E28B55C14003FD51F /* sedutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sedutil.h; path = sedutil/sedutil.h; sourceTree = "<group>"; };
+		D2EA83D628053B3400A0F685 /* DtaDevOpal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal.cpp; sourceTree = "<group>"; };
+		D2EA83D828053B3400A0F685 /* DtaAnnotatedDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAnnotatedDump.cpp; sourceTree = "<group>"; };
+		D2EA83DA28053B3400A0F685 /* Copyright.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Copyright.txt; sourceTree = "<group>"; };
+		D2EA83EB28053B3400A0F685 /* DtaCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaCommand.cpp; sourceTree = "<group>"; };
+		D2EA83ED28053B3400A0F685 /* DtaDiskType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDiskType.h; sourceTree = "<group>"; };
+		D2EA83EF28053B3400A0F685 /* DtaDevOpal1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal1.cpp; sourceTree = "<group>"; };
+		D2EA83F228053B3400A0F685 /* DtaDevGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevGeneric.cpp; sourceTree = "<group>"; };
+		D2EA83F428053B3400A0F685 /* DtaHashPwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaHashPwd.h; sourceTree = "<group>"; };
+		D2EA83F628053B3400A0F685 /* DtaDiskType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDiskType.cpp; sourceTree = "<group>"; };
+		D2EA83F828053B3400A0F685 /* DtaSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaSession.h; sourceTree = "<group>"; };
+		D2EA83F928053B3400A0F685 /* DtaHexDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaHexDump.cpp; sourceTree = "<group>"; };
+		D2EA83FC28053B3400A0F685 /* DtaSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaSession.cpp; sourceTree = "<group>"; };
+		D2EA83FE28053B3400A0F685 /* DtaResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaResponse.cpp; sourceTree = "<group>"; };
+		D2EA840028053B3400A0F685 /* DtaEndianFixup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaEndianFixup.h; sourceTree = "<group>"; };
+		D2EA840228053B3400A0F685 /* DtaHexDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaHexDump.h; sourceTree = "<group>"; };
+		D2EA840628053B3600A0F685 /* DtaDevEnterprise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevEnterprise.h; sourceTree = "<group>"; };
+		D2EA840928053B3700A0F685 /* DtaDev.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDev.cpp; sourceTree = "<group>"; };
+		D2EA840A28053B3700A0F685 /* DtaDevEnterprise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevEnterprise.cpp; sourceTree = "<group>"; };
+		D2EA840C28053B3800A0F685 /* DtaDevOpal2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOpal2.h; sourceTree = "<group>"; };
+		D2EA840F28053B3A00A0F685 /* DtaCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaCommand.h; sourceTree = "<group>"; };
+		D2EA841128053B3B00A0F685 /* DtaDevOpal1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOpal1.h; sourceTree = "<group>"; };
+		D2EA841528053B3D00A0F685 /* DtaOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaOptions.cpp; sourceTree = "<group>"; };
+		D2EA842728053B3F00A0F685 /* DtaHashPwd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaHashPwd.cpp; sourceTree = "<group>"; };
+		D2EA842828053B3F00A0F685 /* DtaDevOpal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOpal.h; sourceTree = "<group>"; };
+		D2EA843228053B4400A0F685 /* DtaAnnotatedDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaAnnotatedDump.h; sourceTree = "<group>"; };
+		D2EA843328053B4400A0F685 /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
+		D2EA843728053B4600A0F685 /* DtaDevGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevGeneric.h; sourceTree = "<group>"; };
+		D2EBA4911F055579002F8780 /* cifra.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cifra.h; sourceTree = "<group>"; };
+		D2EBA4921F055579002F8780 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D2EBA49E1F055590002F8780 /* bitops.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitops.h; sourceTree = "<group>"; };
+		D2EBA49F1F055590002F8780 /* blockwise.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blockwise.c; sourceTree = "<group>"; };
+		D2EBA4A01F055590002F8780 /* blockwise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blockwise.h; sourceTree = "<group>"; };
+		D2EBA4A11F055590002F8780 /* chash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = chash.c; sourceTree = "<group>"; };
+		D2EBA4A21F055590002F8780 /* chash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chash.h; sourceTree = "<group>"; };
+		D2EBA4A31F055590002F8780 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		D2EBA4A41F055590002F8780 /* handy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = handy.h; sourceTree = "<group>"; };
+		D2EBA4A51F055590002F8780 /* hmac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hmac.c; sourceTree = "<group>"; };
+		D2EBA4A61F055590002F8780 /* hmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hmac.h; sourceTree = "<group>"; };
+		D2EBA4A71F055590002F8780 /* pbkdf2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pbkdf2.c; sourceTree = "<group>"; };
+		D2EBA4A81F055590002F8780 /* pbkdf2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pbkdf2.h; sourceTree = "<group>"; };
+		D2EBA4A91F055590002F8780 /* sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha1.c; sourceTree = "<group>"; };
+		D2EBA4AA1F055590002F8780 /* sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha1.h; sourceTree = "<group>"; };
+		D2EBA4AB1F055590002F8780 /* tassert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tassert.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		D23F35172845B22E00708384 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D2C42ADC2845C0DD00D3B958 /* CoreFoundation.framework in Frameworks */,
-				D2C42ADB2845BC2800D3B958 /* IOKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D2D0018927FB4F95007679E3 /* Frameworks */ = {
+		D20A63931F731F3600F154AC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D2ED0EB927D55FBD0053115F /* Frameworks */ = {
+		D2EBA3031F0549B7002F8780 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D226506027FB550600BA5499 /* IOKit.framework in Frameworks */,
-				D226505F27FB54D600BA5499 /* CoreFoundation.framework in Frameworks */,
+				D274DB7228B7FC9D00B9CD1F /* SEDKernelInterface.framework in Frameworks */,
+				D2A06C9D28B5DC7900C0DDB6 /* cifra.framework in Frameworks */,
+				D2A06C9C28B5D8FE00C0DDB6 /* IOKit.framework in Frameworks */,
+				D2A06C9628B5D88800C0DDB6 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2EBA48B1F055579002F8780 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D226503927FB52A100BA5499 /* sedutil */ = {
+		D20A63981F731F3600F154AC /* log */ = {
 			isa = PBXGroup;
 			children = (
-				D226503A27FB52A100BA5499 /* MakeVersion.sh */,
-				D226503B27FB52A100BA5499 /* CleanVersion.sh */,
+				D20A63A81F731FDB00F154AC /* log.h */,
+				D20A63AA1F73204000F154AC /* log.cpp */,
 			);
-			path = sedutil;
+			path = log;
 			sourceTree = "<group>";
 		};
-		D226503C27FB52C000BA5499 /* sedutil project */ = {
+		D23F3E0B28B57E6800741CC0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D226503D27FB52C000BA5499 /* GitVersion.sh */,
-			);
-			path = "sedutil project";
-			sourceTree = "<group>";
-		};
-		D226505227FB531F00BA5499 /* SEDKernelInterface */ = {
-			isa = PBXGroup;
-			children = (
-				D226505327FB531F00BA5499 /* SEDKernelInterface.h */,
-				D226505427FB531F00BA5499 /* UserKernelShared.h */,
-				D226505527FB531F00BA5499 /* TPerDriverDispatchTable.inc */,
-				D226505627FB531F00BA5499 /* TPerKernelInterface.h */,
-				D226505727FB531F00BA5499 /* RegistryUtilities.mm */,
-				D226505827FB531F00BA5499 /* RegistryUtilities.h */,
-				D226505927FB531F00BA5499 /* TPerKernelInterface.c */,
-				D226505A27FB531F00BA5499 /* Info.plist */,
-			);
-			path = SEDKernelInterface;
-			sourceTree = "<group>";
-		};
-		D226505B27FB545500BA5499 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				D226505E27FB54D600BA5499 /* CoreFoundation.framework */,
-				D226505C27FB545500BA5499 /* IOKit.framework */,
+				D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */,
+				D2A06C9528B5D88800C0DDB6 /* Foundation.framework */,
+				D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		D23F351B2845B22E00708384 /* IORegistryTest */ = {
+		D2466A4628B585F8009F55D9 /* macos */ = {
 			isa = PBXGroup;
 			children = (
-				D23F351C2845B22E00708384 /* main.cpp */,
-			);
-			path = IORegistryTest;
-			sourceTree = "<group>";
-		};
-		D27F65D527F437860091C6ED /* PrintBuffer */ = {
-			isa = PBXGroup;
-			children = (
-				D27F65D827F4381C0091C6ED /* PrintBuffer.h */,
-				D27F65D627F437860091C6ED /* PrintBuffer.c */,
-			);
-			path = PrintBuffer;
-			sourceTree = "<group>";
-		};
-		D2D0018D27FB4F95007679E3 /* reenumerate */ = {
-			isa = PBXGroup;
-			children = (
-				D2D0019327FB5003007679E3 /* IOUSBFamilyInfoPlist.pch */,
-				D2D0018E27FB4F95007679E3 /* reenumerate.c */,
-			);
-			path = reenumerate;
-			sourceTree = "<group>";
-		};
-		D2ED0EB327D55FBD0053115F = {
-			isa = PBXGroup;
-			children = (
-				D2ED0F3727D564D20053115F /* macos */,
-				D2ED0EC627D55FE20053115F /* Common */,
-				D2D0018D27FB4F95007679E3 /* reenumerate */,
-				D23F351B2845B22E00708384 /* IORegistryTest */,
-				D2ED0EBD27D55FBD0053115F /* Products */,
-				D226505B27FB545500BA5499 /* Frameworks */,
-			);
-			sourceTree = "<group>";
-		};
-		D2ED0EBD27D55FBD0053115F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				D2ED0EBC27D55FBD0053115F /* sedutil-cli */,
-				D2D0018C27FB4F95007679E3 /* reenumerate */,
-				D23F351A2845B22E00708384 /* IORegistryTest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		D2ED0EC627D55FE20053115F /* Common */ = {
-			isa = PBXGroup;
-			children = (
-				D2ED0EFA27D55FE20053115F /* DtaDev.h */,
-				D2ED0EF227D55FE20053115F /* DtaDev.cpp */,
-				D2ED0EE027D55FE20053115F /* DtaDevGeneric.h */,
-				D2ED0EE627D55FE20053115F /* DtaDevGeneric.cpp */,
-				D2ED0EC727D55FE20053115F /* DtaResponse.h */,
-				D2ED0EC827D55FE20053115F /* DtaDevOpal.cpp */,
-				D2ED0EC927D55FE20053115F /* DtaDevEnterprise.h */,
-				D2ED0ECA27D55FE20053115F /* DtaAnnotatedDump.cpp */,
-				D2ED0ECB27D55FE20053115F /* DtaDevOpal1.h */,
-				D2ED0ECC27D55FE20053115F /* Copyright.txt */,
-				D2ED0ECD27D55FE20053115F /* DtaDevOpal.h */,
-				D2ED0ECE27D55FE20053115F /* pbkdf2 */,
-				D2ED0EDD27D55FE20053115F /* DtaCommand.cpp */,
-				D2ED0EDE27D55FE20053115F /* DtaOptions.cpp */,
-				D2ED0EDF27D55FE20053115F /* DtaDiskType.h */,
-				D2ED0EE127D55FE20053115F /* DtaDevOpal2.cpp */,
-				D2ED0EE227D55FE20053115F /* DtaOptions.h */,
-				D2ED0EE327D55FE20053115F /* DtaDevOpal1.cpp */,
-				D2ED0EE427D55FE20053115F /* DtaLexicon.h */,
-				D2ED0EE527D55FE20053115F /* DtaDevEnterprise.cpp */,
-				D2ED0EE727D55FE20053115F /* DtaDevOpal2.h */,
-				D2ED0EE827D55FE20053115F /* DtaHashPwd.h */,
-				D2ED0EE927D55FE20053115F /* DtaHashPwd.cpp */,
-				D2ED0EEA27D55FE20053115F /* DtaDiskType.cpp */,
-				D2ED0EEB27D55FE20053115F /* log.h */,
-				D2ED0EEC27D55FE20053115F /* DtaSession.h */,
-				D2ED0EED27D55FE20053115F /* DtaStructures.h */,
-				D293C2DF289EEA3D005E7AA8 /* ATAStructures.h */,
-				D2ED0EEE27D55FE20053115F /* DtaHexDump.cpp */,
-				D2ED0EEF27D55FE20053115F /* ReadMe.txt */,
-				D2ED0EF027D55FE20053115F /* sedutil.cpp */,
-				D2ED0EF127D55FE20053115F /* DtaSession.cpp */,
-				D2ED0EF327D55FE20053115F /* DtaResponse.cpp */,
-				D2ED0EF427D55FE20053115F /* DtaAnnotatedDump.h */,
-				D2ED0EF527D55FE20053115F /* DtaEndianFixup.h */,
-				D2ED0EF627D55FE20053115F /* LICENSE.txt */,
-				D2ED0EF727D55FE20053115F /* DtaConstants.h */,
-				D2AEC69A27F499F20050D42F /* DtaMacOSConstants.h */,
-				D2ED0EF827D55FE20053115F /* DtaHexDump.h */,
-				D2ED0EF927D55FE20053115F /* DtaCommand.h */,
-			);
-			name = Common;
-			path = ../../Common;
-			sourceTree = "<group>";
-		};
-		D2ED0ECE27D55FE20053115F /* pbkdf2 */ = {
-			isa = PBXGroup;
-			children = (
-				D2ED0ECF27D55FE20053115F /* tassert.h */,
-				D2ED0ED027D55FE20053115F /* blockwise.h */,
-				D2ED0ED127D55FE20053115F /* hmac.c */,
-				D2ED0ED227D55FE20053115F /* bitops.h */,
-				D2ED0ED327D55FE20053115F /* chash.h */,
-				D2ED0ED427D55FE20053115F /* sha1.c */,
-				D2ED0ED527D55FE20053115F /* pbkdf2.h */,
-				D2ED0ED627D55FE20053115F /* COPYING */,
-				D2ED0ED727D55FE20053115F /* hmac.h */,
-				D2ED0ED827D55FE20053115F /* handy.h */,
-				D2ED0ED927D55FE20053115F /* blockwise.c */,
-				D2ED0EDA27D55FE20053115F /* sha1.h */,
-				D2ED0EDB27D55FE20053115F /* chash.c */,
-				D2ED0EDC27D55FE20053115F /* pbkdf2.c */,
-			);
-			path = pbkdf2;
-			sourceTree = "<group>";
-		};
-		D2ED0F3727D564D20053115F /* macos */ = {
-			isa = PBXGroup;
-			children = (
-				D226505227FB531F00BA5499 /* SEDKernelInterface */,
-				D226503C27FB52C000BA5499 /* sedutil project */,
-				D226503927FB52A100BA5499 /* sedutil */,
-				D27F65DD27F43B350091C6ED /* debug.h */,
-				D27F65D527F437860091C6ED /* PrintBuffer */,
-				D2ED0F5027D6703B0053115F /* Version.h */,
-				D2ED0F3B27D564D20053115F /* os.h */,
-				D2ED0F3927D564D20053115F /* DtaDevOS.h */,
-				D2ED0F4227D564D20053115F /* DtaDevOS.cpp */,
-				D27F65D027F42DC50091C6ED /* DtaDevMacOS_UAS_SAT.cpp */,
-				D293C2DC289ED926005E7AA8 /* DtaDevMacOS_ATA.cpp */,
-				D2DE3A422845440B00B4F78E /* DtaBlockStorageDevice.cpp */,
-				D21322F3283B06500076B62F /* DtaDevMacOSDrive.cpp */,
-				D27F65CF27F42DC50091C6ED /* DtaDevMacOS_UAS_SAT.h */,
-				D293C2DE289ED93D005E7AA8 /* DtaDevMacOS_ATA.h */,
-				D2ED0F3E27D564D20053115F /* DtaDevMacOSDrive.h */,
-				D2DE3A412845436B00B4F78E /* DtaBlockStorageDevice.h */,
-				D2ED0F3A27D564D20053115F /* PSIDRevert_MACOS.txt */,
-				D2ED0F3D27D564D20053115F /* TestSuite.sh */,
+				D2466A4B28B585F8009F55D9 /* DtaDevOS.h */,
+				D2772AD128BBFF8C0005E001 /* DtaDevOS.cpp */,
+				D2772AD428BBFFB60005E001 /* DtaDevMacOSBlockStorageDevice.h */,
+				D2772AD628BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.cpp */,
+				D2B2036428BBFF1D004C88FF /* DtaDevMacOSTPer.h */,
+				D2772AD928BBFFB70005E001 /* DtaDevMacOSTPer.cpp */,
+				D2772AD328BBFFB60005E001 /* DtaDevMacOSTPer_SAT.h */,
+				D2772AD528BBFFB60005E001 /* DtaDevMacOSTPer_SAT.cpp */,
+				D2772AD828BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h */,
+				D2772AD728BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.cpp */,
 			);
 			name = macos;
 			path = ..;
 			sourceTree = "<group>";
 		};
+		D29C45F428C185590093AC75 /* sedutil */ = {
+			isa = PBXGroup;
+			children = (
+				D29C45F528C185590093AC75 /* MakeVersion.sh */,
+				D29C45F628C185590093AC75 /* CleanVersion.sh */,
+			);
+			name = sedutil;
+			path = ../sedutil;
+			sourceTree = "<group>";
+		};
+		D29C45F728C1857D0093AC75 /* versioning */ = {
+			isa = PBXGroup;
+			children = (
+				D29C45F828C186920093AC75 /* Version.h */,
+				D29C45F428C185590093AC75 /* sedutil */,
+				D29C45F328C185150093AC75 /* GitVersion.sh */,
+			);
+			name = versioning;
+			sourceTree = "<group>";
+		};
+		D2BD8F541F02016B00747F4A = {
+			isa = PBXGroup;
+			children = (
+				D29C45F728C1857D0093AC75 /* versioning */,
+				D2466A4528B58518009F55D9 /* os.h */,
+				D2D1379B28B55B9E003FD51F /* DtaOptions.h */,
+				D2D1379E28B55C14003FD51F /* sedutil.h */,
+				D2D137A028B55C15003FD51F /* Common */,
+				D2466A4628B585F8009F55D9 /* macos */,
+				D2EBA4901F055579002F8780 /* cifra (open source crypto) */,
+				D20A63981F731F3600F154AC /* log */,
+				D23F3DF728B57BB400741CC0 /* sedutil.framework */,
+				D23F3DF828B57BB400741CC0 /* log.framework */,
+				D23F3DF928B57BB400741CC0 /* cifra.framework */,
+				D23F3E0B28B57E6800741CC0 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		D2D137A028B55C15003FD51F /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				D2BDDC9728A6361600001E26 /* ob.cpp */,
+				D2BDDC9A28A6369900001E26 /* pyexthash.h */,
+				D2BDDC9E28A63B9200001E26 /* pyextob.h */,
+				D2BDDC9B28A6369A00001E26 /* ReadMe.txt */,
+				D2BDDC9628A6361600001E26 /* ob.h */,
+				D2BDDC9128A5B23600001E26 /* ATAStructures.h */,
+				D2EA83D828053B3400A0F685 /* DtaAnnotatedDump.cpp */,
+				D2EA843228053B4400A0F685 /* DtaAnnotatedDump.h */,
+				D2EA83EB28053B3400A0F685 /* DtaCommand.cpp */,
+				D2EA840F28053B3A00A0F685 /* DtaCommand.h */,
+				D271A1F828054AFD00BF043A /* DtaConstants.h */,
+				D2EA840928053B3700A0F685 /* DtaDev.cpp */,
+				D271A1F628054AFD00BF043A /* DtaDev.h */,
+				D2EA840A28053B3700A0F685 /* DtaDevEnterprise.cpp */,
+				D2EA840628053B3600A0F685 /* DtaDevEnterprise.h */,
+				D2EA843728053B4600A0F685 /* DtaDevGeneric.h */,
+				D2EA83D628053B3400A0F685 /* DtaDevOpal.cpp */,
+				D2EA842828053B3F00A0F685 /* DtaDevOpal.h */,
+				D2EA841128053B3B00A0F685 /* DtaDevOpal1.h */,
+				D2EA83EF28053B3400A0F685 /* DtaDevOpal1.cpp */,
+				D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */,
+				D2EA840C28053B3800A0F685 /* DtaDevOpal2.h */,
+				D2EA83ED28053B3400A0F685 /* DtaDiskType.h */,
+				D2EA840028053B3400A0F685 /* DtaEndianFixup.h */,
+				D2EA842728053B3F00A0F685 /* DtaHashPwd.cpp */,
+				D2EA83F428053B3400A0F685 /* DtaHashPwd.h */,
+				D2EA840228053B3400A0F685 /* DtaHexDump.h */,
+				D2EA83F928053B3400A0F685 /* DtaHexDump.cpp */,
+				D271A1F928054AFE00BF043A /* DtaLexicon.h */,
+				D271A1F728054AFD00BF043A /* DtaOptions.h */,
+				D2EA83FE28053B3400A0F685 /* DtaResponse.cpp */,
+				D271A1FA28054AFE00BF043A /* DtaResponse.h */,
+				D2EA83FC28053B3400A0F685 /* DtaSession.cpp */,
+				D2EA83F828053B3400A0F685 /* DtaSession.h */,
+				D271A1F528054AFD00BF043A /* DtaStructures.h */,
+				D2EA83DA28053B3400A0F685 /* Copyright.txt */,
+				D2EA841528053B3D00A0F685 /* DtaOptions.cpp */,
+				D2EA83F228053B3400A0F685 /* DtaDevGeneric.cpp */,
+				D2EA83F628053B3400A0F685 /* DtaDiskType.cpp */,
+				D2EA843328053B4400A0F685 /* log.h */,
+			);
+			name = Common;
+			path = ../../Common;
+			sourceTree = "<group>";
+		};
+		D2EBA4901F055579002F8780 /* cifra (open source crypto) */ = {
+			isa = PBXGroup;
+			children = (
+				D2EBA49D1F055590002F8780 /* pbkdf2 */,
+				D2EBA4911F055579002F8780 /* cifra.h */,
+				D2EBA4921F055579002F8780 /* Info.plist */,
+			);
+			name = "cifra (open source crypto)";
+			path = cifra;
+			sourceTree = "<group>";
+		};
+		D2EBA49D1F055590002F8780 /* pbkdf2 */ = {
+			isa = PBXGroup;
+			children = (
+				D2EBA49E1F055590002F8780 /* bitops.h */,
+				D2EBA49F1F055590002F8780 /* blockwise.c */,
+				D2EBA4A01F055590002F8780 /* blockwise.h */,
+				D2EBA4A11F055590002F8780 /* chash.c */,
+				D2EBA4A21F055590002F8780 /* chash.h */,
+				D2EBA4A31F055590002F8780 /* COPYING */,
+				D2EBA4A41F055590002F8780 /* handy.h */,
+				D2EBA4A51F055590002F8780 /* hmac.c */,
+				D2EBA4A61F055590002F8780 /* hmac.h */,
+				D2EBA4A71F055590002F8780 /* pbkdf2.c */,
+				D2EBA4A81F055590002F8780 /* pbkdf2.h */,
+				D2EBA4A91F055590002F8780 /* sha1.c */,
+				D2EBA4AA1F055590002F8780 /* sha1.h */,
+				D2EBA4AB1F055590002F8780 /* tassert.h */,
+			);
+			name = pbkdf2;
+			path = ../../../Common/pbkdf2;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
-/* Begin PBXLegacyTarget section */
-		D21322EB283AAA110076B62F /* version */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = ../sedutil/MakeVersion.sh;
-			buildConfigurationList = D21322EE283AAA110076B62F /* Build configuration list for PBXLegacyTarget "version" */;
-			buildPhases = (
+/* Begin PBXHeadersBuildPhase section */
+		D20A63941F731F3600F154AC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2D1379C28B55BAE003FD51F /* DtaOptions.h in Headers */,
 			);
-			buildToolPath = /bin/bash;
-			buildWorkingDirectory = "/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project";
-			dependencies = (
-			);
-			name = version;
-			passBuildSettingsInEnvironment = 1;
-			productName = version;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
-/* End PBXLegacyTarget section */
+		D2EBA3041F0549B7002F8780 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2772B1C28BC32330005E001 /* os.h in Headers */,
+				D2466AF328B5876C009F55D9 /* DtaDevOS.h in Headers */,
+				D2772ADA28BBFFB70005E001 /* DtaDevMacOSTPer_SAT.h in Headers */,
+				D2772ADB28BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.h in Headers */,
+				D2B2036528BBFF1D004C88FF /* DtaDevMacOSTPer.h in Headers */,
+				D2772ADF28BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h in Headers */,
+				D2772B1E28BC345A0005E001 /* ATAStructures.h in Headers */,
+				D271A1FF28054AFE00BF043A /* DtaLexicon.h in Headers */,
+				D271A1FE28054AFE00BF043A /* DtaConstants.h in Headers */,
+				D271A1FB28054AFE00BF043A /* DtaStructures.h in Headers */,
+				D271A1FD28054AFE00BF043A /* DtaOptions.h in Headers */,
+				D271A1FC28054AFE00BF043A /* DtaDev.h in Headers */,
+				D2EA848428053B4D00A0F685 /* DtaDevGeneric.h in Headers */,
+				D2EA844A28053B4C00A0F685 /* DtaDevEnterprise.h in Headers */,
+				D2EA845228053B4C00A0F685 /* DtaDevOpal.h in Headers */,
+				D2EA844E28053B4C00A0F685 /* DtaDevOpal1.h in Headers */,
+				D2EA849028053B4D00A0F685 /* DtaDevOpal2.h in Headers */,
+				D2EA849928053B4D00A0F685 /* DtaSession.h in Headers */,
+				D2EA84AA28053B4E00A0F685 /* DtaAnnotatedDump.h in Headers */,
+				D2EA849128053B4D00A0F685 /* DtaHashPwd.h in Headers */,
+				D2EA848128053B4D00A0F685 /* DtaDiskType.h in Headers */,
+				D2EA84B228053B4E00A0F685 /* DtaCommand.h in Headers */,
+				D271A20028054AFE00BF043A /* DtaResponse.h in Headers */,
+				D2EA84AB28053B4E00A0F685 /* DtaEndianFixup.h in Headers */,
+				D2BDDC9828A6361600001E26 /* ob.h in Headers */,
+				D2BDDC9F28A63B9200001E26 /* pyextob.h in Headers */,
+				D2BDDC9C28A6369A00001E26 /* pyexthash.h in Headers */,
+				D2EA84AF28053B4E00A0F685 /* DtaHexDump.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2EBA48C1F055579002F8780 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2EBA4B81F055590002F8780 /* sha1.h in Headers */,
+				D2EBA4B61F055590002F8780 /* pbkdf2.h in Headers */,
+				D2EBA4B21F055590002F8780 /* handy.h in Headers */,
+				D2EBA4B41F055590002F8780 /* hmac.h in Headers */,
+				D2EBA4B01F055590002F8780 /* chash.h in Headers */,
+				D2EBA4AE1F055590002F8780 /* blockwise.h in Headers */,
+				D2EBA4AC1F055590002F8780 /* bitops.h in Headers */,
+				D2EBA4B91F055590002F8780 /* tassert.h in Headers */,
+				D2EBA4931F055579002F8780 /* cifra.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		D23F35192845B22E00708384 /* IORegistryTest */ = {
+		D20A63961F731F3600F154AC /* log */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D23F351E2845B22E00708384 /* Build configuration list for PBXNativeTarget "IORegistryTest" */;
+			buildConfigurationList = D20A639C1F731F3600F154AC /* Build configuration list for PBXNativeTarget "log" */;
 			buildPhases = (
-				D23F35162845B22E00708384 /* Sources */,
-				D23F35172845B22E00708384 /* Frameworks */,
-				D23F35182845B22E00708384 /* CopyFiles */,
+				D20A63921F731F3600F154AC /* Sources */,
+				D20A63931F731F3600F154AC /* Frameworks */,
+				D20A63941F731F3600F154AC /* Headers */,
+				D20A63951F731F3600F154AC /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = IORegistryTest;
-			productName = IORegistryTest;
-			productReference = D23F351A2845B22E00708384 /* IORegistryTest */;
-			productType = "com.apple.product-type.tool";
+			name = log;
+			productName = log;
+			productReference = D23F3DF828B57BB400741CC0 /* log.framework */;
+			productType = "com.apple.product-type.framework";
 		};
-		D2D0018B27FB4F95007679E3 /* reenumerate */ = {
+		D2EBA3061F0549B7002F8780 /* sedutil */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D2D0019227FB4F95007679E3 /* Build configuration list for PBXNativeTarget "reenumerate" */;
+			buildConfigurationList = D2EBA30C1F0549B7002F8780 /* Build configuration list for PBXNativeTarget "sedutil" */;
 			buildPhases = (
-				D2D0018827FB4F95007679E3 /* Sources */,
-				D2D0018927FB4F95007679E3 /* Frameworks */,
-				D2D0018A27FB4F95007679E3 /* CopyFiles */,
+				D244204E1F537182005D2339 /* ShellScript */,
+				D2EBA3021F0549B7002F8780 /* Sources */,
+				D2EBA3031F0549B7002F8780 /* Frameworks */,
+				D2EBA3041F0549B7002F8780 /* Headers */,
+				D2EBA3051F0549B7002F8780 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D2A06C9828B5D8BC00C0DDB6 /* PBXTargetDependency */,
+				D2A06C9A28B5D8BE00C0DDB6 /* PBXTargetDependency */,
 			);
-			name = reenumerate;
-			productName = reenumerate;
-			productReference = D2D0018C27FB4F95007679E3 /* reenumerate */;
-			productType = "com.apple.product-type.tool";
-		};
-		D2ED0EBB27D55FBD0053115F /* sedutil-cli */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D2ED0EC327D55FBD0053115F /* Build configuration list for PBXNativeTarget "sedutil-cli" */;
-			buildPhases = (
-				D2ED0F4B27D6642E0053115F /* ShellScript */,
-				D2ED0EB827D55FBD0053115F /* Sources */,
-				D2ED0EB927D55FBD0053115F /* Frameworks */,
-				D2ED0EBA27D55FBD0053115F /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				D21322F0283AC7D70076B62F /* PBXTargetDependency */,
-			);
-			name = "sedutil-cli";
+			name = sedutil;
 			productName = sedutil;
-			productReference = D2ED0EBC27D55FBD0053115F /* sedutil-cli */;
-			productType = "com.apple.product-type.tool";
+			productReference = D23F3DF728B57BB400741CC0 /* sedutil.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D2EBA48E1F055579002F8780 /* cifra */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D2EBA4941F055579002F8780 /* Build configuration list for PBXNativeTarget "cifra" */;
+			buildPhases = (
+				D2EBA48A1F055579002F8780 /* Sources */,
+				D2EBA48B1F055579002F8780 /* Frameworks */,
+				D2EBA48C1F055579002F8780 /* Headers */,
+				D2EBA48D1F055579002F8780 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = cifra;
+			productName = cifra;
+			productReference = D23F3DF928B57BB400741CC0 /* cifra.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		D2ED0EB427D55FBD0053115F /* Project object */ = {
+		D2BD8F551F02016B00747F4A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1330;
+				LastUpgradeCheck = 1340;
 				TargetAttributes = {
-					D21322EB283AAA110076B62F = {
-						CreatedOnToolsVersion = 13.4;
+					D20A63961F731F3600F154AC = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = 33Y435HD6M;
+						ProvisioningStyle = Automatic;
 					};
-					D23F35192845B22E00708384 = {
-						CreatedOnToolsVersion = 13.4;
+					D2EBA3061F0549B7002F8780 = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = 33Y435HD6M;
+						ProvisioningStyle = Automatic;
 					};
-					D2D0018B27FB4F95007679E3 = {
-						CreatedOnToolsVersion = 13.2.1;
-					};
-					D2ED0EBB27D55FBD0053115F = {
-						CreatedOnToolsVersion = 13.2.1;
+					D2EBA48E1F055579002F8780 = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = 33Y435HD6M;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
-			buildConfigurationList = D2ED0EB727D55FBD0053115F /* Build configuration list for PBXProject "sedutil" */;
-			compatibilityVersion = "Xcode 13.0";
+			buildConfigurationList = D2BD8F581F02016B00747F4A /* Build configuration list for PBXProject "sedutil" */;
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				de,
+				he,
+				en_AU,
+				ar,
+				el,
+				ja,
+				uk,
+				es_419,
+				zh_CN,
+				es,
+				da,
+				it,
+				sk,
+				pt_PT,
+				ms,
+				sv,
+				cs,
+				ko,
+				no,
+				nb,
+				hu,
+				zh_HK,
+				tr,
+				pl,
+				zh_TW,
+				en_GB,
+				vi,
+				ru,
+				fr_CA,
+				fr,
+				fi,
+				id,
+				nl,
+				th,
+				pt,
+				ro,
+				hr,
+				hi,
+				ca,
 			);
-			mainGroup = D2ED0EB327D55FBD0053115F;
-			productRefGroup = D2ED0EBD27D55FBD0053115F /* Products */;
+			mainGroup = D2BD8F541F02016B00747F4A;
+			productRefGroup = D2BD8F541F02016B00747F4A;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D2ED0EBB27D55FBD0053115F /* sedutil-cli */,
-				D2D0018B27FB4F95007679E3 /* reenumerate */,
-				D21322EB283AAA110076B62F /* version */,
-				D23F35192845B22E00708384 /* IORegistryTest */,
+				D2EBA3061F0549B7002F8780 /* sedutil */,
+				D20A63961F731F3600F154AC /* log */,
+				D2EBA48E1F055579002F8780 /* cifra */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		D20A63951F731F3600F154AC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2EBA3051F0549B7002F8780 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2BDDC9D28A6369A00001E26 /* ReadMe.txt in Resources */,
+				D2EA844F28053B4C00A0F685 /* Copyright.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2EBA48D1F055579002F8780 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2EBA4B11F055590002F8780 /* COPYING in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXShellScriptBuildPhase section */
-		D2ED0F4B27D6642E0053115F /* ShellScript */ = {
+		D244204E1F537182005D2339 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
 			);
-			outputFileListPaths = (
-			);
 			outputPaths = (
-				"$(SRCROOT)/Version.h",
+				"$(DERIVED_FILE_DIR)/Version.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"$SRCROOT/../sedutil/MakeVersion.sh\"\n";
+			shellPath = /bin/bash;
+			shellScript = "pwd\n../sedutil/MakeVersion.sh \n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		D23F35162845B22E00708384 /* Sources */ = {
+		D20A63921F731F3600F154AC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D23F351D2845B22E00708384 /* main.cpp in Sources */,
+				D2D137A128B56329003FD51F /* log.h in Sources */,
+				D20A63AB1F73204000F154AC /* log.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D2D0018827FB4F95007679E3 /* Sources */ = {
+		D2EBA3021F0549B7002F8780 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D2D0018F27FB4F95007679E3 /* reenumerate.c in Sources */,
+				D2772AD228BBFF8C0005E001 /* DtaDevOS.cpp in Sources */,
+				D2772ADD28BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.cpp in Sources */,
+				D2772AE028BBFFB70005E001 /* DtaDevMacOSTPer.cpp in Sources */,
+				D2772ADE28BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.cpp in Sources */,
+				D2772ADC28BBFFB70005E001 /* DtaDevMacOSTPer_SAT.cpp in Sources */,
+				D2EA848028053B4D00A0F685 /* DtaOptions.cpp in Sources */,
+				D2EA84A628053B4E00A0F685 /* DtaDev.cpp in Sources */,
+				D2EA848D28053B4D00A0F685 /* DtaDevGeneric.cpp in Sources */,
+				D2EA848C28053B4D00A0F685 /* DtaDevEnterprise.cpp in Sources */,
+				D2EA844728053B4C00A0F685 /* DtaDevOpal.cpp in Sources */,
+				D2EA848528053B4D00A0F685 /* DtaDevOpal1.cpp in Sources */,
+				D27591BA28B579F1005B9081 /* DtaDevOpal2.cpp in Sources */,
+				D2EA84A328053B4E00A0F685 /* DtaSession.cpp in Sources */,
+				D2EA844B28053B4C00A0F685 /* DtaAnnotatedDump.cpp in Sources */,
+				D2EA849428053B4D00A0F685 /* DtaHashPwd.cpp in Sources */,
+				D2EA849528053B4D00A0F685 /* DtaDiskType.cpp in Sources */,
+				D2EA849C28053B4D00A0F685 /* DtaHexDump.cpp in Sources */,
+				D2EA847D28053B4D00A0F685 /* DtaCommand.cpp in Sources */,
+				D2EA84A728053B4E00A0F685 /* DtaResponse.cpp in Sources */,
+				D2BDDC9928A6361600001E26 /* ob.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D2ED0EB827D55FBD0053115F /* Sources */ = {
+		D2EBA48A1F055579002F8780 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D27F65D127F432FE0091C6ED /* DtaDevMacOS_UAS_SAT.cpp in Sources */,
-				D2ED0F0327D55FE20053115F /* DtaOptions.cpp in Sources */,
-				D2ED0EFE27D55FE20053115F /* sha1.c in Sources */,
-				D2ED0F0E27D55FE20053115F /* DtaResponse.cpp in Sources */,
-				D21322F4283B06F70076B62F /* DtaDevMacOSDrive.cpp in Sources */,
-				D2ED0F0827D55FE20053115F /* DtaHashPwd.cpp in Sources */,
-				D2ED0EFD27D55FE20053115F /* hmac.c in Sources */,
-				D2ED0F0627D55FE20053115F /* DtaDevEnterprise.cpp in Sources */,
-				D2ED0F0427D55FE20053115F /* DtaDevOpal2.cpp in Sources */,
-				D2ED0F0A27D55FE20053115F /* DtaHexDump.cpp in Sources */,
-				D2ED0F0D27D55FE20053115F /* DtaDev.cpp in Sources */,
-				D2ED0F0927D55FE20053115F /* DtaDiskType.cpp in Sources */,
-				D2DE3A432845440B00B4F78E /* DtaBlockStorageDevice.cpp in Sources */,
-				D2ED0F0127D55FE20053115F /* pbkdf2.c in Sources */,
-				D2ED0F0527D55FE20053115F /* DtaDevOpal1.cpp in Sources */,
-				D2ED0F4A27D564D20053115F /* DtaDevOS.cpp in Sources */,
-				D2ED0F0027D55FE20053115F /* chash.c in Sources */,
-				D27F65D727F437860091C6ED /* PrintBuffer.c in Sources */,
-				D2ED0F0C27D55FE20053115F /* DtaSession.cpp in Sources */,
-				D293C2DD289ED926005E7AA8 /* DtaDevMacOS_ATA.cpp in Sources */,
-				D2ED0EFC27D55FE20053115F /* DtaAnnotatedDump.cpp in Sources */,
-				D2ED0F0B27D55FE20053115F /* sedutil.cpp in Sources */,
-				D226506127FB552400BA5499 /* TPerKernelInterface.c in Sources */,
-				D2ED0F0727D55FE20053115F /* DtaDevGeneric.cpp in Sources */,
-				D2ED0F0227D55FE20053115F /* DtaCommand.cpp in Sources */,
-				D2ED0EFF27D55FE20053115F /* blockwise.c in Sources */,
-				D226506227FB553100BA5499 /* RegistryUtilities.mm in Sources */,
-				D2ED0EFB27D55FE20053115F /* DtaDevOpal.cpp in Sources */,
+				D2EBA4B71F055590002F8780 /* sha1.c in Sources */,
+				D2EBA4B31F055590002F8780 /* hmac.c in Sources */,
+				D2EBA4AD1F055590002F8780 /* blockwise.c in Sources */,
+				D2EBA4B51F055590002F8780 /* pbkdf2.c in Sources */,
+				D2EBA4AF1F055590002F8780 /* chash.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		D21322F0283AC7D70076B62F /* PBXTargetDependency */ = {
+		D2A06C9828B5D8BC00C0DDB6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D21322EB283AAA110076B62F /* version */;
-			targetProxy = D21322EF283AC7D70076B62F /* PBXContainerItemProxy */;
+			target = D20A63961F731F3600F154AC /* log */;
+			targetProxy = D2A06C9728B5D8BC00C0DDB6 /* PBXContainerItemProxy */;
+		};
+		D2A06C9A28B5D8BE00C0DDB6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2EBA48E1F055579002F8780 /* cifra */;
+			targetProxy = D2A06C9928B5D8BE00C0DDB6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		D21322EC283AAA110076B62F /* Debug */ = {
+		D20A639D1F731F3600F154AC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEBUGGING_SYMBOLS = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = UES63D9K7E;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
-		D21322ED283AAA110076B62F /* Release */ = {
+		D20A639E1F731F3600F154AC /* Debug Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = UES63D9K7E;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D20A639F1F731F3600F154AC /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Debug Bluetooth";
+		};
+		D20A63A01F731F3600F154AC /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Debug Bonjour";
+		};
+		D20A63A11F731F3600F154AC /* Debug Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Debug Bonjour Multistart";
+		};
+		D20A63A21F731F3600F154AC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
-		D23F351F2845B22E00708384 /* Debug */ = {
+		D20A63A31F731F3600F154AC /* Release Bonjour */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = UES63D9K7E;
-				ENABLE_HARDENED_RUNTIME = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
-			name = Debug;
+			name = "Release Bonjour";
 		};
-		D23F35202845B22E00708384 /* Release */ = {
+		D20A63A41F731F3600F154AC /* Release Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = UES63D9K7E;
-				ENABLE_HARDENED_RUNTIME = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
-			name = Release;
+			name = "Release Bonjour Multistart";
 		};
-		D2D0019027FB4F95007679E3 /* Debug */ = {
+		D20A63A51F731F3600F154AC /* Release Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				ENABLE_HARDENED_RUNTIME = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
-			name = Debug;
+			name = "Release Bluetooth";
 		};
-		D2D0019127FB4F95007679E3 /* Release */ = {
+		D20A63A61F731F3600F154AC /* Release Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				ENABLE_HARDENED_RUNTIME = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
-			name = Release;
+			name = "Release Bonjour and Bluetooth";
 		};
-		D2ED0EC127D55FBD0053115F /* Debug */ = {
+		D2763BE21F1273A50015B62C /* Debug Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
-					"$(inherited)",
+					"ENABLE_BONJOUR=1",
+					"MULTISTART=1",
 				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.4;
+				MTL_ENABLE_DEBUG_INFO = YES;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
 				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				WARNING_CFLAGS = "-Wall";
 			};
-			name = Debug;
+			name = "Debug Bonjour Multistart";
 		};
-		D2ED0EC227D55FBD0053115F /* Release */ = {
+		D2763BE81F1273A50015B62C /* Debug Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Debug Bonjour Multistart";
+		};
+		D2763BE91F1273A50015B62C /* Debug Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Debug Bonjour Multistart";
+		};
+		D2763BEB1F1273B40015B62C /* Release Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 33Y435HD6M;
-				ENABLE_NS_ASSERTIONS = NO;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"ENABLE_BONJOUR=1",
+					"MULTISTART=1",
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
 				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = Release;
+			name = "Release Bonjour Multistart";
 		};
-		D2ED0EC427D55FBD0053115F /* Debug */ = {
+		D2763BF11F1273B40015B62C /* Release Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				ENABLE_HARDENED_RUNTIME = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Release Bonjour Multistart";
+		};
+		D2763BF21F1273B40015B62C /* Release Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Release Bonjour Multistart";
+		};
+		D2B7FA681F02ABC600F2D820 /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"ENABLE_BONJOUR=1",
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.4;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				WARNING_CFLAGS = "-Wall";
+			};
+			name = "Debug Bonjour";
+		};
+		D2B7FA6D1F02ABD100F2D820 /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"ENABLE_BLUETOOTH=1",
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.4;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				WARNING_CFLAGS = "-Wall";
+			};
+			name = "Debug Bluetooth";
+		};
+		D2B7FA721F02ABDB00F2D820 /* Debug Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"ENABLE_BONJOUR=1",
+					"ENABLE_BLUETOOTH=1",
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.4;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				WARNING_CFLAGS = "-Wall";
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D2B7FA771F02ABEF00F2D820 /* Release Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "ENABLE_BONJOUR=1";
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release Bonjour";
+		};
+		D2B7FA7C1F02ABFA00F2D820 /* Release Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "ENABLE_BLUETOOTH=1";
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release Bluetooth";
+		};
+		D2B7FA811F02AC1000F2D820 /* Release Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"ENABLE_BONJOUR=1",
+					"ENABLE_BLUETOOTH=1",
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release Bonjour and Bluetooth";
+		};
+		D2BD8F591F02016B00747F4A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.4;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				WARNING_CFLAGS = "-Wall";
 			};
 			name = Debug;
 		};
-		D2ED0EC527D55FBD0053115F /* Release */ = {
+		D2BD8F5A1F02016B00747F4A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = UES63D9K7E;
 				ENABLE_HARDENED_RUNTIME = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
+		};
+		D2EBA30D1F0549B7002F8780 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Debug;
+		};
+		D2EBA30E1F0549B7002F8780 /* Debug Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D2EBA30F1F0549B7002F8780 /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Debug Bluetooth";
+		};
+		D2EBA3101F0549B7002F8780 /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Debug Bonjour";
+		};
+		D2EBA3111F0549B7002F8780 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Release;
+		};
+		D2EBA3121F0549B7002F8780 /* Release Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Release Bonjour";
+		};
+		D2EBA3131F0549B7002F8780 /* Release Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Release Bluetooth";
+		};
+		D2EBA3141F0549B7002F8780 /* Release Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Release Bonjour and Bluetooth";
+		};
+		D2EBA4951F055579002F8780 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Debug;
+		};
+		D2EBA4961F055579002F8780 /* Debug Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D2EBA4971F055579002F8780 /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Debug Bluetooth";
+		};
+		D2EBA4981F055579002F8780 /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Debug Bonjour";
+		};
+		D2EBA4991F055579002F8780 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Release;
+		};
+		D2EBA49A1F055579002F8780 /* Release Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Release Bonjour";
+		};
+		D2EBA49B1F055579002F8780 /* Release Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Release Bluetooth";
+		};
+		D2EBA49C1F055579002F8780 /* Release Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 624;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 603;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 2.0.4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = "Release Bonjour and Bluetooth";
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D21322EE283AAA110076B62F /* Build configuration list for PBXLegacyTarget "version" */ = {
+		D20A639C1F731F3600F154AC /* Build configuration list for PBXNativeTarget "log" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D21322EC283AAA110076B62F /* Debug */,
-				D21322ED283AAA110076B62F /* Release */,
+				D20A639D1F731F3600F154AC /* Debug */,
+				D20A639E1F731F3600F154AC /* Debug Bonjour and Bluetooth */,
+				D20A639F1F731F3600F154AC /* Debug Bluetooth */,
+				D20A63A01F731F3600F154AC /* Debug Bonjour */,
+				D20A63A11F731F3600F154AC /* Debug Bonjour Multistart */,
+				D20A63A21F731F3600F154AC /* Release */,
+				D20A63A31F731F3600F154AC /* Release Bonjour */,
+				D20A63A41F731F3600F154AC /* Release Bonjour Multistart */,
+				D20A63A51F731F3600F154AC /* Release Bluetooth */,
+				D20A63A61F731F3600F154AC /* Release Bonjour and Bluetooth */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Release Bonjour Multistart";
 		};
-		D23F351E2845B22E00708384 /* Build configuration list for PBXNativeTarget "IORegistryTest" */ = {
+		D2BD8F581F02016B00747F4A /* Build configuration list for PBXProject "sedutil" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D23F351F2845B22E00708384 /* Debug */,
-				D23F35202845B22E00708384 /* Release */,
+				D2BD8F591F02016B00747F4A /* Debug */,
+				D2B7FA721F02ABDB00F2D820 /* Debug Bonjour and Bluetooth */,
+				D2B7FA6D1F02ABD100F2D820 /* Debug Bluetooth */,
+				D2B7FA681F02ABC600F2D820 /* Debug Bonjour */,
+				D2763BE21F1273A50015B62C /* Debug Bonjour Multistart */,
+				D2BD8F5A1F02016B00747F4A /* Release */,
+				D2B7FA771F02ABEF00F2D820 /* Release Bonjour */,
+				D2763BEB1F1273B40015B62C /* Release Bonjour Multistart */,
+				D2B7FA7C1F02ABFA00F2D820 /* Release Bluetooth */,
+				D2B7FA811F02AC1000F2D820 /* Release Bonjour and Bluetooth */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Release Bonjour Multistart";
 		};
-		D2D0019227FB4F95007679E3 /* Build configuration list for PBXNativeTarget "reenumerate" */ = {
+		D2EBA30C1F0549B7002F8780 /* Build configuration list for PBXNativeTarget "sedutil" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D2D0019027FB4F95007679E3 /* Debug */,
-				D2D0019127FB4F95007679E3 /* Release */,
+				D2EBA30D1F0549B7002F8780 /* Debug */,
+				D2EBA30E1F0549B7002F8780 /* Debug Bonjour and Bluetooth */,
+				D2EBA30F1F0549B7002F8780 /* Debug Bluetooth */,
+				D2EBA3101F0549B7002F8780 /* Debug Bonjour */,
+				D2763BE81F1273A50015B62C /* Debug Bonjour Multistart */,
+				D2EBA3111F0549B7002F8780 /* Release */,
+				D2EBA3121F0549B7002F8780 /* Release Bonjour */,
+				D2763BF11F1273B40015B62C /* Release Bonjour Multistart */,
+				D2EBA3131F0549B7002F8780 /* Release Bluetooth */,
+				D2EBA3141F0549B7002F8780 /* Release Bonjour and Bluetooth */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Release Bonjour Multistart";
 		};
-		D2ED0EB727D55FBD0053115F /* Build configuration list for PBXProject "sedutil" */ = {
+		D2EBA4941F055579002F8780 /* Build configuration list for PBXNativeTarget "cifra" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D2ED0EC127D55FBD0053115F /* Debug */,
-				D2ED0EC227D55FBD0053115F /* Release */,
+				D2EBA4951F055579002F8780 /* Debug */,
+				D2EBA4961F055579002F8780 /* Debug Bonjour and Bluetooth */,
+				D2EBA4971F055579002F8780 /* Debug Bluetooth */,
+				D2EBA4981F055579002F8780 /* Debug Bonjour */,
+				D2763BE91F1273A50015B62C /* Debug Bonjour Multistart */,
+				D2EBA4991F055579002F8780 /* Release */,
+				D2EBA49A1F055579002F8780 /* Release Bonjour */,
+				D2763BF21F1273B40015B62C /* Release Bonjour Multistart */,
+				D2EBA49B1F055579002F8780 /* Release Bluetooth */,
+				D2EBA49C1F055579002F8780 /* Release Bonjour and Bluetooth */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		D2ED0EC327D55FBD0053115F /* Build configuration list for PBXNativeTarget "sedutil-cli" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D2ED0EC427D55FBD0053115F /* Debug */,
-				D2ED0EC527D55FBD0053115F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = "Release Bonjour Multistart";
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = D2ED0EB427D55FBD0053115F /* Project object */;
+	rootObject = D2BD8F551F02016B00747F4A /* Project object */;
 }

@@ -179,30 +179,34 @@ uint8_t DtaDev::acquireDiscovery0Response(uint8_t * d0Response)
     return sendCmd(IF_RECV, 0x01, 0x0001, d0Response, MIN_BUFFER_LENGTH);
 }
 
-void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, OPAL_DiskInfo & di)
+void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
 {
     LOG(D1) << "Entering DtaDev::discovery0()";
-    uint8_t * epos, *cpos;
-    Discovery0Header * hdr;
-    Discovery0Features * body;
-    epos = cpos = (uint8_t *) d0Response;
-    hdr = (Discovery0Header *) d0Response;
-    LOG(D3) << "Dumping D0Response";
-    if ( (SWAP32(hdr->length) > 8192) || (SWAP32(hdr->length) < 48) )
+    Discovery0Header * hdr = (Discovery0Header *) d0Response;
+    uint32_t length = SWAP32(hdr->length);
+    if (0 == length)
     {
-	  LOG(D) << "Level 0 Discovery header length abnormal " << hex << SWAP32(hdr->length);
-	return;
+        LOG(D) << "Level 0 Discovery returned no response";
+        return;
     }
-    IFLOG(D3) DtaHexDump(hdr, SWAP32(hdr->length));
+    LOG(D3) << "Dumping D0Response";
+    if ( (length > 8192) || (length < 48) )
+    {
+	  LOG(D) << "Level 0 Discovery header length abnormal " << hex << length;
+	  return;
+    }
+    IFLOG(D3) DtaHexDump(hdr, length);
 
-    epos = epos + SWAP32(hdr->length);
-    cpos = cpos + 48; // TODO: check header version
+    uint8_t *cpos = (uint8_t *) d0Response + 48; // TODO: check header version
+    uint8_t *epos = (uint8_t *) d0Response + length;
 
     do {
-        body = (Discovery0Features *) cpos;
-        LOG(D2) << "Discover0FeatureCode: " << hex << SWAP16(body->TPer.featureCode);
-        switch (SWAP16(body->TPer.featureCode)) { /* could use of the structures here is a common field */
+        Discovery0Features * body = (Discovery0Features *) cpos;
+        uint16_t featureCode = SWAP16(body->TPer.featureCode);
+        LOG(D2) << "Discovery0 FeatureCode: " << hex << featureCode;
+        switch (featureCode) { /* could use of the structures here is a common field */
         case FC_TPER: /* TPer */
+            LOG(D2) << "TPer Feature";
             di.TPer = 1;
             di.TPer_ACKNACK = body->TPer.acknack;
             di.TPer_async = body->TPer.async;
@@ -212,6 +216,7 @@ void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, OPAL_DiskInfo &
             di.TPer_sync = body->TPer.sync;
             break;
         case FC_LOCKING: /* Locking*/
+            LOG(D2) << "Locking Feature";
             di.Locking = 1;
             di.Locking_locked = body->locking.locked;
             di.Locking_lockingEnabled = body->locking.lockingEnabled;
@@ -221,6 +226,7 @@ void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, OPAL_DiskInfo &
             di.Locking_mediaEncrypt = body->locking.mediaEncryption;
             break;
         case FC_GEOMETRY: /* Geometry Features */
+            LOG(D2) << "Geometry Feature";
             di.Geometry = 1;
             di.Geometry_align = body->geometry.align;
             di.Geometry_alignmentGranularity = SWAP64(body->geometry.alignmentGranularity);
@@ -228,6 +234,7 @@ void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, OPAL_DiskInfo &
             di.Geometry_lowestAlignedLBA = SWAP64(body->geometry.lowestAlighedLBA);
             break;
         case FC_ENTERPRISE: /* Enterprise SSC */
+            LOG(D2) << "Enterprise SSC Feature";
             di.Enterprise = 1;
 			di.ANY_OPAL_SSC = 1;
 	        di.Enterprise_rangeCrossing = body->enterpriseSSC.rangeCrossing;
@@ -235,12 +242,14 @@ void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, OPAL_DiskInfo &
             di.Enterprise_numcomID = SWAP16(body->enterpriseSSC.numberComIDs);
             break;
         case FC_OPALV100: /* Opal V1 */
+            LOG(D2) << "Opal v1.0 SSC Feature";
             di.OPAL10 = 1;
 			di.ANY_OPAL_SSC = 1;
 	        di.OPAL10_basecomID = SWAP16(body->opalv100.baseComID);
             di.OPAL10_numcomIDs = SWAP16(body->opalv100.numberComIDs);
             break;
         case FC_SINGLEUSER: /* Single User Mode */
+            LOG(D2) << "Single User Mode Feature";
             di.SingleUser = 1;
             di.SingleUser_all = body->singleUserMode.all;
             di.SingleUser_any = body->singleUserMode.any;
@@ -248,12 +257,14 @@ void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, OPAL_DiskInfo &
             di.SingleUser_lockingObjects = SWAP32(body->singleUserMode.numberLockingObjects);
             break;
         case FC_DATASTORE: /* Datastore Tables */
+            LOG(D2) << "Datastore Feature";
             di.DataStore = 1;
             di.DataStore_maxTables = SWAP16(body->datastore.maxTables);
             di.DataStore_maxTableSize = SWAP32(body->datastore.maxSizeTables);
             di.DataStore_alignment = SWAP32(body->datastore.tableSizeAlignment);
             break;
         case FC_OPALV200: /* OPAL V200 */
+            LOG(D2) << "Opal v2.0 SSC Feature";
             di.OPAL20 = 1;
 			di.ANY_OPAL_SSC = 1;
 		    di.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
@@ -265,6 +276,7 @@ void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, OPAL_DiskInfo &
             di.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
             break;
         case FC_PYRITE: /* PYRITE 0x302 */
+            LOG(D2) << "Pyrite SSC Feature";
             di.PYRITE= 1;
 			di.ANY_OPAL_SSC = 1;
 			di.PYRITE_version = body->opalv200.version;
@@ -288,6 +300,7 @@ void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, OPAL_DiskInfo &
 			di.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
             break;
 		case FC_PYRITE2: /* PYRITE 2 0x303 */
+            LOG(D2) << "Pyrite 2 SSC Feature";
 			di.PYRITE2 = 1;
 			di.ANY_OPAL_SSC = 1;
 			di.PYRITE2_version = body->opalv200.version;
@@ -311,6 +324,7 @@ void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, OPAL_DiskInfo &
 			di.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
 			break;
 		case FC_RUBY: /* RUBY 0x304 */
+            LOG(D2) << "Ruby SSC Feature";
 			di.RUBY = 1;
 			di.ANY_OPAL_SSC = 1;
 			di.RUBY_version = body->opalv200.version;
@@ -334,32 +348,24 @@ void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, OPAL_DiskInfo &
 			di.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
 			di.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
 			di.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
-
 			break;
 		case FC_BlockSID: /* Block SID 0x402 */
+            LOG(D2) << "Block SID Feature";
 			di.BlockSID = 1;
 			di.BlockSID_BlockSIDState = body->blocksidauth.BlockSIDState;
 			di.BlockSID_SIDvalueState = body->blocksidauth.SIDvalueState;
 			di.BlockSID_HardReset = body->blocksidauth.HardReset;
-#if 0
-			LOG(D) << "BLockSID buffer dump";
-			DtaHexDump(body, 64);
-			printf("body->blocksidauth.BlockSIDState= %d ", body->blocksidauth.BlockSIDState);
-			printf("disk_info.BlockSID_BlockSIDState= %d ", di.BlockSID_BlockSIDState);
-			printf("body->blocksidauth.SIDvalueState= %d ", body->blocksidauth.SIDvalueState);
-			printf("disk_info.BlockSID_SIDvalueState= %d ", di.BlockSID_SIDvalueState);
-			printf("body->blocksidauth.HardReset= %d ", body->blocksidauth.HardReset);
-			printf("disk_info.BlockSID_HardReset= %d\n", di.BlockSID_HardReset);
-#endif
 			break;
 		case FC_NSLocking:
+            LOG(D2) << "Namespace Locking Feature";
 			di.NSLocking = 1;
 			di.NSLocking_version = body->Configurable_Namespace_LockingFeature.version;
 			di.Max_Key_Count = body->Configurable_Namespace_LockingFeature.Max_Key_Count;
 			di.Unused_Key_Count = body->Configurable_Namespace_LockingFeature.Unused_Key_Count;
 			di.Max_Range_Per_NS = body->Configurable_Namespace_LockingFeature.Max_Range_Per_NS;
 			break;
-		case FC_DataRemoval: /* Data Remove mechanism 0x404 */
+		case FC_DataRemoval: /* Data Removal mechanism 0x404 */
+            LOG(D2) << "Data Removal Feature";
 			di.DataRemoval = 1;
 			di.DataRemoval_version = body->dataremoval.version;
 			di.DataRemoval_Mechanism = body->dataremoval.DataRemoval_Mechanism;
@@ -377,13 +383,13 @@ void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, OPAL_DiskInfo &
 			di.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit0;
 			break;
         default:
-			if (0xbfff < (SWAP16(body->TPer.featureCode))) {
+            if (FC_Min_Vendor_Specific <= featureCode) {
 				// silently ignore vendor specific segments as there is no public doc on them
 				di.VendorSpecific += 1;
-			}
-			else {
+                LOG(D2) << "Vendor Specfic Feature Code " << std::hex << featureCode << std::dec;
+			} else {
 				di.Unknown += 1;
-				LOG(D) << "Unknown Feature in Discovery 0 response " << std::hex << SWAP16(body->TPer.featureCode) << std::dec;
+				LOG(D) << "Unknown Feature Code " << std::hex << featureCode << std::dec << "in Discovery0 response";
 				/* should do something here */
 			}
             break;
@@ -417,7 +423,7 @@ uint8_t DtaDev::TperReset()
 }
 
 /*
-uint8_t DtaDev::SATCK_Reset()
+uint8_t DtaDev::STACK_Reset()
 {
 	LOG(D1) << "Entering DtaDev::STACK_Reset()";
 	uint8_t lastRC;
