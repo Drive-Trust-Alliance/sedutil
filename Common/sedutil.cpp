@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -18,13 +18,15 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
 
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 #pragma warning(disable: 4224) //C2224: conversion from int to char , possible loss of data
 #pragma warning(disable: 4244) //C4244: 'argument' : conversion from 'uint16_t' to 'uint8_t', possible loss of data
 #pragma comment(lib, "rpcrt4.lib")  // UuidCreate - Minimum supported OS Win 2000
-// this resolve error of uuid 
+#endif // Windows
+// this resolve error of uuid
 
 #include <iostream>
-#include "os.h"
+//#include "os.h"
 #include "DtaHashPwd.h"
 #include "DtaOptions.h"
 #include "DtaLexicon.h"
@@ -47,288 +49,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaHexDump.h"
 //#include <msclr\marshal_cppstd.h>
 #endif
-#include "ob.h"
 
-
-void setlic(char * lic_level, const char * LicenseLevel);
 
 using namespace std;
-
-
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-inline unsigned char hex_nibble_to_ascii(uint8_t ch)
-{
-	switch (ch)
-	{
-	case 0: return '0';
-	case 1: return '1';
-	case 2: return '2';
-	case 3: return '3';
-	case 4: return '4';
-	case 5: return '5';
-	case 6: return '6';
-	case 7: return '7';
-	case 8: return '8';
-	case 9: return '9';
-	case 0xA: return 'A';
-	case 0xB: return 'B';
-	case 0xC: return 'C';
-	case 0xD: return 'D';
-	case 0xE: return 'E';
-	case 0xF: return 'F';
-	default: return '?';  // throw std::invalid_argument();
-	}
-}
-//int DtaDevOS::diskScan()
-int diskScan(char * devskip)
-{
-	char devname[25];
-	int i = 0;
-	DtaDev * d;
-	LOG(D1) << "Creating diskList";
-	printf("\nScanning for Opal compliant disks\n");
-	while (TRUE) {
-		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i);
-		LOG(D1) << devname << " " << atoi(devname + 17);
-		
-		d = new DtaDevGeneric(devname);
-		if (d->isPresent()) {
-			printf("%s", devname);
-			if (d->isAnySSC()) {
-//#define OPAL_MINOR    // uncomment if want to show OPAL minor number
-				#ifdef OPAL_MINOR
-				printf(" %s%s%c%s%s%s%s ", (d->isOpal1() ? "1" : " "),
-					(d->isOpal2() ? "2" : " "), ((d->isOpal2() && d->isOpal2_minor_v()) ? hex_nibble_to_ascii(d->isOpal2_minor_v()) : ' ' ),
-					(d->isEprise() ? "E" : " "),
-					(d->isPyrite2() ? "Y" : d->isPyrite() ? "P" : " "), (d->isOpalite() ? "L" : " "), (d->isRuby() ? "R" : " "));
-
-#else
-				printf(" %s%s%s%s%s%s%s ", (d->isOpal1() ? "1" : " "),
-					(d->isOpal2() ? "2 " : "  "), (d->isEprise() ? "E" : " "),
-					(d->isPyrite2() ? "Y" : d->isPyrite() ? "P" : " "), (d->isOpalite() ? "L" : " "), (d->isRuby() ? "R" : " "), (d->isFIPS() ? "F" : " "));
-#endif
-
-
-
-			}
-			else
-				printf("%s", " No      ");
-				//            123456789
-			//cout << d->getModelNum() << " " << d->getFirmwareRev() << std::endl;
-			cout << d->getModelNum() << ":" << d->getFirmwareRev() << ":" << d->getSerialNum() << std::endl; // GUI not work if no endl?
-			if (MAX_DISKS == i) {
-				LOG(D) << MAX_DISKS << " disks, really?";
-				delete d;
-				return 1;
-			}
-		}
-		else {
-			if (MAX_DISKS == i) {
-				LOG(D) << MAX_DISKS << " disks, really?";
-				delete d;
-				return 1;
-			}
-		}
-		delete d;
-		i += 1;
-	}
-	delete d;
-	printf("No more disks present ending scan\n");
-	return 0;
-}
-
-
-
-
-
-#else // linux 
-int diskScan(char * devskip)
-{
-	char devname[25];
-	int i = 0;
-	int j = 0;
-
-	#ifdef DEVICEMASKN
-	bool f_sda_end = FALSE;
-	bool f_nvme_first = FALSE;
-	#endif
-	DtaDev * d;
-	LOG(D1) << "Creating diskList";
-	printf("\nScanning for Opal compliant disks\n");
-
-	char fn[20] = "fidelitydisk.txt";
-	char buf[10];
-	int ndisk=0;
-	int nvmedisk=0;
-	int mdisk = 0;
-	int mnvmedisk = 0; 
-
-	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-	system("echo list\ disk > list.txt");
-	int r = system("diskpart /s list.txt | findstr /R /C:\"Disk [0-9].\" | find /c /v \"\" > fidelitydisk.txt ");
-	ifstream fs ;
-
-	fs.open("fidelitydisk.txt", ios::in | ios::out | ios::binary);
-        //          ios::in | ios::out | ios::binary
-	if (!fs) {
-		LOG(E) << "Unable to open " << fn ;
-		//return DTAERROR_OPEN_ERR;
-	}
-	fs.read(buf,9);
-        fs.close();
-	ndisk = atoi(buf);
-
-	#else
-	int r = system("sudo fdisk -l | grep 'Disk /dev/sd.*:' | sudo wc -l > disksda.txt ");
-	r = system("sudo fdisk -l | grep 'Disk /dev/nvme.*' | sudo wc -l > disknvme.txt ");
-	FILE * file;
-	file = fopen("disknvme.txt","r");
-	fgets(buf, 9, file);
-	fclose(file);
-	nvmedisk= atoi(buf); // number of nvme disk on system
-        memset(buf,0,10);
-        file = fopen("disksda.txt","r");
-	fgets(buf, 9, file);
-	fclose(file);
-	ndisk = atoi(buf); // number of sdx disk on system 
-	#endif
-	int lpc = 0;
-	while (TRUE && ((mdisk + mnvmedisk) <= (ndisk + nvmedisk)) && (lpc < 256)) {
-		lpc++;
-		//printf ("ndisk=%d mdisk=%d  lpc=%d nvmedisk=%d mnvmedisk=%d\n", ndisk, mdisk,lpc,nvmedisk, mnvmedisk);
-		DEVICEMASK;
-		if (!strcasecmp(devname,devskip)) 
-		{
-			LOG(D1) << "Find skipped device " << devskip;
-			i += 1; 
-			mdisk += 1;
-			DEVICEMASK;
-		}
-		#ifdef DEVICEMASKN
-		//printf("f_sda_end = %d\n",f_sda_end);
-		if (f_sda_end ) {
-			DEVICEMASKN;
-			//printf(" sda end ; start scan nvme %s \n", devname);
-		}
-		#endif
-		//snprintf(devname,23,"/dev/nvme%i",i); //Linux nvme
-		//snprintf(devname,23,"/dev/sd%c",(char) 0x61+i) Linux
-		//sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i)  Windows
-		d = new DtaDevGeneric(devname);
-		if (d->isPresent()) {
-		#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-			mdisk += 1;
-		#else
-			if (!memcmp(devname,"/dev/sd",7))
-				{mdisk +=1 ;}
-			else 
-				{mnvmedisk+=1;}
-		#endif	
-			printf("%s", devname);
-
-			//if (d->isAnySSC())
-			//	printf(" %s%s%s ", (d->isOpal1() ? "1" : " "),
-			//	(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
-			//			else
-			// printf("%s", " No  ");
-			if (d->isAnySSC())
-				printf(" %s%s%s%s%s%s ", (d->isOpal1() ? "1" : " "),
-				(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "),
-					(d->isPyrite() ? "P" : " "), (d->isOpalite() ? "L" : " "), (d->isRuby() ? "R" : " "));
-			else
-				printf("%s", " No     ");
-
-			cout << d->getModelNum() << ":" << d->getFirmwareRev() << ":" << d->getSerialNum() << std::endl; // GUI not work if no endl?
-			if (MAX_DISKS == (i+j)) {
-				LOG(D) << MAX_DISKS << " disks, really?";
-				delete d;
-				return 1;
-			}
-		}
-		else {
-			#ifdef DEVICEMASKN
-			if (mdisk < ndisk) {
-				goto here;
-			}
-
-			if (!f_sda_end) { 
-				f_sda_end = TRUE; f_nvme_first = TRUE;
-				//printf("set f_sda_end from FALSE to TRUE\n");
-				goto here;
-			}
-			if (mnvmedisk < nvmedisk) {
-				j+=1;
-				delete d;
-				continue;
-			}
-			else {
-				delete d;
-				break;
-			}
-			#endif
-			#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-			if ((mdisk >= ndisk)) {
-				delete d;
-				break;
-			}
-			#endif
-		}
-		here:
-		delete d;
-		#ifdef DEVICEMASKN
-		if (f_sda_end) {
-			//printf("f_sda_end is TRUE\n");
-			if (f_nvme_first) { j = 0; f_nvme_first = FALSE;}
-			else	j += 1;
-		}
-		else 
-		#endif
-			i += 1; ; // printf("i=%d\n", i);
-	}
-	//if (d) delete d;
-	//printf ("out of while loop ; ndisk=%d mdisk=%d  lpc=%d nvmedisk=%d mnvmedisk=%d\n", ndisk, mdisk,lpc,nvmedisk, mnvmedisk);
-	return 0;
-}
-#endif
-
-void auditpass(char * apass);
-void auditpass(char * apass)
-{
-	obfs ob;
-	ob.setaudpass(apass);
-}
-
-
-void setlic(char * lic_level, const char * LicenseLevel)
-{
-    char sbnk[16] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', };
-    obfs ob;
-
-    if (!memcmp("0:", LicenseLevel, 2)) { // correct feature set
-	    ob.lic(atoi(&LicenseLevel[2]), lic_level);
-    }
-    else {
-	    memcpy(lic_level, sbnk, 16);
-	    printf("no license = %s\n", lic_level);
-    }
-}
-
-int hashvalidate(char * password, char *devname)
-{
-	vector <uint8_t> hash;
-	DtaDev * d;
-	d = new DtaDevGeneric(devname);
-
-	//bool saved_flag = d->no_hash_passwords;
-	d->no_hash_passwords = false; // force to hash
-	hash.clear();
-	LOG(D1) << "start hashing random password";
-	DtaHashPwd(hash, password, d);
-	printf("hashed password : ");
-	for (int i = 2; i < (int)(hash.size()); i++) printf("%02X",hash.at(i));
-	printf("\n");
-	return 0;
-}
 
 int isValidSEDDisk(char *devname)
 {
@@ -356,7 +79,7 @@ int createvol(HANDLE &vol_handle, char * USBname)
 		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
 		OPEN_EXISTING,
 		//FILE_ATTRIBUTE_NORMAL, // rufus use this attribute, defined in winnt.h Sam result
-		// WinBase.h 
+		// WinBase.h
 		FILE_FLAG_NO_BUFFERING | FILE_FLAG_RANDOM_ACCESS | FILE_FLAG_WRITE_THROUGH, // add write through
 		NULL);
 
@@ -458,7 +181,7 @@ int reloadvol(HANDLE &vol_handle)
 {
 	DWORD n;
 	DeviceIoControl(vol_handle, IOCTL_STORAGE_EJECT_MEDIA, NULL, 0, NULL, 0, &n, NULL);
-	Sleep(1000); // Seems to be 
+	Sleep(1000); // Seems to be
 	unlockvol(vol_handle);
 	Sleep(1000);
 	DeviceIoControl(vol_handle, IOCTL_STORAGE_LOAD_MEDIA, NULL, 0, NULL, 0, &n, NULL);
@@ -485,7 +208,7 @@ BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 	}
 	reloadvol(vol_handle);
 
-	for (lp = 0; lp < 10;lp++) { // 3 Ok 
+	for (lp = 0; lp < 10;lp++) { // 3 Ok
 		status = lockvol(vol_handle); // error return false
 		if (status) break;
 		Sleep(100);
@@ -536,9 +259,30 @@ BOOL zeromem(uint64_t DecompressedBufferSize, char * USBname)
 }
 #endif
 
+
+int hashvalidate(char * password, char *devname)
+{
+    vector <uint8_t> hash;
+    DtaDev * d;
+    d = new DtaDevGeneric(devname);
+
+    //bool saved_flag = d->no_hash_passwords;
+    d->no_hash_passwords = false; // force to hash
+    hash.clear();
+    LOG(D1) << "start hashing random password";
+    DtaHashPwd(hash, password, d);
+    printf("hashed password : ");
+    for (int i = 2; i < (int)(hash.size()); i++) printf("%02X",hash.at(i));
+    printf("\n");
+    return 0;
+}
+
 int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 {
-#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || (WINDOWS7)
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || (WINDOWS7) || defined(__APPLE__)
+#pragma unused(devname)
+#pragma unused(USBname)
+#pragma unused(LicenseLevel)
 	LOG(D1) << "createUSB() isn't supported in Linux, Windows 7";
 	return 0;
 #else
@@ -550,7 +294,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	DWORD n;
 	DtaDev * d, * u;
 	d = new DtaDevGeneric(devname);
-	if (d->isPresent() && d->isAnySSC()) 
+	if (d->isPresent() && d->isAnySSC())
 		printf("Find Opal Drive %s\n", devname);
 	else {
 		printf("No Opal Drive %s\n", devname);
@@ -630,7 +374,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 			if (!Success)
 			{
 				DWORD ErrorCode = GetLastError();
-				// Note that the original size returned by the function is extracted 
+				// Note that the original size returned by the function is extracted
 				// from the buffer itself and should be treated as untrusted and tested
 				// against reasonable limits.
 				if (ErrorCode != ERROR_INSUFFICIENT_BUFFER)
@@ -652,7 +396,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 				}
 				memset(DecompressedBuffer, 0, DecompressedBufferSize);
 			}
-			//  Decompress data 
+			//  Decompress data
 			Success = Decompress(
 				Decompressor,               //  Decompressor handle
 				CompressedBuffer,           //  Compressed data
@@ -694,7 +438,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 		uint8_t struuid[64];
 		vector <uint8_t> uu = ugenv(uuid, struuid);
 		for (uint8_t i = 0; i < 4; i++) {
-			DecompressedBuffer[0x100027 + i] = uu.at(i); DecompressedBuffer[0x27 + i] = uu.at(i); // mbr grub 
+			DecompressedBuffer[0x100027 + i] = uu.at(i); DecompressedBuffer[0x27 + i] = uu.at(i); // mbr grub
 			DecompressedBuffer[0x1b8 + i] = uu.at(i);
 		}
 		for (uint8_t i = 0; i < 11; i++) {
@@ -708,7 +452,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 		IFLOG(D1) printf("model : %s ", model);
 		IFLOG(D1) printf("firmware : %s ", firmware);
 		IFLOG(D1) printf("serial : %s\n", sernum);
-		
+
 		bool saved_flag = d->no_hash_passwords;
 		d->no_hash_passwords = false;
 		vector<uint8_t> hash;
@@ -721,7 +465,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 		//}
 
 	IFLOG(D4) DtaHexDump(DecompressedBuffer+512,512);
-	 
+
 	for (uint8_t i = 2; i < hash.size(); i++) {	DecompressedBuffer[512+64+i-2] = hash.at(i); 	}
 	hash.clear();
 	char usbstr[16] = { 'F','i','d','e','l','i','t','y','L','o','c','k','U', 'S', 'B', };//"FidelityLockUSB";
@@ -730,7 +474,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	{
 		DecompressedBuffer[512 + 96 + i - 2] = hash.at(i);
 	}
- 
+
 	// write license level on window only
 	//uint8_t idx[16];
 	//char st1[16];
@@ -765,7 +509,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	d->no_hash_passwords = saved_flag ; // restore no_hash_password flag
 	// no zero write does it work ????  --> Nope, require to zero out first ,   why ?????
 	vol_handle = INVALID_HANDLE_VALUE;
-	status = createvol(vol_handle, USBname); 
+	status = createvol(vol_handle, USBname);
 	if (!status)
 	{
 		delete u;
@@ -783,7 +527,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 			break;
 		Sleep(100);
 	}
-	if (!res) // zero twice fail 
+	if (!res) // zero twice fail
 	{
 		delete u;
 		delete d;
@@ -802,7 +546,7 @@ int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 	}
 	reloadvol(vol_handle);
 	//status = lockvol(vol_handle);
-	for (lp = 0; lp < 10; lp++) { // 
+	for (lp = 0; lp < 10; lp++) { //
 		status = lockvol(vol_handle); // error return false
 		if (status) break; // break loop if succeess
 		Sleep(500);
@@ -869,7 +613,7 @@ inline void logc(int argc, char * argv[])
 		//std::cout << "registry_writeex error" << std::endl;
 		return ;
 	}
-	if (m.get_logging()) { //logging ON 
+	if (m.get_logging()) { //logging ON
 		char filename[] = "sedutil.log";
 		fstream uidlFile(filename, std::fstream::in | std::fstream::out | std::fstream::app);
 		string s;
@@ -927,7 +671,7 @@ int main(int argc, char * argv[])
 		// bool ValidateLicenseAtStartup(CString computerID, LicenseBinding licenseBinding, bool &needsActivation, CString &returnMsg);
 		if (m_lv->ValidateLicenseAtStartup(licenseBinding, needsActivation, returnMsg) == FALSE)
 		{
-			// no valid license 
+			// no valid license
 
 			//char url[250] = "https://fidelityheight.test.onfastspring.com/"; // new 12/1/2017
 			printf("No valid license of Fidelity Lock found, please register to get demo license or buy basic/premium license\n");
@@ -947,7 +691,7 @@ int main(int argc, char * argv[])
 		}
 		else
 		{
-			printf("Valid Fidelity Lock License found %s %s \n", (char*) m_lv->getf2s(), argv[opts.device]); 
+			printf("Valid Fidelity Lock License found %s %s \n", (char*) m_lv->getf2s(), argv[opts.device]);
 			// printf("License will expire  in %f \n", m_lv->getexpire());
 
 			long licmodel = m_lv->getlicmodel();
@@ -973,10 +717,10 @@ int main(int argc, char * argv[])
 			SYSTEMTIME lt;
 			VariantTimeToSystemTime(m_lv->getexpire(), &lt);
 			//printf("License Expire date : %d/%d/%d %d:%d:%d\n", lt.wYear, lt.wMonth,lt.wDay,lt.wHour,lt.wMinute,lt.wSecond);
-			// additional lic info 
-			long majver = m_lv->getmajorversion(); 
-			long minver = m_lv->getminorversion(); 
-			_bstr_t ver = m_lv->getversion(); 
+			// additional lic info
+			long majver = m_lv->getmajorversion();
+			long minver = m_lv->getminorversion();
+			_bstr_t ver = m_lv->getversion();
 			long prodid = m_lv->getproductid();
 			DATE relsdate = m_lv->getreleasedate();
 			/*
@@ -986,7 +730,7 @@ int main(int argc, char * argv[])
 			printf("License Minor Version = %ld \n", minver);
 			printf("License Version = %s \n", (char *)ver);
 			*/
-			if (0) { // some how m_lv return empty string for the following 
+			if (0) { // some how m_lv return empty string for the following
 				_bstr_t company = m_lv->getcompany();
 				printf("Company = %s\n", (char *)company);
 				_bstr_t ckey = m_lv->getcomputerkey();
@@ -1051,7 +795,7 @@ int main(int argc, char * argv[])
 	//	printf("%s ", argv[i]);
 	//printf("\n");
 
-	if ((opts.action != sedutiloption::scan) && 
+	if ((opts.action != sedutiloption::scan) &&
 		(opts.action != sedutiloption::validatePBKDF2) &&
 		(opts.action != sedutiloption::version) &&
 		//(opts.action != sedutiloption::createUSB) &&
@@ -1068,44 +812,30 @@ int main(int argc, char * argv[])
 			delete tempDev;
 			return DTAERROR_COMMAND_ERROR;
 		}
-		if (tempDev->isOpal2() || tempDev->isPyrite() || tempDev->isOpalite() || tempDev->isRuby())
+        // Delete the tempDev before creating the more specific DtaDev
+        // in case the tempDev was holding some exclusive access
+        if (tempDev->isOpal2()) {
+            delete tempDev;
 			d = new DtaDevOpal2(argv[opts.device]);
-		else
-			if (tempDev->isOpal1())
-				d = new DtaDevOpal1(argv[opts.device]);
-			else
-				if (tempDev->isEprise())
-					d = new DtaDevEnterprise(argv[opts.device]);
-				else
-				 //isOpalite() isPyrite()
-				//	if (tempDev->isPyrite())
-				{
-					LOG(E) << "Unknown OPAL SSC ";
-					return DTAERROR_INVALID_COMMAND;
-				}
-		delete tempDev;
+        } else if (tempDev->isOpal1()) {
+            delete tempDev;
+			d = new DtaDevOpal1(argv[opts.device]);
+        } else if (tempDev->isEprise()) {
+            delete tempDev;
+			d = new DtaDevEnterprise(argv[opts.device]);
+        } else {
+            delete tempDev;
+            LOG(E) << "Unknown OPAL SSC ";
+            return DTAERROR_INVALID_COMMAND;
+        }
 		if (NULL == d) {
 			LOG(E) << "Create device object failed";
 			return DTAERROR_OBJECT_CREATE_FAILED;
 		}
 		// make sure DtaDev::no_hash_passwords is initialized
 		d->no_hash_passwords = opts.no_hash_passwords;
-		d->usermodeON = opts.usermode;
-		d->translate_req = opts.translate_req;
-		d->skip_activate = opts.skip_activate;
-		// only for window
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-		//d->LicenseLevel = (char *) malloc(32);
-		memset((void *)(d->LicenseLevel), 0,32);
-		string tmp_str = _com_util::ConvertBSTRToString(m_lv->getf2s());
-		memcpy((char*)(d->LicenseLevel), tmp_str.c_str(),tmp_str.size()) ; //(_com_util::ConvertBSTRToString(m_lv->getf2s()), 3)).c_str();
-		//LOG(D) << "tmp_str.size()=" << tmp_str.size();
-		//LOG(D) << "m_lv->getf2s()=" << m_lv->getf2s();
-		//LOG(D) << "sizeof(m_lv->getf2s())=" << sizeof(m_lv->getf2s());
-		//LOG(D) << "d->LicenseLevel="  << d->LicenseLevel;
-		//LOG(D) << "_com_util::ConvertBSTRToString( m_lv->getf2s())=" << _com_util::ConvertBSTRToString(m_lv->getf2s());
-		//LOG(D) << "tmp_str = " << tmp_str;
-#endif	
+
+		d->output_format = opts.output_format;
 	}
 
     switch (opts.action) {
@@ -1143,7 +873,7 @@ int main(int argc, char * argv[])
 		LOG(D) << "get manufacture life cycle state " << argv[opts.device];;
 		return d->getmfgstate();
 		break;
-	case sedutiloption::activate: 
+	case sedutiloption::activate:
 		LOG(D) << "activate LockingSP with MSID " << argv[opts.device];;
 		return d->activate(argv[opts.password]);
 		break;
@@ -1166,11 +896,11 @@ int main(int argc, char * argv[])
     #endif
 	case sedutiloption::DataStoreWrite:
 		LOG(D) << "Write to Data Store " << argv[opts.device];;
-		return d->DataStoreWrite(argv[opts.password], argv[opts.userid], argv[opts.pbafile], (uint8_t)atoi(argv[opts.dsnum]), atol(argv[opts.startpos]), atol(argv[opts.len]));
+		return d->DataStoreWrite(argv[opts.password], argv[opts.userid], argv[opts.pbafile], (uint8_t)atoi(argv[opts.dsnum]), (uint32_t)atol(argv[opts.startpos]), (uint32_t)atol(argv[opts.len]));
 		break;
 	case sedutiloption::DataStoreRead:
 		LOG(D) << "Read Data Store to file " << argv[opts.device];;
-		return d->DataStoreRead(argv[opts.password], argv[opts.userid], argv[opts.pbafile], (uint8_t)atoi(argv[opts.dsnum]), atol(argv[opts.startpos]), atol(argv[opts.len]));
+		return d->DataStoreRead(argv[opts.password], argv[opts.userid], argv[opts.pbafile], (uint8_t)atoi(argv[opts.dsnum]), (uint32_t)atol(argv[opts.startpos]), (uint32_t)atol(argv[opts.len]));
 		break;
 	case sedutiloption::getMBRsize:
 		LOG(D) << "get shadow MBR table size " << argv[opts.device];
@@ -1267,8 +997,8 @@ int main(int argc, char * argv[])
         return 0;
         break;
 	case sedutiloption::scan:
-        LOG(D) << "Performing diskScan(skipdevice) ";
-        diskScan(argv[opts.device]);
+        LOG(D) << "Performing diskScan() ";
+        return(DtaDevOS::diskScan());
         break;
 	case sedutiloption::isValidSED:
 		LOG(D) << "Verify whether " << argv[opts.device] << "is valid SED or not";
@@ -1322,9 +1052,8 @@ int main(int argc, char * argv[])
 		return d->objDump(argv[argc - 5], argv[argc - 4], argv[argc - 3], argv[argc - 2]);
 		break;
     case sedutiloption::printDefaultPassword:
-		LOG(D) << "print default password" ;
-        d->printDefaultPassword();
-        return 0;
+		LOG(D) << "print default password";
+        return d->printDefaultPassword();
         break;
 	case sedutiloption::rawCmd:
 		LOG(D) << "Performing cmdDump ";
@@ -1345,7 +1074,7 @@ int main(int argc, char * argv[])
 		st1 = "macOS";
         #endif
 
-#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
 		printf("Opal Lock Version : 0.9.5.%s.%s 20220218-B001\n", st1.c_str(), GIT_VERSION);
 #else
 		//printf("Opal Lock Version : 0.9.5.%s.%s 20220211-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(),GIT_VERSION,GIT_VERSION_PBA);
@@ -1366,5 +1095,6 @@ int main(int argc, char * argv[])
         LOG(E) << "Unable to determine what you want to do ";
         usage();
     }
+    delete d;
 	return DTAERROR_INVALID_COMMAND;
 }

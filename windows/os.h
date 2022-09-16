@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014 - 2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -21,9 +21,9 @@ along with sedutil.If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 #define WINDOWS7 0 // 0 if for windows 8.1 or above ; 1 only for windows 7
 
-#include <WinSDKVer.h>
-#define _WIN32_WINNT _WIN32_WINNT_WINXP
-#include <SDKDDKVer.h>
+//#include <WinSDKVer.h>
+//#define _WIN32_WINNT _WIN32_WINNT_WINXP
+//#include <SDKDDKVer.h>
 #include <Windows.h>
 #include <assert.h>
 
@@ -33,8 +33,6 @@ along with sedutil.If not, see <http://www.gnu.org/licenses/>.
 /** OS specific implementation of the "safe" snprintf function */
 #define SNPRINTF sprintf_s
 #define strcasecmp _stricmp 
-/** OS specific device iterator */
-#define DEVICEMASK sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i)
 /** OS specific example device to be used in help output*/
 #define DEVICEEXAMPLE "\\\\.\\PhysicalDrive3"
 // match types

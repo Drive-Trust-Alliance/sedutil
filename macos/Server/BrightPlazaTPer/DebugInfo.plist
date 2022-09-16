@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>KEXT</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>IOKitPersonalities</key>
+	<dict>
+		<key>SCSI UserClient</key>
+		<dict>
+			<key>CFBundleIdentifier</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			<key>IOClass</key>
+			<string>com_brightplaza_BrightPlazaTPer</string>
+			<key>IOKitDebug</key>
+			<integer>65535</integer>
+			<key>IOProbeScore</key>
+			<integer>32000</integer>
+			<key>IOProviderClass</key>
+			<string>IOSCSIPeripheralDeviceNub</string>
+			<key>IOResourceMatch</key>
+			<string>IOKit</string>
+			<key>IOUserClientClass</key>
+			<string>com_brightplaza_BrightPlazaTPerUserClient</string>
+			<key>Peripheral Device Type</key>
+			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>LSApplicationCategoryType</key>
+	<string>/Users/scott/Library/Developer/Xcode/DerivedData/DTA-emaykawkwetfggaxqqnpsfomwgcp/Build/Intermediates.noindex/ArchiveIntermediates/iSED Bonjour Multistart/IntermediateBuildFilesPath/XCBuildData/92f0d564903b3a4e5e417027d89025fb-manifest.xcbuild:RN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER":"NO","CLANG_WARN_RANGE_LOOP_ANALYSIS":"YES","CLANG_WARN_STRICT_PROTOTYPES":"YES","CLANG_WARN_SUSPICIOUS_MOVE":"YES","CLANG_WARN_SUSPICIOUS_MOVES":"YES","CLANG_WARN_UNREACHABLE_CODE":"YES","CLANG_WARN__DUPLICATE_METHOD_MATCH":"YES","CLASS_FILE_DIR":"/Users/scott/Library/Developer/Xcode/DerivedData/DTA-emaykawkwetfggaxqqnpsfomwgcp/Build/Intermediates.noindex/ArchiveIntermediates/iSED Bonjour Multistart/IntermediateBuildFilesPath/iSED.build/Release Bonjour Multistart-iphoneos/iSED.build/JavaClasses","CLEAN_PRECOMPS":"YES","CLONE_HEADERS":"NO","CODESIGNING_FOLDER_PATH":"/Users/scott/Library/Developer/Xcode/DerivedData/DTA-emaykawkwetfggaxqqnpsfomwgcp/Build/Intermediates.noindex/ArchiveIntermediates/iSED Bonjour Multistart/InstallationBuildProductsLocation/Applications/iSED.app","CODE_SIGNING_ALLOWED":"YES","CODE_SIGNING_REQUIRED":"YES","CODE_SIGN_CONTEXT_CLASS":"XCiPhoneOSCodeSignContext","CODE_SIGN_ENTITLEMENTS":"iSED.entitlements","CODE_SIGN_IDENTITY":"Apple Development","CODE_SIGN_INJECT_BASE_ENTITLEMENTS":"YES","CODE_SIGN_STYLE":"Automatic","COLOR_DIAGNOSTICS":"NO","COMBINE_HIDPI_IMAGES":"NO","COMPILER_INDEX_STORE_ENABLE":"Default","COMPOSITE_SDK_DIRS":"/Users/scott/Library/Developer/Xcode/DerivedData/DTA-emaykawkwetfggaxqqnpsfomwgcp/Build/Intermediates.noindex/ArchiveIntermediates/iSED Bonjour Multistart/IntermediateBuildFilesPath/CompositeSDKs","COMPRESS_PNG_FILES":"YES","CONFIGURATION":"Release Bonjour Multistart","CONFIGURATION_BUILD_DIR":"/Users/scott/Library/Developer/Xcode/DerivedData/DTA-emaykawkwetfggaxqqnpsfomwgcp/Build/Intermediates.noindex/ArchiveIntermediates/iSED Bonjour Multistart/BuildProductsPath/Release Bonjour Multistart-iphoneos","CONFIGURATION_TEMP_DIR":"/Users/scott/Library/Developer/Xcode/DerivedData/DTA-emaykawkwetfggaxqqnpsfomwgcp/Build/Intermediates.noindex/ArchiveIntermediates/iSED Bonjour Multistart/IntermediateBuildFilesPath/iSED.build/Release Bonjour Multistart-iphoneos","CONTENTS_FOLDER_PATH":"iSED.app","COPYING_PRESERVES_HFS_DATA":"NO","COPY_HEADERS_RUN_UNIFDEF":"NO","COPY_PHA</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2016, 2022 Bright Plaza Inc. All rights reserved.</string>
+	<key>OSBundleLibraries</key>
+	<dict>
+		<key>com.apple.iokit.IOSCSIArchitectureModelFamily</key>
+		<string>394.50.1</string>
+		<key>com.apple.iokit.IOSCSIBlockCommandsDevice</key>
+		<string>394.50.1</string>
+		<key>com.apple.kpi.iokit</key>
+		<string>16.6</string>
+		<key>com.apple.kpi.libkern</key>
+		<string>16.6</string>
+	</dict>
+	<key>OSBundleRequired</key>
+	<string>Local-Root</string>
+</dict>
+</plist>

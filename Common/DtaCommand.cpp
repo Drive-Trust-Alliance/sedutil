@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -50,11 +50,11 @@ void
 DtaCommand::reset()
 {
     LOG(D1) << "Entering DtaCommand::reset()";
-    memset(cmdbuf, 0, IO_BUFFER_LENGTH);
-	memset(respbuf, 0, IO_BUFFER_LENGTH);
+    memset(cmdbuf, 0, MAX_BUFFER_LENGTH);
+	memset(respbuf, 0, MIN_BUFFER_LENGTH);
     bufferpos = sizeof (OPALHeader);
 }
-void 
+void
 DtaCommand::reset(OPAL_UID InvokingUid, vector<uint8_t> method){
 	LOG(D1) << "Entering DtaCommand::reset(OPAL_UID,uint8_t)";
 	reset();
@@ -62,7 +62,7 @@ DtaCommand::reset(OPAL_UID InvokingUid, vector<uint8_t> method){
 	addToken(InvokingUid);
 	addToken(method);
 }
-void 
+void
 DtaCommand::reset(vector<uint8_t> InvokingUid, vector<uint8_t> method){
 	LOG(D1) << "Entering DtaCommand::reset(uint8_t,uint8_t)";
 	reset();
@@ -75,7 +75,7 @@ void
 DtaCommand::reset(OPAL_UID InvokingUid, OPAL_METHOD method)
 {
     LOG(D1) << "Entering DtaCommand::reset(OPAL_UID, OPAL_METHOD)";
-    reset(); 
+    reset();
     cmdbuf[bufferpos++] = OPAL_TOKEN::CALL;
 	addToken(InvokingUid);
     cmdbuf[bufferpos++] = OPAL_SHORT_ATOM::BYTESTRING8;
@@ -206,22 +206,15 @@ DtaCommand::complete(uint8_t EOD)
     /* fill in the lengths and add the modulo 4 padding */
     OPALHeader * hdr;
     hdr = (OPALHeader *) cmdbuf;
-	LOG(D1) << "bufferpos=" << bufferpos << endl;
-	LOG(D1) << "sizeof(OPALHeader)=" << sizeof(OPALHeader) << endl;
-	LOG(D1) << "sizeof(OPALComPacket)=" << sizeof(OPALComPacket) << endl;
-    hdr->subpkt.length = SWAP32(bufferpos - (sizeof (OPALHeader)));
+    hdr->subpkt.length = SWAP32(bufferpos - (uint32_t)(sizeof (OPALHeader)));
     while (bufferpos % 4 != 0) {
         cmdbuf[bufferpos++] = 0x00;
     }
-    hdr->pkt.length = SWAP32((bufferpos - sizeof (OPALComPacket))
-                             - sizeof (OPALPacket));
-    hdr->cp.length = SWAP32(bufferpos - sizeof (OPALComPacket));
-	LOG(D1) << "bufferpos=" << bufferpos << endl;
-	LOG(D1) << "hdr->subpkt.length=" << SWAP32(hdr->subpkt.length) << endl;
-	LOG(D1) << "hdr->pkt.length=" << SWAP32(hdr->pkt.length) << endl;
-	LOG(D1) << "hdr->cp.length=" << SWAP32(hdr->cp.length) << endl;
-	if (bufferpos > IO_BUFFER_LENGTH_HI ) { //57444) { 
-		LOG(E) << " Buffer Overrun " << bufferpos;
+    hdr->pkt.length = SWAP32(bufferpos - (uint32_t)(sizeof (OPALComPacket))
+                             - (uint32_t)(sizeof (OPALPacket)));
+    hdr->cp.length = SWAP32(bufferpos - (uint32_t)(sizeof (OPALComPacket)));
+	if (bufferpos > MAX_BUFFER_LENGTH) {
+		LOG(D1) << " Standard Buffer Overrun " << bufferpos;
 		exit(EXIT_FAILURE);
 	}
 }
@@ -251,10 +244,7 @@ DtaCommand::getRespBuffer()
 uint16_t
 DtaCommand::outputBufferSize() {
 	//	if (MIN_BUFFER_LENGTH + 1 > bufferpos) return(MIN_BUFFER_LENGTH);
-	if (bufferpos % 512)
-		return(((uint16_t)(bufferpos / 512) + 1) * 512);
-	else
-		return((uint16_t)(bufferpos / 512) * 512);
+    return (uint16_t)(((bufferpos + 511) / 512) * 512);
 }
 void
 DtaCommand::dumpCommand()
@@ -268,7 +258,6 @@ DtaCommand::dumpResponse()
 	OPALHeader *hdr = (OPALHeader *)respbuf;
 	DtaHexDump(respbuf, SWAP32(hdr->cp.length) + sizeof(OPALComPacket));
 }
-
 void
 DtaCommand::setcomID(uint16_t comID)
 {

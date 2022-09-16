@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -20,6 +20,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include <stdio.h>
 #include "DtaSession.h"
+#include "DtaOptions.h"
 #include "DtaDev.h"
 #include "DtaCommand.h"
 #include "DtaResponse.h"
@@ -33,6 +34,7 @@ using namespace std;
 DtaSession::DtaSession(DtaDev * device)
 {
     LOG(D1) << "Creating DtaSsession()";
+	sessionauth = 0;
     d = device;
 }
 
@@ -53,11 +55,51 @@ DtaSession::start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority)
 	}
 	return(start(SP, HostChallenge, auth));
 }
+uint8_t DtaSession::authuser() {
+	return sessionauth;
+}
+#ifdef MULTISTART
 uint8_t
 DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority)
 {
+	vector <uint8_t> auth;
+	if ((lastRC = unistart(SP, HostChallenge, SignAuthority)) == 0) {
+		sessionauth = 0;
+		return 0;
+	}
+	else {
+		for (uint8_t i = 1; i < 9; i++) {
+			// { 0x00, 0x00, 0x00, 0x09, 0x00, 0x03, 0x00, 0x01 }, /**< USER1 */
+			auth.clear();
+			auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+			auth.push_back(0x00);
+			auth.push_back(0x00);
+			auth.push_back(0x00);
+			auth.push_back(0x09);
+			auth.push_back(0x00);
+			auth.push_back(0x03);
+			auth.push_back(0x00);
+			auth.push_back(i);
+			if ((lastRC = unistart(SP, HostChallenge, auth)) == 0) {
+				sessionauth = i;
+				return 0;
+			}
+		}
+
+	}
+	return lastRC;
+}
+uint8_t
+DtaSession::unistart(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority)
+#else
+uint8_t
+DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority)
+#endif
+{
     LOG(D1) << "Entering DtaSession::startSession vector";
 	vector<uint8_t> hash;
+	lastRC = 0;
+
     DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
 		LOG(E) << "Unable to create session object ";
@@ -99,7 +141,7 @@ DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthori
     cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
 	if ((lastRC = sendCommand(cmd, response)) != 0) {
-		LOG(E) << "Session start failed";
+		LOG(E) << "Session start failed rc = " << (int)lastRC;
 		delete cmd;
 		return lastRC;
 	}  
@@ -161,17 +203,16 @@ DtaSession::authenticate(vector<uint8_t> Authority, char * Challenge)
 	return 0;
 }
 uint8_t
-DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response, uint8_t oper) // oper=0 -> normal for read and non-data ; oper =1 -> write 
+DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response)
 {
     LOG(D1) << "Entering DtaSession::sendCommand()";
     cmd->setHSN(HSN);
     cmd->setTSN(TSN);
     cmd->setcomID(d->comID());
-	//printf("oper=%d\n", oper); // JERRY
-    uint8_t exec_rc = d->exec(cmd, response, SecurityProtocol, oper);
+    uint8_t exec_rc = d->exec(cmd, response, SecurityProtocol);
     if (0 != exec_rc)
     {
-        LOG(E) << "Command failed on exec " << (uint16_t) exec_rc << d->dev ;
+        LOG(E) << "Command failed on exec " << (uint16_t) exec_rc ;
         return exec_rc;
     }
     /*
@@ -182,7 +223,7 @@ DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response, uint8_t oper) 
     if ((0 == response.h.cp.length) ||
         (0 == response.h.pkt.length) ||
         (0 == response.h.subpkt.length)) {
-        LOG(E) << "One or more header fields have 0 length " << d->dev ;
+        LOG(E) << "One or more header fields have 0 length " ;
 		LOG(E) << "response.h.cp.length= " << response.h.cp.length;
 		LOG(E) << "response.h.pkt.length= " << response.h.pkt.length;
 		LOG(E) << "response.h.subpkt.length= " << response.h.subpkt.length << endl; 
@@ -201,12 +242,12 @@ DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response, uint8_t oper) 
     if (!((OPAL_TOKEN::ENDLIST == response.tokenIs(response.getTokenCount() - 1)) &&
         (OPAL_TOKEN::STARTLIST == response.tokenIs(response.getTokenCount() - 5)))) {
         // no method status so we hope we reported the error someplace else
-        LOG(E) << "Method Status missing" << d->dev;
+        LOG(E) << "Method Status missing";
 		return DTAERROR_NO_METHOD_STATUS;
     }
     if (OPALSTATUSCODE::SUCCESS != response.getUint8(response.getTokenCount() - 4)) {
         LOG(E) << "method status code " <<
-                methodStatus(response.getUint8(response.getTokenCount() - 4)) << d->dev ;
+                methodStatus(response.getUint8(response.getTokenCount() - 4));
     }
     return response.getUint8(response.getTokenCount() - 4);
 }

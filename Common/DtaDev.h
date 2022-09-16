@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2022 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -18,15 +18,17 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
-#ifndef BYTE
-typedef unsigned char       BYTE;
-#endif
 #include "DtaStructures.h"
 #include "DtaLexicon.h"
 #include <vector>
 #include "DtaResponse.h"
+#include "DtaConstants.h"
+#include "DtaOptions.h"
 class DtaCommand;
 class DtaSession;
+
+void auditpass(unsigned char * apass);
+void setlic(unsigned char * lic_level, const char * LicenseLevel);
 
 using namespace std;
 /** Base class for a disk device.
@@ -75,6 +77,8 @@ public:
 	char *getModelNum();
 	/** Returns the Serial Number reported by the Identify command */
 	char *getSerialNum();
+    /* What type of disk attachment is used */
+    DTA_DEVICE_TYPE getDevType();
 	/** displays the information returned by the Discovery 0 reply */
 	virtual void puke();
 
@@ -83,7 +87,7 @@ public:
 	 * the endianess conversions either via a bitswap in the structure or executing
 	 * a macro when the input buffer is read.
 	 */
-	void discovery0(BYTE *);
+	void discovery0();
 	uint8_t TperReset();
 	/*
 	 * virtual methods required in the OS specific
@@ -153,10 +157,6 @@ public:
          * @param newpassword  value password is to be changed to
          */
 	virtual uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword) = 0;
-	/** Loads a disk image file to the shadow MBR table.
-	 * @param password the password for the administrative authority with access to the table
-	 * @param filename the filename of the disk image
-	 */
 	virtual uint8_t pbaValid(char * password) = 0;
 	virtual uint8_t activate(char * password) = 0;
 	virtual uint8_t auditWrite(char * password, char * idstr, char * userid) = 0;
@@ -168,6 +168,10 @@ public:
 	virtual uint8_t MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len) = 0;
 	virtual uint8_t getMBRsize(char * password) = 0;
 	virtual uint8_t createUSB(char * filename) = 0;
+    /** Loads a disk image file to the shadow MBR table.
+     * @param password the password for the administrative authority with access to the table
+     * @param filename the filename of the disk image
+     */
 	virtual uint8_t loadPBA(char * password, char * filename) = 0;
 	/** Change the locking state of a locking range
 	 * @param lockingrange The number of the locking range (0 = global)
@@ -218,7 +222,7 @@ public:
 	*/
 	virtual uint8_t rekeyLockingRange(uint8_t lockingrange, char * password) = 0;
 	/** Enable bands using MSID.
-	* @param lockingrange locking range number
+	* @param rangeid locking range number
 	*/
 	virtual uint8_t setBandsEnabled(int16_t rangeid, char * password) = 0;
 	/** Primitive to set the MBRDone flag.
@@ -227,10 +231,10 @@ public:
 	 */
 	virtual uint8_t setMBRDone(uint8_t state, char * Admin1Password) = 0;
 	virtual uint8_t TCGreset(uint8_t state) = 0;
-	/** Primitive to set the MBREnable flag.
-	 * @param state 0 or 1
-	 * @param Admin1Password Locking SP authority with access to flag
-	 */
+    /** Primitive to set the MBREnable flag.
+     * @param state 0 or 1
+     * @param Admin1Password Locking SP authority with access to flag
+     */
 	virtual uint8_t setMBREnable(uint8_t state, char * Admin1Password) = 0;
 	/** enable a locking sp user.
 	 * @param password password of locking sp administrative authority
@@ -305,18 +309,22 @@ public:
 	/** Send a command to the device and wait for the response
 	 * @param cmd the MswdCommand object containing the command
 	 * @param response the DtaResonse object containing the response
-	 * @param protocol The security protocol number to use for the command
+     * @param protocol The security protocol number to use for the command
 	 */
-	virtual uint8_t exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol = 0x01, uint8_t oper = 0) = 0;
+	virtual uint8_t exec(DtaCommand * cmd, DtaResponse & response, uint8_t protocol = 0x01) = 0;
 	/** return the communications ID to be used for sessions to this device */
 	virtual uint16_t comID() = 0;
 	bool no_hash_passwords; /** disables hashing of passwords */
 	bool usermodeON = FALSE;
 	bool translate_req = FALSE;
 	bool skip_activate = FALSE;
-	char LicenseLevel[32];
-	const char * dev;   /**< character string representing the device in the OS lexicon */
+    sedutiloutput output_format; /** standard, readable, JSON */  // TODO: really an attribute of the program, not the TPer
+	char LicenseLevel[32];  // TODO ???
+
+    static void parseDiscovery0Features(const uint8_t * d0Response, OPAL_DiskInfo & di);
 protected:
+	const char * dev;   /**< character string representing the device in the OS lexicon */
+    
 	uint8_t isOpen = FALSE;  /**< The device has been opened */
 	uint8_t isNVME = FALSE;  /**< This device is NVME */
 	uint8_t adj_host = FALSE; 
@@ -325,7 +333,10 @@ protected:
 	DtaResponse response;   /**< shared response object */
 	DtaResponse propertiesResponse;  /**< response from properties exchange */
 	DtaSession *session;  /**< shared session object pointer */
-	uint8_t discovery0buffer[IO_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT] ; // NG->__attribute__((aligned(16)));
+
+    virtual uint8_t acquireDiscovery0Response(uint8_t * d0Response);
+	uint8_t discovery0buffer[MIN_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT] ; // NG->__attribute__((aligned(16)));
+    
 	uint32_t Tper_sz_MaxComPacketSize = 2048;
 	uint32_t Tper_sz_MaxResponseComPacketSize = 2048;
 	uint32_t Tper_sz_MaxPacketSize = 2028;
@@ -335,3 +346,4 @@ protected:
 	uint32_t Host_sz_MaxPacketSize = 2028 ;
 	uint32_t Host_sz_MaxIndTokenSize = 1992 ;
 };
+

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -22,8 +22,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevLinuxDrive.h"
 
 /** Linux specific implementation of DtaDevOS.
- * Uses the SCSI generic ioctls to send commands to the 
- * device 
+ * Uses the SCSI generic ioctls to send commands to the
+ * device
  */
 class DtaDevLinuxSata: public DtaDevLinuxDrive {
 public:
@@ -47,10 +47,12 @@ public:
      * @param buffer input/output buffer
      * @param bufferlen length of the input/output buffer
      */
-    uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,void * buffer, uint32_t bufferlen);
+    uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+            void * buffer, uint32_t bufferlen);
     /** Linux specific routine to send an ATA identify to the device */
     void identify(OPAL_DiskInfo& disk_info);
-    uint8_t sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,void * buffer, uint32_t bufferlen);
+    uint8_t sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+            void * buffer, uint32_t bufferlen);
     /** Linux specific routine to send an ATA identify to the device */
     void identify_SAS(OPAL_DiskInfo *disk_info);
     int fd; /**< Linux handle for the device  */

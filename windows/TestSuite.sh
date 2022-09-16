@@ -11,8 +11,8 @@ read INOUT
 echo  Last chance to hit Ctrl-c an keep the data on your drive
 read INPUT
 ## test PROG commands
-PROG=CLI/Win32/Release/sedutil-cli.exe
-##PROG=CLI/x64/Release/sedutil-cli.exe
+##PROG=CLI/Win32/Release/sedutil-cli.exe
+PROG=CLI/x64/Release/sedutil-cli.exe
 ##PROG=./sedutil-cli.exe
 ##PROG=echo 
 LOGFILE=sedutil_baseline
@@ -22,7 +22,7 @@ echo  testing sedutil `date` > ${LOGFILE}
 ##
 echo  Begin TestSuite.cmd > ${LOGFILE}
 uname -a >> ${LOGFILE}
-echo testing PROG `date` | tee -a ${LOGFILE} 
+echo testing ${PROG} `date` | tee -a ${LOGFILE} 
 ${PROG} --help | grep -a Copyright >>  ${LOGFILE} 2>&1
 
 ${PROG} --scan >>  ${LOGFILE} 2>&1

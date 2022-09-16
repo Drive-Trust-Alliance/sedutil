@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -17,6 +17,17 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
+
+#ifndef _DTAOPTIONS_H
+#define	_DTAOPTIONS_H
+
+/** Output modes */
+typedef enum _sedutiloutput {
+	sedutilNormal,
+	sedutilReadable,
+	sedutilJSON
+} sedutiloutput;
+
 /** Structure representing the command line issued to the program */
 typedef struct _DTA_OPTIONS {
     uint8_t password;   /**< password supplied */
@@ -35,15 +46,16 @@ typedef struct _DTA_OPTIONS {
 	uint32_t startpos;		/** data store start position  */
 	uint32_t len;			/** data store length */
 	bool no_hash_passwords; /** global parameter, disables hashing of passwords */
-	bool usermode; /* true : start session with UserN UID, otherwise with AdminN UID */
-	uint8_t devusb;			/** usb devname */
-	bool	translate_req;	/* global parameter, require to translate the hashed password string into hex data */
-	bool	skip_activate; /* skip activation LockingSP during initial setup */
+    bool usermode; /* true : start session with UserN UID, otherwise with AdminN UID */
+    uint8_t devusb;            /** usb devname */
+    bool    translate_req;    /* global parameter, require to translate the hashed password string into hex data */
+    bool    skip_activate; /* skip activation LockingSP during initial setup */
+	sedutiloutput output_format;
 } DTA_OPTIONS;
 /** Print a usage message */
 void usage();
 /** Parse the command line and return a structure that describes the action desired
- * @param argc program argc parameter 
+ * @param argc program argc parameter
  * @param argv program argv paramater
  * @param opts pointer to options structure to be filled out
  */
@@ -103,7 +115,7 @@ typedef enum _sedutiloption {
 	validatePBKDF2,
 	objDump,
     printDefaultPassword,
-	rawCmd, 
+	rawCmd,
 	version,
 	hashvalidation,
 
@@ -136,4 +148,6 @@ i++;
 
 /** set the argc value for this parameter in the options structure */
 #define OPTION_IS(option_field) \
-				opts->option_field = ++i; 
+				opts->option_field = ++i;
+
+#endif /* _DTAOPTIONS_H */

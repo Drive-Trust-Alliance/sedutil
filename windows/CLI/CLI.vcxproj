@@ -55,7 +55,7 @@
     <ClInclude Include="..\..\linux\VersionPBA.h" />
     <ClInclude Include="..\DtaDevOS.h" />
     <ClInclude Include="..\DtaDiskATA.h" />
-    <ClInclude Include="..\DtaDiskNvme.h" />
+    <ClInclude Include="..\DtaDiskNVMe.h" />
     <ClInclude Include="..\DtaDiskUSB.h" />
     <ClInclude Include="..\IntelRST.h" />
     <ClInclude Include="..\nvme.h" />
@@ -92,7 +92,7 @@
     <ClCompile Include="..\..\License\stdafx.cpp" />
     <ClCompile Include="..\DtaDevOS.cpp" />
     <ClCompile Include="..\DtaDiskATA.cpp" />
-    <ClCompile Include="..\DtaDiskNvme.cpp" />
+    <ClCompile Include="..\DtaDiskNVMe.cpp" />
     <ClCompile Include="..\DtaDiskUSB.cpp" />
     <ClCompile Include="..\uuid.cpp" />
   </ItemGroup>
@@ -193,8 +193,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2;$(SolutionDir)..\..\License</AdditionalIncludeDirectories>
-      <TreatWarningAsError>false</TreatWarningAsError>
+
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <MinimalRebuild>false</MinimalRebuild>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -225,10 +229,11 @@ $(SolutionDir)..\..\windows\PyExtuD.bat
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2;$(SolutionDir)..\..\License</AdditionalIncludeDirectories>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <AdditionalOptions>/Zm2000 %(AdditionalOptions)</AdditionalOptions>
-      <CompileAsManaged>false</CompileAsManaged>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <MinimalRebuild>false</MinimalRebuild>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -260,8 +265,10 @@ copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2;$(SolutionDir)..\..\License</AdditionalIncludeDirectories>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -297,6 +304,8 @@ $(SolutionDir)..\..\windows\PyExtuD.bat
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2;$(SolutionDir)..\..\License</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

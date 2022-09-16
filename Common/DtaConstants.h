@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -17,22 +17,26 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
-/** Length of the IO buffers used */
+ /** MAX Length of input the IO buffers used */
+#define MAX_BUFFER_LENGTH 61440
+/** Length of input the IO buffers used */
+#define MIN_BUFFER_LENGTH 2048
 #define IO_BUFFER_LENGTH 12288 // 15360 // 17408
 #define IO_BUFFER_LENGTH_HI 61440
 #define IO_BUFFER_LENGTH_MI 28672 // 28K 32768 // 33280 // T7 is 33280
-#define IO_BUFFER_LENGTH_LO 12288 // 15360 // 17408 
+#define IO_BUFFER_LENGTH_LO 12288 // 15360 // 17408
 #define BLOCKSIZE_HI 57344  // 56K
 #define BLOCKSIZE_MI 28672  // 30K->28K(28672 7000h) -> 24K(24576 6000h) NG
 #define BLOCKSIZE_LO 10240 //  10K
 /** Alignment of the IO buffers.
 * generic align on 1k boundary probably not needed
-* but when things weren't working this was one of the 
+* but when things weren't working this was one of the
 * things I tried to make it work.
 */
-#define IO_BUFFER_ALIGNMENT 1024 // 4096
+// #define IO_BUFFER_ALIGNMENT 1024
+#define IO_BUFFER_ALIGNMENT 16384  // ARM systems use 16K memory page size
 /** maximum number of disks to be scanned */
-#define MAX_DISKS 20
+#define MAX_DISKS 99
 /** iomanip commands to hexdump a field */
 #define HEXON(x) "0x" << std::hex << std::setw(x) << std::setfill('0')
 /** iomanip command to return to standard ascii output */

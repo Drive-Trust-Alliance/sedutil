@@ -1,6 +1,6 @@
 ![alt tag](https://avatars0.githubusercontent.com/u/13870012?v=3&s=200)
 
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -22,24 +22,23 @@ sedutil - The Drive Trust Alliance Self Encrypting Drive Utility
 
 This program and it's accompanying Pre-Boot Authorization image allow
 you to enable the locking in SED's that comply with the TCG OPAL 2.00
-standard on bios machines.   
+standard on bios machines.
 
-You must be administrator/root to run the host managment program
+You must be administrator/root to run the host management program
 
-In Linux libata.allow_tpm must be set to 1. Either via adding libata.allow_tpm=1 to the kernel flags at boot time 
-or changing the contents of /sys/module/libata/parameters/allow_tpm to a from a "0" to a "1" on a running system.
+In Linux libata.allow_tpm must be set to 1 for SATA-based drives,
+including NGFF/M.2 SATA drives.Either adding libata.allow_tpm=1
+to the kernel flags at boot time or changing the contents of
+/sys/module/libata/parameters/allow_tpm from a "0" to a "1" on
+a running system if possible will accomplish this. NVMe drives
+do not need this parameter.
 
 ***** sleep (S3) is not supported.
 
-Source code is available on GitHub at https://github.com/Drive-Trust-Alliance/sedutil 
+Source code is available on GitHub at https://github.com/Drive-Trust-Alliance/sedutil
 
 Linux and Windows executables are available at https://github.com/Drive-Trust-Alliance/sedutil/wiki/Executable-Distributions
 
 If you are looking for the PSID revert function see linux/PSIDRevert_LINUX.txt or win32/PSIDRevert_WINDOWS.txt
-=======
-# py-gui
-merge py-src and py repo
-pull gui py directory from util repo
-python source code not avilable to py repository with collaborator
 
-
+PLEASE SEE CONTRIBUTING if you would like to make a code contribution.

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -23,7 +23,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define NOHEXDUMP 1
 
 #if NOHEXDUMP
-void DtaHexDump(void * address, int length) { }
+void DtaHexDump(void * address, int length) {
+#pragma unused(address)
+#pragma unused(length)
+}
 #else
 void DtaHexDump(void * address, int length) {
 	uint8_t display[17];

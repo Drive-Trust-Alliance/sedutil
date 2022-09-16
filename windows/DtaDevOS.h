@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -21,8 +21,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDev.h"
 #include "DtaDiskType.h"
 /** Windows specific implementation of DtaDevOS.
- * Uses the ATA_PASSTHROUGH_DIRECT ioctls to send commands to the 
- * device 
+ * Uses the ATA_PASSTHROUGH_DIRECT ioctls to send commands to the
+ * device
  */
 class DtaDevOS : public DtaDev {
 public:
@@ -44,7 +44,8 @@ public:
      * @param buffer input/output buffer
      * @param bufferlen length of the input/output buffer
      */
-	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, void * buffer, uint32_t bufferlen);
+	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+		void * buffer, uint32_t bufferlen);
 	/** OS specific method to send an determing size of disk (in bytes)
 	* @param cmd ATA command to be sent to the device
 	* @param protocol security protocol to be used in the command
@@ -53,8 +54,10 @@ public:
 	* @param bufferlen length of the input/output buffer
 	*/
 	unsigned long long	getSize();
+	/** A static class to scan for supported drives */
+	static int diskScan();
 protected:
-     /** OS specific command to Wait for specified number of milliseconds 
+     /** OS specific command to Wait for specified number of milliseconds
      * @param milliseconds  number of milliseconds to wait
      */
 	void osmsSleep(uint32_t milliseconds);

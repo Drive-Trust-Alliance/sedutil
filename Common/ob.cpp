@@ -20,7 +20,7 @@ obfs::~obfs()
 }
 
 
-void obfs::rstor(char * st1, char * sf)
+void obfs::rstor(unsigned char * st1, unsigned char * sf)
 {
 
 	//char st2[17] = "FidelityPRO5    "; // array size is 17-byte but actual content is 16-byte
@@ -32,7 +32,7 @@ void obfs::rstor(char * st1, char * sf)
 
 	// restore to original text
 	for (int i = 0; i < 16; i++) {
-		st1[i] = ((sf[i] & 0xff) ^ (SeedFL + i));
+		st1[i] = (unsigned char)((sf[i] & 0xff) ^ (SeedFL + i));
 	}
 	//if (0) {
 	//	printf("restore text in hex : ");
@@ -51,7 +51,7 @@ void obfs::rstor(char * st1, char * sf)
 }
 
 
-void obfs::lic(int lev, char * lic_level)
+void obfs::lic(int lev, unsigned char * lic_level)
 {
 	switch (lev)
 	{
@@ -80,7 +80,7 @@ void obfs::lic(int lev, char * lic_level)
 	}
 }
 
-void obfs::setaudpass(char * apass)
+void obfs::setaudpass(unsigned char * apass)
 {
 	rstor(apass, audit);
 }

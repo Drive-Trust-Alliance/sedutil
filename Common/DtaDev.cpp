@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -19,18 +19,43 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 /** Base device class.
  * An OS port must create a subclass of this class
- * implementing sendcmd, osmsSleep and identify 
+ * implementing sendcmd, osmsSleep and identify
  * specific to the IO requirements of that OS
  */
 #include "os.h"
 #include <stdio.h>
 #include <iostream>
 #include <iomanip>
+#include "DtaOptions.h"
 #include "DtaDev.h"
 #include "DtaStructures.h"
-#include "DtaConstants.h"
 #include "DtaEndianFixup.h"
 #include "DtaHexDump.h"
+
+#include "ob.h"
+
+void setlic(unsigned char * lic_level, const char * LicenseLevel)
+{
+    unsigned char sbnk[16] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', };
+    obfs ob;
+
+    if (!memcmp("0:", LicenseLevel, 2)) { // correct feature set
+        ob.lic(atoi(&LicenseLevel[2]), lic_level);
+    }
+    else {
+        memcpy(lic_level, sbnk, 16);
+        printf("no license = %s\n", lic_level);
+    }
+}
+
+
+
+void auditpass(unsigned char * apass)
+{
+    obfs ob;
+    ob.setaudpass(apass);
+}
+
 
 using namespace std;
 
@@ -144,57 +169,28 @@ char *DtaDev::getSerialNum()
 {
 	return (char *)&disk_info.serialNum;
 }
-void DtaDev::discovery0(BYTE * disc0Sts)
+DTA_DEVICE_TYPE DtaDev::getDevType()
+{
+    return disk_info.devType;
+}
+
+uint8_t DtaDev::acquireDiscovery0Response(uint8_t * d0Response)
+{
+    return sendCmd(IF_RECV, 0x01, 0x0001, d0Response, MIN_BUFFER_LENGTH);
+}
+
+void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, OPAL_DiskInfo & di)
 {
     LOG(D1) << "Entering DtaDev::discovery0()";
-	uint8_t lastRC;
-    void * d0Response = NULL;
     uint8_t * epos, *cpos;
     Discovery0Header * hdr;
     Discovery0Features * body;
-	d0Response = discovery0buffer + IO_BUFFER_ALIGNMENT;
-	// wrong memory alignment cause a huge difference. if correct, it seems run well 
-	d0Response = (void *)((uintptr_t)d0Response & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
-	//d0Response = (void *)(((uintptr_t)d0Response + IO_BUFFER_ALIGNMENT - 1) & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
-
-	memset(d0Response, 0, IO_BUFFER_LENGTH);
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-	try {
-		lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, 2048); // IO_BUFFER_LENGTH); // 1024 * 14); // 12k->ok sometimes  10k->NG, 8k->NG 4096->NG); // IO_BUFFER_LENGTH->OK); // 2048->NG);
-	}
-	catch (char *error) // doesnt seem to catch any memory violation
-	{
-		//printf("sendCmd Error : %s\n", error);
-		//ExitProcess(0);
-	}
-    if ((lastRC) != 0) { 
-		LOG(D1) << "sendCmd failed; lastRC= " << lastRC;
-
-    #endif
-    #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-    if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, IO_BUFFER_LENGTH)) != 0) { 
-        LOG(D1) << "Send D0 request(IO_BUFFER_LENGTH) to device failed " << (uint16_t)lastRC;
-        if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, 2048)) == 0) {
-            LOG(D1) << "Send D0 request(2048) to device OK " << (uint16_t)lastRC;
-            goto OK101;
-        }
-    #endif
-        LOG(D1) << "Send D0 request(2048) to device failed " << (uint16_t)lastRC;
-        return;
-    }
-
-    else 
-        { LOG(D1) << "Send D0 request(IO_BUFFER_LENGTH) to device OK " << (uint16_t)lastRC; }
-
-    #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-OK101:
-    #endif
     epos = cpos = (uint8_t *) d0Response;
     hdr = (Discovery0Header *) d0Response;
     LOG(D3) << "Dumping D0Response";
     if ( (SWAP32(hdr->length) > 8192) || (SWAP32(hdr->length) < 48) )
     {
-	  LOG(D) << "Level 0 Discovery header length abnormal " << hex << SWAP32(hdr->length); 
+	  LOG(D) << "Level 0 Discovery header length abnormal " << hex << SWAP32(hdr->length);
 	return;
     }
     IFLOG(D3) DtaHexDump(hdr, SWAP32(hdr->length));
@@ -206,214 +202,187 @@ OK101:
         body = (Discovery0Features *) cpos;
         LOG(D2) << "Discover0FeatureCode: " << hex << SWAP16(body->TPer.featureCode);
         switch (SWAP16(body->TPer.featureCode)) { /* could use of the structures here is a common field */
-        case FC_TPER: /* TPer 0x001 */
-            disk_info.TPer = 1;
-            disk_info.TPer_ACKNACK = body->TPer.acknack;
-            disk_info.TPer_async = body->TPer.async;
-            disk_info.TPer_bufferMgt = body->TPer.bufferManagement;
-            disk_info.TPer_comIDMgt = body->TPer.comIDManagement;
-            disk_info.TPer_streaming = body->TPer.streaming;
-            disk_info.TPer_sync = body->TPer.sync;
+        case FC_TPER: /* TPer */
+            di.TPer = 1;
+            di.TPer_ACKNACK = body->TPer.acknack;
+            di.TPer_async = body->TPer.async;
+            di.TPer_bufferMgt = body->TPer.bufferManagement;
+            di.TPer_comIDMgt = body->TPer.comIDManagement;
+            di.TPer_streaming = body->TPer.streaming;
+            di.TPer_sync = body->TPer.sync;
             break;
-        case FC_LOCKING: /* Locking 0x002 */
-            disk_info.Locking = 1;
-            disk_info.Locking_locked = body->locking.locked;
-            disk_info.Locking_lockingEnabled = body->locking.lockingEnabled;
-            disk_info.Locking_lockingSupported = body->locking.lockingSupported;
-            disk_info.Locking_MBRDone = body->locking.MBRDone;
-            disk_info.Locking_MBREnabled = body->locking.MBREnabled;
-            disk_info.Locking_mediaEncrypt = body->locking.mediaEncryption;
-			disk_info.Locking_MBRshadowingNotSupported = body->locking.MBRshadowingNotSupported; // 
+        case FC_LOCKING: /* Locking*/
+            di.Locking = 1;
+            di.Locking_locked = body->locking.locked;
+            di.Locking_lockingEnabled = body->locking.lockingEnabled;
+            di.Locking_lockingSupported = body->locking.lockingSupported;
+            di.Locking_MBRDone = body->locking.MBRDone;
+            di.Locking_MBREnabled = body->locking.MBREnabled;
+            di.Locking_mediaEncrypt = body->locking.mediaEncryption;
             break;
-        case FC_GEOMETRY: /* Geometry Features 0x003 */
-            disk_info.Geometry = 1;
-            disk_info.Geometry_align = body->geometry.align;
-            disk_info.Geometry_alignmentGranularity = SWAP64(body->geometry.alignmentGranularity);
-            disk_info.Geometry_logicalBlockSize = SWAP32(body->geometry.logicalBlockSize);
-            disk_info.Geometry_lowestAlignedLBA = SWAP64(body->geometry.lowestAlighedLBA);
+        case FC_GEOMETRY: /* Geometry Features */
+            di.Geometry = 1;
+            di.Geometry_align = body->geometry.align;
+            di.Geometry_alignmentGranularity = SWAP64(body->geometry.alignmentGranularity);
+            di.Geometry_logicalBlockSize = SWAP32(body->geometry.logicalBlockSize);
+            di.Geometry_lowestAlignedLBA = SWAP64(body->geometry.lowestAlighedLBA);
             break;
-        case FC_ENTERPRISE: /* Enterprise SSC 0x100 */
-            disk_info.Enterprise = 1;
-			disk_info.ANY_OPAL_SSC = 1;
-	        disk_info.Enterprise_rangeCrossing = body->enterpriseSSC.rangeCrossing;
-            disk_info.Enterprise_basecomID = SWAP16(body->enterpriseSSC.baseComID);
-            disk_info.Enterprise_numcomID = SWAP16(body->enterpriseSSC.numberComIDs);
+        case FC_ENTERPRISE: /* Enterprise SSC */
+            di.Enterprise = 1;
+			di.ANY_OPAL_SSC = 1;
+	        di.Enterprise_rangeCrossing = body->enterpriseSSC.rangeCrossing;
+            di.Enterprise_basecomID = SWAP16(body->enterpriseSSC.baseComID);
+            di.Enterprise_numcomID = SWAP16(body->enterpriseSSC.numberComIDs);
             break;
-        case FC_OPALV100: /* Opal V1 0x200 */
-            disk_info.OPAL10 = 1;
-			disk_info.ANY_OPAL_SSC = 1;
-	        disk_info.OPAL10_basecomID = SWAP16(body->opalv100.baseComID);
-            disk_info.OPAL10_numcomIDs = SWAP16(body->opalv100.numberComIDs);
+        case FC_OPALV100: /* Opal V1 */
+            di.OPAL10 = 1;
+			di.ANY_OPAL_SSC = 1;
+	        di.OPAL10_basecomID = SWAP16(body->opalv100.baseComID);
+            di.OPAL10_numcomIDs = SWAP16(body->opalv100.numberComIDs);
             break;
-        case FC_SINGLEUSER: /* Single User Mode 0x201 */
-            disk_info.SingleUser = 1;
-            disk_info.SingleUser_all = body->singleUserMode.all;
-            disk_info.SingleUser_any = body->singleUserMode.any;
-            disk_info.SingleUser_policy = body->singleUserMode.policy;
-            disk_info.SingleUser_lockingObjects = SWAP32(body->singleUserMode.numberLockingObjects);
+        case FC_SINGLEUSER: /* Single User Mode */
+            di.SingleUser = 1;
+            di.SingleUser_all = body->singleUserMode.all;
+            di.SingleUser_any = body->singleUserMode.any;
+            di.SingleUser_policy = body->singleUserMode.policy;
+            di.SingleUser_lockingObjects = SWAP32(body->singleUserMode.numberLockingObjects);
             break;
-        case FC_DATASTORE: /* Datastore Tables 0x202 */
-            disk_info.DataStore = 1;
-            disk_info.DataStore_maxTables = SWAP16(body->datastore.maxTables);
-            disk_info.DataStore_maxTableSize = SWAP32(body->datastore.maxSizeTables);
-            disk_info.DataStore_alignment = SWAP32(body->datastore.tableSizeAlignment);
+        case FC_DATASTORE: /* Datastore Tables */
+            di.DataStore = 1;
+            di.DataStore_maxTables = SWAP16(body->datastore.maxTables);
+            di.DataStore_maxTableSize = SWAP32(body->datastore.maxSizeTables);
+            di.DataStore_alignment = SWAP32(body->datastore.tableSizeAlignment);
             break;
-        case FC_OPALV200: /* OPAL V200 0x203 */
-            disk_info.OPAL20 = 1;
-			disk_info.ANY_OPAL_SSC = 1;
-		    disk_info.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
-            disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
-            disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
-            disk_info.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-            disk_info.OPAL20_numAdmins = SWAP16(body->opalv200.numlockingAdminAuth);
-            disk_info.OPAL20_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
-            disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
-			disk_info.OPAL20_version = body->opalv200.version;
-			disk_info.OPAL20_minor_v = body->opalv200.minor_v;
-			//printf("body->opalv200.version=%X body->opalv200.minor_v=%X\n", body->opalv200.version, body->opalv200.minor_v);
-            break;
-        case FC_OPALITE: /* OPALITE 0x301 */
-            disk_info.OPALITE = 1;
-			disk_info.ANY_OPAL_SSC = 1;
-		    disk_info.OPALITE_basecomID = SWAP16(body->opalv200.baseCommID);
-            disk_info.OPALITE_initialPIN = body->opalv200.initialPIN;
-            disk_info.OPALITE_revertedPIN = body->opalv200.revertedPIN;
-            disk_info.OPALITE_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-			disk_info.OPALITE_version = body->opalv200.version;
-			// temp patch ; use OPAL2 diskinfo if needed; need create pyrite class in the future
-			disk_info.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
-			disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
-			disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
-			disk_info.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-			disk_info.OPAL20_numAdmins = 1; // SWAP16(body->opalv200.numlockingAdminAuth);
-			disk_info.OPAL20_numUsers =  2; // SWAP16(body->opalv200.numlockingUserAuth);
-			disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
-			disk_info.OPAL20_version = body->opalv200.version;
-			// does pyrite has data store. no feature set for data store default vaule 128K 
-			disk_info.DataStore = 1;
-			disk_info.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
-			disk_info.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
-			disk_info.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
+        case FC_OPALV200: /* OPAL V200 */
+            di.OPAL20 = 1;
+			di.ANY_OPAL_SSC = 1;
+		    di.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
+            di.OPAL20_initialPIN = body->opalv200.initialPIN;
+            di.OPAL20_revertedPIN = body->opalv200.revertedPIN;
+            di.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+            di.OPAL20_numAdmins = SWAP16(body->opalv200.numlockingAdminAuth);
+            di.OPAL20_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
+            di.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
             break;
         case FC_PYRITE: /* PYRITE 0x302 */
-            disk_info.PYRITE= 1;
-			disk_info.ANY_OPAL_SSC = 1;
-			disk_info.PYRITE_version = body->opalv200.version;
-		    disk_info.PYRITE_basecomID = SWAP16(body->opalv200.baseCommID);
-            disk_info.PYRITE_initialPIN = body->opalv200.initialPIN;
-            disk_info.PYRITE_revertedPIN = body->opalv200.revertedPIN;
-            disk_info.PYRITE_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+            di.PYRITE= 1;
+			di.ANY_OPAL_SSC = 1;
+			di.PYRITE_version = body->opalv200.version;
+		    di.PYRITE_basecomID = SWAP16(body->opalv200.baseCommID);
+            di.PYRITE_initialPIN = body->opalv200.initialPIN;
+            di.PYRITE_revertedPIN = body->opalv200.revertedPIN;
+            di.PYRITE_numcomIDs = SWAP16(body->opalv200.numCommIDs);
 			// temp patch ; use OPAL2 diskinfo if needed; need create pyrite class in the future
-			disk_info.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
-			disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
-			disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
-			disk_info.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-			disk_info.OPAL20_numAdmins = 1; // SWAP16(body->opalv200.numlockingAdminAuth);
-			disk_info.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
-			disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
-			disk_info.OPAL20_version = body->opalv200.version;
-			// does pyrite has data store. no feature set for data store default vaule 128K 
-			disk_info.DataStore = 1;
-			disk_info.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
-			disk_info.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
-			disk_info.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
-            break; 
+			di.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
+			di.OPAL20_initialPIN = body->opalv200.initialPIN;
+			di.OPAL20_revertedPIN = body->opalv200.revertedPIN;
+			di.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+			di.OPAL20_numAdmins = 1; // SWAP16(body->opalv200.numlockingAdminAuth);
+			di.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
+			di.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
+			di.OPAL20_version = body->opalv200.version;
+			// does pyrite has data store. no feature set for data store default vaule 128K
+			di.DataStore = 1;
+			di.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
+			di.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
+			di.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
+            break;
 		case FC_PYRITE2: /* PYRITE 2 0x303 */
-			disk_info.PYRITE2 = 1;
-			disk_info.ANY_OPAL_SSC = 1;
-			disk_info.PYRITE2_version = body->opalv200.version;
-			disk_info.PYRITE2_basecomID = SWAP16(body->opalv200.baseCommID);
-			disk_info.PYRITE2_initialPIN = body->opalv200.initialPIN;
-			disk_info.PYRITE2_revertedPIN = body->opalv200.revertedPIN;
-			disk_info.PYRITE2_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+			di.PYRITE2 = 1;
+			di.ANY_OPAL_SSC = 1;
+			di.PYRITE2_version = body->opalv200.version;
+			di.PYRITE2_basecomID = SWAP16(body->opalv200.baseCommID);
+			di.PYRITE2_initialPIN = body->opalv200.initialPIN;
+			di.PYRITE2_revertedPIN = body->opalv200.revertedPIN;
+			di.PYRITE2_numcomIDs = SWAP16(body->opalv200.numCommIDs);
 			// temp patch ; use OPAL2 diskinfo if needed; need create pyrite class in the future
-			disk_info.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
-			disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
-			disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
-			disk_info.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-			disk_info.OPAL20_numAdmins = 1; // SWAP16(body->opalv200.numlockingAdminAuth);
-			disk_info.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
-			disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
-			disk_info.OPAL20_version = body->opalv200.version;
-			// does pyrite has data store. no feature set for data store default vaule 128K 
-			disk_info.DataStore = 1;
-			disk_info.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
-			disk_info.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
-			disk_info.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
+			di.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
+			di.OPAL20_initialPIN = body->opalv200.initialPIN;
+			di.OPAL20_revertedPIN = body->opalv200.revertedPIN;
+			di.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+			di.OPAL20_numAdmins = 1; // SWAP16(body->opalv200.numlockingAdminAuth);
+			di.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
+			di.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
+			di.OPAL20_version = body->opalv200.version;
+			// does pyrite has data store. no feature set for data store default vaule 128K
+			di.DataStore = 1;
+			di.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
+			di.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
+			di.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
 			break;
 		case FC_RUBY: /* RUBY 0x304 */
-			disk_info.RUBY = 1;
-			disk_info.ANY_OPAL_SSC = 1;
-			disk_info.RUBY_version = body->opalv200.version;
-			disk_info.RUBY_basecomID = SWAP16(body->opalv200.baseCommID);
-			disk_info.RUBY_initialPIN = body->opalv200.initialPIN;
-			disk_info.RUBY_revertedPIN = body->opalv200.revertedPIN;
-			disk_info.RUBY_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-			disk_info.RUBY_numAdmins = SWAP16(body->opalv200.numlockingAdminAuth);
-			disk_info.RUBY_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
+			di.RUBY = 1;
+			di.ANY_OPAL_SSC = 1;
+			di.RUBY_version = body->opalv200.version;
+			di.RUBY_basecomID = SWAP16(body->opalv200.baseCommID);
+			di.RUBY_initialPIN = body->opalv200.initialPIN;
+			di.RUBY_revertedPIN = body->opalv200.revertedPIN;
+			di.RUBY_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+			di.RUBY_numAdmins = SWAP16(body->opalv200.numlockingAdminAuth);
+			di.RUBY_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
 			// temp patch ; use OPAL2 diskinfo if needed; need create pyrite class in the future
-			disk_info.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
-			disk_info.OPAL20_initialPIN = body->opalv200.initialPIN;
-			disk_info.OPAL20_revertedPIN = body->opalv200.revertedPIN;
-			disk_info.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-			disk_info.OPAL20_numAdmins = 1; // SWAP16(body->opalv200.numlockingAdminAuth);
-			disk_info.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
-			disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
-			disk_info.OPAL20_version = body->opalv200.version;
-			// does pyrite has data store. no feature set for data store default vaule 128K 
-			disk_info.DataStore = 1;
-			disk_info.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
-			disk_info.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
-			disk_info.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
+			di.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
+			di.OPAL20_initialPIN = body->opalv200.initialPIN;
+			di.OPAL20_revertedPIN = body->opalv200.revertedPIN;
+			di.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
+			di.OPAL20_numAdmins = 1; // SWAP16(body->opalv200.numlockingAdminAuth);
+			di.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
+			di.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
+			di.OPAL20_version = body->opalv200.version;
+			// does pyrite has data store. no feature set for data store default vaule 128K
+			di.DataStore = 1;
+			di.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
+			di.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
+			di.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
 
 			break;
 		case FC_BlockSID: /* Block SID 0x402 */
-			disk_info.BlockSID = 1;
-			disk_info.BlockSID_BlockSIDState = body->blocksidauth.BlockSIDState;
-			disk_info.BlockSID_SIDvalueState = body->blocksidauth.SIDvalueState;
-			disk_info.BlockSID_HardReset = body->blocksidauth.HardReset;
+			di.BlockSID = 1;
+			di.BlockSID_BlockSIDState = body->blocksidauth.BlockSIDState;
+			di.BlockSID_SIDvalueState = body->blocksidauth.SIDvalueState;
+			di.BlockSID_HardReset = body->blocksidauth.HardReset;
 #if 0
 			LOG(D) << "BLockSID buffer dump";
 			DtaHexDump(body, 64);
 			printf("body->blocksidauth.BlockSIDState= %d ", body->blocksidauth.BlockSIDState);
-			printf("disk_info.BlockSID_BlockSIDState= %d ", disk_info.BlockSID_BlockSIDState);
+			printf("disk_info.BlockSID_BlockSIDState= %d ", di.BlockSID_BlockSIDState);
 			printf("body->blocksidauth.SIDvalueState= %d ", body->blocksidauth.SIDvalueState);
-			printf("disk_info.BlockSID_SIDvalueState= %d ", disk_info.BlockSID_SIDvalueState);
+			printf("disk_info.BlockSID_SIDvalueState= %d ", di.BlockSID_SIDvalueState);
 			printf("body->blocksidauth.HardReset= %d ", body->blocksidauth.HardReset);
-			printf("disk_info.BlockSID_HardReset= %d\n", disk_info.BlockSID_HardReset);
+			printf("disk_info.BlockSID_HardReset= %d\n", di.BlockSID_HardReset);
 #endif
 			break;
 		case FC_NSLocking:
-			disk_info.NSLocking = 1;
-			disk_info.NSLocking_version = body->Configurable_Namespace_LockingFeature.version;
-			disk_info.Max_Key_Count = body->Configurable_Namespace_LockingFeature.Max_Key_Count;
-			disk_info.Unused_Key_Count = body->Configurable_Namespace_LockingFeature.Unused_Key_Count;
-			disk_info.Max_Range_Per_NS = body->Configurable_Namespace_LockingFeature.Max_Range_Per_NS;
+			di.NSLocking = 1;
+			di.NSLocking_version = body->Configurable_Namespace_LockingFeature.version;
+			di.Max_Key_Count = body->Configurable_Namespace_LockingFeature.Max_Key_Count;
+			di.Unused_Key_Count = body->Configurable_Namespace_LockingFeature.Unused_Key_Count;
+			di.Max_Range_Per_NS = body->Configurable_Namespace_LockingFeature.Max_Range_Per_NS;
 			break;
 		case FC_DataRemoval: /* Data Remove mechanism 0x404 */
-			disk_info.DataRemoval = 1;
-			disk_info.DataRemoval_version = body->dataremoval.version;
-			disk_info.DataRemoval_Mechanism = body->dataremoval.DataRemoval_Mechanism;
-			disk_info.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit5;
-			disk_info.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit5;
-			disk_info.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit4;
-			disk_info.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit4;
-			disk_info.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit3;
-			disk_info.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit3;
-			disk_info.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit2;
-			disk_info.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit2;
-			disk_info.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit1;
-			disk_info.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit1;
-			disk_info.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit0;
-			disk_info.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit0;
+			di.DataRemoval = 1;
+			di.DataRemoval_version = body->dataremoval.version;
+			di.DataRemoval_Mechanism = body->dataremoval.DataRemoval_Mechanism;
+			di.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit5;
+			di.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit5;
+			di.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit4;
+			di.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit4;
+			di.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit3;
+			di.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit3;
+			di.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit2;
+			di.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit2;
+			di.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit1;
+			di.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit1;
+			di.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit0;
+			di.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit0;
 			break;
         default:
 			if (0xbfff < (SWAP16(body->TPer.featureCode))) {
 				// silently ignore vendor specific segments as there is no public doc on them
-				disk_info.VendorSpecific += 1;
+				di.VendorSpecific += 1;
 			}
 			else {
-				disk_info.Unknown += 1;
+				di.Unknown += 1;
 				LOG(D) << "Unknown Feature in Discovery 0 response " << std::hex << SWAP16(body->TPer.featureCode) << std::dec;
 				/* should do something here */
 			}
@@ -422,20 +391,22 @@ OK101:
         cpos = cpos + (body->TPer.length + 4);
     }
     while (cpos < epos);
-	// do adjustment for No Additional data store case 
-	if (!disk_info.DataStore  || !disk_info.DataStore_maxTables || !disk_info.DataStore_maxTableSize) {
-		disk_info.DataStore_maxTableSize = 10 * 1024 * 1024;
+	// do adjustment for No Additional data store case
+	if (!di.DataStore  || !di.DataStore_maxTables || !di.DataStore_maxTableSize) {
+		di.DataStore_maxTableSize = 10 * 1024 * 1024;
 	}
-	disc0Sts = 0; 
 }
+
+
 uint8_t DtaDev::TperReset()
 {
 	LOG(D1) << "Entering DtaDev::TperReset()";
 	uint8_t lastRC;
-	void * tpResponse = NULL;
-	tpResponse = discovery0buffer + IO_BUFFER_ALIGNMENT;
-	tpResponse = (void *)((uintptr_t)tpResponse & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
-	memset(tpResponse, 0, IO_BUFFER_LENGTH);
+	void * tpResponse = (void *)((((uintptr_t)discovery0buffer) +
+                                   (uintptr_t)IO_BUFFER_ALIGNMENT) &      //  0x00002000 if e.g. 16384
+                                 (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));  // ~0x00001FFF will be
+                                                                          //  0xFFFFE000 masking to alignment
+	memset(tpResponse, 0, MIN_BUFFER_LENGTH);
 	// TperReset ProtocolID=0x02 ComID=0x0004
 	if ((lastRC = sendCmd(IF_SEND, 0x02, 0x0004, tpResponse, 512)) != 0) { // 2048->512
 		LOG(D1) << "Send TperReset to device failed " << (uint16_t)lastRC;
@@ -454,7 +425,7 @@ uint8_t DtaDev::SATCK_Reset()
 	STACKResponse = discovery0buffer + IO_BUFFER_ALIGNMENT;
 	STACKResponse = (void *)((uintptr_t)STACKResponse & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
 	memset(STACKResponse, 0, IO_BUFFER_LENGTH);
-	// STACK_RESET 
+	// STACK_RESET
 	if ((lastRC = sendCmd(IF_SEND, 0x02, 0x0004, STACKResponse, 512)) != 0) { // 2048->512
 		LOG(D1) << "Send STACK_Reset to device failed " << (uint16_t)lastRC;
 		return lastRC;
@@ -462,14 +433,34 @@ uint8_t DtaDev::SATCK_Reset()
 	DtaHexDump((char *)STACKResponse, 64);
 	return 0;
 }
+
 */
+
+
+void DtaDev::discovery0() {
+    uint8_t * d0Response = (uint8_t *)((uintptr_t)(discovery0buffer + IO_BUFFER_ALIGNMENT) &
+                                 (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+    memset(d0Response, 0, MIN_BUFFER_LENGTH);
+
+    uint8_t lastRC = acquireDiscovery0Response(d0Response);
+    if ((lastRC ) != 0) {
+        LOG(D) << "Acquiring D0 response failed " << (uint16_t)lastRC;
+        return;
+    }
+    parseDiscovery0Features(d0Response, disk_info);
+}
+
 
 void DtaDev::puke()
 {
 	LOG(D1) << "Entering DtaDev::puke()";
 	/* IDENTIFY */
-	cout << endl << dev << (disk_info.devType == DEVICE_TYPE_ATA ? " ATA " : disk_info.devType == DEVICE_TYPE_SAS ? " SAS " : disk_info.devType == DEVICE_TYPE_USB ? " USB " : ((disk_info.devType == DEVICE_TYPE_NVME) && (disk_info.asmedia ==0)) ? " NVMe " : ((disk_info.devType == DEVICE_TYPE_NVME) && (disk_info.asmedia == 1)) ? " USB NVMe " : " OTHER ");
-	cout << disk_info.modelNum << ":" << disk_info.firmwareRev << " " << disk_info.serialNum << endl;
+	cout << endl << dev << (disk_info.devType == DEVICE_TYPE_ATA ? " ATA " :
+            disk_info.devType == DEVICE_TYPE_SAS ? " SAS " :
+            disk_info.devType == DEVICE_TYPE_USB ? " USB " :
+            disk_info.devType == DEVICE_TYPE_NVME ? " NVMe " :
+                    " OTHER ");
+	cout << disk_info.modelNum << " " << disk_info.firmwareRev << " " << disk_info.serialNum << endl;
 	/* TPer */
 	if (disk_info.TPer) {
 		cout << "TPer function (" << HEXON(4) << FC_TPER << HEXOFF << ")" << std::endl;
@@ -537,8 +528,8 @@ void DtaDev::puke()
 	if (disk_info.OPAL20) {
 		cout << "OPAL 2." << ((disk_info.OPAL20_version -1) & 0xf) << " function (" << HEXON(4) << FC_OPALV200 << ")" << HEXOFF << std::endl;
 		cout << "    Base comID = " << HEXON(4) << disk_info.OPAL20_basecomID << HEXOFF;
-		cout << ", Initial PIN = " << HEXON(2) << disk_info.OPAL20_initialPIN << HEXOFF;
-		cout << ", Reverted PIN = " << HEXON(2) << disk_info.OPAL20_revertedPIN << HEXOFF;
+		cout << ", Initial PIN = " << HEXON(2) << static_cast<uint32_t>(disk_info.OPAL20_initialPIN) << HEXOFF;
+		cout << ", Reverted PIN = " << HEXON(2) << static_cast<uint32_t>(disk_info.OPAL20_revertedPIN) << HEXOFF;
 		cout << ", comIDs = " << disk_info.OPAL20_numcomIDs;
 		cout << std::endl;
 		cout << "    Locking Admins = " << disk_info.OPAL20_numAdmins;

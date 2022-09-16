@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -36,6 +36,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaHashPwd.h"
 #endif
 #include "DtaLexicon.h"
+#include "DtaOptions.h"
 #include "DtaDev.h"
 #include "log.h"
 
@@ -168,7 +169,7 @@ vector<uint8_t> hex2data(char * password)
 {
 	vector<uint8_t> h;
 	h.clear();
-	if (false)
+	if ((false))
 		printf("strlen(password)=%d\n", (int)strlen(password));
 	if (strlen(password) != 64)
 	{
@@ -182,9 +183,8 @@ vector<uint8_t> hex2data(char * password)
 	//printf("GUI hashed password=");
 	for (uint16_t i=0; i < (uint16_t)strlen(password); i+=2)
 	{
-		h.push_back(
-		(hex_digit_to_nybble(password[i]) << 4) |  // high 4-bit
-			(hex_digit_to_nybble(password[i + 1]) & 0x0f)); // lo 4-bit
+		h.push_back((uint8_t)(((hex_digit_to_nybble(password[i]) << 4) & 0xf0)
+                             |((hex_digit_to_nybble(password[i + 1]) ) & 0x0f)));
 	}
 	//for (uint16_t i = 0; i < (uint16_t)h.size(); i++)
 	//	printf("%02x", h[i]);

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -23,15 +23,17 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "Version.h"
 void usage()
 {
-    printf("sedutil %s Copyright 2017-2020 Fidelity Height LLC <www.fidelityheight.com>\n", GIT_VERSION);
+    printf("sedutil v%s Copyright 2014-2022 Bright Plaza Inc. <drivetrust@drivetrust.com>\n", GIT_VERSION);
     printf("a utility to manage self encrypting drives that conform\n");
     printf("to the Trusted Computing Group OPAL 2.0 SSC specification\n");
     printf("General Usage:                     (see readme for extended commandset)\n");
     printf("sedutil-cli <-v> <-n> <action> <options> <device>\n");
     printf("-v (optional)                       increase verbosity, one to five v's\n");
     printf("-n (optional)                       no password hashing. Passwords will be sent in clear text!\n");
+    printf("-l (optional)                       log style output to stderr only\n");
     printf("actions \n");
-    printf("--scan <skipdevice>\n");
+//    printf("--scan <skipdevice>\n");
+    printf("--scan\n");
     printf("                                Scans the devices on the system \n");
     printf("                                identifying Opal compliant devices \n");
     printf("--query <device>\n");
@@ -106,12 +108,17 @@ void usage()
     return;
 }
 
+/* Default to output that omits timestamps and goes to stdout */
+sedutiloutput outputFormat = sedutilReadable;
+
+
 uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 {
     memset(opts, 0, sizeof (DTA_OPTIONS));
     uint16_t loggingLevel = 2;
 	uint8_t baseOptions = 2; // program and option
     CLog::Level() = CLog::FromInt(loggingLevel);
+    RCLog::Level() = RCLog::FromInt(loggingLevel);
     if (2 > argc) {
         usage();
 		return DTAERROR_INVALID_COMMAND;
@@ -127,6 +134,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			loggingLevel += (uint16_t)(strlen(argv[i]) - 1);
 			if (loggingLevel > 7) loggingLevel = 7;
 			CLog::Level() = CLog::FromInt(loggingLevel);
+			RCLog::Level() = RCLog::FromInt(loggingLevel);
 			LOG(D) << "Log level set to " << CLog::ToString(CLog::FromInt(loggingLevel));
 			LOG(D) << "sedutil version : " << GIT_VERSION;
 		}
@@ -150,7 +158,12 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			opts->no_hash_passwords = true;
 			LOG(D) << "Password hashing is disabled";
                 }
-		else if (!(('-' == argv[i][0]) && ('-' == argv[i][1])) && 
+		else if (!strcmp("-l", argv[i])) {
+			baseOptions += 1;
+			opts->output_format = sedutilNormal;
+			outputFormat = sedutilNormal;
+		}
+		else if (!(('-' == argv[i][0]) && ('-' == argv[i][1])) &&
 			(0 == opts->action))
 		{
 			LOG(E) << "Argument " << (uint16_t) i << " (" << argv[i] << ") should be a command";
@@ -183,11 +196,11 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(newpassword)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(setAdmin1Pwd, 3) OPTION_IS(password) OPTION_IS(newpassword) 
+		BEGIN_OPTION(setAdmin1Pwd, 3) OPTION_IS(password) OPTION_IS(newpassword)
 			OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(pbaValid, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(activate, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(auditWrite, 4)  
+		BEGIN_OPTION(auditWrite, 4)
 		OPTION_IS(eventid) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(auditRead, 3) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(auditErase, 3) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
@@ -204,15 +217,15 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 		BEGIN_OPTION(getMBRsize, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(createUSB, 3) OPTION_IS(pbafile)
 			OPTION_IS(device) OPTION_IS(devusb) END_OPTION
-		BEGIN_OPTION(loadPBAimage, 3) OPTION_IS(password) OPTION_IS(pbafile) 
+		BEGIN_OPTION(loadPBAimage, 3) OPTION_IS(password) OPTION_IS(pbafile)
 			OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(revertTPer, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(revertNoErase, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(PSIDrevert, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(PSIDrevertAdminSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2) OPTION_IS(password) 
+		BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2) OPTION_IS(password)
 			OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(enableuser, 4)  
+		BEGIN_OPTION(enableuser, 4)
 			TESTARG(ON, mbrstate, 1)
 			TESTARG(on, mbrstate, 1)
 			TESTARG(off, mbrstate, 0)
@@ -220,7 +233,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			TESTFAIL("Invalid enableuser argument not <on|off>")
 			OPTION_IS(password) OPTION_IS(userid)
 			OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(enableuserread, 4) 
+		BEGIN_OPTION(enableuserread, 4)
 			TESTARG(ON, mbrstate, 1)
 			TESTARG(on, mbrstate, 1)
 			TESTARG(off, mbrstate, 0)
@@ -268,7 +281,8 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			TESTFAIL("Invalid Locking Range (1-15)")
 			OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(query, 1) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(scan, 1) OPTION_IS(device) END_OPTION
+//        BEGIN_OPTION(scan, 1) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(scan, 0) END_OPTION
 		BEGIN_OPTION(version, 0)  END_OPTION
 		BEGIN_OPTION(isValidSED, 1) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(eraseLockingRange, 3)

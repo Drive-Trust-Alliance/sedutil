@@ -1,0 +1,38 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "type": "shell",
+        "label": "sedutil_build",
+        "command": "make",
+        "options": {"cwd": "${workspaceFolder}"},
+        "args": [
+          "V=0",
+          "CFLAGS='-g -Og'",
+          "CXXFLAGS='-g -Og'",
+          "sedutil-cli"
+        ],
+        "problemMatcher": [
+          "$gcc"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true         }
+      },
+      {
+        "type": "shell",
+        "label": "clean ",
+        "command": "make",
+        "args": [
+          "clean"
+        ],
+        "problemMatcher": [
+          "$gcc"
+        ],
+        
+      }
+
+    ]
+  }
+  
+  

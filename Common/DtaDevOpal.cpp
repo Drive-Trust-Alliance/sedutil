@@ -21,14 +21,18 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * also supports the Opal 1.0 SSC
  */
 
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
+#else // Windows
 #pragma warning(disable: 4224) //C2224: conversion from int to char , possible loss of data
 #pragma warning(disable: 4244) //C4244: 'argument' : conversion from 'uint16_t' to 'uint8_t', possible loss of data
 #pragma warning(disable: 4996)
 #pragma comment(lib, "rpcrt4.lib")  // UuidCreate - Minimum supported OS Win 2000
+#endif
 
 #include "os.h"
-#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-#else
+
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
+#else // Windows
 #include <Windows.h>
 #include "compressapi-8.1.h"
 #include "sedsize.h" 
@@ -47,14 +51,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaSession.h"
 #include "DtaHexDump.h"
 #include <signal.h>
-//#include "ob.h"
+#include "ob.h"
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 #include "uuid.h"
 #endif
-
-
-void setlic(char * lic_level, const char * LicenseLevel);
-void auditpass(char * apass);
 
 using namespace std;
 
@@ -327,10 +327,10 @@ uint8_t DtaDevOpal::setuphuser(char * password)
 	//char p1[64] = "F0iD2eli81Ty"; //20->12 "pFa0isDs2ewloir81Tdy";
 	char p1[80]; // = { 'F','0','i','D','2','e','l','i','8','1','T','y',NULL };
 	memset(p1, 0, 80); // zero out pass
-	auditpass(p1);
+	auditpass((unsigned char *)p1);
 
-	#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-	strcat(p1, getSerialNum());
+	#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
+	strcat((char *)p1, getSerialNum());
 	#else
 	strcat_s(p1, getSerialNum());
 	#endif
@@ -1191,8 +1191,7 @@ uint8_t DtaDevOpal::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 uint8_t DtaDevOpal::TCGreset(uint8_t mbrstate)
 {
 	LOG(D) << "Entering DtaDevOpal::TCGreset " << dev;
-	uint8_t lastRC;
-	switch (mbrstate) { 
+	switch (mbrstate) {
 		case 1 : // mbrstate=1 , Tper Reset;  mbrstate=2, STACK_RESET
 			LOG(D) << "TPerReset";
 			DtaDev::TperReset();
@@ -1577,7 +1576,7 @@ uint8_t DtaDevOpal::userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * use
 
 	// translate UserN AdminN into <int8_t>
 	vector<uint8_t> auth, auth2, auth3;
-	auth = getUID(userid, auth2, auth3, disk_info.OPAL20_numUsers); // always add audit user to auth3. audit user is added first, the following userid will preserve the audit userid
+	auth = getUID(userid, auth2, auth3, (uint8_t)disk_info.OPAL20_numUsers); // always add audit user to auth3. audit user is added first, the following userid will preserve the audit userid
 	LOG(D4) << "auth";  IFLOG(D4) { for (int i = 0; i < 9; i++) printf("%02X, ", auth[i]);  printf("\n"); }
 	LOG(D4) << "auth2"; IFLOG(D4) { for (int i = 0; i < 9; i++) printf("%02X, ", auth2[i]);  printf("\n"); }
 	LOG(D4) << "auth3"; IFLOG(D4) { for (int i = 0; i < 9; i++) printf("%02X, ", auth3[i]);  printf("\n"); }
@@ -1973,7 +1972,7 @@ uint8_t DtaDevOpal::DataRead(char * password, uint32_t startpos, uint32_t len, c
 		// translate UserN AdminN into <int8_t 
 		//printf(" ***** start LOCKINGSP with %s  Token = %d\n", userid, getUIDtoken(userid));
 		vector<uint8_t> auth,auth2,auth3;
-		auth = getUID(userid,auth2,auth3,disk_info.OPAL20_numUsers); // pass vector directly, not enum index of vector table
+		auth = getUID(userid,auth2,auth3,(uint8_t)disk_info.OPAL20_numUsers); // pass vector directly, not enum index of vector table
 		//for (int i = 0; i < 9; i++) { printf("%02X ", auth[i]);} printf("\n");
 		//LOG(D) << "audit data read password" << password; 
 		//for (int i = 0; i < auth.size(); i++) printf("%02", auth.at(i)); printf("\n"); // 
@@ -2066,8 +2065,9 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	uint32_t filepos = 0; // startpos;
 	uint32_t blockSize = 1950; // default data write 
 	uint32_t newSize ;
+#if USING_OPER
 	uint8_t oper = 0;
-
+#endif
 	// determin the blockSize from Tper packet size
 	if (disk_info.enclosure) {
 		// do not change host property for enclosure
@@ -2117,7 +2117,7 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 	}
 	LOG(D1) << "start lockingSP session " << dev;
 	vector<uint8_t> auth, auth2, auth3;
-	auth = getUID(userid, auth2, auth3, disk_info.OPAL20_numUsers);
+	auth = getUID(userid, auth2, auth3, (uint8_t)disk_info.OPAL20_numUsers);
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth)) != 0) { // OPAL_UID::OPAL_ADMIN1_UID
 		delete cmd;
 		delete session;
@@ -2190,7 +2190,7 @@ uint8_t DtaDevOpal::DataWrite(char * password, uint32_t startpos, uint32_t len, 
 		cmd->addToken(OPAL_TOKEN::ENDNAME);
 		cmd->addToken(OPAL_TOKEN::ENDLIST);
 		cmd->complete();
-		if ((lastRC = session->sendCommand(cmd, response, oper = 1)) != 0) {
+		if ((lastRC = session->sendCommand(cmd, response)) != 0) {
 			delete cmd;
 			delete session;
 			return lastRC;
@@ -2232,7 +2232,8 @@ uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len,
 	vector <entry_t> entryA;
 	uint8_t lastRC;
 
-	uint32_t MAX_ENTRY;
+    // uint32_t MAX_ENTRY;  header.num_entry is a uint16_t so this is too big
+    uint16_t MAX_ENTRY;
 
 	MAX_ENTRY = 1000; // default size
 	if (disk_info.DataStore_maxTableSize < 10485760) {
@@ -2253,7 +2254,7 @@ uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len,
 	{
 		LOG(D1) << "passing empty entry";
 		// linux 
-        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
 		time_t rawtime;
   		struct tm * lt;
   		/* get current timeinfo */
@@ -2321,7 +2322,7 @@ uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len,
 	}
 	*/
 	wrtchksum(buffer, genchksum(buffer));
-	if (0)
+    if (/* DISABLES CODE */ (0))
 	{
 		printf("entryA[0].yy=%d ", entryA[0].yy);
 		printf("entryA[0].mm=%d ", entryA[0].mm);
@@ -2332,7 +2333,7 @@ uint8_t DtaDevOpal::auditlogwr(char * password, uint32_t startpos, uint32_t len,
 		printf("entryA[0].event=%d\n", entryA[0].event);
 		//printf("entryA[i].reserved=%d\n", entryA[i].reserved);
 	}
-	if (0) 
+	if (/* DISABLES CODE */ (0))
 	{
 		printf("ptr->header.hdr=%s ", ptr->header.hdr);
 		printf("ptr->header.ver_major=%d ", ptr->header.ver_major);
@@ -2480,7 +2481,7 @@ uint8_t DtaDevOpal::auditRec(char * password, entry_t * pent, char * userid)
 	if ((lastRC = (uint8_t)memcmp(ptr->header.signature, str1, strlen(str1))) !=0)
 	{
 		LOG(D1) << "Invalid Audit signature : lastRC = " << lastRC << " or num_entry is zero : " << hex << ptr->header.num_entry;
-        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
 		time_t rawtime;
   		struct tm * lt;
   		/* get current timeinfo */
@@ -2494,7 +2495,7 @@ uint8_t DtaDevOpal::auditRec(char * password, entry_t * pent, char * userid)
 		hdrtmp.date_created.min = (uint8_t)lt->tm_min;
 		hdrtmp.date_created.sec = (uint8_t)lt->tm_sec;
 		//pent->event = ID;
-	#else
+#else
 		SYSTEMTIME st, lt;
 		GetSystemTime(&st);
 		GetLocalTime(&lt);
@@ -2505,7 +2506,7 @@ uint8_t DtaDevOpal::auditRec(char * password, entry_t * pent, char * userid)
 		hdrtmp.date_created.hh = (uint8_t)lt.wHour;
 		hdrtmp.date_created.min = (uint8_t)lt.wMinute;
 		hdrtmp.date_created.sec = (uint8_t)lt.wSecond;
-	#endif	
+#endif
 		memset(buffer, 0, MAX_ENTRY * 8 + gethdrsize());
 		memcpy(buffer, (char *)&hdrtmp, gethdrsize());
 		wrtchksum(buffer, genchksum(buffer)); 
@@ -2625,7 +2626,7 @@ vector<uint8_t> hex2data_a(char * password)
 {
 	vector<uint8_t> h;
 	h.clear();
-	if (false)
+	if ((false))
 		printf("strlen(password)=%d\n", (int)strlen(password));
 	/*
 	if (strlen(password) != 16)
@@ -2653,13 +2654,13 @@ vector<uint8_t> hex2data_a(char * password)
 uint8_t DtaDevOpal::auditWrite(char * password, char * idstr, char * userid)
 {
 	LOG(D) << "***** Entering DtaDevOpal::auditWrite ***** " << dev;
-	uint8_t lastRC, rc, rc1, rc2;
 	entry_t ent;
 	uint8_t * pent;
 	pent = (uint8_t *)&ent;
 	//LOG(D) << "sizeof(entry_t)=" << sizeof(entry_t) ;
 	memset(&ent, 0, sizeof(entry_t));
 	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+    uint8_t rc, rc1, rc2;
 	char t[16], t1[16], t2[16];
 	memset(t, 0, 16); memset(t1, 0, 16); memset(t1, 0, 16);
 	rc = memcpy_s(t, 8, idstr, 8); 	rc1 = memcpy_s(t1, 8, idstr, 8); 	rc2 = memcpy_s(t2, 8, idstr, 8);
@@ -2686,12 +2687,12 @@ uint8_t DtaDevOpal::auditWrite(char * password, char * idstr, char * userid)
 		LOG(E) << "eventID error " << ent.event;
 	}
 	//LOG(D) << "event ID correct";
-	if (((ent.yy < 19) && (ent.yy > 29)) || (ent.mm > 12) || (ent.dd > 31) || (ent.hh > 60) || (ent.min > 60) || (ent.sec > 60)) {
+	if (((ent.yy < 19) || (ent.yy > 29)) || (ent.mm > 12) || (ent.dd > 31) || (ent.hh > 60) || (ent.min > 60) || (ent.sec > 60)) {
 		LOG(E) << "event time stamp error " << ent.yy << ent.mm << ent.dd << ent.hh << ent.min << ent.sec;
 		DtaHexDump(&ent, 8);
 	}
 
-	lastRC = auditRec(password, &ent, userid);
+    uint8_t lastRC = auditRec(password, &ent, userid);
 	LOG(D) << "***** Exiting DtaDevOpal::auditWrite ***** " << dev;
 	return lastRC;
 }
@@ -2793,19 +2794,19 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 	vector <uint8_t> lengthtoken;
 	uint8_t lastRC;
 	uint64_t fivepercent = 0;
-	int complete = 4;
-	typedef struct { uint8_t  i : 2; } spinnertik;
-	spinnertik spinnertick;
-	spinnertick.i = 0;
-	char star[] = "*";
-	char spinner[] = "|/-\\";
-	char progress_bar[] = "   [                     ]";
+//	typedef struct { uint8_t  i : 2; } spinnertik;
+//	spinnertik spinnertick;
+//	spinnertick.i = 0;
+//	char star[] = "*";
+//	char spinner[] = "|/-\\";
+//	char progress_bar[] = "   [                     ]";
 	uint32_t blockSize = 1950; // 14336;//  15360; // 16384;  // 57344; // 57344=512*112=E000h 1950=0x79E; 16384=512*32 for 17K MaxComPacketSize, 15360=512*30
 	uint32_t filepos = 0;
 	uint64_t imgsize;
 	uint32_t newSize;
+#if USING_OPER
 	uint8_t oper = 0;
-
+#endif
 	if (dsnum > disk_info.DataStore_maxTables)
 	{
 		LOG(E) << "Data Store number must be " << disk_info.DataStore_maxTables << " or less";
@@ -2922,7 +2923,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 	LOG(D1) << "start lockingSP session";
 	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 	vector<uint8_t> auth,auth2,auth3;
-	auth = getUID(userid,auth2,auth3,disk_info.OPAL20_numUsers); // pass vector directly, not enum index of vector table
+	auth = getUID(userid,auth2,auth3,(uint8_t)disk_info.OPAL20_numUsers); // pass vector directly, not enum index of vector table
 
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth)) != 0) {
 		delete cmd;
@@ -3033,7 +3034,7 @@ uint8_t DtaDevOpal::DataStoreWrite(char * password, char * userid, char * filena
 		cmd->addToken(OPAL_TOKEN::ENDNAME);
 		cmd->addToken(OPAL_TOKEN::ENDLIST);
 		cmd->complete();
-		if ((lastRC = session->sendCommand(cmd, response, oper = 1)) != 0) {
+		if ((lastRC = session->sendCommand(cmd, response)) != 0) {
 			delete cmd;
 			delete session;
 			return lastRC;
@@ -3091,7 +3092,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	char progress_bar[] = "   [                     ]";
 	uint32_t blockSize = 1950; //  14336; // 15360; //16384; // 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
 	uint32_t filepos = 0;
-	uint32_t newSize;
+	uint32_t newSize = blockSize;
 
 	//printf("dsnum = %d startpos=%ld len=%ld\n", dsnum, startpos, len);
 	if (dsnum > disk_info.DataStore_maxTables)
@@ -3169,7 +3170,7 @@ uint8_t DtaDevOpal::DataStoreRead(char * password, char * userid, char * filenam
 	}
 	LOG(D1) << "start lockingSP session";
 	vector<uint8_t> auth,auth2,auth3;
-	auth = getUID(userid,auth2,auth3,disk_info.OPAL20_numUsers); // pass vector directly, not enum index of vector table
+	auth = getUID(userid,auth2,auth3,(uint8_t)disk_info.OPAL20_numUsers); // pass vector directly, not enum index of vector table
 	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, auth)) != 0) { 
 		delete cmd;
 		delete session;
@@ -3319,10 +3320,10 @@ uint8_t DtaDevOpal::MBRRead(char * password, char * filename, uint32_t startpos,
 	char progress_bar[] = "   [                     ]";
 	uint32_t blockSize = 1950; // 14336; // 15360; // 16384;  // 57344; // 4096;// 57344; // 57344=512*112=E000h 1950=0x79E;
 	uint32_t filepos = 0;
-	uint32_t newSize;
+	uint32_t newSize = blockSize;
 	uint32_t maxMBRSize;
 
-#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
 #else
 	printf("startpos=%ld len=%ld\n", startpos, len); // linux has error
 #endif
@@ -3591,9 +3592,8 @@ uint8_t DtaDevOpal::getMBRsize(char * password)
 	//
 	// adminN userN enabled state
 	//
-skip_act: 
-	uint8_t nu;
-	if (isPyrite() || isOpalite() || isRuby()) 	nu = 2;	else nu = disk_info.OPAL20_numUsers;
+// skip_act:
+	uint8_t nu = (isPyrite() || isOpalite() || isRuby()) ? 2 : (uint8_t)disk_info.OPAL20_numUsers;
 	for (uint8_t usr = 0; usr < nu ; usr++)
 	{
 		LR.clear();
@@ -3754,7 +3754,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 uint8_t DtaDevOpal::loadPBA_O(char * password, char * filename) {
 	LOG(D) << "Entering DtaDevOpal::loadPBAimage_O()" << filename << " " << dev;
 	uint8_t lastRC;
-	uint32_t blockSize;
+	uint32_t blockSize = BLOCKSIZE_HI;
 	uint32_t filepos = 0;
 	uint32_t eofpos;
 	ifstream pbafile;
@@ -3783,15 +3783,15 @@ uint8_t DtaDevOpal::loadPBA_O(char * password, char * filename) {
 	vector <uint8_t> buffer, lengthtoken; 
 
 	if (!disk_info.enclosure) { // only if not enclosure need packet size change 
-#define MAX_BUFFER_LENGTH IO_BUFFER_LENGTH_HI
 		uint32_t tperMaxPacket = Tper_sz_MaxComPacketSize;
 		uint32_t tperMaxToken = Tper_sz_MaxIndTokenSize;
-		(MAX_BUFFER_LENGTH > tperMaxPacket) ? blockSize = tperMaxPacket : blockSize = MAX_BUFFER_LENGTH;
+        
+        blockSize = (MAX_BUFFER_LENGTH > tperMaxPacket) ? tperMaxPacket : MAX_BUFFER_LENGTH;
 		if (blockSize > (tperMaxToken - 4)) blockSize = tperMaxToken - 4;
 		//printf("tperMaxPacket=%ld  tperMaxToken=%ld before blockSize=%ld\n", tperMaxPacket, tperMaxToken, blockSize);
 		//vector <uint8_t> buffer, lengthtoken;
 		blockSize -= sizeof(OPALHeader) + 50;  // packet overhead
-		printf("tperMaxPacket=%ld  tperMaxToken=%ld After blockSize=%ld\n", tperMaxPacket, tperMaxToken, blockSize);
+        printf("tperMaxPacket=%u  tperMaxToken=%u After blockSize=%u\n", tperMaxPacket, tperMaxToken, blockSize);
 	}
  
 	buffer.resize(blockSize);
@@ -3803,7 +3803,7 @@ uint8_t DtaDevOpal::loadPBA_O(char * password, char * filename) {
 	pbafile.seekg(0, pbafile.end);
 	eofpos = (uint32_t)pbafile.tellg();
 	pbafile.seekg(0, pbafile.beg);
-	printf("eofpos(size of pbaimage file)=%ld\n", eofpos);
+    printf("eofpos(size of pbaimage file)=%u\n", eofpos);
 	DtaCommand *cmd = new DtaCommand();
 	if (NULL == cmd) {
 		LOG(E) << "Unable to create command object ";
@@ -3873,10 +3873,12 @@ uint8_t DtaDevOpal::loadPBA_O(char * password, char * filename) {
 
 
 uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
-    #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || (WINDOWS7)
-        LOG(D1) << "DtaDevOpal::loadPBAimage() isn't supported in Linux";
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__) || (WINDOWS7)
+#pragma unused(password)
+#pragma unused(filename)
+        LOG(D1) << "DtaDevOpal::loadPBAimage_M() isn't supported in Linux";
 	return 0;
-        #else
+#else
 	LOG(D) << "Entering DtaDevOpal::loadPBAimage_M()" << filename << " " << dev;
 	if (disk_info.Locking_MBRshadowingNotSupported) {
 		LOG(E) << "SSC device does not support shadow MBR";
@@ -4353,11 +4355,11 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 	}
 	
     _aligned_free(DecompressedBuffer);
-        #endif
 	adj_host_prop(0); // reset host properties to smaller size
 	LOG(D) << "Exiting DtaDevOpal::loadPBAimage_M() " << dev;
 
 	return 0;
+#endif
 }
 
 
@@ -4618,7 +4620,7 @@ uint8_t DtaDevOpal::getTryLimit(uint16_t col1,uint16_t col2, char * password)
 		return lastRC;
 	}
 
-	uint8_t lmt; 
+	uint8_t lmt = 1;
 	// print TryLimit and Tries for OPAL_C_PIN_ADMIN
 	for (uint8_t u = 0; u < 3; u ++) // u=0=>admin  u=1 => user u=2 SID ---> DBG start u=2
 	{ 
@@ -4629,7 +4631,7 @@ uint8_t DtaDevOpal::getTryLimit(uint16_t col1,uint16_t col2, char * password)
 #endif
 		switch (u) {
 		case 0 :
-			lmt = disk_info.OPAL20_numAdmins;
+			lmt = (uint8_t)disk_info.OPAL20_numAdmins;
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 			strcpy_s(s,"Admin");
 #else
@@ -4637,7 +4639,7 @@ uint8_t DtaDevOpal::getTryLimit(uint16_t col1,uint16_t col2, char * password)
 #endif
 			break;
 		case 1 :
-			lmt = disk_info.OPAL20_numUsers; 
+			lmt = (uint8_t)disk_info.OPAL20_numUsers;
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 			strcpy_s(s, "User");
 #else
@@ -4653,7 +4655,7 @@ uint8_t DtaDevOpal::getTryLimit(uint16_t col1,uint16_t col2, char * password)
 #endif
 			break;
 		}
-		for (uint16_t admin = 1; admin <= lmt; admin++)
+		for (uint8_t admin = 1; admin <= lmt; admin++)
 		{ 
 			if (u == 2) {
 				delete session;
@@ -4849,7 +4851,7 @@ uint8_t DtaDevOpal::getTable(vector<uint8_t> table, uint16_t startcol,
 	delete get;
 	return 0;
 }
-uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol, uint8_t oper )
+uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 {
 	uint8_t lastRC;
     OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
@@ -4865,11 +4867,15 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol,
 	}
 	#endif
 	
+# if USING_OPER
 	if (oper == 1)
 		lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), cmd->outputBufferSize());
 	else
-		lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), adj_io_buffer_length);
-	if ((lastRC) != 0) { 
+        lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), adj_io_buffer_length);
+#else
+    lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), cmd->outputBufferSize());
+#endif
+	if ((lastRC) != 0) {
 		LOG(E) << "Command failed on send " << (uint16_t) lastRC << dev;
         return lastRC;
     }
@@ -4887,10 +4893,14 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol,
         osmsSleep(25); // could it be too fast if multiple drive situation ?????, 25->250 does not help; 25->50 better, ->100
         memset(cmd->getRespBuffer(), 0, IO_BUFFER_LENGTH);
 		LOG(D) << "Entering DtaDevOpal::exec sendCmd(IF_RECV, IO_BUFFER_LENGTH) " << dev ; 
-		if (oper == 1 )
-			lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), 2048); //  IO_BUFFER_LENGTH);
-		else
-			lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), adj_io_buffer_length); //  IO_BUFFER_LENGTH);
+# if USING_OPER
+        if (oper == 1 )
+            lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), 2048); //  IO_BUFFER_LENGTH);
+        else
+            lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), adj_io_buffer_length); //  IO_BUFFER_LENGTH);
+#else
+        lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), IO_BUFFER_LENGTH);
+#endif
 
 		//LOG(D) << "hdr->cp.outstandingData)=" << hdr->cp.outstandingData << " hdr->cp.minTransfer=" << hdr->cp.minTransfer << dev;
 	}
@@ -4990,7 +5000,7 @@ uint8_t DtaDevOpal::properties()
 		adj_io_buffer_length = 2048; // -> 2048 IO_BUFFER_LENGTH; // 10240; //  17408;
 	}
 	else if (adj_host == 3) {// T7 specific
-		uint16_t adjust_more_t7 = 512; // T7 adjust size , 256,  NG >= 512 OK 
+//		uint16_t adjust_more_t7 = 512; // T7 adjust size , 256,  NG >= 512 OK
 		sz_MaxComPacketSize = 30720  ; // 30K  - adjust_more_t7  ; // 10240; // 17408; 
 		sz_MaxResponseComPacketSize = 30720; // 10240; // 17108;
 		sz_MaxPacketSize = 30700 ; // - adjust_more_t7; //  10220; // 17180;
@@ -5000,11 +5010,11 @@ uint8_t DtaDevOpal::properties()
 	}
 	else if (adj_host == 2) {// anything less than 64K but greater than 2K, will adjust according to TPer returned size
 		uint16_t adjust_more_t7 = 512 ; // T7 adjust size , 256,  NG >= 512 OK 
-		sz_MaxComPacketSize = Tper_sz_MaxComPacketSize ; // - adjust_more_t7  ; // 10240; // 17408; 
-		sz_MaxResponseComPacketSize = Tper_sz_MaxResponseComPacketSize; // 10240; // 17108;
-		sz_MaxPacketSize = Tper_sz_MaxPacketSize ; // - adjust_more_t7; //  10220; // 17180;
-		sz_MaxIndTokenSize = Tper_sz_MaxIndTokenSize; // - adjust_more_t7; //  10184; //  16384;
-		adj_io_buffer_length = Tper_sz_MaxComPacketSize - adjust_more_t7; // +IO_BUFFER_ALIGNMENT; //  17408;
+		sz_MaxComPacketSize = (uint16_t)Tper_sz_MaxComPacketSize ; // - adjust_more_t7  ; // 10240; // 17408;
+		sz_MaxResponseComPacketSize = (uint16_t)Tper_sz_MaxResponseComPacketSize; // 10240; // 17108;
+		sz_MaxPacketSize = (uint16_t)Tper_sz_MaxPacketSize ; // - adjust_more_t7; //  10220; // 17180;
+		sz_MaxIndTokenSize = (uint16_t)Tper_sz_MaxIndTokenSize; // - adjust_more_t7; //  10184; //  16384;
+		adj_io_buffer_length = (uint16_t)(Tper_sz_MaxComPacketSize - adjust_more_t7); // +IO_BUFFER_ALIGNMENT; //  17408;
 		// adj_io_buffer_length must not exceed TperMaxComPacketSize 
 	}
 
@@ -5042,44 +5052,44 @@ void DtaDevOpal::fill_prop(uint8_t show)
 						//LOG(D) << "match MaxComPacketSize";
 						if (tper_flag) { // Tper size
 							//LOG(D) << "Tper";
-							Tper_sz_MaxComPacketSize = propertiesResponse.getUint64(i + 2);
+							Tper_sz_MaxComPacketSize = (uint32_t)propertiesResponse.getUint64(i + 2);
 						}
 						else { // Host size
 							//LOG(D) << "Host";
-							Host_sz_MaxComPacketSize = propertiesResponse.getUint64(i + 2);
+							Host_sz_MaxComPacketSize = (uint32_t)propertiesResponse.getUint64(i + 2);
 						}
 					}
 					else if (!memcmp((propertiesResponse.getString(i + 1)).c_str(), "MaxResponseComPacketSize", sizeof("MaxResponseComPacketSize"))) {
 						//LOG(D) << "match MaxResponseComPacketSize";
 						if (tper_flag) { // Tper size
 							//LOG(D) << "Tper";
-							Tper_sz_MaxResponseComPacketSize = propertiesResponse.getUint64(i + 2);
+							Tper_sz_MaxResponseComPacketSize = (uint32_t)propertiesResponse.getUint64(i + 2);
 						}
 						else { // Host size
 							//LOG(D) << "Host";
-							Host_sz_MaxResponseComPacketSize = propertiesResponse.getUint64(i + 2);
+							Host_sz_MaxResponseComPacketSize = (uint32_t)propertiesResponse.getUint64(i + 2);
 						}
 					}
 					else if (!memcmp((propertiesResponse.getString(i + 1)).c_str(), "MaxPacketSize", sizeof("MaxPacketSize"))) {
 						//LOG(D) << "match MaxPacketSize";
 						if (tper_flag) { // Tper size
 							//LOG(D) << "Tper";
-							Tper_sz_MaxPacketSize = propertiesResponse.getUint64(i + 2);
+							Tper_sz_MaxPacketSize = (uint32_t)propertiesResponse.getUint64(i + 2);
 						}
 						else { // Host size
 							//LOG(D) << "Host";
-							Host_sz_MaxPacketSize = propertiesResponse.getUint64(i + 2);
+							Host_sz_MaxPacketSize = (uint32_t)propertiesResponse.getUint64(i + 2);
 						}
 					}
 					else if (!memcmp((propertiesResponse.getString(i + 1)).c_str(), "MaxIndTokenSize", sizeof("MaxIndTokenSize"))) {
 						//LOG(D) << "match MaxIndTokenSize";
 						if (tper_flag) { // Tper size
 							//LOG(D) << "Tper";
-							Tper_sz_MaxIndTokenSize = propertiesResponse.getUint64(i + 2);
+							Tper_sz_MaxIndTokenSize = (uint32_t)propertiesResponse.getUint64(i + 2);
 						}
 						else { // Host size
 							//LOG(D) << "Host";
-							Host_sz_MaxIndTokenSize = propertiesResponse.getUint64(i + 2);
+							Host_sz_MaxIndTokenSize = (uint32_t)propertiesResponse.getUint64(i + 2);
 						}
 					}
 				} // 

@@ -1,0 +1,90 @@
+.\" Manpage for sedutil-cli.
+.TH SEDUTIL\-CLI 8 "18 Feb 2016" "0.12" "sedutil-cli man page"
+.SH NAME
+sedutil-cli \- util to manage TCG Opal 2.0 self encrypting drives
+
+.SH SYNOPSIS
+sedutil\-cli <\-v> <\-n> <action> <options> <device>
+
+.SH DESCRIPTION
+sedutil-cli is a utility to manage self encrypting drives that conform
+to the Trusted Computing Group (TCG) OPAL 2.0 SSC specification.
+
+In Linux libata.allow_tpm must be set to 1. Either via adding
+libata.allow_tpm=1 to the kernel flags at boot time or changing the
+contents of /sys/module/libata/parameters/allow_tpm to a from a
+"0" to a "1" on a running system.
+
+.SH OPTIONS
+.SS General Options
+.TP
+.IP "\-v (optional)"
+increase verbosity, one to five v's
+.IP "\-n (optional)"
+no password hashing. Passwords will be sent in clear text!
+
+.SS Actions
+.IP \-\-scan
+Scans the devices on the system identifying Opal compliant devices
+.IP "\-\-query <device>"
+Display the Discovery 0 response of a device
+.IP "\-\-isValidSED <device>"
+Verify whether the given device is SED or not
+.IP "\-\-listLockingRanges <password> <device>"
+List all Locking Ranges
+.IP "\-\-listLockingRange <0...n> <password> <device>"
+List all Locking Ranges, 0 = GLobal 1..n  = LRn
+.IP "\-\-eraseLockingRange <0...n> <password> <device>"
+Erase a Locking Range, 0 = GLobal 1..n  = LRn
+.IP "\-\-setupLockingRange <0...n> <RangeStart> <RangeLength> <password> <device>"
+Setup a new Locking Range, 0 = GLobal 1..n  = LRn
+.IP "\-\-initialSetup <SIDpassword> <device>"
+Setup the device for use with sedutil, <SIDpassword> is new SID and Admin1 password
+.IP "\-\-setSIDPassword <SIDpassword> <newSIDpassword> <device>"
+Change the SID password
+.IP "\-\-setAdmin1Pwd <Admin1password> <newAdmin1password> <device>"
+Change the Admin1 password
+.IP "\-\-setPassword <oldpassword, "" for MSID> <userid> <newpassword> <device>"
+Change the Enterprise password for userid, "EraseMaster" or "BandMaster<n>", 0 <= n <= 1023
+.IP "\-\-setLockingRange <0...n> <RW|RO|LK> <Admin1password> <device>"
+Set the status of a Locking Range, 0 = GLobal 1..n  = LRn
+.IP "\-\-enableLockingRange <0...n> <Admin1password> <device>"
+Enable a Locking Range, 0 = GLobal 1..n  = LRn
+.IP "\-\-disableLockingRange <0...n> <Admin1password> <device>"
+Disable a Locking Range, 0 = GLobal 1..n  = LRn
+.IP "\-\-setMBREnable <on|off> <Admin1password> <device>"
+Enable|Disable MBR shadowing
+.IP "\-\-setMBRDone <on|off> <Admin1password> <device>"
+set|unset MBRDone
+.IP "\-\-loadPBAimage <Admin1password> <file> <device>"
+Write <file> to MBR Shadow area
+.IP "\-\-revertTPer <SIDpassword> <device>"
+set the device back to factory defaults.
+.B This **ERASES ALL DATA**
+.IP "\-\-revertNoErase <Admin1password> <device>"
+deactivate the Locking SP without erasing the data on GLOBAL RANGE *ONLY*
+.IP "\-\---yesIreallywanttoERASEALLmydatausingthePSID <PSID> <device>"
+revert the device using the PSID. 
+.B *ERASING* *ALL* the data
+.IP "\-\-printDefaultPassword <device>"
+print MSID
+
+.SH EXAMPLES
+.EX
+sedutil-cli --scan
+.EE
+.EX
+sedutil-cli --query /dev/sdc
+.EE
+.EX
+sedutil-cli --yesIreallywanttoERASEALLmydatausingthePSID <PSIDALLCAPSNODASHED> /dev/sdc
+.EE
+.EX
+sedutil-cli --initialSetup <newSIDpassword> /dev/sdc
+.EE
+
+.SH BUGS
+Sleep (S3) is not supported.
+
+.SH AUTHOR
+The tool was developed by Bright Plaza Inc. <drivetrust@drivetrust.com>. This man page was written by Jan Luca Naumann <j.naumann@fu-berlin.de>.

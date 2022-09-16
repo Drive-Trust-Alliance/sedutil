@@ -1,0 +1,844 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D21322F4283B06F70076B62F /* DtaDevMacOSDrive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D21322F3283B06500076B62F /* DtaDevMacOSDrive.cpp */; };
+		D226505F27FB54D600BA5499 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D226505E27FB54D600BA5499 /* CoreFoundation.framework */; };
+		D226506027FB550600BA5499 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D226505C27FB545500BA5499 /* IOKit.framework */; };
+		D226506127FB552400BA5499 /* TPerKernelInterface.c in Sources */ = {isa = PBXBuildFile; fileRef = D226505927FB531F00BA5499 /* TPerKernelInterface.c */; };
+		D226506227FB553100BA5499 /* RegistryUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = D226505727FB531F00BA5499 /* RegistryUtilities.mm */; };
+		D23F351D2845B22E00708384 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D23F351C2845B22E00708384 /* main.cpp */; };
+		D27F65D127F432FE0091C6ED /* DtaDevMacOS_UAS_SAT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27F65D027F42DC50091C6ED /* DtaDevMacOS_UAS_SAT.cpp */; };
+		D27F65D727F437860091C6ED /* PrintBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = D27F65D627F437860091C6ED /* PrintBuffer.c */; };
+		D293C2DD289ED926005E7AA8 /* DtaDevMacOS_ATA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D293C2DC289ED926005E7AA8 /* DtaDevMacOS_ATA.cpp */; };
+		D2C42ADB2845BC2800D3B958 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D226505C27FB545500BA5499 /* IOKit.framework */; };
+		D2C42ADC2845C0DD00D3B958 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D226505E27FB54D600BA5499 /* CoreFoundation.framework */; };
+		D2D0018F27FB4F95007679E3 /* reenumerate.c in Sources */ = {isa = PBXBuildFile; fileRef = D2D0018E27FB4F95007679E3 /* reenumerate.c */; };
+		D2DE3A432845440B00B4F78E /* DtaBlockStorageDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2DE3A422845440B00B4F78E /* DtaBlockStorageDevice.cpp */; };
+		D2ED0EFB27D55FE20053115F /* DtaDevOpal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EC827D55FE20053115F /* DtaDevOpal.cpp */; };
+		D2ED0EFC27D55FE20053115F /* DtaAnnotatedDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0ECA27D55FE20053115F /* DtaAnnotatedDump.cpp */; };
+		D2ED0EFD27D55FE20053115F /* hmac.c in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0ED127D55FE20053115F /* hmac.c */; };
+		D2ED0EFE27D55FE20053115F /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0ED427D55FE20053115F /* sha1.c */; };
+		D2ED0EFF27D55FE20053115F /* blockwise.c in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0ED927D55FE20053115F /* blockwise.c */; };
+		D2ED0F0027D55FE20053115F /* chash.c in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EDB27D55FE20053115F /* chash.c */; };
+		D2ED0F0127D55FE20053115F /* pbkdf2.c in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EDC27D55FE20053115F /* pbkdf2.c */; };
+		D2ED0F0227D55FE20053115F /* DtaCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EDD27D55FE20053115F /* DtaCommand.cpp */; };
+		D2ED0F0327D55FE20053115F /* DtaOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EDE27D55FE20053115F /* DtaOptions.cpp */; };
+		D2ED0F0427D55FE20053115F /* DtaDevOpal2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EE127D55FE20053115F /* DtaDevOpal2.cpp */; };
+		D2ED0F0527D55FE20053115F /* DtaDevOpal1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EE327D55FE20053115F /* DtaDevOpal1.cpp */; };
+		D2ED0F0627D55FE20053115F /* DtaDevEnterprise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EE527D55FE20053115F /* DtaDevEnterprise.cpp */; };
+		D2ED0F0727D55FE20053115F /* DtaDevGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EE627D55FE20053115F /* DtaDevGeneric.cpp */; };
+		D2ED0F0827D55FE20053115F /* DtaHashPwd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EE927D55FE20053115F /* DtaHashPwd.cpp */; };
+		D2ED0F0927D55FE20053115F /* DtaDiskType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EEA27D55FE20053115F /* DtaDiskType.cpp */; };
+		D2ED0F0A27D55FE20053115F /* DtaHexDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EEE27D55FE20053115F /* DtaHexDump.cpp */; };
+		D2ED0F0B27D55FE20053115F /* sedutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EF027D55FE20053115F /* sedutil.cpp */; };
+		D2ED0F0C27D55FE20053115F /* DtaSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EF127D55FE20053115F /* DtaSession.cpp */; };
+		D2ED0F0D27D55FE20053115F /* DtaDev.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EF227D55FE20053115F /* DtaDev.cpp */; };
+		D2ED0F0E27D55FE20053115F /* DtaResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0EF327D55FE20053115F /* DtaResponse.cpp */; };
+		D2ED0F4A27D564D20053115F /* DtaDevOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2ED0F4227D564D20053115F /* DtaDevOS.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D21322EF283AC7D70076B62F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2ED0EB427D55FBD0053115F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D21322EB283AAA110076B62F;
+			remoteInfo = version;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D23F35182845B22E00708384 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		D2D0018A27FB4F95007679E3 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		D2ED0EBA27D55FBD0053115F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		D21322F3283B06500076B62F /* DtaDevMacOSDrive.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSDrive.cpp; sourceTree = "<group>"; };
+		D226503A27FB52A100BA5499 /* MakeVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = MakeVersion.sh; sourceTree = "<group>"; };
+		D226503B27FB52A100BA5499 /* CleanVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CleanVersion.sh; sourceTree = "<group>"; };
+		D226503D27FB52C000BA5499 /* GitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GitVersion.sh; sourceTree = "<group>"; };
+		D226505327FB531F00BA5499 /* SEDKernelInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SEDKernelInterface.h; sourceTree = "<group>"; };
+		D226505427FB531F00BA5499 /* UserKernelShared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserKernelShared.h; sourceTree = "<group>"; };
+		D226505527FB531F00BA5499 /* TPerDriverDispatchTable.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = TPerDriverDispatchTable.inc; sourceTree = "<group>"; };
+		D226505627FB531F00BA5499 /* TPerKernelInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TPerKernelInterface.h; sourceTree = "<group>"; };
+		D226505727FB531F00BA5499 /* RegistryUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RegistryUtilities.mm; sourceTree = "<group>"; };
+		D226505827FB531F00BA5499 /* RegistryUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RegistryUtilities.h; sourceTree = "<group>"; };
+		D226505927FB531F00BA5499 /* TPerKernelInterface.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = TPerKernelInterface.c; sourceTree = "<group>"; };
+		D226505A27FB531F00BA5499 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D226505C27FB545500BA5499 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		D226505E27FB54D600BA5499 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		D23F351A2845B22E00708384 /* IORegistryTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = IORegistryTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D23F351C2845B22E00708384 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		D27F65CF27F42DC50091C6ED /* DtaDevMacOS_UAS_SAT.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOS_UAS_SAT.h; sourceTree = "<group>"; };
+		D27F65D027F42DC50091C6ED /* DtaDevMacOS_UAS_SAT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOS_UAS_SAT.cpp; sourceTree = "<group>"; };
+		D27F65D627F437860091C6ED /* PrintBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PrintBuffer.c; sourceTree = "<group>"; };
+		D27F65D827F4381C0091C6ED /* PrintBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrintBuffer.h; path = ../include/PrintBuffer.h; sourceTree = "<group>"; };
+		D27F65DD27F43B350091C6ED /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debug.h; path = include/debug.h; sourceTree = "<group>"; };
+		D293C2DC289ED926005E7AA8 /* DtaDevMacOS_ATA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOS_ATA.cpp; sourceTree = "<group>"; };
+		D293C2DE289ED93D005E7AA8 /* DtaDevMacOS_ATA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOS_ATA.h; sourceTree = "<group>"; };
+		D293C2DF289EEA3D005E7AA8 /* ATAStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATAStructures.h; sourceTree = "<group>"; };
+		D2AEC69A27F499F20050D42F /* DtaMacOSConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaMacOSConstants.h; path = ../macos/DtaMacOSConstants.h; sourceTree = "<group>"; };
+		D2D0018C27FB4F95007679E3 /* reenumerate */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = reenumerate; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2D0018E27FB4F95007679E3 /* reenumerate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = reenumerate.c; sourceTree = "<group>"; };
+		D2D0019327FB5003007679E3 /* IOUSBFamilyInfoPlist.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOUSBFamilyInfoPlist.pch; sourceTree = "<group>"; };
+		D2DE3A412845436B00B4F78E /* DtaBlockStorageDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaBlockStorageDevice.h; sourceTree = "<group>"; };
+		D2DE3A422845440B00B4F78E /* DtaBlockStorageDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaBlockStorageDevice.cpp; sourceTree = "<group>"; };
+		D2ED0EBC27D55FBD0053115F /* sedutil-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "sedutil-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2ED0EC727D55FE20053115F /* DtaResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaResponse.h; sourceTree = "<group>"; };
+		D2ED0EC827D55FE20053115F /* DtaDevOpal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal.cpp; sourceTree = "<group>"; };
+		D2ED0EC927D55FE20053115F /* DtaDevEnterprise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevEnterprise.h; sourceTree = "<group>"; };
+		D2ED0ECA27D55FE20053115F /* DtaAnnotatedDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAnnotatedDump.cpp; sourceTree = "<group>"; };
+		D2ED0ECB27D55FE20053115F /* DtaDevOpal1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOpal1.h; sourceTree = "<group>"; };
+		D2ED0ECC27D55FE20053115F /* Copyright.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Copyright.txt; sourceTree = "<group>"; };
+		D2ED0ECD27D55FE20053115F /* DtaDevOpal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOpal.h; sourceTree = "<group>"; };
+		D2ED0ECF27D55FE20053115F /* tassert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tassert.h; sourceTree = "<group>"; };
+		D2ED0ED027D55FE20053115F /* blockwise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blockwise.h; sourceTree = "<group>"; };
+		D2ED0ED127D55FE20053115F /* hmac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hmac.c; sourceTree = "<group>"; };
+		D2ED0ED227D55FE20053115F /* bitops.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitops.h; sourceTree = "<group>"; };
+		D2ED0ED327D55FE20053115F /* chash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chash.h; sourceTree = "<group>"; };
+		D2ED0ED427D55FE20053115F /* sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha1.c; sourceTree = "<group>"; };
+		D2ED0ED527D55FE20053115F /* pbkdf2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pbkdf2.h; sourceTree = "<group>"; };
+		D2ED0ED627D55FE20053115F /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		D2ED0ED727D55FE20053115F /* hmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hmac.h; sourceTree = "<group>"; };
+		D2ED0ED827D55FE20053115F /* handy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = handy.h; sourceTree = "<group>"; };
+		D2ED0ED927D55FE20053115F /* blockwise.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blockwise.c; sourceTree = "<group>"; };
+		D2ED0EDA27D55FE20053115F /* sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha1.h; sourceTree = "<group>"; };
+		D2ED0EDB27D55FE20053115F /* chash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = chash.c; sourceTree = "<group>"; };
+		D2ED0EDC27D55FE20053115F /* pbkdf2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pbkdf2.c; sourceTree = "<group>"; };
+		D2ED0EDD27D55FE20053115F /* DtaCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaCommand.cpp; sourceTree = "<group>"; };
+		D2ED0EDE27D55FE20053115F /* DtaOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaOptions.cpp; sourceTree = "<group>"; };
+		D2ED0EDF27D55FE20053115F /* DtaDiskType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDiskType.h; sourceTree = "<group>"; };
+		D2ED0EE027D55FE20053115F /* DtaDevGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevGeneric.h; sourceTree = "<group>"; };
+		D2ED0EE127D55FE20053115F /* DtaDevOpal2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal2.cpp; sourceTree = "<group>"; };
+		D2ED0EE227D55FE20053115F /* DtaOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
+		D2ED0EE327D55FE20053115F /* DtaDevOpal1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal1.cpp; sourceTree = "<group>"; };
+		D2ED0EE427D55FE20053115F /* DtaLexicon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaLexicon.h; sourceTree = "<group>"; };
+		D2ED0EE527D55FE20053115F /* DtaDevEnterprise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevEnterprise.cpp; sourceTree = "<group>"; };
+		D2ED0EE627D55FE20053115F /* DtaDevGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevGeneric.cpp; sourceTree = "<group>"; };
+		D2ED0EE727D55FE20053115F /* DtaDevOpal2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOpal2.h; sourceTree = "<group>"; };
+		D2ED0EE827D55FE20053115F /* DtaHashPwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaHashPwd.h; sourceTree = "<group>"; };
+		D2ED0EE927D55FE20053115F /* DtaHashPwd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaHashPwd.cpp; sourceTree = "<group>"; };
+		D2ED0EEA27D55FE20053115F /* DtaDiskType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDiskType.cpp; sourceTree = "<group>"; };
+		D2ED0EEB27D55FE20053115F /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
+		D2ED0EEC27D55FE20053115F /* DtaSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaSession.h; sourceTree = "<group>"; };
+		D2ED0EED27D55FE20053115F /* DtaStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaStructures.h; sourceTree = "<group>"; };
+		D2ED0EEE27D55FE20053115F /* DtaHexDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaHexDump.cpp; sourceTree = "<group>"; };
+		D2ED0EEF27D55FE20053115F /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
+		D2ED0EF027D55FE20053115F /* sedutil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sedutil.cpp; sourceTree = "<group>"; };
+		D2ED0EF127D55FE20053115F /* DtaSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaSession.cpp; sourceTree = "<group>"; };
+		D2ED0EF227D55FE20053115F /* DtaDev.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDev.cpp; sourceTree = "<group>"; };
+		D2ED0EF327D55FE20053115F /* DtaResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaResponse.cpp; sourceTree = "<group>"; };
+		D2ED0EF427D55FE20053115F /* DtaAnnotatedDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaAnnotatedDump.h; sourceTree = "<group>"; };
+		D2ED0EF527D55FE20053115F /* DtaEndianFixup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaEndianFixup.h; sourceTree = "<group>"; };
+		D2ED0EF627D55FE20053115F /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		D2ED0EF727D55FE20053115F /* DtaConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaConstants.h; sourceTree = "<group>"; };
+		D2ED0EF827D55FE20053115F /* DtaHexDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaHexDump.h; sourceTree = "<group>"; };
+		D2ED0EF927D55FE20053115F /* DtaCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaCommand.h; sourceTree = "<group>"; };
+		D2ED0EFA27D55FE20053115F /* DtaDev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDev.h; sourceTree = "<group>"; };
+		D2ED0F3927D564D20053115F /* DtaDevOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOS.h; sourceTree = "<group>"; };
+		D2ED0F3A27D564D20053115F /* PSIDRevert_MACOS.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PSIDRevert_MACOS.txt; sourceTree = "<group>"; };
+		D2ED0F3B27D564D20053115F /* os.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = os.h; sourceTree = "<group>"; };
+		D2ED0F3D27D564D20053115F /* TestSuite.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = TestSuite.sh; sourceTree = "<group>"; };
+		D2ED0F3E27D564D20053115F /* DtaDevMacOSDrive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSDrive.h; sourceTree = "<group>"; };
+		D2ED0F4227D564D20053115F /* DtaDevOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOS.cpp; sourceTree = "<group>"; };
+		D2ED0F5027D6703B0053115F /* Version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D23F35172845B22E00708384 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2C42ADC2845C0DD00D3B958 /* CoreFoundation.framework in Frameworks */,
+				D2C42ADB2845BC2800D3B958 /* IOKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2D0018927FB4F95007679E3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2ED0EB927D55FBD0053115F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D226506027FB550600BA5499 /* IOKit.framework in Frameworks */,
+				D226505F27FB54D600BA5499 /* CoreFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D226503927FB52A100BA5499 /* sedutil */ = {
+			isa = PBXGroup;
+			children = (
+				D226503A27FB52A100BA5499 /* MakeVersion.sh */,
+				D226503B27FB52A100BA5499 /* CleanVersion.sh */,
+			);
+			path = sedutil;
+			sourceTree = "<group>";
+		};
+		D226503C27FB52C000BA5499 /* sedutil project */ = {
+			isa = PBXGroup;
+			children = (
+				D226503D27FB52C000BA5499 /* GitVersion.sh */,
+			);
+			path = "sedutil project";
+			sourceTree = "<group>";
+		};
+		D226505227FB531F00BA5499 /* SEDKernelInterface */ = {
+			isa = PBXGroup;
+			children = (
+				D226505327FB531F00BA5499 /* SEDKernelInterface.h */,
+				D226505427FB531F00BA5499 /* UserKernelShared.h */,
+				D226505527FB531F00BA5499 /* TPerDriverDispatchTable.inc */,
+				D226505627FB531F00BA5499 /* TPerKernelInterface.h */,
+				D226505727FB531F00BA5499 /* RegistryUtilities.mm */,
+				D226505827FB531F00BA5499 /* RegistryUtilities.h */,
+				D226505927FB531F00BA5499 /* TPerKernelInterface.c */,
+				D226505A27FB531F00BA5499 /* Info.plist */,
+			);
+			path = SEDKernelInterface;
+			sourceTree = "<group>";
+		};
+		D226505B27FB545500BA5499 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D226505E27FB54D600BA5499 /* CoreFoundation.framework */,
+				D226505C27FB545500BA5499 /* IOKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D23F351B2845B22E00708384 /* IORegistryTest */ = {
+			isa = PBXGroup;
+			children = (
+				D23F351C2845B22E00708384 /* main.cpp */,
+			);
+			path = IORegistryTest;
+			sourceTree = "<group>";
+		};
+		D27F65D527F437860091C6ED /* PrintBuffer */ = {
+			isa = PBXGroup;
+			children = (
+				D27F65D827F4381C0091C6ED /* PrintBuffer.h */,
+				D27F65D627F437860091C6ED /* PrintBuffer.c */,
+			);
+			path = PrintBuffer;
+			sourceTree = "<group>";
+		};
+		D2D0018D27FB4F95007679E3 /* reenumerate */ = {
+			isa = PBXGroup;
+			children = (
+				D2D0019327FB5003007679E3 /* IOUSBFamilyInfoPlist.pch */,
+				D2D0018E27FB4F95007679E3 /* reenumerate.c */,
+			);
+			path = reenumerate;
+			sourceTree = "<group>";
+		};
+		D2ED0EB327D55FBD0053115F = {
+			isa = PBXGroup;
+			children = (
+				D2ED0F3727D564D20053115F /* macos */,
+				D2ED0EC627D55FE20053115F /* Common */,
+				D2D0018D27FB4F95007679E3 /* reenumerate */,
+				D23F351B2845B22E00708384 /* IORegistryTest */,
+				D2ED0EBD27D55FBD0053115F /* Products */,
+				D226505B27FB545500BA5499 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		D2ED0EBD27D55FBD0053115F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2ED0EBC27D55FBD0053115F /* sedutil-cli */,
+				D2D0018C27FB4F95007679E3 /* reenumerate */,
+				D23F351A2845B22E00708384 /* IORegistryTest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D2ED0EC627D55FE20053115F /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				D2ED0EFA27D55FE20053115F /* DtaDev.h */,
+				D2ED0EF227D55FE20053115F /* DtaDev.cpp */,
+				D2ED0EE027D55FE20053115F /* DtaDevGeneric.h */,
+				D2ED0EE627D55FE20053115F /* DtaDevGeneric.cpp */,
+				D2ED0EC727D55FE20053115F /* DtaResponse.h */,
+				D2ED0EC827D55FE20053115F /* DtaDevOpal.cpp */,
+				D2ED0EC927D55FE20053115F /* DtaDevEnterprise.h */,
+				D2ED0ECA27D55FE20053115F /* DtaAnnotatedDump.cpp */,
+				D2ED0ECB27D55FE20053115F /* DtaDevOpal1.h */,
+				D2ED0ECC27D55FE20053115F /* Copyright.txt */,
+				D2ED0ECD27D55FE20053115F /* DtaDevOpal.h */,
+				D2ED0ECE27D55FE20053115F /* pbkdf2 */,
+				D2ED0EDD27D55FE20053115F /* DtaCommand.cpp */,
+				D2ED0EDE27D55FE20053115F /* DtaOptions.cpp */,
+				D2ED0EDF27D55FE20053115F /* DtaDiskType.h */,
+				D2ED0EE127D55FE20053115F /* DtaDevOpal2.cpp */,
+				D2ED0EE227D55FE20053115F /* DtaOptions.h */,
+				D2ED0EE327D55FE20053115F /* DtaDevOpal1.cpp */,
+				D2ED0EE427D55FE20053115F /* DtaLexicon.h */,
+				D2ED0EE527D55FE20053115F /* DtaDevEnterprise.cpp */,
+				D2ED0EE727D55FE20053115F /* DtaDevOpal2.h */,
+				D2ED0EE827D55FE20053115F /* DtaHashPwd.h */,
+				D2ED0EE927D55FE20053115F /* DtaHashPwd.cpp */,
+				D2ED0EEA27D55FE20053115F /* DtaDiskType.cpp */,
+				D2ED0EEB27D55FE20053115F /* log.h */,
+				D2ED0EEC27D55FE20053115F /* DtaSession.h */,
+				D2ED0EED27D55FE20053115F /* DtaStructures.h */,
+				D293C2DF289EEA3D005E7AA8 /* ATAStructures.h */,
+				D2ED0EEE27D55FE20053115F /* DtaHexDump.cpp */,
+				D2ED0EEF27D55FE20053115F /* ReadMe.txt */,
+				D2ED0EF027D55FE20053115F /* sedutil.cpp */,
+				D2ED0EF127D55FE20053115F /* DtaSession.cpp */,
+				D2ED0EF327D55FE20053115F /* DtaResponse.cpp */,
+				D2ED0EF427D55FE20053115F /* DtaAnnotatedDump.h */,
+				D2ED0EF527D55FE20053115F /* DtaEndianFixup.h */,
+				D2ED0EF627D55FE20053115F /* LICENSE.txt */,
+				D2ED0EF727D55FE20053115F /* DtaConstants.h */,
+				D2AEC69A27F499F20050D42F /* DtaMacOSConstants.h */,
+				D2ED0EF827D55FE20053115F /* DtaHexDump.h */,
+				D2ED0EF927D55FE20053115F /* DtaCommand.h */,
+			);
+			name = Common;
+			path = ../../Common;
+			sourceTree = "<group>";
+		};
+		D2ED0ECE27D55FE20053115F /* pbkdf2 */ = {
+			isa = PBXGroup;
+			children = (
+				D2ED0ECF27D55FE20053115F /* tassert.h */,
+				D2ED0ED027D55FE20053115F /* blockwise.h */,
+				D2ED0ED127D55FE20053115F /* hmac.c */,
+				D2ED0ED227D55FE20053115F /* bitops.h */,
+				D2ED0ED327D55FE20053115F /* chash.h */,
+				D2ED0ED427D55FE20053115F /* sha1.c */,
+				D2ED0ED527D55FE20053115F /* pbkdf2.h */,
+				D2ED0ED627D55FE20053115F /* COPYING */,
+				D2ED0ED727D55FE20053115F /* hmac.h */,
+				D2ED0ED827D55FE20053115F /* handy.h */,
+				D2ED0ED927D55FE20053115F /* blockwise.c */,
+				D2ED0EDA27D55FE20053115F /* sha1.h */,
+				D2ED0EDB27D55FE20053115F /* chash.c */,
+				D2ED0EDC27D55FE20053115F /* pbkdf2.c */,
+			);
+			path = pbkdf2;
+			sourceTree = "<group>";
+		};
+		D2ED0F3727D564D20053115F /* macos */ = {
+			isa = PBXGroup;
+			children = (
+				D226505227FB531F00BA5499 /* SEDKernelInterface */,
+				D226503C27FB52C000BA5499 /* sedutil project */,
+				D226503927FB52A100BA5499 /* sedutil */,
+				D27F65DD27F43B350091C6ED /* debug.h */,
+				D27F65D527F437860091C6ED /* PrintBuffer */,
+				D2ED0F5027D6703B0053115F /* Version.h */,
+				D2ED0F3B27D564D20053115F /* os.h */,
+				D2ED0F3927D564D20053115F /* DtaDevOS.h */,
+				D2ED0F4227D564D20053115F /* DtaDevOS.cpp */,
+				D27F65D027F42DC50091C6ED /* DtaDevMacOS_UAS_SAT.cpp */,
+				D293C2DC289ED926005E7AA8 /* DtaDevMacOS_ATA.cpp */,
+				D2DE3A422845440B00B4F78E /* DtaBlockStorageDevice.cpp */,
+				D21322F3283B06500076B62F /* DtaDevMacOSDrive.cpp */,
+				D27F65CF27F42DC50091C6ED /* DtaDevMacOS_UAS_SAT.h */,
+				D293C2DE289ED93D005E7AA8 /* DtaDevMacOS_ATA.h */,
+				D2ED0F3E27D564D20053115F /* DtaDevMacOSDrive.h */,
+				D2DE3A412845436B00B4F78E /* DtaBlockStorageDevice.h */,
+				D2ED0F3A27D564D20053115F /* PSIDRevert_MACOS.txt */,
+				D2ED0F3D27D564D20053115F /* TestSuite.sh */,
+			);
+			name = macos;
+			path = ..;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		D21322EB283AAA110076B62F /* version */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = ../sedutil/MakeVersion.sh;
+			buildConfigurationList = D21322EE283AAA110076B62F /* Build configuration list for PBXLegacyTarget "version" */;
+			buildPhases = (
+			);
+			buildToolPath = /bin/bash;
+			buildWorkingDirectory = "/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project";
+			dependencies = (
+			);
+			name = version;
+			passBuildSettingsInEnvironment = 1;
+			productName = version;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXNativeTarget section */
+		D23F35192845B22E00708384 /* IORegistryTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D23F351E2845B22E00708384 /* Build configuration list for PBXNativeTarget "IORegistryTest" */;
+			buildPhases = (
+				D23F35162845B22E00708384 /* Sources */,
+				D23F35172845B22E00708384 /* Frameworks */,
+				D23F35182845B22E00708384 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IORegistryTest;
+			productName = IORegistryTest;
+			productReference = D23F351A2845B22E00708384 /* IORegistryTest */;
+			productType = "com.apple.product-type.tool";
+		};
+		D2D0018B27FB4F95007679E3 /* reenumerate */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D2D0019227FB4F95007679E3 /* Build configuration list for PBXNativeTarget "reenumerate" */;
+			buildPhases = (
+				D2D0018827FB4F95007679E3 /* Sources */,
+				D2D0018927FB4F95007679E3 /* Frameworks */,
+				D2D0018A27FB4F95007679E3 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = reenumerate;
+			productName = reenumerate;
+			productReference = D2D0018C27FB4F95007679E3 /* reenumerate */;
+			productType = "com.apple.product-type.tool";
+		};
+		D2ED0EBB27D55FBD0053115F /* sedutil-cli */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D2ED0EC327D55FBD0053115F /* Build configuration list for PBXNativeTarget "sedutil-cli" */;
+			buildPhases = (
+				D2ED0F4B27D6642E0053115F /* ShellScript */,
+				D2ED0EB827D55FBD0053115F /* Sources */,
+				D2ED0EB927D55FBD0053115F /* Frameworks */,
+				D2ED0EBA27D55FBD0053115F /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D21322F0283AC7D70076B62F /* PBXTargetDependency */,
+			);
+			name = "sedutil-cli";
+			productName = sedutil;
+			productReference = D2ED0EBC27D55FBD0053115F /* sedutil-cli */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D2ED0EB427D55FBD0053115F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1330;
+				TargetAttributes = {
+					D21322EB283AAA110076B62F = {
+						CreatedOnToolsVersion = 13.4;
+					};
+					D23F35192845B22E00708384 = {
+						CreatedOnToolsVersion = 13.4;
+					};
+					D2D0018B27FB4F95007679E3 = {
+						CreatedOnToolsVersion = 13.2.1;
+					};
+					D2ED0EBB27D55FBD0053115F = {
+						CreatedOnToolsVersion = 13.2.1;
+					};
+				};
+			};
+			buildConfigurationList = D2ED0EB727D55FBD0053115F /* Build configuration list for PBXProject "sedutil" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D2ED0EB327D55FBD0053115F;
+			productRefGroup = D2ED0EBD27D55FBD0053115F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D2ED0EBB27D55FBD0053115F /* sedutil-cli */,
+				D2D0018B27FB4F95007679E3 /* reenumerate */,
+				D21322EB283AAA110076B62F /* version */,
+				D23F35192845B22E00708384 /* IORegistryTest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D2ED0F4B27D6642E0053115F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/Version.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"$SRCROOT/../sedutil/MakeVersion.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D23F35162845B22E00708384 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D23F351D2845B22E00708384 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2D0018827FB4F95007679E3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2D0018F27FB4F95007679E3 /* reenumerate.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2ED0EB827D55FBD0053115F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D27F65D127F432FE0091C6ED /* DtaDevMacOS_UAS_SAT.cpp in Sources */,
+				D2ED0F0327D55FE20053115F /* DtaOptions.cpp in Sources */,
+				D2ED0EFE27D55FE20053115F /* sha1.c in Sources */,
+				D2ED0F0E27D55FE20053115F /* DtaResponse.cpp in Sources */,
+				D21322F4283B06F70076B62F /* DtaDevMacOSDrive.cpp in Sources */,
+				D2ED0F0827D55FE20053115F /* DtaHashPwd.cpp in Sources */,
+				D2ED0EFD27D55FE20053115F /* hmac.c in Sources */,
+				D2ED0F0627D55FE20053115F /* DtaDevEnterprise.cpp in Sources */,
+				D2ED0F0427D55FE20053115F /* DtaDevOpal2.cpp in Sources */,
+				D2ED0F0A27D55FE20053115F /* DtaHexDump.cpp in Sources */,
+				D2ED0F0D27D55FE20053115F /* DtaDev.cpp in Sources */,
+				D2ED0F0927D55FE20053115F /* DtaDiskType.cpp in Sources */,
+				D2DE3A432845440B00B4F78E /* DtaBlockStorageDevice.cpp in Sources */,
+				D2ED0F0127D55FE20053115F /* pbkdf2.c in Sources */,
+				D2ED0F0527D55FE20053115F /* DtaDevOpal1.cpp in Sources */,
+				D2ED0F4A27D564D20053115F /* DtaDevOS.cpp in Sources */,
+				D2ED0F0027D55FE20053115F /* chash.c in Sources */,
+				D27F65D727F437860091C6ED /* PrintBuffer.c in Sources */,
+				D2ED0F0C27D55FE20053115F /* DtaSession.cpp in Sources */,
+				D293C2DD289ED926005E7AA8 /* DtaDevMacOS_ATA.cpp in Sources */,
+				D2ED0EFC27D55FE20053115F /* DtaAnnotatedDump.cpp in Sources */,
+				D2ED0F0B27D55FE20053115F /* sedutil.cpp in Sources */,
+				D226506127FB552400BA5499 /* TPerKernelInterface.c in Sources */,
+				D2ED0F0727D55FE20053115F /* DtaDevGeneric.cpp in Sources */,
+				D2ED0F0227D55FE20053115F /* DtaCommand.cpp in Sources */,
+				D2ED0EFF27D55FE20053115F /* blockwise.c in Sources */,
+				D226506227FB553100BA5499 /* RegistryUtilities.mm in Sources */,
+				D2ED0EFB27D55FE20053115F /* DtaDevOpal.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D21322F0283AC7D70076B62F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D21322EB283AAA110076B62F /* version */;
+			targetProxy = D21322EF283AC7D70076B62F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		D21322EC283AAA110076B62F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D21322ED283AAA110076B62F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		D23F351F2845B22E00708384 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D23F35202845B22E00708384 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		D2D0019027FB4F95007679E3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D2D0019127FB4F95007679E3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		D2ED0EC127D55FBD0053115F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		D2ED0EC227D55FBD0053115F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 33Y435HD6M;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		D2ED0EC427D55FBD0053115F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D2ED0EC527D55FBD0053115F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D21322EE283AAA110076B62F /* Build configuration list for PBXLegacyTarget "version" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D21322EC283AAA110076B62F /* Debug */,
+				D21322ED283AAA110076B62F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D23F351E2845B22E00708384 /* Build configuration list for PBXNativeTarget "IORegistryTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D23F351F2845B22E00708384 /* Debug */,
+				D23F35202845B22E00708384 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D2D0019227FB4F95007679E3 /* Build configuration list for PBXNativeTarget "reenumerate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D2D0019027FB4F95007679E3 /* Debug */,
+				D2D0019127FB4F95007679E3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D2ED0EB727D55FBD0053115F /* Build configuration list for PBXProject "sedutil" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D2ED0EC127D55FBD0053115F /* Debug */,
+				D2ED0EC227D55FBD0053115F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D2ED0EC327D55FBD0053115F /* Build configuration list for PBXNativeTarget "sedutil-cli" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D2ED0EC427D55FBD0053115F /* Debug */,
+				D2ED0EC527D55FBD0053115F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D2ED0EB427D55FBD0053115F /* Project object */;
+}

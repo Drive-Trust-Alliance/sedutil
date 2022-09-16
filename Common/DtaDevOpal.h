@@ -27,7 +27,7 @@ class DtaSession;
 #include "DtaLexicon.h"
 #include "DtaResponse.h"   // wouldn't take class
 #include <vector>
-#include <DtaAudit.h>
+#include "DtaAudit.h"
 
 using namespace std;
 /** Common code for OPAL SSCs.
@@ -56,10 +56,10 @@ public:
 	uint8_t properties();
          /** Send a command to the device and wait for the response
          * @param cmd the MswdCommand object containg the command
-         * @param response the DtaResonse object containing the response
+         * @param resp the DtaResonse object containing the response
          * @param protocol The security protocol number to use for the command
          */
-	uint8_t exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol = 0x01, uint8_t oper = 0);
+	uint8_t exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol = 0x01);
          /** return the communications ID to be used for sessions to this device */
 	virtual uint16_t comID() = 0;
         /** Change the SID password from it's MSID default 
@@ -132,12 +132,12 @@ public:
          */
 	uint8_t enableUser(uint8_t mbrstate, char * password, char * userid);
 
-	/**
-         * @param state 0 or 1  
-         * @param Admin1Password Locking SP authority with access to flag
-         */
 	uint8_t enableUserRead(uint8_t mbrstate, char * password, char * userid);
 	uint8_t userAcccessEnable(uint8_t mbrstate, OPAL_UID UID, char * userid);
+    /**
+         * @param state 0 or 1
+         * @param Admin1Password Locking SP authority with access to flag
+         */
 	uint8_t setMBRDone(uint8_t state, char * Admin1Password);
 	uint8_t TCGreset(uint8_t mbrstate);
 	uint8_t STACK_RESET();
@@ -213,25 +213,18 @@ public:
         * @param password password of the UID authority
         */
 	uint8_t rekeyLockingRange_SUM(vector<uint8_t> LR, vector<uint8_t>  UID, char * password);
-	/** Reset the TPER to its factory condition   
+	uint8_t setBandsEnabled(int16_t rangeid, char * password);
+    /** Reset the TPER to its factory condition
          * ERASES ALL DATA!
          * @param password password of authority (SID or PSID)
          * @param PSID true or false is the authority the PSID
          *   */
-	/** Enable bands using MSID.
-	* @param lockingrange locking range number
-	*/
-	uint8_t setBandsEnabled(int16_t rangeid, char * password);
 	uint8_t revertTPer(char * password, uint8_t PSID = 0, uint8_t AdminSP = 0);
 	    /** Erase a locking range
 	    * @param lockingrange The number of the locking range (0 = global)
 	    * @param password Password of administrative authority for locking range
 	    */
 	uint8_t eraseLockingRange(uint8_t lockingrange, char * password);
-	/** Loads a disk image file to the shadow MBR table.
-         * @param password the password for the administrative authority with access to the table
-         * @param filename the filename of the disk image
-         */
 	uint8_t pbaValid(char * password);
 	uint8_t activate(char * password);
 	uint8_t auditRec(char * password, entry_t * pent, char * userid);
@@ -253,16 +246,20 @@ public:
 	uint8_t createUSB(char * filename);
 	uint8_t loadPBA_O(char * password, char * filename);
 	uint8_t loadPBA_M(char * password, char * filename);
-	uint8_t loadPBA(char * password, char * filename);
-        /** User command to prepare the device for management by sedutil. 
-         * Specific to the SSC that the device supports
-         * @param password the password that is to be assigned to the SSC master entities 
+    /** Loads a disk image file to the shadow MBR table.
+         * @param password the password for the administrative authority with access to the table
+         * @param filename the filename of the disk image
          */
+	uint8_t loadPBA(char * password, char * filename);
 		 // create an audit user UserN disk_info.OPAL20_numUsers
 	void gethuser(char * buf);
 	uint8_t setTperResetEnable(bool enable, char * password);
 	uint8_t setLockonReset(uint8_t lockingrange, bool enable, char * password);
 	uint8_t setuphuser(char * password);
+    /** User command to prepare the device for management by sedutil.
+     * Specific to the SSC that the device supports
+     * @param password the password that is to be assigned to the SSC master entities
+     */
 	uint8_t initialSetup(char * password);
 
 	//uint8_t initialsetup(char * password);

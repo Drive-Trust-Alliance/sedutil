@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -21,6 +21,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #pragma pack(push)
 #pragma pack(1)
 
+#include "ATAStructures.h"
 #define FC_TPER		  0x0001
 #define FC_LOCKING    0x0002
 #define FC_GEOMETRY   0x0003
@@ -419,12 +420,6 @@ typedef struct _OPALHeader {
     OPALPacket pkt;
     OPALDataSubPacket subpkt;
 } OPALHeader;
-/** ATA commands needed for TCG storage communication */
-typedef enum _ATACOMMAND {
-    IF_RECV = 0x5c,
-    IF_SEND = 0x5e,
-    IDENTIFY = 0xec,
-} ATACOMMAND;
 
 typedef enum _NVMECOMMAND {
     NVME_RECV = 0x82,
@@ -554,9 +549,9 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t NSLocking_version;
 	uint8_t range_C : 1;
 	uint8_t range_P : 1;
-	uint8_t Max_Key_Count;
-	uint8_t Unused_Key_Count;
-	uint8_t Max_Range_Per_NS;
+    uint32_t Max_Key_Count;
+    uint32_t Unused_Key_Count;
+    uint32_t Max_Range_Per_NS;
 
 
     // IDENTIFY information
@@ -583,10 +578,23 @@ typedef struct _IDENTIFY_RESPONSE {
     uint8_t modelNum[40];
 } IDENTIFY_RESPONSE;
 
+typedef struct _UASP_INQUIRY_RESPONSE {
+	uint8_t fill1[20];
+	char ProductSerial[20];
+	uint8_t fill2[6];
+	char ProductRev[8];
+	char ProductID[40];
+} UASP_INQUIRY_RESPONSE;
+
+typedef struct _SCSI_INQUIRY_RESPONSE {
+	uint8_t fill1[16];
+	char ProductID[16];
+	char ProductRev[4];
+} SCSI_INQUIRY_RESPONSE;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-class CScsiCmdInquiry
+struct CScsiCmdInquiry
 ////////////////////////////////////////////////////////////////////////////////
 {
 public:

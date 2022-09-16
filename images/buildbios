@@ -1,0 +1,35 @@
+#!/bin/bash
+set -x
+# Build a custom bootable image for BIOS machines
+## define releases for tools
+. conf
+VERSIONINFO=`git describe --dirty`  || VERSIONINFO=tarball
+BUILDTYPE=BIOS32
+BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
+
+## check that everything is available
+[  -f scratch/${SYSLINUX}/bios/mbr/mbr.bin ] || { echo " prereqs are not available "; exit 1; }
+[  -x scratch/${SYSLINUX}/bios/extlinux/extlinux ] || { echo " prereqs are not available "; exit 1; }
+[  -f scratch/buildroot/32bit/images/bzImage  ] || { echo " prereqs are not available "; exit 1; }
+[  -f scratch/buildroot/32bit/images/rootfs.cpio.xz ] || { echo " prereqs are not available "; exit 1; }
+[  -x scratch/buildroot/32bit/target/sbin/linuxpba ] || { echo " prereqs are not available "; exit 1; }
+[  -x scratch/buildroot/32bit/target/sbin/sedutil-cli  ] || { echo " prereqs are not available "; exit 1; }
+[  -f buildroot/syslinux.cfg ] || { echo " prereqs are not available "; exit 1; }
+#
+sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE}
+dd if=/dev/zero of=${BUILDIMG} bs=1M count=32
+(echo o;echo n;echo p;echo 1;echo "";echo "";echo "";echo a;echo 1;echo w) | fdisk ${BUILDIMG}
+dd if=../scratch/${SYSLINUX}/bios/mbr/mbr.bin of=${BUILDIMG} count=1 conv=notrunc bs=512
+LOOPDEV=`sudo losetup --show -f -o 1048576 ${BUILDIMG}`
+sudo mkfs.ext4 $LOOPDEV -L ${BUILDTYPE}
+mkdir image
+sudo mount $LOOPDEV image
+sudo chmod 777 image
+sudo mkdir -p image/boot/extlinux
+sudo ../scratch/${SYSLINUX}/bios/extlinux/extlinux --install image/boot/extlinux
+sudo cp ../scratch/buildroot/32bit/images/bzImage  image/boot/extlinux/
+sudo cp ../scratch/buildroot/32bit/images/rootfs.cpio.xz image/boot/extlinux/
+sudo cp ../buildroot/syslinux.cfg image/boot/extlinux/extlinux.conf
+sudo umount image
+sudo losetup -d $LOOPDEV
+gzip ${BUILDIMG}

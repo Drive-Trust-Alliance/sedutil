@@ -135,25 +135,7 @@
     <ClInclude Include="..\..\Common\pbkdf2\tassert.h">
       <Filter>Header Files\pbkdf2</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\compressapi-8.1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\ob.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\License\PyExt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\uuid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\IntelRST.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\linux\VersionPBA.h">
+    <ClInclude Include="..\DtaDiskNVMe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -236,39 +218,8 @@
     <ClCompile Include="..\..\Common\pbkdf2\sha1.c">
       <Filter>Source Files\pbkdf2</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Common\ob.cpp">
+    <ClCompile Include="..\DtaDiskNVMe.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\uuid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\regtry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\..\rc\Cabinet_x64.Lib">
-      <Filter>Resource Files</Filter>
-    </Library>
-    <Library Include="..\..\rc\Cabinet_x86.Lib">
-      <Filter>Resource Files</Filter>
-    </Library>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="QlmLicenseLib.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <Manifest Include="QlmLicenseLib.dll.manifest" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="CLI.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\..\rc\icon-opal.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
 </Project>

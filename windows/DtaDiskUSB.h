@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -84,13 +84,6 @@ typedef struct _SDWB {
 
 } SDWB;
 
-typedef struct _USB_INQUIRY_DATA {
-	uint8_t fill1[20];
-	char ProductSerial[20];
-	uint8_t fill2[6];
-	char ProductRev[8];
-	char ProductID[40];
-} USB_INQUIRY_DATA;
 
 typedef struct _USB_INQUIRY_DATA_NVME {
 	uint8_t fill1[4];
@@ -106,7 +99,7 @@ public:
 	~DtaDiskUSB();
 	/** device specific initialization.
 	* This function should perform the necessary authority and environment checking
-	* to allow proper functioning of the program, open the device, perform an 
+	* to allow proper functioning of the program, open the device, perform an
 	* identify, add the fields from the identify response to the disk info structure
 	* and if the device is an ATA device perform a call to Discovery0() to complete
 	* the disk_info structure
@@ -120,7 +113,8 @@ public:
 	* @param buffer input/output buffer
 	* @param bufferlen length of the input/output buffer
 	*/
-	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, void * buffer, uint32_t bufferlen);
+	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+		void * buffer, uint32_t bufferlen);
 	/** OS specific routine to send an ATA identify to the device */
 	void identify(OPAL_DiskInfo& disk_info);
 	void identifyPd(OPAL_DiskInfo& disk_info);

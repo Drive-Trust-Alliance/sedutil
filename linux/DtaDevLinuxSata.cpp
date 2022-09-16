@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -36,7 +36,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaHexDump.h"
 //
 // taken from <scsi/scsi.h> to avoid SCSI/ATA name collision
-// 
+//
 
 /*
  *  Status codes
@@ -50,7 +50,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define INTERMEDIATE_C_GOOD  0x0a
 #define RESERVATION_CONFLICT 0x0c
 #define COMMAND_TERMINATED   0x11
-#define QUEUE_FULL  
+#define QUEUE_FULL
 
 using namespace std;
 
@@ -67,7 +67,7 @@ bool DtaDevLinuxSata::init(const char * devref)
     LOG(D1) << "Creating DtaDevLinuxSata::DtaDev() " << devref;
 	bool isOpen = FALSE;
 
-    if(access("/dev/sda", R_OK | W_OK)) {
+    if (access(devref, R_OK | W_OK)) {
         LOG(E) << "You do not have permission to access the raw disk in write mode";
         LOG(E) << "Perhaps you might try sudo to run as root";
     }
@@ -121,13 +121,13 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
      */
     sg.timeout = 60000;
     if (IF_RECV == cmd) {
-        // how do I know it is discovery 0 ? 
+        // how do I know it is discovery 0 ?
         cdb[1] = 4 << 1; // PIO DATA IN
         cdb[2] = 0x0E; // T_DIR = 1, BYTE_BLOCK = 1, Length in Sector Count
         cdb[4] = bufferlen / 512; // Sector count / transfer length (512b blocks)
         sg.dxfer_direction = SG_DXFER_FROM_DEV;
         sg.dxfer_len = bufferlen;
-    } 
+    }
     else if (IDENTIFY == cmd) {
         sg.timeout = 600; // Sabrent USB-SATA adapter 1ms,6ms,20ms,60 NG, 600ms OK
         cdb[1] = 4 << 1; // PIO DATA IN
@@ -161,7 +161,7 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
     sg.cmd_len = sizeof (cdb);
     sg.mx_sb_len = sizeof (sense);
     sg.iovec_count = 0;
-
+    sg.dxfer_len = bufferlen;
     sg.dxferp = buffer;
     sg.cmdp = cdb;
     sg.sbp = sense;
@@ -196,16 +196,70 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
 
 void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
 {
+     sg_io_hdr_t sg;
+    uint8_t sense[32]; // how big should this be??
+    uint8_t cdb[12];
+    memset(&cdb, 0, sizeof (cdb));
+    memset(&sense, 0, sizeof (sense));
+    memset(&sg, 0, sizeof (sg));
     LOG(D4) << "Entering DtaDevLinuxSata::identify()";
     uint8_t bus_sas = 0;
     vector<uint8_t> nullz(512, 0x00);
-    uint8_t * buffer = (uint8_t *) memalign(IO_BUFFER_ALIGNMENT, IO_BUFFER_LENGTH);
-    memset(buffer, 0, IO_BUFFER_LENGTH);
+    uint8_t * buffer = (uint8_t *) memalign(IO_BUFFER_ALIGNMENT, MIN_BUFFER_LENGTH);
+    memset(buffer, 0, MIN_BUFFER_LENGTH);
+     /*
+     * Initialize the CDB as described in SAT-2 and the
+     * ATA Command set reference (protocol and commID placement)
+     * We need a few more standards bodies --NOT--
+     */
 
-    // how about not to use native sata identify ioctl
+    cdb[0] = 0xa1; // ata pass through(12)
     /*
-    if (ioctl(fd, HDIO_GET_IDENTITY, buffer) < 0) {
-        LOG(D1) << "Identify failed " << strerror(errno);
+     * Byte 1 is the protocol 4 = PIO IN and 5 = PIO OUT
+     * Byte 2 is:
+     * bits 7-6 OFFLINE - Amount of time the command can take the bus offline
+     * bit 5    CK_COND - If set the command will always return a condition check
+     * bit 4    RESERVED
+     * bit 3    T_DIR   - transfer direction 1 in, 0 out
+     * bit 2    BYTE_BLock  1 = transfer in blocks, 0 transfer in bytes
+     * bits 1-0 T_LENGTH -  10 = the length id in sector count
+     */
+   cdb[1] = 4 << 1; // PIO DATA IN
+   cdb[2] = 0x0E; // T_DIR = 1, BYTE_BLOCK = 1, Length in Sector Count
+   sg.dxfer_direction = SG_DXFER_FROM_DEV;
+   cdb[4] = 1;
+   cdb[9] = 0xec; // IF_SEND/IF_RECV
+    //      cdb[10] = 0x00;              // reserved
+    //      cdb[11] = 0x00;              // control
+    /*
+     * Set up the SCSI Generic structure
+     * see the SG HOWTO for the best info I could find
+     */
+    sg.interface_id = 'S';
+    //      sg.dxfer_direction = Set in if above
+    sg.cmd_len = sizeof (cdb);
+    sg.mx_sb_len = sizeof (sense);
+    sg.iovec_count = 0;
+    sg.dxfer_len = 512;
+    sg.dxferp = buffer;
+    sg.cmdp = cdb;
+    sg.sbp = sense;
+    sg.timeout = 60000;
+    sg.flags = 0;
+    sg.pack_id = 0;
+    sg.usr_ptr = NULL;
+    //    LOG(D4) << "cdb before ";
+    //    IFLOG(D4) hexDump(cdb, sizeof (cdb));
+    //    LOG(D4) << "sg before ";
+    //    IFLOG(D4) hexDump(&sg, sizeof (sg));
+    /*
+     * Do the IO
+     */
+    if (ioctl(fd, SG_IO, &sg) < 0) {
+        LOG(D4) << "cdb after ";
+        IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
+        LOG(D4) << "sense after ";
+        IFLOG(D4) DtaHexDump(sense, sizeof (sense));
         disk_info.devType = DEVICE_TYPE_OTHER;
         sendCmd(IDENTIFY, 0, 0, buffer, IO_BUFFER_LENGTH);
         bus_sas =1;
@@ -217,13 +271,18 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
     if (result) {
         return;
     }
-    bus_sas = TRUE;
+    //    LOG(D4) << "cdb after ";
+    //    IFLOG(D4) hexDump(cdb, sizeof (cdb));
+    //    LOG(D4) << "sg after ";
+    //    IFLOG(D4) hexDump(&sg, sizeof (sg));
+    //    LOG(D4) << "sense after ";
+    //    IFLOG(D4) hexDump(sense, sizeof (sense));
 
     ifstream kopts;
     kopts.open("/sys/module/libata/parameters/allow_tpm", ios::in);
     if (!kopts) {
 	LOG(W) << "Unable to verify Kernel flag libata.allow_tpm ";
-    } 
+    }
     else {
         if('1' !=  kopts.get()) {
             LOG(E) << "The Kernel flag libata.allow_tpm is not set correctly";
@@ -234,7 +293,29 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
 
     if (!(memcmp(nullz.data(), buffer, 512))) {
         disk_info.devType = DEVICE_TYPE_OTHER;
+        // XXX: ioctl call was aborted or returned no data, most probably
+        //      due to driver not being libata based, let's try SAS instead.
+        identify_SAS(&disk_info);
         return;
+    }
+    IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) buffer;
+    //    disk_info->devType = id->devType;
+    disk_info.devType = DEVICE_TYPE_ATA;
+    //   memcpy(disk_info.serialNum, id->serialNum, sizeof (disk_info.serialNum));
+    //   memcpy(disk_info.firmwareRev, id->firmwareRev, sizeof (disk_info.firmwareRev));
+    //   memcpy(disk_info.modelNum, id->modelNum, sizeof (disk_info.modelNum));
+    // looks like linux does the byte flipping for you
+    for (unsigned int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
+      disk_info.serialNum[i] = id->serialNum[i + 1];
+      disk_info.serialNum[i + 1] = id->serialNum[i];
+    }
+    for (unsigned int i = 0; i < sizeof (disk_info.firmwareRev); i += 2) {
+      disk_info.firmwareRev[i] = id->firmwareRev[i + 1];
+      disk_info.firmwareRev[i + 1] = id->firmwareRev[i];
+    }
+    for (unsigned int i = 0; i < sizeof (disk_info.modelNum); i += 2) {
+      disk_info.modelNum[i] = id->modelNum[i + 1];
+      disk_info.modelNum[i + 1] = id->modelNum[i];
     }
 
     IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) buffer;
@@ -246,7 +327,7 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
 
     } else {
         disk_info.devType = DEVICE_TYPE_ATA;
-        // looks like linux does the byte flipping for you, but not for device on SAS 
+        // looks like linux does the byte flipping for you, but not for device on SAS
         for (int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
             disk_info.serialNum[i] = id->serialNum[i + 1];
             disk_info.serialNum[i + 1] = id->serialNum[i];
@@ -266,7 +347,7 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
             if (!isprint((unsigned)disk_info.serialNum[i])) {
                 nonp=1;
                 break;
-            }  
+            }
         }
         if (nonp) memset(disk_info.serialNum,0,sizeof(disk_info.serialNum));
         nonp=0;
@@ -274,7 +355,7 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
             if (!isprint((unsigned)disk_info.firmwareRev[i])) {
                 nonp=1;
                 break;
-            }  
+            }
         }
         if (nonp) memset(disk_info.firmwareRev,0,sizeof(disk_info.firmwareRev));
         nonp=0;
@@ -282,7 +363,7 @@ void DtaDevLinuxSata::identify(OPAL_DiskInfo& disk_info)
             if (!isprint((unsigned)disk_info.modelNum[i])) {
                 nonp=1;
                 break;
-            }  
+            }
         }
         if (nonp) memset(disk_info.modelNum,0,sizeof(disk_info.modelNum));
     free(buffer);
@@ -301,12 +382,12 @@ uint8_t DtaDevLinuxSata::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t 
     memset(&sense, 0, sizeof (sense));
     memset(&sg, 0, sizeof (sg));
 
-  
+
 	LOG(D4) << "sizeof(unsigned)=" << sizeof(unsigned) << " sizeof(uint8_t)=" << sizeof(uint8_t) << " sizeof(uint16_t)=" << sizeof(uint16_t);
 
         // initialize SCSI CDB
         switch(cmd)
-        {/* JERRY 
+        {/* JERRY
         default:
         {
             return 0xff;
@@ -369,7 +450,7 @@ uint8_t DtaDevLinuxSata::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t 
             IFLOG(D4) DtaHexDump(sense, sizeof (sense));
             return 0xff;
         }
-    
+
         // check for successful target completion
         if (sg.masked_status != GOOD)
         {
@@ -383,7 +464,7 @@ uint8_t DtaDevLinuxSata::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t 
         // success
         return 0;
     }
-    
+
 static void safecopy(uint8_t * dst, size_t dstsize, uint8_t * src, size_t srcsize)
 {
     const size_t size = min(dstsize, srcsize);
@@ -398,7 +479,7 @@ void DtaDevLinuxSata::identify_SAS(OPAL_DiskInfo *disk_info)
     uint8_t cdb[sizeof(CScsiCmdInquiry)];
 
     LOG(D4) << "Entering DtaDevLinuxSata::identify_SAS()";
-    uint8_t * buffer = (uint8_t *) aligned_alloc(IO_BUFFER_ALIGNMENT, IO_BUFFER_LENGTH);
+    uint8_t * buffer = (uint8_t *) aligned_alloc(IO_BUFFER_ALIGNMENT, MIN_BUFFER_LENGTH);
 
     memset(&cdb, 0, sizeof (cdb));
     memset(&sense, 0, sizeof (sense));
@@ -415,7 +496,7 @@ void DtaDevLinuxSata::identify_SAS(OPAL_DiskInfo *disk_info)
     sg.cmd_len = sizeof (cdb);
     sg.mx_sb_len = sizeof (sense);
     sg.iovec_count = 0;
-    sg.dxfer_len = IO_BUFFER_LENGTH;
+    sg.dxfer_len = MIN_BUFFER_LENGTH;
     sg.dxferp = buffer;
     sg.cmdp = cdb;
     sg.sbp = sense;
@@ -449,7 +530,7 @@ void DtaDevLinuxSata::identify_SAS(OPAL_DiskInfo *disk_info)
 
     // response is a standard INQUIRY (at least 36 bytes)
     auto resp = (CScsiCmdInquiry_StandardData *) buffer;
- 
+
     // make sure SCSI target is disk
     if (((sg.dxfer_len - sg.resid) < sizeof(CScsiCmdInquiry_StandardData)) // some drive return more than sizeof(CScsiCmdInquiry_StandardData)
         || (resp->m_PeripheralDeviceType != 0x0))
@@ -460,7 +541,7 @@ void DtaDevLinuxSata::identify_SAS(OPAL_DiskInfo *disk_info)
         IFLOG(D4) DtaHexDump(sense, sizeof (sense));
         disk_info->devType = DEVICE_TYPE_OTHER;
 	LOG(D4) << "sg.dxfer_len=" << sg.dxfer_len << " sg.resid=" << sg.resid <<
-			 " sizeof(CScsiCmdInquiry_StandardData)=" << sizeof(CScsiCmdInquiry_StandardData) << 
+			 " sizeof(CScsiCmdInquiry_StandardData)=" << sizeof(CScsiCmdInquiry_StandardData) <<
 			" resp->m_PeripheralDeviceType=" << resp->m_PeripheralDeviceType;
         free(buffer);
         return;
