@@ -439,7 +439,7 @@ typedef enum _DTA_DEVICE_TYPE {
 
 /** structure to store Disk information. */
 typedef struct _DTA_DEVICE_INFO {
-    // parsed the Function block?
+    // parsed the Feature block?
 	uint8_t Unknown;
 	uint8_t VendorSpecific;
     uint8_t TPer : 1;
@@ -461,7 +461,7 @@ typedef struct _DTA_DEVICE_INFO {
 	uint8_t NSLocking : 1;
 	uint8_t FIPS : 1;
 
-    // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
+    // values ONLY VALID IF FEATURE ABOVE IS TRUE!!!!!
     uint8_t TPer_ACKNACK : 1;
     uint8_t TPer_async : 1;
     uint8_t TPer_bufferMgt : 1;
@@ -557,6 +557,7 @@ typedef struct _DTA_DEVICE_INFO {
 
 
     // IDENTIFY information
+    uint64_t devSize;
     DTA_DEVICE_TYPE devType;
     uint8_t serialNum[20];
 	uint8_t null0;  // make sn a cstring
