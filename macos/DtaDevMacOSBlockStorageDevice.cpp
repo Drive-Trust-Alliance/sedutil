@@ -30,6 +30,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <IOKit/storage/IOMedia.h>
 #include <IOKit/storage/nvme/NVMeSMARTLibExternal.h>
 #include <IOKit/IOKitLib.h>
+#include <CoreFoundation/CFNumber.h>
 #include <string.h>
 #include "DtaDevMacOSTPer.h"
 
@@ -38,6 +39,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define GetDict(dict,name) (CFDictionaryRef)CFDictionaryGetValue(dict, CFSTR(name))
 #define GetData(dict,name) (CFDataRef)CFDictionaryGetValue(dict, CFSTR(name))
 #define GetString(dict,name) (CFStringRef)CFDictionaryGetValue(dict, CFSTR(name))
+#define GetNumber(dict,name) (CFNumberRef)CFDictionaryGetValue(dict, CFSTR(name))
 #define GetPropertiesDict(name) GetDict(properties, name)
 
 static bool parseNVMeSMARTLibIdentifyData(io_service_t aBlockStorageDevice, CFDictionaryRef deviceProperties, DTA_DEVICE_INFO &disk_info)
@@ -99,7 +101,34 @@ static bool parseNVMeSMARTLibIdentifyData(io_service_t aBlockStorageDevice, CFDi
     return true;
 }
 
-static bool FillDiskInfoFromDeviceProperties(CFDictionaryRef deviceProperties, DTA_DEVICE_INFO &disk_info) {
+static bool FillDeviceInfoFromProperties(CFDictionaryRef deviceProperties, CFDictionaryRef mediaProperties,
+                                         DTA_DEVICE_INFO &disk_info) {
+    if (NULL != mediaProperties) {
+        CFNumberRef size = GetNumber(mediaProperties, "Size");
+        if (NULL != size) {
+            CFNumberType numberType = CFNumberGetType(size);
+            switch (numberType) {
+                case kCFNumberLongLongType:
+                    {
+                        long long sSize ;
+                        if (CFNumberGetValue(size, numberType, &sSize)) {
+                            disk_info.devSize = (uint64_t)sSize;
+                        }
+                    }
+                    break;
+                case kCFNumberSInt64Type:
+                    {
+                        int64_t sSize ;
+                        if (CFNumberGetValue(size, numberType, &sSize)) {
+                            disk_info.devSize = (uint64_t)sSize;
+                        }
+                    }
+                    break;
+                default:
+                    ;
+            }
+        }
+    }
     if (NULL != deviceProperties ) {
         CFDictionaryRef deviceCharacteristics = GetDict(deviceProperties, "Device Characteristics");
         if (NULL != deviceCharacteristics) {
@@ -121,20 +150,20 @@ static bool FillDiskInfoFromDeviceProperties(CFDictionaryRef deviceProperties, D
     return false;
 }
 
-void DtaDevMacOSBlockStorageDevice::parse_properties_into_disk_info(io_service_t aBlockStorageDevice) {
+void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(io_service_t aBlockStorageDevice) {
     // Parse from properties instance var
     // Parse TPer properties, if available
-    if (pdisk_info == NULL)
+    if (pdevice_info == NULL)
         return;
-    DTA_DEVICE_INFO & disk_info = *pdisk_info;
+    DTA_DEVICE_INFO & device_info = *pdevice_info;
     
     CFDictionaryRef tPerProperties = GetPropertiesDict("TPer");
     if (NULL != tPerProperties) {  // Probably not, since we are probably not a DtaDevMacOSTPer
-        CFDataRef diData = GetData(tPerProperties, IOOPALDiskInfoKey);
+        CFDataRef diData = GetData(tPerProperties, IODtaDeviceInfoKey);
         if (NULL != diData) {
             const uint8_t * pdi = CFDataGetBytePtr(diData);
             if (NULL != pdi) {
-                memcpy(&disk_info, pdi, (unsigned)CFDataGetLength(diData));
+                memcpy(&device_info, pdi, (unsigned)CFDataGetLength(diData));
                 return;
             }
         }
@@ -144,62 +173,63 @@ void DtaDevMacOSBlockStorageDevice::parse_properties_into_disk_info(io_service_t
     if (NULL != deviceProperties) {
         CFBooleanRef NVMeSMARTCapable = GetBool(deviceProperties, "NVMe SMART Capable");
         if (NULL != NVMeSMARTCapable && CFBooleanGetValue(NVMeSMARTCapable)) {
-            disk_info.devType = DEVICE_TYPE_NVME;
+            device_info.devType = DEVICE_TYPE_NVME;
         } else {
             CFDictionaryRef protocolProperties = GetDict(deviceProperties, "Protocol Characteristics");
             if (NULL != protocolProperties) {
                 CFStringRef interconnect = GetString(protocolProperties, "Physical Interconnect");
                 if (NULL != interconnect) {
                     if (CFEqual(interconnect, CFSTR("USB"))) {
-                        disk_info.devType = DEVICE_TYPE_USB;
+                        device_info.devType = DEVICE_TYPE_USB;
                     } else if (CFEqual(interconnect, CFSTR("Apple Fabric"))) {
-                        disk_info.devType = DEVICE_TYPE_NVME;
+                        device_info.devType = DEVICE_TYPE_NVME;
                     } else if (CFEqual(interconnect, CFSTR("PCI-Express"))) {
-                        disk_info.devType = DEVICE_TYPE_OTHER;  // TODO ... what?
+                        device_info.devType = DEVICE_TYPE_OTHER;  // TODO ... what?
                     } else if (CFEqual(interconnect, CFSTR("SATA"))) {
-                        disk_info.devType = DEVICE_TYPE_ATA;
+                        device_info.devType = DEVICE_TYPE_ATA;
                     } else
-                        disk_info.devType = DEVICE_TYPE_OTHER;
+                        device_info.devType = DEVICE_TYPE_OTHER;
                 }
             }
         }
     } else {
-        disk_info.devType = DEVICE_TYPE_OTHER; // TODO -- generalize for other devices when they are supported by BPTperDriver
+        device_info.devType = DEVICE_TYPE_OTHER; // TODO -- generalize for other devices when they are supported by BPTperDriver
     }
 
+    CFDictionaryRef mediaProperties = GetPropertiesDict("media");
     
-    FillDiskInfoFromDeviceProperties(deviceProperties, disk_info);
+    FillDeviceInfoFromProperties(deviceProperties, mediaProperties, device_info);
 
     
-    switch (disk_info.devType) {
+    switch (device_info.devType) {
         case DEVICE_TYPE_NVME:
         case DEVICE_TYPE_OTHER:
-            if (parseNVMeSMARTLibIdentifyData(aBlockStorageDevice, deviceProperties, disk_info))
+            if (parseNVMeSMARTLibIdentifyData(aBlockStorageDevice, deviceProperties, device_info))
                 break;
             break;
         case DEVICE_TYPE_USB:
 #define HACK_MODELNUM_WITH_VENDORNAME
 #if defined(HACK_MODELNUM_WITH_VENDORNAME)
         {
-            size_t vendorNameLength = strlen((const char *)disk_info.vendorName);
-            size_t modelNumLength = strlen((const char *)disk_info.modelNum);
+            size_t vendorNameLength = strlen((const char *)device_info.vendorName);
+            size_t modelNumLength = strlen((const char *)device_info.modelNum);
             size_t newModelNumLength = vendorNameLength + modelNumLength ;
             if (0 < newModelNumLength) {
-                size_t maxModelNumLength = sizeof(disk_info.modelNum);
+                size_t maxModelNumLength = sizeof(device_info.modelNum);
                 if (maxModelNumLength < newModelNumLength) {
                     size_t excessModelNumLength = newModelNumLength - maxModelNumLength ;
                     vendorNameLength -= excessModelNumLength;
                     newModelNumLength = maxModelNumLength;
                 }
-                uint8_t newModelNum[sizeof(disk_info.modelNum)];
+                uint8_t newModelNum[sizeof(device_info.modelNum)];
                 bzero(newModelNum, sizeof(newModelNum));
                 if (0 < vendorNameLength) {
-                    memcpy(&newModelNum[0],disk_info.vendorName,vendorNameLength);
+                    memcpy(&newModelNum[0],device_info.vendorName,vendorNameLength);
                 }
                 if (0 < modelNumLength) {
-                    memcpy(&newModelNum[vendorNameLength],disk_info.modelNum,modelNumLength);
+                    memcpy(&newModelNum[vendorNameLength],device_info.modelNum,modelNumLength);
                 }
-                memcpy(disk_info.modelNum,newModelNum,newModelNumLength);
+                memcpy(device_info.modelNum,newModelNum,newModelNumLength);
             }
         }
 #endif //defined(HACK_MODELNUM_WITH_VENDORNAME)
@@ -439,57 +469,57 @@ DtaDevMacOSBlockStorageDevice::~DtaDevMacOSBlockStorageDevice () {
 
 uint8_t DtaDevMacOSBlockStorageDevice::isOpal2()
 {
-    return pdisk_info->OPAL20;
+    return pdevice_info->OPAL20;
 }
 uint8_t DtaDevMacOSBlockStorageDevice::isOpal1()
 {
-    return pdisk_info->OPAL10;
+    return pdevice_info->OPAL10;
 }
 uint8_t DtaDevMacOSBlockStorageDevice::isEprise()
 {
-    return pdisk_info->Enterprise;
+    return pdevice_info->Enterprise;
 }
 
 uint8_t DtaDevMacOSBlockStorageDevice::isAnySSC()
 {
-    return pdisk_info->ANY_OPAL_SSC;
+    return pdevice_info->ANY_OPAL_SSC;
 }
 uint8_t DtaDevMacOSBlockStorageDevice::MBREnabled()
 {
-    return pdisk_info->Locking_MBREnabled;
+    return pdevice_info->Locking_MBREnabled;
 }
 uint8_t DtaDevMacOSBlockStorageDevice::MBRDone()
 {
-    return pdisk_info->Locking_MBRDone;
+    return pdevice_info->Locking_MBRDone;
 }
 uint8_t DtaDevMacOSBlockStorageDevice::Locked()
 {
-    return pdisk_info->Locking_locked;
+    return pdevice_info->Locking_locked;
 }
 uint8_t DtaDevMacOSBlockStorageDevice::LockingEnabled()
 {
-    return pdisk_info->Locking_lockingEnabled;
+    return pdevice_info->Locking_lockingEnabled;
 }
 char *DtaDevMacOSBlockStorageDevice::getVendorName()
 {
-    return (char *)&pdisk_info->vendorName;
+    return (char *)&pdevice_info->vendorName;
 }
 char *DtaDevMacOSBlockStorageDevice::getFirmwareRev()
 {
-    return (char *)&pdisk_info->firmwareRev;
+    return (char *)&pdevice_info->firmwareRev;
 }
 char *DtaDevMacOSBlockStorageDevice::getModelNum()
 {
-    return (char *)&pdisk_info->modelNum;
+    return (char *)&pdevice_info->modelNum;
 }
 char *DtaDevMacOSBlockStorageDevice::getSerialNum()
 {
-    return (char *)&pdisk_info->serialNum;
+    return (char *)&pdevice_info->serialNum;
 }
 
 DTA_DEVICE_TYPE DtaDevMacOSBlockStorageDevice::getDevType()
 {
-    return pdisk_info->devType;
+    return pdevice_info->devType;
 }
 
 const std::string DtaDevMacOSBlockStorageDevice::getDevName () {

@@ -57,7 +57,7 @@
 #define IOInterfaceTypeKey              "TPer Interface Type"
 #define IOInterfaceTypeSAT              "SAT"
 #define IOInterfaceTypeSCSI             "SCSI"
-#define IOOPALDiskInfoKey               "OPAL Disk Info"
+#define IODtaDeviceInfoKey              "DTA Device Info"
 
 
 #include <AssertMacros.h>

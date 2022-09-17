@@ -29,7 +29,7 @@ using namespace std;
   * At initialization we determine if we map to the NVMe or SATA derived class
  */
 unsigned long long DtaDevOS::getSize()
-{ return 0;  // TODO: this is easy
+{ return disk_info.devSize;
 }
 
 

@@ -7,7 +7,6 @@
 //
 
 #include <IOKit/IOUserClient.h>
-
 #include <SEDKernelInterface/SEDKernelInterface.h>
 #include "TPerDriver.h"
 #include "CDBAccess.hpp"
@@ -71,7 +70,7 @@ bool DriverClass::InitializeDeviceSupport ( void )
     if (deviceIsTPer_SCSI(di)) {
         IOLOG_DEBUG("%s[%p]::%s Device is TPer_SCSI", getName(), this, __FUNCTION__);
         setProperty(IOInterfaceTypeKey, IOInterfaceTypeSCSI);
-        setProperty(IOOPALDiskInfoKey, &di, sizeof(di));
+        setProperty(IODtaDeviceInfoKey, &di, sizeof(di));
         return true;
     }
 
@@ -87,7 +86,7 @@ bool DriverClass::InitializeDeviceSupport ( void )
         if (result) {
             IOLOG_DEBUG("%s[%p]::%s Device is TPer_SAT", getName(), this, __FUNCTION__);
             setProperty(IOInterfaceTypeKey, IOInterfaceTypeSAT);
-            setProperty(IOOPALDiskInfoKey, &di, sizeof(di));
+            setProperty(IODtaDeviceInfoKey, &di, sizeof(di));
             return true;
         }
     }
@@ -545,6 +544,12 @@ OSDictionary * DriverClass::parseInquiryStandardDataAllResponse( const unsigned 
 #if defined(USE_INQUIRY_PAGE_00h)
 #pragma mark -
 #pragma mark Inquiry Page 00h
+#if DEBUG
+#error DEBUG
+#endif
+#if defined(DEBUG)
+#error DEBUG is defined
+#endif
 
 bool DriverClass::deviceIsPage00SCSI(bool & deviceSupportsPage80,
                                      bool & deviceSupportsPage89)
@@ -811,6 +816,7 @@ bool DriverClass::deviceIsPage89SCSI(DTA_DEVICE_INFO &di)
         isSCSI = ( kIOReturnSuccess == inquiryPage89_SCSI( md ) );
         if (isSCSI) {
 #if DEBUG
+//#error DEBUG is defined
             setProperty(IOInquiryPage89ResponseKey, inquiryResponse, (unsigned int)transferSize);
 #endif // DEBUG
             OSDictionary * characteristics =

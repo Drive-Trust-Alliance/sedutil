@@ -134,7 +134,7 @@ kern_return_t TPerUpdate(io_connect_t connect, void /* DTA_DEVICE_INFO */ * pdi)
     kern_return_t ret = updatePropertiesInIORegistry(connect);
     if (ret == KERN_SUCCESS && pdi != NULL ) {
         CFDataRef data = (CFDataRef)IORegistryEntryCreateCFProperty(connect,
-                                                                    CFSTR(IOOPALDiskInfoKey),
+                                                                    CFSTR(IODtaDeviceInfoKey),
                                                                     CFAllocatorGetDefault(), 0);
         if ( data == NULL )
             return KERN_FAILURE;

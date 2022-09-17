@@ -32,8 +32,8 @@ public:
         : bsdName(bsdName),
           entryName(entryName),
           properties(properties),
-          pdisk_info(pdi)
-    {parse_properties_into_disk_info(aBlockStorageDevice);};
+          pdevice_info(pdi)
+    {parse_properties_into_device_info(aBlockStorageDevice);};
     virtual ~DtaDevMacOSBlockStorageDevice();
     uint8_t isOpal2();
     /** Does the device conform to the OPAL 1.0 SSC */
@@ -77,7 +77,7 @@ private:
     CFDictionaryRef properties;
     
     // derived
-    void parse_properties_into_disk_info(io_service_t aBlockStorageDevice);
-    DTA_DEVICE_INFO * pdisk_info;  /**< Weak reference to Structure containing info from properties, including identify and discovery 0 if available*/
+    void parse_properties_into_device_info(io_service_t aBlockStorageDevice);
+    DTA_DEVICE_INFO * pdevice_info;  /**< Weak reference to Structure containing info from properties, including identify and discovery 0 if available*/
     static bool bsdNameLessThan(DtaDevMacOSBlockStorageDevice * a, DtaDevMacOSBlockStorageDevice * b);  // for sorting
 };
