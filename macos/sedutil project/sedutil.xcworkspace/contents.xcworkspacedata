@@ -749,12 +749,9 @@
       location = "group:../SEDDriver.xcodeproj">
    </FileRef>
    <FileRef
-      location = "container:sedutil.xcodeproj">
+      location = "container:/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project/SEDFrameworks.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:sedutil-cli.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:../sedutil-cli project/reenumerate/reenumerate.xcodeproj">
+      location = "group:/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project/SEDUtilities.xcodeproj">
    </FileRef>
 </Workspace>

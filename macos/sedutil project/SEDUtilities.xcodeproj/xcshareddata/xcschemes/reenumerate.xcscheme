@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D2EBA48E1F055579002F8780"
-               BuildableName = "cifra.framework"
-               BlueprintName = "cifra"
-               ReferencedContainer = "container:sedutil.xcodeproj">
+               BlueprintIdentifier = "D26904BD28D7A1530095769E"
+               BuildableName = "reenumerate"
+               BlueprintName = "reenumerate"
+               ReferencedContainer = "container:SEDUtilities.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -39,7 +39,18 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES">
+      allowLocationSimulation = "YES"
+      viewDebuggingEnabled = "No">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "D26904BD28D7A1530095769E"
+            BuildableName = "reenumerate"
+            BlueprintName = "reenumerate"
+            ReferencedContainer = "container:SEDUtilities.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release Bonjour Multistart"
@@ -47,15 +58,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D2EBA48E1F055579002F8780"
-            BuildableName = "cifra.framework"
-            BlueprintName = "cifra"
-            ReferencedContainer = "container:sedutil.xcodeproj">
+            BlueprintIdentifier = "D26904BD28D7A1530095769E"
+            BuildableName = "reenumerate"
+            BlueprintName = "reenumerate"
+            ReferencedContainer = "container:SEDUtilities.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug Bonjour Multistart">

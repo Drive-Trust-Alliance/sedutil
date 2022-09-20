@@ -18,34 +18,16 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #include "os.h"
-#include <mach/mach_port.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <dirent.h>
-#include <fnmatch.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-// #include <scsi/sg.h>
-#include <stdio.h>
-#include <string.h>
-#include <algorithm>
-#include <unistd.h>
-// #include <linux/hdreg.h>
-#include <errno.h>
-#include <map>
-#include <vector>
-#include <fstream>
-#include <mach/mach_port.h>
+
 #include <IOKit/IOKitLib.h>
 #include <IOKit/scsi/SCSITaskLib.h>
+
 #include <SEDKernelInterface/SEDKernelInterface.h>
+
 #include "DtaMacOSConstants.h"
 #include "DtaDevMacOSTPer.h"
 #include "DtaDevMacOSTPer_SAT.h"
 #include "DtaDevMacOSTPer_SCSI.h"
-#include <map>
-#include <string>
-#include <vector>
 
 using namespace std;
 

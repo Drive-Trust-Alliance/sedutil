@@ -30,7 +30,10 @@ using namespace std;
 */
 class DtaDevOpal2 : public DtaDevOpal {
 public:
-	DtaDevOpal2(const char * devref);
+    DtaDevOpal2(const char * devref);
+    DtaDevOpal2(const char * devref,
+              io_registry_entry_t driverService,
+              io_connect_t connect);
 	~DtaDevOpal2();
         /** return the communication ID to be used with this device */
 	uint16_t comID();

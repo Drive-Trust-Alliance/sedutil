@@ -17,25 +17,15 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
-//#include "os.h"
-//#include <mach/mach_port.h>
-//#include <IOKit/IOKitLib.h>
-//#include <IOKit/scsi/SCSITaskLib.h>
-//#include "TPerKernelInterface.h"
-//#include "PrintBuffer.h"
-//#include "RegistryUtilities.h"
-//#include "DtaMacOSConstants.h"
-#include "SEDKernelInterface.h"
-#include "DtaBlockStorageDevice.h"
+#include <SEDKernelInterface/SEDKernelInterface.h>
 #include <IOKit/storage/IOBlockStorageDevice.h>
 #include <IOKit/storage/IOMedia.h>
 #include "string.h"
 #include "DtaBlockStorageDevice.h"
-#include "RegistryUtilities.h"
-#include "UserKernelShared.h"
+//#include "UserKernelShared.h"
 
 
-static void ReformatIdentifyResponseAsDiskInfo(const uint8_t * response, OPAL_DiskInfo& disk_info)
+static void ReformatIdentifyResponseAsDiskInfo(const uint8_t * response, DTA_DEVICE_INFO& disk_info)
 {
     const IDENTIFY_RESPONSE & id = * (const IDENTIFY_RESPONSE *) response;
     for (size_t i = 0; i < sizeof (disk_info.serialNum); i += 2) {         // uint8_t[20]

@@ -108,7 +108,7 @@ uint8_t DtaDevMacOSDrive::GetIdentifyResponseFromIORegistry(uint8_t * response)
     return KERN_FAILURE;
 }
 
-static void ReformatIdentifyResponseAsDiskInfo(uint8_t * response, OPAL_DiskInfo& disk_info)
+static void ReformatIdentifyResponseAsDiskInfo(uint8_t * response, DTA_DEVICE_INFO& disk_info)
 {
     IDENTIFY_RESPONSE & id = * (IDENTIFY_RESPONSE *) response;
     disk_info.devType = DEVICE_TYPE_USB; // TODO -- generalize for other devices when they are supported by BPTperDriver
@@ -126,7 +126,7 @@ static void ReformatIdentifyResponseAsDiskInfo(uint8_t * response, OPAL_DiskInfo
     }
 }
 
-uint8_t DtaDevMacOSDrive::identify(OPAL_DiskInfo& disk_info )
+uint8_t DtaDevMacOSDrive::identify(DTA_DEVICE_INFO& disk_info )
 {
     uint8_t response[IDENTIFY_RESPONSE_SIZE]={0};
     

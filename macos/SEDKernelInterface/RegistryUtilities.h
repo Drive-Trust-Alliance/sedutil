@@ -18,7 +18,7 @@
 extern "C" {
 #endif // defined(__cplusplus)
 
-mach_port_t default_port ();
+extern mach_port_t default_port(void);
 
 extern io_registry_entry_t findBrightPlazaDriverInParents(io_registry_entry_t service);
 extern io_iterator_t createRecursiveIORegistryIterator(io_registry_entry_t service);

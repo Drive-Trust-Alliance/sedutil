@@ -52,10 +52,14 @@ public:
     virtual bool init(const char * dev, bool doConnect=false);
 
     /** Initialize a drive object for use
-     * @param driverService the IO Registry entry for the driver
-     * @param connect the IOKit IOObject representing the connection to wrap
+     * @param driverService   IO Registry entry for the driver
+     * @param connect IO Connection to the driver
+     *
+     *  We do not own the driverService or the connect.  No error checking.
      */
-    virtual void init(io_registry_entry_t driverService, io_connect_t connect);
+    virtual void init(io_registry_entry_t driverService,
+                      io_connect_t connect);
+
     
     static DtaDevMacOSTPer * getTPer(io_service_t aBlockStorageDevice,
                                      std::string entryName,

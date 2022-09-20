@@ -29,4 +29,5 @@ extern const unsigned char sedutilVersionString[];
 #import <sedutil/DtaDevOpal2.h>
 #import <sedutil/DtaConstants.h>
 #import <sedutil/DtaEndianFixup.h>
+#import <sedutil/DtaAudit.h>
 

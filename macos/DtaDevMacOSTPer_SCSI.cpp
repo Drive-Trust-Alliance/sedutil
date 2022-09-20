@@ -22,7 +22,11 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <IOKit/IOKitLib.h>
 #include <IOKit/scsi/SCSITaskLib.h>
 #include <IOKit/scsi/SCSICommandOperationCodes.h>
-#include <SEDKernelInterface/SEDKernelInterface.h>
+#include <SEDKernelInterface/InterfaceCommandCodes.h>
+#include <SEDKernelInterface/TPerKernelInterface.h>
+
+// #include <SEDKernelInterface/SEDKernelInterface.h>
+
 #include "DtaMacOSConstants.h"
 #include "DtaDevMacOSTPer_SCSI.h"
 

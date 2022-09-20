@@ -7,22 +7,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B34AE049-97D6-46A9-81AA-85B5445F7DBB"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../DtaDevOS.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "52"
-            endingLineNumber = "52"
-            landmarkName = "DtaDevOS::init(devref)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "EE961200-BC98-42E5-A8C3-8F8B010A793F"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -48,7 +32,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "112"
             endingLineNumber = "112"
-            landmarkName = "DtaDev::acquireDiscovery0Response(d0Response)"
+            landmarkName = "DtaDev::isOpal2()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -78,8 +62,8 @@
             filePath = "../DtaDevOS.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "162"
-            endingLineNumber = "162"
+            startingLineNumber = "178"
+            endingLineNumber = "178"
             landmarkName = "DtaDevOS::~DtaDevOS()"
             landmarkType = "7">
          </BreakpointContent>
@@ -110,8 +94,8 @@
             filePath = "../DtaDevMacOSTPer.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "103"
-            endingLineNumber = "103"
+            startingLineNumber = "85"
+            endingLineNumber = "85"
             landmarkName = "DtaDevMacOSTPer::getTPer(aBlockStorageDevice, entryName, bsdName, tPerProperties, properties, pdi)"
             landmarkType = "7">
          </BreakpointContent>
@@ -128,8 +112,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "150"
             endingLineNumber = "150"
-            landmarkName = "FillDeviceInfoFromProperties(deviceProperties, mediaProperties, disk_info)"
-            landmarkType = "9">
+            landmarkName = "DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(aBlockStorageDevice)"
+            landmarkType = "7">
             <Locations>
                <Location
                   uuid = "AE20DFCF-7A16-4F55-AD9A-D179A561DE42 - 43a5c0be2b79712b"

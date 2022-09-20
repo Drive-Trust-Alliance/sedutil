@@ -27,6 +27,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 class DtaCommand;
 class DtaSession;
 
+// TODO: do these (and related things) belong in an implementation-specific DtaDevOS?
 void auditpass(unsigned char * apass);
 void setlic(unsigned char * lic_level, const char * LicenseLevel);
 
@@ -115,8 +116,8 @@ public:
 	 * @param milliseconds  number of milliseconds to wait
 	 */
 	virtual void osmsSleep(uint32_t milliseconds) = 0;
-	/** OS specific routine to send an ATA identify to the device */
-	virtual void identify(DTA_DEVICE_INFO& disk_info) = 0;
+	/** OS specific routine to identify the device and fill out the device information struct*/
+	virtual void identify(void) = 0;
 	/** OS specific routine to get size of the device */
 	virtual unsigned long long getSize() = 0;
 	/*
@@ -273,7 +274,7 @@ public:
 	 * ERASES ALL DATA!
 	 * @param password password of authority (SID or PSID)
 	 * @param PSID true or false is the authority the PSID
-	 *   */
+	 */
 	virtual uint8_t revertTPer(char * password, uint8_t PSID = 0, uint8_t AdminSP = 0 ) = 0;
 	/** Erase a locking range
 	 * @param lockingrange The number of the locking range (0 = global)
@@ -285,7 +286,7 @@ public:
 	 * @param auth the authority ti use for the dump
 	 * @param pass the password for the suthority
 	 * @param objID the UID of the object to dump
-	 *  */
+	 */
 	virtual uint8_t objDump(char *sp, char * auth, char *pass,
 		char * objID) = 0;
 	/** Issue any command to the drive for diagnostic purposes
@@ -295,17 +296,18 @@ public:
 	 * @param invoker caller of the method
 	 * @param method the method to call
 	 * @param plist  the parameter list for the command
-	 *
 	 */
 	virtual uint8_t rawCmd(char *sp, char * auth, char *pass,
 		char *invoker, char *method, char *plist) = 0;
 	/** Read MSID
 	 */
 	virtual uint8_t printDefaultPassword() = 0;
+    
 	/*
 	* virtual functions required to be implemented
 	* because they are called by DtaSession.cpp
 	*/
+    
 	/** Send a command to the device and wait for the response
 	 * @param cmd the MswdCommand object containing the command
 	 * @param response the DtaResonse object containing the response
@@ -319,7 +321,7 @@ public:
 	bool translate_req = FALSE;
 	bool skip_activate = FALSE;
     sedutiloutput output_format; /** standard, readable, JSON */  // TODO: really an attribute of the program, not the TPer
-	char LicenseLevel[32];  // TODO ???
+	char LicenseLevel[32];  // TODO: see comment at the top???
 
     static void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di);
 protected:

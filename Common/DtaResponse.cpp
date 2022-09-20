@@ -41,9 +41,9 @@ DtaResponse::init(void * buffer)
     uint8_t * reply = (uint8_t *) buffer;
     uint32_t cpos = 0;
     uint32_t tokenLength;
-    memcpy(&h, buffer, sizeof (OPALHeader));
+    memcpy(&h, buffer, sizeof (DTA_Header));
     response.clear();
-    reply += sizeof (OPALHeader);
+    reply += sizeof (DTA_Header);
     while (cpos < SWAP32(h.subpkt.length)) {
         bytestring.clear();
         if (!(reply[cpos] & 0x80)) //tiny atom

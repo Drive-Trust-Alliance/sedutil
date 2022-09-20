@@ -49,6 +49,15 @@ public:
          * @param devref character representation of the device is standard OS lexicon
          */
 	void init(const char * devref);
+    
+    /** OS specific method to initialize an object to a pre-existing connection
+     *  @param devref the name of the device in the OS lexicon
+     *  @param driverService  the I/O Registry entry of the device
+     *  @param connect the connection returned by Open
+     */
+    void init(const char * devref,
+              io_registry_entry_t driverService,
+              io_connect_t connect);
         /** Notify the device of the host properties and receive the
          * properties of the device as a reply */
 	void set_prop(DtaCommand * props, uint16_t sz_MaxComPacketSize, uint16_t sz_MaxResponseComPacketSize, uint16_t sz_MaxPacketSize, uint16_t sz_MaxIndTokenSize);

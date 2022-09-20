@@ -18,6 +18,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
+#if !defined(__ATASTRUCTURES_H_INCLUDED__)
+#define __ATASTRUCTURES_H_INCLUDED__
 
 /** ATA commands needed for TCG storage communication */
 typedef enum _ATACOMMAND {
@@ -44,3 +46,5 @@ typedef enum _ATAPROTOCOL {
     // 13, 14 Reserved
     RETURN_RESPONSE_INFORMATION = 15
 } ATAPROTOCOL;
+
+#endif //!defined(__ATASTRUCTURES_H_INCLUDED__)

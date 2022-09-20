@@ -170,6 +170,16 @@ DtaDevEnterprise::DtaDevEnterprise(const char * devref)
 	assert(isEprise());
 	if (properties()) { LOG(E) << "Properties exchange failed"; }
 }
+
+DtaDevEnterprise::DtaDevEnterprise(const char * devref,
+          io_registry_entry_t driverService,
+          io_connect_t connect)
+{
+    DtaDevOS::init(devref, driverService, connect);
+    assert(isEprise());
+    if (properties()) { LOG(E) << "Properties exchange failed"; }
+}
+
 DtaDevEnterprise::~DtaDevEnterprise()
 {
 }
@@ -1497,17 +1507,17 @@ uint16_t DtaDevEnterprise::comID()
 uint8_t DtaDevEnterprise::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 {
     uint8_t rc = 0;
-    OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
+    DTA_Header * hdr = (DTA_Header *) cmd->getCmdBuffer();
 	LOG(D1) << "Entering DtaDevEnterprize::exec";
     LOG(D3) << endl << "Dumping command buffer";
     IFLOG(D) DtaAnnotatedDump(IF_SEND, cmd->getCmdBuffer(), cmd->outputBufferSize());
-    IFLOG(D3) DtaHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
+    IFLOG(D3) DtaHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (DTA_ComPacketHeader));
     rc = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), cmd->outputBufferSize());
     if (0 != rc) {
         LOG(E) << "DtaDevEnterprize::exec Command failed on send " << (uint16_t) rc;
         return rc;
     }
-    hdr = (OPALHeader *) cmd->getRespBuffer();
+    hdr = (DTA_Header *) cmd->getRespBuffer();
     do {
         //LOG(D) << "read loop";
         osmsSleep(25);
@@ -1517,8 +1527,8 @@ uint8_t DtaDevEnterprise::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t pro
     }
     while ((0 != hdr->cp.outstandingData) && (0 == hdr->cp.minTransfer));
     LOG(D3) << std::endl << "Dumping reply buffer";
-    IFLOG(D) DtaAnnotatedDump(IF_RECV, cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
-    IFLOG(D3) DtaHexDump(cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
+    IFLOG(D) DtaAnnotatedDump(IF_RECV, cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (DTA_ComPacketHeader));
+    IFLOG(D3) DtaHexDump(cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (DTA_ComPacketHeader));
     if (0 != rc) {
         LOG(E) << "Command failed on recv" << (uint16_t) rc;
         return rc;

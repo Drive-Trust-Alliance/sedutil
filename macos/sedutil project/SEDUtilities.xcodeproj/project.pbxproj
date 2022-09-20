@@ -7,12 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D26904CE28D7A17B0095769E /* reenumerate.c in Sources */ = {isa = PBXBuildFile; fileRef = D26904CD28D7A17B0095769E /* reenumerate.c */; };
 		D287224328B835CB0023404B /* sedutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D287224228B835CB0023404B /* sedutil.cpp */; };
 		D289AB3F28D5314100616E4F /* log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D289AB3E28D5314100616E4F /* log.framework */; };
 		D289AB4128D5317700616E4F /* sedutil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D289AB4028D5317700616E4F /* sedutil.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		D26904BC28D7A1530095769E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		D26B3B501F6FB6BC004571A8 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -35,6 +45,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D2233E3428D79504006B6974 /* DtaOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
+		D26904BE28D7A1530095769E /* reenumerate */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = reenumerate; sourceTree = BUILT_PRODUCTS_DIR; };
+		D26904CD28D7A17B0095769E /* reenumerate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = reenumerate.c; path = "../../sedutil-cli project/reenumerate/reenumerate.c"; sourceTree = "<group>"; };
+		D26904CF28D7A17F0095769E /* IOUSBFamilyInfoPlist.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOUSBFamilyInfoPlist.pch; path = "../../sedutil-cli project/reenumerate/IOUSBFamilyInfoPlist.pch"; sourceTree = "<group>"; };
 		D2772B4F28BC354B0005E001 /* DtaStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaStructures.h; sourceTree = "<group>"; };
 		D2772B5A28BC354B0005E001 /* DtaConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaConstants.h; sourceTree = "<group>"; };
 		D2772B5E28BC354B0005E001 /* DtaDev.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaDev.h; sourceTree = "<group>"; };
@@ -46,11 +60,17 @@
 		D289AB3E28D5314100616E4F /* log.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = log.framework; path = ../../../../../../../../../Library/Frameworks/log.framework; sourceTree = "<group>"; };
 		D289AB4028D5317700616E4F /* sedutil.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sedutil.framework; path = ../../../../../../../../../Library/Frameworks/sedutil.framework; sourceTree = "<group>"; };
 		D2B200E628BBF3D3004C88FF /* sedutil-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "sedutil-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D2B202B528BBFDC3004C88FF /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
 		D2ECBD7E28CACC1400D9F997 /* log.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D26904BB28D7A1530095769E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D26B3B4F1F6FB6BC004571A8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -63,6 +83,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D26904BF28D7A1530095769E /* reenumerate */ = {
+			isa = PBXGroup;
+			children = (
+				D26904CD28D7A17B0095769E /* reenumerate.c */,
+				D26904CF28D7A17F0095769E /* IOUSBFamilyInfoPlist.pch */,
+			);
+			path = reenumerate;
+			sourceTree = "<group>";
+		};
 		D2772B5F28BC354B0005E001 /* macos */ = {
 			isa = PBXGroup;
 			children = (
@@ -88,10 +117,10 @@
 		D2B2025F28BBFD8F004C88FF /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D2233E3428D79504006B6974 /* DtaOptions.h */,
 				D2772B4F28BC354B0005E001 /* DtaStructures.h */,
 				D2772B5A28BC354B0005E001 /* DtaConstants.h */,
 				D2772B5E28BC354B0005E001 /* DtaDev.h */,
-				D2B202B528BBFDC3004C88FF /* log.h */,
 			);
 			name = Common;
 			path = ../../Common;
@@ -103,14 +132,33 @@
 				D2772B5F28BC354B0005E001 /* macos */,
 				D2B2025F28BBFD8F004C88FF /* Common */,
 				D287224228B835CB0023404B /* sedutil.cpp */,
+				D26904BF28D7A1530095769E /* reenumerate */,
 				D287224428B835DF0023404B /* Frameworks */,
 				D2B200E628BBF3D3004C88FF /* sedutil-cli */,
+				D26904BE28D7A1530095769E /* reenumerate */,
 			);
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		D26904BD28D7A1530095769E /* reenumerate */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D26904C228D7A1530095769E /* Build configuration list for PBXNativeTarget "reenumerate" */;
+			buildPhases = (
+				D26904BA28D7A1530095769E /* Sources */,
+				D26904BB28D7A1530095769E /* Frameworks */,
+				D26904BC28D7A1530095769E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = reenumerate;
+			productName = reenumerate;
+			productReference = D26904BE28D7A1530095769E /* reenumerate */;
+			productType = "com.apple.product-type.tool";
+		};
 		D26B3B511F6FB6BC004571A8 /* sedutil-cli */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D26B3B601F6FB6BC004571A8 /* Build configuration list for PBXNativeTarget "sedutil-cli" */;
@@ -140,6 +188,11 @@
 				);
 				LastUpgradeCheck = 1400;
 				TargetAttributes = {
+					D26904BD28D7A1530095769E = {
+						CreatedOnToolsVersion = 14.0;
+						DevelopmentTeam = UES63D9K7E;
+						ProvisioningStyle = Automatic;
+					};
 					D26B3B511F6FB6BC004571A8 = {
 						CreatedOnToolsVersion = 8.1;
 						DevelopmentTeam = 33Y435HD6M;
@@ -147,7 +200,7 @@
 					};
 				};
 			};
-			buildConfigurationList = D2BD8F581F02016B00747F4A /* Build configuration list for PBXProject "sedutil-cli" */;
+			buildConfigurationList = D2BD8F581F02016B00747F4A /* Build configuration list for PBXProject "SEDUtilities" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -200,11 +253,20 @@
 			projectRoot = "";
 			targets = (
 				D26B3B511F6FB6BC004571A8 /* sedutil-cli */,
+				D26904BD28D7A1530095769E /* reenumerate */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D26904BA28D7A1530095769E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D26904CE28D7A17B0095769E /* reenumerate.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D26B3B4E1F6FB6BC004571A8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -216,6 +278,191 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		D26904C328D7A1530095769E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D26904C428D7A1530095769E /* Debug Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D26904C528D7A1530095769E /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Debug Bluetooth";
+		};
+		D26904C628D7A1530095769E /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Debug Bonjour";
+		};
+		D26904C728D7A1530095769E /* Debug Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Debug Bonjour Multistart";
+		};
+		D26904C828D7A1530095769E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		D26904C928D7A1530095769E /* Release Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Release Bonjour";
+		};
+		D26904CA28D7A1530095769E /* Release Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Release Bonjour Multistart";
+		};
+		D26904CB28D7A1530095769E /* Release Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Release Bluetooth";
+		};
+		D26904CC28D7A1530095769E /* Release Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = UES63D9K7E;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = "Release Bonjour and Bluetooth";
+		};
 		D26B3B561F6FB6BC004571A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1488,6 +1735,23 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D26904C228D7A1530095769E /* Build configuration list for PBXNativeTarget "reenumerate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D26904C328D7A1530095769E /* Debug */,
+				D26904C428D7A1530095769E /* Debug Bonjour and Bluetooth */,
+				D26904C528D7A1530095769E /* Debug Bluetooth */,
+				D26904C628D7A1530095769E /* Debug Bonjour */,
+				D26904C728D7A1530095769E /* Debug Bonjour Multistart */,
+				D26904C828D7A1530095769E /* Release */,
+				D26904C928D7A1530095769E /* Release Bonjour */,
+				D26904CA28D7A1530095769E /* Release Bonjour Multistart */,
+				D26904CB28D7A1530095769E /* Release Bluetooth */,
+				D26904CC28D7A1530095769E /* Release Bonjour and Bluetooth */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release Bonjour Multistart";
+		};
 		D26B3B601F6FB6BC004571A8 /* Build configuration list for PBXNativeTarget "sedutil-cli" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1505,7 +1769,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Release Bonjour Multistart";
 		};
-		D2BD8F581F02016B00747F4A /* Build configuration list for PBXProject "sedutil-cli" */ = {
+		D2BD8F581F02016B00747F4A /* Build configuration list for PBXProject "SEDUtilities" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D2BD8F591F02016B00747F4A /* Debug */,

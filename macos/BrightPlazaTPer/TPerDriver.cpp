@@ -7,9 +7,10 @@
 //
 
 #include <IOKit/IOUserClient.h>
-#include <SEDKernelInterface/SEDKernelInterface.h>
 #include "TPerDriver.h"
 #include "CDBAccess.hpp"
+
+#include <SEDKernelInterface/SEDKernelInterface.h>
 
 #include "kernel_debug.h"
 #include "kernel_PrintBuffer.h"
@@ -544,12 +545,6 @@ OSDictionary * DriverClass::parseInquiryStandardDataAllResponse( const unsigned 
 #if defined(USE_INQUIRY_PAGE_00h)
 #pragma mark -
 #pragma mark Inquiry Page 00h
-#if DEBUG
-#error DEBUG
-#endif
-#if defined(DEBUG)
-#error DEBUG is defined
-#endif
 
 bool DriverClass::deviceIsPage00SCSI(bool & deviceSupportsPage80,
                                      bool & deviceSupportsPage89)
@@ -1271,9 +1266,9 @@ IOReturn DriverClass::updatePropertiesInIORegistry_SAT( DTA_DEVICE_INFO & di )
 
 OSDictionary * DriverClass::parseIdentifyResponse( const unsigned char * response, DTA_DEVICE_INFO & di)
 {
-    IDENTIFY_RESPONSE & resp = *(IDENTIFY_RESPONSE *)response;
+    const IDENTIFY_RESPONSE & resp = *(IDENTIFY_RESPONSE *)response;
 
-    parseATIdentifyResponse(resp, di);
+    parseATIdentifyResponse(&resp, &di);
     
     const OSObject * objects[6];
     const OSSymbol * keys[6];

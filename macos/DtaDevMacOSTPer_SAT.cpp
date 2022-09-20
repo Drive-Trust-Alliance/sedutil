@@ -21,7 +21,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <mach/mach_port.h>
 #include <IOKit/IOKitLib.h>
 #include <IOKit/scsi/SCSITaskLib.h>
-#include <SEDKernelInterface/SEDKernelInterface.h>
+#include <SEDKernelInterface/InterfaceCommandCodes.h>
+#include <SEDKernelInterface/TPerKernelInterface.h>
 #include "DtaMacOSConstants.h"
 #include "DtaDevMacOSTPer_SAT.h"
 

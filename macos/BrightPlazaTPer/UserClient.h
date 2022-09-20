@@ -7,6 +7,7 @@
 //
 
 #include "TPerDriver.h"
+#include "TPerDriverMethodIndex.h"
 
 
 class UserClientClass : public IOUserClient
@@ -65,7 +66,7 @@ protected:
                                           uint64_t inBufferSize,
                                           IODirection direction,
                                           uint64_t requiredTransferLength,
-                                          uint64_t *pActualTransferLength);
+                                          uint64_t *pLengthActuallyTransferred);
 
     
     static IOReturn sUserClientUpdatePropertiesInIORegistry(UserClientClass* target,

@@ -41,6 +41,16 @@ public:
          * @param devref reference to device is OS specific lexicon
          *  */
 	DtaDevEnterprise(const char * devref);
+    
+    /** Constructor using an OS specific device descriptor to initialize an object to a pre-existing connection
+     *  @param devref the name of the device in the OS lexicon
+     *  @param driverService  the I/O Registry entry of the device
+     *  @param connect the connection returned by Open
+     */
+    DtaDevEnterprise(const char * devref,
+                     io_registry_entry_t driverService,
+                     io_connect_t connect);
+    
          /** Default destructor, does nothing*/
 	~DtaDevEnterprise();
         /** Inform TPer of the communication propertied I wiah to use and

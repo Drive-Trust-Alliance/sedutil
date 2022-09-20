@@ -39,9 +39,9 @@ public:
             void * buffer, uint16_t bufferlen) = 0;
 
     /** Mac specific routine to identify the device
-     * @param disk_info  OPAL_DiskInfo struct describing TPer
+     * @param disk_info  DTA_DEVICE_INFO struct describing TPer
     */
-    virtual uint8_t identify(OPAL_DiskInfo& disk_info)=0;
+    virtual uint8_t identify(DTA_DEVICE_INFO& disk_info)=0;
 
     /** Mac specific routine to retrieve discovery0 response from the device
      * @param response  byte array to receive discovery0 response

@@ -53,7 +53,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-static int isValidSEDDisk(char *devname)
+static void isValidSEDDisk(char *devname)
 {
 	DtaDev * d;
 	d = new DtaDevGeneric(devname);
@@ -68,7 +68,6 @@ static int isValidSEDDisk(char *devname)
 		cout << std::endl;
 	}
 	delete d;
-	return 0;
 }
 
 
@@ -1008,7 +1007,8 @@ int main(int argc, char * argv[])
         break;
 	case sedutiloption::isValidSED:
 		LOG(D) << "Verify whether " << argv[opts.device] << "is valid SED or not";
-        return isValidSEDDisk(argv[opts.device]);
+        isValidSEDDisk(argv[opts.device]);
+        return 0;
         break;
 	case sedutiloption::takeOwnership:
 		LOG(D) << "Taking Ownership of the drive at " << argv[opts.device];

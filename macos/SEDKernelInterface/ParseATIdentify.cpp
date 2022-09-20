@@ -14,8 +14,10 @@
 #include <db.h>
 #undef __DBINTERFACE_PRIVATE
 
-void parseATIdentifyResponse( const IDENTIFY_RESPONSE & resp, DTA_DEVICE_INFO & di)
+void parseATIdentifyResponse( const IDENTIFY_RESPONSE * presp, DTA_DEVICE_INFO * pdi)
 {
+    const IDENTIFY_RESPONSE & resp = *presp;
+    DTA_DEVICE_INFO & di = *pdi;
 
 #define P_16_COPY_RESP_TO_DI(respFieldName,diFieldName) \
     for (size_t i = 0; i < sizeof(resp.respFieldName); i += 2) {\

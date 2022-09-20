@@ -105,7 +105,7 @@ uint8_t DtaDevMacOS_UAS_SAT::sendCmd(ATACOMMAND cmd,                  // IF_RECV
     return (kernResult == kIOReturnSuccess) ? 0 : 0xff; // not ATA response -- just for stubbing, not for reals
 }
 
-static void ReformatIdentifyResponseAsDiskInfo(uint8_t * response, OPAL_DiskInfo& disk_info)
+static void ReformatIdentifyResponseAsDiskInfo(uint8_t * response, DTA_DEVICE_INFO& disk_info)
 {
     IDENTIFY_RESPONSE & id = * (IDENTIFY_RESPONSE *) response;
     disk_info.devType = DEVICE_TYPE_USB; // TODO -- generalize for other devices when they are supported by BPTperDriver
@@ -123,7 +123,7 @@ static void ReformatIdentifyResponseAsDiskInfo(uint8_t * response, OPAL_DiskInfo
     }
 }
 
-uint8_t DtaDevMacOS_UAS_SAT::identify(OPAL_DiskInfo& disk_info )
+uint8_t DtaDevMacOS_UAS_SAT::identify(DTA_DEVICE_INFO& disk_info )
 {
     uint8_t response[IDENTIFY_RESPONSE_SIZE]={0};
     

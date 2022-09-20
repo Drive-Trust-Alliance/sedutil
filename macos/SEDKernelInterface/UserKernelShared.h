@@ -75,12 +75,6 @@ typedef struct _tagSCSICommandDescriptorBlockAsTwoQuads
     uint64_t quad1;
 } SCSICommandDescriptorBlockAsTwoQuads;
 
-#define __TPerDriverMethod__(index, method, nScalarInputs, nStructInputs, nScalarOutputs, nStructOutputs) index,
-enum {
-#include "TPerDriverDispatchTable.inc"
-    kSedUserClientNumberOfMethods // Must be last
-};
-#undef __TPerDriverMethod__
 
 
 #endif  // #ifndef UserKernelShared_h

@@ -41,30 +41,28 @@ public:
      */
     void init(const char * devref);
     
-//    /** OS specific initialization.
-//     * This function should perform the necessary authority and environment checking
-//     * to allow proper functioning of the program, open the device, perform an ATA
-//     * identify, add the fields from the identify response to the disk info structure
-//     * and if the device is an ATA device perform a call to Discovery0() to complete
-//     * the disk_info structure.  This version is used to create a DtaDev object from the
-//     * OS specific parts already under use.
-//     * @param devref character representation of the device is standard OS lexicon
-//     * @param driverService an IO Registry entry for the driver
-//     * @param connect an io_connect_t for the existing connection
-//     * @param diskInfo reference to possibly partially filled out DTA_DEVICE_INFO
-//     */
-//void init(const char * devref,
-//              io_registry_entry_t driverService,
-//              io_connect_t connect,
-//              const DTA_DEVICE_INFO& diskInfo);
-//
-//    /** OS specific method to send an ATA command to the device
-//     * @param cmd ATA command to be sent to the device
-//     * @param protocol security protocol to be used in the command
-//     * @param comID communications ID to be used
-//     * @param buffer input/output buffer
-//     * @param bufferlen length of the input/output buffer
-//     */
+    /** OS specific method to initialize an object to a pre-existing connection
+     *  @param devref the name of the device in the OS lexicon
+     *  @param driverService  the I/O Registry entry of the device
+     *  @param connect the connection returned by Open
+     */
+    void init(const char * devref,
+              io_registry_entry_t driverService,
+              io_connect_t connect);
+
+
+    /** OS specific routine to identify the device and fill out the device information struct
+     */
+    void identify(void);
+    
+
+        /** OS specific method to send an ATA command to the device
+         * @param cmd ATA command to be sent to the device
+         * @param protocol security protocol to be used in the command
+         * @param comID communications ID to be used
+         * @param buffer input/output buffer
+         * @param bufferlen length of the input/output buffer
+         */
     uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                     void * buffer, uint32_t bufferlen);
     /** A static class to scan for supported drives */
@@ -74,13 +72,11 @@ protected:
      * @param ms  number of milliseconds to wait
      */
     void osmsSleep(uint32_t ms);
-    /* OS specific routine to send an ATA identify to the device */
-    void identify(DTA_DEVICE_INFO& disk_info);
-    
-
     /** return drive size in bytes */
     unsigned long long getSize();
 
 private:
+    bool __init(const char *devref);
+    
     DtaDevMacOSTPer *tPer;
 };

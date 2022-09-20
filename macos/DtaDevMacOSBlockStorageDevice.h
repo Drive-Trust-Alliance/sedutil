@@ -64,6 +64,12 @@ public:
     const std::string getDevName ();
 
     static std::vector<DtaDevMacOSBlockStorageDevice *> enumerateBlockStorageDevices();
+    static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(io_service_t aBlockStorageDevice,
+                                                     const char *devref,
+                                                     DTA_DEVICE_INFO *pdi);
+    
+    static void extracted(io_service_t aBlockStorageDevice, CFDictionaryRef &allProperties, std::string &bsdName, CFDictionaryRef &deviceProperties, const char *devref, std::string &entryName, DtaDevMacOSBlockStorageDevice *&foundDevice, CFIndex kCStringSize, io_service_t &media, CFDictionaryRef &mediaProperties, char *nameBuffer, DTA_DEVICE_INFO *pdi, io_service_t &tPer, CFDictionaryRef &tPerProperties);
+    
     static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(const char * devref, DTA_DEVICE_INFO * pdi);  // Factory for this class or subclass instances
     static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(io_service_t aBlockStorageDevice,
                                                                  std::string entryName,
@@ -79,5 +85,6 @@ private:
     // derived
     void parse_properties_into_device_info(io_service_t aBlockStorageDevice);
     DTA_DEVICE_INFO * pdevice_info;  /**< Weak reference to Structure containing info from properties, including identify and discovery 0 if available*/
-    static bool bsdNameLessThan(DtaDevMacOSBlockStorageDevice * a, DtaDevMacOSBlockStorageDevice * b);  // for sorting
+    static bool bsdNameLessThan(DtaDevMacOSBlockStorageDevice * a,
+                                DtaDevMacOSBlockStorageDevice * b);  // for sorting
 };

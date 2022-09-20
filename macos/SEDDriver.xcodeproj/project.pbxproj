@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D201C18728D855E200FCD053 /* TPerDriverMethodIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = D201C18628D855E200FCD053 /* TPerDriverMethodIndex.h */; };
 		D26EB97C1F036671002200A2 /* RegistryUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = D26EB97A1F036671002200A2 /* RegistryUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D26EB97D1F036671002200A2 /* RegistryUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = D26EB97B1F036671002200A2 /* RegistryUtilities.mm */; };
 		D27129ED28C53FB5007AB870 /* kernel_PrintBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = D27129EC28C53FB5007AB870 /* kernel_PrintBuffer.h */; };
@@ -14,6 +15,8 @@
 		D2747D8E28D0509700FFF949 /* ParseATIdentify.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2A1BB5928CA636D00B492CE /* ParseATIdentify.cpp */; };
 		D280599F28C9126200EB9C59 /* db.h in Headers */ = {isa = PBXBuildFile; fileRef = D280599E28C9126200EB9C59 /* db.h */; };
 		D28059A128C912E600EB9C59 /* limits.h in Headers */ = {isa = PBXBuildFile; fileRef = D28059A028C912E600EB9C59 /* limits.h */; };
+		D285010E28D6779400230968 /* DtaStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D285010D28D6779400230968 /* DtaStructures.h */; };
+		D285011028D677C600230968 /* DtaEndianFixup.h in Headers */ = {isa = PBXBuildFile; fileRef = D285010F28D677C600230968 /* DtaEndianFixup.h */; };
 		D28C720328C6906F00EA1838 /* InterfaceCommandCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = D28C720228C6906F00EA1838 /* InterfaceCommandCodes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D28C720528C6968A00EA1838 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D28C720428C6968A00EA1838 /* IOKit.framework */; };
 		D2910E251F038CFD00005E87 /* libPrintBuffer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2BD8F8E1F0205F900747F4A /* libPrintBuffer.a */; };
@@ -21,10 +24,6 @@
 		D29EAE6328C8E2A100A307DF /* InterfaceDeviceID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D29EAE6228C8E2A100A307DF /* InterfaceDeviceID.cpp */; };
 		D2A1BB5A28CA636D00B492CE /* ParseATIdentify.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2A1BB5928CA636D00B492CE /* ParseATIdentify.cpp */; };
 		D2A1BB5C28CA64DE00B492CE /* ParseATIdentify.h in Headers */ = {isa = PBXBuildFile; fileRef = D2A1BB5B28CA64DE00B492CE /* ParseATIdentify.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D2B2012B28BBF80E004C88FF /* DtaResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = D2B200EC28BBF80E004C88FF /* DtaResponse.h */; };
-		D2B2014A28BBF80F004C88FF /* ATAStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D2B2010C28BBF80E004C88FF /* ATAStructures.h */; };
-		D2B2015928BBF80F004C88FF /* DtaStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D2B2011B28BBF80E004C88FF /* DtaStructures.h */; };
-		D2B2016228BBF80F004C88FF /* DtaEndianFixup.h in Headers */ = {isa = PBXBuildFile; fileRef = D2B2012428BBF80E004C88FF /* DtaEndianFixup.h */; };
 		D2BD8F731F02021F00747F4A /* TPerKernelInterface.c in Sources */ = {isa = PBXBuildFile; fileRef = D2BD8F6E1F02021F00747F4A /* TPerKernelInterface.c */; };
 		D2BD8F7A1F02029800747F4A /* TPerKernelInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BD8F6F1F02021F00747F4A /* TPerKernelInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2BD8F7B1F02029800747F4A /* UserKernelShared.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BD8F701F02021F00747F4A /* UserKernelShared.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -58,6 +57,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D201C18628D855E200FCD053 /* TPerDriverMethodIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPerDriverMethodIndex.h; sourceTree = "<group>"; };
 		D20A9E8D28C5BD4900F7985D /* Kernel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kernel.framework; path = System/Library/Frameworks/Kernel.framework; sourceTree = SDKROOT; };
 		D20CC9671F69C4A900CE3D72 /* kernel_debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kernel_debug.h; sourceTree = "<group>"; };
 		D26EB97A1F036671002200A2 /* RegistryUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegistryUtilities.h; sourceTree = "<group>"; };
@@ -67,6 +67,8 @@
 		D2772B0C28BC04900005E001 /* SEDKernelInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SEDKernelInterface.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D280599E28C9126200EB9C59 /* db.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = db.h; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/db.h; sourceTree = DEVELOPER_DIR; };
 		D28059A028C912E600EB9C59 /* limits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = limits.h; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/limits.h; sourceTree = DEVELOPER_DIR; };
+		D285010D28D6779400230968 /* DtaStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaStructures.h; path = ../Common/DtaStructures.h; sourceTree = "<group>"; };
+		D285010F28D677C600230968 /* DtaEndianFixup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaEndianFixup.h; path = ../Common/DtaEndianFixup.h; sourceTree = "<group>"; };
 		D28C720228C6906F00EA1838 /* InterfaceCommandCodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InterfaceCommandCodes.h; sourceTree = "<group>"; };
 		D28C720428C6968A00EA1838 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		D295B8DD1F0D464600DFDD5B /* singleton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = singleton.h; sourceTree = "<group>"; };
@@ -74,10 +76,6 @@
 		D29EAE6228C8E2A100A307DF /* InterfaceDeviceID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InterfaceDeviceID.cpp; sourceTree = "<group>"; };
 		D2A1BB5928CA636D00B492CE /* ParseATIdentify.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParseATIdentify.cpp; sourceTree = "<group>"; };
 		D2A1BB5B28CA64DE00B492CE /* ParseATIdentify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseATIdentify.h; sourceTree = "<group>"; };
-		D2B200EC28BBF80E004C88FF /* DtaResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaResponse.h; sourceTree = "<group>"; };
-		D2B2010C28BBF80E004C88FF /* ATAStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATAStructures.h; sourceTree = "<group>"; };
-		D2B2011B28BBF80E004C88FF /* DtaStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaStructures.h; sourceTree = "<group>"; };
-		D2B2012428BBF80E004C88FF /* DtaEndianFixup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaEndianFixup.h; sourceTree = "<group>"; };
 		D2BD8F601F02017B00747F4A /* SEDKernelInterface.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SEDKernelInterface.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2BD8F641F02017B00747F4A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D2BD8F6C1F02021F00747F4A /* PrintBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PrintBuffer.c; sourceTree = "<group>"; };
@@ -139,28 +137,17 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		D2B200EB28BBF80E004C88FF /* Common */ = {
-			isa = PBXGroup;
-			children = (
-				D2B2011B28BBF80E004C88FF /* DtaStructures.h */,
-				D2B2012428BBF80E004C88FF /* DtaEndianFixup.h */,
-				D2B2010C28BBF80E004C88FF /* ATAStructures.h */,
-				D2B200EC28BBF80E004C88FF /* DtaResponse.h */,
-			);
-			name = Common;
-			path = ../../../FH/sedutil/Common;
-			sourceTree = "<group>";
-		};
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D285010F28D677C600230968 /* DtaEndianFixup.h */,
+				D285010D28D6779400230968 /* DtaStructures.h */,
 				D28059A028C912E600EB9C59 /* limits.h */,
 				D280599E28C9126200EB9C59 /* db.h */,
 				D2BD8FA21F0207AF00747F4A /* BrightPlazaTPer */,
 				D2BD8F621F02017B00747F4A /* SEDKernelInterface */,
 				D2BD8F8F1F0205F900747F4A /* PrintBuffer */,
 				D2BD8F991F0206A200747F4A /* include */,
-				D2B200EB28BBF80E004C88FF /* Common */,
 				D2772B0B28BC04830005E001 /* libPrintBuffer.a */,
 				D2772B0C28BC04900005E001 /* SEDKernelInterface.framework */,
 				D2BD8F611F02017B00747F4A /* Products */,
@@ -190,6 +177,7 @@
 				D2BD8F6F1F02021F00747F4A /* TPerKernelInterface.h */,
 				D2BD8F6E1F02021F00747F4A /* TPerKernelInterface.c */,
 				D2BD8F701F02021F00747F4A /* UserKernelShared.h */,
+				D201C18628D855E200FCD053 /* TPerDriverMethodIndex.h */,
 				D2E0B5BF1F2D3C7B00CD66FB /* TPerDriverDispatchTable.inc */,
 				D2BD8F641F02017B00747F4A /* Info.plist */,
 			);
@@ -247,10 +235,13 @@
 				D2BD8F7C1F02029800747F4A /* SEDKernelInterface.h in Headers */,
 				D28C720328C6906F00EA1838 /* InterfaceCommandCodes.h in Headers */,
 				D2A1BB5C28CA64DE00B492CE /* ParseATIdentify.h in Headers */,
+				D201C18728D855E200FCD053 /* TPerDriverMethodIndex.h in Headers */,
 				D26EB97C1F036671002200A2 /* RegistryUtilities.h in Headers */,
 				D2E0B5C61F2D45C900CD66FB /* TPerDriverDispatchTable.inc in Headers */,
 				D2BD8F7A1F02029800747F4A /* TPerKernelInterface.h in Headers */,
 				D2BD8F7B1F02029800747F4A /* UserKernelShared.h in Headers */,
+				D285011028D677C600230968 /* DtaEndianFixup.h in Headers */,
+				D285010E28D6779400230968 /* DtaStructures.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -271,10 +262,6 @@
 				D280599F28C9126200EB9C59 /* db.h in Headers */,
 				D29EAE6128C8E24C00A307DF /* InterfaceDeviceID.h in Headers */,
 				D2747D8D28D0509700FFF949 /* ParseATIdentify.h in Headers */,
-				D2B2015928BBF80F004C88FF /* DtaStructures.h in Headers */,
-				D2B2014A28BBF80F004C88FF /* ATAStructures.h in Headers */,
-				D2B2016228BBF80F004C88FF /* DtaEndianFixup.h in Headers */,
-				D2B2012B28BBF80E004C88FF /* DtaResponse.h in Headers */,
 				D27129ED28C53FB5007AB870 /* kernel_PrintBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

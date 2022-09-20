@@ -12,7 +12,7 @@
 #define _POSIX_SOURCE
 #include <sys/stat.h>
 #include "InterfaceCommandCodes.h"
-
+#include "TPerDriverMethodIndex.h"
 
 // ************
 // *** TCG functions
@@ -23,7 +23,7 @@ kern_return_t PerformSCSICommand(io_connect_t connect,
                                  const void * buffer,
                                  const uint64_t bufferLen,
                                  const uint64_t requestedTransferLength,
-                                 uint64_t *pActualTransferLength)
+                                 uint64_t *pLengthActuallyTransferred)
 {
 
     // *** check arguments
@@ -118,7 +118,7 @@ kern_return_t PerformSCSICommand(io_connect_t connect,
                                       &outputCount);                  // pointer to number of output scalar parms.
         
         if (1 <= outputCount) {
-            *pActualTransferLength = output[0];
+            *pLengthActuallyTransferred = output[0];
         }
         return kernResult;
     }
@@ -130,7 +130,7 @@ kern_return_t updatePropertiesInIORegistry(io_connect_t connect) {
     return IOConnectCallScalarMethod(connect, kSedUserClientUpdatePropertiesInIORegistry, NULL, 0, NULL, NULL);
 }
 
-kern_return_t TPerUpdate(io_connect_t connect, void /* DTA_DEVICE_INFO */ * pdi) {
+kern_return_t TPerUpdate(io_connect_t connect, DTA_DEVICE_INFO * pdi) {
     kern_return_t ret = updatePropertiesInIORegistry(connect);
     if (ret == KERN_SUCCESS && pdi != NULL ) {
         CFDataRef data = (CFDataRef)IORegistryEntryCreateCFProperty(connect,
@@ -139,7 +139,7 @@ kern_return_t TPerUpdate(io_connect_t connect, void /* DTA_DEVICE_INFO */ * pdi)
         if ( data == NULL )
             return KERN_FAILURE;
         
-        CFDataGetBytes(data, CFRangeMake(0,CFDataGetLength(data)), pdi);
+        CFDataGetBytes(data, CFRangeMake(0,CFDataGetLength(data)), (void *)pdi);
         
         CFRelease(data);
     }

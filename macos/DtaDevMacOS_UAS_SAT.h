@@ -60,7 +60,7 @@ public:
     uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                     void * buffer, uint16_t bufferlen);
     /** USB specific routine to send an identify to the device */
-    uint8_t identify(OPAL_DiskInfo& disk_info);
+    uint8_t identify(DTA_DEVICE_INFO& disk_info);
     /** USB specific routine to send a discovery0 to the device */
     uint8_t discovery0(uint8_t * response);
     

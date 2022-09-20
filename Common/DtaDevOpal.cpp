@@ -90,6 +90,17 @@ void DtaDevOpal::init(const char * devref)
 	else fill_prop(false);
 }
 
+void DtaDevOpal::init(const char * devref,
+          io_registry_entry_t driverService,
+          io_connect_t connect)
+{
+    DtaDevOS::init(devref, driverService, connect);
+    adj_host = 0;
+    if(properties() != 0) { LOG(E) << "Properties exchange failed " << dev;}
+    else fill_prop(false);
+}
+
+
 // create an audit user UserN disk_info.OPAL20_numUsers
 //char * DtaDevOpal::gethuser(void);
 
@@ -3803,7 +3814,7 @@ uint8_t DtaDevOpal::loadPBA_O(char * password, char * filename) {
 		if (blockSize > (tperMaxToken - 4)) blockSize = tperMaxToken - 4;
 		//printf("tperMaxPacket=%ld  tperMaxToken=%ld before blockSize=%ld\n", tperMaxPacket, tperMaxToken, blockSize);
 		//vector <uint8_t> buffer, lengthtoken;
-		blockSize -= sizeof(OPALHeader) + 50;  // packet overhead
+		blockSize -= sizeof(DTA_Header) + 50;  // packet overhead
         printf("tperMaxPacket=%u  tperMaxToken=%u After blockSize=%u\n", tperMaxPacket, tperMaxToken, blockSize);
 	}
  
@@ -4867,10 +4878,10 @@ uint8_t DtaDevOpal::getTable(vector<uint8_t> table, uint16_t startcol,
 uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 {
 	uint8_t lastRC;
-    OPALHeader * hdr = (OPALHeader *) cmd->getCmdBuffer();
+    DTA_Header * hdr = (DTA_Header *) cmd->getCmdBuffer();
 	LOG(D) << "Entering DtaDevOpal::exec" << dev;
     LOG(D3) << endl << "Dumping command buffer";
-    IFLOG(D) DtaHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
+    IFLOG(D) DtaHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (DTA_ComPacketHeader));
 	LOG(D) << "Entering DtaDevOpal::exec sendCmd(IF_SEND, IO_BUFFER_LENGTH)";
     //if((lastRC = sendCmd(IF_SEND, protocol, comID(), cmd->getCmdBuffer(), IO_BUFFER_LENGTH)) != 0) {
 	#if 0
@@ -4901,7 +4912,7 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 	}
 
 
-    hdr = (OPALHeader *) cmd->getRespBuffer();
+    hdr = (DTA_Header *) cmd->getRespBuffer();
 
     do {
         osmsSleep(25); // could it be too fast if multiple drive situation ?????, 25->250 does not help; 25->50 better, ->100
@@ -4919,7 +4930,7 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 	}
     while ((0 != hdr->cp.outstandingData) && (0 == hdr->cp.minTransfer));  // add timer --> advice from Joe
     LOG(D3) << endl << "Dumping reply buffer";
-    IFLOG(D3) DtaHexDump(cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (OPALComPacket));
+    IFLOG(D3) DtaHexDump(cmd->getRespBuffer(), SWAP32(hdr->cp.length) + sizeof (DTA_ComPacketHeader));
 	if (0 != lastRC) {
         LOG(E) << "Command failed on recv from " << dev << " --  result was 0x"
                << hex << setw(2) << setfill('0') << uppercase << (uint16_t)lastRC;

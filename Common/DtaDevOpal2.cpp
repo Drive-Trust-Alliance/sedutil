@@ -25,9 +25,19 @@ using namespace std;
 
 DtaDevOpal2::DtaDevOpal2 (const char * devref)
 {
-	DtaDevOpal::init(devref);
-	//assert(isOpal2());
+    DtaDevOpal::init(devref);
+    //assert(isOpal2());
 }
+
+DtaDevOpal2::DtaDevOpal2 (const char * devref,
+                          io_registry_entry_t driverService,
+                          io_connect_t connect)
+{
+    DtaDevOpal::init(devref, driverService, connect);
+    //assert(isOpal2());
+}
+
+
 
 DtaDevOpal2::~DtaDevOpal2()
 {

@@ -66,5 +66,5 @@ private:
     CFDictionaryRef properties;
     // derived
     void parse_properties_into_disk_info();
-    OPAL_DiskInfo disk_info;  /**< Structure containing info from properties, including identify and discovery 0 if available*/
+    DTA_DEVICE_INFO disk_info;  /**< Structure containing info from properties, including identify and discovery 0 if available*/
 };

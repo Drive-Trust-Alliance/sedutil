@@ -69,7 +69,7 @@ public:
     * @param bytearray pointer to array for return data */
     void getBytes(uint32_t tokenNum, uint8_t bytearray[]);
     
-    OPALHeader h; /**< TCG Header fields of the response */
+    DTA_Header h; /**< TCG Header fields of the response */
 
 private:
 

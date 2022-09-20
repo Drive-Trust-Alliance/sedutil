@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D2EBA3061F0549B7002F8780"
-               BuildableName = "sedutil.framework"
-               BlueprintName = "sedutil"
-               ReferencedContainer = "container:sedutil.xcodeproj">
+               BlueprintIdentifier = "D26B3B511F6FB6BC004571A8"
+               BuildableName = "sedutil-cli"
+               BlueprintName = "sedutil-cli"
+               ReferencedContainer = "container:SEDUtilities.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -39,7 +39,40 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES">
+      allowLocationSimulation = "YES"
+      viewDebuggingEnabled = "No">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "D26B3B511F6FB6BC004571A8"
+            BuildableName = "sedutil-cli"
+            BlueprintName = "sedutil-cli"
+            ReferencedContainer = "container:SEDUtilities.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "--scan"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--query"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "disk4"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "disk5"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "disk6"
+            isEnabled = "NO">
+         </CommandLineArgument>
+      </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release Bonjour Multistart"
@@ -47,15 +80,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D2EBA3061F0549B7002F8780"
-            BuildableName = "sedutil.framework"
-            BlueprintName = "sedutil"
-            ReferencedContainer = "container:sedutil.xcodeproj">
+            BlueprintIdentifier = "D26B3B511F6FB6BC004571A8"
+            BuildableName = "sedutil-cli"
+            BlueprintName = "sedutil-cli"
+            ReferencedContainer = "container:SEDUtilities.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug Bonjour Multistart">

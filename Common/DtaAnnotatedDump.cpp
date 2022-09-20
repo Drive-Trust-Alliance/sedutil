@@ -356,7 +356,7 @@ uint8_t DtaAnnotatedDump(ATACOMMAND cmd, void * buffer, uint32_t bufferlen)
         fprintf(stream, "<< 0x%2.2X\n >>\n", cmd);
 
     // echo header
-    OPALHeader h;
+    DTA_Header h;
     memcpy(&h, buffer, sizeof(h));
     IFLOG(D1)
     {

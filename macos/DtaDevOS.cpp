@@ -40,16 +40,32 @@ DtaDevOS::DtaDevOS()
 }
 
 
-/* Determine which type of drive we're using and instantiate a derived class of that type */
-void DtaDevOS::init(const char * devref)
-{
+bool DtaDevOS::__init(const char *devref) {
+    dev = strdup(devref);
     memset(&disk_info, 0, sizeof(DTA_DEVICE_INFO));
     DtaDevMacOSBlockStorageDevice * device = DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(devref, &disk_info);
     tPer = dynamic_cast <DtaDevMacOSTPer *> (device);
-    if (tPer != NULL) {
+    return (tPer != NULL);
+}
+
+/* Determine which type of drive we're using and instantiate a derived class of that type */
+void DtaDevOS::init(const char * devref)
+{
+    if (__init(devref)) {
         isOpen = tPer->init(devref, true);
-    }
-    dev = strdup(devref);
+    };
+}
+
+
+/* Determine which type of drive we're using and instantiate a derived class of that type */
+void DtaDevOS::init(const char * devref,
+                    io_registry_entry_t driverService,
+                    io_connect_t connect)
+{
+    if (__init(devref)) {
+        tPer->init(driverService, connect);
+        isOpen = true;
+    };
 }
 
 uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
@@ -67,7 +83,7 @@ uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 }
 
 
-void DtaDevOS::identify(DTA_DEVICE_INFO & di)
+void DtaDevOS::identify()
 {
     if (!isOpen) return; //disk open failed so this will too
 
@@ -77,7 +93,7 @@ void DtaDevOS::identify(DTA_DEVICE_INFO & di)
         return;
     }
 
-    (void)(tPer -> identify(di));
+    (void)(tPer -> identify(disk_info));
 }
 
 void DtaDevOS::osmsSleep(uint32_t ms)

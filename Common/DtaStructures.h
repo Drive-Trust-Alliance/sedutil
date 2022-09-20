@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014-2022 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -17,11 +17,18 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
+
 #pragma once
+#if !defined(__DTASTRUCTURES_H_INCLUDED__)
+#define __DTASTRUCTURES_H_INCLUDED__
+
+#include <sys/types.h>
+
 #pragma pack(push)
 #pragma pack(1)
 
 #include "ATAStructures.h"
+
 #define FC_TPER		  0x0001
 #define FC_LOCKING    0x0002
 #define FC_GEOMETRY   0x0003
@@ -391,16 +398,16 @@ union Discovery0Features {
 
 /** ComPacket (header) for transmissions. */
 
-typedef struct _OPALComPacket {
+typedef struct _DTA_ComPacketHeader {
     uint32_t reserved0;
     uint8_t extendedComID[4];
     uint32_t outstandingData;
     uint32_t minTransfer;
     uint32_t length;
-} OPALComPacket;
+} DTA_ComPacketHeader;
 
 /** Packet structure. */
-typedef struct _OPALPacket {
+typedef struct _DTA_PacketHeader {
     uint32_t TSN;
     uint32_t HSN;
     uint32_t seqNumber;
@@ -408,20 +415,20 @@ typedef struct _OPALPacket {
     uint16_t ackType;
     uint32_t acknowledgement;
     uint32_t length;
-} OPALPacket;
+} DTA_PacketHeader;
 
 /** Data sub packet header */
-typedef struct _OPALDataSubPacket {
+typedef struct _DTA_DataSubPacketHeader {
     uint8_t reserved0[6];
     uint16_t kind;
     uint32_t length;
-} OPALDataSubPacket;
+} DTA_DataSubPacketHeader;
 /** header of a response */
-typedef struct _OPALHeader {
-    OPALComPacket cp;
-    OPALPacket pkt;
-    OPALDataSubPacket subpkt;
-} OPALHeader;
+typedef struct _DTA_Header {
+    DTA_ComPacketHeader cp;
+    DTA_PacketHeader pkt;
+    DTA_DataSubPacketHeader subpkt;
+} DTA_Header;
 
 typedef enum _NVMECOMMAND {
     NVME_RECV = 0x82,
@@ -615,6 +622,7 @@ typedef struct _SCSI_INQUIRY_RESPONSE {
 	char ProductRev[4];
 } SCSI_INQUIRY_RESPONSE;
 
+#if defined(__cplusplus)
 
 ////////////////////////////////////////////////////////////////////////////////
 struct CScsiCmdInquiry
@@ -635,6 +643,8 @@ public:
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 #else
+
+
 ////////////////////////////////////////////////////////////////////////////////
 class CScsiCmdInquiry_StandardData
 ////////////////////////////////////////////////////////////////////////////////
@@ -719,5 +729,8 @@ public:
     uint8_t         m_Reserved_3[1];            // 10
     uint8_t         m_Control;                  // 11
 };                      // 12
+#endif  // defined(__cplusplus)
 
 #pragma pack(pop)
+
+#endif // !defined(__DTASTRUCTURES_H_INCLUDED__)

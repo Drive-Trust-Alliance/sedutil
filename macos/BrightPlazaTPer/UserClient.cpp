@@ -13,6 +13,7 @@
 
 #include "kernel_debug.h"
 #include "kernel_PrintBuffer.h"
+#include "TPerDriverMethodIndex.h"
 
 #define super IOUserClient
 
@@ -85,7 +86,7 @@ IOReturn UserClientClass::userClientPerformSCSICommand(SCSICommandDescriptorBloc
                                                        const uint64_t userBufferSize,
                                                        IODirection direction,
                                                        uint64_t requiredTransferLength,
-                                                       uint64_t *pActualTransferLength)
+                                                       uint64_t *pLengthActuallyTransferred)
 {
     char tagstring[128];
     
@@ -172,9 +173,9 @@ IOReturn UserClientClass::userClientPerformSCSICommand(SCSICommandDescriptorBloc
     IOSleep(1);
     
     
-    uint64_t actualTransferLength = requiredTransferLength;
-    IOReturn result = fProvider->PerformSCSICommand(cdb, md, &actualTransferLength);
-    *pActualTransferLength = actualTransferLength;
+    uint64_t lengthActuallyTransferred = requiredTransferLength;
+    IOReturn result = fProvider->PerformSCSICommand(cdb, md, &lengthActuallyTransferred);
+    *pLengthActuallyTransferred = lengthActuallyTransferred;
     
     
     

@@ -10,4 +10,4 @@
 #include "stdint.h"
 #include "DtaStructures.h"
 
-void parseATIdentifyResponse( const IDENTIFY_RESPONSE & resp, DTA_DEVICE_INFO & di);
+void parseATIdentifyResponse( const IDENTIFY_RESPONSE * presp, DTA_DEVICE_INFO * pdi);

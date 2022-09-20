@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D20A63961F731F3600F154AC"
-               BuildableName = "log.framework"
-               BlueprintName = "log"
-               ReferencedContainer = "container:sedutil.xcodeproj">
+               BlueprintIdentifier = "D2EBA3061F0549B7002F8780"
+               BuildableName = "sedutil.framework"
+               BlueprintName = "sedutil"
+               ReferencedContainer = "container:SEDFrameworks.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D20A63961F731F3600F154AC"
-            BuildableName = "log.framework"
-            BlueprintName = "log"
-            ReferencedContainer = "container:sedutil.xcodeproj">
+            BlueprintIdentifier = "D2EBA3061F0549B7002F8780"
+            BuildableName = "sedutil.framework"
+            BlueprintName = "sedutil"
+            ReferencedContainer = "container:SEDFrameworks.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
