@@ -225,7 +225,7 @@ void DtaDev::puke()
 	if (disk_info.TPer) {
 		cout << "TPer function (" << HEXON(4) << FC_TPER << HEXOFF << ")" << std::endl;
 		cout << "    ACKNAK = " << (disk_info.TPer_ACKNACK ? "Y, " : "N, ")
-			<< "ASYNC = " << (disk_info.TPer_async ? "Y, " : "N. ")
+			<< "ASYNC = " << (disk_info.TPer_async ? "Y, " : "N, ")
 			<< "BufferManagement = " << (disk_info.TPer_bufferMgt ? "Y, " : "N, ")
 			<< "comIDManagement  = " << (disk_info.TPer_comIDMgt ? "Y, " : "N, ")
 			<< "Streaming = " << (disk_info.TPer_streaming ? "Y, " : "N, ")
