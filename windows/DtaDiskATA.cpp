@@ -30,6 +30,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaEndianFixup.h"
 #include "DtaStructures.h"
 #include "DtaHexDump.h"
+#include "fips.h""
 
 using namespace std;
 DtaDiskATA::DtaDiskATA() {};
@@ -137,10 +138,25 @@ void DtaDiskATA::identify(OPAL_DiskInfo& disk_info)
         disk_info.modelNum[i] = id->modelNum[i + 1];
         disk_info.modelNum[i + 1] = id->modelNum[i];
     }
-	disk_info.fips = * (((uint8_t *) identifyResp) + 506) & 0x02 ; 
+	if (1 == (disk_info.fips_fw_match = getFwMatch((const char *)disk_info.firmwareRev))) {
+		DtaHexDump(id, 512);
+		disk_info.fips_support = *(((uint8_t *)id) + 506) & 0x01;
+		disk_info.fips = (*(((uint8_t *)id) + 506) & 0x02) >> 1; // bit 0 should AND 0x01 0x02;
+		LOG(D1) << "Match Phison FIPS FW Name ; disk_info.fips_support=" << disk_info.fips_support + 0 << " disk_info.fips=" << disk_info.fips + 0;
+	}
+	else {
+		LOG(D1) << "No Match Phison FIPS FW Name ";
+		disk_info.fips = 0;
+		disk_info.fips_support = 0;
+	}
 	_aligned_free(identifyResp);
     return;
 }
+
+
+
+
+
 
 /** Close the filehandle so this object can be delete. */
 DtaDiskATA::~DtaDiskATA()

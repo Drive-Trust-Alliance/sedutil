@@ -114,7 +114,8 @@ void DtaDevOS::init(const char * devref)
 			delete disk;
 			disk = new DtaDiskNVME();
 			disk->init(dev);
-			identifyNVMeRealtek(disk_info);
+			// identifyNVMeRealtek(disk_info);
+			// identify(disk_info); // native nvme identify NG 
 			disk_info.devType = DEVICE_TYPE_NVME;
 			discovery0(&disc0Sts);
 			return;
@@ -148,7 +149,6 @@ void DtaDevOS::init(const char * devref)
 			delete disk;
 			disk = new DtaDiskNVME();
 			disk->init(dev);
-
 			identifyNVMeASMedia(disk_info);
 			disk_info.devType = DEVICE_TYPE_NVME;
 			discovery0(&disc0Sts);

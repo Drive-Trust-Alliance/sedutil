@@ -148,6 +148,7 @@ struct NVME_IDENTIFY_DEVICE
 	CHAR		MinorVersion;
 	SHORT		MajorVersion;
 	CHAR		Reserved3[428];
+	CHAR        Reserved4[3072];// full length of IDENTIFY data ?????
 };
 
 struct ATA_IDENTIFY_DEVICE

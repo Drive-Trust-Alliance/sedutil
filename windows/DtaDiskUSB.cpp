@@ -31,6 +31,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaEndianFixup.h"
 #include "DtaStructures.h"
 #include "DtaHexDump.h"
+#include "fips.h"
 
 using namespace std;
 DtaDiskUSB::DtaDiskUSB() {};
@@ -186,13 +187,24 @@ void DtaDiskUSB::identify(OPAL_DiskInfo& disk_info)
 			disk_info.modelNum[i] = ' ';
 		}
 	}
-	disk_info.fips = *(((uint8_t *)identifyResp) + 506) & 0x02; // Byte 506 bit 1
+	if (1 == (disk_info.fips_fw_match = getFwMatch((const char *)disk_info.firmwareRev))) {
+		DtaHexDump(id, 512);
+		disk_info.fips_support = *(((uint8_t *)id) + 506) & 0x01;
+		disk_info.fips = (*(((uint8_t *)id) + 506) & 0x02) >> 1; 
+		LOG(D1) << "Match Phison SATA FIPS FW Name ; disk_info.fips_support=" << disk_info.fips_support + 0 << " disk_info.fips=" << disk_info.fips + 0;
+	}
+	else {
+		LOG(D1) << "No Match Phison SATA FIPS FW Name ";
+		disk_info.fips = 0;
+		disk_info.fips_support = 0;
+	}
+#if 0
 	//printf("disk_info.fips=%02X\n", disk_info.fips);
-
 	//DtaHexDump(disk_info.serialNum, sizeof(disk_info.serialNum));
 	//DtaHexDump(disk_info.firmwareRev, sizeof(disk_info.firmwareRev));
 	//DtaHexDump(disk_info.modelNum, sizeof(disk_info.modelNum));
 	//memcpy(disk_info.modelNum, id->ProductID, sizeof(disk_info.modelNum));
+#endif
 	_aligned_free(identifyResp);
     return;
 }
@@ -275,11 +287,24 @@ void DtaDiskUSB::identifyPd(OPAL_DiskInfo& disk_info) {
 		//	}
 		//}
 
-	}
+		if (1 == (disk_info.fips_fw_match = getFwMatch((const char *)disk_info.firmwareRev))) {
+			DtaHexDump(id, 4096);
+			disk_info.fips_support = *(((uint8_t *)id) + 506) & 0x01;
+			disk_info.fips = (*(((uint8_t *)id) + 506) & 0x02) >> 1; // bit 0 should AND 0x01 0x02;
+			LOG(D1) << "Match Phison SATA/Nvme FIPS FW Name ; disk_info.fips_support=" << disk_info.fips_support + 0 << " disk_info.fips=" << disk_info.fips + 0;
+		}
+		else {
+			LOG(D1) << "No Match Phison SATA/Nvme FIPS FW Name ";
+			disk_info.fips = 0;
+			disk_info.fips_support = 0;
+		}
+
+	} // above if 
 	//else {
 		// fail again 
 	//}
-	disk_info.fips = *(((uint8_t *)identifyResp) + 506) & 0x02;
+
+	//disk_info.fips = *(((uint8_t *)identifyResp) + 506) & 0x02;
 	_aligned_free(identifyResp);
 	return;
 }
@@ -534,31 +559,42 @@ void DtaDiskUSB::identifyNVMeASMedia(OPAL_DiskInfo& disk_info) {
 		else { // Possible Nvme enclosure
 			disk_info.enclosure = 1; 
 			LOG(D1) << "DtaDiskUSB::identifyNVMeASMedia : Does NOT Find Samsung Portable SSD for Nvme or Nvme Idfy data format";
-			USB_INQUIRY_DATA * id = (USB_INQUIRY_DATA *)&identify;
-			IFLOG(D2) DtaHexDump(id, 512);
+			//USB_INQUIRY_DATA * id = (USB_INQUIRY_DATA *)&identify;
+			IFLOG(D2) DtaHexDump(idn, 512);
 			disk_info.devType = DEVICE_TYPE_NVME;
 
 			for (int i = 0; i < sizeof(disk_info.serialNum); i += 2) {
-				disk_info.serialNum[i] = id->ProductSerial[i];
-				disk_info.serialNum[i + 1] = id->ProductSerial[i + 1];
+				disk_info.serialNum[i] = idn->ProductSerial[i];
+				disk_info.serialNum[i + 1] = idn->ProductSerial[i + 1];
 				if (!isprint(disk_info.serialNum[i])) { non_ascii = 1; ; break; };
 				if (!isprint(disk_info.serialNum[i + 1])) { non_ascii = 1; ; break; };
 			}
 			for (int i = 0; i < sizeof(disk_info.firmwareRev); i += 2) {
-				disk_info.firmwareRev[i] = id->ProductRev[i];
-				disk_info.firmwareRev[i + 1] = id->ProductRev[i + 1];
+				disk_info.firmwareRev[i] = idn->ProductRev[i];
+				disk_info.firmwareRev[i + 1] = idn->ProductRev[i + 1];
 				if (!isprint(disk_info.firmwareRev[i])) { non_ascii = 1; ; break; }
 				if (!isprint(disk_info.firmwareRev[i + 1])) { non_ascii = 1; ; break; }
 			}
 			for (int i = 0; i < sizeof(disk_info.modelNum); i += 2) {
-				disk_info.modelNum[i] = id->ProductID[i];
-				disk_info.modelNum[i + 1] = id->ProductID[i + 1];
+				disk_info.modelNum[i] = idn->ProductID[i];
+				disk_info.modelNum[i + 1] = idn->ProductID[i + 1];
 				if (!isprint(disk_info.modelNum[i])) { non_ascii = 1; ; break; };
 				if (!isprint(disk_info.modelNum[i + 1])) { non_ascii = 1; ; break; };
 			}
 		}
-	}
-	//else {
+		if (1 == (disk_info.fips_fw_match = getFwMatch((const char *)disk_info.firmwareRev))) {
+			DtaHexDump(idn, 4096);
+			disk_info.fips_support = *(((uint8_t *)idn) + 4093) & 0x01;
+			disk_info.fips = (*(((uint8_t *)idn) + 4093) & 0x02) >> 1; // bit 0 should AND 0x01 0x02;
+			LOG(D1) << "DtaDiskUSB::identifyNVMeASMedia :Match Phison Nvme FIPS FW Name ; disk_info.fips_support=" << disk_info.fips_support + 0 << " disk_info.fips=" << disk_info.fips + 0;
+		}
+		else {
+			LOG(D1) << "DtaDiskUSB::identifyNVMeASMedia :No Match Phison Nvme FIPS FW Name ";
+			disk_info.fips = 0;
+			disk_info.fips_support = 0;
+		}
+	} // above if passible asmedia nvme 
+	//else { // noop if not asmedia 
 	// fail again 
 	//}
 	LOG(D) << "Exiting DtaDiskUSB::identifyNVMeASMedia";
@@ -685,7 +721,7 @@ BOOL DtaDiskUSB::DoIdentifyDeviceNVMeASMedia(INT physicalDriveId, INT scsiPort, 
 }
 
 void DtaDiskUSB::identifyNVMeRealtek(OPAL_DiskInfo& disk_info) {
-	LOG(D1) << "Entering DtaDiskUSB::identifyNVMeASMedia()";
+	LOG(D1) << "Entering DtaDiskUSB::identifyNVMeRealtek()";
 	vector<uint8_t> nullz(512, 0x00);
 	void * identifyResp = NULL;
 	identifyResp = _aligned_malloc(IO_BUFFER_LENGTH, IO_BUFFER_ALIGNMENT);
@@ -694,7 +730,7 @@ void DtaDiskUSB::identifyNVMeRealtek(OPAL_DiskInfo& disk_info) {
 
 	// before give up, try identifyDevicePd
 	////////////////////////////////////////
-	IDENTIFY_DEVICE identify = { 0 };
+	IDENTIFY_DEVICE identify = { 0 };  // seems IDENTIFY_DEVICE data size is only 512 , memory violation? 
 	disk_info.asmedia = 0;
 	disk_info.enclosure = 0;
 	//BOOL DtaDiskUSB::DoIdentifyDeviceNVMeASMedia(INT physicalDriveId, INT scsiPort, INT scsiTargetId, IDENTIFY_DEVICE* data)
@@ -730,9 +766,23 @@ void DtaDiskUSB::identifyNVMeRealtek(OPAL_DiskInfo& disk_info) {
 				if (!isprint(disk_info.firmwareRev[i])) { non_ascii = 1; ; break; }
 				if (!isprint(disk_info.firmwareRev[i + 1])) { non_ascii = 1; ; break; }
 			}
+			// t7 or asmedia 
+			if (1 == (disk_info.fips_fw_match = getFwMatch((const char *)disk_info.firmwareRev))) {
+				DtaHexDump(idn, 4096);
+				disk_info.fips_support = *(((uint8_t *)idn) + 4093) & 0x01;
+				disk_info.fips = (*(((uint8_t *)idn) + 4093) & 0x02) >> 1; // bit 0 should AND 0x01 0x02;
+				LOG(D1) << "DtaDiskUSB::identifyNVMeRealtek() Match Phison Nvme FIPS FW Name ; disk_info.fips_support=" << disk_info.fips_support + 0 << " disk_info.fips=" << disk_info.fips + 0;
+
+			}
+			else {
+				LOG(D1) << "DtaDiskUSB::identifyNVMeRealtek() No Match Phison Nvme FIPS FW Name ";
+				disk_info.fips = 0;
+				disk_info.fips_support = 0;
+			}
+
 		}
 		else if (!chkprintable((uint8_t *)idn, 4, 72)) { // check byte 4 to 71(47h) printable ascii , return 1 if find non printable , 0 if all printable 
-			LOG(D1) << "DtaDiskUSB::identifyNVMeASMedia : Find Nvme idfy data format ";
+			LOG(D1) << "DtaDiskUSB::identifyNVMeReltek : Find Nvme idfy data format ";
 			disk_info.asmedia = 1;
 			for (int i = 0; i < sizeof(disk_info.serialNum); i += 2) {
 				disk_info.serialNum[i] = idn->ProductSerial[i];
@@ -746,10 +796,22 @@ void DtaDiskUSB::identifyNVMeRealtek(OPAL_DiskInfo& disk_info) {
 				if (!isprint(disk_info.firmwareRev[i])) { non_ascii = 1; ; break; }
 				if (!isprint(disk_info.firmwareRev[i + 1])) { non_ascii = 1; ; break; }
 			}
+			// asmedia nvme enclosure
+			if (1 == (disk_info.fips_fw_match = getFwMatch((const char *)disk_info.firmwareRev))) {
+				DtaHexDump(idn, 4096);
+				disk_info.fips_support = *(((uint8_t *)idn) + 4093) & 0x01;
+				disk_info.fips = (*(((uint8_t *)idn) + 4093) & 0x02) >> 1; // bit 0 should AND 0x01 0x02;
+				LOG(D1) << "DtaDiskUSB::identifyNVMeRealtek() Match Phison Nvme FIPS FW Name ; disk_info.fips_support=" << disk_info.fips_support + 0 << " disk_info.fips=" << disk_info.fips + 0;
+			}
+			else {
+				LOG(D1) << "DtaDiskUSB::identifyNVMeRealtek()No Match Phison Nvme FIPS FW Name ";
+				disk_info.fips = 0;
+				disk_info.fips_support = 0;
+			}
 		}
 		else { // Possible Nvme enclosure
 			disk_info.enclosure = 1;
-			LOG(D1) << "DtaDiskUSB::identifyNVMeASMedia : Does NOT Find Samsung Portable SSD for Nvme or Nvme Idfy data format";
+			LOG(D1) << "DtaDiskUSB::identifyNVMeRealtek : Does NOT Find Samsung Portable SSD for Nvme or Nvme Idfy data format";
 			USB_INQUIRY_DATA * id = (USB_INQUIRY_DATA *)&identify;
 			IFLOG(D2) DtaHexDump(id, 512);
 			disk_info.devType = DEVICE_TYPE_NVME;
@@ -772,11 +834,24 @@ void DtaDiskUSB::identifyNVMeRealtek(OPAL_DiskInfo& disk_info) {
 				if (!isprint(disk_info.modelNum[i])) { non_ascii = 1; ; break; };
 				if (!isprint(disk_info.modelNum[i + 1])) { non_ascii = 1; ; break; };
 			}
+			// nvme enclosure
+			if (1 == (disk_info.fips_fw_match = getFwMatch((const char *)disk_info.firmwareRev))) {
+				DtaHexDump(id, 512);
+				disk_info.fips_support = *(((uint8_t *)id) + 506) & 0x01;
+				disk_info.fips = (*(((uint8_t *)id) + 506) & 0x02) >> 1;
+				LOG(D1) << "DtaDiskUSB::identifyNVMeRealtek() Match Phison SATA FIPS FW Name ; disk_info.fips_support=" << disk_info.fips_support + 0 << " disk_info.fips=" << disk_info.fips + 0;
+			}
+			else {
+				LOG(D1) << "DtaDiskUSB::identifyNVMeRealtek() No Match Phison SATA FIPS FW Name ";
+				disk_info.fips = 0;
+				disk_info.fips_support = 0;
+			}
 		}
 	}
 	//else {
 	// fail again 
 	//}
+
 	LOG(D) << "Exiting DtaDiskUSB::identifyNVMeRealtek";
 	_aligned_free(identifyResp);
 	return;

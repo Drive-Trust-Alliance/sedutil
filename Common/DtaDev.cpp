@@ -55,6 +55,11 @@ uint8_t DtaDev::isFIPS()
 	LOG(D1) << "Entering DtaDev::isFIPS " << (uint16_t)disk_info.fips;
 	return disk_info.fips;
 }
+uint8_t DtaDev::isFIPS_SUP()
+{
+	LOG(D1) << "Entering DtaDev::isFIPS_SUP " << (uint16_t)disk_info.fips_support;
+	return disk_info.fips_support;
+}
 
 uint8_t DtaDev::isOpalite()
 {

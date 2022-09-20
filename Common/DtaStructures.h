@@ -568,8 +568,10 @@ typedef struct _OPAL_DiskInfo {
     uint8_t modelNum[40];
 	uint8_t null2;  // make model number a cstring
 	uint8_t fips; // FIPS Approval mode
+	uint8_t fips_support; // FIPS Approval mode supported
 	uint8_t asmedia; 
 	uint8_t enclosure;
+	uint8_t fips_fw_match;
 } OPAL_DiskInfo;
 /** Response returned by ATA Identify */
 typedef struct _IDENTIFY_RESPONSE {

@@ -2730,154 +2730,158 @@ uint8_t DtaDevOpal::activate(char * password)
 		return lastRC;
 	}
 
+	if (disk_info.fips_fw_match && disk_info.fips_support) { // ===== FIPS initi 
+		LOG(D1) << "disk_info.fips_fw_match && disk_info.fips_support are set, init FIPS"; 
 	// for FIPS compliacnce mode 
-	
+
 	// setup reset of the available user ( exclude huser and user1 )
 	// disk_info.OPAL20_numUsers
-	srand(time(0));
-	size_t length = 32;
-	string randompassword, userid_str;
-	char userid[8];
-	randompassword = random_string(length);
-	// printf("randompassword=%s\n", randompassword.c_str());
-	if (disk_info.OPAL20_numUsers > 2) {
-		memset(userid, 0, 8);
-		memcpy(userid, "User1", 6);
-		for (int n = 2; n < disk_info.OPAL20_numUsers; n++) { // user 2,3,4,5,6,7,8 up to 18
-			if (n < 10) {
-				userid[4] = n + 48;
-			}
-			else {
-				userid[4] = (n / 10) + 48;
-				userid[5] = (n % 10) + 48;
-			}
-			lastRC = setPassword(newpassword, userid, (char *)randompassword.c_str());
-			if (lastRC) {
-				LOG(D) << userid << " setPassowrd failed" << dev;
-				return lastRC;
+		srand(time(0));
+		size_t length = 32;
+		string randompassword, userid_str;
+		char userid[8];
+		randompassword = random_string(length);
+		// printf("randompassword=%s\n", randompassword.c_str());
+		if (disk_info.OPAL20_numUsers > 2) {
+			memset(userid, 0, 8);
+			memcpy(userid, "User1", 6);
+			for (int n = 2; n < disk_info.OPAL20_numUsers; n++) { // user 2,3,4,5,6,7,8 up to 18
+				if (n < 10) {
+					userid[4] = n + 48;
+				}
+				else {
+					userid[4] = (n / 10) + 48;
+					userid[5] = (n % 10) + 48;
+				}
+				lastRC = setPassword(newpassword, userid, (char *)randompassword.c_str());
+				if (lastRC) {
+					LOG(D) << userid << " setPassowrd failed" << dev;
+					return lastRC;
+				}
 			}
 		}
-	}
 
-	// Now SID has new password 
-	// set AdminSP's Admin1 to 4 password
+		// Now SID has new password 
+		// set AdminSP's Admin1 to 4 password
 
-	vector<uint8_t> hash, table;
-	for (int adminN = 0; adminN < disk_info.OPAL20_numAdmins; adminN++) {
-		//printf("start set AdminSP Admin%d password\n", adminN + 1);
-		LOG(D1) << "Start set password of AdminSP Admin " << adminN + 1 << " " << dev;
+		vector<uint8_t> hash, table;
+		for (int adminN = 0; adminN < disk_info.OPAL20_numAdmins; adminN++) {
+			//printf("start set AdminSP Admin%d password\n", adminN + 1);
+			LOG(D1) << "Start set password of AdminSP Admin " << adminN + 1 << " " << dev;
 
+			session = new DtaSession(this);
+			if (NULL == session) {
+				LOG(E) << "Unable to create session object " << dev;
+				return DTAERROR_OBJECT_CREATE_FAILED;
+			}
+			// no_hash_passwords
+			if (no_hash_passwords) session->dontHashPwd();
+			if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID,
+				newpassword, OPAL_UID::OPAL_SID_UID)) != 0) { // SID NG: SID->ADMIN1  ADMIN1-> seession start fail
+				LOG(E) << "Unable to start session " << adminN + 1 << " " << dev;
+				delete session;
+				return lastRC;
+			}
+			table.clear();
+			table.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+			for (int i = 0; i < 8; i++) {
+				if (i == 7)
+					table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_ADMIN1_ADMINSP][i] + adminN); // Admin2 
+				else
+					table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_ADMIN1_ADMINSP][i]);
+			}
+			hash.clear();
+			// (char *)randompassword.c_str()
+			if (!no_hash_passwords) {
+				DtaHashPwd(hash, (char *)randompassword.c_str(), this);
+			}
+			else {
+				hash.push_back(0xd0);
+				uint8_t len = randompassword.length();
+				// printf("randompassword length=%d", len);
+				hash.push_back(len);
+				for (uint16_t i = 0; i < len; i++) {
+					hash.push_back(randompassword[i]);
+				}
+			}
+			if ((lastRC = setTable(table, OPAL_TOKEN::PIN, hash)) != 0) {
+				LOG(E) << "Unable to set new password of AdminSP Admin" << adminN + 1 << " " << dev;
+				delete session;
+				return lastRC;
+			}
+			delete session;
+			LOG(D1) << "End set password of AdminSP Admin " << adminN + 1 << " " << dev;
+		}
+
+
+		// set random password for LockingSP admin 2 3 4 
+		if (disk_info.OPAL20_numAdmins > 1) {
+			memset(userid, 0, 8);
+			memcpy(userid, "Admin1", 7);
+			for (int n = 2; n <= disk_info.OPAL20_numAdmins; n++) { //admin 2 3 4 }
+				userid[5] = n + 48;
+				//printf("Admin = %d userid=%s \n", n, userid);
+				LOG(D1) << "Start set random password AdminSP Admin" << n << " " << dev;
+				// if ((lastRC = setPassword( (!skip_activate) ? (char *)msid_str.c_str() : password , userid, (char *)randompassword.c_str())) != 0 )
+				if ((lastRC = setPassword(newpassword, userid, (char *)randompassword.c_str())) != 0)
+				{
+					LOG(E) << userid << " AdminSP Admin" << n << " setPassowrd failed " << dev;
+					return lastRC;
+				}
+				LOG(D1) << "End set random password LockinSP admin " << n << " " << dev;
+			}
+		}
+
+		// disable Maker 
+		LOG(D1) << "Start disable Maker";
 		session = new DtaSession(this);
 		if (NULL == session) {
 			LOG(E) << "Unable to create session object " << dev;
 			return DTAERROR_OBJECT_CREATE_FAILED;
 		}
-		// no_hash_passwords
 		if (no_hash_passwords) session->dontHashPwd();
 		if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID,
 			newpassword, OPAL_UID::OPAL_SID_UID)) != 0) { // SID NG: SID->ADMIN1  ADMIN1-> seession start fail
-			LOG(E) << "Unable to start session " << adminN + 1 << " " << dev ;
 			delete session;
 			return lastRC;
 		}
 		table.clear();
 		table.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
 		for (int i = 0; i < 8; i++) {
-			if (i == 7)
-				table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_ADMIN1_ADMINSP][i] + adminN); // Admin2 
-			else
-				table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_ADMIN1_ADMINSP][i]);
+			table.push_back(OPALUID[OPAL_UID::OPAL_MAKER_UID][i]);
 		}
-		hash.clear();
-		// (char *)randompassword.c_str()
-		if (!no_hash_passwords) {
-			DtaHashPwd(hash, (char *)randompassword.c_str(), this);
-		}
-		else {
-			hash.push_back(0xd0);
-			uint8_t len =  randompassword.length();
-			printf("randompassword length=%d", len);
-			hash.push_back(len);
-			for (uint16_t i = 0; i < len ; i++) {
-				hash.push_back(randompassword[i]);
-			}
-		}
-		if ((lastRC = setTable(table, OPAL_TOKEN::PIN, hash)) != 0) {
-			LOG(E) << "Unable to set new password of AdminSP Admin" << adminN + 1 << " " << dev;
+
+		if ((lastRC = setTable(table, (OPAL_TOKEN)0x05, OPAL_TOKEN::OPAL_FALSE)) != 0) {
+			LOG(E) << "Unable to disable Maker " << " " << dev;
 			delete session;
 			return lastRC;
 		}
 		delete session;
-		LOG(D1) << "End set password of AdminSP Admin " <<  adminN + 1 << " " << dev;
-	}
+		LOG(D1) << "End disable Maker";
+
+		// since it is activate, we can set LockingSP admin password
+		// or we can leave it at the end of initial setup 
 
 
-	// set random password for LockingSP admin 2 3 4 
-	if (disk_info.OPAL20_numAdmins > 1) {
-		memset(userid, 0, 8);
-		memcpy(userid, "Admin1", 7);
-		for (int n = 2; n <= disk_info.OPAL20_numAdmins; n++) { //admin 2 3 4 }
-			userid[5] = n + 48;
-			//printf("Admin = %d userid=%s \n", n, userid);
-			LOG(D1) << "Start set random password AdminSP Admin" << n << " " << dev; 
-			// if ((lastRC = setPassword( (!skip_activate) ? (char *)msid_str.c_str() : password , userid, (char *)randompassword.c_str())) != 0 )
-			if ((lastRC = setPassword(newpassword, userid, (char *)randompassword.c_str())) != 0)
-			{
-				LOG(E) << userid << " AdminSP Admin" << n << " setPassowrd failed " << dev;
+		// setup locking range 1 to max user
+
+		for (int i = 1; i < disk_info.OPAL20_numUsers; i++) {
+			// set all lockiing range ( 1 - max locking range )
+			LOG(D1) << "Lockingrange " << i << " enable";
+			if ((lastRC = configureLockingRange(i, DTA_READLOCKINGENABLED + DTA_WRITELOCKINGENABLED, password)) != 0) { // + DTA_DISABLELOCKING
+				LOG(E) << "Failed - unable to configure locking range " << i << " " << dev;
 				return lastRC;
 			}
-			LOG(D1) << "End set random password LockinSP admin " << n << " " << dev;
+			LOG(D1) << "Lockingrange " << i << " ReadLock WriteLock enable";
+			if ((lastRC = setLockingRange(i, OPAL_LOCKINGSTATE::READWRITE, password)) != 0) {
+				LOG(E) << "Failed - unable to set locking range RW " << i << " " << dev;
+				return lastRC;
+			}
 		}
+	} // ===== end of FIPS init ???
+	else {
+		LOG(D1) << "disk_info.fips_fw_match && disk_info.fips_support NOT set, NO init FIPS";
 	}
-
-	// disable Maker 
-	LOG(D1) << "Start disable Maker"; 
-	session = new DtaSession(this);
-	if (NULL == session) {
-		LOG(E) << "Unable to create session object " << dev;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	if (no_hash_passwords) session->dontHashPwd();
-	if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID,
-		newpassword, OPAL_UID::OPAL_SID_UID)) != 0) { // SID NG: SID->ADMIN1  ADMIN1-> seession start fail
-		delete session;
-		return lastRC;
-	}
-	table.clear();
-	table.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	for (int i = 0; i < 8; i++) {
-		table.push_back(OPALUID[OPAL_UID::OPAL_MAKER_UID][i]);
-	}
-
-	if ((lastRC = setTable(table, (OPAL_TOKEN)0x05, OPAL_TOKEN::OPAL_FALSE)) != 0) {
-		LOG(E) << "Unable to disable Maker " << " " << dev;
-		delete session;
-		return lastRC;
-	}
-	delete session;
-	LOG(D1) << "End disable Maker";
-
-	// since it is activate, we can set LockingSP admin password
-    // or we can leave it at the end of initial setup 
-
-
-	// setup locking range 1 to max user
-
-	for (int i = 1; i < disk_info.OPAL20_numUsers; i++) {
-		// set all lockiing range ( 1 - max locking range )
-		LOG(I) << "Lockingrange " << i << " enable";
-		if ((lastRC = configureLockingRange(i, DTA_READLOCKINGENABLED + DTA_WRITELOCKINGENABLED , password)) != 0) { // + DTA_DISABLELOCKING
-			LOG(E) << "Failed - unable to configure locking range " << i << " " << dev;
-			return lastRC;
-		}
-		LOG(I) << "Lockingrange " << i << " ReadLock WriteLock enable";
-		if ((lastRC = setLockingRange(i, OPAL_LOCKINGSTATE::READWRITE, password)) != 0) {
-			LOG(E) << "Failed - unable to set locking range RW " << i << " " << dev;
-			return lastRC;
-		}
-
-	}
-
 	return lastRC;
 }
 

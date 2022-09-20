@@ -57,6 +57,7 @@
     <ClInclude Include="..\DtaDiskATA.h" />
     <ClInclude Include="..\DtaDiskNvme.h" />
     <ClInclude Include="..\DtaDiskUSB.h" />
+    <ClInclude Include="..\fips.h" />
     <ClInclude Include="..\IntelRST.h" />
     <ClInclude Include="..\nvme.h" />
     <ClInclude Include="..\nvmeIoctl.h" />
@@ -94,6 +95,7 @@
     <ClCompile Include="..\DtaDiskATA.cpp" />
     <ClCompile Include="..\DtaDiskNvme.cpp" />
     <ClCompile Include="..\DtaDiskUSB.cpp" />
+    <ClCompile Include="..\fips.cpp" />
     <ClCompile Include="..\uuid.cpp" />
   </ItemGroup>
   <ItemGroup>

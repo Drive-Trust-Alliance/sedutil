@@ -42,6 +42,7 @@ public:
 	virtual ~DtaDev();
 	uint8_t isRuby();
 	uint8_t isFIPS();
+	uint8_t isFIPS_SUP();
 	/** Does the device conform to the OPALITE SSC */
 	uint8_t isOpalite();
 	/** Does the device conform to the PYRITE SSC */

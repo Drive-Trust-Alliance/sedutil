@@ -32,6 +32,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaStructures.h"
 #include "DtaHexDump.h"
 #include "nvme.h"
+#include "fips.h""
 //#include "nvmeIoctl.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -84,8 +85,8 @@ DWORD GetIDFY(HANDLE hDev, PStorageQueryWithBuffer Qry)
 	Qry->ProtocolSpecific.DataType = NVMeDataTypeIdentify;
 	Qry->ProtocolSpecific.ProtocolDataOffset = sizeof(STORAGE_PROTOCOL_SPECIFIC_DATA);
 	Qry->ProtocolSpecific.ProtocolDataLength  = IO_BUFFER_LENGTH;
-		Qry->ProtocolSpecific.ProtocolDataRequestValue = 1 ; // 0-511, only 1 OK other fail ;  1:0-> OK; 2:0->NG 0:0 -> NG cdw10 maybe CNS value either 0 or 1 ; cdw0 = opcode = 06
-		Qry->ProtocolSpecific.ProtocolDataRequestSubValue = 0 ; // nsid 0 - 0ffffh all OK , this is don't care value
+	Qry->ProtocolSpecific.ProtocolDataRequestValue = 1 ; // 0-511, only 1 OK other fail ;  1:0-> OK; 2:0->NG 0:0 -> NG cdw10 maybe CNS value either 0 or 1 ; cdw0 = opcode = 06
+	Qry->ProtocolSpecific.ProtocolDataRequestSubValue = 0 ; // nsid 0 - 0ffffh all OK , this is don't care value
 	Qry->Query.PropertyId = StorageAdapterProtocolSpecificProperty;
 	Qry->Query.QueryType = PropertyStandardQuery;
 	// from smartmontools project os_win32.cpp
@@ -108,6 +109,8 @@ DWORD GetIDFY(HANDLE hDev, PStorageQueryWithBuffer Qry)
 			//dumphex(&Qry , sizeof(Qry));
 			LOG(D) << "DeviceIoControl IOCTL_STORAGE_QUERY_PROPERTY OK";
 			DtaHexDump(&Qry, 128);
+			LOG(I) << "Qry->Buffer[IO_BUFFER_LENGTH] : ";
+			DtaHexDump(Qry->Buffer, 4096); 
 		}
 	}
 	else
@@ -378,7 +381,7 @@ uint8_t DtaDiskNVME::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID, v
 
 void DtaDiskNVME::identify(OPAL_DiskInfo& disk_info)
 {
-    LOG(D1) << "Entering DtaDiskNVME::identify()";
+    LOG(D1) << "Entering DtaDiskNVME::identify()"; 
 	vector<uint8_t> nullz(4096, 0x00);
     void * identifyResp = NULL;
 	/* NVME identify response
@@ -394,7 +397,10 @@ void DtaDiskNVME::identify(OPAL_DiskInfo& disk_info)
 #define IDENTIFY_RESPONSE ADMIN_IDENTIFY_CONTROLLER
 
 	identifyResp = _aligned_malloc(sizeof(StorageQueryWithBuffer), IO_BUFFER_ALIGNMENT);
-    if (NULL == identifyResp) return;
+	if (NULL == identifyResp) {
+		LOG(E) << "DtaDiskNVME::identify allocate memory error";
+		return ;
+	}
     memset(identifyResp, 0, IO_BUFFER_LENGTH);
 	StorageQueryWithBuffer * Q; 
 	///////////////////////////////////////////////////////////////
@@ -407,11 +413,11 @@ void DtaDiskNVME::identify(OPAL_DiskInfo& disk_info)
 			DtaHexDump(identifyResp, 128);
 			LOG(D1) << "Q->ProtocolSpecific ";
 			DtaHexDump(&(Q->ProtocolSpecific), 128);
-
 			DtaHexDump(&(Q->Query), 128);
 			LOG(D1) << "Q->Buffer ";
-			DtaHexDump(Q->Buffer, 128);
+			DtaHexDump(Q->Buffer, 4096);
 		}
+
 	}
 	else {
 		// try Intel RST before claim fail 
@@ -433,7 +439,19 @@ void DtaDiskNVME::identify(OPAL_DiskInfo& disk_info)
 			for (int i = 0; i < sizeof(disk_info.modelNum); i += 1) {
 				disk_info.modelNum[i] = id->N.Model[i];
 			}
-			disk_info.fips = *(((uint8_t *)identifyResp) + 4093) & 0x02 ;
+			if (1 == (disk_info.fips_fw_match = getFwMatch((const char *)disk_info.firmwareRev))) {
+				DtaHexDump(id, 4096);
+				disk_info.fips_support = *(((uint8_t *)id) + 4093) & 0x01;
+				disk_info.fips = (*(((uint8_t *)id) + 4093) & 0x02) >> 1; // bit 0 should AND 0x01 0x02;
+				LOG(D1) << "Match Phison Nvme FIPS FW Name ; disk_info.fips_support=" << disk_info.fips_support + 0 << " disk_info.fips=" << disk_info.fips + 0;
+
+			}
+			else {
+				LOG(D1) << "No Match Phison Nvme FIPS FW Name ";
+				disk_info.fips = 0;
+				disk_info.fips_support = 0;
+			}
+			//disk_info.fips = *(((uint8_t *)identifyResp) + 4093) & 0x02 ;
 
 			_aligned_free(identifyResp);
 			return;
@@ -459,7 +477,17 @@ void DtaDiskNVME::identify(OPAL_DiskInfo& disk_info)
 	for (int i = 0; i < sizeof(disk_info.modelNum); i += 1) {
 		disk_info.modelNum[i] = id->modelNum[i];
 	}
-	disk_info.fips = *(((uint8_t *)identifyResp) + 4093) & 0x02;
+	if (1 == (disk_info.fips_fw_match = getFwMatch((const char *)disk_info.firmwareRev))) {
+		DtaHexDump(id, 4096);
+		disk_info.fips_support = *(((uint8_t *)id) + 4093) & 0x01;
+		disk_info.fips = (*(((uint8_t *)id) + 4093) & 0x02) >> 1; // bit 0 should AND 0x01 0x02;
+		LOG(D1) << "DtaDiskNVME::identify Match Phison Nvme FIPS FW Name ; disk_info.fips_support=" << disk_info.fips_support + 0 << " disk_info.fips=" << disk_info.fips + 0; 
+	}
+	else {
+		LOG(D1) << "DtaDiskNVME::identify No Match Phison Nvme FIPS FW Name ";
+		disk_info.fips = 0;
+		disk_info.fips_support = 0;
+	}
 	_aligned_free(identifyResp);
 	return;
 }

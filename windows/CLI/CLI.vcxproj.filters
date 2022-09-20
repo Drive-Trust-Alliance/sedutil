@@ -156,6 +156,9 @@
     <ClInclude Include="..\..\linux\VersionPBA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\fips.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\sedutil.cpp">
@@ -243,6 +246,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\regtry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fips.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
