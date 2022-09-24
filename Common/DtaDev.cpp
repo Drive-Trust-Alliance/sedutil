@@ -31,6 +31,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaStructures.h"
 #include "DtaEndianFixup.h"
 #include "DtaHexDump.h"
+#include "DtaSession.h"
+#include "DtaCommand.h"
 
 #include "ob.h"
 
@@ -606,4 +608,39 @@ void DtaDev::puke()
 
 	if (disk_info.Unknown)
 		cout << "**** " << (uint16_t)disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
+}
+
+uint8_t DtaDev::WithSession(std::function<uint8_t(void)>startSessionFn,
+                            std::function<uint8_t(void)>sessionBodyFn) {
+    session = new DtaSession(this);
+    if (NULL == session) {
+        LOG(E) << "Unable to create session object " << dev;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    
+    
+    uint8_t lastRC;
+
+    if ((lastRC = startSessionFn()) == 0) {
+        lastRC = sessionBodyFn();
+    }
+            
+    delete session;
+    return lastRC;
+    
+}
+
+uint8_t DtaDev::WithSessionCommand(std::function<uint8_t(void)>startSessionFn,
+                                   std::function<void(DtaCommand * command)>commandWriterFn) {
+   return WithSession(startSessionFn, [this, commandWriterFn]()->uint8_t{
+        DtaCommand *command = new DtaCommand();
+        if (NULL == command) {
+            LOG(E) << "Unable to create command object " << dev;
+            return DTAERROR_OBJECT_CREATE_FAILED;
+        }
+        commandWriterFn(command);
+        uint8_t rc = session->sendCommand(command, response);
+        delete command;
+        return rc;
+    });
 }

@@ -61,6 +61,12 @@ public:
          */
 	uint8_t initialSetup(char * password) ;
 
+    /** User command to prepare the device for management by sedutil.
+     * Specific to the SSC that the device supports
+     * @param HostChallenge the HostChallenge that is to be assigned to the SSC master entities
+     */
+    uint8_t initialSetup(vector<uint8_t>HostChallenge);
+
     /** User command to prepare the drive for Single User Mode and rekey a SUM locking range.
          * @param lockingrange locking range number to enable
          * @param start LBA to start locking range
@@ -79,6 +85,14 @@ public:
          */
 	uint8_t setSIDPassword(char * oldpassword, char * newpassword,
                            uint8_t hasholdpwd = 1, uint8_t hashnewpwd = 1) ;
+
+    /** Set the SID password.
+     * @param oldHostChallenge  current SID host challenge
+     * @param newHostChallenge  value host challenge is to be changed to
+     * @note neither value is hashed
+     */
+    uint8_t setSIDPassword(vector<uint8_t> oldHostChallenge,
+                                   vector<uint8_t> newHostChallenge);
 
     /** Set the password of a locking SP user.
          * @param password  current password
@@ -116,8 +130,14 @@ public:
          * @param lockingstate  the locking state to set
          * @param Admin1Password password of administrative authority for locking range
          */
-	uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
-                            char * Admin1Password) ;
+	uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate, char * Admin1Password) ;
+    /** User command to manipulate the state of a locking range.
+     * RW|RO|LK are the supported states @see OPAL_LOCKINGSTATE
+     * @param lockingrange locking range number
+     * @param lockingstate desired locking state (see above)
+     * @param Admin1HostChallenge  host challenge -- unsalted password of the locking administrative authority
+     */
+    uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate, vector<uint8_t> Admin1HostChallenge);
 
     /** Change the locking state of a locking range in Single User Mode
          * @param lockingrange The number of the locking range (0 = global)
@@ -134,6 +154,14 @@ public:
          */
 	uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled,
                                   char * password) ;
+
+    /** User command to enable/disable a locking range.
+     * RW|RO|LK are the supported states @see OPAL_LOCKINGSTATE
+     * @param lockingrange locking range number
+     * @param enabled boolean true = enabled, false = disabled
+     * @param HostChallenge HostChallenge of the locking administrative authority
+     */
+uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint8_t> HostChallenge);
 
     /** Setup a locking range.  Initialize a locking range, set its start
          *  LBA and length, initialize it as unlocked with locking disabled.
@@ -174,16 +202,34 @@ public:
 
     /** Primitive to set the MBRDone flag.
          * @param state 0 or 1
-         * @param Admin1Password Locking SP authority with access to flag
+         * @param Admin1Password password of the locking sp administrative authority
          */
     uint8_t setMBRDone(uint8_t state, char * Admin1Password) ;
+    
+    /** Primitive to set the MBRDone flag.
+         * @param state 0 or 1
+         * @param Admin1HostChallenge host challenge of the locking sp administrative authority
+         */
+    uint8_t setMBRDone(uint8_t state, vector<uint8_t> Admin1HostChallenge) ;
+    
+
+    
     uint8_t TCGreset(uint8_t state);
 
+    
+    
     /** Primitive to set the MBREnable flag.
          * @param state 0 or 1
          * @param Admin1Password Locking SP authority with access to flag
          */
     uint8_t setMBREnable(uint8_t state, char * Admin1Password) ;
+
+    /** Primitive to set the MBREnable flag.
+     * @param state 0 or 1
+     * @param Admin1HostChallenge  host challenge -- unsalted password of the locking administrative authority
+     */
+    uint8_t setMBREnable(uint8_t state, vector<uint8_t> Admin1HostChallenge);
+
 
     /** enable a locking sp user.
          * @param password password of locking sp administrative authority
@@ -192,11 +238,29 @@ public:
     uint8_t enableUser(char * password, char * userid, OPAL_TOKEN status = OPAL_TOKEN::OPAL_TRUE) ;
     uint8_t enableUser(uint8_t state, char * password, char * userid) ;
     uint8_t enableUserRead(uint8_t state, char * password, char * userid);
+    
+    /** enable a locking sp user.
+     * @param state 0 or 1
+     * @param HostChallenge HostChallenge of locking sp administrative authority
+     * @param userid  the user to be enabled
+     */
+    uint8_t enableUser(uint8_t state, vector<uint8_t> HostChallenge, char * userid);
+
+    /** Enable locking on the device
+     * @param state 0 or 1
+     * @param HostChallenge HostChallenge of the admin sp SID authority
+     */
+    uint8_t enableUserRead(uint8_t state, vector<uint8_t> HostChallenge, char * userid);
 
     /** Enable locking on the device
          * @param password password of the admin sp SID authority
          */
-	 uint8_t activateLockingSP(char * password) ;
+     uint8_t activateLockingSP(char * password) ;
+
+    /** Enable locking on the device
+         * @param HostChallenge HostChallenge of the admin sp SID authority
+         */
+     uint8_t activateLockingSP(vector<uint8_t>HostChallenge);
 
     /** Enable locking on the device in Single User Mode
 	 * @param lockingrange locking range to activate in SUM
@@ -214,6 +278,11 @@ public:
          * @param newpassword  new password for SID and locking SP admins
          */
     uint8_t takeOwnership(char * newpassword) ;
+
+    /** Change the SID HostChallenge from its MSID default
+         * @param HostChallenge  new HostChallenge for SID and locking SP admins
+         */
+    uint8_t takeOwnership(vector<uint8_t> HostChallenge);
 
     /** Reset the Locking SP to its factory default condition
          * ERASES ALL DATA!

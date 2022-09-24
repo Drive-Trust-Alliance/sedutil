@@ -40,31 +40,57 @@ public:
     /** start an anonymous session 
      * @param SP the Security Provider to start the session with */
     uint8_t start(OPAL_UID SP);    
-    /** Start an authenticated session with any user(1-8) or admint (OPAL only) 
-     * @param SP the securitly provider to start the session with
-     * @param HostChallenge the password to start the session
-     * @param SignAuthority the Signing authority (in a simple session this is the user)
-     *  */    
-#ifdef MULTISTART
-	uint8_t unistart(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority);
-#endif
-	/** Start an authenticated session (OPAL only)
-	* @param SP the securitly provider to start the session with
-	* @param HostChallenge the password to start the session
-	* @param SignAuthority the Signing authority (in a simple session this is the user)
-	*/
+    
+    
+    
+    /** Start an authenticated session (OPAL only)
+    * @param SP the securitly provider to start the session with
+    * @param HostChallenge the password to start the session
+    * @param SignAuthority the Signing authority (in a simple session this is the user)
+    */
     uint8_t start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority);
-    /** Start an authenticated session (OPAL only) 
+    
+    
+    
+    /** Start an authenticated session (OPAL only)
+    * @param SP the securitly provider to start the session with
+    * @param HostChallenge the password to start the session
+    * @param SignAuthority the Signing authority (in a simple session this is the user)
+    */
+    uint8_t start(OPAL_UID SP, vector<uint8_t> HostChallenge, OPAL_UID SignAuthority);
+    
+
+    
+    /** Start an authenticated session (OPAL only)
      * @param SP the securitly provider to start the session with
      * @param HostChallenge the password to start the session
      * @param SignAuthority the Signing authority (in a simple session this is the user)
      *  */
     uint8_t start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority);
-    /** Authenticate an already started session 
+
+    
+    /** Start an authenticated session (OPAL only)
+     * @param SP the securitly provider to start the session with
+     * @param HostChallenge the password to start the session
+     * @param SignAuthority the Signing authority (in a simple session this is the user)
+     *  */
+    uint8_t start(OPAL_UID SP, vector<uint8_t>  HostChallenge, vector<uint8_t> SignAuthority);
+
+
+    /** Authenticate an already started session
      * @param Authority the authority to authenticate
      * @param Challenge the password
      */
     uint8_t authenticate(vector<uint8_t> Authority, char * Challenge);
+
+
+    /** Authenticate an already started session
+     * @param Authority the authority to authenticate
+     * @param Challenge the host challenge, already hashed if desired
+     */
+    uint8_t authenticate(vector<uint8_t> Authority, vector<uint8_t>  Challenge);
+
+
     /** assign the security protocol to be used in the sessiion
      * @param value the security protocol number 
      */
@@ -89,7 +115,23 @@ public:
 private:
     /** Default constructor, private should never be called */
     DtaSession();
-    /** return a string explaining the method status 
+#ifdef MULTISTART
+    /** Start an authenticated session with any user(1-8) or admint (OPAL only)
+     * @param SP the securitly provider to start the session with
+     * @param HostChallenge the password to start the session
+     * @param SignAuthority the Signing authority (in a simple session this is the user)
+     *  */
+    uint8_t unistart(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority);
+
+    /** Start an authenticated session with any user(1-8) or admint (OPAL only)
+     * @param SP the securitly provider to start the session with
+     * @param HostChallenge the password to start the session
+     * @param SignAuthority the Signing authority (in a simple session this is the user)
+     *  */
+
+    uint8_t unistart(OPAL_UID SP, vector<uint8_t> HostChallenge, vector<uint8_t> SignAuthority);
+#endif
+    /** return a string explaining the method status
      * @param status the method status code returned 
      */
     char * methodStatus(uint8_t status);

@@ -51,13 +51,15 @@ public:
     /** Is the Locking SP enabled */
     uint8_t LockingEnabled();
     /** Returns the Firmware revision reported by the identify command */
-    char *getVendorName();
+    const char *getVendorName();
     /** Returns the Vendor Name reported by the Identify command */
-    char *getFirmwareRev();
+    const char *getFirmwareRev();
     /** Returns the Model Number reported by the Identify command */
-    char *getModelNum();
+    const char *getModelNum();
     /** Returns the Serial Number reported by the Identify command */
-    char *getSerialNum();
+    const char *getSerialNum();
+    /** Returns the BSD Name */
+    const char *getBSDName();
     /* What type of disk attachment is used */
     DTA_DEVICE_TYPE getDevType();
 

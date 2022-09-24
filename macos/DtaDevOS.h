@@ -50,6 +50,7 @@ public:
               io_registry_entry_t driverService,
               io_connect_t connect);
 
+    
 
     /** OS specific routine to identify the device and fill out the device information struct
      */
@@ -67,6 +68,12 @@ public:
                     void * buffer, uint32_t bufferlen);
     /** A static class to scan for supported drives */
     static int diskScan();
+    
+    const char * serialNumber() { return tPer->getSerialNum();}
+    const char * bsdName() { return tPer->getBSDName();}
+    const char * modelNumber() { return tPer->getModelNum();}
+    const char * firmwareRevision() { return tPer->getFirmwareRev();}
+
 protected:
     /** OS specific command to Wait for specified number of milliseconds 
      * @param ms  number of milliseconds to wait

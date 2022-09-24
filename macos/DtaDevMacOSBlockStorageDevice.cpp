@@ -294,11 +294,26 @@ std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enum
         
         std::vector<const void *>keys;
         std::vector<const void *>values;
+        DtaDevMacOSBlockStorageDevice * device;
+        CFDictionaryRef protocolCharacteristics;
+        CFStringRef physicalInterconnectLocation;
         
         deviceProperties = copyProperties( aBlockStorageDevice );
         if (NULL == deviceProperties) {
             goto finishedWithDevice;
         }
+        protocolCharacteristics = GetDict(deviceProperties, "Protocol Characteristics");
+        if (NULL == protocolCharacteristics) {
+            goto finishedWithDevice;
+        }
+        physicalInterconnectLocation = GetString(protocolCharacteristics, "Physical Interconnect Location");
+        if (NULL == physicalInterconnectLocation ||
+            CFEqual(physicalInterconnectLocation, CFSTR("File"))) {
+            goto finishedWithDevice;
+        }
+            
+                
+
         keys.push_back( CFSTR("device"));
         values.push_back( deviceProperties);
 
@@ -337,8 +352,10 @@ std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enum
         pdi = static_cast <DTA_DEVICE_INFO *> (malloc(sizeof(DTA_DEVICE_INFO)));
         bzero(pdi, sizeof(DTA_DEVICE_INFO));
         
-        devices.push_back( getBlockStorageDevice(aBlockStorageDevice, entryNameStr, bsdNameStr, allProperties, pdi) );
-        
+        device =
+            getBlockStorageDevice(aBlockStorageDevice, entryNameStr, bsdNameStr, allProperties, pdi);
+        devices.push_back( device );
+
         IOObjectRelease(tPer);
 
     finishedWithMedia:
@@ -505,21 +522,25 @@ uint8_t DtaDevMacOSBlockStorageDevice::LockingEnabled()
 {
     return pdevice_info->Locking_lockingEnabled;
 }
-char *DtaDevMacOSBlockStorageDevice::getVendorName()
+const char * DtaDevMacOSBlockStorageDevice::getVendorName()
 {
-    return (char *)&pdevice_info->vendorName;
+    return (const char *)&pdevice_info->vendorName;
 }
-char *DtaDevMacOSBlockStorageDevice::getFirmwareRev()
+const char * DtaDevMacOSBlockStorageDevice::getFirmwareRev()
 {
-    return (char *)&pdevice_info->firmwareRev;
+    return (const char *)&pdevice_info->firmwareRev;
 }
-char *DtaDevMacOSBlockStorageDevice::getModelNum()
+const char * DtaDevMacOSBlockStorageDevice::getModelNum()
 {
-    return (char *)&pdevice_info->modelNum;
+    return (const char *)&pdevice_info->modelNum;
 }
-char *DtaDevMacOSBlockStorageDevice::getSerialNum()
+const char * DtaDevMacOSBlockStorageDevice::getSerialNum()
 {
-    return (char *)&pdevice_info->serialNum;
+    return (const char *)&pdevice_info->serialNum;
+}
+const char * DtaDevMacOSBlockStorageDevice::getBSDName()
+{
+    return (const char *)bsdName.c_str();
 }
 
 DTA_DEVICE_TYPE DtaDevMacOSBlockStorageDevice::getDevType()

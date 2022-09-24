@@ -30,8 +30,8 @@
             filePath = "../../Common/DtaDev.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "112"
-            endingLineNumber = "112"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
             landmarkName = "DtaDev::isOpal2()"
             landmarkType = "7">
          </BreakpointContent>
@@ -81,22 +81,6 @@
             startingLineNumber = "174"
             endingLineNumber = "174"
             landmarkName = "DtaBlockStorageDevice::enumerateBlockStorageDevices()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "D74F1F0E-AA3B-479C-B6F0-E06E1F5E2B18"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../DtaDevMacOSTPer.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "85"
-            endingLineNumber = "85"
-            landmarkName = "DtaDevMacOSTPer::getTPer(aBlockStorageDevice, entryName, bsdName, tPerProperties, properties, pdi)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -160,6 +144,21 @@
                   endingLineNumber = "150"
                   offsetFromSymbolStart = "536">
                </Location>
+               <Location
+                  uuid = "AE20DFCF-7A16-4F55-AD9A-D179A561DE42 - b1061c256541bf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(unsigned int)"
+                  moduleName = "sedutil"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/scott/Drive%20Trust%20Alliance/DTA/submodules/FH/sedutil/macos/DtaDevMacOSBlockStorageDevice.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "150"
+                  endingLineNumber = "150"
+                  offsetFromSymbolStart = "56">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -177,6 +176,22 @@
             endingLineNumber = "106"
             landmarkName = "FillDeviceInfoFromProperties(deviceProperties, mediaProperties, disk_info)"
             landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "86354E1F-EDE7-450A-AEBD-24755A149B9B"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../DtaDevMacOSBlockStorageDevice.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "310"
+            endingLineNumber = "310"
+            landmarkName = "DtaDevMacOSBlockStorageDevice::enumerateBlockStorageDevices()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -44,17 +44,40 @@ DtaSession::start(OPAL_UID SP)
     return (start(SP, NULL, OPAL_UID::OPAL_UID_HEXFF));
 }
 
-uint8_t 
+
+
+uint8_t
 DtaSession::start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority)
 {
-	LOG(D1) << "Entering DtaSession::startSession OPl_UID";
-	vector<uint8_t> auth;
-	auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	for (int i = 0; i < 8; i++) {
-		auth.push_back(OPALUID[SignAuthority][i]);
-	}
-	return(start(SP, HostChallenge, auth));
+    LOG(D1) << "Entering DtaSession::startSession OPl_UID";
+    vector<uint8_t> auth;
+    auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+    for (int i = 0; i < 8; i++) {
+        auth.push_back(OPALUID[SignAuthority][i]);
+    }
+    return(start(SP, HostChallenge, auth));
 }
+
+
+
+
+
+
+uint8_t
+DtaSession::start(OPAL_UID SP, vector<uint8_t> HostChallenge, OPAL_UID SignAuthority)
+{
+    LOG(D1) << "Entering DtaSession::startSession OPl_UID";
+    vector<uint8_t> auth;
+    auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+    for (int i = 0; i < 8; i++) {
+        auth.push_back(OPALUID[SignAuthority][i]);
+    }
+    return(start(SP, HostChallenge, auth));
+}
+
+
+
+
 uint8_t DtaSession::authuser() {
 	return sessionauth;
 }
@@ -62,146 +85,420 @@ uint8_t DtaSession::authuser() {
 uint8_t
 DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority)
 {
-	vector <uint8_t> auth;
-	if ((lastRC = unistart(SP, HostChallenge, SignAuthority)) == 0) {
-		sessionauth = 0;
-		return 0;
-	}
-	else {
-		for (uint8_t i = 1; i < 9; i++) {
-			// { 0x00, 0x00, 0x00, 0x09, 0x00, 0x03, 0x00, 0x01 }, /**< USER1 */
-			auth.clear();
-			auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-			auth.push_back(0x00);
-			auth.push_back(0x00);
-			auth.push_back(0x00);
-			auth.push_back(0x09);
-			auth.push_back(0x00);
-			auth.push_back(0x03);
-			auth.push_back(0x00);
-			auth.push_back(i);
-			if ((lastRC = unistart(SP, HostChallenge, auth)) == 0) {
-				sessionauth = i;
-				return 0;
-			}
-		}
+    vector <uint8_t> auth;
+    if ((lastRC = unistart(SP, HostChallenge, SignAuthority)) == 0) {
+        sessionauth = 0;
+        return 0;
+    }
+    else {
+        for (uint8_t i = 1; i < 9; i++) {
+            // { 0x00, 0x00, 0x00, 0x09, 0x00, 0x03, 0x00, 0x01 }, /**< USER1 */
+            auth.clear();
+            auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+            auth.push_back(0x00);
+            auth.push_back(0x00);
+            auth.push_back(0x00);
+            auth.push_back(0x09);
+            auth.push_back(0x00);
+            auth.push_back(0x03);
+            auth.push_back(0x00);
+            auth.push_back(i);
+            if ((lastRC = unistart(SP, HostChallenge, auth)) == 0) {
+                sessionauth = i;
+                return 0;
+            }
+        }
 
-	}
-	return lastRC;
+    }
+    return lastRC;
 }
+
+uint8_t
+DtaSession::start(OPAL_UID SP, vector<uint8_t> HostChallenge, vector<uint8_t> SignAuthority)
+{
+    vector <uint8_t> auth;
+    if ((lastRC = unistart(SP, HostChallenge, SignAuthority)) == 0) {
+        sessionauth = 0;
+        return 0;
+    }
+    else {
+        for (uint8_t i = 1; i < 9; i++) {
+            // { 0x00, 0x00, 0x00, 0x09, 0x00, 0x03, 0x00, 0x01 }, /**< USER1 */
+            auth.clear();
+            auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+            auth.push_back(0x00);
+            auth.push_back(0x00);
+            auth.push_back(0x00);
+            auth.push_back(0x09);
+            auth.push_back(0x00);
+            auth.push_back(0x03);
+            auth.push_back(0x00);
+            auth.push_back(i);
+            if ((lastRC = unistart(SP, HostChallenge, auth)) == 0) {
+                sessionauth = i;
+                return 0;
+            }
+        }
+
+    }
+    return lastRC;
+}
+
+
+
 uint8_t
 DtaSession::unistart(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority)
-#else
-uint8_t
-DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority)
-#endif
 {
     LOG(D1) << "Entering DtaSession::startSession vector";
-	vector<uint8_t> hash;
-	lastRC = 0;
+    vector<uint8_t> hash;
+    lastRC = 0;
 
     DtaCommand *cmd = new DtaCommand();
-	if (NULL == cmd) {
-		LOG(E) << "Unable to create session object ";
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
+    if (NULL == cmd) {
+        LOG(E) << "Unable to create session object ";
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
     DtaResponse response;
     cmd->reset(OPAL_UID::OPAL_SMUID_UID, OPAL_METHOD::STARTSESSION);
     cmd->addToken(OPAL_TOKEN::STARTLIST); // [  (Open Bracket)
     cmd->addToken(105); // HostSessionID : sessionnumber
     cmd->addToken(SP); // SPID : SP
     cmd->addToken(OPAL_TINY_ATOM::UINT_01); // write
-	if ((NULL != HostChallenge) && (!d->isEprise())) {
-		cmd->addToken(OPAL_TOKEN::STARTNAME);
-		cmd->addToken(OPAL_TINY_ATOM::UINT_00);
-		if (hashPwd) {
-			hash.clear();
-			DtaHashPwd(hash, HostChallenge, d);
-			cmd->addToken(hash);
-		} else {
-			cmd->addToken(HostChallenge);
-		}
-		cmd->addToken(OPAL_TOKEN::ENDNAME);
-		cmd->addToken(OPAL_TOKEN::STARTNAME);
-		cmd->addToken(OPAL_TINY_ATOM::UINT_03);
-		cmd->addToken(SignAuthority);
-		cmd->addToken(OPAL_TOKEN::ENDNAME);
-	}
+    if ((NULL != HostChallenge) && (!d->isEprise())) {
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken(OPAL_TINY_ATOM::UINT_00);
+        if (hashPwd) {
+            hash.clear();
+            DtaHashPwd(hash, HostChallenge, d);
+            cmd->addToken(hash);
+        } else {
+            cmd->addToken(HostChallenge);
+        }
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken(OPAL_TINY_ATOM::UINT_03);
+        cmd->addToken(SignAuthority);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+    }
  
-	// w/o the timeout the session may wedge and require a power-cycle,
-	// e.g., when interrupted by ^C. 60 seconds is inconveniently long,
-	// but revert may require that long to complete.
-	if (d->isEprise()) {
-		cmd->addToken(OPAL_TOKEN::STARTNAME);
-		cmd->addToken("SessionTimeout");
-		cmd->addToken(60000);
-		cmd->addToken(OPAL_TOKEN::ENDNAME);
-	}
+    // w/o the timeout the session may wedge and require a power-cycle,
+    // e.g., when interrupted by ^C. 60 seconds is inconveniently long,
+    // but revert may require that long to complete.
+    if (d->isEprise()) {
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken("SessionTimeout");
+        cmd->addToken(60000);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+    }
 
     cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
-	if ((lastRC = sendCommand(cmd, response)) != 0) {
-		LOG(E) << "Session start failed rc = " << (int)lastRC;
-		delete cmd;
-		return lastRC;
-	}  
+    if ((lastRC = sendCommand(cmd, response)) != 0) {
+        LOG(E) << "Session start failed rc = " << (int)lastRC;
+        delete cmd;
+        return lastRC;
+    }
     // call user method SL HSN TSN EL EOD SL 00 00 00 EL
     //   0   1     2     3  4   5   6  7   8
     HSN = SWAP32(response.getUint32(4));
     TSN = SWAP32(response.getUint32(5));
-	delete cmd;
-	if ((NULL != HostChallenge) && (d->isEprise())) {
-		return(authenticate(SignAuthority, HostChallenge));
-	}
+    delete cmd;
+    if ((NULL != HostChallenge) && (d->isEprise())) {
+        return(authenticate(SignAuthority, HostChallenge));
+    }
     return 0;
 }
+
+
+
+uint8_t
+DtaSession::unistart(OPAL_UID SP, vector<uint8_t> HostChallenge, vector<uint8_t> SignAuthority)
+{
+    LOG(D1) << "Entering DtaSession::startSession vector";
+    vector<uint8_t> hash;
+    lastRC = 0;
+
+    DtaCommand *cmd = new DtaCommand();
+    if (NULL == cmd) {
+        LOG(E) << "Unable to create session object ";
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    DtaResponse response;
+    cmd->reset(OPAL_UID::OPAL_SMUID_UID, OPAL_METHOD::STARTSESSION);
+    cmd->addToken(OPAL_TOKEN::STARTLIST); // [  (Open Bracket)
+    cmd->addToken(105); // HostSessionID : sessionnumber
+    cmd->addToken(SP); // SPID : SP
+    cmd->addToken(OPAL_TINY_ATOM::UINT_01); // write
+    if ((0 != HostChallenge.size()) && (!d->isEprise())) {
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken(OPAL_TINY_ATOM::UINT_00);
+        cmd->addToken(HostChallenge);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken(OPAL_TINY_ATOM::UINT_03);
+        cmd->addToken(SignAuthority);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+    }
+ 
+    // w/o the timeout the session may wedge and require a power-cycle,
+    // e.g., when interrupted by ^C. 60 seconds is inconveniently long,
+    // but revert may require that long to complete.
+    if (d->isEprise()) {
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken("SessionTimeout");
+        cmd->addToken(60000);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+    }
+
+    cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
+    cmd->complete();
+    if ((lastRC = sendCommand(cmd, response)) != 0) {
+        LOG(E) << "Session start failed rc = " << (int)lastRC;
+        delete cmd;
+        return lastRC;
+    }
+    // call user method SL HSN TSN EL EOD SL 00 00 00 EL
+    //   0   1     2     3  4   5   6  7   8
+    HSN = SWAP32(response.getUint32(4));
+    TSN = SWAP32(response.getUint32(5));
+    delete cmd;
+    if ((0 != HostChallenge.size()) && (d->isEprise())) {
+        return(authenticate(SignAuthority, HostChallenge));
+    }
+    return 0;
+}
+
+
+
+#else
+
+
+uint8_t
+DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority)
+{
+    LOG(D1) << "Entering DtaSession::startSession vector";
+    vector<uint8_t> hash;
+    lastRC = 0;
+
+    DtaCommand *cmd = new DtaCommand();
+    if (NULL == cmd) {
+        LOG(E) << "Unable to create session object ";
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    DtaResponse response;
+    cmd->reset(OPAL_UID::OPAL_SMUID_UID, OPAL_METHOD::STARTSESSION);
+    cmd->addToken(OPAL_TOKEN::STARTLIST); // [  (Open Bracket)
+    cmd->addToken(105); // HostSessionID : sessionnumber
+    cmd->addToken(SP); // SPID : SP
+    cmd->addToken(OPAL_TINY_ATOM::UINT_01); // write
+    if ((NULL != HostChallenge) && (!d->isEprise())) {
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken(OPAL_TINY_ATOM::UINT_00);
+        if (hashPwd) {
+            hash.clear();
+            DtaHashPwd(hash, HostChallenge, d);
+            cmd->addToken(hash);
+        } else {
+            cmd->addToken(HostChallenge);
+        }
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken(OPAL_TINY_ATOM::UINT_03);
+        cmd->addToken(SignAuthority);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+    }
+ 
+    // w/o the timeout the session may wedge and require a power-cycle,
+    // e.g., when interrupted by ^C. 60 seconds is inconveniently long,
+    // but revert may require that long to complete.
+    if (d->isEprise()) {
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken("SessionTimeout");
+        cmd->addToken(60000);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+    }
+
+    cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
+    cmd->complete();
+    if ((lastRC = sendCommand(cmd, response)) != 0) {
+        LOG(E) << "Session start failed rc = " << (int)lastRC;
+        delete cmd;
+        return lastRC;
+    }
+    // call user method SL HSN TSN EL EOD SL 00 00 00 EL
+    //   0   1     2     3  4   5   6  7   8
+    HSN = SWAP32(response.getUint32(4));
+    TSN = SWAP32(response.getUint32(5));
+    delete cmd;
+    if ((NULL != HostChallenge) && (d->isEprise())) {
+        return(authenticate(SignAuthority, HostChallenge));
+    }
+    return 0;
+}
+
+
+
+
+uint8_t
+DtaSession::start(OPAL_UID SP, vector<uint8_t> HostChallenge, vector<uint8_t> SignAuthority)
+{
+    LOG(D1) << "Entering DtaSession::startSession vector";
+    vector<uint8_t> hash;
+    lastRC = 0;
+
+    DtaCommand *cmd = new DtaCommand();
+    if (NULL == cmd) {
+        LOG(E) << "Unable to create session object ";
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    DtaResponse response;
+    cmd->reset(OPAL_UID::OPAL_SMUID_UID, OPAL_METHOD::STARTSESSION);
+    cmd->addToken(OPAL_TOKEN::STARTLIST); // [  (Open Bracket)
+    cmd->addToken(105); // HostSessionID : sessionnumber
+    cmd->addToken(SP); // SPID : SP
+    cmd->addToken(OPAL_TINY_ATOM::UINT_01); // write
+    if ((0 != HostChallenge.size()) && (!d->isEprise())) {
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken(OPAL_TINY_ATOM::UINT_00);
+        cmd->addToken(HostChallenge);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken(OPAL_TINY_ATOM::UINT_03);
+        cmd->addToken(SignAuthority);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+    }
+ 
+    // w/o the timeout the session may wedge and require a power-cycle,
+    // e.g., when interrupted by ^C. 60 seconds is inconveniently long,
+    // but revert may require that long to complete.
+    if (d->isEprise()) {
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken("SessionTimeout");
+        cmd->addToken(60000);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+    }
+
+    cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
+    cmd->complete();
+    if ((lastRC = sendCommand(cmd, response)) != 0) {
+        LOG(E) << "Session start failed rc = " << (int)lastRC;
+        delete cmd;
+        return lastRC;
+    }
+    // call user method SL HSN TSN EL EOD SL 00 00 00 EL
+    //   0   1     2     3  4   5   6  7   8
+    HSN = SWAP32(response.getUint32(4));
+    TSN = SWAP32(response.getUint32(5));
+    delete cmd;
+    if ((0 != HostChallenge.size()) && (d->isEprise())) {
+        return(authenticate(SignAuthority, HostChallenge));
+    }
+    return 0;
+}
+
+
+
+#endif
+
+
+
 uint8_t
 DtaSession::authenticate(vector<uint8_t> Authority, char * Challenge)
 {
-	LOG(D1) << "Entering DtaSession::authenticate ";
-	vector<uint8_t> hash;
-	DtaCommand *cmd = new DtaCommand();
-	if (NULL == cmd) {
-		LOG(E) << "Unable to create session object ";
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	DtaResponse response;
-	cmd->reset(OPAL_UID::OPAL_THISSP_UID, d->isEprise() ? OPAL_METHOD::EAUTHENTICATE : OPAL_METHOD::AUTHENTICATE);
-	cmd->addToken(OPAL_TOKEN::STARTLIST); // [  (Open Bracket)
-	cmd->addToken(Authority);
+    LOG(D1) << "Entering DtaSession::authenticate ";
+    vector<uint8_t> hash;
+    DtaCommand *cmd = new DtaCommand();
+    if (NULL == cmd) {
+        LOG(E) << "Unable to create session object ";
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    DtaResponse response;
+    cmd->reset(OPAL_UID::OPAL_THISSP_UID, d->isEprise() ? OPAL_METHOD::EAUTHENTICATE : OPAL_METHOD::AUTHENTICATE);
+    cmd->addToken(OPAL_TOKEN::STARTLIST); // [  (Open Bracket)
+    cmd->addToken(Authority);
     if (Challenge && *Challenge)
     {
-		cmd->addToken(OPAL_TOKEN::STARTNAME);
-		if (d->isEprise())
-			cmd->addToken("Challenge");
-		else
-			cmd->addToken(OPAL_TINY_ATOM::UINT_00);
-		if (hashPwd) {
-			hash.clear();
-			DtaHashPwd(hash, Challenge, d);
-			cmd->addToken(hash);
-		}
-		else
-			cmd->addToken(Challenge);
-		cmd->addToken(OPAL_TOKEN::ENDNAME);
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        if (d->isEprise())
+            cmd->addToken("Challenge");
+        else
+            cmd->addToken(OPAL_TINY_ATOM::UINT_00);
+        if (hashPwd) {
+            hash.clear();
+            DtaHashPwd(hash, Challenge, d);
+            cmd->addToken(hash);
+        }
+        else
+            cmd->addToken(Challenge);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
     }
-	cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
-	cmd->complete();
-	if ((lastRC = sendCommand(cmd, response)) != 0) {
-		LOG(E) << "Session Authenticate failed";
-		delete cmd;
-		return lastRC;
-	}
-	if (0 == response.getUint8(1)) {
-		LOG(E) << "Session Authenticate failed (response = false)";
-		delete cmd;
-		return DTAERROR_AUTH_FAILED;
-	}
+    cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
+    cmd->complete();
+    if ((lastRC = sendCommand(cmd, response)) != 0) {
+        LOG(E) << "Session Authenticate failed";
+        delete cmd;
+        return lastRC;
+    }
+    if (0 == response.getUint8(1)) {
+        LOG(E) << "Session Authenticate failed (response = false)";
+        delete cmd;
+        return DTAERROR_AUTH_FAILED;
+    }
 
-	LOG(D1) << "Exiting DtaSession::authenticate "; 
-	delete cmd;
-	return 0;
+    LOG(D1) << "Exiting DtaSession::authenticate ";
+    delete cmd;
+    return 0;
 }
+
+
+
+
+
+
+uint8_t
+DtaSession::authenticate(vector<uint8_t> Authority, vector<uint8_t>  Challenge)
+{
+    LOG(D1) << "Entering DtaSession::authenticate ";
+    vector<uint8_t> hash;
+    DtaCommand *cmd = new DtaCommand();
+    if (NULL == cmd) {
+        LOG(E) << "Unable to create session object ";
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    DtaResponse response;
+    cmd->reset(OPAL_UID::OPAL_THISSP_UID, d->isEprise() ? OPAL_METHOD::EAUTHENTICATE : OPAL_METHOD::AUTHENTICATE);
+    cmd->addToken(OPAL_TOKEN::STARTLIST); // [  (Open Bracket)
+    cmd->addToken(Authority);
+    if (Challenge.size()!=0)
+    {
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        if (d->isEprise())
+            cmd->addToken("Challenge");
+        else
+            cmd->addToken(OPAL_TINY_ATOM::UINT_00);
+        cmd->addToken(Challenge);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+    }
+    cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
+    cmd->complete();
+    if ((lastRC = sendCommand(cmd, response)) != 0) {
+        LOG(E) << "Session Authenticate failed";
+        delete cmd;
+        return lastRC;
+    }
+    if (0 == response.getUint8(1)) {
+        LOG(E) << "Session Authenticate failed (response = false)";
+        delete cmd;
+        return DTAERROR_AUTH_FAILED;
+    }
+
+    LOG(D1) << "Exiting DtaSession::authenticate ";
+    delete cmd;
+    return 0;
+}
+
+
+
 uint8_t
 DtaSession::sendCommand(DtaCommand * cmd, DtaResponse & response)
 {

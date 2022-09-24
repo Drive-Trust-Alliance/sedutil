@@ -146,12 +146,13 @@ public:
 	 */
 	virtual uint8_t setSIDPassword(char * oldpassword, char * newpassword,
 		uint8_t hasholdpwd = 1, uint8_t hashnewpwd = 1) = 0;
-	/** Set the password of a locking SP user.
-	 * @param password  current password
-	 * @param userid the userid whose password is to be changed
-	 * @param newpassword  value password is to be changed to
-	 */
-	virtual uint8_t setPassword(char * password, char * userid, char * newpassword) = 0;
+    /** Set the password of a locking SP user.
+     * @param password  current password
+     * @param userid the userid whose password is to be changed
+     * @param newpassword  value password is to be changed to
+     */
+    virtual uint8_t setPassword(char * password, char * userid, char * newpassword) = 0;
+
 	/** Set the password of a locking SP user in Single User Mode.
          * @param password  current user password
          * @param userid the userid whose password is to be changed
@@ -179,8 +180,7 @@ public:
 	 * @param lockingstate  the locking state to set
 	 * @param Admin1Password password of administrative authority for locking range
 	 */
-	virtual uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
-		char * Admin1Password) = 0;
+	virtual uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate, char * Admin1Password) = 0;
 	/** Change the locking state of a locking range in Single User Mode
          * @param lockingrange The number of the locking range (0 = global)
          * @param lockingstate  the locking state to set
@@ -219,7 +219,7 @@ public:
 	virtual uint8_t listLockingRanges(char * password, int16_t rangeid) = 0;
 	/** Generate a new encryption key for a locking range.
 	* @param lockingrange locking range number
-	* @param password password of the locking administrative authority
+	* @param password password of the locking sp administrative authority
 	*/
 	virtual uint8_t rekeyLockingRange(uint8_t lockingrange, char * password) = 0;
 	/** Enable bands using MSID.
@@ -228,29 +228,43 @@ public:
 	virtual uint8_t setBandsEnabled(int16_t rangeid, char * password) = 0;
 	/** Primitive to set the MBRDone flag.
 	 * @param state 0 or 1
-	 * @param Admin1Password Locking SP authority with access to flag
+	 * @param Admin1Password  password of the locking sp administrative authority
 	 */
 	virtual uint8_t setMBRDone(uint8_t state, char * Admin1Password) = 0;
-	virtual uint8_t TCGreset(uint8_t state) = 0;
+    
+	
+    virtual uint8_t TCGreset(uint8_t state) = 0;
+    
+    
     /** Primitive to set the MBREnable flag.
      * @param state 0 or 1
-     * @param Admin1Password Locking SP authority with access to flag
+     * @param Admin1Password  password of the locking sp administrative authority
      */
 	virtual uint8_t setMBREnable(uint8_t state, char * Admin1Password) = 0;
+    
 	/** enable a locking sp user.
+     * @param state 0 or 1
 	 * @param password password of locking sp administrative authority
 	 * @param userid  the user to be enabled
 	 */
 	virtual uint8_t enableUser(uint8_t state, char * password, char * userid) = 0;
 	/** Enable locking on the device
+     * @param state 0 or 1
 	 * @param password password of the admin sp SID authority
 	 */
 	virtual uint8_t enableUserRead(uint8_t state, char * password, char * userid) = 0;
+    
 	/** Enable locking on the device
 	* @param password password of the admin sp SID authority
 	*/
 	virtual uint8_t activateLockingSP(char * password) = 0;
-	/** Enable locking on the device in Single User Mode
+
+    /** Enable locking on the device
+     * @param HostChallenge HostChallenge of the admin sp SID authority
+     */
+    virtual uint8_t activateLockingSP(vector<uint8_t>HostChallenge) = 0;
+
+ 	/** Enable locking on the device in Single User Mode
 	* @param lockingrange the locking range number to activate in SUM
 	* @param password password of the admin sp SID authority
 	*/
@@ -302,6 +316,142 @@ public:
 	/** Read MSID
 	 */
 	virtual uint8_t printDefaultPassword() = 0;
+    
+    
+    /// The methods below are slightly lower-level versions of the similarly-named ones above.
+    ///   They differ in that they take a byte vector host challenge that is passed through
+    ///   unchanged, i.e. not a null-terminated C string, and not (possibly) hashed.
+    
+    /** User command to manipulate the state of a locking range.
+     * RW|RO|LK are the supported states @see OPAL_LOCKINGSTATE
+     * @param lockingrange locking range number
+     * @param lockingstate desired locking state (see above)
+     * @param Admin1HostChallenge  host challenge -- unsalted password of the locking administrative authority
+     */
+    virtual uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate, vector<uint8_t> Admin1HostChallenge)=0;
+    
+    /** Primitive to set the MBRDone flag.
+     * @param state 0 or 1
+     * @param Admin1HostChallenge  host challenge -- unsalted password of the locking administrative authority
+     */
+    virtual uint8_t setMBRDone(uint8_t state, vector<uint8_t> Admin1HostChallenge) = 0;
+
+
+    /** User command to prepare the device for management by sedutil.
+     * Specific to the SSC that the device supports
+     * @param HostChallenge the HostChallenge that is to be assigned to the SSC master entities
+     */
+    virtual uint8_t initialSetup(vector<uint8_t> HostChallenge) = 0;
+
+    /** Change the SID HostChallenge from its MSID default
+     * @param HostChallenge  new HostChallenge for SID and locking SP admins
+     */
+    virtual uint8_t takeOwnership(vector<uint8_t> HostChallenge) = 0;
+    /** Change the active state of a locking range
+     * @param lockingrange The number of the locking range (0 = global)
+     * @param enabled  enable (true) or disable (false) the lockingrange
+     * @param HostChallenge  HostChallenge of administrative authority for locking range
+     */
+    virtual uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled,
+                                          vector<uint8_t> HostChallenge) = 0;
+
+    /** Set the SID password.
+     * @param oldHostChallenge  current SID host challenge
+     * @param newHostChallenge  value host challenge is to be changed to
+     * @note neither value is hashed
+     */
+    virtual uint8_t setSIDPassword(vector<uint8_t> oldHostChallenge,
+                                   vector<uint8_t> newHostChallenge) = 0;
+
+    /** Primitive to set the MBREnable flag.
+     * @param state 0 or 1
+     * @param Admin1HostChallenge  host challenge -- unsalted password of the locking administrative authority
+     */
+    virtual uint8_t setMBREnable(uint8_t state, vector<uint8_t> Admin1HostChallenge) = 0;
+
+    /** Set the host challenge of a locking SP user.
+     *   Note that the version above of this method is called setPassword
+     * @param currentHostChallenge  current host challenge
+     * @param userid the userid whose host challenge is to be changed
+     * @param newHostChallenge  value  host challenge is to be changed to
+     */
+    virtual uint8_t setHostChallenge(vector<uint8_t> currentHostChallenge, char * userid, vector<uint8_t> newHostChallenge) = 0;
+    
+    
+    /** enable a locking sp user.
+     * @param state 0 or 1
+     * @param HostChallenge HostChallenge of locking sp administrative authority
+     * @param userid  the user to be enabled
+     */
+    virtual uint8_t enableUser(uint8_t state, vector<uint8_t> HostChallenge, char * userid) = 0;
+
+    /** Enable locking on the device
+     * @param state 0 or 1
+     * @param HostChallenge HostChallenge of the admin sp SID authority
+     */
+    virtual uint8_t enableUserRead(uint8_t state, vector<uint8_t> HostChallenge, char * userid) = 0;
+
+
+    /// Wrapper methods that allow concise TPer function methods
+    
+    /** Start a session using some kind of authentication, and
+     * then do something within that session.
+     * This method handles errors starting the session, and cleans
+     * up by deleting the session afterwards,
+     * returning the result of any session start error
+     * or otherwise the result of the session body function
+     *
+     * Note that it is expected that these "function" parameters
+     * will probably be closures.
+     *
+     * @param startSessionFn a function that starts a session, returning a uint8_t
+     * @param sessionBodyFn a function that runs within that session, returning a uint8_t
+     */
+    uint8_t WithSession(std::function<uint8_t(void)>startSessionFn,
+                        std::function<uint8_t(void)>sessionBodyFn);
+    
+    /** Start a session using some kind of authentication,
+     * create a DtaCommand object, and then runs that command within that session.
+     * This method handles errors starting the session and creating the command,
+     * and cleans up by deleting the command and session afterwards,
+     * returning the result of any session start error
+     * or command creation error
+     * or otherwise the result of executing sendCommand on the command
+     * leaving the response in the response instance variable
+     *
+     * Note that it is expected that these "function" parameters
+     * will probably be closures.
+     *
+     * @param startSessionFn a function that starts a session, returning a uint8_t
+     * @param commandWriterFn a function that runs within that session,
+     *                       takes a DtaCommand parameter,
+     *                       and writes into that DtaCommand
+     *                       and then simply returns no value
+     */
+    uint8_t WithSessionCommand(std::function<uint8_t(void)>startSessionFn,
+                               std::function<void(DtaCommand * command)>commandWriterFn);
+    
+//    /** Start a session using some kind of authentication,
+//     * create a DtaCommand object, and then runs  that command within that session.
+//     * This method handles errors starting the session and creating the command,
+//     * and cleans up by deleting the command and session afterwards,
+//     * returning the result of any session start error
+//     * or command creation error
+//     * or otherwise the result of executing sendCommand on the command
+//     * leaving the response in the response instance variable
+//     *
+//     * Note that it is expected that these "function" parameters
+//     * will probably be closures.
+//     *
+//     * @param startSessionFn a function that starts a session, returning a uint8_t
+//     * @param commandWriterFn a function that runs within that session,
+//     *                       takes a DtaCommand parameter,
+//     *                       and writes into that DtaCommand
+//     *                       and returns a return code to indicate if something went wrong writing
+//     */
+//    uint8_t WithSessionCommand(std::function<uint8_t(void)>startSessionFn,
+//                               std::function<uint8_t(DtaCommand * command)>commandWriterFn);
+
     
 	/*
 	* virtual functions required to be implemented

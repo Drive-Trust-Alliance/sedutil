@@ -567,13 +567,13 @@ typedef struct _DTA_DEVICE_INFO {
     uint64_t devSize;
     DTA_DEVICE_TYPE devType;
     uint8_t serialNum[20];
-	uint8_t null0;  // make sn a cstring
+	uint8_t null0;  // make serialNum a cstring
     uint8_t firmwareRev[8];
 	uint8_t null1;  // make firmware rev a cstring
     uint8_t modelNum[40];
 	uint8_t null2;  // make model number a cstring
     uint8_t vendorName[8];
-    uint8_t null3;
+    uint8_t null3;  // make vendor Name a cstring
     
     uint8_t worldWideName[8];    // bytes, not a cstring
 	

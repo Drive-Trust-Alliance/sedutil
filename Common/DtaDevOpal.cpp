@@ -179,212 +179,420 @@ void DtaDevOpal::gethuser(char * buf)
 		LOG(D1) << "Exiting DtaDevOpal::setTPerResetEnable() " << dev;
 		return 0;
 }
- uint8_t DtaDevOpal::setLockonReset(uint8_t lockingrange, bool enable,char * password)
+
+
+
+uint8_t DtaDevOpal::setLockonReset(uint8_t lockingrange, bool enable,
+                                   char * password)
 {
 
-		LOG(D1) << "Entering DtaDevOpal::setLockonReset()";
-		uint8_t lastRC;
-		vector<uint8_t> LR;
-		LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-		for (int i = 0; i < 8; i++) {
-			LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
-		}
-		if (lockingrange != 0) {
-			LOG(D2) << "lockingrange = " << lockingrange;
-			LR[6] = 0x03;
-			LR[8] = lockingrange;
-		}
-		session = new DtaSession(this);
-		if (NULL == session) {
-			LOG(E) << "Unable to create session object " << dev;
-			return DTAERROR_OBJECT_CREATE_FAILED;
-		}
-		if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
-			delete session;
-			return lastRC;
-		}
-		//if ((lastRC = getTable(LR, OPAL_TOKEN::ACTIVEKEY, OPAL_TOKEN::ACTIVEKEY)) != 0) {
-		//	delete session;
-		//	return lastRC;
-		//}
-		DtaCommand *rekey = new DtaCommand();
-		if (NULL == rekey) {
-			LOG(E) << "Unable to create command object " << dev;
-			delete session;
-			return DTAERROR_OBJECT_CREATE_FAILED;
-		}
-		rekey->reset(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_METHOD::SET);
-		rekey->changeInvokingUid(LR);
-		rekey->addToken(OPAL_TOKEN::STARTLIST);
-		rekey->addToken(OPAL_TOKEN::STARTNAME);
-		rekey->addToken(OPAL_TOKEN::VALUES);
+       LOG(D1) << "Entering DtaDevOpal::setLockonReset()";
+       uint8_t lastRC;
+       vector<uint8_t> LR;
+       LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+       for (int i = 0; i < 8; i++) {
+           LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
+       }
+       if (lockingrange != 0) {
+           LOG(D2) << "lockingrange = " << lockingrange;
+           LR[6] = 0x03;
+           LR[8] = lockingrange;
+       }
+       session = new DtaSession(this);
+       if (NULL == session) {
+           LOG(E) << "Unable to create session object " << dev;
+           return DTAERROR_OBJECT_CREATE_FAILED;
+       }
+       if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+           delete session;
+           return lastRC;
+       }
+       //if ((lastRC = getTable(LR, OPAL_TOKEN::ACTIVEKEY, OPAL_TOKEN::ACTIVEKEY)) != 0) {
+       //    delete session;
+       //    return lastRC;
+       //}
+       DtaCommand *rekey = new DtaCommand();
+       if (NULL == rekey) {
+           LOG(E) << "Unable to create command object " << dev;
+           delete session;
+           return DTAERROR_OBJECT_CREATE_FAILED;
+       }
+       rekey->reset(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_METHOD::SET);
+       rekey->changeInvokingUid(LR);
+       rekey->addToken(OPAL_TOKEN::STARTLIST);
+       rekey->addToken(OPAL_TOKEN::STARTNAME);
+       rekey->addToken(OPAL_TOKEN::VALUES);
 
-		rekey->addToken(OPAL_TOKEN::STARTLIST);
-		rekey->addToken(OPAL_TOKEN::STARTNAME);
-		rekey->addToken(OPAL_TOKEN::LOCKONRESETCOLUMN);
+       rekey->addToken(OPAL_TOKEN::STARTLIST);
+       rekey->addToken(OPAL_TOKEN::STARTNAME);
+       rekey->addToken(OPAL_TOKEN::LOCKONRESETCOLUMN);
 
-		rekey->addToken(OPAL_TOKEN::STARTLIST);
-		rekey->addToken(OPAL_TOKEN::WHERE);
-		if (enable) 
-			rekey->addToken(OPAL_TOKEN::LOCKONRESETVALUE); 
-		rekey->addToken(OPAL_TOKEN::ENDLIST);
+       rekey->addToken(OPAL_TOKEN::STARTLIST);
+       rekey->addToken(OPAL_TOKEN::WHERE);
+       if (enable)
+           rekey->addToken(OPAL_TOKEN::LOCKONRESETVALUE);
+       rekey->addToken(OPAL_TOKEN::ENDLIST);
 
-		rekey->addToken(OPAL_TOKEN::ENDNAME);
-		rekey->addToken(OPAL_TOKEN::ENDLIST);
-		rekey->addToken(OPAL_TOKEN::ENDNAME);
-		rekey->addToken(OPAL_TOKEN::ENDLIST);
-		rekey->complete();
-		if ((lastRC = session->sendCommand(rekey, response)) != 0) {
-			LOG(E) << "LockOnReset LockingRange " << lockingrange << " Failed " << dev;
-			delete rekey;
-			delete session;
-			return lastRC;
-		}
-		delete rekey;
-		delete session;
-		LOG(D) << "LockOnReset LockingRange : " << (uint16_t)lockingrange << " *** " << dev;
-		LOG(D1) << "Exiting DtaDevOpal::SetLockonReset() " << dev;
-		return 0;
+       rekey->addToken(OPAL_TOKEN::ENDNAME);
+       rekey->addToken(OPAL_TOKEN::ENDLIST);
+       rekey->addToken(OPAL_TOKEN::ENDNAME);
+       rekey->addToken(OPAL_TOKEN::ENDLIST);
+       rekey->complete();
+       if ((lastRC = session->sendCommand(rekey, response)) != 0) {
+           LOG(E) << "LockOnReset LockingRange " << lockingrange << " Failed " << dev;
+           delete rekey;
+           delete session;
+           return lastRC;
+       }
+       delete rekey;
+       delete session;
+       LOG(D) << "LockOnReset LockingRange : " << (uint16_t)lockingrange << " *** " << dev;
+       LOG(D1) << "Exiting DtaDevOpal::SetLockonReset() " << dev;
+       return 0;
 }
+
+
+uint8_t DtaDevOpal::setLockonReset(uint8_t lockingrange, bool enable,
+                                   vector<uint8_t>HostChallenge)
+{
+
+    LOG(D1) << "Entering DtaDevOpal::setLockonReset()";
+    vector<uint8_t> LR;
+    LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+    for (int i = 0; i < 8; i++) {
+       LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
+    }
+    if (lockingrange != 0) {
+       LOG(D2) << "lockingrange = " << lockingrange;
+       LR[6] = 0x03;
+       LR[8] = lockingrange;
+    }
+    
+    uint8_t lastRC = WithSessionCommand([this, HostChallenge](){
+        return session->start(OPAL_UID::OPAL_LOCKINGSP_UID, HostChallenge, OPAL_UID::OPAL_ADMIN1_UID);
+    },
+                                        [LR, enable](DtaCommand * rekey){
+        rekey->reset(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_METHOD::SET);
+        rekey->changeInvokingUid(LR);
+        rekey->addToken(OPAL_TOKEN::STARTLIST);
+        rekey->addToken(OPAL_TOKEN::STARTNAME);
+        rekey->addToken(OPAL_TOKEN::VALUES);
+
+        rekey->addToken(OPAL_TOKEN::STARTLIST);
+        rekey->addToken(OPAL_TOKEN::STARTNAME);
+        rekey->addToken(OPAL_TOKEN::LOCKONRESETCOLUMN);
+
+        rekey->addToken(OPAL_TOKEN::STARTLIST);
+        rekey->addToken(OPAL_TOKEN::WHERE);
+        if (enable)
+           rekey->addToken(OPAL_TOKEN::LOCKONRESETVALUE);
+        rekey->addToken(OPAL_TOKEN::ENDLIST);
+
+        rekey->addToken(OPAL_TOKEN::ENDNAME);
+        rekey->addToken(OPAL_TOKEN::ENDLIST);
+        rekey->addToken(OPAL_TOKEN::ENDNAME);
+        rekey->addToken(OPAL_TOKEN::ENDLIST);
+        rekey->complete();
+    });
+    
+    if (lastRC != 0) {
+       LOG(E) << "LockOnReset LockingRange " << lockingrange << " Failed " << dev;
+    } else {
+        LOG(D) << "LockOnReset LockingRange : " << (uint16_t)lockingrange << " *** " << dev;
+        LOG(D1) << "Exiting DtaDevOpal::SetLockonReset() " << dev;
+    }
+    return lastRC;
+}
+
+
+
 uint8_t DtaDevOpal::initialSetup(char * password)
 {
-	LOG(D1) << "Entering initialSetup() " << dev;
-	uint8_t lastRC;
+    LOG(D1) << "Entering initialSetup() " << dev;
+    uint8_t lastRC;
 
-	if (!skip_activate) {
-		LOG(D) << "skip activateLockingSP"; 
-		if ((lastRC = takeOwnership(password)) != 0) {
-			LOG(E) << "Initial setup failed - unable to take ownership " << dev;
-			return lastRC;
-		}
+    if (!skip_activate) {
+        LOG(D) << "skip activateLockingSP";
+        if ((lastRC = takeOwnership(password)) != 0) {
+            LOG(E) << "Initial setup failed - unable to take ownership " << dev;
+            return lastRC;
+        }
 
-		if ((lastRC = activateLockingSP(password)) != 0) {
-			LOG(E) << "Initial setup failed - unable to activate LockingSP " << dev;
-			return lastRC;
-		}
-	}
+        if ((lastRC = activateLockingSP(password)) != 0) {
+            LOG(E) << "Initial setup failed - unable to activate LockingSP " << dev;
+            return lastRC;
+        }
+    }
 
-	if ((lastRC = configureLockingRange(0, DTA_DISABLELOCKING, password)) != 0) {
-		LOG(E) << "Initial setup failed - unable to configure global locking range " << dev;
-		return lastRC;
-	}
-	if ((lastRC = setLockingRange(0, OPAL_LOCKINGSTATE::READWRITE, password)) != 0) {
-		LOG(E) << "Initial setup failed - unable to set global locking range RW " << dev;
-		return lastRC;
-	}
-	if ( isOpal2() || isOpal1()  ||  (disk_info.PYRITE_version > 1 ) ) { // Opal2, pyrite 2 support mbr 
-		if ((lastRC = setMBRDone(1, password)) != 0) {
-			LOG(E) << "Initial setup failed - unable to Enable MBR shadow " << dev;
-			return lastRC;
-		}
-		if ((lastRC = setMBREnable(1, password)) != 0) {
-			LOG(E) << "Initial setup failed - unable to Enable MBR shadow " << dev;
-			return lastRC;
-		}
-	}
-	if ((lastRC = setLockonReset(0, TRUE, password)) != 0) { // enable LOCKING RANGE 0 LOCKonRESET 
-		LOG(E) << "Initial setup failed - unable to set LOCKONRESET " << dev;
-		return lastRC;
-	}
-	LOG(D1) << "Initial setup of TPer complete on " << dev;
-	if (isAnySSC()) {  // ( isOpal1() | isOpal2() || isPyrite() || isOpalite()) { // Opal2 support users, Pyrite support 2 User
-		LOG(D) << "setuphuser() " << dev;
-		if ((lastRC = setuphuser(password)) != 0) {
-			LOG(E) << "setup audit user failed " << dev;
-			return lastRC;
-		}
-	}
+    if ((lastRC = configureLockingRange(0, DTA_DISABLELOCKING, password)) != 0) {
+        LOG(E) << "Initial setup failed - unable to configure global locking range " << dev;
+        return lastRC;
+    }
+    if ((lastRC = setLockingRange(0, OPAL_LOCKINGSTATE::READWRITE, password)) != 0) {
+        LOG(E) << "Initial setup failed - unable to set global locking range RW " << dev;
+        return lastRC;
+    }
+    if ( isOpal2() || isOpal1()  ||  (disk_info.PYRITE_version > 1 ) ) { // Opal2, pyrite 2 support mbr
+        if ((lastRC = setMBRDone(1, password)) != 0) {
+            LOG(E) << "Initial setup failed - unable to Enable MBR shadow " << dev;
+            return lastRC;
+        }
+        if ((lastRC = setMBREnable(1, password)) != 0) {
+            LOG(E) << "Initial setup failed - unable to Enable MBR shadow " << dev;
+            return lastRC;
+        }
+    }
+    if ((lastRC = setLockonReset(0, TRUE, password)) != 0) { // enable LOCKING RANGE 0 LOCKonRESET
+        LOG(E) << "Initial setup failed - unable to set LOCKONRESET " << dev;
+        return lastRC;
+    }
+    LOG(D1) << "Initial setup of TPer complete on " << dev;
+    if (isAnySSC()) {  // ( isOpal1() | isOpal2() || isPyrite() || isOpalite()) { // Opal2 support users, Pyrite support 2 User
+        LOG(D) << "setuphuser() " << dev;
+        if ((lastRC = setuphuser(password)) != 0) {
+            LOG(E) << "setup audit user failed " << dev;
+            return lastRC;
+        }
+    }
 
-	
-	LOG(D) << "setup normal user" << dev;
-	/*
-		enableUser(true, password, buf); // true : enable user; false: disable user
-		enableUserRead(true, password, buf);
+    
+    LOG(D) << "setup normal user" << dev;
+    /*
+        enableUser(true, password, buf); // true : enable user; false: disable user
+        enableUserRead(true, password, buf);
 
-	*/
-	char buf[5] = { 'U','s','e','r','1' };
+    */
+    char buf[5] = { 'U','s','e','r','1' };
 
-	if ((lastRC = enableUser(true, password, buf)) != 0) {
-		LOG(E) << "enable user failed " << dev;
-		return lastRC;
-	}
-	if ((lastRC = enableUserRead(true, password, buf)) != 0) {
-		LOG(E) << "enable user read failed " << dev;
-		return lastRC;
-	}
-	char strname[20];
-	memset(strname, 0, 20);
-	strncpy(strname, "USER1", 5);
-	if ((lastRC = setPassword(password, buf, strname)) != 0) { // set User1 password as USER1 default
-		LOG(E) << "set user password failed " << dev;
-		return lastRC;
-	}
-	LOG(D1) << "Exiting initialSetup() " << dev;
-	return 0;
+    if ((lastRC = enableUser(true, password, buf)) != 0) {
+        LOG(E) << "enable user failed " << dev;
+        return lastRC;
+    }
+    if ((lastRC = enableUserRead(true, password, buf)) != 0) {
+        LOG(E) << "enable user read failed " << dev;
+        return lastRC;
+    }
+    char strname[20];
+    memset(strname, 0, 20);
+    strncpy(strname, "USER1", 5);
+    if ((lastRC = setPassword(password, buf, strname)) != 0) { // set User1 password as USER1 default
+        LOG(E) << "set user password failed " << dev;
+        return lastRC;
+    }
+    LOG(D1) << "Exiting initialSetup() " << dev;
+    return 0;
+}
+
+
+uint8_t DtaDevOpal::initialSetup(vector<uint8_t> HostChallenge)
+{
+    LOG(D1) << "Entering initialSetup() " << dev;
+    uint8_t lastRC;
+
+    if (!skip_activate) {
+        LOG(D) << "skip activateLockingSP";
+        if ((lastRC = takeOwnership(HostChallenge)) != 0) {
+            LOG(E) << "Initial setup failed - unable to take ownership " << dev;
+            return lastRC;
+        }
+
+        if ((lastRC = activateLockingSP(HostChallenge)) != 0) {
+            LOG(E) << "Initial setup failed - unable to activate LockingSP " << dev;
+            return lastRC;
+        }
+    }
+
+    if ((lastRC = configureLockingRange(0, DTA_DISABLELOCKING, HostChallenge)) != 0) {
+        LOG(E) << "Initial setup failed - unable to configure global locking range " << dev;
+        return lastRC;
+    }
+    if ((lastRC = setLockingRange(0, OPAL_LOCKINGSTATE::READWRITE, HostChallenge)) != 0) {
+        LOG(E) << "Initial setup failed - unable to set global locking range RW " << dev;
+        return lastRC;
+    }
+    if ( isOpal2() || isOpal1()  ||  (disk_info.PYRITE_version > 1 ) ) { // Opal2, pyrite 2 support mbr
+        if ((lastRC = setMBRDone(1, HostChallenge)) != 0) {
+            LOG(E) << "Initial setup failed - unable to Enable MBR shadow " << dev;
+            return lastRC;
+        }
+        if ((lastRC = setMBREnable(1, HostChallenge)) != 0) {
+            LOG(E) << "Initial setup failed - unable to Enable MBR shadow " << dev;
+            return lastRC;
+        }
+    }
+    if ((lastRC = setLockonReset(0, TRUE, HostChallenge)) != 0) { // enable LOCKING RANGE 0 LOCKonRESET
+        LOG(E) << "Initial setup failed - unable to set LOCKONRESET " << dev;
+        return lastRC;
+    }
+    LOG(D1) << "Initial setup of TPer complete on " << dev;
+    if (isAnySSC()) {  // ( isOpal1() | isOpal2() || isPyrite() || isOpalite()) { // Opal2 support users, Pyrite support 2 User
+        LOG(D) << "setuphuser() " << dev;
+        if ((lastRC = setuphuser(HostChallenge)) != 0) {
+            LOG(E) << "setup audit user failed " << dev;
+            return lastRC;
+        }
+    }
+
+    
+    LOG(D) << "setup normal user" << dev;
+    /*
+        enableUser(true, password, buf); // true : enable user; false: disable user
+        enableUserRead(true, password, buf);
+
+    */
+    char buf[5] = { 'U','s','e','r','1' };
+
+    if ((lastRC = enableUser(true, HostChallenge, buf)) != 0) {
+        LOG(E) << "enable user failed " << dev;
+        return lastRC;
+    }
+    if ((lastRC = enableUserRead(true, HostChallenge, buf)) != 0) {
+        LOG(E) << "enable user read failed " << dev;
+        return lastRC;
+    }
+    char strname[] = "USER1";
+    vector<uint8_t> newHostChallenge(strname, strname+strlen(strname));
+    
+    if ((lastRC = setHostChallenge(HostChallenge, buf, newHostChallenge)) != 0) { // set User1 password as USER1 default
+        LOG(E) << "set user host challenge failed " << dev;
+        return lastRC;
+    }
+    LOG(D1) << "Exiting initialSetup() " << dev;
+    return 0;
 }
 
 uint8_t DtaDevOpal::setuphuser(char * password)
 {
-	LOG(D) << "Entering setuphuser() " << dev;
-	uint8_t lastRC;
-	char * buf = (char *)malloc(20);
-	memset(buf, 0, 20);
-	if (isPyrite() || isOpalite() || isRuby() ) {
-		//buf = "User2"; // User2 is the last user of Pyrite
-		strncpy(buf, "User2", 5);
-	}
-	else {
-		gethuser(buf);
-	}
-	if (enableUser(true, password, buf)) { LOG(E) << "enable audit User fail"; }; // true : enable user; false: disable user
-	if (enableUserRead(true, password, buf)) { LOG(E) << "enable User access fail"; };
-	//char p1[64] = "F0iD2eli81Ty"; //20->12 "pFa0isDs2ewloir81Tdy";
-	char p1[80]; // = { 'F','0','i','D','2','e','l','i','8','1','T','y',NULL };
-	memset(p1, 0, 80); // zero out pass
-	auditpass((unsigned char *)p1);
+    LOG(D) << "Entering setuphuser() " << dev;
+    uint8_t lastRC;
+    char * buf = (char *)malloc(20);
+    memset(buf, 0, 20);
+    if (isPyrite() || isOpalite() || isRuby() ) {
+        //buf = "User2"; // User2 is the last user of Pyrite
+        strncpy(buf, "User2", 5);
+    }
+    else {
+        gethuser(buf);
+    }
+    if (enableUser(true, password, buf)) { LOG(E) << "enable audit User fail"; }; // true : enable user; false: disable user
+    if (enableUserRead(true, password, buf)) { LOG(E) << "enable User access fail"; };
+    //char p1[64] = "F0iD2eli81Ty"; //20->12 "pFa0isDs2ewloir81Tdy";
+    char p1[80]; // = { 'F','0','i','D','2','e','l','i','8','1','T','y',NULL };
+    memset(p1, 0, 80); // zero out pass
+    auditpass((unsigned char *)p1);
 
-	#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
-	strncat((char *)p1, getSerialNum(), sizeof(disk_info.serialNum));
-	#else
-	strncat_s(p1, getSerialNum(), sizeof(disk_info.serialNum));
-	#endif
-	// setpassword has flag -n -t from GUI
-	if (no_hash_passwords) { // do it only when -n is set
-		bool saved_flag = no_hash_passwords;
-		no_hash_passwords = false; // want to hash audit user password
-		bool saved_t_flag = translate_req;
-		translate_req = false; // do not want to do translate user password
-		vector <uint8_t> hash;
-		DtaHashPwd(hash, (char *)p1, this);
-		memset(p1, 0, 80); 
-		for (int ii = 0; ii < (int)(hash.size() -2); ii += 1) { // first 2 byte of hash vector is header
-			//p1[ii] = hash.at(ii+2); // p1 is binary data of hashed password
-			//itoa(hash.at(ii + 2) >> 4,  p1 + (ii*2),   16);
-			//itoa(hash.at(ii + 2) & 0xf, p1 + (ii*2) + 1 , 16);
-			snprintf(p1 + (ii * 2), 4, "%02x", hash.at(ii + 2)); // itoa is not standard lib and linux doesn't like it
-		}
-		if (0) { // should never reveal the hashed password
-			LOG(D) << "setuphuser() : after hash p1, User9 new hashed password = ";
-			for (int ii = 0; ii < (int)(hash.size() - 2); ii += 1) { // first 2 byte of hash vector is header
-				printf("%02X", hash[ii+2]);
-			}
-			printf("  %s \n",  dev);
-		} 
-		translate_req = saved_t_flag;
-		no_hash_passwords = saved_flag ;
-	}
-	// 
-	if ((lastRC = setPassword(password, buf, (char *)p1) != 0))
-	{
-		LOG(E) << "setup h user failed " << dev;
-		return lastRC;
-	}
-	//translate_req = saved_t_flag;
-	//no_hash_passwords = saved_flag;
-	LOG(D) << "Exiting setuphuser() " << dev;
-	return 0;
+    #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
+    strncat((char *)p1, getSerialNum(), sizeof(disk_info.serialNum));
+    #else
+    strncat_s(p1, getSerialNum(), sizeof(disk_info.serialNum));
+    #endif
+    // setpassword has flag -n -t from GUI
+    if (no_hash_passwords) { // do it only when -n is set
+        bool saved_flag = no_hash_passwords;
+        no_hash_passwords = false; // want to hash audit user password
+        bool saved_t_flag = translate_req;
+        translate_req = false; // do not want to do translate user password
+        vector <uint8_t> hash;
+        DtaHashPwd(hash, (char *)p1, this);
+        memset(p1, 0, 80);
+        for (int ii = 0; ii < (int)(hash.size() -2); ii += 1) { // first 2 byte of hash vector is header
+            //p1[ii] = hash.at(ii+2); // p1 is binary data of hashed password
+            //itoa(hash.at(ii + 2) >> 4,  p1 + (ii*2),   16);
+            //itoa(hash.at(ii + 2) & 0xf, p1 + (ii*2) + 1 , 16);
+            snprintf(p1 + (ii * 2), 4, "%02x", hash.at(ii + 2)); // itoa is not standard lib and linux doesn't like it
+        }
+        if (0) { // should never reveal the hashed password
+            LOG(D) << "setuphuser() : after hash p1, User9 new hashed password = ";
+            for (int ii = 0; ii < (int)(hash.size() - 2); ii += 1) { // first 2 byte of hash vector is header
+                printf("%02X", hash[ii+2]);
+            }
+            printf("  %s \n",  dev);
+        }
+        translate_req = saved_t_flag;
+        no_hash_passwords = saved_flag ;
+    }
+    //
+    if ((lastRC = setPassword(password, buf, (char *)p1) != 0))
+    {
+        LOG(E) << "setup h user failed " << dev;
+        return lastRC;
+    }
+    //translate_req = saved_t_flag;
+    //no_hash_passwords = saved_flag;
+    LOG(D) << "Exiting setuphuser() " << dev;
+    return 0;
 
 }
+
+
+
+
+uint8_t DtaDevOpal::setuphuser(vector<uint8_t>HostChallenge)
+{
+    LOG(D) << "Entering setuphuser() " << dev;
+    uint8_t lastRC;
+    char * buf = (char *)malloc(20);
+    memset(buf, 0, 20);
+    if (isPyrite() || isOpalite() || isRuby() ) {
+        //buf = "User2"; // User2 is the last user of Pyrite
+        strncpy(buf, "User2", 5);
+    }
+    else {
+        gethuser(buf);
+    }
+    if (enableUser(true, HostChallenge, buf)) { LOG(E) << "enable audit User fail"; }; // true : enable user; false: disable user
+    if (enableUserRead(true, HostChallenge, buf)) { LOG(E) << "enable User access fail"; };
+    //char p1[64] = "F0iD2eli81Ty"; //20->12 "pFa0isDs2ewloir81Tdy";
+    char p1[80]; // = { 'F','0','i','D','2','e','l','i','8','1','T','y',NULL };
+    memset(p1, 0, 80); // zero out pass
+    auditpass((unsigned char *)p1);
+
+    #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
+    strncat((char *)p1, getSerialNum(), sizeof(disk_info.serialNum));
+    #else
+    strncat_s(p1, getSerialNum(), sizeof(disk_info.serialNum));
+    #endif
+    // setpassword has flag -n -t from GUI
+    if (no_hash_passwords) { // do it only when -n is set
+        bool saved_flag = no_hash_passwords;
+        no_hash_passwords = false; // want to hash audit user password
+        bool saved_t_flag = translate_req;
+        translate_req = false; // do not want to do translate user password
+        vector <uint8_t> hash;
+        DtaHashPwd(hash, (char *)p1, this);
+        memset(p1, 0, 80);
+        for (int ii = 0; ii < (int)(hash.size() -2); ii += 1) { // first 2 byte of hash vector is header
+            //p1[ii] = hash.at(ii+2); // p1 is binary data of hashed password
+            //itoa(hash.at(ii + 2) >> 4,  p1 + (ii*2),   16);
+            //itoa(hash.at(ii + 2) & 0xf, p1 + (ii*2) + 1 , 16);
+            snprintf(p1 + (ii * 2), 4, "%02x", hash.at(ii + 2)); // itoa is not standard lib and linux doesn't like it
+        }
+        if (0) { // should never reveal the hashed password
+            LOG(D) << "setuphuser() : after hash p1, User9 new hashed password = ";
+            for (int ii = 0; ii < (int)(hash.size() - 2); ii += 1) { // first 2 byte of hash vector is header
+                printf("%02X", hash[ii+2]);
+            }
+            printf("  %s \n",  dev);
+        }
+        translate_req = saved_t_flag;
+        no_hash_passwords = saved_flag ;
+    }
+    //
+    vector<uint8_t> newHostChallenge(p1, p1+strlen(p1));
+    if ((lastRC = setHostChallenge(HostChallenge, buf, newHostChallenge) != 0))
+    {
+        LOG(E) << "setup h user failed " << dev;
+        return lastRC;
+    }
+    //translate_req = saved_t_flag;
+    //no_hash_passwords = saved_flag;
+    LOG(D) << "Exiting setuphuser() " << dev;
+    return 0;
+
+}
+
+
+
 
 
 uint8_t DtaDevOpal::setup_SUM(uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password)
@@ -767,67 +975,121 @@ uint8_t DtaDevOpal::setupLockingRange_SUM(uint8_t lockingrange, uint64_t start,
 }
 uint8_t DtaDevOpal::configureLockingRange(uint8_t lockingrange, uint8_t enabled, char * password)
 {
-	uint8_t lastRC;
-	LOG(D1) << "Entering DtaDevOpal::configureLockingRange() " << dev;
-	vector<uint8_t> LR;
-	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	for (int i = 0; i < 8; i++) {
-		LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
-	}
-	if (lockingrange != 0) {
-		LR[6] = 0x03;
-		LR[8] = lockingrange;
-	}
-	session = new DtaSession(this);
-	if (NULL == session) {
-		LOG(E) << "Unable to create session object " << dev;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { 
-		delete session;
-		return lastRC;
-	}
-	DtaCommand *set = new DtaCommand();
-	if (NULL == set) {
-		LOG(E) << "Unable to create command object " << dev;
-		delete session;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	set->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::SET);
-	set->changeInvokingUid(LR);
-	set->addToken(OPAL_TOKEN::STARTLIST);
-	set->addToken(OPAL_TOKEN::STARTNAME);
-	set->addToken(OPAL_TOKEN::VALUES);
-	set->addToken(OPAL_TOKEN::STARTLIST);
-	set->addToken(OPAL_TOKEN::STARTNAME);
-	set->addToken(OPAL_TOKEN::READLOCKENABLED);
-	set->addToken((enabled & DTA_READLOCKINGENABLED) ? OPAL_TRUE : OPAL_FALSE);
-	set->addToken(OPAL_TOKEN::ENDNAME);
-	set->addToken(OPAL_TOKEN::STARTNAME);
-	set->addToken(OPAL_TOKEN::WRITELOCKENABLED);
-	set->addToken((enabled & DTA_WRITELOCKINGENABLED) ? OPAL_TRUE : OPAL_FALSE);
-	set->addToken(OPAL_TOKEN::ENDNAME);
-	set->addToken(OPAL_TOKEN::ENDLIST);
-	set->addToken(OPAL_TOKEN::ENDNAME);
-	set->addToken(OPAL_TOKEN::ENDLIST);
-	set->complete();
-	if ((lastRC = session->sendCommand(set, response)) != 0) {
-		LOG(E) << "configureLockingRange Failed " << dev;
-		delete set;
-		delete session;
-		return lastRC;
-	}
-	delete set;
-	delete session;
-	LOG(D) << "LockingRange" << (uint16_t) lockingrange 
-		<< (enabled ? " enabled " : " disabled ") 
-		<< ((enabled & DTA_READLOCKINGENABLED) ? "ReadLocking" : "")
-		<< ((enabled == (DTA_WRITELOCKINGENABLED | DTA_READLOCKINGENABLED)) ? "," : "")
-		<< ((enabled & DTA_WRITELOCKINGENABLED) ? "WriteLocking" : "")
-		<< " " << dev ;
-	LOG(D1) << "Exiting DtaDevOpal::configureLockingRange() " << dev;
-	return 0;
+    uint8_t lastRC;
+    LOG(D1) << "Entering DtaDevOpal::configureLockingRange() " << dev;
+    vector<uint8_t> LR;
+    LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+    for (int i = 0; i < 8; i++) {
+        LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
+    }
+    if (lockingrange != 0) {
+        LR[6] = 0x03;
+        LR[8] = lockingrange;
+    }
+    session = new DtaSession(this);
+    if (NULL == session) {
+        LOG(E) << "Unable to create session object " << dev;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+        delete session;
+        return lastRC;
+    }
+    DtaCommand *set = new DtaCommand();
+    if (NULL == set) {
+        LOG(E) << "Unable to create command object " << dev;
+        delete session;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    set->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::SET);
+    set->changeInvokingUid(LR);
+    set->addToken(OPAL_TOKEN::STARTLIST);
+    set->addToken(OPAL_TOKEN::STARTNAME);
+    set->addToken(OPAL_TOKEN::VALUES);
+    set->addToken(OPAL_TOKEN::STARTLIST);
+    set->addToken(OPAL_TOKEN::STARTNAME);
+    set->addToken(OPAL_TOKEN::READLOCKENABLED);
+    set->addToken((enabled & DTA_READLOCKINGENABLED) ? OPAL_TRUE : OPAL_FALSE);
+    set->addToken(OPAL_TOKEN::ENDNAME);
+    set->addToken(OPAL_TOKEN::STARTNAME);
+    set->addToken(OPAL_TOKEN::WRITELOCKENABLED);
+    set->addToken((enabled & DTA_WRITELOCKINGENABLED) ? OPAL_TRUE : OPAL_FALSE);
+    set->addToken(OPAL_TOKEN::ENDNAME);
+    set->addToken(OPAL_TOKEN::ENDLIST);
+    set->addToken(OPAL_TOKEN::ENDNAME);
+    set->addToken(OPAL_TOKEN::ENDLIST);
+    set->complete();
+    if ((lastRC = session->sendCommand(set, response)) != 0) {
+        LOG(E) << "configureLockingRange Failed " << dev;
+        delete set;
+        delete session;
+        return lastRC;
+    }
+    delete set;
+    delete session;
+    LOG(D) << "LockingRange" << (uint16_t) lockingrange
+        << (enabled ? " enabled " : " disabled ")
+        << ((enabled & DTA_READLOCKINGENABLED) ? "ReadLocking" : "")
+        << ((enabled == (DTA_WRITELOCKINGENABLED | DTA_READLOCKINGENABLED)) ? "," : "")
+        << ((enabled & DTA_WRITELOCKINGENABLED) ? "WriteLocking" : "")
+        << " " << dev ;
+    LOG(D1) << "Exiting DtaDevOpal::configureLockingRange() " << dev;
+    return 0;
 }
+
+uint8_t DtaDevOpal::configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint8_t> HostChallenge)
+{
+    LOG(D1) << "Entering DtaDevOpal::configureLockingRange() " << dev;
+    vector<uint8_t> LR;
+    LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+    for (int i = 0; i < 8; i++) {
+        LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
+    }
+    if (lockingrange != 0) {
+        LR[6] = 0x03;
+        LR[8] = lockingrange;
+    }
+    
+    uint8_t lastRC = WithSessionCommand([this, HostChallenge](){
+        return session->start(OPAL_UID::OPAL_LOCKINGSP_UID,
+                              HostChallenge,
+                              getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID);
+    },
+                                        [LR, enabled](DtaCommand * set){
+        set->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::SET);
+        set->changeInvokingUid(LR);
+        set->addToken(OPAL_TOKEN::STARTLIST);
+        set->addToken(OPAL_TOKEN::STARTNAME);
+        set->addToken(OPAL_TOKEN::VALUES);
+        set->addToken(OPAL_TOKEN::STARTLIST);
+        set->addToken(OPAL_TOKEN::STARTNAME);
+        set->addToken(OPAL_TOKEN::READLOCKENABLED);
+        set->addToken((enabled & DTA_READLOCKINGENABLED) ? OPAL_TRUE : OPAL_FALSE);
+        set->addToken(OPAL_TOKEN::ENDNAME);
+        set->addToken(OPAL_TOKEN::STARTNAME);
+        set->addToken(OPAL_TOKEN::WRITELOCKENABLED);
+        set->addToken((enabled & DTA_WRITELOCKINGENABLED) ? OPAL_TRUE : OPAL_FALSE);
+        set->addToken(OPAL_TOKEN::ENDNAME);
+        set->addToken(OPAL_TOKEN::ENDLIST);
+        set->addToken(OPAL_TOKEN::ENDNAME);
+        set->addToken(OPAL_TOKEN::ENDLIST);
+        set->complete();
+    });
+    if (lastRC  != 0) {
+        LOG(E) << "configureLockingRange Failed " << dev;
+        return lastRC;
+    }
+
+    LOG(D) << "LockingRange" << (uint16_t) lockingrange
+        << (enabled ? " enabled " : " disabled ")
+        << ((enabled & DTA_READLOCKINGENABLED) ? "ReadLocking" : "")
+        << ((enabled == (DTA_WRITELOCKINGENABLED | DTA_READLOCKINGENABLED)) ? "," : "")
+        << ((enabled & DTA_WRITELOCKINGENABLED) ? "WriteLocking" : "")
+        << " " << dev ;
+    LOG(D1) << "Exiting DtaDevOpal::configureLockingRange() " << dev;
+    return 0;
+}
+
 uint8_t DtaDevOpal::rekeyLockingRange(uint8_t lockingrange, char * password)
 {
 	LOG(D1) << "Entering DtaDevOpal::rekeyLockingRange() " << dev;
@@ -1127,83 +1389,171 @@ uint8_t DtaDevOpal::setNewPassword_SUM(char * password, char * userid, char * ne
 	LOG(D1) << "Exiting DtaDevOpal::setNewPassword_SUM() " << dev;
 	return 0; 
 }
-uint8_t DtaDevOpal::setMBREnable(uint8_t mbrstate,	char * Admin1Password)
+uint8_t DtaDevOpal::setMBREnable(uint8_t mbrstate,    char * Admin1Password)
 {
-	LOG(D1) << "Entering DtaDevOpal::setMBREnable " << dev;
-	if (disk_info.Locking_MBRshadowingNotSupported) {
-		LOG(E) << "SSC device does not support shadow MBR";
-		return DTAERROR_INVALID_COMMAND;
-	}
-	uint8_t lastRC;
+    LOG(D1) << "Entering DtaDevOpal::setMBREnable " << dev;
+    if (disk_info.Locking_MBRshadowingNotSupported) {
+        LOG(E) << "SSC device does not support shadow MBR";
+        return DTAERROR_INVALID_COMMAND;
+    }
+    uint8_t lastRC;
         // set MBRDone before changing MBREnable so the PBA isn't presented
         if ((lastRC = setMBRDone(1, Admin1Password)) != 0) {
-		LOG(E) << "unable to set MBRDone " << dev;
+        LOG(E) << "unable to set MBRDone " << dev;
                 return lastRC;
         }
-	if (mbrstate) {
-		if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRENABLE,
-			OPAL_TOKEN::OPAL_TRUE, Admin1Password, NULL)) != 0) {
-			LOG(E) << "Unable to set setMBREnable on " << dev;
-			return lastRC;
-		}
-		else {
-			LOG(D) << "MBREnable set on " << dev ;
-		}
-	} 
-	else {
-		if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRENABLE,
-				OPAL_TOKEN::OPAL_FALSE, Admin1Password, NULL)) != 0) {
-				LOG(E) << "Unable to set setMBREnable off " << dev;
-				return lastRC;
-			}
-		else {
-			LOG(D) << "MBREnable set off " << dev;
-		}
-	}
-	LOG(D1) << "Exiting DtaDevOpal::setMBREnable " << dev;
-	return 0;
+    if (mbrstate) {
+        if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRENABLE,
+            OPAL_TOKEN::OPAL_TRUE, Admin1Password, NULL)) != 0) {
+            LOG(E) << "Unable to set setMBREnable on " << dev;
+            return lastRC;
+        }
+        else {
+            LOG(D) << "MBREnable set on " << dev ;
+        }
+    }
+    else {
+        if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRENABLE,
+                OPAL_TOKEN::OPAL_FALSE, Admin1Password, NULL)) != 0) {
+                LOG(E) << "Unable to set setMBREnable off " << dev;
+                return lastRC;
+            }
+        else {
+            LOG(D) << "MBREnable set off " << dev;
+        }
+    }
+    LOG(D1) << "Exiting DtaDevOpal::setMBREnable " << dev;
+    return 0;
 }
+
+
+
+uint8_t DtaDevOpal::setMBREnable(uint8_t mbrstate, vector<uint8_t> Admin1HostChallenge)
+{
+    LOG(D1) << "Entering DtaDevOpal::setMBREnable " << dev;
+    if (disk_info.Locking_MBRshadowingNotSupported) {
+        LOG(E) << "SSC device does not support shadow MBR";
+        return DTAERROR_INVALID_COMMAND;
+    }
+    uint8_t lastRC;
+    // set MBRDone before changing MBREnable so the PBA isn't presented
+    if ((lastRC = setMBRDone(1, Admin1HostChallenge)) != 0) {
+    LOG(E) << "unable to set MBRDone " << dev;
+            return lastRC;
+    }
+    if (mbrstate) {
+        if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRENABLE,
+            OPAL_TOKEN::OPAL_TRUE, Admin1HostChallenge, NULL)) != 0) {
+            LOG(E) << "Unable to set setMBREnable on " << dev;
+            return lastRC;
+        }
+        else {
+            LOG(D) << "MBREnable set on " << dev ;
+        }
+    }
+    else {
+        if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRENABLE,
+                OPAL_TOKEN::OPAL_FALSE, Admin1HostChallenge, NULL)) != 0) {
+                LOG(E) << "Unable to set setMBREnable off " << dev;
+                return lastRC;
+            }
+        else {
+            LOG(D) << "MBREnable set off " << dev;
+        }
+    }
+    LOG(D1) << "Exiting DtaDevOpal::setMBREnable " << dev;
+    return 0;
+}
+
 uint8_t DtaDevOpal::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 {
-	// hijack to setTperResetEnable
-	/*
-	LOG(D) << "Entering HIJACKED DtaDevOpal::setMBRDon " << dev;
-	bool state;
-	state = true;
-	setTperResetEnable(state, Admin1Password);
-	return 0;
-	*/
+    // hijack to setTperResetEnable
+    /*
+    LOG(D) << "Entering HIJACKED DtaDevOpal::setMBRDon " << dev;
+    bool state;
+    state = true;
+    setTperResetEnable(state, Admin1Password);
+    return 0;
+    */
 
-	LOG(D1) << "Entering DtaDevOpal::setMBRDone " << dev;
-	if (disk_info.Locking_MBRshadowingNotSupported) {
-		LOG(E) << "SSC device does not support shadow MBR";
-		return DTAERROR_INVALID_COMMAND;
-	}
-	uint8_t lastRC;
-	if (mbrstate) {
-		if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRDONE,
-			OPAL_TOKEN::OPAL_TRUE, Admin1Password, NULL)) != 0) {
-			LOG(E) << "Unable to set setMBRDone on " << dev;
-			return lastRC;
-		}
-		else {
-			LOG(D) << "MBRDone set on " << dev;
-		}
-	}
-	else {
-		if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRDONE,
-			OPAL_TOKEN::OPAL_FALSE, Admin1Password, NULL)) != 0) {
-			LOG(E) << "Unable to set setMBRDone off " << dev;
-			return lastRC;
-		}
-		else {
-			LOG(D) << "MBRDone set off " << dev;
-		}
-	}
-	LOG(D1) << "Exiting DtaDevOpal::setMBRDone " << dev;
+    LOG(D1) << "Entering DtaDevOpal::setMBRDone " << dev;
+    if (disk_info.Locking_MBRshadowingNotSupported) {
+        LOG(E) << "SSC device does not support shadow MBR";
+        return DTAERROR_INVALID_COMMAND;
+    }
+    uint8_t lastRC;
+    if (mbrstate) {
+        if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRDONE,
+            OPAL_TOKEN::OPAL_TRUE, Admin1Password, NULL)) != 0) {
+            LOG(E) << "Unable to set setMBRDone on " << dev;
+            return lastRC;
+        }
+        else {
+            LOG(D) << "MBRDone set on " << dev;
+        }
+    }
+    else {
+        if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRDONE,
+            OPAL_TOKEN::OPAL_FALSE, Admin1Password, NULL)) != 0) {
+            LOG(E) << "Unable to set setMBRDone off " << dev;
+            return lastRC;
+        }
+        else {
+            LOG(D) << "MBRDone set off " << dev;
+        }
+    }
+    LOG(D1) << "Exiting DtaDevOpal::setMBRDone " << dev;
 
-	return 0;
+    return 0;
 }
+
+
+
+uint8_t DtaDevOpal::setMBRDone(uint8_t state, vector<uint8_t> Admin1HostChallenge)
+{
+    // hijack to setTperResetEnable
+    /*
+    LOG(D) << "Entering HIJACKED DtaDevOpal::setMBRDon " << dev;
+    bool state;
+    state = true;
+    setTperResetEnable(state, Admin1Password);
+    return 0;
+    */
+
+    LOG(D1) << "Entering DtaDevOpal::setMBRDone " << dev;
+    if (disk_info.Locking_MBRshadowingNotSupported) {
+        LOG(E) << "SSC device does not support shadow MBR";
+        return DTAERROR_INVALID_COMMAND;
+    }
+    uint8_t lastRC;
+    if (0!=state) {
+        if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRDONE,
+            OPAL_TOKEN::OPAL_TRUE, Admin1HostChallenge, NULL)) != 0) {
+            LOG(E) << "Unable to set setMBRDone on " << dev;
+            return lastRC;
+        }
+        else {
+            LOG(D) << "MBRDone set on " << dev;
+        }
+    }
+    else {
+        if ((lastRC = setLockingSPvalue(OPAL_UID::OPAL_MBRCONTROL, OPAL_TOKEN::MBRDONE,
+            OPAL_TOKEN::OPAL_FALSE, Admin1HostChallenge, NULL)) != 0) {
+            LOG(E) << "Unable to set setMBRDone off " << dev;
+            return lastRC;
+        }
+        else {
+            LOG(D) << "MBRDone set off " << dev;
+        }
+    }
+    LOG(D1) << "Exiting DtaDevOpal::setMBRDone " << dev;
+
+    return 0;
+}
+
+
+
+
 uint8_t DtaDevOpal::TCGreset(uint8_t mbrstate)
 {
 	LOG(D) << "Entering DtaDevOpal::TCGreset " << dev;
@@ -1251,86 +1601,103 @@ uint8_t DtaDevOpal::STACK_RESET()
 	LOG(D1) << "Exiting DtaDevOpal::STACK_RESET " << dev;
 	return 0;
 }
-uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
-	char * Admin1Password)
-{
-	uint8_t lastRC;
-	OPAL_TOKEN readlocked, writelocked;
-	const char *msg;
 
-	LOG(D1) << "Entering DtaDevOpal::setLockingRange " << dev;
-	switch (lockingstate) {
-	case OPAL_LOCKINGSTATE::READWRITE:
-		readlocked = writelocked = OPAL_TOKEN::OPAL_FALSE;
-		msg = "RW";
-		break;
-	case OPAL_LOCKINGSTATE::READONLY:
-		readlocked = OPAL_TOKEN::OPAL_FALSE;
-		writelocked = OPAL_TOKEN::OPAL_TRUE;
-		msg = "RO";
-		break;
-	case OPAL_LOCKINGSTATE::LOCKED:
-		readlocked = writelocked = OPAL_TOKEN::OPAL_TRUE;
-		msg = "LK";
-		break;
-	default:
-		LOG(E) << "Invalid locking state for setLockingRange " << dev;
-		return DTAERROR_INVALID_PARAMETER;
-	}
-	vector<uint8_t> LR;
-	LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	for (int i = 0; i < 8; i++) {
-		LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
-	}
-	if (lockingrange != 0) {
-		LR[6] = 0x03;
-		LR[8] = lockingrange;
-	}
-	session = new DtaSession(this);
-	if (NULL == session) {
-		LOG(E) << "Unable to create session object " << dev;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, Admin1Password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { 
-		delete session;
-		return lastRC;
-	}
-	DtaCommand *set = new DtaCommand();
-	if (NULL == set) {
-		LOG(E) << "Unable to create command object " << dev;
-		delete session;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	set->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::SET);
-	set->changeInvokingUid(LR);
-	set->addToken(OPAL_TOKEN::STARTLIST);
-	set->addToken(OPAL_TOKEN::STARTNAME);
-	set->addToken(OPAL_TOKEN::VALUES);
-	set->addToken(OPAL_TOKEN::STARTLIST);
-	set->addToken(OPAL_TOKEN::STARTNAME);
-	set->addToken(OPAL_TOKEN::READLOCKED);
-	set->addToken(readlocked);
-	set->addToken(OPAL_TOKEN::ENDNAME);
-	set->addToken(OPAL_TOKEN::STARTNAME);
-	set->addToken(OPAL_TOKEN::WRITELOCKED);
-	set->addToken(writelocked);
-	set->addToken(OPAL_TOKEN::ENDNAME);
-	set->addToken(OPAL_TOKEN::ENDLIST);
-	set->addToken(OPAL_TOKEN::ENDNAME);
-	set->addToken(OPAL_TOKEN::ENDLIST);
-	set->complete();
-	if ((lastRC = session->sendCommand(set, response)) != 0) {
-		LOG(E) << "setLockingRange Failed " << dev;
-		delete set;
-		delete session;
-		return lastRC;
-	}
-	delete set;
-	delete session;
-	LOG(D) << "LockingRange" << (uint16_t)lockingrange << " set to " << msg << " " << dev;
-	LOG(D1) << "Exiting DtaDevOpal::setLockingRange " << dev;
-	return 0;
+uint8_t DtaDevOpal::__setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
+                                      std::function<uint8_t(void)>startSessionFn)
+{
+    uint8_t lastRC;
+    OPAL_TOKEN readlocked, writelocked;
+    const char *msg;
+
+    LOG(D1) << "Entering DtaDevOpal::setLockingRange " << dev;
+    switch (lockingstate) {
+    case OPAL_LOCKINGSTATE::READWRITE:
+        readlocked = writelocked = OPAL_TOKEN::OPAL_FALSE;
+        msg = "RW";
+        break;
+    case OPAL_LOCKINGSTATE::READONLY:
+        readlocked = OPAL_TOKEN::OPAL_FALSE;
+        writelocked = OPAL_TOKEN::OPAL_TRUE;
+        msg = "RO";
+        break;
+    case OPAL_LOCKINGSTATE::LOCKED:
+        readlocked = writelocked = OPAL_TOKEN::OPAL_TRUE;
+        msg = "LK";
+        break;
+    default:
+        LOG(E) << "Invalid locking state for setLockingRange " << dev;
+        return DTAERROR_INVALID_PARAMETER;
+    }
+    vector<uint8_t> LR;
+    LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+    for (int i = 0; i < 8; i++) {
+        LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
+    }
+    if (lockingrange != 0) {
+        LR[6] = 0x03;
+        LR[8] = lockingrange;
+    }
+    
+    lastRC = WithSessionCommand(startSessionFn,
+                                [LR, readlocked, writelocked]
+                                (DtaCommand * set){
+            set->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::SET);
+            set->changeInvokingUid(LR);
+            set->addToken(OPAL_TOKEN::STARTLIST);
+            set->addToken(OPAL_TOKEN::STARTNAME);
+            set->addToken(OPAL_TOKEN::VALUES);
+            set->addToken(OPAL_TOKEN::STARTLIST);
+            set->addToken(OPAL_TOKEN::STARTNAME);
+            set->addToken(OPAL_TOKEN::READLOCKED);
+            set->addToken(readlocked);
+            set->addToken(OPAL_TOKEN::ENDNAME);
+            set->addToken(OPAL_TOKEN::STARTNAME);
+            set->addToken(OPAL_TOKEN::WRITELOCKED);
+            set->addToken(writelocked);
+            set->addToken(OPAL_TOKEN::ENDNAME);
+            set->addToken(OPAL_TOKEN::ENDLIST);
+            set->addToken(OPAL_TOKEN::ENDNAME);
+            set->addToken(OPAL_TOKEN::ENDLIST);
+            set->complete();
+        });
+    
+    if (lastRC != 0) {
+        LOG(E) << "setLockingRange Failed " << dev;
+    } else {
+        LOG(D) << "LockingRange" << (uint16_t)lockingrange << " set to " << msg << " " << dev;
+        LOG(D1) << "Exiting DtaDevOpal::setLockingRange " << dev;
+    }
+    return lastRC;
 }
+
+
+uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
+    char * Admin1Password)
+{
+    return __setLockingRange(lockingrange, lockingstate,
+                             [this, Admin1Password](){
+        return session->start(OPAL_UID::OPAL_LOCKINGSP_UID,
+                              Admin1Password,
+                              getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID);
+        
+    });
+
+}
+
+
+uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
+                                    vector<uint8_t> Admin1HostChallenge)
+{
+    return __setLockingRange(lockingrange, lockingstate,
+                             [this, Admin1HostChallenge](){
+        return session->start(OPAL_UID::OPAL_LOCKINGSP_UID,
+                              Admin1HostChallenge,
+                              getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID);
+        
+    });
+}
+
+
 uint8_t DtaDevOpal::setLockingRange_SUM(uint8_t lockingrange, uint8_t lockingstate,
 	char * password)
 {
@@ -1431,86 +1798,158 @@ uint8_t DtaDevOpal::setLockingRange_SUM(uint8_t lockingrange, uint8_t lockingsta
 	LOG(D1) << "Exiting DtaDevOpal::setLockingRange_SUM " << dev;
 	return 0;
 }
-uint8_t DtaDevOpal::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, 
-	OPAL_TOKEN value,char * password, char * msg)
+uint8_t DtaDevOpal::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
+    OPAL_TOKEN value,char * password, char * msg)
 {
-	LOG(D1) << "Entering DtaDevOpal::setLockingSPvalue " << dev;
-	uint8_t lastRC;
-	vector<uint8_t> table;
-	table. push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	for (int i = 0; i < 8; i++) {
-		table.push_back(OPALUID[table_uid][i]);
-	}
-	session = new DtaSession(this);
-	if (NULL == session) {
-		LOG(E) << "Unable to create session object " << dev;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode()? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { 
-		delete session;
-		return lastRC;
-	}
-	if ((lastRC = setTable(table, name, value)) != 0) {
-		LOG(E) << "Unable to update table " << dev;
-		delete session;
-		return lastRC;
-	}
-	if (NULL != msg) {
-		LOG(D) << msg;
-	}
-	
-	delete session;
-	LOG(D1) << "Exiting DtaDevOpal::setLockingSPvalue() " << dev;
-	return 0;
+    LOG(D1) << "Entering DtaDevOpal::setLockingSPvalue " << dev;
+    uint8_t lastRC;
+    vector<uint8_t> table;
+    table. push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+    for (int i = 0; i < 8; i++) {
+        table.push_back(OPALUID[table_uid][i]);
+    }
+    session = new DtaSession(this);
+    if (NULL == session) {
+        LOG(E) << "Unable to create session object " << dev;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    
+    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode()? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+        delete session;
+        return lastRC;
+    }
+    if ((lastRC = setTable(table, name, value)) != 0) {
+        LOG(E) << "Unable to update table " << dev;
+        delete session;
+        return lastRC;
+    }
+    if (NULL != msg) {
+        LOG(D) << msg;
+    }
+    
+    delete session;
+    LOG(D1) << "Exiting DtaDevOpal::setLockingSPvalue() " << dev;
+    return 0;
 }
+
+
+
+uint8_t DtaDevOpal::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
+    OPAL_TOKEN value, vector<uint8_t>HostChallenge, char * msg)
+{
+    LOG(D1) << "Entering DtaDevOpal::setLockingSPvalue " << dev;
+    uint8_t lastRC;
+    vector<uint8_t> table;
+    table. push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+    for (int i = 0; i < 8; i++) {
+        table.push_back(OPALUID[table_uid][i]);
+    }
+    session = new DtaSession(this);
+    if (NULL == session) {
+        LOG(E) << "Unable to create session object " << dev;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    
+    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, HostChallenge, getusermode()? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+        delete session;
+        return lastRC;
+    }
+    if ((lastRC = setTable(table, name, value)) != 0) {
+        LOG(E) << "Unable to update table " << dev;
+        delete session;
+        return lastRC;
+    }
+    if (NULL != msg) {
+        LOG(D) << msg;
+    }
+    
+    delete session;
+    LOG(D1) << "Exiting DtaDevOpal::setLockingSPvalue() " << dev;
+    return 0;
+}
+
 
 uint8_t DtaDevOpal::enableUser(uint8_t mbrstate, char * password, char * userid)
 {
-	LOG(D1) << "Entering DtaDevOpal::enableUser " << dev;
-	uint8_t lastRC;
-	vector<uint8_t> userUID;
-	
-	session = new DtaSession(this);
-	if (NULL == session) {
-		LOG(E) << "Unable to create session object " << dev;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
-		delete session;
-		return lastRC;
-	}
-	if ((lastRC = getAuth4User(userid, 0, userUID)) != 0) {
-		LOG(E) << "Unable to find user " << userid << " in Authority Table " << dev;
-		delete session;
-		return lastRC;
-	}
-	if ((lastRC = setTable(userUID, (OPAL_TOKEN)0x05, mbrstate ? OPAL_TOKEN::OPAL_TRUE : OPAL_TOKEN::OPAL_FALSE)) != 0) {
-		LOG(E) << "Unable to enable user " << userid << " " << dev;
-		delete session;
-		return lastRC;
-	}
-	/*
-	if ((lastRC = getAuth4User("User2", 0, userUID)) != 0) {
-		LOG(E) << "Unable to find user " << "User2" << " in Authority Table";
-		delete session;
-		return lastRC;
-	}
-	if ((lastRC = setTable(userUID, (OPAL_TOKEN)0x05, mbrstate ? OPAL_TOKEN::OPAL_TRUE : OPAL_TOKEN::OPAL_FALSE)) != 0) {
-		LOG(E) << "Unable to enable user " << "User2";
-		delete session;
-		return lastRC;
-	}
-	*/
-	if (mbrstate) 
-		LOG(D2) << userid << " has been enabled " << dev;
-	else 
-		LOG(D2) << userid << " has been disabled" << dev;
+    LOG(D1) << "Entering DtaDevOpal::enableUser " << dev;
+    uint8_t lastRC;
+    vector<uint8_t> userUID;
+    
+    session = new DtaSession(this);
+    if (NULL == session) {
+        LOG(E) << "Unable to create session object " << dev;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+        delete session;
+        return lastRC;
+    }
+    if ((lastRC = getAuth4User(userid, 0, userUID)) != 0) {
+        LOG(E) << "Unable to find user " << userid << " in Authority Table " << dev;
+        delete session;
+        return lastRC;
+    }
+    if ((lastRC = setTable(userUID, (OPAL_TOKEN)0x05, mbrstate ? OPAL_TOKEN::OPAL_TRUE : OPAL_TOKEN::OPAL_FALSE)) != 0) {
+        LOG(E) << "Unable to enable user " << userid << " " << dev;
+        delete session;
+        return lastRC;
+    }
+    /*
+    if ((lastRC = getAuth4User("User2", 0, userUID)) != 0) {
+        LOG(E) << "Unable to find user " << "User2" << " in Authority Table";
+        delete session;
+        return lastRC;
+    }
+    if ((lastRC = setTable(userUID, (OPAL_TOKEN)0x05, mbrstate ? OPAL_TOKEN::OPAL_TRUE : OPAL_TOKEN::OPAL_FALSE)) != 0) {
+        LOG(E) << "Unable to enable user " << "User2";
+        delete session;
+        return lastRC;
+    }
+    */
+    if (mbrstate)
+        LOG(D2) << userid << " has been enabled " << dev;
+    else
+        LOG(D2) << userid << " has been disabled" << dev;
 
-	delete session;
-	LOG(D1) << "Exiting DtaDevOpal::enableUser() " << dev;
-	return 0;
+    delete session;
+    LOG(D1) << "Exiting DtaDevOpal::enableUser() " << dev;
+    return 0;
 }
+
+uint8_t DtaDevOpal::enableUser(uint8_t mbrstate, vector<uint8_t> HostChallenge, char * userid)
+{
+    LOG(D1) << "Entering DtaDevOpal::enableUser " << dev;
+    
+    uint8_t lastRC = WithSession([this, HostChallenge](){
+        return session->start(OPAL_UID::OPAL_LOCKINGSP_UID, HostChallenge, OPAL_UID::OPAL_ADMIN1_UID);
+    },
+                                 [this, mbrstate, userid](){
+        vector<uint8_t> userUID;
+        uint8_t rc;
+        if ((rc = getAuth4User(userid, 0, userUID)) != 0) {
+            LOG(E) << "Unable to find user " << userid << " in Authority Table " << dev;
+            return rc;
+        }
+        if ((rc = setTable(userUID, (OPAL_TOKEN)0x05, mbrstate ? OPAL_TOKEN::OPAL_TRUE : OPAL_TOKEN::OPAL_FALSE)) != 0) {
+            LOG(E) << "Unable to enable user " << userid << " " << dev;
+            return rc;
+        }
+        return rc;
+    });
+    
+    if (lastRC == 0) {
+        if (mbrstate)
+            LOG(D2) << userid << " has been enabled " << dev;
+        else
+            LOG(D2) << userid << " has been disabled" << dev;
+    }
+    LOG(D1) << "Exiting DtaDevOpal::enableUser() " << dev;
+    return lastRC;
+}
+
+
+
+
 
 /*
 OPAL_UID getUIDtoken(char * userid)
@@ -1678,80 +2117,156 @@ uint8_t DtaDevOpal::userAccessEnable(uint8_t mbrstate, OPAL_UID UID, char * user
 }
 uint8_t DtaDevOpal::enableUserRead(uint8_t mbrstate, char * password, char * userid)
 {
-	LOG(D1) << "Entering DtaDevOpal::enableUserRead " << dev;
-	uint8_t lastRC;
-	uint8_t error;
-	vector<uint8_t> userUID;
+    LOG(D1) << "Entering DtaDevOpal::enableUserRead " << dev;
+    uint8_t lastRC;
+    uint8_t error;
+    vector<uint8_t> userUID;
 
-	session = new DtaSession(this);
-	if (NULL == session) {
-		LOG(E) << "Unable to create session object " << dev;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
-		delete session;
-		return lastRC;
-	}
-	if ((lastRC = getAuth4User(userid, 0, userUID)) != 0) {
-		LOG(E) << "Unable to find user " << userid << " in Authority Table " << dev;
-		delete session;
-		return lastRC;
-	}
-	/*	OPAL_ACE_DataStore_Get_All,
-		OPAL_ACE_MBRControl_Set_Done,
-	    OPAL_ACE_LOCKINGRANGE_RDLOCKED,
-		OPAL_ACE_LOCKINGRANGE_WRLOCKED,
-	*/
-	error = 0;
-	
+    session = new DtaSession(this);
+    if (NULL == session) {
+        LOG(E) << "Unable to create session object " << dev;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+        delete session;
+        return lastRC;
+    }
+    if ((lastRC = getAuth4User(userid, 0, userUID)) != 0) {
+        LOG(E) << "Unable to find user " << userid << " in Authority Table " << dev;
+        delete session;
+        return lastRC;
+    }
+    /*    OPAL_ACE_DataStore_Get_All,
+        OPAL_ACE_MBRControl_Set_Done,
+        OPAL_ACE_LOCKINGRANGE_RDLOCKED,
+        OPAL_ACE_LOCKINGRANGE_WRLOCKED,
+    */
+    error = 0;
+    
     LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_DataStore_Get_All for " << userid;
-	error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_DataStore_Get_All,userid);
-	
+    error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_DataStore_Get_All,userid);
+    
     LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_DataStore_Set_All for " << userid;
-	error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_DataStore_Set_All, userid);
-	
+    error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_DataStore_Set_All, userid);
+    
     if (!disk_info.Locking_MBRshadowingNotSupported) {
-		LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_MBRControl_Set_Done for " << userid;
-		error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_MBRControl_Set_Done, userid);
-	}
-	// DO NOT turn on lockingrange 1
-	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "enable OPAL_ACE_LOCKINGRANGE1_RDLOCKED for " << userid;
-	//error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_LOCKINGRANGE1_RDLOCKED, userid);
-	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "enable OPAL_ACE_LOCKINGRANGE1_WRLOCKED for " << userid;
-	//error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_LOCKINGRANGE1_WRLOCKED, userid);
-	/*
-	OPAL_ACE_MBRControl_Set_Enable,
-	ACE_Locking_GlobalRange_Get_RangeStartToActiveKey,
-	ACE_Locking_GlobalRange_Set_ReadLocked,
-	ACE_Locking_GlobalRange_Set_WriteLocked,
-	ACE_Locking_GlobalRange_Admin_Set,	// allow to set/reset
-	ACE_Locking_GlobalRange_Admin_Start, // allow to set/reset range start and length
-	*/
-	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_MBRControl_Set_Enable for " << userid;
-	//error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_MBRControl_Set_Enable, userid); // NG6
-	if ( isOpal2() && !( isPyrite() || isOpalite() || isRuby()) ) {
-		LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey for " << userid;
-		error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey, userid);
-	}
-	LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Set_ReadLocked for " << userid;
-	error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Set_ReadLocked, userid);
-	LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Set_WriteLocked for " << userid;
-	error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Set_WriteLocked, userid);
-	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Admin_Set for " << userid;
-	//error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Admin_Set, userid); // NG10
-	//LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Admin_Start for " << userid;
-	//error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Admin_Start, userid); // NG11
+        LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_MBRControl_Set_Done for " << userid;
+        error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_MBRControl_Set_Done, userid);
+    }
+    // DO NOT turn on lockingrange 1
+    //LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "enable OPAL_ACE_LOCKINGRANGE1_RDLOCKED for " << userid;
+    //error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_LOCKINGRANGE1_RDLOCKED, userid);
+    //LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "enable OPAL_ACE_LOCKINGRANGE1_WRLOCKED for " << userid;
+    //error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_LOCKINGRANGE1_WRLOCKED, userid);
+    /*
+    OPAL_ACE_MBRControl_Set_Enable,
+    ACE_Locking_GlobalRange_Get_RangeStartToActiveKey,
+    ACE_Locking_GlobalRange_Set_ReadLocked,
+    ACE_Locking_GlobalRange_Set_WriteLocked,
+    ACE_Locking_GlobalRange_Admin_Set,    // allow to set/reset
+    ACE_Locking_GlobalRange_Admin_Start, // allow to set/reset range start and length
+    */
+    //LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_MBRControl_Set_Enable for " << userid;
+    //error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_MBRControl_Set_Enable, userid); // NG6
+    if ( isOpal2() && !( isPyrite() || isOpalite() || isRuby()) ) {
+        LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey for " << userid;
+        error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey, userid);
+    }
+    LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Set_ReadLocked for " << userid;
+    error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Set_ReadLocked, userid);
+    LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Set_WriteLocked for " << userid;
+    error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Set_WriteLocked, userid);
+    //LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Admin_Set for " << userid;
+    //error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Admin_Set, userid); // NG10
+    //LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Admin_Start for " << userid;
+    //error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Admin_Start, userid); // NG11
 
-	if (error) {
-		LOG(E) << (mbrstate ? "enable " : "disable ") << "one of user accesses fail" << dev;
-		delete session;
-		return error;
-	}
+    if (error) {
+        LOG(E) << (mbrstate ? "enable " : "disable ") << "one of user accesses fail" << dev;
+        delete session;
+        return error;
+    }
 
-	delete session;
-	return 0;
+    delete session;
+    return 0;
 }
 
+
+uint8_t DtaDevOpal::enableUserRead(uint8_t mbrstate, vector<uint8_t> HostChallenge, char * userid)
+{
+    LOG(D1) << "Entering DtaDevOpal::enableUserRead " << dev;
+    uint8_t lastRC;
+    uint8_t error;
+    vector<uint8_t> userUID;
+
+    session = new DtaSession(this);
+    if (NULL == session) {
+        LOG(E) << "Unable to create session object " << dev;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, HostChallenge, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+        delete session;
+        return lastRC;
+    }
+    if ((lastRC = getAuth4User(userid, 0, userUID)) != 0) {
+        LOG(E) << "Unable to find user " << userid << " in Authority Table " << dev;
+        delete session;
+        return lastRC;
+    }
+    /*    OPAL_ACE_DataStore_Get_All,
+        OPAL_ACE_MBRControl_Set_Done,
+        OPAL_ACE_LOCKINGRANGE_RDLOCKED,
+        OPAL_ACE_LOCKINGRANGE_WRLOCKED,
+    */
+    error = 0;
+    
+    LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_DataStore_Get_All for " << userid;
+    error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_DataStore_Get_All,userid);
+    
+    LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_DataStore_Set_All for " << userid;
+    error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_DataStore_Set_All, userid);
+    
+    if (!disk_info.Locking_MBRshadowingNotSupported) {
+        LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_MBRControl_Set_Done for " << userid;
+        error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_MBRControl_Set_Done, userid);
+    }
+    // DO NOT turn on lockingrange 1
+    //LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "enable OPAL_ACE_LOCKINGRANGE1_RDLOCKED for " << userid;
+    //error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_LOCKINGRANGE1_RDLOCKED, userid);
+    //LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "enable OPAL_ACE_LOCKINGRANGE1_WRLOCKED for " << userid;
+    //error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_LOCKINGRANGE1_WRLOCKED, userid);
+    /*
+    OPAL_ACE_MBRControl_Set_Enable,
+    ACE_Locking_GlobalRange_Get_RangeStartToActiveKey,
+    ACE_Locking_GlobalRange_Set_ReadLocked,
+    ACE_Locking_GlobalRange_Set_WriteLocked,
+    ACE_Locking_GlobalRange_Admin_Set,    // allow to set/reset
+    ACE_Locking_GlobalRange_Admin_Start, // allow to set/reset range start and length
+    */
+    //LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_MBRControl_Set_Enable for " << userid;
+    //error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_MBRControl_Set_Enable, userid); // NG6
+    if ( isOpal2() && !( isPyrite() || isOpalite() || isRuby()) ) {
+        LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey for " << userid;
+        error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Get_RangeStartToActiveKey, userid);
+    }
+    LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Set_ReadLocked for " << userid;
+    error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Set_ReadLocked, userid);
+    LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Set_WriteLocked for " << userid;
+    error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Set_WriteLocked, userid);
+    //LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Admin_Set for " << userid;
+    //error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Admin_Set, userid); // NG10
+    //LOG(D1) << "***** " << (mbrstate ? "enable " : "disable ") << "OPAL_ACE_Locking_GlobalRange_Admin_Start for " << userid;
+    //error |= userAccessEnable(mbrstate, OPAL_UID::OPAL_ACE_Locking_GlobalRange_Admin_Start, userid); // NG11
+
+    if (error) {
+        LOG(E) << (mbrstate ? "enable " : "disable ") << "one of user accesses fail" << dev;
+        delete session;
+        return error;
+    }
+
+    delete session;
+    return 0;
+}
 
 uint8_t DtaDevOpal::revertTPer(char * password, uint8_t PSID, uint8_t AdminSP)
 {
@@ -4389,57 +4904,97 @@ uint8_t DtaDevOpal::loadPBA_M(char * password, char * filename) {
 
 uint8_t DtaDevOpal::activateLockingSP(char * password)
 {
-	LOG(D1) << "Entering DtaDevOpal::activateLockingSP() " << dev;
-	uint8_t lastRC;
-	vector<uint8_t> table;
-	table. push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	for (int i = 0; i < 8; i++) {
-		table.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGSP_UID][i]);
-	}
-	DtaCommand *cmd = new DtaCommand();
-	if (NULL == cmd) {
-		LOG(E) << "Unable to create command object " << dev;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	session = new DtaSession(this);
-	if (NULL == session) {
-		LOG(E) << "Unable to create session object " << dev;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, OPAL_UID::OPAL_SID_UID)) != 0) {
-		delete cmd;
-		delete session;
-		return lastRC;
-	}
-	if ((lastRC = getTable(table, 0x06, 0x06)) != 0) {
-		LOG(E) << "Unable to determine LockingSP Lifecycle state " << dev;
-		delete cmd;
-		delete session;
-		return lastRC;
-	}
-	if ((0x06 != response.getUint8(3)) || // getlifecycle
-		(0x08 != response.getUint8(4))) // Manufactured-Inactive
-	{
-		LOG(E) << "Locking SP lifecycle is not Manufactured-Inactive " << dev;
-		delete cmd;
-		delete session;
-		return DTAERROR_INVALID_LIFECYCLE;
-	}
-	cmd->reset(OPAL_UID::OPAL_LOCKINGSP_UID, OPAL_METHOD::ACTIVATE);
-	cmd->addToken(OPAL_TOKEN::STARTLIST);
-	cmd->addToken(OPAL_TOKEN::ENDLIST);
-	cmd->complete();
-	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
-		delete cmd;
-		delete session;
-		return lastRC;
-	}
-	LOG(D) << "Locking SP Activate Complete " << dev;
+    LOG(D1) << "Entering DtaDevOpal::activateLockingSP() " << dev;
+    uint8_t lastRC;
+    vector<uint8_t> table;
+    table. push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+    for (int i = 0; i < 8; i++) {
+        table.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGSP_UID][i]);
+    }
+    DtaCommand *cmd = new DtaCommand();
+    if (NULL == cmd) {
+        LOG(E) << "Unable to create command object " << dev;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    session = new DtaSession(this);
+    if (NULL == session) {
+        LOG(E) << "Unable to create session object " << dev;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, OPAL_UID::OPAL_SID_UID)) != 0) {
+        delete cmd;
+        delete session;
+        return lastRC;
+    }
+    if ((lastRC = getTable(table, 0x06, 0x06)) != 0) {
+        LOG(E) << "Unable to determine LockingSP Lifecycle state " << dev;
+        delete cmd;
+        delete session;
+        return lastRC;
+    }
+    if ((0x06 != response.getUint8(3)) || // getlifecycle
+        (0x08 != response.getUint8(4))) // Manufactured-Inactive
+    {
+        LOG(E) << "Locking SP lifecycle is not Manufactured-Inactive " << dev;
+        delete cmd;
+        delete session;
+        return DTAERROR_INVALID_LIFECYCLE;
+    }
+    cmd->reset(OPAL_UID::OPAL_LOCKINGSP_UID, OPAL_METHOD::ACTIVATE);
+    cmd->addToken(OPAL_TOKEN::STARTLIST);
+    cmd->addToken(OPAL_TOKEN::ENDLIST);
+    cmd->complete();
+    if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+        delete cmd;
+        delete session;
+        return lastRC;
+    }
+    LOG(D) << "Locking SP Activate Complete " << dev;
 
-	delete cmd;
-	delete session;
-	LOG(D1) << "Exiting DtaDevOpal::activatLockingSP() " << dev;
-	return 0;
+    delete cmd;
+    delete session;
+    LOG(D1) << "Exiting DtaDevOpal::activatLockingSP() " << dev;
+    return 0;
+}
+
+
+uint8_t DtaDevOpal::activateLockingSP(vector<uint8_t> HostChallenge)
+{
+    LOG(D1) << "Entering DtaDevOpal::activateLockingSP() " << dev;
+    vector<uint8_t> table;
+    table. push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+    for (int i = 0; i < 8; i++) {
+        table.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGSP_UID][i]);
+    }
+    uint8_t lastRC = WithSessionCommand([this, HostChallenge, table](){
+        uint8_t rc = session->start(OPAL_UID::OPAL_ADMINSP_UID, HostChallenge, OPAL_UID::OPAL_SID_UID);
+        if (rc != 0)
+            return rc;
+        rc = getTable(table, 0x06, 0x06);
+        if (rc != 0) {
+            LOG(E) << "Unable to determine LockingSP Lifecycle state " << dev;
+            return rc;
+        }
+        if ((0x06 != response.getUint8(3)) || // getlifecycle
+            (0x08 != response.getUint8(4))) // Manufactured-Inactive
+        {
+            LOG(E) << "Locking SP lifecycle is not Manufactured-Inactive " << dev;
+            return (uint8_t)DTAERROR_INVALID_LIFECYCLE;
+        }
+        return rc;
+    },
+                                        [](DtaCommand * cmd){
+        cmd->reset(OPAL_UID::OPAL_LOCKINGSP_UID, OPAL_METHOD::ACTIVATE);
+        cmd->addToken(OPAL_TOKEN::STARTLIST);
+        cmd->addToken(OPAL_TOKEN::ENDLIST);
+        cmd->complete();
+    });
+    if (lastRC  != 0) {
+    } else {
+        LOG(D) << "Locking SP Activate Complete " << dev;
+        LOG(D1) << "Exiting DtaDevOpal::activatLockingSP() " << dev;
+    }
+    return lastRC;
 }
 
 uint8_t DtaDevOpal::activateLockingSP_SUM(uint8_t lockingrange, char * password)
@@ -4575,20 +5130,41 @@ uint8_t DtaDevOpal::eraseLockingRange_SUM(uint8_t lockingrange, char * password)
 
 uint8_t DtaDevOpal::takeOwnership(char * newpassword)
 {
-	LOG(D1) << "Entering DtaDevOpal::takeOwnership() " << dev;
-	uint8_t lastRC;
-	if ((lastRC = getDefaultPassword()) != 0) {
-		LOG(E) << "Unable to read MSID password " << dev;
-		return lastRC;
-	}
-	if ((lastRC = setSIDPassword((char *)response.getString(4).c_str(), newpassword, 0)) != 0) {
-		LOG(E) << "takeOwnership failed " << dev;
-		return lastRC;
-	}
-	LOG(D) << "takeOwnership complete " << dev;
-	LOG(D1) << "Exiting takeOwnership() " << dev;
-	return 0;
+    LOG(D1) << "Entering DtaDevOpal::takeOwnership() " << dev;
+    uint8_t lastRC;
+    if ((lastRC = getDefaultPassword()) != 0) {
+        LOG(E) << "Unable to read MSID password " << dev;
+        return lastRC;
+    }
+    if ((lastRC = setSIDPassword((char *)response.getString(4).c_str(), newpassword, 0)) != 0) {
+        LOG(E) << "takeOwnership failed " << dev;
+        return lastRC;
+    }
+    LOG(D) << "takeOwnership complete " << dev;
+    LOG(D1) << "Exiting takeOwnership() " << dev;
+    return 0;
 }
+
+uint8_t DtaDevOpal::takeOwnership(vector<uint8_t> HostChallenge)
+{
+    LOG(D1) << "Entering DtaDevOpal::takeOwnership() " << dev;
+    uint8_t lastRC;
+    if ((lastRC = getDefaultPassword()) != 0) {
+        LOG(E) << "Unable to read MSID password " << dev;
+        return lastRC;
+    }
+    string defaultPassword = response.getString(4);
+    const char * dps = defaultPassword.c_str();
+    vector<uint8_t> defaultHostChallenge(dps,dps+strlen(dps));
+    if ((lastRC = setSIDPassword(defaultHostChallenge, HostChallenge)) != 0) {
+        LOG(E) << "takeOwnership failed " << dev;
+        return lastRC;
+    }
+    LOG(D) << "takeOwnership complete " << dev;
+    LOG(D1) << "Exiting takeOwnership() " << dev;
+    return 0;
+}
+
 uint8_t DtaDevOpal::getDefaultPassword()
 {
 	LOG(D1) << "Entering DtaDevOpal::getDefaultPassword() " << dev;
@@ -4758,49 +5334,76 @@ uint8_t DtaDevOpal::printDefaultPassword()
 }
 
 uint8_t DtaDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
-	uint8_t hasholdpwd, uint8_t hashnewpwd)
+    uint8_t hasholdpwd, uint8_t hashnewpwd)
 {
-	vector<uint8_t> hash, table;
-	LOG(D1) << "Entering DtaDevOpal::setSIDPassword() " << dev;
-	uint8_t lastRC;
-	session = new DtaSession(this);
-	if (NULL == session) {
-		LOG(E) << "Unable to create session object " << dev;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	if (!hasholdpwd) session->dontHashPwd();
-	if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID,
-		oldpassword, OPAL_UID::OPAL_SID_UID)) != 0) {
-		delete session;
-		return lastRC;
-	}
-	table.clear();
-	table. push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	for (int i = 0; i < 8; i++) {
-		table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_SID][i]);
-	}
-	hash.clear();
-	if (hashnewpwd) {
-		DtaHashPwd(hash, newpassword, this);
-	}
-	else {
-		hash.push_back(0xd0);
-		hash.push_back((uint8_t)strnlen(newpassword, 255));
-		for (uint16_t i = 0; i < strnlen(newpassword, 255); i++) {
-			hash.push_back(newpassword[i]);
-		}
-	}
-	if ((lastRC = setTable(table, OPAL_TOKEN::PIN, hash)) != 0) {
-		LOG(E) << "Unable to set new SID password " << dev;
-		delete session;
-		return lastRC;
-	}
-	delete session;
-	//auditRec(newpassword, evt_PasswordChangedSID);
-	LOG(D) << "set SID password completed " << dev;
-	LOG(D1) << "Exiting DtaDevOpal::setSIDPassword() " << dev;
-	return 0;
+    vector<uint8_t> hash, table;
+    LOG(D1) << "Entering DtaDevOpal::setSIDPassword() " << dev;
+    uint8_t lastRC;
+    session = new DtaSession(this);
+    if (NULL == session) {
+        LOG(E) << "Unable to create session object " << dev;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    if (!hasholdpwd) session->dontHashPwd();
+    if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID,
+        oldpassword, OPAL_UID::OPAL_SID_UID)) != 0) {
+        delete session;
+        return lastRC;
+    }
+    table.clear();
+    table. push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+    for (int i = 0; i < 8; i++) {
+        table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_SID][i]);
+    }
+    hash.clear();
+    if (hashnewpwd) {
+        DtaHashPwd(hash, newpassword, this);
+    }
+    else {
+        hash.push_back(0xd0);
+        hash.push_back((uint8_t)strnlen(newpassword, 255));
+        for (uint16_t i = 0; i < strnlen(newpassword, 255); i++) {
+            hash.push_back(newpassword[i]);
+        }
+    }
+    if ((lastRC = setTable(table, OPAL_TOKEN::PIN, hash)) != 0) {
+        LOG(E) << "Unable to set new SID password " << dev;
+        delete session;
+        return lastRC;
+    }
+    delete session;
+    //auditRec(newpassword, evt_PasswordChangedSID);
+    LOG(D) << "set SID password completed " << dev;
+    LOG(D1) << "Exiting DtaDevOpal::setSIDPassword() " << dev;
+    return 0;
 }
+
+uint8_t DtaDevOpal::setSIDPassword(vector<uint8_t> oldHostChallenge,
+                                   vector<uint8_t> newHostChallenge)
+{
+    LOG(D1) << "Entering DtaDevOpal::setSIDPassword() " << dev;
+    uint8_t lastRC = WithSession([this, oldHostChallenge](){
+        return session->start(OPAL_UID::OPAL_ADMINSP_UID,
+                              oldHostChallenge, OPAL_UID::OPAL_SID_UID);
+    },
+                                 [this, newHostChallenge](){
+        vector<uint8_t> table;
+        table.clear();
+        table. push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+        for (int i = 0; i < 8; i++) {
+            table.push_back(OPALUID[OPAL_UID::OPAL_C_PIN_SID][i]);
+        }
+        return setTable(table, OPAL_TOKEN::PIN, newHostChallenge);
+    });
+    if (lastRC != 0) {
+        LOG(E) << "Unable to set new SID password " << dev;
+    } else {
+        LOG(D) << "set SID password completed " << dev;
+        LOG(D1) << "Exiting DtaDevOpal::setSIDPassword() " << dev;
+    }
+    return lastRC;
+}
+
 
 uint8_t DtaDevOpal::setTable(vector<uint8_t> table, OPAL_TOKEN name,
 	OPAL_TOKEN value)
