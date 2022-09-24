@@ -101,13 +101,14 @@ public:
          */ 
 	uint8_t setSIDPassword(char * oldpassword, char * newpassword,
 		uint8_t hasholdpwd = 1, uint8_t hashnewpwd = 1);
-    /** Set the SID password.
+    
+    /** Set the SID host challenge.
      * @param oldHostChallenge  current SID host challenge
      * @param newHostChallenge  value host challenge is to be changed to
      * @note neither value is hashed
      */
-    virtual uint8_t setSIDPassword(vector<uint8_t> oldHostChallenge,
-                                   vector<uint8_t> newHostChallenge) = 0;
+    uint8_t setSIDHostChallenge(vector<uint8_t> oldHostChallenge,
+                                vector<uint8_t> newHostChallenge);
          /** set a single column in an object table 
          * @param table the UID of the table
          * @param name the column name to be set
@@ -151,6 +152,14 @@ public:
          * @param keep boolean keep the data (NOT FUNCTIONAL)
          */
 	uint8_t revertLockingSP(char * password, uint8_t keep = 0);
+
+    /** Reset the Locking SP to its factory default condition
+     * ERASES ALL DATA!
+     * @param HostChallenge of Administrative user
+     * @param keep true false for noerase function NOT WWORKING
+     */
+    uint8_t revertLockingSP(vector<uint8_t> HostChallenge, uint8_t keep = 0);
+
          /** get the UID or CPIN ID of a user from their character name
           * @param userid  Character user name
           *  @param column UID or CPIN to be returned
@@ -224,7 +233,18 @@ public:
          * @param newpassword  value password is to be changed to
          */
 	uint8_t setPassword(char * password, char * userid, char * newpassword);
-	/** Set the password of a locking SP user in Single User Mode.
+
+    
+    /** Set the host challenge of a locking SP user.
+     *   Note that the version above of this method is called setPassword
+     * @param currentHostChallenge  current host challenge
+     * @param userid the userid whose host challenge is to be changed
+     * @param newHostChallenge  value  host challenge is to be changed to
+     */
+    uint8_t setHostChallenge(vector<uint8_t> currentHostChallenge, char * userid, vector<uint8_t> newHostChallenge);
+    
+    
+    /** Set the password of a locking SP user in Single User Mode.
          * @param password  current user password
          * @param userid the userid whose password is to be changed
          * @param newpassword  value password is to be changed to
@@ -310,6 +330,14 @@ uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint
          * @param PSID true or false is the authority the PSID
          *   */
 	uint8_t revertTPer(char * password, uint8_t PSID = 0, uint8_t AdminSP = 0);
+    
+    /** Reset the TPER to its factory condition
+     * @param HostChallenge HostChallenge of authority (SID or PSID)
+     * @param PSID true or false is the authority the PSID
+     * @param AdminSP true or false is the SP the AdminSP or ThisSP (Enterprise Only)
+     */
+    uint8_t revertTPer(vector<uint8_t> HostChallenge, uint8_t PSID = 0, uint8_t AdminSP = 0 );
+
 	    /** Erase a locking range
 	    * @param lockingrange The number of the locking range (0 = global)
 	    * @param password Password of administrative authority for locking range
@@ -421,6 +449,11 @@ uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint
 	//audit_t auditL;
 	//vector <entry_t> entryA;
 
+    /** Primitive to extract the MSID into a std::string
+     * @param MSID the string to receive the MSID
+     */
+    uint8_t getMSID(std::string& MSID);
+    
 protected:
     /** Primitive to handle the setting of a value in the locking sp.
      * @param table_uid UID of the table

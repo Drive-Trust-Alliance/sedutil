@@ -619,20 +619,19 @@ DtaSession::methodStatus(uint8_t status)
 DtaSession::~DtaSession()
 {
     LOG(D1) << "Destroying DtaSession";
-	DtaResponse response;
     if (!willAbort) {
         DtaCommand *cmd = new DtaCommand();
 		if (NULL == cmd) {
 			LOG(E) << "Unable to create command object ";
-		} 
-		else {
-			cmd->reset();
-			cmd->addToken(OPAL_TOKEN::ENDOFSESSION);
-			cmd->complete(0);
-			if (sendCommand(cmd, response)) {
-				LOG(E) << "EndSession Failed";
-			}
-			delete cmd;
+            return;
 		}
+        DtaResponse response;
+        cmd->reset();
+        cmd->addToken(OPAL_TOKEN::ENDOFSESSION);
+        cmd->complete(0);
+        if (0 != sendCommand(cmd, response)) {
+            LOG(E) << "EndSession Failed";
+        }
+        delete cmd;
     }
 }

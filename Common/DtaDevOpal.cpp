@@ -1190,51 +1190,83 @@ uint8_t DtaDevOpal::setBandsEnabled(int16_t lockingrange, char * password)
 }
 uint8_t DtaDevOpal::revertLockingSP(char * password, uint8_t keep)
 {
-	LOG(D1) << "Entering revert DtaDevOpal::revertLockingSP() keep = " << (uint16_t) keep << " " << dev;
-	uint8_t lastRC;
-	vector<uint8_t> keepGlobalLocking;
-	keepGlobalLocking.push_back(0x83);
-	keepGlobalLocking.push_back(0x06);
-	keepGlobalLocking.push_back(0x00);
-	keepGlobalLocking.push_back(0x00);
-	DtaCommand *cmd = new DtaCommand();
-	if (NULL == cmd) {
-		LOG(E) << "Create session object failed " << dev;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	session = new DtaSession(this);
-	if (NULL == session) {
-		LOG(E) << "Create session object failed " << dev;
-		delete cmd;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
-		delete cmd;
-		delete session;
-		return lastRC;
-	}
-	cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
-	cmd->addToken(OPAL_TOKEN::STARTLIST);
-	if (keep) {
-		cmd->addToken(OPAL_TOKEN::STARTNAME);
-		cmd->addToken(keepGlobalLocking);
-		cmd->addToken(OPAL_TOKEN::OPAL_TRUE);
-		cmd->addToken(OPAL_TOKEN::ENDNAME);
-	}
-	cmd->addToken(OPAL_TOKEN::ENDLIST);
-	cmd->complete();
-	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
-		delete cmd;
-		delete session;
-		return lastRC;
-	}
-	// empty list returned so rely on method status
-	LOG(D) << "Revert LockingSP complete " << dev;
-	session->expectAbort();
-	delete session;
-	LOG(D1) << "Exiting revert DtaDev:LockingSP() " << dev;
-	return 0;
+    LOG(D1) << "Entering revert DtaDevOpal::revertLockingSP() keep = " << (uint16_t) keep << " " << dev;
+    uint8_t lastRC;
+    vector<uint8_t> keepGlobalLocking;
+    keepGlobalLocking.push_back(0x83);
+    keepGlobalLocking.push_back(0x06);
+    keepGlobalLocking.push_back(0x00);
+    keepGlobalLocking.push_back(0x00);
+    DtaCommand *cmd = new DtaCommand();
+    if (NULL == cmd) {
+        LOG(E) << "Create session object failed " << dev;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    session = new DtaSession(this);
+    if (NULL == session) {
+        LOG(E) << "Create session object failed " << dev;
+        delete cmd;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+        delete cmd;
+        delete session;
+        return lastRC;
+    }
+    cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
+    cmd->addToken(OPAL_TOKEN::STARTLIST);
+    if (keep) {
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken(keepGlobalLocking);
+        cmd->addToken(OPAL_TOKEN::OPAL_TRUE);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+    }
+    cmd->addToken(OPAL_TOKEN::ENDLIST);
+    cmd->complete();
+    if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+        delete cmd;
+        delete session;
+        return lastRC;
+    }
+    // empty list returned so rely on method status
+    LOG(D) << "Revert LockingSP complete " << dev;
+    session->expectAbort();
+    delete session;
+    LOG(D1) << "Exiting revert DtaDev:LockingSP() " << dev;
+    return 0;
 }
+
+
+
+uint8_t DtaDevOpal::revertLockingSP(vector<uint8_t> HostChallenge, uint8_t keep)
+{
+    LOG(D1) << "Entering revert DtaDevOpal::revertLockingSP() keep = " << (uint16_t) keep << " " << dev;
+    uint8_t lastRC = WithSessionCommand([this, HostChallenge](){
+        return session->start(OPAL_UID::OPAL_LOCKINGSP_UID, HostChallenge, OPAL_UID::OPAL_ADMIN1_UID);
+    },
+                       [this, keep](DtaCommand *cmd){
+        cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
+        cmd->addToken(OPAL_TOKEN::STARTLIST);
+        if (keep) {
+            cmd->addToken(OPAL_TOKEN::STARTNAME);
+            vector<uint8_t> keepGlobalLocking{0x83,0x06,0x00,0x00};
+            cmd->addToken(keepGlobalLocking);
+            cmd->addToken(OPAL_TOKEN::OPAL_TRUE);
+            cmd->addToken(OPAL_TOKEN::ENDNAME);
+        }
+        cmd->addToken(OPAL_TOKEN::ENDLIST);
+        cmd->complete();
+        session->expectAbort();  // TODO: check this
+    });
+    if (lastRC == 0) {
+        // empty list returned so rely on method status
+        LOG(D) << "Revert LockingSP complete " << dev;
+    }
+    LOG(D1) << "Exiting revert DtaDev:LockingSP() " << dev;
+    return lastRC;
+}
+
+
 uint8_t DtaDevOpal::eraseLockingRange(uint8_t lockingrange, char * password)
 {
 	LOG(D1) << "Entering DtaDevOpal::eraseLockingRange()" << lockingrange << " " << dev;
@@ -1284,57 +1316,122 @@ uint8_t DtaDevOpal::getAuth4User(char * userid, uint8_t uidorcpin, vector<uint8_
 }
 uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpassword)
 {
-	LOG(D1) << "Entering DtaDevOpal::setPassword " << dev;
-	uint8_t lastRC;
-	vector<uint8_t> userCPIN, hash;
-	session = new DtaSession(this);
-	if (NULL == session) {
-		LOG(E) << "Unable to create session object " << dev;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	char * buf = (char *)malloc(20);
-	int idx=0;
+    LOG(D1) << "Entering DtaDevOpal::setPassword " << dev;
+    uint8_t lastRC;
+    vector<uint8_t> userCPIN, hash;
+    session = new DtaSession(this);
+    if (NULL == session) {
+        LOG(E) << "Unable to create session object " << dev;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    char * buf = (char *)malloc(20);
+    int idx=0;
 
-	memset(buf, 0, 20);
-	gethuser(buf);
-	if (!memcmp(userid , buf, (disk_info.OPAL20_numUsers < 10) ? 5 : 6 ) ) idx = disk_info.OPAL20_numUsers -1 ;
+    memset(buf, 0, 20);
+    gethuser(buf);
+    if (!memcmp(userid , buf, (disk_info.OPAL20_numUsers < 10) ? 5 : 6 ) ) idx = disk_info.OPAL20_numUsers -1 ;
     free(buf);
-	// if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? (OPAL_UID)(OPAL_USER1_UID + idx) : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { 
-		delete session;
-		return lastRC;
-	}
-	if ((lastRC = getAuth4User(userid, 10, userCPIN)) != 0) {
-		LOG(E) << "Unable to find user " << userid << " in Authority Table";
-		delete session;
-		return lastRC;
-	}
-	DtaHashPwd(hash, newpassword, this);
-	if ((lastRC = setTable(userCPIN, OPAL_TOKEN::PIN, hash)) != 0) {
-		LOG(E) << "Unable to set user " << userid << " new password " << dev;
-		delete session;
-		return lastRC;
-	}
-	delete session;
-	LOG(D1) << userid << " password changed " << dev;
+    // if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? (OPAL_UID)(OPAL_USER1_UID + idx) : OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+        delete session;
+        return lastRC;
+    }
+    if ((lastRC = getAuth4User(userid, 10, userCPIN)) != 0) {
+        LOG(E) << "Unable to find user " << userid << " in Authority Table";
+        delete session;
+        return lastRC;
+    }
+    DtaHashPwd(hash, newpassword, this);
+    if ((lastRC = setTable(userCPIN, OPAL_TOKEN::PIN, hash)) != 0) {
+        LOG(E) << "Unable to set user " << userid << " new password " << dev;
+        delete session;
+        return lastRC;
+    }
+    delete session;
+    LOG(D1) << userid << " password changed " << dev;
 
-	//auditRec(newpassword, memcmp(userid, "Admin", 5) ? (uint8_t)evt_PasswordChangedUser: (uint8_t)evt_PasswordChangedAdmin);
-	if (!memcmp(userid, "Admin", 5)) { // if admin
-		LOG(D1) << "Admin try set password ";
-		if ((lastRC = setLockonReset(0, TRUE, newpassword)) != 0) { // enable LOCKING RANGE 0 LOCKonRESET 
-			LOG(E) << "failed - unable to set LOCKONRESET " << dev;
-			//delete session;
-			return lastRC;
-		}
-		//setuphuser(newpassword); // do not setup audit user when set admin password 
-	}
-	//else {
-	//	LOG(D) << "User try set password ";
-	//}
-	
-	LOG(D1) << "Exiting DtaDevOpal::setPassword() " << dev;
-	return 0;
+    //auditRec(newpassword, memcmp(userid, "Admin", 5) ? (uint8_t)evt_PasswordChangedUser: (uint8_t)evt_PasswordChangedAdmin);
+    if (!memcmp(userid, "Admin", 5)) { // if admin
+        LOG(D1) << "Admin try set password ";
+        if ((lastRC = setLockonReset(0, TRUE, newpassword)) != 0) { // enable LOCKING RANGE 0 LOCKonRESET
+            LOG(E) << "failed - unable to set LOCKONRESET " << dev;
+            //delete session;
+            return lastRC;
+        }
+        //setuphuser(newpassword); // do not setup audit user when set admin password
+    }
+    //else {
+    //    LOG(D) << "User try set password ";
+    //}
+    
+    LOG(D1) << "Exiting DtaDevOpal::setPassword() " << dev;
+    return 0;
 }
+
+
+
+uint8_t DtaDevOpal::setHostChallenge(vector<uint8_t> currentHostChallenge, char * userid, vector<uint8_t> newHostChallenge)
+{
+    LOG(D1) << "Entering DtaDevOpal::setHostChallenge " << dev;
+    char buf[20];
+    bzero(buf, sizeof(buf));
+    gethuser(buf);
+    int idx=0;
+    if (!memcmp(userid , buf, (disk_info.OPAL20_numUsers < 10) ? 5 : 6 ) ) {
+        idx = disk_info.OPAL20_numUsers -1 ;
+    }
+    
+    uint8_t lastRC = WithSession([this, currentHostChallenge, idx](){
+        return session->start(OPAL_UID::OPAL_LOCKINGSP_UID,
+                              currentHostChallenge,
+                              getusermode() ? (OPAL_UID)(OPAL_USER1_UID + idx) : OPAL_UID::OPAL_ADMIN1_UID);
+    },
+                                 [this, userid, newHostChallenge](){
+        uint8_t rc;
+        vector<uint8_t> userCPIN;
+        if ((rc = getAuth4User(userid, 10, userCPIN)) != 0) {
+            LOG(E) << "Unable to find user " << userid << " in Authority Table";
+            return rc;
+        }
+        if ((rc = setTable(userCPIN, OPAL_TOKEN::PIN, newHostChallenge)) != 0) {
+            LOG(E) << "Unable to set user " << userid << " new host challenge " << dev;
+            return rc;
+        }
+        if (0 == memcmp(userid, "Admin", 5)) { // if admin
+            LOG(D1) << "Admin try set password ";
+            if ((rc = setLockonReset(0, TRUE, newHostChallenge)) != 0) { // enable LOCKING RANGE 0 LOCKonRESET
+                LOG(E) << "failed - unable to set LOCKONRESET " << dev;
+                return rc;
+            }
+        }
+        return rc;
+    });
+
+    if (lastRC == 0) {
+        LOG(D1) << userid << " host challenge changed " << dev;
+    }
+    LOG(D1) << "Exiting DtaDevOpal::setHostChallenge() " << dev;
+    return lastRC;
+}
+
+
+
+
+
+
+/** Set the host challenge of a locking SP user.
+ *   Note that the version above of this method is called setPassword
+ * @param currentHostChallenge  current host challenge
+ * @param userid the userid whose host challenge is to be changed
+ * @param newHostChallenge  value  host challenge is to be changed to
+ */
+uint8_t setHostChallenge(vector<uint8_t> currentHostChallenge, char * userid, vector<uint8_t> newHostChallenge);
+
+
+
+
+
+
 uint8_t DtaDevOpal::setNewPassword_SUM(char * password, char * userid, char * newpassword)
 {
 	LOG(D1) << "Entering DtaDevOpal::setNewPassword_SUM " << dev;
@@ -2270,49 +2367,70 @@ uint8_t DtaDevOpal::enableUserRead(uint8_t mbrstate, vector<uint8_t> HostChallen
 
 uint8_t DtaDevOpal::revertTPer(char * password, uint8_t PSID, uint8_t AdminSP)
 {
-	LOG(D1) << "Entering DtaDevOpal::revertTPer() " << AdminSP << " " << dev;
-	uint8_t lastRC;
-	DtaCommand *cmd = new DtaCommand();
-	if (NULL == cmd) {
-		LOG(E) << "Unable to create command object " << dev;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	session = new DtaSession(this);
-	if (NULL == session) {
-		LOG(E) << "Unable to create session object " << dev;
-		delete cmd;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	OPAL_UID uid = OPAL_UID::OPAL_SID_UID;
-	if (PSID) {
-		session->dontHashPwd(); // PSID pwd should be passed as entered
-		uid = OPAL_UID::OPAL_PSID_UID;
-		}
-	if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, uid)) != 0) {
-		delete cmd;
-		delete session;
-		return lastRC;
-	}
-	cmd->reset(OPAL_UID::OPAL_ADMINSP_UID, OPAL_METHOD::REVERT);
-	cmd->addToken(OPAL_TOKEN::STARTLIST);
-	cmd->addToken(OPAL_TOKEN::ENDLIST);
-	cmd->complete();
-	session->expectAbort();
-	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
-		delete cmd;
-		delete session;
-		return lastRC;
-	}
-	LOG(D) << "revertTper completed successfully " << dev;
-	delete cmd;
-	delete session;
+    LOG(D1) << "Entering DtaDevOpal::revertTPer() " << AdminSP << " " << dev;
+    uint8_t lastRC;
+    DtaCommand *cmd = new DtaCommand();
+    if (NULL == cmd) {
+        LOG(E) << "Unable to create command object " << dev;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    session = new DtaSession(this);
+    if (NULL == session) {
+        LOG(E) << "Unable to create session object " << dev;
+        delete cmd;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    OPAL_UID uid = OPAL_UID::OPAL_SID_UID;
+    if (PSID) {
+        session->dontHashPwd(); // PSID pwd should be passed as entered
+        uid = OPAL_UID::OPAL_PSID_UID;
+        }
+    if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, uid)) != 0) {
+        delete cmd;
+        delete session;
+        return lastRC;
+    }
+    cmd->reset(OPAL_UID::OPAL_ADMINSP_UID, OPAL_METHOD::REVERT);
+    cmd->addToken(OPAL_TOKEN::STARTLIST);
+    cmd->addToken(OPAL_TOKEN::ENDLIST);
+    cmd->complete();
+    session->expectAbort();
+    if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+        delete cmd;
+        delete session;
+        return lastRC;
+    }
+    LOG(D) << "revertTper completed successfully " << dev;
+    delete cmd;
+    delete session;
 
-	//auditRec(password, evt_Revert);
-	LOG(D1) << "Exiting DtaDevOpal::revertTPer() " << dev;
-	return 0;
+    //auditRec(password, evt_Revert);
+    LOG(D1) << "Exiting DtaDevOpal::revertTPer() " << dev;
+    return 0;
 }
 
-
+uint8_t DtaDevOpal::revertTPer(vector<uint8_t> HostChallenge, uint8_t PSID, uint8_t AdminSP)
+{
+    LOG(D1) << "Entering DtaDevOpal::revertTPer() " << AdminSP << " " << dev;
+    uint8_t lastRC = WithSessionCommand([this, HostChallenge, PSID](){
+        return session->start(OPAL_UID::OPAL_ADMINSP_UID,
+                              HostChallenge,
+                              PSID ? OPAL_UID::OPAL_PSID_UID : OPAL_UID::OPAL_SID_UID);
+    },
+                                        [this](DtaCommand * cmd){
+        cmd->reset(OPAL_UID::OPAL_ADMINSP_UID, OPAL_METHOD::REVERT);
+        cmd->addToken(OPAL_TOKEN::STARTLIST);
+        cmd->addToken(OPAL_TOKEN::ENDLIST);
+        cmd->complete();
+        session->expectAbort();
+    });
+    if (lastRC == 0) {
+        LOG(D) << "revertTper completed successfully " << dev;
+    }
+    //auditRec(password, evt_Revert);
+    LOG(D1) << "Exiting DtaDevOpal::revertTPer() " << dev;
+    return lastRC;
+}
 
 uint8_t DtaDevOpal::pbaValid(char * password)
 {
@@ -5156,7 +5274,7 @@ uint8_t DtaDevOpal::takeOwnership(vector<uint8_t> HostChallenge)
     string defaultPassword = response.getString(4);
     const char * dps = defaultPassword.c_str();
     vector<uint8_t> defaultHostChallenge(dps,dps+strlen(dps));
-    if ((lastRC = setSIDPassword(defaultHostChallenge, HostChallenge)) != 0) {
+    if ((lastRC = setSIDHostChallenge(defaultHostChallenge, HostChallenge)) != 0) {
         LOG(E) << "takeOwnership failed " << dev;
         return lastRC;
     }
@@ -5337,7 +5455,7 @@ uint8_t DtaDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
     uint8_t hasholdpwd, uint8_t hashnewpwd)
 {
     vector<uint8_t> hash, table;
-    LOG(D1) << "Entering DtaDevOpal::setSIDPassword() " << dev;
+    LOG(D1) << "Entering DtaDevOpal::setSIDHostChallenge() " << dev;
     uint8_t lastRC;
     session = new DtaSession(this);
     if (NULL == session) {
@@ -5378,10 +5496,10 @@ uint8_t DtaDevOpal::setSIDPassword(char * oldpassword, char * newpassword,
     return 0;
 }
 
-uint8_t DtaDevOpal::setSIDPassword(vector<uint8_t> oldHostChallenge,
-                                   vector<uint8_t> newHostChallenge)
+uint8_t DtaDevOpal::setSIDHostChallenge(vector<uint8_t> oldHostChallenge,
+                                        vector<uint8_t> newHostChallenge)
 {
-    LOG(D1) << "Entering DtaDevOpal::setSIDPassword() " << dev;
+    LOG(D1) << "Entering DtaDevOpal::setSIDHostChallenge() " << dev;
     uint8_t lastRC = WithSession([this, oldHostChallenge](){
         return session->start(OPAL_UID::OPAL_ADMINSP_UID,
                               oldHostChallenge, OPAL_UID::OPAL_SID_UID);
@@ -5399,7 +5517,7 @@ uint8_t DtaDevOpal::setSIDPassword(vector<uint8_t> oldHostChallenge,
         LOG(E) << "Unable to set new SID password " << dev;
     } else {
         LOG(D) << "set SID password completed " << dev;
-        LOG(D1) << "Exiting DtaDevOpal::setSIDPassword() " << dev;
+        LOG(D1) << "Exiting DtaDevOpal::setSIDHostChallenge() " << dev;
     }
     return lastRC;
 }
@@ -5917,3 +6035,16 @@ uint8_t DtaDevOpal::rawCmd(char *sp, char * hexauth, char *pass,
 	LOG(D1) << "Exiting DtaDevEnterprise::rawCmd";
 	return 0;
 }
+
+
+uint8_t DtaDevOpal::getMSID(string& MSID) {
+    const uint8_t rc = getDefaultPassword();
+    if (rc) {
+        LOG(E) << "unable to read MSID password";
+        return rc;
+    }
+    MSID = response.getString(4);
+    LOG(D1) << "MSID=" << MSID;
+    return 0;
+}
+

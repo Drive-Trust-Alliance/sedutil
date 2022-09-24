@@ -64,7 +64,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts);
 typedef enum _sedutiloption {
 	deadbeef,    // 0 should indicate no action specified
 	initialSetup,
-	setSIDPassword,
+    setSIDPassword,
 	setup_SUM,
 	setAdmin1Pwd,
 	setPassword,

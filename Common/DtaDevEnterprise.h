@@ -112,8 +112,8 @@ public:
      * @param newHostChallenge  value host challenge is to be changed to
      * @note neither value is hashed
      */
-    uint8_t setSIDPassword(vector<uint8_t> oldHostChallenge,
-                           vector<uint8_t> newHostChallenge);
+    uint8_t setSIDHostChallenge(vector<uint8_t> oldHostChallenge,
+                                vector<uint8_t> newHostChallenge);
         /** set a single column in an object table
          * @param table the UID of the table
          * @param name the column name to be set
@@ -140,12 +140,25 @@ public:
 	uint8_t activateLockingSP_SUM(uint8_t lockingrange, char * password);
 	/** dummy code not implemented in teh enterprise SSC*/
 	uint8_t eraseLockingRange_SUM(uint8_t lockingrange, char * password);
-        /** dummy code not implemented in teh enterprise SSC*/
-	uint8_t revertLockingSP(char * password, uint8_t keep = 0);
+
+    /** Restore the state of the Locking SP to factory defaults.
+     * Enables locking
+     * @param password  current SID password
+     * @param keep boolean keep the data (NOT FUNCTIONAL)
+     */
+    uint8_t revertLockingSP(char * password, uint8_t keep = 0);
+
+    /** Reset the Locking SP to its factory default condition
+     * ERASES ALL DATA!
+     * @param HostChallenge of Administrative user
+     * @param keep true false for noerase function NOT WWORKING
+     */
+    uint8_t revertLockingSP(vector<uint8_t> HostChallenge, uint8_t keep = 0);
+
         /** get the UID or CPIN ID of a user from their character name*/
 	uint8_t getAuth4User(char * userid, uint8_t column, std::vector<uint8_t> &userData);
-        /** Enable a Bandmaster Not functional */
-	uint8_t enableUser(char * password, char * userid, OPAL_TOKEN status = OPAL_TOKEN::OPAL_TRUE);
+//        /** Enable a Bandmaster Not functional */
+//	uint8_t enableUser(char * password, char * userid, OPAL_TOKEN status = OPAL_TOKEN::OPAL_TRUE);
 	uint8_t enableUser(uint8_t mbrstate, char * password, char * userid);
 	uint8_t enableUserRead(uint8_t mbrstate, char * password, char * userid);
     
@@ -189,12 +202,22 @@ public:
     uint8_t setMBREnable(uint8_t state, vector<uint8_t> Admin1HostChallenge);
 
 
-         /** Set the password of a locking SP user.
-         * @param password  current password
-         * @param userid the userid whose password is to be changed
-         * @param newpassword  value password is to be changed to
-         */
-	uint8_t setPassword(char * password, char * userid, char * newpassword);
+    /** Set the password of a locking SP user.
+    * @param password  current password
+    * @param userid the userid whose password is to be changed
+    * @param newpassword  value password is to be changed to
+    */
+    uint8_t setPassword(char * password, char * userid, char * newpassword);
+
+    /** Set the host challenge of a locking SP user.
+    * @param currentHostChallenge  current host challenge
+    * @param userid the userid whose host challenge is to be changed
+    * @param newHostChallenge  value host challenge is to be changed to
+    */
+    uint8_t setHostChallenge(vector<uint8_t> currentHostChallenge, char * userid, vector<uint8_t> newHostChallenge);
+
+    
+    
 	/** dummy code not implemented in the enterprise SSC*/
 	uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword);
     uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
@@ -247,6 +270,14 @@ public:
          * @param PSID true or false is the authority the PSID
          *   */
 	uint8_t revertTPer(char * password, uint8_t PSID = 0, uint8_t AdminSP = 0);
+    
+    /** Reset the TPER to its factory condition
+     * @param HostChallenge HostChallenge of authority (SID or PSID)
+     * @param PSID true or false is the authority the PSID
+     * @param AdminSP true or false is the SP the AdminSP or ThisSP (Enterprise Only)
+     */
+    uint8_t revertTPer(vector<uint8_t> HostChallenge, uint8_t PSID = 0, uint8_t AdminSP = 0 );
+
 	    /** Erase a locking range
 	    * @param lockingrange The number of the locking range (0 = global)
 	    * @param password Password of administrative authority for locking range
@@ -302,6 +333,12 @@ public:
          */
 	uint8_t rawCmd(char *sp, char *hexauth, char *pass,
 		char *hexinvokingUID, char *hexmethod, char *hexparms);
+
+    /** Primitive to extract the MSID into a std::string
+     * @param MSID the string to receive the MSID
+     */
+    uint8_t getMSID(string& MSID);
+
 
 protected:
 	uint8_t getDefaultPassword();

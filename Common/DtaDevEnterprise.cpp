@@ -440,133 +440,225 @@ uint8_t DtaDevEnterprise::rekeyLockingRange(uint8_t lockingrange, char * passwor
 }
 uint8_t DtaDevEnterprise::revertLockingSP(char * password, uint8_t keep)
 {
-	LOG(D1) << "Entering DtaDevEnterprise::revertLockingSP()";
-	if(password == NULL) { LOG(D4) << "Referencing formal parameters " << keep; }
-	uint8_t lastRC;
-	DtaCommand *cmd = new DtaCommand();
-	if (NULL == cmd) {
-		LOG(E) << "Unable to create command object ";
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	session = new DtaSession(this);
-	if (NULL == session) {
-		LOG(E) << "Unable to create session object ";
-		delete cmd;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	OPAL_UID uid = OPAL_UID::OPAL_SID_UID;
-	if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, uid)) != 0) {
-		delete cmd;
-		delete session;
-		return lastRC;
-	}
-	cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
-	cmd->addToken(OPAL_TOKEN::STARTLIST);
-	cmd->addToken(OPAL_TOKEN::STARTNAME);
-	cmd->addToken("KeepGlobalRangeKey");
-	cmd->addToken(keep);
-	cmd->addToken(OPAL_TOKEN::ENDNAME);
-	cmd->addToken(OPAL_TOKEN::ENDLIST);
-	cmd->complete();
-	session->expectAbort();
-	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
-		delete cmd;
-		delete session;
-		return lastRC;
-	}
-	LOG(D) << "revertLockingSP completed successfully";
-	delete cmd;
-	delete session;
-	LOG(D1) << "Exiting DtaDevEnterprise::revertLockingSP()";
-	return 0;
+    LOG(D1) << "Entering DtaDevEnterprise::revertLockingSP()";
+    if(password == NULL) { LOG(D4) << "Referencing formal parameters " << keep; }
+    uint8_t lastRC;
+    DtaCommand *cmd = new DtaCommand();
+    if (NULL == cmd) {
+        LOG(E) << "Unable to create command object ";
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    session = new DtaSession(this);
+    if (NULL == session) {
+        LOG(E) << "Unable to create session object ";
+        delete cmd;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    OPAL_UID uid = OPAL_UID::OPAL_SID_UID;
+    if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, uid)) != 0) {
+        delete cmd;
+        delete session;
+        return lastRC;
+    }
+    cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
+    cmd->addToken(OPAL_TOKEN::STARTLIST);
+    cmd->addToken(OPAL_TOKEN::STARTNAME);
+    cmd->addToken("KeepGlobalRangeKey");
+    cmd->addToken(keep);
+    cmd->addToken(OPAL_TOKEN::ENDNAME);
+    cmd->addToken(OPAL_TOKEN::ENDLIST);
+    cmd->complete();
+    session->expectAbort();
+    if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+        delete cmd;
+        delete session;
+        return lastRC;
+    }
+    LOG(D) << "revertLockingSP completed successfully";
+    delete cmd;
+    delete session;
+    LOG(D1) << "Exiting DtaDevEnterprise::revertLockingSP()";
+    return 0;
 }
+
+uint8_t DtaDevEnterprise::revertLockingSP(vector<uint8_t> HostChallenge, uint8_t keep)
+{
+    LOG(D1) << "Entering DtaDevEnterprise::revertLockingSP()";
+    if(HostChallenge.size() == 0) { LOG(D4) << "Referencing formal parameters " << keep; }
+    uint8_t lastRC = WithSessionCommand([this, HostChallenge](){
+        return session->start(OPAL_UID::OPAL_ADMINSP_UID, HostChallenge, OPAL_UID::OPAL_SID_UID);
+    },
+                                        [this, keep](DtaCommand *cmd){
+        cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
+        cmd->addToken(OPAL_TOKEN::STARTLIST);
+        cmd->addToken(OPAL_TOKEN::STARTNAME);
+        cmd->addToken("KeepGlobalRangeKey");
+        cmd->addToken(keep);
+        cmd->addToken(OPAL_TOKEN::ENDNAME);
+        cmd->addToken(OPAL_TOKEN::ENDLIST);
+        cmd->complete();
+        session->expectAbort();
+    });
+    if (lastRC == 0) {
+        LOG(D) << "revertLockingSP completed successfully";
+    }
+    LOG(D1) << "Exiting DtaDevEnterprise::revertLockingSP()";
+    return 0;
+}
+
 uint8_t DtaDevEnterprise::setPassword(char * password, char * userid, char * newpassword)
 {
-	LOG(D1) << "Entering DtaDevEnterprise::setPassword" ;
-	uint8_t lastRC;
-	string defaultPassword;
-	char *pwd = password, *newpwd = newpassword;
+    LOG(D1) << "Entering DtaDevEnterprise::setPassword" ;
+    uint8_t lastRC;
+    char *pwd = password, *newpwd = newpassword;
 
-	if (11 > strnlen(userid, 15)) {
-		LOG(E) << "Invalid Userid " << userid;
-		return DTAERROR_INVALID_PARAMETER;
-	}
+    if (11 > strnlen(userid, 15)) {
+        LOG(E) << "Invalid Userid " << userid;
+        return DTAERROR_INVALID_PARAMETER;
+    }
 
-	std::vector<uint8_t> user;
-	if (!memcmp("BandMaster", userid, 10)) {
-		uint16_t band = (uint16_t)atoi(&userid[10]);
-		if (1023 < band) {
-			LOG(E) << "Invalid Userid " << userid;
-			return DTAERROR_INVALID_PARAMETER;
-		}
-		set8(user, OPALUID[OPAL_UID::ENTERPRISE_BANDMASTER0_UID]);
-		setband(user, band);
-	}
-	else if (!memcmp("EraseMaster", userid, 11)) {
-		set8(user, OPALUID[OPAL_UID::ENTERPRISE_ERASEMASTER_UID]);
-	}
-	else {
-		LOG(E) << "Invalid Userid " << userid;
-		return DTAERROR_INVALID_PARAMETER;
-	}
+    std::vector<uint8_t> user;
+    if (!memcmp("BandMaster", userid, 10)) {
+        uint16_t band = (uint16_t)atoi(&userid[10]);
+        if (1023 < band) {
+            LOG(E) << "Invalid Userid " << userid;
+            return DTAERROR_INVALID_PARAMETER;
+        }
+        set8(user, OPALUID[OPAL_UID::ENTERPRISE_BANDMASTER0_UID]);
+        setband(user, band);
+    }
+    else if (!memcmp("EraseMaster", userid, 11)) {
+        set8(user, OPALUID[OPAL_UID::ENTERPRISE_ERASEMASTER_UID]);
+    }
+    else {
+        LOG(E) << "Invalid Userid " << userid;
+        return DTAERROR_INVALID_PARAMETER;
+    }
 
-	if ((password == NULL) || (*password == '\0') || (newpassword == NULL) ||
-		(*newpassword == '\0')) {
-		if ((lastRC = getDefaultPassword()) != 0) {
-			LOG(E) << "setPassword failed to retrieve MSID";
-			return lastRC;
-		}
-		defaultPassword = response.getString(5);
-		if ((password == NULL) || (*password == '\0'))
-			pwd = (char *)defaultPassword.c_str();
+    string defaultPassword;
+    if ((password == NULL) || (*password == '\0') || (newpassword == NULL) ||
+        (*newpassword == '\0')) {
+        if ((lastRC = getMSID(defaultPassword)) != 0) {
+            LOG(E) << "setPassword failed to retrieve MSID";
+            return lastRC;
+        }
+        if ((password == NULL) || (*password == '\0'))
+            pwd = (char *)defaultPassword.c_str();
 
-		if ((newpassword == NULL) || (*newpassword == '\0'))
-			newpwd = (char *)defaultPassword.c_str();
-	}
+        if ((newpassword == NULL) || (*newpassword == '\0'))
+            newpwd = (char *)defaultPassword.c_str();
+    }
 
-	std::vector<uint8_t> usercpin;
-	user2cpin(usercpin, user);
-	session = new DtaSession(this);
-	if (session == NULL) {
-		LOG(E) << "Unable to create session object ";
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	if ((password == NULL) || (*password == '\0'))
-		session->dontHashPwd();
-	if ((lastRC = session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, pwd, user)) != 0) {
-		delete session;
-		return lastRC;
-	}
+    std::vector<uint8_t> usercpin;
+    user2cpin(usercpin, user);
+    session = new DtaSession(this);
+    if (session == NULL) {
+        LOG(E) << "Unable to create session object ";
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    if ((password == NULL) || (*password == '\0'))
+        session->dontHashPwd();
+    if ((lastRC = session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, pwd, user)) != 0) {
+        delete session;
+        return lastRC;
+    }
 
-	if ((newpassword == NULL) || (*newpassword == '\0')) {
-		std::vector<uint8_t> tmppwd;
+    if ((newpassword == NULL) || (*newpassword == '\0')) {
+        std::vector<uint8_t> tmppwd;
 
-		tmppwd.push_back(0xd0);
-		tmppwd.push_back((uint8_t)strnlen(newpwd, 255));
-		for (unsigned int i = 0; i < strnlen(newpwd, 255); i++) {
-			tmppwd.push_back(newpwd[i]);
-		}
+        tmppwd.push_back(0xd0);
+        tmppwd.push_back((uint8_t)strnlen(newpwd, 255));
+        for (unsigned int i = 0; i < strnlen(newpwd, 255); i++) {
+            tmppwd.push_back(newpwd[i]);
+        }
 
-		if ((lastRC = setTable(usercpin, "PIN", tmppwd)) != 0) {
-			LOG(E) << "Unable to set user " << userid << " new password ";
-			delete session;
-			return lastRC;
-		}
-	} else {
-		std::vector<uint8_t> hash;
-		DtaHashPwd(hash, newpwd, this);
-		if ((lastRC = setTable(usercpin, "PIN", hash)) != 0) {
-			LOG(E) << "Unable to set user " << userid << " new password ";
-			delete session;
-			return lastRC;
-		}
-	}
+        if ((lastRC = setTable(usercpin, "PIN", tmppwd)) != 0) {
+            LOG(E) << "Unable to set user " << userid << " new password ";
+            delete session;
+            return lastRC;
+        }
+    } else {
+        std::vector<uint8_t> hash;
+        DtaHashPwd(hash, newpwd, this);
+        if ((lastRC = setTable(usercpin, "PIN", hash)) != 0) {
+            LOG(E) << "Unable to set user " << userid << " new password ";
+            delete session;
+            return lastRC;
+        }
+    }
 
-	LOG(I) << userid << " password changed";
-	delete session;
-	LOG(D1) << "Exiting DtaDevEnterprise::setPassword()";
-	return 0;
+    LOG(I) << userid << " password changed";
+    delete session;
+    LOG(D1) << "Exiting DtaDevEnterprise::setPassword()";
+    return 0;
 }
+
+
+
+uint8_t DtaDevEnterprise::setHostChallenge(vector<uint8_t> currentHostChallenge, char * userid, vector<uint8_t> newHostChallenge)
+{
+    LOG(D1) << "Entering DtaDevEnterprise::setPassword" ;
+
+    if (11 > strnlen(userid, 15)) {
+        LOG(E) << "Invalid Userid " << userid;
+        return DTAERROR_INVALID_PARAMETER;
+    }
+
+    std::vector<uint8_t> user;
+    if (!memcmp("BandMaster", userid, 10)) {
+        uint16_t band = (uint16_t)atoi(&userid[10]);
+        if (1023 < band) {
+            LOG(E) << "Invalid Userid " << userid;
+            return DTAERROR_INVALID_PARAMETER;
+        }
+        set8(user, OPALUID[OPAL_UID::ENTERPRISE_BANDMASTER0_UID]);
+        setband(user, band);
+    }
+    else if (!memcmp("EraseMaster", userid, 11)) {
+        set8(user, OPALUID[OPAL_UID::ENTERPRISE_ERASEMASTER_UID]);
+    }
+    else {
+        LOG(E) << "Invalid Userid " << userid;
+        return DTAERROR_INVALID_PARAMETER;
+    }
+
+    uint8_t lastRC;
+
+    if (currentHostChallenge.size() == 0 || newHostChallenge.size() == 0) {
+        string defaultPassword;
+        if ((lastRC = getMSID(defaultPassword)) != 0) {
+            LOG(E) << "setPassword failed to retrieve MSID";
+            return lastRC;
+        }
+        const char * dps = defaultPassword.c_str();
+        uint8_t dpslen = (uint8_t)strlen(dps);
+        vector<uint8_t> defaultHostChallenge(dps, dps+dpslen);
+        if (currentHostChallenge.size() == 0)
+            currentHostChallenge=defaultHostChallenge;
+        if (newHostChallenge.size() == 0)
+            newHostChallenge=defaultHostChallenge;
+    }
+
+    std::vector<uint8_t> usercpin;
+    user2cpin(usercpin, user);
+    
+    lastRC = WithSession([this, currentHostChallenge, user](){
+        return session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, currentHostChallenge, user);
+    },
+                         [this, newHostChallenge, usercpin](){
+        vector<uint8_t>token=newHostChallenge;
+        token.insert(token.begin(), (uint8_t)newHostChallenge.size());
+        token.insert(token.begin(), 0xd0);
+        return setTable(usercpin, "PIN", token);
+    });
+
+    if (lastRC == 0) {
+        LOG(I) << userid << " password changed";
+    }
+    LOG(D1) << "Exiting DtaDevEnterprise::setPassword()";
+    return lastRC;
+}
+
 uint8_t DtaDevEnterprise::setNewPassword_SUM(char * password, char * userid, char * newpassword)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::setNewPassword_SUM()";
@@ -727,17 +819,16 @@ uint8_t DtaDevEnterprise::listLockingRanges(char * password, int16_t rangeid)
 	LOG(D1) << "Entering DtaDevEnterprise::listLockingRanges";
 	uint8_t lastRC = 0, failRC = 0;
 	int one_succeeded = 0;
-	string defaultPassword;
 	char *pwd = NULL;
 
 	// if (NULL == password) { LOG(E) << "password NULL"; }
+    string defaultPassword;
 	if ((password == NULL) || (*password == '\0')) {
 
-		if ((lastRC = getDefaultPassword()) != 0) {
+		if ((lastRC = getMSID(defaultPassword)) != 0) {
 			LOG(E) << __func__ << ": unable to retrieve MSID";
 			return lastRC;
 		}
-		defaultPassword = response.getString(5);
 		pwd = (char *)defaultPassword.c_str();
 	} else {
 		pwd = password;
@@ -1092,14 +1183,14 @@ uint8_t DtaDevEnterprise::enableUser(uint8_t mbrstate, vector<uint8_t> HostChall
     return DTAERROR_INVALID_PARAMETER;
 }
 
-uint8_t DtaDevEnterprise::enableUser(char * password, char * userid, OPAL_TOKEN status)
-{
-	LOG(D1) << "Entering DtaDevEnterprise::enableUser";
-	LOG(E) << "enableUser not implemented";
-	if (!password || !userid) { LOG(E) << "Formal Parameters"; }
-	LOG(D1) << "Exiting DtaDevEnterprise::enableUser()";
-	return 0xff;
-}
+//uint8_t DtaDevEnterprise::enableUser(char * password, char * userid, OPAL_TOKEN status)
+//{
+//	LOG(D1) << "Entering DtaDevEnterprise::enableUser";
+//	LOG(E) << "enableUser not implemented";
+//	if (!password || !userid) { LOG(E) << "Formal Parameters"; }
+//	LOG(D1) << "Exiting DtaDevEnterprise::enableUser()";
+//	return 0xff;
+//}
 uint8_t DtaDevEnterprise::enableUserRead(uint8_t mbrstate, char * password, char * userid)
 {
     LOG(D1) << "Entering DtaDevEnterprise::enableUserRead";
@@ -1120,66 +1211,92 @@ uint8_t DtaDevEnterprise::enableUserRead(uint8_t state, vector<uint8_t> HostChal
 
 uint8_t DtaDevEnterprise::revertTPer(char * password, uint8_t PSID, uint8_t AdminSP)
 {
-	LOG(D1) << "Entering DtaDevEnterprise::revertTPer()";
-	if (password == NULL) { LOG(D4) << "Referencing formal parameters " << PSID; }
-	uint8_t lastRC;
-	DtaCommand *cmd = new DtaCommand();
-	if (NULL == cmd) {
-		LOG(E) << "Unable to create command object ";
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	session = new DtaSession(this);
-	if (NULL == session) {
-		LOG(E) << "Unable to create session object ";
-		delete cmd;
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	OPAL_UID uid = OPAL_UID::OPAL_SID_UID;
-	if (PSID) {
-		session->dontHashPwd(); // PSID pwd should be passed as entered
-		uid = OPAL_UID::OPAL_PSID_UID;
-		}
-	if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, uid)) != 0) {
-		delete cmd;
-		delete session;
-		return lastRC;
-	}
+    LOG(D1) << "Entering DtaDevEnterprise::revertTPer()";
+    if (password == NULL) { LOG(D4) << "Referencing formal parameters " << PSID; }
+    uint8_t lastRC;
+    DtaCommand *cmd = new DtaCommand();
+    if (NULL == cmd) {
+        LOG(E) << "Unable to create command object ";
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    session = new DtaSession(this);
+    if (NULL == session) {
+        LOG(E) << "Unable to create session object ";
+        delete cmd;
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    OPAL_UID uid = OPAL_UID::OPAL_SID_UID;
+    if (PSID) {
+        session->dontHashPwd(); // PSID pwd should be passed as entered
+        uid = OPAL_UID::OPAL_PSID_UID;
+        }
+    if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, password, uid)) != 0) {
+        delete cmd;
+        delete session;
+        return lastRC;
+    }
     if (AdminSP)
-	    cmd->reset(OPAL_UID::OPAL_ADMINSP_UID, OPAL_METHOD::REVERT);
+        cmd->reset(OPAL_UID::OPAL_ADMINSP_UID, OPAL_METHOD::REVERT);
     else
-	    cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
-	cmd->addToken(OPAL_TOKEN::STARTLIST);
-	cmd->addToken(OPAL_TOKEN::ENDLIST);
-	cmd->complete();
-	session->expectAbort();
-	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
-		delete cmd;
-		delete session;
-		return lastRC;
-	}
-	LOG(D) << "revertTper completed successfully";
-	delete cmd;
-	delete session;
-	LOG(D1) << "Exiting DtaDevEnterprise::revertTPer()";
-	return 0;
+        cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
+    cmd->addToken(OPAL_TOKEN::STARTLIST);
+    cmd->addToken(OPAL_TOKEN::ENDLIST);
+    cmd->complete();
+    session->expectAbort();
+    if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+        delete cmd;
+        delete session;
+        return lastRC;
+    }
+    LOG(D) << "revertTper completed successfully";
+    delete cmd;
+    delete session;
+    LOG(D1) << "Exiting DtaDevEnterprise::revertTPer()";
+    return 0;
 }
+
+uint8_t DtaDevEnterprise::revertTPer(vector<uint8_t> HostChallenge, uint8_t PSID, uint8_t AdminSP)
+{
+    LOG(D1) << "Entering DtaDevEnterprise::revertTPer()";
+    if (HostChallenge.size() == 0) { LOG(D4) << "Referencing formal parameters " << PSID; }
+    uint8_t lastRC = WithSessionCommand([this, HostChallenge, PSID](){
+        return session->start(OPAL_UID::OPAL_ADMINSP_UID, HostChallenge,
+                              PSID ? OPAL_UID::OPAL_PSID_UID : OPAL_UID::OPAL_SID_UID );
+    },
+                                        [this, AdminSP](DtaCommand * cmd){
+        if (AdminSP)
+            cmd->reset(OPAL_UID::OPAL_ADMINSP_UID, OPAL_METHOD::REVERT);
+        else
+            cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
+        cmd->addToken(OPAL_TOKEN::STARTLIST);
+        cmd->addToken(OPAL_TOKEN::ENDLIST);
+        cmd->complete();
+        session->expectAbort();
+    });
+    if (lastRC == 0) {
+        LOG(D) << "revertTper completed successfully";
+    }
+    LOG(D1) << "Exiting DtaDevEnterprise::revertTPer()";
+    return lastRC;
+}
+
 uint8_t DtaDevEnterprise::eraseLockingRange(uint8_t lockingrange, char * password)
 {
 	uint8_t lastRC;
-	string defaultPassword;
 	char *pwd = NULL;
 	LOG(D1) << "Entering DtaDevEnterprise::eraseLockingRange";
 
     // look up MaxRanges
 	uint16_t MaxRanges = 0;
 
-	if ((password == NULL) || (*password == '\0')) {
 
-		if ((lastRC = getDefaultPassword()) != 0) {
+    string defaultPassword;
+
+    if ((password == NULL) || (*password == '\0')) {
+		if ((lastRC = getMSID(defaultPassword)) != 0) {
 			LOG(E) << __func__ << ": unable to retrieve MSID";
 			return lastRC;
 		}
-		defaultPassword = response.getString(5);
 		pwd = (char *)defaultPassword.c_str();
 	} else {
 		pwd = password;
@@ -1339,15 +1456,14 @@ uint8_t DtaDevEnterprise::eraseLockingRange_SUM(uint8_t lockingrange, char * pas
 }
 uint8_t DtaDevEnterprise::takeOwnership(char * newpassword)
 {
-    string defaultPassword;
     uint8_t lastRC;
 
     LOG(D1) << "Entering DtaDevEnterprise::takeOwnership()";
-    if ((lastRC = getDefaultPassword()) != 0) {
+    string defaultPassword;
+    if ((lastRC = getMSID(defaultPassword)) != 0) {
         LOG(E) << "takeOwnership failed unable to retrieve MSID";
         return lastRC;
     }
-    defaultPassword = response.getString(5);
     if ((lastRC = setSIDPassword((char *)defaultPassword.c_str(), newpassword, 0)) != 0) {
         LOG(E) << "takeOwnership failed unable to set new SID password";
         return lastRC;
@@ -1366,15 +1482,15 @@ uint8_t DtaDevEnterprise::takeOwnership(vector<uint8_t> HostChallenge)
     uint8_t lastRC;
 
     LOG(D1) << "Entering DtaDevEnterprise::takeOwnership()";
-    if ((lastRC = getDefaultPassword()) != 0) {
+    string defaultPassword;
+    if ((lastRC = getMSID(defaultPassword)) != 0) {
         LOG(E) << "takeOwnership failed unable to retrieve MSID";
         return lastRC;
     }
-    string defaultPassword = response.getString(5);
     const char * dps = defaultPassword.c_str();
     vector<uint8_t> defaultHostChallenge(dps, dps+strlen(dps));
     defaultHostChallenge.resize(8, (uint8_t)0);
-    if ((lastRC = setSIDPassword(defaultHostChallenge, HostChallenge)) != 0) {
+    if ((lastRC = setSIDHostChallenge(defaultHostChallenge, HostChallenge)) != 0) {
         LOG(E) << "takeOwnership failed unable to set new SID password";
         return lastRC;
     }
@@ -1424,15 +1540,10 @@ uint8_t DtaDevEnterprise::setBandsEnabled(int16_t lockingrange, char * password)
     // get password (usually MSID)
     string pwd;
     const bool useMSID = password == NULL || *password == '\0';
-    if (!useMSID)
-    {
+    if (!useMSID) {
         pwd = password;
-    }
-    else
-    {
-        if ((lastRC = getDefaultPassword()) != 0)
-			return lastRC;
-        pwd = response.getString(5);
+    } else if ((lastRC = getMSID(pwd)) != 0) {
+        return lastRC;
     }
 
     vector<uint8_t> erasemaster;
@@ -1667,12 +1778,12 @@ uint8_t DtaDevEnterprise::getDefaultPassword()
 }
 uint8_t DtaDevEnterprise::printDefaultPassword()
 {
-    const uint8_t rc = getDefaultPassword();
+    string defaultPassword;
+    const uint8_t rc = getMSID(defaultPassword);
 	if (rc) {
 		LOG(E) << "unable to retrieve MSID";
 		return rc;
 	}
-	string defaultPassword = response.getString(5);
     fprintf(stdout, "MSID: %s\n", (char *)defaultPassword.c_str());
     return 0;
 }
@@ -1690,11 +1801,11 @@ uint8_t DtaDevEnterprise::setSIDPassword(char * oldpassword, char * newpassword,
 
     if (*oldpassword == '\0')
     {
-        if ((lastRC = getDefaultPassword()) != 0) {
+        string defaultPassword;
+        if ((lastRC = getMSID(defaultPassword)) != 0) {
             LOG(E) << "setPassword failed to retrieve MSID";
             return lastRC;
         }
-        string defaultPassword = response.getString(5);
         session = new DtaSession(this);
         if (session == NULL) {
             LOG(E) << "Unable to create session object ";
@@ -1740,14 +1851,14 @@ uint8_t DtaDevEnterprise::setSIDPassword(char * oldpassword, char * newpassword,
         return lastRC;
     }
     delete session;
-    LOG(D1) << "Exiting DtaDevEnterprise::setSIDPassword()";
+    LOG(D1) << "Exiting DtaDevEnterprise::setSIDHostChallenge()";
     return 0;
 }
 
-uint8_t DtaDevEnterprise::setSIDPassword(vector<uint8_t> oldHostChallenge,
-                                         vector<uint8_t> newHostChallenge)
+uint8_t DtaDevEnterprise::setSIDHostChallenge(vector<uint8_t> oldHostChallenge,
+                                              vector<uint8_t> newHostChallenge)
 {
-    LOG(D1) << "Entering DtaDevEnterprise::setSIDPassword()";
+    LOG(D1) << "Entering DtaDevEnterprise::setSIDHostChallenge()";
     vector<uint8_t> user;
     set8(user, OPALUID[OPAL_SID_UID]);
 
@@ -1758,12 +1869,12 @@ uint8_t DtaDevEnterprise::setSIDPassword(vector<uint8_t> oldHostChallenge,
         session->dontHashPwd();
         if (oldHostChallenge.size() == 0)
         {
-            uint8_t rc = getDefaultPassword();
+            string defaultPassword;
+            uint8_t rc = getMSID(defaultPassword);
             if (rc != 0) {
                 LOG(E) << "setPassword failed to retrieve MSID";
                 return rc;
             }
-            string defaultPassword = response.getString(5);
             return session->start(OPAL_UID::OPAL_ADMINSP_UID, (char *)defaultPassword.c_str(), user);
         }
         else
@@ -1778,7 +1889,7 @@ uint8_t DtaDevEnterprise::setSIDPassword(vector<uint8_t> oldHostChallenge,
     if (lastRC != 0) {
         LOG(E) << "Unable to set new SID password ";
     } else {
-        LOG(D1) << "Exiting DtaDevEnterprise::setSIDPassword()";
+        LOG(D1) << "Exiting DtaDevEnterprise::setSIDHostChallenge()";
     }
     return lastRC;
 }
@@ -2128,3 +2239,16 @@ uint8_t DtaDevEnterprise::objDump(char *sp, char * auth, char *pass,
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
+
+
+uint8_t DtaDevEnterprise::getMSID(string& MSID) {
+    const uint8_t rc = getDefaultPassword();
+    if (rc) {
+        LOG(E) << "unable to read MSID password";
+        return rc;
+    }
+    MSID = response.getString(5);
+    LOG(D1) << "MSID=" << MSID;
+    return 0;
+}
+

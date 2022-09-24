@@ -278,19 +278,22 @@ public:
 	 * @param newpassword  new password for SID and locking SP admins
 	 */
 	virtual uint8_t takeOwnership(char * newpassword) = 0;
-	/** Reset the Locking SP to its factory default condition
+
+    /** Reset the Locking SP to its factory default condition
 	 * ERASES ALL DATA!
 	 * @param password of Administrative user
 	 * @param keep true false for noerase function NOT WWORKING
 	 */
 	virtual uint8_t revertLockingSP(char * password, uint8_t keep = 0) = 0;
-	/** Reset the TPER to its factory condition
-	 * ERASES ALL DATA!
-	 * @param password password of authority (SID or PSID)
-	 * @param PSID true or false is the authority the PSID
-	 */
-	virtual uint8_t revertTPer(char * password, uint8_t PSID = 0, uint8_t AdminSP = 0 ) = 0;
-	/** Erase a locking range
+
+    /** Reset the TPER to its factory condition
+     * @param password password of authority (SID or PSID)
+     * @param PSID true or false is the authority the PSID
+     * @param AdminSP true or false is the SP the AdminSP or ThisSP (Enterprise Only)
+     */
+    virtual uint8_t revertTPer(char * password, uint8_t PSID = 0, uint8_t AdminSP = 0 ) = 0;
+
+    /** Erase a locking range
 	 * @param lockingrange The number of the locking range (0 = global)
 	 * @param password Password of administrative authority for locking range
 	 */
@@ -313,11 +316,17 @@ public:
 	 */
 	virtual uint8_t rawCmd(char *sp, char * auth, char *pass,
 		char *invoker, char *method, char *plist) = 0;
-	/** Read MSID
-	 */
+
+
+    /** Primitive to extract the MSID into a std::string
+     * @param MSID the string to receive the MSID
+     */
+    virtual uint8_t getMSID(string& MSID) = 0;
+
+    /** Primitive to print the MSID to stdout
+     */
 	virtual uint8_t printDefaultPassword() = 0;
-    
-    
+
     /// The methods below are slightly lower-level versions of the similarly-named ones above.
     ///   They differ in that they take a byte vector host challenge that is passed through
     ///   unchanged, i.e. not a null-terminated C string, and not (possibly) hashed.
@@ -360,8 +369,8 @@ public:
      * @param newHostChallenge  value host challenge is to be changed to
      * @note neither value is hashed
      */
-    virtual uint8_t setSIDPassword(vector<uint8_t> oldHostChallenge,
-                                   vector<uint8_t> newHostChallenge) = 0;
+    virtual uint8_t setSIDHostChallenge(vector<uint8_t> oldHostChallenge,
+                                        vector<uint8_t> newHostChallenge) = 0;
 
     /** Primitive to set the MBREnable flag.
      * @param state 0 or 1
@@ -391,7 +400,23 @@ public:
      */
     virtual uint8_t enableUserRead(uint8_t state, vector<uint8_t> HostChallenge, char * userid) = 0;
 
+    /** Reset the Locking SP to its factory default condition
+     * ERASES ALL DATA!
+     * @param HostChallenge of Administrative user
+     * @param keep true false for noerase function NOT WWORKING
+     */
+    virtual uint8_t revertLockingSP(vector<uint8_t> HostChallenge, uint8_t keep = 0) = 0;
+    
+    /** Reset the TPER to its factory condition
+     * @param HostChallenge HostChallenge of authority (SID or PSID)
+     * @param PSID true or false is the authority the PSID
+     * @param AdminSP true or false is the SP the AdminSP or ThisSP (Enterprise Only)
+     */
+    virtual uint8_t revertTPer(vector<uint8_t> HostChallenge, uint8_t PSID = 0, uint8_t AdminSP = 0 ) = 0;
 
+
+    
+    
     /// Wrapper methods that allow concise TPer function methods
     
     /** Start a session using some kind of authentication, and

@@ -69,8 +69,10 @@ uint8NOCODE(configureLockingRange,uint8_t lockingrange,
 uint8NOCODE(configureLockingRange,uint8_t lockingrange,
     uint8_t enabled, vector<uint8_t> HostChallenge)
 uint8NOCODE(revertLockingSP,char * password, uint8_t keep)
+uint8NOCODE(revertLockingSP,vector<uint8_t> HostChallenge, uint8_t keep)
 uint8NOCODE(setup_SUM, uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password)
 uint8NOCODE(setPassword,char * password, char * userid, char * newpassword)
+uint8NOCODE(setHostChallenge,vector<uint8_t> oldHostChallenge, char * userid, vector<uint8_t> newHostChallenge)
 uint8NOCODE(setNewPassword_SUM,char * password, char * userid, char * newpassword)
 uint8NOCODE(setMBREnable,uint8_t mbrstate, char * Admin1Password)
 uint8NOCODE(setMBREnable,uint8_t mbrstate, vector<uint8_t> Admin1HostChallenge)
@@ -91,14 +93,15 @@ uint8NOCODE(setupLockingRange_SUM, uint8_t lockingrange, uint64_t start,
 uint8NOCODE(rekeyLockingRange, uint8_t lockingrange, char * password)
 uint8NOCODE(setBandsEnabled, int16_t lockingrange, char * password)
 
-uint8NOCODE(enableUser,char * password, char * userid, OPAL_TOKEN status)
+//-0uint8NOCODE(enableUser,char * password, char * userid, OPAL_TOKEN status)
 uint8NOCODE(enableUser, uint8_t state, char * password, char * userid)
 uint8NOCODE(enableUser, uint8_t state, vector<uint8_t> HostChallenge, char * userid)
 uint8NOCODE(enableUserRead, uint8_t state, char * password, char * userid)
 uint8NOCODE(enableUserRead, uint8_t state, vector<uint8_t> HostChallenge, char * userid)
-
 uint8NOCODE(revertTPer,char * password, uint8_t PSID, uint8_t AdminSP)
+uint8NOCODE(revertTPer,vector<uint8_t> HostChallenge, uint8_t PSID, uint8_t AdminSP)
 uint8NOCODE(eraseLockingRange,uint8_t lockingrange, char * password)
+uint8NOCODE(getMSID,string& MSID)
 uint8NOCODE(printDefaultPassword)
 uint8NOCODE(pbaValid, char * password)
 uint8NOCODE(activate, char * password)
@@ -120,8 +123,8 @@ uint8NOCODE(takeOwnership, char * newpassword)
 uint8NOCODE(takeOwnership, vector<uint8_t> HostChallenge)
 uint8NOCODE(setSIDPassword,char * oldpassword, char * newpassword,
     uint8_t hasholdpwd, uint8_t hashnewpwd)
-uint8NOCODE(setSIDPassword,vector<uint8_t> oldHostChallenge,
-                           vector<uint8_t> newHostChallenge)
+uint8NOCODE(setSIDHostChallenge,vector<uint8_t> oldHostChallenge,
+                                vector<uint8_t> newHostChallenge)
 
 uint16_t DtaDevGeneric::comID()
 {
