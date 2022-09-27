@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		D201C18728D855E200FCD053 /* TPerDriverMethodIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = D201C18628D855E200FCD053 /* TPerDriverMethodIndex.h */; };
-		D2336D7928E283C800F199EA /* BrightPlazaTPer.kext in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2BD8FA11F0207AF00747F4A /* BrightPlazaTPer.kext */; };
-		D2336D7B28E283F300F199EA /* SEDKernelInterface.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2BD8F601F02017B00747F4A /* SEDKernelInterface.framework */; };
 		D26EB97C1F036671002200A2 /* RegistryUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = D26EB97A1F036671002200A2 /* RegistryUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D26EB97D1F036671002200A2 /* RegistryUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = D26EB97B1F036671002200A2 /* RegistryUtilities.mm */; };
 		D27129ED28C53FB5007AB870 /* kernel_PrintBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = D27129EC28C53FB5007AB870 /* kernel_PrintBuffer.h */; };
@@ -56,29 +54,6 @@
 			remoteInfo = PrintBuffer;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		D2336D7828E2837E00F199EA /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = bundles/Library/Extensions;
-			dstSubfolderSpec = 16;
-			files = (
-				D2336D7928E283C800F199EA /* BrightPlazaTPer.kext in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D2336D7A28E283DD00F199EA /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = bundles/Library/Frameworks;
-			dstSubfolderSpec = 16;
-			files = (
-				D2336D7B28E283F300F199EA /* SEDKernelInterface.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		D201C18628D855E200FCD053 /* TPerDriverMethodIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPerDriverMethodIndex.h; sourceTree = "<group>"; };
@@ -340,8 +315,6 @@
 				D2BD8F9D1F0207AF00747F4A /* Frameworks */,
 				D2BD8F9E1F0207AF00747F4A /* Headers */,
 				D2BD8F9F1F0207AF00747F4A /* Resources */,
-				D2336D7828E2837E00F199EA /* CopyFiles */,
-				D2336D7A28E283DD00F199EA /* CopyFiles */,
 			);
 			buildRules = (
 			);
