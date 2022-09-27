@@ -574,7 +574,11 @@ typedef struct _DTA_DEVICE_INFO {
 	uint8_t null2;  // make model number a cstring
     uint8_t vendorName[8];
     uint8_t null3;  // make vendor Name a cstring
-    
+    uint8_t physicalInterconnect[8];
+    uint8_t null4;  // make physical Interconnect a cstring
+    uint8_t physicalInterconnectLocation[12];
+    uint8_t null5;  // make physical Interconnect Location a cstring
+
     uint8_t worldWideName[8];    // bytes, not a cstring
 	
     uint8_t fips; // FIPS Approval mode

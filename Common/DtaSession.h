@@ -63,10 +63,10 @@ public:
     
     /** Start an authenticated session (OPAL only)
      * @param SP the securitly provider to start the session with
-     * @param HostChallenge the password to start the session
+     * @param password the password to start the session
      * @param SignAuthority the Signing authority (in a simple session this is the user)
      *  */
-    uint8_t start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority);
+    uint8_t start(OPAL_UID SP, char * password, vector<uint8_t> SignAuthority);
 
     
     /** Start an authenticated session (OPAL only)
@@ -118,10 +118,10 @@ private:
 #ifdef MULTISTART
     /** Start an authenticated session with any user(1-8) or admint (OPAL only)
      * @param SP the securitly provider to start the session with
-     * @param HostChallenge the password to start the session
+     * @param password the password to start the session
      * @param SignAuthority the Signing authority (in a simple session this is the user)
      *  */
-    uint8_t unistart(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority);
+    uint8_t unistart(OPAL_UID SP, char * password, vector<uint8_t> SignAuthority);
 
     /** Start an authenticated session with any user(1-8) or admint (OPAL only)
      * @param SP the securitly provider to start the session with

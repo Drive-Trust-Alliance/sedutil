@@ -94,8 +94,8 @@
             filePath = "../DtaDevMacOSBlockStorageDevice.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "150"
-            endingLineNumber = "150"
+            startingLineNumber = "170"
+            endingLineNumber = "170"
             landmarkName = "DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(aBlockStorageDevice)"
             landmarkType = "7">
             <Locations>
@@ -174,7 +174,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "106"
             endingLineNumber = "106"
-            landmarkName = "FillDeviceInfoFromProperties(deviceProperties, mediaProperties, disk_info)"
+            landmarkName = "FillDeviceInfoFromProperties(deviceProperties, mediaProperties, device_info)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -188,8 +188,8 @@
             filePath = "../DtaDevMacOSBlockStorageDevice.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "310"
-            endingLineNumber = "310"
+            startingLineNumber = "330"
+            endingLineNumber = "330"
             landmarkName = "DtaDevMacOSBlockStorageDevice::enumerateBlockStorageDevices()"
             landmarkType = "7">
          </BreakpointContent>

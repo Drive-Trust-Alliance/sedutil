@@ -9,28 +9,28 @@
 /* Begin PBXBuildFile section */
 		D26904CE28D7A17B0095769E /* reenumerate.c in Sources */ = {isa = PBXBuildFile; fileRef = D26904CD28D7A17B0095769E /* reenumerate.c */; };
 		D287224328B835CB0023404B /* sedutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D287224228B835CB0023404B /* sedutil.cpp */; };
-		D289AB3F28D5314100616E4F /* log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D289AB3E28D5314100616E4F /* log.framework */; };
-		D289AB4128D5317700616E4F /* sedutil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D289AB4028D5317700616E4F /* sedutil.framework */; };
+		D28CFD6428E2C4EE00A33B00 /* sedutil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D287224528B835DF0023404B /* sedutil.framework */; };
+		D28CFD6528E2C50300A33B00 /* log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2ECBD7E28CACC1400D9F997 /* log.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		D2336D7C28E2845900F199EA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = files/usr/local/bin;
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D26904BC28D7A1530095769E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = files/usr/local/bin;
+			dstSubfolderSpec = 16;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-		D26B3B501F6FB6BC004571A8 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		D2ECBD8128CACC1400D9F997 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -46,7 +46,6 @@
 
 /* Begin PBXFileReference section */
 		D2233E3428D79504006B6974 /* DtaOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
-		D26904BE28D7A1530095769E /* reenumerate */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = reenumerate; sourceTree = BUILT_PRODUCTS_DIR; };
 		D26904CD28D7A17B0095769E /* reenumerate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = reenumerate.c; path = "../../sedutil-cli project/reenumerate/reenumerate.c"; sourceTree = "<group>"; };
 		D26904CF28D7A17F0095769E /* IOUSBFamilyInfoPlist.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOUSBFamilyInfoPlist.pch; path = "../../sedutil-cli project/reenumerate/IOUSBFamilyInfoPlist.pch"; sourceTree = "<group>"; };
 		D2772B4F28BC354B0005E001 /* DtaStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaStructures.h; sourceTree = "<group>"; };
@@ -57,9 +56,8 @@
 		D2772BEA28BC36420005E001 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
 		D287224228B835CB0023404B /* sedutil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sedutil.cpp; path = ../../Common/sedutil.cpp; sourceTree = "<group>"; };
 		D287224528B835DF0023404B /* sedutil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = sedutil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D289AB3E28D5314100616E4F /* log.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = log.framework; path = ../../../../../../../../../Library/Frameworks/log.framework; sourceTree = "<group>"; };
-		D289AB4028D5317700616E4F /* sedutil.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sedutil.framework; path = ../../../../../../../../../Library/Frameworks/sedutil.framework; sourceTree = "<group>"; };
-		D2B200E628BBF3D3004C88FF /* sedutil-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "sedutil-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D28CFD6028E2C1AF00A33B00 /* sedutil-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "sedutil-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D28CFD6128E2C1AF00A33B00 /* reenumerate */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = reenumerate; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2ECBD7E28CACC1400D9F997 /* log.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -75,8 +73,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D289AB4128D5317700616E4F /* sedutil.framework in Frameworks */,
-				D289AB3F28D5314100616E4F /* log.framework in Frameworks */,
+				D28CFD6428E2C4EE00A33B00 /* sedutil.framework in Frameworks */,
+				D28CFD6528E2C50300A33B00 /* log.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,13 +104,12 @@
 		D287224428B835DF0023404B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D289AB4028D5317700616E4F /* sedutil.framework */,
 				D2ECBD7E28CACC1400D9F997 /* log.framework */,
-				D289AB3E28D5314100616E4F /* log.framework */,
 				D287224528B835DF0023404B /* sedutil.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
+			path = "../../../../../../../../Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project";
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		D2B2025F28BBFD8F004C88FF /* Common */ = {
 			isa = PBXGroup;
@@ -134,8 +131,8 @@
 				D287224228B835CB0023404B /* sedutil.cpp */,
 				D26904BF28D7A1530095769E /* reenumerate */,
 				D287224428B835DF0023404B /* Frameworks */,
-				D2B200E628BBF3D3004C88FF /* sedutil-cli */,
-				D26904BE28D7A1530095769E /* reenumerate */,
+				D28CFD6028E2C1AF00A33B00 /* sedutil-cli */,
+				D28CFD6128E2C1AF00A33B00 /* reenumerate */,
 			);
 			sourceTree = "<group>";
 		};
@@ -156,7 +153,7 @@
 			);
 			name = reenumerate;
 			productName = reenumerate;
-			productReference = D26904BE28D7A1530095769E /* reenumerate */;
+			productReference = D28CFD6128E2C1AF00A33B00 /* reenumerate */;
 			productType = "com.apple.product-type.tool";
 		};
 		D26B3B511F6FB6BC004571A8 /* sedutil-cli */ = {
@@ -165,8 +162,8 @@
 			buildPhases = (
 				D26B3B4E1F6FB6BC004571A8 /* Sources */,
 				D26B3B4F1F6FB6BC004571A8 /* Frameworks */,
-				D26B3B501F6FB6BC004571A8 /* CopyFiles */,
 				D2ECBD8128CACC1400D9F997 /* Embed Frameworks */,
+				D2336D7C28E2845900F199EA /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -174,7 +171,7 @@
 			);
 			name = "sedutil-cli";
 			productName = "sedutil-cli";
-			productReference = D2B200E628BBF3D3004C88FF /* sedutil-cli */;
+			productReference = D28CFD6028E2C1AF00A33B00 /* sedutil-cli */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */

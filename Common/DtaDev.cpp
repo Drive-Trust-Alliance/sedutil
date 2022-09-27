@@ -619,9 +619,9 @@ uint8_t DtaDev::WithSession(std::function<uint8_t(void)>startSessionFn,
     }
     
     
-    uint8_t lastRC;
+    uint8_t lastRC = startSessionFn();
 
-    if ((lastRC = startSessionFn()) == 0) {
+    if (lastRC == 0) {
         lastRC = sessionBodyFn();
     }
             
@@ -644,3 +644,86 @@ uint8_t DtaDev::WithSessionCommand(std::function<uint8_t(void)>startSessionFn,
         return rc;
     });
 }
+//uint8_t DtaDev::WithSimpleSessionCommand(OPAL_UID SP, char * password, OPAL_UID SignAuthority,
+//                                 std::function<void(DtaCommand * command)>commandWriterFn) {
+//    std::function<uint8_t(void)>startSessionFn = [this, SP, password, SignAuthority](){
+//        return session->start(SP, password, SignAuthority);
+//    };
+//    return WithSessionCommand(startSessionFn, commandWriterFn);
+//}
+//
+//uint8_t DtaDev::WithSimpleSessionCommand(OPAL_UID SP, vector<uint8_t> HostChallenge, OPAL_UID SignAuthority,
+//                                 std::function<void(DtaCommand * command)>commandWriterFn) {
+//    std::function<uint8_t(void)>startSessionFn = [this, SP, HostChallenge, SignAuthority](){
+//        return session->start(SP, HostChallenge, SignAuthority);
+//    };
+//    return WithSessionCommand(startSessionFn, commandWriterFn);
+//}
+//
+//uint8_t DtaDev::WithSimpleSessionCommand(OPAL_UID SP, vector<uint8_t> HostChallenge, vector<uint8_t> SignAuthority,
+//                                 std::function<void(DtaCommand * command)>commandWriterFn) {
+//    std::function<uint8_t(void)>startSessionFn = [this, SP, HostChallenge, SignAuthority](){
+//        return session->start(SP, HostChallenge, SignAuthority);
+//    };
+//    return WithSessionCommand(startSessionFn, commandWriterFn);
+//}
+
+
+
+/** start an anonymous session
+ * @param SP the Security Provider to start the session with */
+uint8_t DtaDev::start(OPAL_UID SP){
+    if (session == NULL)
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    return session->start(SP);
+}
+
+
+/** Start an authenticated session (OPAL only)
+* @param SP the securitly provider to start the session with
+* @param password the password to start the session
+* @param SignAuthority the Signing authority (in a simple session this is the user)
+*/
+uint8_t DtaDev::start(OPAL_UID SP, char * password, OPAL_UID SignAuthority){
+    if (session == NULL)
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    return session->start(SP, password, SignAuthority);
+}
+
+
+
+/** Start an authenticated session (OPAL only)
+* @param SP the securitly provider to start the session with
+* @param HostChallenge the password to start the session
+* @param SignAuthority the Signing authority (in a simple session this is the user)
+*/
+uint8_t DtaDev::start(OPAL_UID SP, vector<uint8_t> HostChallenge, OPAL_UID SignAuthority){
+    if (session == NULL)
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    return session->start(SP, HostChallenge, SignAuthority);
+}
+
+
+/** Start an authenticated session (OPAL only)
+ * @param SP the securitly provider to start the session with
+ * @param password the password to start the session
+ * @param SignAuthority the Signing authority (in a simple session this is the user)
+ *  */
+uint8_t DtaDev::start(OPAL_UID SP, char * password, vector<uint8_t> SignAuthority){
+    if (session == NULL)
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    return session->start(SP, password, SignAuthority);
+}
+
+
+/** Start an authenticated session (OPAL only)
+ * @param SP the securitly provider to start the session with
+ * @param HostChallenge the password to start the session
+ * @param SignAuthority the Signing authority (in a simple session this is the user)
+ *  */
+uint8_t DtaDev::start(OPAL_UID SP, vector<uint8_t>  HostChallenge, vector<uint8_t> SignAuthority){
+    if (session == NULL)
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    return session->start(SP, HostChallenge, SignAuthority);
+}
+

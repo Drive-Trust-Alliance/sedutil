@@ -31,8 +31,10 @@ class DtaSession;
 void auditpass(unsigned char * apass);
 void setlic(unsigned char * lic_level, const char * LicenseLevel);
 
+#define  __unimplemented__ {throw __PRETTY_FUNCTION__;}
+
 using namespace std;
-/** Base class for a disk device.
+/** Base class for a disk^H^H^H^H device.
  * This is a virtual base class defining the minimum functionality of device
  * object.  The methods defined here are called by other parts of the program 
  * so must be present in all devices
@@ -129,6 +131,11 @@ public:
 	 * @param password the password that is to be assigned to the SSC master entities
 	 */
 	virtual uint8_t initialSetup(char * password) = 0;
+    /** User command to prepare the device for management by sedutil.
+     * Specific to the SSC that the device supports
+     * @param password the password that is to be assigned to the SSC master entities
+     */
+    virtual uint8_t multiUserSetup(char * __unused password) __unimplemented__;
 	/** User command to prepare the drive for Single User Mode and rekey a SUM locking range.
 	 * @param lockingrange locking range number to enable
 	 * @param start LBA to start locking range
@@ -352,6 +359,12 @@ public:
      */
     virtual uint8_t initialSetup(vector<uint8_t> HostChallenge) = 0;
 
+    /** User command to prepare the device for management by sedutil.
+     * Specific to the SSC that the device supports
+     * @param hostChallenge the password that is to be assigned to the SSC master entities
+     */
+    virtual uint8_t multiUserSetup(vector<uint8_t> __unused hostChallenge) __unimplemented__;
+
     /** Change the SID HostChallenge from its MSID default
      * @param HostChallenge  new HostChallenge for SID and locking SP admins
      */
@@ -435,6 +448,87 @@ public:
     uint8_t WithSession(std::function<uint8_t(void)>startSessionFn,
                         std::function<uint8_t(void)>sessionBodyFn);
     
+    /** Start a session using a simple start method call, and
+     * then do something within that session.
+     * This method handles errors starting the session, and cleans
+     * up by deleting the session afterwards,
+     * returning the result of any session start error
+     * or otherwise the result of the session body function
+     *
+     * Note that it is expected that these "function" parameters
+     * will probably be closures.
+     *
+     * @param SP the securitly provider to start the session with
+     * @param password the password to start the session
+     * @param SignAuthority the Signing authority (in a simple session this is the user)
+     * @param sessionBodyFn a function that runs within that session, returning a uint8_t
+     */
+    template <typename PasswordType, typename AuthorityType>
+    uint8_t WithSimpleSession(OPAL_UID SP, PasswordType password, AuthorityType SignAuthority,
+                              std::function<uint8_t(void)>sessionBodyFn) {
+        std::function<uint8_t(void)>startSessionFn = [this, SP, password, SignAuthority](){
+            return start(SP, password, SignAuthority);
+        };
+        return WithSession(startSessionFn, sessionBodyFn);
+    }
+
+
+
+#if 0
+    /** Start a session using a simple start method call, and
+     * then do something within that session.
+     * This method handles errors starting the session, and cleans
+     * up by deleting the session afterwards,
+     * returning the result of any session start error
+     * or otherwise the result of the session body function
+     *
+     * Note that it is expected that these "function" parameters
+     * will probably be closures.
+     *
+     * @param SP the securitly provider to start the session with
+     * @param password the password to start the session
+     * @param SignAuthority the Signing authority (in a simple session this is the user)
+     * @param sessionBodyFn a function that runs within that session, returning a uint8_t
+     */
+    uint8_t WithSimpleSession(OPAL_UID SP, char * password, OPAL_UID SignAuthority,
+                              std::function<uint8_t(void)>sessionBodyFn) ;
+    
+    /** Start a session using a simple start method call, and
+     * then do something within that session.
+     * This method handles errors starting the session, and cleans
+     * up by deleting the session afterwards,
+     * returning the result of any session start error
+     * or otherwise the result of the session body function
+     *
+     * Note that it is expected that these "function" parameters
+     * will probably be closures.
+     *
+     * @param SP the securitly provider to start the session with
+     * @param HostChallenge the host challenge to start the session
+     * @param SignAuthority the Signing authority (in a simple session this is the user)
+     * @param sessionBodyFn a function that runs within that session, returning a uint8_t
+     */
+    uint8_t WithSimpleSession(OPAL_UID SP, vector<uint8_t> HostChallenge, OPAL_UID SignAuthority,
+                              std::function<uint8_t(void)>sessionBodyFn) ;
+    
+    /** Start a session using a simple start method call, and
+     * then do something within that session.
+     * This method handles errors starting the session, and cleans
+     * up by deleting the session afterwards,
+     * returning the result of any session start error
+     * or otherwise the result of the session body function
+     *
+     * Note that it is expected that these "function" parameters
+     * will probably be closures.
+     *
+     * @param SP the securitly provider to start the session with
+     * @param HostChallenge the host challenge to start the session
+     * @param SignAuthority the Signing authority (in a simple session this is the user)
+     * @param sessionBodyFn a function that runs within that session, returning a uint8_t
+     */
+    uint8_t WithSimpleSession(OPAL_UID SP, vector<uint8_t> HostChallenge, vector<uint8_t> SignAuthority,
+                              std::function<uint8_t(void)>sessionBodyFn) ;
+
     /** Start a session using some kind of authentication,
      * create a DtaCommand object, and then runs that command within that session.
      * This method handles errors starting the session and creating the command,
@@ -453,6 +547,9 @@ public:
      *                       and writes into that DtaCommand
      *                       and then simply returns no value
      */
+#endif // 0 WithSimpleSession
+    
+    
     uint8_t WithSessionCommand(std::function<uint8_t(void)>startSessionFn,
                                std::function<void(DtaCommand * command)>commandWriterFn);
     
@@ -477,6 +574,108 @@ public:
 //    uint8_t WithSessionCommand(std::function<uint8_t(void)>startSessionFn,
 //                               std::function<uint8_t(DtaCommand * command)>commandWriterFn);
 
+
+    /** Start a session using a simple start method call, and
+     * create a DtaCommand object, and then runs that command within that session.
+     * This method handles errors starting the session and creating the command,
+     * and cleans up by deleting the command and session afterwards,
+     * returning the result of any session start error
+     * or command creation error
+     * or otherwise the result of executing sendCommand on the command
+     * leaving the response in the response instance variable
+     *
+     * Note that it is expected that these "function" parameters
+     * will probably be closures.
+     *
+     * @param SP the securitly provider to start the session with
+     * @param password the password to start the session
+     * @param SignAuthority the Signing authority (in a simple session this is the user)
+     * @param commandWriterFn a function that runs within that session,
+     *                       takes a DtaCommand parameter,
+     *                       and writes into that DtaCommand
+     *                       and then simply returns no value
+     */
+    template <typename PasswordType, typename AuthorityType>
+    uint8_t WithSimpleSessionCommand(OPAL_UID SP, PasswordType password, AuthorityType SignAuthority,
+                                     std::function<void(DtaCommand * command)>commandWriterFn) {
+        std::function<uint8_t(void)>startSessionFn = [this, SP, password, SignAuthority](){
+            return start(SP, password, SignAuthority);
+        };
+        return WithSessionCommand(startSessionFn, commandWriterFn);
+    }
+
+#if 0
+    /** Start a session using a simple start method call, and
+     * create a DtaCommand object, and then runs that command within that session.
+     * This method handles errors starting the session and creating the command,
+     * and cleans up by deleting the command and session afterwards,
+     * returning the result of any session start error
+     * or command creation error
+     * or otherwise the result of executing sendCommand on the command
+     * leaving the response in the response instance variable
+     *
+     * Note that it is expected that these "function" parameters
+     * will probably be closures.
+     *
+     * @param SP the securitly provider to start the session with
+     * @param password the password to start the session
+     * @param SignAuthority the Signing authority (in a simple session this is the user)
+     * @param commandWriterFn a function that runs within that session,
+     *                       takes a DtaCommand parameter,
+     *                       and writes into that DtaCommand
+     *                       and then simply returns no value
+     */
+    uint8_t WithSimpleSessionCommand(OPAL_UID SP, char * password, OPAL_UID SignAuthority,
+                                     std::function<void(DtaCommand * command)>commandWriterFn) ;
+    
+    /** Start a session using a simple start method call, and
+     * create a DtaCommand object, and then runs that command within that session.
+     * This method handles errors starting the session and creating the command,
+     * and cleans up by deleting the command and session afterwards,
+     * returning the result of any session start error
+     * or command creation error
+     * or otherwise the result of executing sendCommand on the command
+     * leaving the response in the response instance variable
+     *
+     * Note that it is expected that these "function" parameters
+     * will probably be closures.
+     *
+     * @param SP the securitly provider to start the session with
+     * @param HostChallenge the host challenge to start the session
+     * @param SignAuthority the Signing authority (in a simple session this is the user)
+     * @param commandWriterFn a function that runs within that session,
+     *                       takes a DtaCommand parameter,
+     *                       and writes into that DtaCommand
+     *                       and then simply returns no value
+     */
+    uint8_t WithSimpleSessionCommand(OPAL_UID SP, vector<uint8_t> HostChallenge, OPAL_UID SignAuthority,
+                                     std::function<void(DtaCommand * command)>commandWriterFn) ;
+    
+    /** Start a session using a simple start method call, and
+     * create a DtaCommand object, and then runs that command within that session.
+     * This method handles errors starting the session and creating the command,
+     * and cleans up by deleting the command and session afterwards,
+     * returning the result of any session start error
+     * or command creation error
+     * or otherwise the result of executing sendCommand on the command
+     * leaving the response in the response instance variable
+     *
+     * Note that it is expected that these "function" parameters
+     * will probably be closures.
+     *
+     * @param SP the securitly provider to start the session with
+     * @param HostChallenge the host challenge to start the session
+     * @param SignAuthority the Signing authority (in a simple session this is the user)
+     * @param commandWriterFn a function that runs within that session,
+     *                       takes a DtaCommand parameter,
+     *                       and writes into that DtaCommand
+     *                       and then simply returns no value
+     */
+    uint8_t WithSimpleSessionCommand(OPAL_UID SP, vector<uint8_t> HostChallenge, vector<uint8_t> SignAuthority,
+                                     std::function<void(DtaCommand * command)>commandWriterFn) ;
+    
+#endif // 0 WithSimpleSessionCommand
+    
     
 	/*
 	* virtual functions required to be implemented
@@ -509,8 +708,48 @@ protected:
 	DTA_DEVICE_INFO disk_info;  /**< Structure containing info from identify and discovery 0 */
 	DtaResponse response;   /**< shared response object */
 	DtaResponse propertiesResponse;  /**< response from properties exchange */
+    
+    
 	DtaSession *session;  /**< shared session object pointer */
 
+    /** start an anonymous session
+     * @param SP the Security Provider to start the session with */
+    uint8_t start(OPAL_UID SP);
+    
+    
+    /** Start an authenticated session (OPAL only)
+    * @param SP the securitly provider to start the session with
+    * @param password the password to start the session
+    * @param SignAuthority the Signing authority (in a simple session this is the user)
+    */
+    uint8_t start(OPAL_UID SP, char * password, OPAL_UID SignAuthority);
+    
+    
+    
+    /** Start an authenticated session (OPAL only)
+    * @param SP the securitly provider to start the session with
+    * @param HostChallenge the password to start the session
+    * @param SignAuthority the Signing authority (in a simple session this is the user)
+    */
+    uint8_t start(OPAL_UID SP, vector<uint8_t> HostChallenge, OPAL_UID SignAuthority);
+
+    
+    /** Start an authenticated session (OPAL only)
+     * @param SP the securitly provider to start the session with
+     * @param password the password to start the session
+     * @param SignAuthority the Signing authority (in a simple session this is the user)
+     *  */
+    uint8_t start(OPAL_UID SP, char * password, vector<uint8_t> SignAuthority);
+
+    
+    /** Start an authenticated session (OPAL only)
+     * @param SP the securitly provider to start the session with
+     * @param HostChallenge the password to start the session
+     * @param SignAuthority the Signing authority (in a simple session this is the user)
+     *  */
+    uint8_t start(OPAL_UID SP, vector<uint8_t>  HostChallenge, vector<uint8_t> SignAuthority);
+
+    
     virtual uint8_t acquireDiscovery0Response(uint8_t * d0Response);
 	uint8_t discovery0buffer[MIN_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT] ; // NG->__attribute__((aligned(16)));
     

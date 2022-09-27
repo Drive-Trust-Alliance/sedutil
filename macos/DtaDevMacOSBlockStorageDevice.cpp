@@ -95,7 +95,7 @@ static bool parseNVMeSMARTLibIdentifyData(io_service_t aBlockStorageDevice, CFDi
 }
 
 static bool FillDeviceInfoFromProperties(CFDictionaryRef deviceProperties, CFDictionaryRef mediaProperties,
-                                         DTA_DEVICE_INFO &disk_info) {
+                                         DTA_DEVICE_INFO &device_info) {
     if (NULL != mediaProperties) {
         CFNumberRef size = GetNumber(mediaProperties, "Size");
         if (NULL != size) {
@@ -105,7 +105,7 @@ static bool FillDeviceInfoFromProperties(CFDictionaryRef deviceProperties, CFDic
                     {
                         long long sSize ;
                         if (CFNumberGetValue(size, numberType, &sSize)) {
-                            disk_info.devSize = (uint64_t)sSize;
+                            device_info.devSize = (uint64_t)sSize;
                         }
                     }
                     break;
@@ -113,7 +113,7 @@ static bool FillDeviceInfoFromProperties(CFDictionaryRef deviceProperties, CFDic
                     {
                         int64_t sSize ;
                         if (CFNumberGetValue(size, numberType, &sSize)) {
-                            disk_info.devSize = (uint64_t)sSize;
+                            device_info.devSize = (uint64_t)sSize;
                         }
                     }
                     break;
@@ -127,18 +127,38 @@ static bool FillDeviceInfoFromProperties(CFDictionaryRef deviceProperties, CFDic
         if (NULL != deviceCharacteristics) {
             CFStringRef vendorName = GetString(deviceCharacteristics, "Vendor Name");
             if (vendorName != NULL )
-                CFStringGetCString(vendorName, (char *)&disk_info.vendorName, sizeof(disk_info.vendorName)+sizeof(disk_info.null0), kCFStringEncodingASCII);
+                CFStringGetCString(vendorName, (char *)&device_info.vendorName, sizeof(device_info.vendorName)+sizeof(device_info.null0), kCFStringEncodingASCII);
             CFStringRef modelNumber = GetString(deviceCharacteristics, "Product Name");
             if (modelNumber != NULL)
-                CFStringGetCString(modelNumber, (char *)&disk_info.modelNum, sizeof(disk_info.modelNum)+sizeof(disk_info.null1), kCFStringEncodingASCII);
+                CFStringGetCString(modelNumber, (char *)&device_info.modelNum, sizeof(device_info.modelNum)+sizeof(device_info.null1), kCFStringEncodingASCII);
             CFStringRef firmwareRevision = GetString(deviceCharacteristics, "Product Revision Level");
             if (firmwareRevision != NULL)
-                CFStringGetCString(firmwareRevision, (char *)&disk_info.firmwareRev, sizeof(disk_info.firmwareRev)+sizeof(disk_info.null2), kCFStringEncodingASCII);
+                CFStringGetCString(firmwareRevision, (char *)&device_info.firmwareRev, sizeof(device_info.firmwareRev)+sizeof(device_info.null2), kCFStringEncodingASCII);
             CFStringRef serialNumber = GetString(deviceCharacteristics, "Serial Number");
             if (serialNumber != NULL )
-                CFStringGetCString(serialNumber, (char *)&disk_info.serialNum, sizeof(disk_info.serialNum)+sizeof(disk_info.null0), kCFStringEncodingASCII);
-            return true;
+                CFStringGetCString(serialNumber, (char *)&device_info.serialNum, sizeof(device_info.serialNum)+sizeof(device_info.null0), kCFStringEncodingASCII);
+            
         }
+            
+        CFDictionaryRef protocolProperties = GetDict(deviceProperties, "Protocol Characteristics");
+        if (NULL != protocolProperties) {
+            CFStringRef interconnect = GetString(protocolProperties, "Physical Interconnect");
+            if (NULL != interconnect) {
+                CFStringGetCString(interconnect,
+                                   (char *)device_info.physicalInterconnect,
+                                   sizeof(device_info.physicalInterconnect),
+                                   kCFStringEncodingASCII);
+            }
+            CFStringRef interconnectLocation = GetString(protocolProperties, "Physical Interconnect Location");
+            if (NULL != interconnectLocation) {
+                CFStringGetCString(interconnect,
+                                   (char *)device_info.physicalInterconnectLocation,
+                                   sizeof(device_info.physicalInterconnectLocation),
+                                   kCFStringEncodingASCII);
+            }
+        }
+        
+        return true;
     }
     return false;
 }
@@ -538,6 +558,14 @@ const char * DtaDevMacOSBlockStorageDevice::getSerialNum()
 {
     return (const char *)&pdevice_info->serialNum;
 }
+const char * DtaDevMacOSBlockStorageDevice::getPhysicalInterconnect()
+{
+    return (const char *)&pdevice_info->physicalInterconnect;
+}
+const char * DtaDevMacOSBlockStorageDevice::getPhysicalInterconnectLocation()
+{
+    return (const char *)&pdevice_info->physicalInterconnectLocation;
+}
 const char * DtaDevMacOSBlockStorageDevice::getBSDName()
 {
     return (const char *)bsdName.c_str();
@@ -549,9 +577,6 @@ DTA_DEVICE_TYPE DtaDevMacOSBlockStorageDevice::getDevType()
 }
 
 const std::string DtaDevMacOSBlockStorageDevice::getDevName () {
-    char devname[26];
-    bzero(devname, sizeof(devname));
-    snprintf(devname,25,"/dev/%s", bsdName.c_str());
-    return devname;
+    return ("/dev/"+bsdName).substr(0,25);
 }
 

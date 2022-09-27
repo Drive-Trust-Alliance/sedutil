@@ -58,6 +58,10 @@ public:
     const char *getModelNum();
     /** Returns the Serial Number reported by the Identify command */
     const char *getSerialNum();
+    /** Returns the Physical Interconnect technology */
+    const char *getPhysicalInterconnect();
+    /** Returns the Physical Interconnect Location */
+    const char * getPhysicalInterconnectLocation();
     /** Returns the BSD Name */
     const char *getBSDName();
     /* What type of disk attachment is used */

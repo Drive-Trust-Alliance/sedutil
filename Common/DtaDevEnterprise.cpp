@@ -58,18 +58,6 @@ static const bool is_NULL_UID(std::vector<uint8_t> & v)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void set8(vector<uint8_t> & v, const uint8_t value[8])
-////////////////////////////////////////////////////////////////////////////////
-{
-	v.clear();
-	v.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-	for (int i = 0; i < 8; i++)
-    {
-		v.push_back(value[i]);
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
 static void setband(vector<uint8_t> & v, uint16_t i)
 ////////////////////////////////////////////////////////////////////////////////
 {
@@ -328,23 +316,19 @@ uint8_t DtaDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t en
     LOG(D1) << "Entering DtaDevEnterprise::configureLockingRange()";
 
     //** BandMaster0 UID of Table 28 Locking SP Authority table, p. 70 of Enterprise SSC rev 3.00
-    std::vector<uint8_t> user;
-    set8(user, OPALUID[OPAL_UID::ENTERPRISE_BANDMASTER0_UID]);
+    vector<uint8_t> user=vUID(OPAL_UID::ENTERPRISE_BANDMASTER0_UID);
     setband(user, lockingrange);
 
     //** Global_Range UID of Table 33 Locking SP Locking table, p. 84 of Enterprise SSC rev 3.00
-    vector<uint8_t> object;
-    set8(object, OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL]);
+    vector<uint8_t> object=vUID(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL);
     setband(object, lockingrange);
 
-    uint8_t lastRC= WithSessionCommand([this, HostChallenge,user](){
-        return session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, HostChallenge, user);
-    },
-                                       [object, enabled](DtaCommand * set){
+    uint8_t lastRC= WithSimpleSessionCommand(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, HostChallenge, user,
+                                             [object, enabled](DtaCommand * set){
         vector<uint8_t> method;
         set8(method, OPALMETHOD[OPAL_METHOD::ESET]);
-
         set->reset(object, method);
+        
         set->addToken(OPAL_TOKEN::STARTLIST);
         set->addToken(OPAL_TOKEN::STARTLIST);
         set->addToken(OPAL_TOKEN::ENDLIST);
@@ -367,6 +351,7 @@ uint8_t DtaDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t en
         set->addToken(OPAL_TOKEN::ENDLIST);
         set->addToken(OPAL_TOKEN::ENDLIST);
         set->addToken(OPAL_TOKEN::ENDLIST);
+        
         set->complete();
     });
 
@@ -485,10 +470,8 @@ uint8_t DtaDevEnterprise::revertLockingSP(vector<uint8_t> HostChallenge, uint8_t
 {
     LOG(D1) << "Entering DtaDevEnterprise::revertLockingSP()";
     if(HostChallenge.size() == 0) { LOG(D4) << "Referencing formal parameters " << keep; }
-    uint8_t lastRC = WithSessionCommand([this, HostChallenge](){
-        return session->start(OPAL_UID::OPAL_ADMINSP_UID, HostChallenge, OPAL_UID::OPAL_SID_UID);
-    },
-                                        [this, keep](DtaCommand *cmd){
+    uint8_t lastRC = WithSimpleSessionCommand(OPAL_UID::OPAL_ADMINSP_UID, HostChallenge, OPAL_UID::OPAL_SID_UID,
+                                              [this, keep](DtaCommand *cmd){
         cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
         cmd->addToken(OPAL_TOKEN::STARTLIST);
         cmd->addToken(OPAL_TOKEN::STARTNAME);
@@ -1110,18 +1093,14 @@ uint8_t DtaDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t lockings
         return DTAERROR_UNSUPORTED_LOCKING_RANGE;
     }
 
-    lastRC = WithSessionCommand([this, HostChallenge, lockingrange](){
-        //** BandMaster0 UID of Table 28 Locking SP Authority table, p. 70 of Enterprise SSC rev 3.00
-        vector<uint8_t> user;
-        set8(user, OPALUID[OPAL_UID::ENTERPRISE_BANDMASTER0_UID]);
-        setband(user, lockingrange);
-
-        return session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, HostChallenge, user);
-    },
-                              [lockingrange, locked](DtaCommand * set){
+    
+    //** BandMaster0 UID of Table 28 Locking SP Authority table, p. 70 of Enterprise SSC rev 3.00
+    vector<uint8_t> user = vUID(OPAL_UID::ENTERPRISE_BANDMASTER0_UID);
+    setband(user, lockingrange);
+    lastRC = WithSimpleSessionCommand(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, HostChallenge, user,
+                                      [lockingrange, locked](DtaCommand * set){
         //** Band0 UID of Table 33 Locking SP Locking table, p. 84 of Enterprise SSC rev 3.00
-        vector<uint8_t> object;
-        set8(object, OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL]);
+        vector<uint8_t> object = vUID(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL);
         setband(object, lockingrange);
 
         vector<uint8_t> method;
@@ -1259,11 +1238,9 @@ uint8_t DtaDevEnterprise::revertTPer(vector<uint8_t> HostChallenge, uint8_t PSID
 {
     LOG(D1) << "Entering DtaDevEnterprise::revertTPer()";
     if (HostChallenge.size() == 0) { LOG(D4) << "Referencing formal parameters " << PSID; }
-    uint8_t lastRC = WithSessionCommand([this, HostChallenge, PSID](){
-        return session->start(OPAL_UID::OPAL_ADMINSP_UID, HostChallenge,
-                              PSID ? OPAL_UID::OPAL_PSID_UID : OPAL_UID::OPAL_SID_UID );
-    },
-                                        [this, AdminSP](DtaCommand * cmd){
+    uint8_t lastRC = WithSimpleSessionCommand(OPAL_UID::OPAL_ADMINSP_UID, HostChallenge,
+                                              PSID ? OPAL_UID::OPAL_PSID_UID : OPAL_UID::OPAL_SID_UID ,
+                                              [this, AdminSP](DtaCommand * cmd){
         if (AdminSP)
             cmd->reset(OPAL_UID::OPAL_ADMINSP_UID, OPAL_METHOD::REVERT);
         else

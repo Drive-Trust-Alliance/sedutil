@@ -257,21 +257,18 @@ uint8_t DtaDevOpal::setLockonReset(uint8_t lockingrange, bool enable,
 {
 
     LOG(D1) << "Entering DtaDevOpal::setLockonReset()";
-    vector<uint8_t> LR;
-    LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-    for (int i = 0; i < 8; i++) {
-       LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
-    }
+    
+    vector<uint8_t> LR = vUID(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL);
     if (lockingrange != 0) {
        LOG(D2) << "lockingrange = " << lockingrange;
        LR[6] = 0x03;
        LR[8] = lockingrange;
     }
     
-    uint8_t lastRC = WithSessionCommand([this, HostChallenge](){
-        return session->start(OPAL_UID::OPAL_LOCKINGSP_UID, HostChallenge, OPAL_UID::OPAL_ADMIN1_UID);
-    },
-                                        [LR, enable](DtaCommand * rekey){
+    uint8_t lastRC = WithSimpleSessionCommand(OPAL_UID::OPAL_LOCKINGSP_UID,
+                                              HostChallenge,
+                                              OPAL_UID::OPAL_ADMIN1_UID,
+                                              [LR, enable](DtaCommand * rekey){
         rekey->reset(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL, OPAL_METHOD::SET);
         rekey->changeInvokingUid(LR);
         rekey->addToken(OPAL_TOKEN::STARTLIST);
@@ -531,7 +528,7 @@ uint8_t DtaDevOpal::setuphuser(vector<uint8_t>HostChallenge)
 {
     LOG(D) << "Entering setuphuser() " << dev;
     uint8_t lastRC;
-    char * buf = (char *)malloc(20);
+    char buf[20];
     memset(buf, 0, 20);
     if (isPyrite() || isOpalite() || isRuby() ) {
         //buf = "User2"; // User2 is the last user of Pyrite
@@ -1040,22 +1037,18 @@ uint8_t DtaDevOpal::configureLockingRange(uint8_t lockingrange, uint8_t enabled,
 uint8_t DtaDevOpal::configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint8_t> HostChallenge)
 {
     LOG(D1) << "Entering DtaDevOpal::configureLockingRange() " << dev;
-    vector<uint8_t> LR;
-    LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-    for (int i = 0; i < 8; i++) {
-        LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
-    }
+    vector<uint8_t> LR = vUID(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL);
     if (lockingrange != 0) {
         LR[6] = 0x03;
         LR[8] = lockingrange;
     }
     
-    uint8_t lastRC = WithSessionCommand([this, HostChallenge](){
-        return session->start(OPAL_UID::OPAL_LOCKINGSP_UID,
-                              HostChallenge,
-                              getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID);
-    },
-                                        [LR, enabled](DtaCommand * set){
+    uint8_t lastRC = WithSimpleSessionCommand(OPAL_UID::OPAL_LOCKINGSP_UID,
+                                              HostChallenge,
+                                              (getusermode()
+                                                ? OPAL_UID::OPAL_USER1_UID
+                                                : OPAL_UID::OPAL_ADMIN1_UID),
+                                              [LR, enabled](DtaCommand * set){
         set->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::SET);
         set->changeInvokingUid(LR);
         set->addToken(OPAL_TOKEN::STARTLIST);
@@ -1241,10 +1234,10 @@ uint8_t DtaDevOpal::revertLockingSP(char * password, uint8_t keep)
 uint8_t DtaDevOpal::revertLockingSP(vector<uint8_t> HostChallenge, uint8_t keep)
 {
     LOG(D1) << "Entering revert DtaDevOpal::revertLockingSP() keep = " << (uint16_t) keep << " " << dev;
-    uint8_t lastRC = WithSessionCommand([this, HostChallenge](){
-        return session->start(OPAL_UID::OPAL_LOCKINGSP_UID, HostChallenge, OPAL_UID::OPAL_ADMIN1_UID);
-    },
-                       [this, keep](DtaCommand *cmd){
+    uint8_t lastRC = WithSimpleSessionCommand(OPAL_UID::OPAL_LOCKINGSP_UID,
+                                              HostChallenge,
+                                              OPAL_UID::OPAL_ADMIN1_UID,
+                                              [this, keep](DtaCommand *cmd){
         cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::REVERTSP);
         cmd->addToken(OPAL_TOKEN::STARTLIST);
         if (keep) {
@@ -1725,11 +1718,8 @@ uint8_t DtaDevOpal::__setLockingRange(uint8_t lockingrange, uint8_t lockingstate
         LOG(E) << "Invalid locking state for setLockingRange " << dev;
         return DTAERROR_INVALID_PARAMETER;
     }
-    vector<uint8_t> LR;
-    LR.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-    for (int i = 0; i < 8; i++) {
-        LR.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL][i]);
-    }
+    
+    vector<uint8_t> LR = vUID(OPAL_UID::OPAL_LOCKINGRANGE_GLOBAL);
     if (lockingrange != 0) {
         LR[6] = 0x03;
         LR[8] = lockingrange;
@@ -2412,12 +2402,10 @@ uint8_t DtaDevOpal::revertTPer(char * password, uint8_t PSID, uint8_t AdminSP)
 uint8_t DtaDevOpal::revertTPer(vector<uint8_t> HostChallenge, uint8_t PSID, uint8_t AdminSP)
 {
     LOG(D1) << "Entering DtaDevOpal::revertTPer() " << AdminSP << " " << dev;
-    uint8_t lastRC = WithSessionCommand([this, HostChallenge, PSID](){
-        return session->start(OPAL_UID::OPAL_ADMINSP_UID,
-                              HostChallenge,
-                              PSID ? OPAL_UID::OPAL_PSID_UID : OPAL_UID::OPAL_SID_UID);
-    },
-                                        [this](DtaCommand * cmd){
+    uint8_t lastRC = WithSimpleSessionCommand(OPAL_UID::OPAL_ADMINSP_UID,
+                                              HostChallenge,
+                                              (PSID ? OPAL_UID::OPAL_PSID_UID : OPAL_UID::OPAL_SID_UID),
+                                              [this](DtaCommand * cmd){
         cmd->reset(OPAL_UID::OPAL_ADMINSP_UID, OPAL_METHOD::REVERT);
         cmd->addToken(OPAL_TOKEN::STARTLIST);
         cmd->addToken(OPAL_TOKEN::ENDLIST);
@@ -5079,16 +5067,14 @@ uint8_t DtaDevOpal::activateLockingSP(char * password)
 uint8_t DtaDevOpal::activateLockingSP(vector<uint8_t> HostChallenge)
 {
     LOG(D1) << "Entering DtaDevOpal::activateLockingSP() " << dev;
-    vector<uint8_t> table;
-    table. push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-    for (int i = 0; i < 8; i++) {
-        table.push_back(OPALUID[OPAL_UID::OPAL_LOCKINGSP_UID][i]);
-    }
-    uint8_t lastRC = WithSessionCommand([this, HostChallenge, table](){
+    vector<uint8_t> LockingSP= vUID(OPAL_UID::OPAL_LOCKINGSP_UID);
+    
+    uint8_t lastRC = WithSessionCommand(
+                                        [this, HostChallenge, LockingSP](){
         uint8_t rc = session->start(OPAL_UID::OPAL_ADMINSP_UID, HostChallenge, OPAL_UID::OPAL_SID_UID);
         if (rc != 0)
             return rc;
-        rc = getTable(table, 0x06, 0x06);
+        rc = getTable(LockingSP, 0x06, 0x06);
         if (rc != 0) {
             LOG(E) << "Unable to determine LockingSP Lifecycle state " << dev;
             return rc;

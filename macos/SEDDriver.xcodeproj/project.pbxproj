@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		D201C18728D855E200FCD053 /* TPerDriverMethodIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = D201C18628D855E200FCD053 /* TPerDriverMethodIndex.h */; };
+		D2336D7928E283C800F199EA /* BrightPlazaTPer.kext in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2BD8FA11F0207AF00747F4A /* BrightPlazaTPer.kext */; };
+		D2336D7B28E283F300F199EA /* SEDKernelInterface.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2BD8F601F02017B00747F4A /* SEDKernelInterface.framework */; };
 		D26EB97C1F036671002200A2 /* RegistryUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = D26EB97A1F036671002200A2 /* RegistryUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D26EB97D1F036671002200A2 /* RegistryUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = D26EB97B1F036671002200A2 /* RegistryUtilities.mm */; };
 		D27129ED28C53FB5007AB870 /* kernel_PrintBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = D27129EC28C53FB5007AB870 /* kernel_PrintBuffer.h */; };
@@ -28,7 +30,6 @@
 		D2BD8F7A1F02029800747F4A /* TPerKernelInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BD8F6F1F02021F00747F4A /* TPerKernelInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2BD8F7B1F02029800747F4A /* UserKernelShared.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BD8F701F02021F00747F4A /* UserKernelShared.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2BD8F7C1F02029800747F4A /* SEDKernelInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BD8F761F02023100747F4A /* SEDKernelInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D2BD8F981F02066C00747F4A /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BD8F971F02066C00747F4A /* debug.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2BD8F9A1F02072D00747F4A /* PrintBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = D2BD8F6C1F02021F00747F4A /* PrintBuffer.c */; };
 		D2BD8F9B1F02073B00747F4A /* PrintBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BD8F6D1F02021F00747F4A /* PrintBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2BD8FB21F02082E00747F4A /* TPerDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2BD8FA91F02082E00747F4A /* TPerDriver.cpp */; };
@@ -56,10 +57,35 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		D2336D7828E2837E00F199EA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = bundles/Library/Extensions;
+			dstSubfolderSpec = 16;
+			files = (
+				D2336D7928E283C800F199EA /* BrightPlazaTPer.kext in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2336D7A28E283DD00F199EA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = bundles/Library/Frameworks;
+			dstSubfolderSpec = 16;
+			files = (
+				D2336D7B28E283F300F199EA /* SEDKernelInterface.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		D201C18628D855E200FCD053 /* TPerDriverMethodIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPerDriverMethodIndex.h; sourceTree = "<group>"; };
 		D20A9E8D28C5BD4900F7985D /* Kernel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kernel.framework; path = System/Library/Frameworks/Kernel.framework; sourceTree = SDKROOT; };
 		D20CC9671F69C4A900CE3D72 /* kernel_debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kernel_debug.h; sourceTree = "<group>"; };
+		D2336D3C28E2754700F199EA /* BrightPlazaTPer copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "BrightPlazaTPer copy-Info.plist"; path = "/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/BrightPlazaTPer copy-Info.plist"; sourceTree = "<absolute>"; };
+		D2336D3D28E2754700F199EA /* BrightPlazaTPer copy2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "BrightPlazaTPer copy2-Info.plist"; path = "/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/BrightPlazaTPer copy2-Info.plist"; sourceTree = "<absolute>"; };
 		D26EB97A1F036671002200A2 /* RegistryUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegistryUtilities.h; sourceTree = "<group>"; };
 		D26EB97B1F036671002200A2 /* RegistryUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RegistryUtilities.mm; sourceTree = "<group>"; };
 		D27129EC28C53FB5007AB870 /* kernel_PrintBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kernel_PrintBuffer.h; sourceTree = "<group>"; };
@@ -152,6 +178,8 @@
 				D2772B0C28BC04900005E001 /* SEDKernelInterface.framework */,
 				D2BD8F611F02017B00747F4A /* Products */,
 				D20A9E8A28C5BB7500F7985D /* Frameworks */,
+				D2336D3C28E2754700F199EA /* BrightPlazaTPer copy-Info.plist */,
+				D2336D3D28E2754700F199EA /* BrightPlazaTPer copy2-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -163,7 +191,8 @@
 				D2BD8F601F02017B00747F4A /* SEDKernelInterface.framework */,
 			);
 			name = Products;
-			sourceTree = "<group>";
+			path = "../Debug Bonjour Multistart";
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		D2BD8F621F02017B00747F4A /* SEDKernelInterface */ = {
 			isa = PBXGroup;
@@ -250,7 +279,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D2BD8F9B1F02073B00747F4A /* PrintBuffer.h in Headers */,
-				D2BD8F981F02066C00747F4A /* debug.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,6 +340,8 @@
 				D2BD8F9D1F0207AF00747F4A /* Frameworks */,
 				D2BD8F9E1F0207AF00747F4A /* Headers */,
 				D2BD8F9F1F0207AF00747F4A /* Resources */,
+				D2336D7828E2837E00F199EA /* CopyFiles */,
+				D2336D7A28E283DD00F199EA /* CopyFiles */,
 			);
 			buildRules = (
 			);
