@@ -10,7 +10,7 @@
 #import <SEDKernelInterface/UserKernelShared.h>
 #import <SEDClientServerCommunication/NSData+Hashing.h>
 #import "MacOSXInterface.h"
-#import "MacRegistryAccess.h"
+//#import "MacRegistryAccess.h"
 #include "debug.h"
 
 #import "TPer.h"

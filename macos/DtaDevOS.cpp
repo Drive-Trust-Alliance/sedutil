@@ -110,8 +110,7 @@ int  DtaDevOS::diskScan()
 
     vector<DtaDevMacOSBlockStorageDevice *> blockStorageDevices=DtaDevMacOSBlockStorageDevice::enumerateBlockStorageDevices();
 
-    for (DtaDevMacOSBlockStorageDevice * device : blockStorageDevices)
-    {
+    for (DtaDevMacOSBlockStorageDevice * device : blockStorageDevices){
         printf("%-10s", device->getDevName().c_str());
 
         if (device->isAnySSC()) {

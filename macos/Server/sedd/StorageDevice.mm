@@ -9,7 +9,7 @@
 #import <IOKit/IOBSD.h>
 #import <SEDKernelInterface/UserKernelShared.h>
 #import "SEDClientServerCommunication.h"
-#import "MacRegistryAccess.h"
+//#import "MacRegistryAccess.h"
 #import "MacOSXInterface.h"
 #import "StorageDevice.h"
 #include "debug.h"

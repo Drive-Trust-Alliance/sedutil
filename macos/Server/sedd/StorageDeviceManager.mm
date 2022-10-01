@@ -10,7 +10,7 @@
 //
 
 #import "StorageDeviceManager.h"
-#import "MacRegistryAccess.h"
+//#import "MacRegistryAccess.h"
 #import "MacFileSystemInterface.h"      // xxx need to make a general superclass
 #import "SEDNotifications.h"
 #import "debug.h"
