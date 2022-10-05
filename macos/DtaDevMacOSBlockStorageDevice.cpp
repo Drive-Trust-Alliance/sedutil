@@ -35,7 +35,11 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define GetNumber(dict,name) (CFNumberRef)CFDictionaryGetValue(dict, CFSTR(name))
 #define GetPropertiesDict(name) GetDict(properties, name)
 
-static bool parseNVMeSMARTLibIdentifyData(io_service_t aBlockStorageDevice, CFDictionaryRef deviceProperties, DTA_DEVICE_INFO &disk_info)
+//#define ERRORS_TO_STDERR
+#undef ERRORS_TO_STDERR
+
+static bool parseNVMeSMARTLibIdentifyData(io_service_t aBlockStorageDevice, CFDictionaryRef deviceProperties,
+                                          DTA_DEVICE_INFO &disk_info)
 {
     CFBooleanRef bNVMeSMARTCapable = GetBool(deviceProperties, kIOPropertyNVMeSMARTCapableKey);
     if (!(bNVMeSMARTCapable != NULL))
@@ -59,10 +63,14 @@ static bool parseNVMeSMARTLibIdentifyData(io_service_t aBlockStorageDevice, CFDi
     IOCFPlugInInterface     **plugInInterface = NULL;
     IONVMeSMARTInterface    **NVMeSMARTInterface = NULL;
     SInt32                  score;
-    IOReturn kr = IOCreatePlugInInterfaceForService(aBlockStorageDevice, kIONVMeSMARTUserClientTypeID, kIOCFPlugInInterfaceID, &plugInInterface, &score);
+    IOReturn kr = IOCreatePlugInInterfaceForService(aBlockStorageDevice,
+                                                    kIONVMeSMARTUserClientTypeID, kIOCFPlugInInterfaceID,
+                                                    &plugInInterface, &score);
     
     if ((kIOReturnSuccess != kr) || plugInInterface == NULL) {
-        fprintf(stderr, "IOCreatePlugInInterfaceForService returned 0x%08x", kr);   // TODO:  replace fprintf
+#if DEBUG && defined(ERRORS_TO_STDERR)
+        fprintf(stderr, "IOCreatePlugInInterfaceForService returned 0x%08x\n", kr);   // TODO:  replace fprintf
+#endif // DEBUG && defined(ERRORS_TO_STDERR)
         return false;
     }
     
@@ -73,7 +81,9 @@ static bool parseNVMeSMARTLibIdentifyData(io_service_t aBlockStorageDevice, CFDi
     (*plugInInterface)->Release(plugInInterface);
     
     if (0 != res || NVMeSMARTInterface == NULL) {
-        fprintf(stderr, "QueryInterface returned %d.\n", (int) res);
+#if DEBUG && defined(ERRORS_TO_STDERR)
+        fprintf(stderr, "QueryInterface returned %d.\n", (int) res);   // TODO:  replace fprintf
+#endif // DEBUG && defined(ERRORS_TO_STDERR)
         return false;
     }
     uint32_t inNamespace = 0 ;
@@ -82,7 +92,9 @@ static bool parseNVMeSMARTLibIdentifyData(io_service_t aBlockStorageDevice, CFDi
     kr = (*NVMeSMARTInterface) -> GetIdentifyData (NVMeSMARTInterface, &data, inNamespace );
     (*NVMeSMARTInterface)->Release(NVMeSMARTInterface);
     if ((kIOReturnSuccess != kr) ) {
-        fprintf(stderr, "GetIdentifyData returned 0x%08x", kr);
+#if DEBUG && defined(ERRORS_TO_STDERR)
+        fprintf(stderr, "GetIdentifyData returned 0x%08x\n", kr);   // TODO:  replace fprintf
+#endif // DEBUG && defined(ERRORS_TO_STDERR)
         return false;
     }
     
