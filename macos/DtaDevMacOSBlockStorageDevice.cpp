@@ -19,6 +19,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 #include <IOKit/storage/IOBlockStorageDevice.h>
 #include <IOKit/storage/IOMedia.h>
+#include <IOKit/storage/ata/ATASMARTLib.h>
 #include <IOKit/storage/nvme/NVMeSMARTLibExternal.h>
 #include <IOKit/IOKitLib.h>
 #include <CoreFoundation/CFNumber.h>
@@ -35,8 +36,96 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define GetNumber(dict,name) (CFNumberRef)CFDictionaryGetValue(dict, CFSTR(name))
 #define GetPropertiesDict(name) GetDict(properties, name)
 
-//#define ERRORS_TO_STDERR
-#undef ERRORS_TO_STDERR
+#define ERRORS_TO_STDERR
+//#undef ERRORS_TO_STDERR
+
+
+#if defined(TRY_SMART_LIBS)
+static bool parseSMARTLibIdentifyData(io_service_t aBlockStorageDevice, CFDictionaryRef deviceProperties,
+                                          DTA_DEVICE_INFO &disk_info)
+{
+    CFBooleanRef bSMARTCapable = GetBool(deviceProperties, kIOPropertySMARTCapableKey);
+    if (!(bSMARTCapable != NULL))
+        return false;
+    if (!(CFGetTypeID(bSMARTCapable) == CFBooleanGetTypeID()))
+        return false;
+    if (!(CFBooleanGetValue(bSMARTCapable)))
+        return false;
+    
+    CFDictionaryRef ioPluginTypes = GetDict( deviceProperties, kIOCFPlugInTypesKey);
+    if (!(ioPluginTypes != NULL))
+        return false;
+    
+    CFStringRef typeID= CFUUIDCreateString(CFAllocatorGetDefault(),kIOATASMARTUserClientTypeID);
+    CFStringRef cfsrTypeName = (CFStringRef)CFDictionaryGetValue(ioPluginTypes, typeID);
+    CFRelease(typeID);
+    if (!(cfsrTypeName != NULL))
+        return false;
+    CFIndex typeNameLength = CFStringGetLength(cfsrTypeName);
+    CFIndex typeNameMaxSize = CFStringGetMaximumSizeForEncoding(typeNameLength, kCFStringEncodingUTF8);
+    char typeName[typeNameMaxSize];
+            
+    if (! CFStringGetCString(cfsrTypeName, typeName, typeNameMaxSize, kCFStringEncodingUTF8))
+        return false;
+    
+    io_name_t entryName;
+    IOReturn kr = IORegistryEntryGetName(aBlockStorageDevice, entryName);
+    if ( !(kr == kIOReturnSuccess))
+        return false;
+
+    
+
+    IOCFPlugInInterface     **plugInInterface = NULL;
+    IONVMeSMARTInterface    **SMARTInterface = NULL;
+    SInt32                  score;
+    kr = IOCreatePlugInInterfaceForService(aBlockStorageDevice,
+                                                    kIONVMeSMARTUserClientTypeID, kIOCFPlugInInterfaceID,
+                                                    &plugInInterface, &score);
+    
+    if ((kIOReturnSuccess != kr) || plugInInterface == NULL) {
+#if DEBUG && defined(ERRORS_TO_STDERR)
+        fprintf(stderr, "IOCreatePlugInInterfaceForService returned 0x%08x -- typeName=%s entryName=%s\n", kr, typeName, entryName);   // TODO:  replace fprintf
+#endif // DEBUG && defined(ERRORS_TO_STDERR)
+        return false;
+    }
+#if DEBUG && defined(ERRORS_TO_STDERR)
+    else {
+        fprintf(stderr, "IOCreatePlugInInterfaceForService returned 0x%08x -- typeName=%s entryName=%s\n", kr, typeName, entryName);   // TODO:  replace fprintf
+    }
+#endif // DEBUG && defined(ERRORS_TO_STDERR)
+    
+    // Use the plugin interface to retrieve the device interface.
+    HRESULT res = (*plugInInterface)->QueryInterface(plugInInterface, CFUUIDGetUUIDBytes(kIONVMeSMARTInterfaceID),
+                                                     (LPVOID *)&SMARTInterface);
+    // Now done with the plugin interface.
+    (*plugInInterface)->Release(plugInInterface);
+    
+    if (0 != res || SMARTInterface == NULL) {
+#if DEBUG && defined(ERRORS_TO_STDERR)
+        fprintf(stderr, "QueryInterface returned %d.\n", (int) res);   // TODO:  replace fprintf
+#endif // DEBUG && defined(ERRORS_TO_STDERR)
+        return false;
+    }
+    uint32_t inNamespace = 0 ;
+    IDENTIFY_RESPONSE data;
+    
+    kr = (*SMARTInterface) -> GetIdentifyData (SMARTInterface, &data, inNamespace );
+    (*SMARTInterface)->Release(SMARTInterface);
+    if ((kIOReturnSuccess != kr) ) {
+#if DEBUG && defined(ERRORS_TO_STDERR)
+        fprintf(stderr, "GetIdentifyData returned 0x%08x\n", kr);   // TODO:  replace fprintf
+#endif // DEBUG && defined(ERRORS_TO_STDERR)
+        return false;
+    }
+    
+    memcpy(disk_info.serialNum, data.serialNumber, sizeof(disk_info.serialNum));
+    memcpy(disk_info.firmwareRev, data.firmwareRevision, sizeof(disk_info.firmwareRev));
+    memcpy(disk_info.modelNum, data.modelNum, sizeof(disk_info.modelNum));
+    memcpy(disk_info.worldWideName, data.worldWideName, sizeof(disk_info.worldWideName));
+    
+    return true;
+}
+
 
 static bool parseNVMeSMARTLibIdentifyData(io_service_t aBlockStorageDevice, CFDictionaryRef deviceProperties,
                                           DTA_DEVICE_INFO &disk_info)
@@ -54,26 +143,41 @@ static bool parseNVMeSMARTLibIdentifyData(io_service_t aBlockStorageDevice, CFDi
         return false;
     
     CFStringRef typeID= CFUUIDCreateString(CFAllocatorGetDefault(),kIONVMeSMARTUserClientTypeID);
-    CFStringRef name = (CFStringRef)CFDictionaryGetValue(ioPluginTypes, typeID);
+    CFStringRef cfsrTypeName = (CFStringRef)CFDictionaryGetValue(ioPluginTypes, typeID);
     CFRelease(typeID);
-    if (!(name != NULL))
+    if (!(cfsrTypeName != NULL))
         return false;
-    
-    
+    CFIndex typeNameLength = CFStringGetLength(cfsrTypeName);
+    CFIndex typeNameMaxSize = CFStringGetMaximumSizeForEncoding(typeNameLength, kCFStringEncodingUTF8);
+    char typeName[typeNameMaxSize];
+    if (! CFStringGetCString(cfsrTypeName, typeName, typeNameMaxSize, kCFStringEncodingUTF8))
+        return false;
+
+    io_name_t entryName;
+    IOReturn kr = IORegistryEntryGetName(aBlockStorageDevice, entryName);
+    if ( !(kr == kIOReturnSuccess))
+        return false;
+
+
     IOCFPlugInInterface     **plugInInterface = NULL;
     IONVMeSMARTInterface    **NVMeSMARTInterface = NULL;
     SInt32                  score;
-    IOReturn kr = IOCreatePlugInInterfaceForService(aBlockStorageDevice,
+    kr = IOCreatePlugInInterfaceForService(aBlockStorageDevice,
                                                     kIONVMeSMARTUserClientTypeID, kIOCFPlugInInterfaceID,
                                                     &plugInInterface, &score);
     
     if ((kIOReturnSuccess != kr) || plugInInterface == NULL) {
 #if DEBUG && defined(ERRORS_TO_STDERR)
-        fprintf(stderr, "IOCreatePlugInInterfaceForService returned 0x%08x\n", kr);   // TODO:  replace fprintf
+        fprintf(stderr, "IOCreatePlugInInterfaceForService returned 0x%08x -- typeName=%s entryName=%s\n", kr, typeName, entryName);   // TODO:  replace fprintf
 #endif // DEBUG && defined(ERRORS_TO_STDERR)
         return false;
     }
-    
+#if DEBUG && defined(ERRORS_TO_STDERR)
+    else {
+        fprintf(stderr, "IOCreatePlugInInterfaceForService returned 0x%08x -- typeName=%s entryName=%s\n", kr, typeName, entryName);   // TODO:  replace fprintf
+    }
+#endif // DEBUG && defined(ERRORS_TO_STDERR)
+
     // Use the plugin interface to retrieve the device interface.
     HRESULT res = (*plugInInterface)->QueryInterface(plugInInterface, CFUUIDGetUUIDBytes(kIONVMeSMARTInterfaceID),
                                                      (LPVOID *)&NVMeSMARTInterface);
@@ -98,13 +202,14 @@ static bool parseNVMeSMARTLibIdentifyData(io_service_t aBlockStorageDevice, CFDi
         return false;
     }
     
-    memcpy(disk_info.serialNum, data.SERIAL_NUMBER, sizeof(disk_info.serialNum));
+    memcpy(disk_info.serialNum, data.SERIAL_NUMBER, sizeof(disk_info.serialNum));  //TODO: Do these need byte flipping?
     memcpy(disk_info.firmwareRev, data.FW_REVISION, sizeof(disk_info.firmwareRev));
     memcpy(disk_info.modelNum, data.MODEL_NUMBER, sizeof(disk_info.modelNum));
     memcpy(disk_info.worldWideName, data.IEEE_OUI_ID, sizeof(disk_info.worldWideName));
     
     return true;
 }
+#endif // defined(TRY_SMART_LIBS)
 
 static bool FillDeviceInfoFromProperties(CFDictionaryRef deviceProperties, CFDictionaryRef mediaProperties,
                                          DTA_DEVICE_INFO &device_info) {
@@ -139,13 +244,13 @@ static bool FillDeviceInfoFromProperties(CFDictionaryRef deviceProperties, CFDic
         if (NULL != deviceCharacteristics) {
             CFStringRef vendorName = GetString(deviceCharacteristics, "Vendor Name");
             if (vendorName != NULL )
-                CFStringGetCString(vendorName, (char *)&device_info.vendorName, sizeof(device_info.vendorName)+sizeof(device_info.null0), kCFStringEncodingASCII);
+                CFStringGetCString(vendorName, (char *)&device_info.vendorName, sizeof(device_info.vendorName)+sizeof(device_info.null3), kCFStringEncodingASCII);
             CFStringRef modelNumber = GetString(deviceCharacteristics, "Product Name");
             if (modelNumber != NULL)
-                CFStringGetCString(modelNumber, (char *)&device_info.modelNum, sizeof(device_info.modelNum)+sizeof(device_info.null1), kCFStringEncodingASCII);
+                CFStringGetCString(modelNumber, (char *)&device_info.modelNum, sizeof(device_info.modelNum)+sizeof(device_info.null2), kCFStringEncodingASCII);
             CFStringRef firmwareRevision = GetString(deviceCharacteristics, "Product Revision Level");
             if (firmwareRevision != NULL)
-                CFStringGetCString(firmwareRevision, (char *)&device_info.firmwareRev, sizeof(device_info.firmwareRev)+sizeof(device_info.null2), kCFStringEncodingASCII);
+                CFStringGetCString(firmwareRevision, (char *)&device_info.firmwareRev, sizeof(device_info.firmwareRev)+sizeof(device_info.null1), kCFStringEncodingASCII);
             CFStringRef serialNumber = GetString(deviceCharacteristics, "Serial Number");
             if (serialNumber != NULL )
                 CFStringGetCString(serialNumber, (char *)&device_info.serialNum, sizeof(device_info.serialNum)+sizeof(device_info.null0), kCFStringEncodingASCII);
@@ -158,14 +263,14 @@ static bool FillDeviceInfoFromProperties(CFDictionaryRef deviceProperties, CFDic
             if (NULL != interconnect) {
                 CFStringGetCString(interconnect,
                                    (char *)device_info.physicalInterconnect,
-                                   sizeof(device_info.physicalInterconnect),
+                                   sizeof(device_info.physicalInterconnect)+sizeof(device_info.null4),
                                    kCFStringEncodingASCII);
             }
             CFStringRef interconnectLocation = GetString(protocolProperties, "Physical Interconnect Location");
             if (NULL != interconnectLocation) {
-                CFStringGetCString(interconnect,
+                CFStringGetCString(interconnectLocation,
                                    (char *)device_info.physicalInterconnectLocation,
-                                   sizeof(device_info.physicalInterconnectLocation),
+                                   sizeof(device_info.physicalInterconnectLocation)+sizeof(device_info.null5),
                                    kCFStringEncodingASCII);
             }
         }
@@ -175,9 +280,11 @@ static bool FillDeviceInfoFromProperties(CFDictionaryRef deviceProperties, CFDic
     return false;
 }
 
+#if defined(TRY_SMART_LIBS)
 void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(io_service_t aBlockStorageDevice) {
-    // Parse from properties instance var
-    // Parse TPer properties, if available
+#else // !defined(TRY_SMART_LIBS)
+void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info() {
+#endif // defined(TRY_SMART_LIBS)
     if (pdevice_info == NULL)
         return;
     DTA_DEVICE_INFO & device_info = *pdevice_info;
@@ -194,27 +301,37 @@ void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(io_service
         }
     }
     
+#if defined(TRY_SMART_LIBS)
+    bool SMARTCapable = false;
+    bool NVMeSMARTCapable = false;
+#endif // defined(TRY_SMART_LIBS)
+
     CFDictionaryRef deviceProperties = GetPropertiesDict("device");
     if (NULL != deviceProperties) {
-        CFBooleanRef NVMeSMARTCapable = GetBool(deviceProperties, "NVMe SMART Capable");
-        if (NULL != NVMeSMARTCapable && CFBooleanGetValue(NVMeSMARTCapable)) {
-            device_info.devType = DEVICE_TYPE_NVME;
-        } else {
-            CFDictionaryRef protocolProperties = GetDict(deviceProperties, "Protocol Characteristics");
-            if (NULL != protocolProperties) {
-                CFStringRef interconnect = GetString(protocolProperties, "Physical Interconnect");
-                if (NULL != interconnect) {
-                    if (CFEqual(interconnect, CFSTR("USB"))) {
-                        device_info.devType = DEVICE_TYPE_USB;
-                    } else if (CFEqual(interconnect, CFSTR("Apple Fabric"))) {
-                        device_info.devType = DEVICE_TYPE_NVME;
-                    } else if (CFEqual(interconnect, CFSTR("PCI-Express"))) {
-                        device_info.devType = DEVICE_TYPE_OTHER;  // TODO ... what?
-                    } else if (CFEqual(interconnect, CFSTR("SATA"))) {
-                        device_info.devType = DEVICE_TYPE_ATA;
-                    } else
-                        device_info.devType = DEVICE_TYPE_OTHER;
-                }
+#if defined(TRY_SMART_LIBS)
+        CFBooleanRef cfbrSMARTCapable = GetBool(deviceProperties, "SMART Capable");
+        if (NULL != cfbrSMARTCapable) {
+            SMARTCapable = CFBooleanGetValue(cfbrSMARTCapable);
+        }
+        CFBooleanRef cfbrNVMeSMARTCapable = GetBool(deviceProperties, "NVMe SMART Capable");
+        if (NULL != cfbrNVMeSMARTCapable) {
+            NVMeSMARTCapable = CFBooleanGetValue(cfbrNVMeSMARTCapable);
+        }
+#endif // defined(TRY_SMART_LIBS)
+        CFDictionaryRef protocolProperties = GetDict(deviceProperties, "Protocol Characteristics");
+        if (NULL != protocolProperties) {
+            CFStringRef interconnect = GetString(protocolProperties, "Physical Interconnect");
+            if (NULL != interconnect) {
+                if (CFEqual(interconnect, CFSTR("USB"))) {
+                    device_info.devType = DEVICE_TYPE_USB;
+                } else if (CFEqual(interconnect, CFSTR("Apple Fabric"))) {
+                    device_info.devType = DEVICE_TYPE_NVME;
+                } else if (CFEqual(interconnect, CFSTR("PCI-Express"))) {
+                    device_info.devType = DEVICE_TYPE_OTHER;  // TODO ... what?
+                } else if (CFEqual(interconnect, CFSTR("SATA"))) {
+                    device_info.devType = DEVICE_TYPE_ATA;
+                } else
+                    device_info.devType = DEVICE_TYPE_OTHER;
             }
         }
     } else {
@@ -225,16 +342,23 @@ void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(io_service
     
     FillDeviceInfoFromProperties(deviceProperties, mediaProperties, device_info);
 
+#if defined(TRY_SMART_LIBS)
+    if (SMARTCapable &&
+        parseSMARTLibIdentifyData(aBlockStorageDevice, deviceProperties, device_info) &&
+        device_info.devType == DEVICE_TYPE_OTHER) {
+        device_info.devType = DEVICE_TYPE_ATA;
+        }
     
-    switch (device_info.devType) {
-        case DEVICE_TYPE_NVME:
-        case DEVICE_TYPE_OTHER:
-            if (parseNVMeSMARTLibIdentifyData(aBlockStorageDevice, deviceProperties, device_info))
-                break;
-            break;
-        case DEVICE_TYPE_USB:
+    if (NVMeSMARTCapable &&
+        parseNVMeSMARTLibIdentifyData(aBlockStorageDevice, deviceProperties, device_info) &&
+        device_info.devType == DEVICE_TYPE_OTHER) {
+        device_info.devType = DEVICE_TYPE_NVME;
+    }
+#endif // defined(TRY_SMART_LIBS)
+
 #define HACK_MODELNUM_WITH_VENDORNAME
 #if defined(HACK_MODELNUM_WITH_VENDORNAME)
+    if (device_info.devType == DEVICE_TYPE_USB )
         {
             size_t vendorNameLength = strlen((const char *)device_info.vendorName);
             size_t modelNumLength = strlen((const char *)device_info.modelNum);
@@ -258,13 +382,6 @@ void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(io_service
             }
         }
 #endif //defined(HACK_MODELNUM_WITH_VENDORNAME)
-            break;
-        case DEVICE_TYPE_ATA:
-            // identify();
-            break;
-        default:
-            ;
-    }
 
     return;
 
@@ -385,7 +502,11 @@ std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enum
         bzero(pdi, sizeof(DTA_DEVICE_INFO));
         
         device =
-            getBlockStorageDevice(aBlockStorageDevice, entryNameStr, bsdNameStr, allProperties, pdi);
+#if defined(TRY_SMART_LIBS)
+        getBlockStorageDevice(aBlockStorageDevice, entryNameStr, bsdNameStr, allProperties, pdi);
+#else // !defined(TRY_SMART_LIBS)
+        getBlockStorageDevice(entryNameStr, bsdNameStr, allProperties, pdi);
+#endif // defined(TRY_SMART_LIBS)
         devices.push_back( device );
 
         IOObjectRelease(tPer);
@@ -402,18 +523,32 @@ std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enum
 }
 
 // Factory for this class or subclass instances
-DtaDevMacOSBlockStorageDevice * DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageDevice,
-                                                                                     std::string entryName,
-                                                                                     std::string bsdName,
-                                                                                     CFDictionaryRef properties,
-                                                                                     DTA_DEVICE_INFO * pdi) {
-    
-    CFDictionaryRef tPerProperties = GetPropertiesDict("TPer");
-    if (NULL != tPerProperties)
-        return DtaDevMacOSTPer::getTPer(aBlockStorageDevice, entryName, bsdName, tPerProperties, properties, pdi);
-    else
-        return new DtaDevMacOSBlockStorageDevice(aBlockStorageDevice, entryName, bsdName, properties, pdi);
-}
+#if defined(TRY_SMART_LIBS)
+    DtaDevMacOSBlockStorageDevice * DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageDevice,
+                                                                                         std::string entryName,
+                                                                                         std::string bsdName,
+                                                                                         CFDictionaryRef properties,
+                                                                                         DTA_DEVICE_INFO * pdi) {
+        
+        CFDictionaryRef tPerProperties = GetPropertiesDict("TPer");
+        if (NULL != tPerProperties)
+            return DtaDevMacOSTPer::getTPer(aBlockStorageDevice, entryName, bsdName, tPerProperties, properties, pdi);
+        else
+            return new DtaDevMacOSBlockStorageDevice(aBlockStorageDevice, entryName, bsdName, properties, pdi);
+    }
+#else // !defined(TRY_SMART_LIBS)
+    DtaDevMacOSBlockStorageDevice * DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(std::string entryName,
+                                                                                         std::string bsdName,
+                                                                                         CFDictionaryRef properties,
+                                                                                         DTA_DEVICE_INFO * pdi) {
+        
+        CFDictionaryRef tPerProperties = GetPropertiesDict("TPer");
+        if (NULL != tPerProperties)
+            return DtaDevMacOSTPer::getTPer(entryName, bsdName, tPerProperties, properties, pdi);
+        else
+            return new DtaDevMacOSBlockStorageDevice(entryName, bsdName, properties, pdi);
+    }
+#endif // defined(TRY_SMART_LIBS)
 
 DtaDevMacOSBlockStorageDevice * DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageDevice,
                                                                                      const char *devref,
@@ -479,11 +614,18 @@ DtaDevMacOSBlockStorageDevice * DtaDevMacOSBlockStorageDevice::getBlockStorageDe
                                            keys.data(), values.data(), (CFIndex)keys.size(),
                                            NULL, NULL);
         
+#if defined(TRY_SMART_LIBS)
         foundDevice = DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(aBlockStorageDevice,
                                                                            entryName,
                                                                            bsdName,
                                                                            allProperties,
                                                                            pdi);
+#else // !defined(TRY_SMART_LIBS)
+        foundDevice = DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(entryName,
+                                                                           bsdName,
+                                                                           allProperties,
+                                                                           pdi);
+#endif // defined(TRY_SMART_LIBS)
         
     }
     

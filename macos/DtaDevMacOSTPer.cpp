@@ -74,6 +74,7 @@ std::string cfStringToStdString(CFStringRef input)
 
 #define GetString(dict,name) (CFStringRef)CFDictionaryGetValue(dict, CFSTR(name))
 
+#if defined(TRY_SMART_LIBS)
 DtaDevMacOSTPer * DtaDevMacOSTPer::getTPer(io_service_t aBlockStorageDevice,
                                            std::string entryName,
                                            std::string bsdName,
@@ -90,6 +91,23 @@ DtaDevMacOSTPer * DtaDevMacOSTPer::getTPer(io_service_t aBlockStorageDevice,
         return nil;
     }
 }
+#else // !defined(TRY_SMART_LIBS)
+DtaDevMacOSTPer * DtaDevMacOSTPer::getTPer(std::string entryName,
+                                           std::string bsdName,
+                                           CFDictionaryRef tPerProperties,
+                                           CFDictionaryRef properties,
+                                           DTA_DEVICE_INFO * pdi)
+{
+    const CFStringRef interfaceType=GetString(tPerProperties, IOInterfaceTypeKey);
+    if (CFEqual(interfaceType, CFSTR(IOInterfaceTypeSAT))) {
+        return new DtaDevMacOSTPer_SAT(entryName, bsdName, properties, pdi);
+    } else if (CFEqual(interfaceType, CFSTR(IOInterfaceTypeSCSI))) {
+        return new DtaDevMacOSTPer_SCSI(entryName, bsdName, properties, pdi);
+    } else {
+        return nil;
+    }
+}
+#endif // defined(TRY_SMART_LIBS)
 
 bool DtaDevMacOSTPer::findBrightPlazaDriverService(const char * dev)
 {

@@ -26,14 +26,26 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 /** virtual implementation for a block storage device
  */
+//#define TRY_SMART_LIBS
+#undef TRY_SMART_LIBS
+
 class DtaDevMacOSBlockStorageDevice {
 public:
+#if defined(TRY_SMART_LIBS)
     DtaDevMacOSBlockStorageDevice(io_service_t aBlockStorageDevice, std::string entryName, std::string bsdName, CFDictionaryRef properties, DTA_DEVICE_INFO * pdi)
         : bsdName(bsdName),
           entryName(entryName),
           properties(properties),
           pdevice_info(pdi)
     {parse_properties_into_device_info(aBlockStorageDevice);};
+#else // !defined(TRY_SMART_LIBS)
+    DtaDevMacOSBlockStorageDevice(std::string entryName, std::string bsdName, CFDictionaryRef properties, DTA_DEVICE_INFO * pdi)
+        : bsdName(bsdName),
+          entryName(entryName),
+          properties(properties),
+          pdevice_info(pdi)
+    {parse_properties_into_device_info();};
+#endif // defined(TRY_SMART_LIBS)
     virtual ~DtaDevMacOSBlockStorageDevice();
     uint8_t isOpal2();
     /** Does the device conform to the OPAL 1.0 SSC */
@@ -77,11 +89,18 @@ public:
     static void extracted(io_service_t aBlockStorageDevice, CFDictionaryRef &allProperties, std::string &bsdName, CFDictionaryRef &deviceProperties, const char *devref, std::string &entryName, DtaDevMacOSBlockStorageDevice *&foundDevice, CFIndex kCStringSize, io_service_t &media, CFDictionaryRef &mediaProperties, char *nameBuffer, DTA_DEVICE_INFO *pdi, io_service_t &tPer, CFDictionaryRef &tPerProperties);
     
     static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(const char * devref, DTA_DEVICE_INFO * pdi);  // Factory for this class or subclass instances
+#if defined(TRY_SMART_LIBS)
     static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(io_service_t aBlockStorageDevice,
                                                                  std::string entryName,
                                                                  std::string bsdName,
                                                                  CFDictionaryRef properties,
                                                                  DTA_DEVICE_INFO * pdi);  // Factory for this class or subclass instances
+#else // !defined(TRY_SMART_LIBS)
+    static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(std::string entryName,
+                                                                 std::string bsdName,
+                                                                 CFDictionaryRef properties,
+                                                                 DTA_DEVICE_INFO * pdi);  // Factory for this class or subclass instances
+#endif // defined(TRY_SMART_LIBS)
     
 private:
     std::string bsdName;
@@ -89,7 +108,11 @@ private:
     CFDictionaryRef properties;
     
     // derived
+#if defined(TRY_SMART_LIBS)
     void parse_properties_into_device_info(io_service_t aBlockStorageDevice);
+#else // !defined(TRY_SMART_LIBS)
+    void parse_properties_into_device_info(void);
+#endif // defined(TRY_SMART_LIBS)
     DTA_DEVICE_INFO * pdevice_info;  /**< Weak reference to Structure containing info from properties, including identify and discovery 0 if available*/
     static bool bsdNameLessThan(DtaDevMacOSBlockStorageDevice * a,
                                 DtaDevMacOSBlockStorageDevice * b);  // for sorting

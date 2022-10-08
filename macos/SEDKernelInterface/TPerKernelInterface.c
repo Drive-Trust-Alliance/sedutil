@@ -132,7 +132,7 @@ kern_return_t updatePropertiesInIORegistry(io_connect_t connect) {
 
 kern_return_t TPerUpdate(io_connect_t connect, DTA_DEVICE_INFO * pdi) {
     kern_return_t ret = updatePropertiesInIORegistry(connect);
-    if (ret == KERN_SUCCESS && pdi != NULL ) {
+    if (kIOReturnSuccess == ret && pdi != NULL ) {
         CFDataRef data = (CFDataRef)IORegistryEntryCreateCFProperty(connect,
                                                                     CFSTR(IODtaDeviceInfoKey),
                                                                     CFAllocatorGetDefault(), 0);
@@ -150,33 +150,32 @@ kern_return_t TPerUpdate(io_connect_t connect, DTA_DEVICE_INFO * pdi) {
 
 kern_return_t OpenUserClient(io_service_t service, io_connect_t *pConnect)
 {
-    io_connect_t connect;
     
     // This call will cause the user client to be instantiated. It returns an io_connect_t handle
     // that is used for all subsequent calls to the user client.
 //#if DEBUG
 //    fprintf(stderr, "OpenUserClient -- service is %d.\n", service);
 //#endif
-    kern_return_t kernResult = IOServiceOpen(service, mach_task_self(), 0, &connect);
-    *pConnect = connect;
+    kern_return_t kernResult = IOServiceOpen(service, mach_task_self(), 0, pConnect);
     if (kernResult != kIOReturnSuccess) {
+#if DEBUG
         fprintf(stderr, "OpenUserClient: error -- IOServiceOpen returned 0x%08x\n", kernResult);
+#endif
+        return kernResult;
     }
-    else {
+
     // This calls the openUserClient method in SedUserClient inside the kernel.
 //#if DEBUG
 //        fprintf(stderr, "OpenUserClient IOServiceOpen successful -- connect is %d (%d).\n", connect, *pConnect);
 //#endif
-        kernResult = IOConnectCallScalarMethod(*pConnect, kSedUserClientOpen, NULL, 0, NULL, NULL);
-//#if DEBUG
-//        if (kernResult == kIOReturnSuccess) {
-//            fprintf(stderr, "OpenUserClient IOConnectCallScalarMethod successful.\n");
-//        }
-//        else {
-//            fprintf(stderr, "OpenUserClient error -- IOConnectCallScalarMethod returned 0x%08x.\n\n", kernResult);
-//        }
-//#endif
+    kernResult = IOConnectCallScalarMethod(*pConnect, kSedUserClientOpen, NULL, 0, NULL, NULL);
+    if (kernResult != kIOReturnSuccess) {
+#if DEBUG
+            fprintf(stderr, "OpenUserClient error -- IOConnectCallScalarMethod returned 0x%08x.\n\n", kernResult);
+#endif
+        return kernResult;
     }
+
     return kernResult;
 }
 
@@ -185,18 +184,17 @@ kern_return_t CloseUserClient(io_connect_t connect)
 {
     // This calls the closeUserClient method in SedUserClient inside the kernel, which in turn closes
     // the driver.
-    kern_return_t	SedUserClientCloseResult;
-    kern_return_t	IOServiceCloseResult;
 //#if DEBUG
 //    fprintf(stderr, "CloseUserClient -- connect is %d.\n", connect);
 //#endif
-    SedUserClientCloseResult = IOConnectCallScalarMethod(connect, kSedUserClientClose, NULL, 0, NULL, NULL);
+    kern_return_t SedUserClientCloseResult =
+       IOConnectCallScalarMethod(connect, kSedUserClientClose, NULL, 0, NULL, NULL);
 //#if DEBUG
 //    fprintf(stderr, "CloseUserClient -- SedUserClientCloseResult is %d.\n", SedUserClientCloseResult);
 //#endif
-    IOServiceCloseResult = IOServiceClose(connect);  // releases connect
+    kern_return_t IOServiceCloseResult = IOServiceClose(connect);  // releases connect
 //#if DEBUG
 //    fprintf(stderr, "CloseUserClient -- IOServiceCloseResult is %d.\n", IOServiceCloseResult);
 //#endif
-    return SedUserClientCloseResult ? SedUserClientCloseResult : IOServiceCloseResult;
+    return kIOReturnSuccess != SedUserClientCloseResult ? SedUserClientCloseResult : IOServiceCloseResult;
 }

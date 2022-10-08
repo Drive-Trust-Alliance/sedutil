@@ -61,12 +61,20 @@ public:
                       io_connect_t connect);
 
     
+#if defined(TRY_SMART_LIBS)
     static DtaDevMacOSTPer * getTPer(io_service_t aBlockStorageDevice,
                                      std::string entryName,
                                      std::string bsdName,
                                      CFDictionaryRef tPerProperties,
                                      CFDictionaryRef properties,
                                      DTA_DEVICE_INFO * pdi) ;
+#else // !defined(TRY_SMART_LIBS)
+    static DtaDevMacOSTPer * getTPer(std::string entryName,
+                                     std::string bsdName,
+                                     CFDictionaryRef tPerProperties,
+                                     CFDictionaryRef properties,
+                                     DTA_DEVICE_INFO * pdi) ;
+#endif // defined(TRY_SMART_LIBS)
 
 
 protected:

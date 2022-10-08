@@ -59,8 +59,6 @@
 		D201C18628D855E200FCD053 /* TPerDriverMethodIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPerDriverMethodIndex.h; sourceTree = "<group>"; };
 		D20A9E8D28C5BD4900F7985D /* Kernel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kernel.framework; path = System/Library/Frameworks/Kernel.framework; sourceTree = SDKROOT; };
 		D20CC9671F69C4A900CE3D72 /* kernel_debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kernel_debug.h; sourceTree = "<group>"; };
-		D2336D3C28E2754700F199EA /* BrightPlazaTPer copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "BrightPlazaTPer copy-Info.plist"; path = "/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/BrightPlazaTPer copy-Info.plist"; sourceTree = "<absolute>"; };
-		D2336D3D28E2754700F199EA /* BrightPlazaTPer copy2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "BrightPlazaTPer copy2-Info.plist"; path = "/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/BrightPlazaTPer copy2-Info.plist"; sourceTree = "<absolute>"; };
 		D26EB97A1F036671002200A2 /* RegistryUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegistryUtilities.h; sourceTree = "<group>"; };
 		D26EB97B1F036671002200A2 /* RegistryUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RegistryUtilities.mm; sourceTree = "<group>"; };
 		D27129EC28C53FB5007AB870 /* kernel_PrintBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kernel_PrintBuffer.h; sourceTree = "<group>"; };
@@ -153,8 +151,6 @@
 				D2772B0C28BC04900005E001 /* SEDKernelInterface.framework */,
 				D2BD8F611F02017B00747F4A /* Products */,
 				D20A9E8A28C5BB7500F7985D /* Frameworks */,
-				D2336D3C28E2754700F199EA /* BrightPlazaTPer copy-Info.plist */,
-				D2336D3D28E2754700F199EA /* BrightPlazaTPer copy2-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
