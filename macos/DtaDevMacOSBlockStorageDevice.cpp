@@ -280,6 +280,11 @@ static bool FillDeviceInfoFromProperties(CFDictionaryRef deviceProperties, CFDic
     return false;
 }
 
+const DTA_DEVICE_INFO & DtaDevMacOSBlockStorageDevice::device_info() {
+    assert(NULL != pdevice_info);
+    return *pdevice_info;
+}
+
 #if defined(TRY_SMART_LIBS)
 void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(io_service_t aBlockStorageDevice) {
 #else // !defined(TRY_SMART_LIBS)

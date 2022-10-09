@@ -40,10 +40,10 @@ public:
     {parse_properties_into_device_info(aBlockStorageDevice);};
 #else // !defined(TRY_SMART_LIBS)
     DtaDevMacOSBlockStorageDevice(std::string entryName, std::string bsdName, CFDictionaryRef properties, DTA_DEVICE_INFO * pdi)
-        : bsdName(bsdName),
+        : pdevice_info(pdi),
+          bsdName(bsdName),
           entryName(entryName),
-          properties(properties),
-          pdevice_info(pdi)
+          properties(properties)
     {parse_properties_into_device_info();};
 #endif // defined(TRY_SMART_LIBS)
     virtual ~DtaDevMacOSBlockStorageDevice();
@@ -101,8 +101,12 @@ public:
                                                                  CFDictionaryRef properties,
                                                                  DTA_DEVICE_INFO * pdi);  // Factory for this class or subclass instances
 #endif // defined(TRY_SMART_LIBS)
-    
+    const DTA_DEVICE_INFO & device_info(void);  /**< Weak reference to Structure containing info from properties, including identify and discovery 0 if available
+                                           Asserts if no such reference.*/
+
 private:
+    DTA_DEVICE_INFO * pdevice_info;  /**< Weak reference to Structure containing info from properties, including identify and discovery 0 if available*/
+
     std::string bsdName;
     std::string entryName;
     CFDictionaryRef properties;
@@ -113,7 +117,6 @@ private:
 #else // !defined(TRY_SMART_LIBS)
     void parse_properties_into_device_info(void);
 #endif // defined(TRY_SMART_LIBS)
-    DTA_DEVICE_INFO * pdevice_info;  /**< Weak reference to Structure containing info from properties, including identify and discovery 0 if available*/
     static bool bsdNameLessThan(DtaDevMacOSBlockStorageDevice * a,
                                 DtaDevMacOSBlockStorageDevice * b);  // for sorting
 };
