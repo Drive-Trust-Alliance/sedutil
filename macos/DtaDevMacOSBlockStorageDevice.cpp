@@ -672,10 +672,12 @@ uint8_t DtaDevMacOSBlockStorageDevice::isOpal2()
     else
         return pdevice_info->OPAL20;
 }
+
 uint8_t DtaDevMacOSBlockStorageDevice::isOpal1()
 {
     return pdevice_info->OPAL10;
 }
+    
 uint8_t DtaDevMacOSBlockStorageDevice::isEprise()
 {
     return pdevice_info->Enterprise;
@@ -685,34 +687,42 @@ uint8_t DtaDevMacOSBlockStorageDevice::isAnySSC()
 {
     return pdevice_info->ANY_OPAL_SSC;
 }
+    
 uint8_t DtaDevMacOSBlockStorageDevice::MBREnabled()
 {
     return pdevice_info->Locking_MBREnabled;
 }
+    
 uint8_t DtaDevMacOSBlockStorageDevice::MBRDone()
 {
     return pdevice_info->Locking_MBRDone;
 }
+    
 uint8_t DtaDevMacOSBlockStorageDevice::Locked()
 {
     return pdevice_info->Locking_locked;
 }
+    
 uint8_t DtaDevMacOSBlockStorageDevice::LockingEnabled()
 {
     return pdevice_info->Locking_lockingEnabled;
 }
+    
 const char * DtaDevMacOSBlockStorageDevice::getVendorName()
 {
     return (const char *)&pdevice_info->vendorName;
 }
+    
 const char * DtaDevMacOSBlockStorageDevice::getFirmwareRev()
 {
     return (const char *)&pdevice_info->firmwareRev;
 }
+    
 const char * DtaDevMacOSBlockStorageDevice::getModelNum()
 {
     return (const char *)&pdevice_info->modelNum;
 }
+    
 const char * DtaDevMacOSBlockStorageDevice::getSerialNum()
 {
     return (const char *)&pdevice_info->serialNum;
