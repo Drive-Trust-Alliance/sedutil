@@ -62,9 +62,11 @@ private:
     //
     // Initialization functions
     //
+    void GetDeviceStringsFromIORegistry(DTA_DEVICE_INFO &di);
+    
     void updateIORegistryFromD0Response(const uint8_t * d0Response, DTA_DEVICE_INFO & di);
 
-    IOReturn updatePropertiesInIORegistryWithCDB(SCSICommandDescriptorBlock cdb, DTA_DEVICE_INFO & di );
+    IOReturn updatePropertiesInIORegistryWithDiscovery0CDB(SCSICommandDescriptorBlock cdb, DTA_DEVICE_INFO & di );
 
     //
     // General SCSI Interface

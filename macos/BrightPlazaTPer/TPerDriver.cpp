@@ -33,7 +33,7 @@ bool DriverClass::start(IOService* provider)
     if ( (ret = super::start(provider) ) ) {
         registerService();
     }
-    else if (getProperty(IOTCGPropertiesKey)) { // pointer is not null => super::InitializeDeviceSupport returned true
+    else if (getProperty(IOInterfaceTypeKey)) { // pointer is not null => super::InitializeDeviceSupport returned true
                                              // and deviceIsTPer returned false
         IOLOG_DEBUG("%s[%p]::%s - leaving start, Device Support was initialized but is NOT TPer, calling stop\n",
               getName(), this, __FUNCTION__);
@@ -45,6 +45,18 @@ bool DriverClass::start(IOService* provider)
     IOLOG_DEBUG("%s[%p]::%s - leaving start, returning %d\n",
           getName(), this, __FUNCTION__, ret);
     return ret;
+}
+
+void DriverClass::GetDeviceStringsFromIORegistry(DTA_DEVICE_INFO &di) {
+    char * v = GetVendorString ( );
+    if (v != NULL)
+        strlcpy((char *)di.vendorName, v, sizeof(di.vendorName));
+    char * p = GetProductString ( );
+    if (p != NULL)
+        strlcpy((char *)di.modelNum, p, sizeof(di.modelNum));
+    char * r = GetRevisionString ( );
+    if (r != NULL)
+        strlcpy((char *)di.firmwareRev, r, sizeof(di.firmwareRev));
 }
 
 // IOSCSIPrimaryBlockCommandsDevice method
@@ -62,10 +74,15 @@ bool DriverClass::InitializeDeviceSupport ( void )
     InterfaceDeviceID interfaceDeviceIdentification;
     DTA_DEVICE_INFO di;
     
+    
     if (!identifyUsingSCSIInquiry(interfaceDeviceIdentification, di)) {
         return false;
     }
-    
+    IOLOG_DEBUG("%s[%p]::%s Device is SCSI", getName(), this, __FUNCTION__);
+
+    GetDeviceStringsFromIORegistry(di);
+
+
     di.devType = DEVICE_TYPE_SAS;
     
     if (deviceIsTPer_SCSI(di)) {
@@ -177,6 +194,7 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
     }
 #endif //DEBUG
 
+    // Call IOSCSIPrimaryCommandsDevice::SendCommand
     SCSIServiceResponse serviceResponse = SendCommand(request, SED_TIMEOUT);
     
     if ( serviceResponse != kSCSIServiceResponse_TASK_COMPLETE) {
@@ -463,22 +481,29 @@ IOReturn DriverClass::__inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryD
 {
     IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
 
-    static SCSICommandDescriptorBlock inquiryCDB_SCSI =
-      { kSCSICmd_INQUIRY,           // Byte  0  INQUIRY 12h
-        0x00,                       // Byte  1  Logical Unit Number| Reserved | EVPD
-        0x00,                       // Byte  2  Page Code
-        0x00,                       // Byte  3  Allocation length (MSB)
-        0x00,                       // Byte  4  Allocation length (LSB)
-        0x00,                       // Byte  5  Control
-      };
-    unsigned long long len = md->getLength();
-    inquiryCDB_SCSI[1] = evpd;
-    inquiryCDB_SCSI[2] = page_code;
-    inquiryCDB_SCSI[3] = (uint8_t)(len >> 8);
-    inquiryCDB_SCSI[4] = (uint8_t)(len     );
-    IOLOG_DEBUG("%s[%p]::%s len=%llu=0x%02X:0x%02X\n", getName(), this, __FUNCTION__,
-                len, (uint8_t)(len >> 8), (uint8_t)(len     ));
-    return PerformSCSICommand(inquiryCDB_SCSI, md);
+//    static SCSICommandDescriptorBlock inquiryCDB_SCSI =
+//      { kSCSICmd_INQUIRY,           // Byte  0  INQUIRY 12h
+//        0x00,                       // Byte  1  Logical Unit Number| Reserved | EVPD
+//        0x00,                       // Byte  2  Page Code
+//        0x00,                       // Byte  3  Allocation length (MSB)
+//        0x00,                       // Byte  4  Allocation length (LSB)
+//        0x00,                       // Byte  5  Control
+//      };
+//    unsigned long long len = md->getLength();
+//    inquiryCDB_SCSI[1] = evpd;
+//    inquiryCDB_SCSI[2] = page_code;
+//    inquiryCDB_SCSI[3] = (uint8_t)(len >> 8);
+//    inquiryCDB_SCSI[4] = (uint8_t)(len     );
+//    IOLOG_DEBUG("%s[%p]::%s len=%llu=0x%02X:0x%02X\n", getName(), this, __FUNCTION__,
+//                len, (uint8_t)(len >> 8), (uint8_t)(len     ));
+//    return PerformSCSICommand(inquiryCDB_SCSI, md);
+    
+    md->prepare();
+    UInt16 dataSize = (UInt16)md->getLength();
+    // Use inherited IOSCSIPrimaryCommandsDevice::RetrieveINQUIRYData
+    bool success = RetrieveINQUIRYData(evpd, page_code, (UInt8 *)(md->getBytesNoCopy()), &dataSize );
+    md->complete();
+    return success ? kIOReturnSuccess : kIOReturnIOError;
 }
 
 IOReturn DriverClass::__inquiry__EVPD(uint8_t page_code, IOBufferMemoryDescriptor * md )
@@ -705,9 +730,10 @@ OSDictionary * DriverClass::parseInquiryPage80Response( const unsigned char * re
 {
     SCSICmd_INQUIRY_Page80_Header *resp = (SCSICmd_INQUIRY_Page80_Header *)response;
     
-    uint8_t serialNumber[sizeof(di.serialNum)+1];
+    uint8_t serialNumber[257];
     bzero(serialNumber, sizeof(serialNumber));
-    memcpy(serialNumber, &resp->PRODUCT_SERIAL_NUMBER, sizeof(di.serialNum));
+    memcpy(serialNumber, &resp->PRODUCT_SERIAL_NUMBER, resp->PAGE_LENGTH);
+    memcpy(di.serialNum, serialNumber, sizeof(di.serialNum));
     
     const OSObject * objects[2];
     const OSSymbol * keys[2];
@@ -1181,10 +1207,10 @@ void DriverClass::updateIORegistryFromD0Response(const uint8_t * d0Response, DTA
     parseDiscovery0Features(d0Response, di);
 }
 
-IOReturn DriverClass::updatePropertiesInIORegistryWithCDB(SCSICommandDescriptorBlock cdb, DTA_DEVICE_INFO & di)
+IOReturn DriverClass::updatePropertiesInIORegistryWithDiscovery0CDB(SCSICommandDescriptorBlock cdb, DTA_DEVICE_INFO & di)
 {
     IOBufferMemoryDescriptor * md = IOBufferMemoryDescriptor::withCapacity ( DISCOVERY0_RESPONSE_SIZE,
-                                                                            kIODirectionIn, false );
+                                                                             kIODirectionIn, false );
     if (NULL == md) {
         return kIOReturnInternalError;
     }
@@ -1228,7 +1254,7 @@ IOReturn DriverClass::updatePropertiesInIORegistry_SCSI( DTA_DEVICE_INFO & di )
         0x00,    // Byte 10  Reserved
         0x00,    // Byte 11  Control
       };
-    return updatePropertiesInIORegistryWithCDB(acquireDiscovery0ResponseCDB_SCSI, di);
+    return updatePropertiesInIORegistryWithDiscovery0CDB(acquireDiscovery0ResponseCDB_SCSI, di);
 }
 
 IOReturn DriverClass::updatePropertiesInIORegistry_SAT( DTA_DEVICE_INFO & di )
@@ -1261,7 +1287,7 @@ IOReturn DriverClass::updatePropertiesInIORegistry_SAT( DTA_DEVICE_INFO & di )
         0x00,    // Byte 10  Reserved -- zero
         0x00,    // Byte 11  CONTROL -- so far always zero
       };
-    return updatePropertiesInIORegistryWithCDB(acquireDiscovery0ResponseCDB_SAT, di);
+    return updatePropertiesInIORegistryWithDiscovery0CDB(acquireDiscovery0ResponseCDB_SAT, di);
 }
 
 OSDictionary * DriverClass::parseIdentifyResponse( const unsigned char * response, DTA_DEVICE_INFO & di)
