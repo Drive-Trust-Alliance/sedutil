@@ -72,9 +72,9 @@ private:
     // General SCSI Interface
     //
     bool deviceIsStandardSCSI(InterfaceDeviceID deviceIdentification, DTA_DEVICE_INFO &di);
-    IOReturn __inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryDescriptor * md );
-    IOReturn __inquiry__EVPD(uint8_t page_code, IOBufferMemoryDescriptor * md );
-    IOReturn inquiryStandardDataAll_SCSI( IOBufferMemoryDescriptor * md );
+    IOReturn __inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryDescriptor * md, UInt16 & dataSize );
+    IOReturn __inquiry__EVPD(uint8_t page_code, IOBufferMemoryDescriptor * md, UInt16 & dataSize );
+    IOReturn inquiryStandardDataAll_SCSI( IOBufferMemoryDescriptor * md);
     OSDictionary * parseInquiryStandardDataAllResponse(const unsigned char * response,
                                                        unsigned char deviceIdentification[],
                                                        DTA_DEVICE_INFO & di);
@@ -84,7 +84,7 @@ private:
 #if defined(USE_INQUIRY_PAGE_00h)
     bool deviceIsPage00SCSI(bool & deviceSupportsPage80,
                             bool & deviceSupportsPage89);
-    IOReturn inquiryPage00_SCSI( IOBufferMemoryDescriptor * md );
+    IOReturn inquiryPage00_SCSI( IOBufferMemoryDescriptor * md, UInt16 & dataSize );
     OSDictionary * parseInquiryPage00Response(const unsigned char * response,
                                               bool & deviceSupportsPage00,
                                               bool & deviceSupportsPage80,
@@ -103,8 +103,8 @@ private:
 #define USE_INQUIRY_PAGE_83h
 #if defined(USE_INQUIRY_PAGE_83h)
     bool deviceIsPage83SCSI(DTA_DEVICE_INFO &di);
-    IOReturn inquiryPage83_SCSI( IOBufferMemoryDescriptor * md );
-    OSDictionary * parseInquiryPage83Response( const unsigned char * response, DTA_DEVICE_INFO & di);
+    IOReturn inquiryPage83_SCSI( IOBufferMemoryDescriptor * md, UInt16 & dataSize );
+    OSDictionary * parseInquiryPage83Response( const unsigned char * response, UInt16 dataSize, DTA_DEVICE_INFO & di);
 #endif // defined(USE_INQUIRY_PAGE_83h)
 
 

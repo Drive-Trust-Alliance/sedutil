@@ -80,9 +80,6 @@ bool DriverClass::InitializeDeviceSupport ( void )
     }
     IOLOG_DEBUG("%s[%p]::%s Device is SCSI", getName(), this, __FUNCTION__);
 
-    GetDeviceStringsFromIORegistry(di);
-
-
     di.devType = DEVICE_TYPE_SAS;
     
     if (deviceIsTPer_SCSI(di)) {
@@ -459,10 +456,11 @@ bool DriverClass::deviceIsStandardSCSI(InterfaceDeviceID interfaceDeviceIdentifi
         isStandardSCSI = ( kIOReturnSuccess == inquiryStandardDataAll_SCSI( md ) );
         if (isStandardSCSI) {
 #if DEBUG
-            setProperty(IOInquiryDeviceResponseKey, inquiryResponse, (unsigned int)transferSize);
+            setProperty(IOInquiryDeviceResponseKey, inquiryResponse, static_cast<unsigned int>(transferSize));
 #endif // DEBUG
             OSDictionary * characteristics =
-                parseInquiryStandardDataAllResponse(static_cast <const unsigned char * >(inquiryResponse), interfaceDeviceIdentification, di);
+                parseInquiryStandardDataAllResponse(static_cast <const unsigned char * >(inquiryResponse),
+                                                    interfaceDeviceIdentification, di);
 #if DEBUG
             setProperty(IOInquiryCharacteristicsKey, characteristics);
 #endif // DEBUG
@@ -477,7 +475,7 @@ bool DriverClass::deviceIsStandardSCSI(InterfaceDeviceID interfaceDeviceIdentifi
 }
 
 
-IOReturn DriverClass::__inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryDescriptor * md )
+IOReturn DriverClass::__inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryDescriptor * md, UInt16 & dataSize)
 {
     IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
 
@@ -499,24 +497,25 @@ IOReturn DriverClass::__inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryD
 //    return PerformSCSICommand(inquiryCDB_SCSI, md);
     
     md->prepare();
-    UInt16 dataSize = (UInt16)md->getLength();
+    dataSize = (UInt16)md->getLength();
     // Use inherited IOSCSIPrimaryCommandsDevice::RetrieveINQUIRYData
     bool success = RetrieveINQUIRYData(evpd, page_code, (UInt8 *)(md->getBytesNoCopy()), &dataSize );
     md->complete();
     return success ? kIOReturnSuccess : kIOReturnIOError;
 }
 
-IOReturn DriverClass::__inquiry__EVPD(uint8_t page_code, IOBufferMemoryDescriptor * md )
+IOReturn DriverClass::__inquiry__EVPD(uint8_t page_code, IOBufferMemoryDescriptor * md, UInt16 & dataSize )
 {
     IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
-    return __inquiry(0x01, page_code, md);
+    return __inquiry(0x01, page_code, md, dataSize);
 }
 
 
 IOReturn DriverClass::inquiryStandardDataAll_SCSI( IOBufferMemoryDescriptor * md )
 {
     IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
-    return __inquiry(0x00, 0x00, md);
+    UInt16 dataSize = (UInt16)md->getLength();
+    return __inquiry(0x00, 0x00, md, dataSize);
 }
 
 
@@ -528,35 +527,37 @@ OSDictionary * DriverClass::parseInquiryStandardDataAllResponse( const unsigned 
                                                             + kINQUIRY_PRODUCT_IDENTIFICATION_Length
                                                             + kINQUIRY_PRODUCT_REVISION_LEVEL_Length);
     
-    uint8_t vendorName[sizeof(resp->VENDOR_IDENTIFICATION)+1];
-    memcpy(vendorName, resp->VENDOR_IDENTIFICATION, sizeof(resp->VENDOR_IDENTIFICATION));
-    vendorName[sizeof(resp->VENDOR_IDENTIFICATION)] = 0;
-    memcpy(di.vendorName, resp->VENDOR_IDENTIFICATION, sizeof(resp->VENDOR_IDENTIFICATION));
-                                                    
-    uint8_t firmwareRevision[sizeof(resp->PRODUCT_REVISION_LEVEL)+1];
-    memcpy(firmwareRevision, resp->PRODUCT_REVISION_LEVEL, sizeof(resp->PRODUCT_REVISION_LEVEL));
-    firmwareRevision[sizeof(resp->PRODUCT_REVISION_LEVEL)] = 0;
-    memcpy(di.firmwareRev, resp->PRODUCT_REVISION_LEVEL, sizeof(resp->PRODUCT_REVISION_LEVEL));
+//    uint8_t vendorName[sizeof(resp->VENDOR_IDENTIFICATION)+1];
+//    memcpy(vendorName, resp->VENDOR_IDENTIFICATION, sizeof(resp->VENDOR_IDENTIFICATION));
+//    vendorName[sizeof(resp->VENDOR_IDENTIFICATION)] = 0;
+//    memcpy(di.vendorName, resp->VENDOR_IDENTIFICATION, sizeof(resp->VENDOR_IDENTIFICATION));
+//
+//    uint8_t firmwareRevision[sizeof(resp->PRODUCT_REVISION_LEVEL)+1];
+//    memcpy(firmwareRevision, resp->PRODUCT_REVISION_LEVEL, sizeof(resp->PRODUCT_REVISION_LEVEL));
+//    firmwareRevision[sizeof(resp->PRODUCT_REVISION_LEVEL)] = 0;
+//    memcpy(di.firmwareRev, resp->PRODUCT_REVISION_LEVEL, sizeof(resp->PRODUCT_REVISION_LEVEL));
+//
+//
+//    uint8_t modelNumber[sizeof(resp->PRODUCT_IDENTIFICATION)+1];
+//    memcpy(modelNumber, resp->PRODUCT_IDENTIFICATION, sizeof(resp->PRODUCT_IDENTIFICATION));
+//    modelNumber[sizeof(resp->PRODUCT_IDENTIFICATION)] = 0;
+//    memcpy(di.modelNum, resp->PRODUCT_IDENTIFICATION, sizeof(resp->PRODUCT_IDENTIFICATION));
     
+    GetDeviceStringsFromIORegistry(di);
 
-    uint8_t modelNumber[sizeof(resp->PRODUCT_IDENTIFICATION)+1];
-    memcpy(modelNumber, resp->PRODUCT_IDENTIFICATION, sizeof(resp->PRODUCT_IDENTIFICATION));
-    modelNumber[sizeof(resp->PRODUCT_IDENTIFICATION)] = 0;
-    memcpy(di.modelNum, resp->PRODUCT_IDENTIFICATION, sizeof(resp->PRODUCT_IDENTIFICATION));
-    
     const OSObject * objects[4];
     const OSSymbol * keys[4];
     
     objects[0] = OSString::withCString( "SCSI");
     keys[0]    = OSSymbol::withCString( IODeviceTypeKey );
 
-    objects[1] = OSString::withCString( (const char *)modelNumber);
+    objects[1] = OSString::withCString( (const char *)di.modelNum);
     keys[1]    = OSSymbol::withCString( IOModelNumberKey );
     
-    objects[2] = OSString::withCString( (const char *)firmwareRevision);
+    objects[2] = OSString::withCString( (const char *)di.firmwareRev);
     keys[2]    = OSSymbol::withCString( IOFirmwareRevisionKey );
     
-    objects[3] = OSString::withCString( (const char *)vendorName);
+    objects[3] = OSString::withCString( (const char *)di.vendorName);
     keys[3]    = OSSymbol::withCString( IOVendorNameKey );
     
     OSDictionary * result = OSDictionary::withObjects(objects, keys, 4, 4);
@@ -588,10 +589,11 @@ bool DriverClass::deviceIsPage00SCSI(bool & deviceSupportsPage80,
     if ( md ) {
         void * inquiryResponse = md->getBytesNoCopy( );
         bzero ( inquiryResponse, md->getLength ( ) );
-        isPage00SCSI = ( kIOReturnSuccess == inquiryPage00_SCSI( md ) );
+        UInt16 dataSize = static_cast<UInt16>(transferSize);
+        isPage00SCSI = ( kIOReturnSuccess == inquiryPage00_SCSI( md, dataSize ) );
         if (isPage00SCSI) {
 #if DEBUG
-            setProperty(IOInquiryPage00ResponseKey, inquiryResponse, (unsigned int)transferSize);
+            setProperty(IOInquiryPage00ResponseKey, inquiryResponse, dataSize);
 #endif // DEBUG
             OSDictionary * characteristics =
                 parseInquiryPage00Response(static_cast <const unsigned char * >(inquiryResponse),
@@ -622,10 +624,10 @@ bool DriverClass::deviceIsPage00SCSI(bool & deviceSupportsPage80,
 }
 
 
-IOReturn DriverClass::inquiryPage00_SCSI( IOBufferMemoryDescriptor * md )
+IOReturn DriverClass::inquiryPage00_SCSI( IOBufferMemoryDescriptor * md, UInt16 & dataSize )
 {
     IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
-    return __inquiry__EVPD(kINQUIRY_Page00_PageCode, md);
+    return __inquiry__EVPD(kINQUIRY_Page00_PageCode, md, dataSize);
 }
 
 
@@ -719,10 +721,11 @@ bool DriverClass::deviceIsPage80SCSI(DTA_DEVICE_INFO &di)
 }
 
 
-IOReturn DriverClass::inquiryPage80_SCSI( IOBufferMemoryDescriptor * md )
+IOReturn DriverClass::inquiryPage80_SCSI( IOBufferMemoryDescriptor * md)
 {
     IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
-    return __inquiry__EVPD(kINQUIRY_Page80_PageCode, md);
+    UInt16 dataSize = (UInt16)md->getLength();
+    return __inquiry__EVPD(kINQUIRY_Page80_PageCode, md, dataSize);
 }
 
 
@@ -768,13 +771,14 @@ bool DriverClass::deviceIsPage83SCSI(DTA_DEVICE_INFO &di)
     if ( md ) {
         void * inquiryResponse = md->getBytesNoCopy( );
         bzero ( inquiryResponse, md->getLength ( ) );
-        isPage83SCSI = ( kIOReturnSuccess == inquiryPage83_SCSI( md ) );
+        UInt16 dataSize = static_cast<UInt16>(transferSize);
+        isPage83SCSI = ( kIOReturnSuccess == inquiryPage83_SCSI( md, dataSize ) );
         if (isPage83SCSI) {
 #if DEBUG
-            setProperty(IOInquiryPage83ResponseKey, inquiryResponse, (unsigned int)transferSize);
+            setProperty(IOInquiryPage83ResponseKey, inquiryResponse, dataSize);
 #endif // DEBUG
             OSDictionary * characteristics =
-                parseInquiryPage83Response(static_cast <const unsigned char * >(inquiryResponse), di);
+                parseInquiryPage83Response(static_cast <const unsigned char * >(inquiryResponse), dataSize, di);
 #if DEBUG
             setProperty(IOInquiryPage83CharacteristicsKey, characteristics);
 #endif // DEBUG
@@ -789,28 +793,64 @@ bool DriverClass::deviceIsPage83SCSI(DTA_DEVICE_INFO &di)
 }
 
 
-IOReturn DriverClass::inquiryPage83_SCSI( IOBufferMemoryDescriptor * md )
+IOReturn DriverClass::inquiryPage83_SCSI( IOBufferMemoryDescriptor * md, UInt16 & dataSize )
 {
     IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
-    return __inquiry__EVPD(kINQUIRY_Page83_PageCode, md);
+    return __inquiry__EVPD(kINQUIRY_Page83_PageCode, md, dataSize);
 }
 
 
-OSDictionary * DriverClass::parseInquiryPage83Response( const unsigned char * response, DTA_DEVICE_INFO & di)
+OSDictionary * DriverClass::parseInquiryPage83Response( const unsigned char * response, UInt16 dataSize, DTA_DEVICE_INFO & di)
 {
-    SCSICmd_INQUIRY_Page83_Header *resp = (SCSICmd_INQUIRY_Page83_Header *)response;
+    const OSObject * objects[2];
+    const OSSymbol * keys[2];
+    unsigned int dictSize = 0;
     
-    (void)di;
-    
-    const OSObject * objects[1];
-    const OSSymbol * keys[1];
-    
-    objects[0] = OSData::withBytes((const void *)resp, 4+resp->PAGE_LENGTH);
+    objects[0] = OSData::withBytes(response, dataSize);
     keys[0]    = OSSymbol::withCString( IOInquiryPage83ResponseKey );
+    dictSize++;
     
-    // TODO: Parse descriptors
+    const unsigned char * pdescs = response + sizeof(SCSICmd_INQUIRY_Page83_Header);
+    
+    // We use dataSize instead of page_length because e.g. SABRENT returns the wrong value
+    const unsigned char * pdescs_end = response + dataSize;
+    
+    // Parse descriptors
+    for (const unsigned char * p = pdescs; p<pdescs_end ; ) {
+        const SCSICmd_INQUIRY_Page83_Identification_Descriptor & desc =
+            * reinterpret_cast <const SCSICmd_INQUIRY_Page83_Identification_Descriptor *> (p);
+        const unsigned char identifier_length = desc.IDENTIFIER_LENGTH ;
 
-    OSDictionary * result = OSDictionary::withObjects(objects, keys, 1, 1);
+        // Because we must use dataSize instead of PAGE_LENGTH, we just stop if when it looks like we
+        // are parsing garbage
+        if (0 == identifier_length)
+            break;
+        bool descriptorUnrecognized = false;
+
+#define desc_type(code_set,identifier_type) \
+    (((code_set & kINQUIRY_Page83_CodeSetMask) << 8) | (identifier_type & kINQUIRY_Page83_IdentifierTypeMask))
+        switch (desc_type(desc.CODE_SET, desc.IDENTIFIER_TYPE)) {
+            case desc_type(kINQUIRY_Page83_CodeSetBinaryData, kINQUIRY_Page83_IdentifierTypeIEEE_EUI64):
+                bzero(di.worldWideName, sizeof(di.worldWideName));
+                memcpy(di.worldWideName, &desc.IDENTIFIER, min(identifier_length, sizeof(di.worldWideName)));
+                objects[1] = OSData::withBytes(di.worldWideName, sizeof(di.worldWideName));
+                keys[1]    = OSSymbol::withCString( IOWorldWideNameKey );
+                dictSize++;
+                break;
+            case desc_type(kINQUIRY_Page83_CodeSetASCIIData, kINQUIRY_Page83_IdentifierTypeVendorID):
+                // We already get Vendor Name and Serial Number using superclass methods
+                break;
+            default:
+                descriptorUnrecognized = true;
+                break;
+        }
+        if (descriptorUnrecognized)
+            break;
+
+        p = &desc.IDENTIFIER + identifier_length;
+    }
+
+    OSDictionary * result = OSDictionary::withObjects(objects, keys, dictSize, dictSize);
     
     return result;
 }
@@ -828,14 +868,14 @@ bool DriverClass::deviceIsPage89SCSI(DTA_DEVICE_INFO &di)
     // SCSI Inquiry command
     // If it works, as a side effect, parse the Inquiry response
     // and save it in the IO Registry
-    bool isSCSI = false;
+    bool isPage89SCSI = false;
     size_t transferSize = sizeof(SCSICmd_INQUIRY_Page89_Data);
     IOBufferMemoryDescriptor * md = IOBufferMemoryDescriptor::withCapacity ( transferSize, kIODirectionIn, false );
     if ( md ) {
         void * inquiryResponse = md->getBytesNoCopy( );
         bzero ( inquiryResponse, md->getLength ( ) );
-        isSCSI = ( kIOReturnSuccess == inquiryPage89_SCSI( md ) );
-        if (isSCSI) {
+        isPage89SCSI = ( kIOReturnSuccess == inquiryPage89_SCSI( md ) );
+        if (isPage89SCSI) {
 #if DEBUG
 //#error DEBUG is defined
             setProperty(IOInquiryPage89ResponseKey, inquiryResponse, (unsigned int)transferSize);
@@ -851,15 +891,16 @@ bool DriverClass::deviceIsPage89SCSI(DTA_DEVICE_INFO &di)
         md->release ( );
         md = NULL;
     }
-    IOLOG_DEBUG("%s[%p]::%s *** end of function, isSCSI is %d\n", getName(), this, __FUNCTION__, isSCSI);
-    return isSCSI;
+    IOLOG_DEBUG("%s[%p]::%s *** end of function, isPage89SCSI is %d\n", getName(), this, __FUNCTION__, isPage89SCSI);
+    return isPage89SCSI;
 }
 
 
 IOReturn DriverClass::inquiryPage89_SCSI( IOBufferMemoryDescriptor * md )
 {
     IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
-    return __inquiry__EVPD(kINQUIRY_Page89_PageCode, md);
+    UInt16 dataSize = static_cast<UInt16>(md->getLength());
+    return __inquiry__EVPD(kINQUIRY_Page89_PageCode, md, dataSize);
 }
 
 
