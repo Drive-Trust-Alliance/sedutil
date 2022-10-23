@@ -41,7 +41,7 @@ bool DriverClass::start(IOService* provider)
         super::stop(provider);   // releases provider - having
     }
     // if neither case, then super::InitializeDeviceSupport returned false and we don't need to call stop
-    
+
     IOLOG_DEBUG("%s[%p]::%s - leaving start, returning %d\n",
           getName(), this, __FUNCTION__, ret);
     return ret;
@@ -73,15 +73,15 @@ bool DriverClass::InitializeDeviceSupport ( void )
 
     InterfaceDeviceID interfaceDeviceIdentification;
     DTA_DEVICE_INFO di;
-    
-    
+
+
     if (!identifyUsingSCSIInquiry(interfaceDeviceIdentification, di)) {
         return false;
     }
     IOLOG_DEBUG("%s[%p]::%s Device is SCSI", getName(), this, __FUNCTION__);
 
     di.devType = DEVICE_TYPE_SAS;
-    
+
     if (deviceIsTPer_SCSI(di)) {
         IOLOG_DEBUG("%s[%p]::%s Device is TPer_SCSI", getName(), this, __FUNCTION__);
         setProperty(IOInterfaceTypeKey, IOInterfaceTypeSCSI);
@@ -123,22 +123,22 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
 {
     IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
     IOReturn ret = kIOReturnUnsupported;
-    
+
     if ( md == NULL ) {
         return kIOReturnInternalError;
     }
-    
+
     uint64_t transferSize = md -> getLength();
     if (pTransferSize != NULL && 0 < *pTransferSize)
         transferSize = *pTransferSize;
 
-    
+
     SCSITaskIdentifier request = GetSCSITask();
     if ( request == NULL ) {
         return kIOReturnInternalError;
     }
-    
-    
+
+
     UInt8 direction = kSCSIDataTransfer_NoDataTransfer;
     UInt8 cdbSize=0;
     switch (cdb[0]) {
@@ -175,10 +175,10 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
             IOLOG_DEBUG("%s[%p]::%s UNRECOGNIZED COMMAND=0x%02X", getName(), this, __FUNCTION__, cdb[0]);
             return ret;
     }
-    
+
 
     ret = prepareSCSICommand(cdb, cdbSize, md, request, direction, transferSize);
-    
+
     if ( ret != kIOReturnSuccess ) {
         IOLOG_DEBUG("%s[%p]::%s prepareSCSICommand failed, ret=0x%08X", getName(), this, __FUNCTION__, ret);
         return ret;
@@ -193,13 +193,13 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
 
     // Call IOSCSIPrimaryCommandsDevice::SendCommand
     SCSIServiceResponse serviceResponse = SendCommand(request, SED_TIMEOUT);
-    
+
     if ( serviceResponse != kSCSIServiceResponse_TASK_COMPLETE) {
         IOLOG_DEBUG("%s[%p]::%s Hmm, SendCommand returned %d", getName(), this, __FUNCTION__, serviceResponse);
     }
-    
+
     ret = completeSCSICommand(md, request, serviceResponse, &transferSize);
-    
+
     if ( ret != kIOReturnSuccess ) {
         IOLOG_DEBUG("%s[%p]::%s completeSCSICommand failed, ret=0x%08X", getName(), this, __FUNCTION__, ret);
         return ret;
@@ -217,9 +217,9 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
 
     ReleaseSCSITask(request);
     request = NULL;
-    
+
     return ret;
-    
+
 }
 
 
@@ -253,11 +253,11 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID interfaceDeviceIden
     }
     IOLOG_DEBUG("%s[%p]::%s Device identification fields:", getName(), this, __FUNCTION__);
     IOLOGBUFFER_DEBUG(NULL, interfaceDeviceIdentification, sizeof(InterfaceDeviceID));
-    
-    
+
+
     // Extract information from Inquiry VPD pages
     //
-    
+
     bool deviceSupportsPage80=false;
     bool deviceSupportsPage89=false;
 #if defined(USE_INQUIRY_PAGE_00h)
@@ -273,7 +273,7 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID interfaceDeviceIden
         return false;  // Mandatory, according to standard
     }
 #endif // defined(USE_INQUIRY_PAGE_00h)
-    
+
 #if defined(USE_INQUIRY_PAGE_80h)
     if (deviceSupportsPage80) {
         if (deviceIsPage80SCSI(di)) {
@@ -284,7 +284,7 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID interfaceDeviceIden
         }
     }
 #endif // defined(USE_INQUIRY_PAGE_80h)
-    
+
 #if defined(USE_INQUIRY_PAGE_83h)
     if (deviceIsPage83SCSI(di)) {
         IOLOG_DEBUG("%s[%p]::%s Device is Page 83 SCSI", getName(), this, __FUNCTION__);
@@ -293,8 +293,8 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID interfaceDeviceIden
         return false;  // Mandatory, according to standard
     }
 #endif // defined(USE_INQUIRY_PAGE_83h)
-    
-    
+
+
 #if defined(USE_INQUIRY_PAGE_89h)
     if (deviceSupportsPage89) {
         if (deviceIsPage89SCSI(di)) {
@@ -305,7 +305,7 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID interfaceDeviceIden
         }
     }
 #endif // defined(USE_INQUIRY_PAGE_89h)
-    
+
     return true;
 }
 
@@ -353,11 +353,11 @@ bool DriverClass::deviceIsSAT(DTA_DEVICE_INFO &di, OSDictionary ** pIdentifyChar
     if ( md != NULL ) {
         void * identifyResponse = md->getBytesNoCopy ( );
         bzero ( identifyResponse, md->getLength ( ) );
-        
+
         isSAT = (kIOReturnSuccess == identifyDevice_SAT( md ));
-                 
+
         if (isSAT) {
-    
+
             if (0xA5==((UInt8 *)identifyResponse)[510]) {  // checksum is present
                 UInt8 checksum=0;
                 for (UInt8 * p = ((UInt8 *)identifyResponse), * end = ((UInt8 *)identifyResponse) + 512; p<end ; p++)
@@ -403,7 +403,7 @@ bool DriverClass::deviceIsTPer_SAT(const InterfaceDeviceID interfaceDeviceIdenti
             IOLOG_DEBUG("%s[%p]::%s *** despite matching tperOverride entry, level 0 discovery did not work", getName(), this, __FUNCTION__);
         }
     }
-    
+
 #if defined(UNJUSTIFIED_LEVEL_0_DISCOVERY)
     if (kIOReturnSuccess == updatePropertiesInIORegistry_SAT(di)) {
         IOLOG_DEBUG("%s[%p]::%s *** unjustified level 0 discovery worked", getName(), this, __FUNCTION__);
@@ -411,33 +411,33 @@ bool DriverClass::deviceIsTPer_SAT(const InterfaceDeviceID interfaceDeviceIdenti
     }
 #endif // defined(UNJUSTIFIED_LEVEL_0_DISCOVERY)
 
-    
+
     if (identifyCharacteristics == NULL){
         IOLOG_DEBUG("%s[%p]::%s *** identifyCharacteristics is NULL", getName(), this, __FUNCTION__);
         return false;
     }
-    
+
     OSNumber * tcgOptions = OSRequiredCast(OSNumber,identifyCharacteristics->getObject(IOTCGOptionsKey));
     if (tcgOptions == NULL) {
         IOLOG_DEBUG("%s[%p]::%s *** tcgOptions is NULL", getName(), this, __FUNCTION__);
         return false;
     }
 
-    
+
     // TCG Options word is valid and TCG Features present bit is one
     IOLOG_DEBUG("%s[%p]::%s *** from tcgOptions->unsigned16BitValue() is 0x%04X", getName(), this, __FUNCTION__,
                 tcgOptions->unsigned16BitValue());
     bool isTPer = (tcgOptions->unsigned16BitValue() & 0xE001) == 0x4001;
     IOLOG_DEBUG("%s[%p]::%s *** from tcgOptions, isTPer is %s", getName(), this, __FUNCTION__,
                 isTPer ? "true" : "false");
-    
+
     if (isTPer) {
         isTPer = (kIOReturnSuccess == updatePropertiesInIORegistry_SAT(di));
         IOLOG_DEBUG("%s[%p]::%s *** level 0 discovery worked", getName(), this, __FUNCTION__);
     }
     IOLOG_DEBUG("%s[%p]::%s *** end of function, isTPer is %s", getName(), this, __FUNCTION__,
                 isTPer ? "true" : "false");
-    
+
     return isTPer;
 }
 
@@ -495,11 +495,13 @@ IOReturn DriverClass::__inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryD
 //    IOLOG_DEBUG("%s[%p]::%s len=%llu=0x%02X:0x%02X\n", getName(), this, __FUNCTION__,
 //                len, (uint8_t)(len >> 8), (uint8_t)(len     ));
 //    return PerformSCSICommand(inquiryCDB_SCSI, md);
-    
+
     md->prepare();
     dataSize = (UInt16)md->getLength();
+    void * data = md->getBytesNoCopy();
+    bzero(data,dataSize);
     // Use inherited IOSCSIPrimaryCommandsDevice::RetrieveINQUIRYData
-    bool success = RetrieveINQUIRYData(evpd, page_code, (UInt8 *)(md->getBytesNoCopy()), &dataSize );
+    bool success = RetrieveINQUIRYData(evpd, page_code, (UInt8 *)data, &dataSize );
     md->complete();
     return success ? kIOReturnSuccess : kIOReturnIOError;
 }
@@ -522,11 +524,11 @@ IOReturn DriverClass::inquiryStandardDataAll_SCSI( IOBufferMemoryDescriptor * md
 OSDictionary * DriverClass::parseInquiryStandardDataAllResponse( const unsigned char * response, unsigned char interfaceDeviceIdentification[], DTA_DEVICE_INFO & di)
 {
     SCSICmd_INQUIRY_StandardDataAll *resp = (SCSICmd_INQUIRY_StandardDataAll *)response;
-    
+
     memcpy(interfaceDeviceIdentification, resp->VENDOR_IDENTIFICATION, kINQUIRY_VENDOR_IDENTIFICATION_Length
                                                             + kINQUIRY_PRODUCT_IDENTIFICATION_Length
                                                             + kINQUIRY_PRODUCT_REVISION_LEVEL_Length);
-    
+
 //    uint8_t vendorName[sizeof(resp->VENDOR_IDENTIFICATION)+1];
 //    memcpy(vendorName, resp->VENDOR_IDENTIFICATION, sizeof(resp->VENDOR_IDENTIFICATION));
 //    vendorName[sizeof(resp->VENDOR_IDENTIFICATION)] = 0;
@@ -542,26 +544,26 @@ OSDictionary * DriverClass::parseInquiryStandardDataAllResponse( const unsigned 
 //    memcpy(modelNumber, resp->PRODUCT_IDENTIFICATION, sizeof(resp->PRODUCT_IDENTIFICATION));
 //    modelNumber[sizeof(resp->PRODUCT_IDENTIFICATION)] = 0;
 //    memcpy(di.modelNum, resp->PRODUCT_IDENTIFICATION, sizeof(resp->PRODUCT_IDENTIFICATION));
-    
+
     GetDeviceStringsFromIORegistry(di);
 
     const OSObject * objects[4];
     const OSSymbol * keys[4];
-    
+
     objects[0] = OSString::withCString( "SCSI");
     keys[0]    = OSSymbol::withCString( IODeviceTypeKey );
 
     objects[1] = OSString::withCString( (const char *)di.modelNum);
     keys[1]    = OSSymbol::withCString( IOModelNumberKey );
-    
+
     objects[2] = OSString::withCString( (const char *)di.firmwareRev);
     keys[2]    = OSSymbol::withCString( IOFirmwareRevisionKey );
-    
+
     objects[3] = OSString::withCString( (const char *)di.vendorName);
     keys[3]    = OSSymbol::withCString( IOVendorNameKey );
-    
+
     OSDictionary * result = OSDictionary::withObjects(objects, keys, 4, 4);
-    
+
     return result;
 }
 
@@ -666,16 +668,16 @@ OSDictionary * DriverClass::parseInquiryPage00Response(const unsigned char * res
                 ;
         }
     }
-    
+
 
     const OSObject * objects[1];
     const OSSymbol * keys[1];
-    
+
     objects[0] = OSData::withBytes((const void *)resp, 4+resp->PAGE_LENGTH);
     keys[0]    = OSSymbol::withCString( IOInquiryPage00ResponseKey );
-    
+
     OSDictionary * result = OSDictionary::withObjects(objects, keys, 1, 1);
-    
+
     return result;
 }
 #endif // defined(USE_INQUIRY_PAGE_00h)
@@ -732,23 +734,23 @@ IOReturn DriverClass::inquiryPage80_SCSI( IOBufferMemoryDescriptor * md)
 OSDictionary * DriverClass::parseInquiryPage80Response( const unsigned char * response, DTA_DEVICE_INFO & di)
 {
     SCSICmd_INQUIRY_Page80_Header *resp = (SCSICmd_INQUIRY_Page80_Header *)response;
-    
+
     uint8_t serialNumber[257];
     bzero(serialNumber, sizeof(serialNumber));
     memcpy(serialNumber, &resp->PRODUCT_SERIAL_NUMBER, resp->PAGE_LENGTH);
     memcpy(di.serialNum, serialNumber, sizeof(di.serialNum));
-    
+
     const OSObject * objects[2];
     const OSSymbol * keys[2];
-    
+
     objects[0] = OSString::withCString( (const char *)serialNumber);
     keys[0]    = OSSymbol::withCString( IOSerialNumberKey );
-    
+
     objects[1] = OSData::withBytes((const void *)resp, 4 + resp->PAGE_LENGTH);
     keys[1]    = OSSymbol::withCString( IOInquiryPage80ResponseKey );
 
     OSDictionary * result = OSDictionary::withObjects(objects, keys, 2, 2);
-    
+
     return result;
 }
 #endif // defined(USE_INQUIRY_PAGE_80h)
@@ -802,19 +804,15 @@ IOReturn DriverClass::inquiryPage83_SCSI( IOBufferMemoryDescriptor * md, UInt16 
 
 OSDictionary * DriverClass::parseInquiryPage83Response( const unsigned char * response, UInt16 dataSize, DTA_DEVICE_INFO & di)
 {
-    const OSObject * objects[2];
-    const OSSymbol * keys[2];
-    unsigned int dictSize = 0;
-    
-    objects[0] = OSData::withBytes(response, dataSize);
-    keys[0]    = OSSymbol::withCString( IOInquiryPage83ResponseKey );
-    dictSize++;
-    
+    const OSObject * objects[] = {OSData::withBytes(response, dataSize)};
+    const OSSymbol * keys   [] = {OSSymbol::withCString( IOInquiryPage83ResponseKey )};
+    OSDictionary * result = OSDictionary::withObjects(objects, keys, 1, 4);
+
     const unsigned char * pdescs = response + sizeof(SCSICmd_INQUIRY_Page83_Header);
-    
+
     // We use dataSize instead of page_length because e.g. SABRENT returns the wrong value
     const unsigned char * pdescs_end = response + dataSize;
-    
+
     // Parse descriptors
     for (const unsigned char * p = pdescs; p<pdescs_end ; ) {
         const SCSICmd_INQUIRY_Page83_Identification_Descriptor & desc =
@@ -829,17 +827,35 @@ OSDictionary * DriverClass::parseInquiryPage83Response( const unsigned char * re
 
 #define desc_type(code_set,identifier_type) \
     (((code_set & kINQUIRY_Page83_CodeSetMask) << 8) | (identifier_type & kINQUIRY_Page83_IdentifierTypeMask))
+
         switch (desc_type(desc.CODE_SET, desc.IDENTIFIER_TYPE)) {
             case desc_type(kINQUIRY_Page83_CodeSetBinaryData, kINQUIRY_Page83_IdentifierTypeIEEE_EUI64):
+            {
                 bzero(di.worldWideName, sizeof(di.worldWideName));
                 memcpy(di.worldWideName, &desc.IDENTIFIER, min(identifier_length, sizeof(di.worldWideName)));
-                objects[1] = OSData::withBytes(di.worldWideName, sizeof(di.worldWideName));
-                keys[1]    = OSSymbol::withCString( IOWorldWideNameKey );
-                dictSize++;
+                OSData* wwn = OSData::withBytes(di.worldWideName, sizeof(di.worldWideName));
+                result->setObject(IOWorldWideNameKey, wwn);
+                wwn->release();
+            }
+                break;
+
+            case desc_type(kINQUIRY_Page83_CodeSetBinaryData, kINQUIRY_Page83_IdentifierTypeNAAIdentifier):
+            {
+                OSData * NAAID = OSData::withBytes(&desc.IDENTIFIER, identifier_length);
+                result->setObject(IONAAIDKey, NAAID);
+                NAAID->release();
+            }
                 break;
             case desc_type(kINQUIRY_Page83_CodeSetASCIIData, kINQUIRY_Page83_IdentifierTypeVendorID):
+            {
+                OSString * VendorID = OSString::withCString(reinterpret_cast<const char *>(&desc.IDENTIFIER),
+                                                            identifier_length);
+                result->setObject(IOVendorIDKey, VendorID);
+                VendorID -> release();
                 // We already get Vendor Name and Serial Number using superclass methods
+            }
                 break;
+
             default:
                 descriptorUnrecognized = true;
                 break;
@@ -850,8 +866,6 @@ OSDictionary * DriverClass::parseInquiryPage83Response( const unsigned char * re
         p = &desc.IDENTIFIER + identifier_length;
     }
 
-    OSDictionary * result = OSDictionary::withObjects(objects, keys, dictSize, dictSize);
-    
     return result;
 }
 #endif // defined(USE_INQUIRY_PAGE_83h)
@@ -907,47 +921,47 @@ IOReturn DriverClass::inquiryPage89_SCSI( IOBufferMemoryDescriptor * md )
 OSDictionary * DriverClass::parseInquiryPage89Response( const unsigned char * response, DTA_DEVICE_INFO & di)
 {
     SCSICmd_INQUIRY_Page89_Data *resp = (SCSICmd_INQUIRY_Page89_Data *)response;
-    
+
     uint8_t vendorName[sizeof(resp->SAT_VENDOR_IDENTIFICATION)+1];
     memcpy(vendorName, resp->SAT_VENDOR_IDENTIFICATION, sizeof(resp->SAT_VENDOR_IDENTIFICATION));
     vendorName[sizeof(resp->SAT_VENDOR_IDENTIFICATION)] = 0;
     memcpy(di.vendorName, resp->SAT_VENDOR_IDENTIFICATION, sizeof(resp->SAT_VENDOR_IDENTIFICATION));
-  
+
     uint8_t firmwareRevision[sizeof(resp->SAT_PRODUCT_REVISION_LEVEL)+1];
     memcpy(firmwareRevision, resp->SAT_PRODUCT_REVISION_LEVEL, sizeof(resp->SAT_PRODUCT_REVISION_LEVEL));
     firmwareRevision[sizeof(resp->SAT_PRODUCT_REVISION_LEVEL)] = 0;
     memcpy(di.firmwareRev, resp->SAT_PRODUCT_REVISION_LEVEL, sizeof(di.firmwareRev));
-    
+
 
     uint8_t modelNumber[sizeof(resp->SAT_PRODUCT_IDENTIFICATION)+1];
     memcpy(modelNumber, resp->SAT_PRODUCT_IDENTIFICATION, sizeof(resp->SAT_PRODUCT_IDENTIFICATION));
     modelNumber[sizeof(resp->SAT_PRODUCT_IDENTIFICATION)] = 0;
     memcpy(di.modelNum, resp->SAT_PRODUCT_IDENTIFICATION, sizeof(di.modelNum));
-    
-    
+
+
     const OSObject * objects[6];
     const OSSymbol * keys[6];
-    
+
     objects[0] = OSString::withCString( "SCSI");
     keys[0]    = OSSymbol::withCString( IODeviceTypeKey );
 
     objects[1] = OSString::withCString( (const char *)modelNumber);
     keys[1]    = OSSymbol::withCString( IOModelNumberKey );
-    
+
     objects[2] = OSString::withCString( (const char *)firmwareRevision);
     keys[2]    = OSSymbol::withCString( IOFirmwareRevisionKey );
-    
+
     objects[3] = OSString::withCString( (const char *)vendorName);
     keys[3]    = OSSymbol::withCString( IOVendorNameKey );
-    
+
     objects[4] = OSData::withBytes((const void *)resp->IDENTIFY_DATA, sizeof(resp->IDENTIFY_DATA));
     keys[4]    = OSSymbol::withCString( IOIdentifyCharacteristicsKey );
-    
+
     objects[5] = OSData::withBytes((const void *)resp, sizeof(SCSICmd_INQUIRY_Page89_Data));
     keys[5]    = OSSymbol::withCString( IOInquiryPage89ResponseKey );
 
     OSDictionary * result = OSDictionary::withObjects(objects, keys, 6, 6);
-    
+
     return result;
 }
 #endif // defined(USE_INQUIRY_PAGE_89h)
@@ -963,7 +977,7 @@ bool DriverClass::deviceIsTPer_SCSI(DTA_DEVICE_INFO &di)
     // If it works, as a side effect, parse the discovery0 response
     // and save it in the IO Registry
     bool isTPer = false;
-    
+
     isTPer = (kIOReturnSuccess == updatePropertiesInIORegistry_SCSI(di));
 
     IOLOG_DEBUG("%s[%p]::%s *** end of function, isTPer is %d\n", getName(), this, __FUNCTION__, isTPer);
@@ -1216,7 +1230,7 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
     if (!di.DataStore  || !di.DataStore_maxTables || !di.DataStore_maxTableSize) {
         di.DataStore_maxTableSize = 10 * 1024 * 1024;
     }
-    
+
     return true;
 }
 
@@ -1255,14 +1269,14 @@ IOReturn DriverClass::updatePropertiesInIORegistryWithDiscovery0CDB(SCSICommandD
     if (NULL == md) {
         return kIOReturnInternalError;
     }
-    
+
     UInt8 * d0Response = ( UInt8 * ) md->getBytesNoCopy ( );
     bzero ( d0Response, md->getLength ( ) );
-    
+
     IOReturn result = PerformSCSICommand(cdb, md);
-    
+
     updateIORegistryFromD0Response(d0Response, di);
-    
+
 #if DEBUG
     OSData * d0Buffer = OSData::withBytes(d0Response, DISCOVERY0_RESPONSE_SIZE);
     if ( getProperty(IODiscovery0ResponseKey) )
@@ -1272,7 +1286,7 @@ IOReturn DriverClass::updatePropertiesInIORegistryWithDiscovery0CDB(SCSICommandD
 #endif // DEBUG
 
     md->release ( );
-    
+
     return result;
 }
 
@@ -1301,7 +1315,7 @@ IOReturn DriverClass::updatePropertiesInIORegistry_SCSI( DTA_DEVICE_INFO & di )
 IOReturn DriverClass::updatePropertiesInIORegistry_SAT( DTA_DEVICE_INFO & di )
 {
     IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
-    
+
     static SCSICommandDescriptorBlock acquireDiscovery0ResponseCDB_SAT =
       { kSCSICmd_ATA_PASS_THROUGH,    // Byte  0  ATA PASS-THROUGH (12)
         //    /*
@@ -1336,30 +1350,30 @@ OSDictionary * DriverClass::parseIdentifyResponse( const unsigned char * respons
     const IDENTIFY_RESPONSE & resp = *(IDENTIFY_RESPONSE *)response;
 
     parseATIdentifyResponse(&resp, &di);
-    
+
     const OSObject * objects[6];
     const OSSymbol * keys[6];
-    
+
     objects[0] = OSNumber::withNumber( (unsigned long long)(resp.TCGOptions[1]<<8 | resp.TCGOptions[0]), 16);
     keys[0]    = OSSymbol::withCString( IOTCGOptionsKey );
-    
+
     objects[1] = OSString::withCString( resp.devType ? "OTHER" : "ATA");
     keys[1]    = OSSymbol::withCString( IODeviceTypeKey );
 
     objects[2] = OSString::withCString( (const char *)di.serialNum);
     keys[2]    = OSSymbol::withCString( IOSerialNumberKey );
-    
+
     objects[3] = OSString::withCString( (const char *)di.modelNum);
     keys[3]    = OSSymbol::withCString( IOModelNumberKey );
-    
+
     objects[4] = OSString::withCString( (const char *)di.firmwareRev);
     keys[4]    = OSSymbol::withCString( IOFirmwareRevisionKey );
-    
+
     objects[5] = OSData::withBytes((const void *)di.worldWideName, sizeof(di.worldWideName));
     keys[5]    = OSSymbol::withCString( IOWorldWideNameKey );
-    
+
     OSDictionary * result = OSDictionary::withObjects(objects, keys, 6, 6);
-    
+
     return result;
 }
 
@@ -1381,8 +1395,8 @@ IOReturn DriverClass::prepareSCSICommand(SCSICommandDescriptorBlock cdb,
         IOLOG_DEBUG( "%s::%s data BufferDescriptor error", getName ( ), __FUNCTION__);
         return kIOReturnVMError;                                            // !!immediate exit, do not pass through!!
     }
-    
-    
+
+
     IOLOG_DEBUG("%s::%s, CDB is ", getName ( ), __FUNCTION__ );
     IOLOGBUFFER_DEBUG(NULL, cdb, cdbSize);
 
@@ -1407,7 +1421,7 @@ IOReturn DriverClass::prepareSCSICommand(SCSICommandDescriptorBlock cdb,
     SetTimeoutDuration(request, SED_TIMEOUT);
     SetDataTransferDirection(request, direction);
     SetRequestedDataTransferCount(request, count);
-    
+
     md->prepare();
     SetDataBuffer(request, md);
     return kIOReturnSuccess;
@@ -1423,7 +1437,7 @@ void DriverClass::printSenseData ( SCSI_Sense_Data * sense )
 {
     char    str[256];
     UInt8   key, ASC, ASCQ;
-    
+
     key     = sense->SENSE_KEY & 0x0F;
     ASC     = sense->ADDITIONAL_SENSE_CODE;
     ASCQ    = sense->ADDITIONAL_SENSE_CODE_QUALIFIER;
@@ -1439,9 +1453,9 @@ IOReturn DriverClass::completeSCSICommand(IOBufferMemoryDescriptor * md,
     SCSITaskStatus taskStatus = kSCSITaskStatus_No_Status;
     SCSI_Sense_Data senseData;
     UInt8 senseDataSize;
-    
+
     IOReturn ret = kIOReturnError;
-    
+
     taskStatus = GetTaskStatus(request);
 
     IOLOG_DEBUG("%s[%p]::%s(): service response: %u, task status: %u\n",
@@ -1461,9 +1475,9 @@ IOReturn DriverClass::completeSCSICommand(IOBufferMemoryDescriptor * md,
             case kSCSITaskStatus_CHECK_CONDITION:
                 IOLOG_DEBUG( "%s::%s task status is CHECK_CONDITION", getName ( ), __FUNCTION__);
                 senseDataSize = GetAutoSenseDataSize( request );
-                
+
                 GetAutoSenseData(request, &senseData, senseDataSize);
-                
+
                 if (senseData.VALID_RESPONSE_CODE & kSENSE_DATA_VALID) {
                     printSenseData( &senseData );
                 } else {
@@ -1525,10 +1539,10 @@ IOService* DriverClass::probe(IOService* provider, SInt32* score)
     //
     // cannot determine applicability of our driver to this device
     // in the probe function because device support is not initialized
-    
+
     IOLOG_DEBUG("%s[%p]::%s(provider is %s, score is %d)\n",
           getName(), this, __FUNCTION__, provider->getName(), (int)*score);
-    
+
     return this;
 }
 
@@ -1602,7 +1616,7 @@ bool DriverClass::init(OSDictionary* dictionary)
         return false;
     }
     IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
-    
+
     return true;
 }
 

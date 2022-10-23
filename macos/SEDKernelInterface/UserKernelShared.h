@@ -53,6 +53,8 @@
 #define IOFirmwareRevisionKey           "Firmware Revision"
 #define IOProductNameKey                "Product Name"
 #define IOWorldWideNameKey              "World Wide Name"
+#define IONAAIDKey                      "NAA ID"
+#define IOVendorIDKey                   "Vendor ID"
 #define IOVendorNameKey                 "Vendor Name"
 #define IOInterfaceTypeKey              "TPer Interface Type"
 #define IOInterfaceTypeSAT              "SAT"
