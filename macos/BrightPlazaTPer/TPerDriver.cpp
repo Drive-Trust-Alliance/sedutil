@@ -345,7 +345,7 @@ IOReturn DriverClass::identifyDevice_SAT( IOBufferMemoryDescriptor * md )
 bool DriverClass::deviceIsSAT(DTA_DEVICE_INFO &di, OSDictionary ** pIdentifyCharacteristics)
 {
     // Test whether device is a SAT drive by attempting
-    // SCSI passthrough of Identify command
+    // SCSI passthrough of ATA Identify Device command
     // If it works, as a side effect, parse the Identify response
     // and save it in the IO Registry
     bool isSAT = false;
@@ -382,7 +382,9 @@ bool DriverClass::deviceIsSAT(DTA_DEVICE_INFO &di, OSDictionary ** pIdentifyChar
     return isSAT;
 }
 
-bool DriverClass::deviceIsTPer_SAT(const InterfaceDeviceID interfaceDeviceIdentification, OSDictionary * identifyCharacteristics, DTA_DEVICE_INFO &di)
+bool DriverClass::deviceIsTPer_SAT(const InterfaceDeviceID interfaceDeviceIdentification,
+                                   OSDictionary * identifyCharacteristics,
+                                   DTA_DEVICE_INFO &di)
 {
     // Test whether the device is a TPer by
     // retrieving level 0 discovery information via SAT
