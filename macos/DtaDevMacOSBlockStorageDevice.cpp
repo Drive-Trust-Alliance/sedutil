@@ -288,82 +288,82 @@ const DTA_DEVICE_INFO & DtaDevMacOSBlockStorageDevice::device_info() {
 #if defined(TRY_SMART_LIBS)
 void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(io_service_t aBlockStorageDevice) {
 #else // !defined(TRY_SMART_LIBS)
-void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info() {
+    void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info() {
 #endif // defined(TRY_SMART_LIBS)
-    if (pdevice_info == NULL)
-        return;
-    DTA_DEVICE_INFO & device_info = *pdevice_info;
-    
-    CFDictionaryRef tPerProperties = GetPropertiesDict("TPer");
-    if (NULL != tPerProperties) {  // Probably not, since we are probably not a DtaDevMacOSTPer
-        CFDataRef diData = GetData(tPerProperties, IODtaDeviceInfoKey);
-        if (NULL != diData) {
-            const uint8_t * pdi = CFDataGetBytePtr(diData);
-            if (NULL != pdi) {
-                memcpy(&device_info, pdi, (unsigned)CFDataGetLength(diData));
-                return;
+        if (pdevice_info == NULL)
+            return;
+        DTA_DEVICE_INFO & device_info = *pdevice_info;
+        
+        CFDictionaryRef tPerProperties = GetPropertiesDict("TPer");
+        if (NULL != tPerProperties) {  // Probably not, since we are probably not a DtaDevMacOSTPer
+            CFDataRef diData = GetData(tPerProperties, IODtaDeviceInfoKey);
+            if (NULL != diData) {
+                const uint8_t * pdi = CFDataGetBytePtr(diData);
+                if (NULL != pdi) {
+                    memcpy(&device_info, pdi, (unsigned)CFDataGetLength(diData));
+                    return;
+                }
             }
         }
-    }
-    
+        
 #if defined(TRY_SMART_LIBS)
-    bool SMARTCapable = false;
-    bool NVMeSMARTCapable = false;
+        bool SMARTCapable = false;
+        bool NVMeSMARTCapable = false;
 #endif // defined(TRY_SMART_LIBS)
-
-    CFDictionaryRef deviceProperties = GetPropertiesDict("device");
-    if (NULL != deviceProperties) {
+        
+        CFDictionaryRef deviceProperties = GetPropertiesDict("device");
+        if (NULL != deviceProperties) {
 #if defined(TRY_SMART_LIBS)
-        CFBooleanRef cfbrSMARTCapable = GetBool(deviceProperties, "SMART Capable");
-        if (NULL != cfbrSMARTCapable) {
-            SMARTCapable = CFBooleanGetValue(cfbrSMARTCapable);
-        }
-        CFBooleanRef cfbrNVMeSMARTCapable = GetBool(deviceProperties, "NVMe SMART Capable");
-        if (NULL != cfbrNVMeSMARTCapable) {
-            NVMeSMARTCapable = CFBooleanGetValue(cfbrNVMeSMARTCapable);
-        }
-#endif // defined(TRY_SMART_LIBS)
-        CFDictionaryRef protocolProperties = GetDict(deviceProperties, "Protocol Characteristics");
-        if (NULL != protocolProperties) {
-            CFStringRef interconnect = GetString(protocolProperties, "Physical Interconnect");
-            if (NULL != interconnect) {
-                if (CFEqual(interconnect, CFSTR("USB"))) {
-                    device_info.devType = DEVICE_TYPE_USB;
-                } else if (CFEqual(interconnect, CFSTR("Apple Fabric"))) {
-                    device_info.devType = DEVICE_TYPE_NVME;
-                } else if (CFEqual(interconnect, CFSTR("PCI-Express"))) {
-                    device_info.devType = DEVICE_TYPE_OTHER;  // TODO ... what?
-                } else if (CFEqual(interconnect, CFSTR("SATA"))) {
-                    device_info.devType = DEVICE_TYPE_ATA;
-                } else
-                    device_info.devType = DEVICE_TYPE_OTHER;
+            CFBooleanRef cfbrSMARTCapable = GetBool(deviceProperties, "SMART Capable");
+            if (NULL != cfbrSMARTCapable) {
+                SMARTCapable = CFBooleanGetValue(cfbrSMARTCapable);
             }
-        }
-    } else {
-        device_info.devType = DEVICE_TYPE_OTHER; // TODO -- generalize for other devices when they are supported by BPTperDriver
-    }
-
-    CFDictionaryRef mediaProperties = GetPropertiesDict("media");
-    
-    FillDeviceInfoFromProperties(deviceProperties, mediaProperties, device_info);
-
-#if defined(TRY_SMART_LIBS)
-    if (SMARTCapable &&
-        parseSMARTLibIdentifyData(aBlockStorageDevice, deviceProperties, device_info) &&
-        device_info.devType == DEVICE_TYPE_OTHER) {
-        device_info.devType = DEVICE_TYPE_ATA;
-        }
-    
-    if (NVMeSMARTCapable &&
-        parseNVMeSMARTLibIdentifyData(aBlockStorageDevice, deviceProperties, device_info) &&
-        device_info.devType == DEVICE_TYPE_OTHER) {
-        device_info.devType = DEVICE_TYPE_NVME;
-    }
+            CFBooleanRef cfbrNVMeSMARTCapable = GetBool(deviceProperties, "NVMe SMART Capable");
+            if (NULL != cfbrNVMeSMARTCapable) {
+                NVMeSMARTCapable = CFBooleanGetValue(cfbrNVMeSMARTCapable);
+            }
 #endif // defined(TRY_SMART_LIBS)
-
+            CFDictionaryRef protocolProperties = GetDict(deviceProperties, "Protocol Characteristics");
+            if (NULL != protocolProperties) {
+                CFStringRef interconnect = GetString(protocolProperties, "Physical Interconnect");
+                if (NULL != interconnect) {
+                    if (CFEqual(interconnect, CFSTR("USB"))) {
+                        device_info.devType = DEVICE_TYPE_USB;
+                    } else if (CFEqual(interconnect, CFSTR("Apple Fabric"))) {
+                        device_info.devType = DEVICE_TYPE_NVME;
+                    } else if (CFEqual(interconnect, CFSTR("PCI-Express"))) {
+                        device_info.devType = DEVICE_TYPE_OTHER;  // TODO ... what?
+                    } else if (CFEqual(interconnect, CFSTR("SATA"))) {
+                        device_info.devType = DEVICE_TYPE_ATA;
+                    } else
+                        device_info.devType = DEVICE_TYPE_OTHER;
+                }
+            }
+        } else {
+            device_info.devType = DEVICE_TYPE_OTHER; // TODO -- generalize for other devices when they are supported by BPTperDriver
+        }
+        
+        CFDictionaryRef mediaProperties = GetPropertiesDict("media");
+        
+        FillDeviceInfoFromProperties(deviceProperties, mediaProperties, device_info);
+        
+#if defined(TRY_SMART_LIBS)
+        if (SMARTCapable &&
+            parseSMARTLibIdentifyData(aBlockStorageDevice, deviceProperties, device_info) &&
+            device_info.devType == DEVICE_TYPE_OTHER) {
+            device_info.devType = DEVICE_TYPE_ATA;
+        }
+        
+        if (NVMeSMARTCapable &&
+            parseNVMeSMARTLibIdentifyData(aBlockStorageDevice, deviceProperties, device_info) &&
+            device_info.devType == DEVICE_TYPE_OTHER) {
+            device_info.devType = DEVICE_TYPE_NVME;
+        }
+#endif // defined(TRY_SMART_LIBS)
+        
 #define HACK_MODELNUM_WITH_VENDORNAME
 #if defined(HACK_MODELNUM_WITH_VENDORNAME)
-    if (device_info.devType == DEVICE_TYPE_USB )
+        if (device_info.devType == DEVICE_TYPE_USB )
         {
             size_t vendorNameLength = strlen((const char *)device_info.vendorName);
             size_t modelNumLength = strlen((const char *)device_info.modelNum);
@@ -387,147 +387,147 @@ void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info() {
             }
         }
 #endif //defined(HACK_MODELNUM_WITH_VENDORNAME)
-
-    return;
-
-}
-
-
-
-// Sorting order
-bool DtaDevMacOSBlockStorageDevice::bsdNameLessThan(DtaDevMacOSBlockStorageDevice * a, DtaDevMacOSBlockStorageDevice * b) {
-    const string & aName = a->bsdName;
-    const string & bName = b->bsdName;
-    const auto aNameLength = aName.length();
-    const auto bNameLength = bName.length();
-    if (aNameLength < bNameLength ) {
-        return true;
+        
+        return;
+        
     }
-    if (bNameLength < aNameLength ) {
-        return false;
-    }
-    return aName < bName ;
-}
-
-// extern CFMutableDictionaryRef copyProperties(io_registry_entry_t service);
-// #import <Foundation/Foundation.h>
-static
-CFMutableDictionaryRef copyProperties(io_registry_entry_t service) {
-    CFMutableDictionaryRef cfproperties = NULL;
-    if (KERN_SUCCESS != IORegistryEntryCreateCFProperties(service,
-                                                          &cfproperties,
-                                                          CFAllocatorGetDefault(),
-                                                          0)) {
-        return NULL;
-    }
-    return cfproperties;
-}
-
-
-std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enumerateBlockStorageDevices() {
-    std::vector<DtaDevMacOSBlockStorageDevice *>devices;
-    io_iterator_t iterator = findMatchingServices(kIOBlockStorageDeviceClass);
-    io_service_t aBlockStorageDevice;
-    io_service_t media;
-    io_service_t tPer;
-    DTA_DEVICE_INFO * pdi;
-    CFDictionaryRef deviceProperties;
-    CFDictionaryRef mediaProperties;
-    CFDictionaryRef tPerProperties;
-    CFDictionaryRef allProperties;
-
-    const CFIndex kCStringSize = 128;
-    char nameBuffer[kCStringSize];
-    bzero(nameBuffer,kCStringSize);
-
-    string entryNameStr;
-    string bsdNameStr;
     
-    // Iterate over nodes of class IOBlockStorageDevice or subclass thereof
-    while ( (IO_OBJECT_NULL != (aBlockStorageDevice = IOIteratorNext( iterator )))) {
+    
+    
+    // Sorting order
+    bool DtaDevMacOSBlockStorageDevice::bsdNameLessThan(DtaDevMacOSBlockStorageDevice * a, DtaDevMacOSBlockStorageDevice * b) {
+        const string & aName = a->bsdName;
+        const string & bName = b->bsdName;
+        const auto aNameLength = aName.length();
+        const auto bNameLength = bName.length();
+        if (aNameLength < bNameLength ) {
+            return true;
+        }
+        if (bNameLength < aNameLength ) {
+            return false;
+        }
+        return aName < bName ;
+    }
+    
+    // extern CFMutableDictionaryRef copyProperties(io_registry_entry_t service);
+    // #import <Foundation/Foundation.h>
+    static
+    CFMutableDictionaryRef copyProperties(io_registry_entry_t service) {
+        CFMutableDictionaryRef cfproperties = NULL;
+        if (KERN_SUCCESS != IORegistryEntryCreateCFProperties(service,
+                                                              &cfproperties,
+                                                              CFAllocatorGetDefault(),
+                                                              0)) {
+            return NULL;
+        }
+        return cfproperties;
+    }
+    
+    
+    std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enumerateBlockStorageDevices() {
+        std::vector<DtaDevMacOSBlockStorageDevice *>devices;
+        io_iterator_t iterator = findMatchingServices(kIOBlockStorageDeviceClass);
+        io_service_t aBlockStorageDevice;
+        io_service_t media;
+        io_service_t tPer;
+        DTA_DEVICE_INFO * pdi;
+        CFDictionaryRef deviceProperties;
+        CFDictionaryRef mediaProperties;
+        CFDictionaryRef tPerProperties;
+        CFDictionaryRef allProperties;
         
-        std::vector<const void *>keys;
-        std::vector<const void *>values;
-        DtaDevMacOSBlockStorageDevice * device;
-        CFDictionaryRef protocolCharacteristics;
-        CFStringRef physicalInterconnectLocation;
+        const CFIndex kCStringSize = 128;
+        char nameBuffer[kCStringSize];
+        bzero(nameBuffer,kCStringSize);
         
-        deviceProperties = copyProperties( aBlockStorageDevice );
-        if (NULL == deviceProperties) {
-            goto finishedWithDevice;
-        }
-        protocolCharacteristics = GetDict(deviceProperties, "Protocol Characteristics");
-        if (NULL == protocolCharacteristics) {
-            goto finishedWithDevice;
-        }
-        physicalInterconnectLocation = GetString(protocolCharacteristics, "Physical Interconnect Location");
-        if (NULL == physicalInterconnectLocation ||
-            CFEqual(physicalInterconnectLocation, CFSTR("File"))) {
-            goto finishedWithDevice;
-        }
+        string entryNameStr;
+        string bsdNameStr;
+        
+        // Iterate over nodes of class IOBlockStorageDevice or subclass thereof
+        while ( (IO_OBJECT_NULL != (aBlockStorageDevice = IOIteratorNext( iterator )))) {
             
-                
-
-        keys.push_back( CFSTR("device"));
-        values.push_back( deviceProperties);
-
-        
-        media = findServiceForClassInChildren(aBlockStorageDevice, kIOMediaClass);
-        if (IO_OBJECT_NULL == media) {
-            goto finishedWithMedia;
-        }
-        mediaProperties = copyProperties( media );
-        if (NULL == mediaProperties ) {
-            goto finishedWithMedia ;
-        }
-        keys.push_back( CFSTR("media"));
-        values.push_back( mediaProperties);
-
-
-        tPer = findParent(aBlockStorageDevice);
-        if (IOObjectConformsTo(tPer, kBrightPlazaDriverClass)) {
-            tPerProperties = copyProperties( tPer );
-            keys.push_back( CFSTR("TPer"));
-            values.push_back(tPerProperties);
-        }
-        
-        
-        allProperties = CFDictionaryCreate(CFAllocatorGetDefault(), keys.data(), values.data(), (CFIndex)keys.size(), NULL, NULL);
-
-        bzero(nameBuffer,kCStringSize);
-        CFStringGetCString(GetString(mediaProperties, "BSD Name"),
-                           nameBuffer, kCStringSize, kCFStringEncodingUTF8);
-        bsdNameStr = string(nameBuffer);
-        
-        bzero(nameBuffer,kCStringSize);
-        GetName(media,nameBuffer);
-        entryNameStr = string(nameBuffer);
-        
-        pdi = static_cast <DTA_DEVICE_INFO *> (malloc(sizeof(DTA_DEVICE_INFO)));
-        bzero(pdi, sizeof(DTA_DEVICE_INFO));
-        
-        device =
+            std::vector<const void *>keys;
+            std::vector<const void *>values;
+            DtaDevMacOSBlockStorageDevice * device;
+            CFDictionaryRef protocolCharacteristics;
+            CFStringRef physicalInterconnectLocation;
+            
+            deviceProperties = copyProperties( aBlockStorageDevice );
+            if (NULL == deviceProperties) {
+                goto finishedWithDevice;
+            }
+            protocolCharacteristics = GetDict(deviceProperties, "Protocol Characteristics");
+            if (NULL == protocolCharacteristics) {
+                goto finishedWithDevice;
+            }
+            physicalInterconnectLocation = GetString(protocolCharacteristics, "Physical Interconnect Location");
+            if (NULL == physicalInterconnectLocation ||
+                CFEqual(physicalInterconnectLocation, CFSTR("File"))) {
+                goto finishedWithDevice;
+            }
+            
+            
+            
+            keys.push_back( CFSTR("device"));
+            values.push_back( deviceProperties);
+            
+            
+            media = findServiceForClassInChildren(aBlockStorageDevice, kIOMediaClass);
+            if (IO_OBJECT_NULL == media) {
+                goto finishedWithMedia;
+            }
+            mediaProperties = copyProperties( media );
+            if (NULL == mediaProperties ) {
+                goto finishedWithMedia ;
+            }
+            keys.push_back( CFSTR("media"));
+            values.push_back( mediaProperties);
+            
+            
+            tPer = findParent(aBlockStorageDevice);
+            if (IOObjectConformsTo(tPer, kBrightPlazaDriverClass)) {
+                tPerProperties = copyProperties( tPer );
+                keys.push_back( CFSTR("TPer"));
+                values.push_back(tPerProperties);
+            }
+            
+            
+            allProperties = CFDictionaryCreate(CFAllocatorGetDefault(), keys.data(), values.data(), (CFIndex)keys.size(), NULL, NULL);
+            
+            bzero(nameBuffer,kCStringSize);
+            CFStringGetCString(GetString(mediaProperties, "BSD Name"),
+                               nameBuffer, kCStringSize, kCFStringEncodingUTF8);
+            bsdNameStr = string(nameBuffer);
+            
+            bzero(nameBuffer,kCStringSize);
+            GetName(media,nameBuffer);
+            entryNameStr = string(nameBuffer);
+            
+            pdi = static_cast <DTA_DEVICE_INFO *> (malloc(sizeof(DTA_DEVICE_INFO)));
+            bzero(pdi, sizeof(DTA_DEVICE_INFO));
+            
+            device =
 #if defined(TRY_SMART_LIBS)
-        getBlockStorageDevice(aBlockStorageDevice, entryNameStr, bsdNameStr, allProperties, pdi);
+            getBlockStorageDevice(aBlockStorageDevice, entryNameStr, bsdNameStr, allProperties, pdi);
 #else // !defined(TRY_SMART_LIBS)
-        getBlockStorageDevice(entryNameStr, bsdNameStr, allProperties, pdi);
+            getBlockStorageDevice(entryNameStr, bsdNameStr, allProperties, pdi);
 #endif // defined(TRY_SMART_LIBS)
-        devices.push_back( device );
-
-        IOObjectRelease(tPer);
-
-    finishedWithMedia:
-        IOObjectRelease(media);
-
-    finishedWithDevice:
-        IOObjectRelease(aBlockStorageDevice);
+            devices.push_back( device );
+            
+            IOObjectRelease(tPer);
+            
+        finishedWithMedia:
+            IOObjectRelease(media);
+            
+        finishedWithDevice:
+            IOObjectRelease(aBlockStorageDevice);
+        }
+        
+        sort(devices.begin(), devices.end(), DtaDevMacOSBlockStorageDevice::bsdNameLessThan);
+        return devices;
     }
     
-    sort(devices.begin(), devices.end(), DtaDevMacOSBlockStorageDevice::bsdNameLessThan);
-    return devices;
-}
-
-// Factory for this class or subclass instances
+    // Factory for this class or subclass instances
 #if defined(TRY_SMART_LIBS)
     DtaDevMacOSBlockStorageDevice * DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageDevice,
                                                                                          std::string entryName,
@@ -554,198 +554,201 @@ std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enum
             return new DtaDevMacOSBlockStorageDevice(entryName, bsdName, properties, pdi);
     }
 #endif // defined(TRY_SMART_LIBS)
-
-DtaDevMacOSBlockStorageDevice * DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageDevice,
-                                                                                     const char *devref,
-                                                                                     DTA_DEVICE_INFO *pdi) {
-    DtaDevMacOSBlockStorageDevice * foundDevice = nil;
-    io_service_t tPer;
-    io_service_t media;
-    CFDictionaryRef deviceProperties;
-    CFDictionaryRef mediaProperties;
-    CFDictionaryRef tPerProperties;
-    CFDictionaryRef allProperties;
-
-    const size_t kCStringSize = 128;
-    char nameBuffer[kCStringSize];
-    bzero(nameBuffer,kCStringSize);
-
-    string entryName;
-    string bsdName;
-
     
-    std::vector<const void *>keys;
-    std::vector<const void *>values;
-    
-    deviceProperties = copyProperties( aBlockStorageDevice );
-    if (NULL == deviceProperties) {
-        goto finishedWithDevice;
-    }
-    keys.push_back( CFSTR("device"));
-    values.push_back( deviceProperties);
-    
-    
-    media = findServiceForClassInChildren(aBlockStorageDevice, kIOMediaClass);
-    if (IO_OBJECT_NULL == media) {
-        goto finishedWithMedia;
-    }
-    mediaProperties = copyProperties( media );
-    if (NULL == mediaProperties ) {
-        goto finishedWithMedia ;
-    }
-    keys.push_back( CFSTR("media"));
-    values.push_back( mediaProperties);
-    
-    
-    tPer = findParent(aBlockStorageDevice);
-    if (IOObjectConformsTo(tPer, kBrightPlazaDriverClass)) {
-        tPerProperties = copyProperties( tPer );
-        keys.push_back( CFSTR("TPer"));
-        values.push_back(tPerProperties);
-    }
-    
-    
-    bzero(nameBuffer,kCStringSize);
-    CFStringGetCString(GetString(mediaProperties, "BSD Name"),
-                       nameBuffer, (CFIndex)kCStringSize, kCFStringEncodingUTF8);
-    bsdName = string(nameBuffer);
-    
-    if (bsdName == string(devref)) {
+    DtaDevMacOSBlockStorageDevice * DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageDevice,
+                                                                                         const char *devref,
+                                                                                         DTA_DEVICE_INFO *pdi) {
+        DtaDevMacOSBlockStorageDevice * foundDevice = nil;
+        io_service_t tPer;
+        io_service_t media;
+        CFDictionaryRef deviceProperties;
+        CFDictionaryRef mediaProperties;
+        CFDictionaryRef tPerProperties;
+        CFDictionaryRef allProperties;
+        
+        const size_t kCStringSize = 128;
+        char nameBuffer[kCStringSize];
         bzero(nameBuffer,kCStringSize);
-        GetName(media,nameBuffer);
-        entryName = string(nameBuffer);
         
-        allProperties = CFDictionaryCreate(CFAllocatorGetDefault(),
-                                           keys.data(), values.data(), (CFIndex)keys.size(),
-                                           NULL, NULL);
+        string entryName;
+        string bsdName;
         
+        
+        std::vector<const void *>keys;
+        std::vector<const void *>values;
+        
+        deviceProperties = copyProperties( aBlockStorageDevice );
+        if (NULL == deviceProperties) {
+            goto finishedWithDevice;
+        }
+        keys.push_back( CFSTR("device"));
+        values.push_back( deviceProperties);
+        
+        
+        media = findServiceForClassInChildren(aBlockStorageDevice, kIOMediaClass);
+        if (IO_OBJECT_NULL == media) {
+            goto finishedWithMedia;
+        }
+        mediaProperties = copyProperties( media );
+        if (NULL == mediaProperties ) {
+            goto finishedWithMedia ;
+        }
+        keys.push_back( CFSTR("media"));
+        values.push_back( mediaProperties);
+        
+        
+        tPer = findParent(aBlockStorageDevice);
+        if (IOObjectConformsTo(tPer, kBrightPlazaDriverClass)) {
+            tPerProperties = copyProperties( tPer );
+            keys.push_back( CFSTR("TPer"));
+            values.push_back(tPerProperties);
+        }
+        
+        
+        bzero(nameBuffer,kCStringSize);
+        CFStringGetCString(GetString(mediaProperties, "BSD Name"),
+                           nameBuffer, (CFIndex)kCStringSize, kCFStringEncodingUTF8);
+        bsdName = string(nameBuffer);
+        
+        if (bsdName == string(devref)) {
+            bzero(nameBuffer,kCStringSize);
+            GetName(media,nameBuffer);
+            entryName = string(nameBuffer);
+            
+            allProperties = CFDictionaryCreate(CFAllocatorGetDefault(),
+                                               keys.data(), values.data(), (CFIndex)keys.size(),
+                                               NULL, NULL);
+            
 #if defined(TRY_SMART_LIBS)
-        foundDevice = DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(aBlockStorageDevice,
-                                                                           entryName,
-                                                                           bsdName,
-                                                                           allProperties,
-                                                                           pdi);
+            foundDevice = DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(aBlockStorageDevice,
+                                                                               entryName,
+                                                                               bsdName,
+                                                                               allProperties,
+                                                                               pdi);
 #else // !defined(TRY_SMART_LIBS)
-        foundDevice = DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(entryName,
-                                                                           bsdName,
-                                                                           allProperties,
-                                                                           pdi);
+            foundDevice = DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(entryName,
+                                                                               bsdName,
+                                                                               allProperties,
+                                                                               pdi);
 #endif // defined(TRY_SMART_LIBS)
+            
+        }
         
+        IOObjectRelease(tPer);
+        
+    finishedWithMedia:
+        IOObjectRelease(media);
+        
+    finishedWithDevice:
+        IOObjectRelease(aBlockStorageDevice);
+        
+        return foundDevice;
     }
     
-    IOObjectRelease(tPer);
-
-finishedWithMedia:
-    IOObjectRelease(media);
+    DtaDevMacOSBlockStorageDevice * DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(const char * devref, DTA_DEVICE_INFO * pdi)
+    {
+        DtaDevMacOSBlockStorageDevice * foundDevice = NULL;
+        io_iterator_t iterator = findMatchingServices(kIOBlockStorageDeviceClass);
+        io_service_t aBlockStorageDevice;
+        
+        // Iterate over nodes of class IOBlockStorageDevice or subclass thereof
+        while ( foundDevice == NULL && (IO_OBJECT_NULL != (aBlockStorageDevice = IOIteratorNext( iterator )))) {
+            foundDevice = getBlockStorageDevice(aBlockStorageDevice, devref, pdi);
+        }
+        return foundDevice;
+    }
     
-finishedWithDevice:
-    IOObjectRelease(aBlockStorageDevice);
-
-    return foundDevice;
-}
-
-DtaDevMacOSBlockStorageDevice * DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(const char * devref, DTA_DEVICE_INFO * pdi)
-{
-    DtaDevMacOSBlockStorageDevice * foundDevice = NULL;
-    io_iterator_t iterator = findMatchingServices(kIOBlockStorageDeviceClass);
-    io_service_t aBlockStorageDevice;
-  
-    // Iterate over nodes of class IOBlockStorageDevice or subclass thereof
-     while ( foundDevice == NULL && (IO_OBJECT_NULL != (aBlockStorageDevice = IOIteratorNext( iterator )))) {
-         foundDevice = getBlockStorageDevice(aBlockStorageDevice, devref, pdi);
-     }
-    return foundDevice;
-}
-
-
-
-DtaDevMacOSBlockStorageDevice::~DtaDevMacOSBlockStorageDevice () {
-    if (properties != NULL )
-        CFRelease(properties);
-}
-
-uint8_t DtaDevMacOSBlockStorageDevice::isOpal2()
-{
-    if (NULL == pdevice_info)
-        return (uint8_t)NULL;
-    else
-        return pdevice_info->OPAL20;
-}
-
-uint8_t DtaDevMacOSBlockStorageDevice::isOpal1()
-{
-    return pdevice_info->OPAL10;
-}
     
-uint8_t DtaDevMacOSBlockStorageDevice::isEprise()
-{
-    return pdevice_info->Enterprise;
-}
-
-uint8_t DtaDevMacOSBlockStorageDevice::isAnySSC()
-{
-    return pdevice_info->ANY_OPAL_SSC;
-}
     
-uint8_t DtaDevMacOSBlockStorageDevice::MBREnabled()
-{
-    return pdevice_info->Locking_MBREnabled;
-}
+    DtaDevMacOSBlockStorageDevice::~DtaDevMacOSBlockStorageDevice () {
+        if (properties != NULL )
+            CFRelease(properties);
+    }
     
-uint8_t DtaDevMacOSBlockStorageDevice::MBRDone()
-{
-    return pdevice_info->Locking_MBRDone;
-}
+    uint8_t DtaDevMacOSBlockStorageDevice::isOpal2()
+    {
+        if (NULL == pdevice_info)
+            return (uint8_t)NULL;
+        else
+            return pdevice_info->OPAL20;
+    }
     
-uint8_t DtaDevMacOSBlockStorageDevice::Locked()
-{
-    return pdevice_info->Locking_locked;
-}
+    uint8_t DtaDevMacOSBlockStorageDevice::isOpal1()
+    {
+        return pdevice_info->OPAL10;
+    }
     
-uint8_t DtaDevMacOSBlockStorageDevice::LockingEnabled()
-{
-    return pdevice_info->Locking_lockingEnabled;
-}
+    uint8_t DtaDevMacOSBlockStorageDevice::isEprise()
+    {
+        return pdevice_info->Enterprise;
+    }
     
-const char * DtaDevMacOSBlockStorageDevice::getVendorName()
-{
-    return (const char *)&pdevice_info->vendorName;
-}
+    uint8_t DtaDevMacOSBlockStorageDevice::isAnySSC()
+    {
+        return pdevice_info->ANY_OPAL_SSC;
+    }
     
-const char * DtaDevMacOSBlockStorageDevice::getFirmwareRev()
-{
-    return (const char *)&pdevice_info->firmwareRev;
-}
+    uint8_t DtaDevMacOSBlockStorageDevice::MBREnabled()
+    {
+        return pdevice_info->Locking_MBREnabled;
+    }
     
-const char * DtaDevMacOSBlockStorageDevice::getModelNum()
-{
-    return (const char *)&pdevice_info->modelNum;
-}
+    uint8_t DtaDevMacOSBlockStorageDevice::MBRDone()
+    {
+        return pdevice_info->Locking_MBRDone;
+    }
     
-const char * DtaDevMacOSBlockStorageDevice::getSerialNum()
-{
-    return (const char *)&pdevice_info->serialNum;
-}
-const char * DtaDevMacOSBlockStorageDevice::getPhysicalInterconnect()
-{
-    return (const char *)&pdevice_info->physicalInterconnect;
-}
-const char * DtaDevMacOSBlockStorageDevice::getPhysicalInterconnectLocation()
-{
-    return (const char *)&pdevice_info->physicalInterconnectLocation;
-}
-const char * DtaDevMacOSBlockStorageDevice::getBSDName()
-{
-    return (const char *)bsdName.c_str();
-}
-
-DTA_DEVICE_TYPE DtaDevMacOSBlockStorageDevice::getDevType()
-{
-    return pdevice_info->devType;
-}
-
-const std::string DtaDevMacOSBlockStorageDevice::getDevName () {
-    return ("/dev/"+bsdName).substr(0,25);
-}
-
+    uint8_t DtaDevMacOSBlockStorageDevice::Locked()
+    {
+        return pdevice_info->Locking_locked;
+    }
+    
+    uint8_t DtaDevMacOSBlockStorageDevice::LockingEnabled()
+    {
+        return pdevice_info->Locking_lockingEnabled;
+    }
+    
+    const char * DtaDevMacOSBlockStorageDevice::getVendorName()
+    {
+        return (const char *)&pdevice_info->vendorName;
+    }
+    
+    const char * DtaDevMacOSBlockStorageDevice::getFirmwareRev()
+    {
+        return (const char *)&pdevice_info->firmwareRev;
+    }
+    
+    const char * DtaDevMacOSBlockStorageDevice::getModelNum()
+    {
+        return (const char *)&pdevice_info->modelNum;
+    }
+    
+    const char * DtaDevMacOSBlockStorageDevice::getSerialNum()
+    {
+        return (const char *)&pdevice_info->serialNum;
+    }
+    const char * DtaDevMacOSBlockStorageDevice::getPhysicalInterconnect()
+    {
+        return (const char *)&pdevice_info->physicalInterconnect;
+    }
+    const char * DtaDevMacOSBlockStorageDevice::getPhysicalInterconnectLocation()
+    {
+        return (const char *)&pdevice_info->physicalInterconnectLocation;
+    }
+    const char * DtaDevMacOSBlockStorageDevice::getBSDName()
+    {
+        return (const char *)bsdName.c_str();
+    }
+    
+    DTA_DEVICE_TYPE DtaDevMacOSBlockStorageDevice::getDevType()
+    {
+        return pdevice_info->devType;
+    }
+    
+    const std::string DtaDevMacOSBlockStorageDevice::getDevName () {
+        return ("/dev/"+bsdName).substr(0,25);
+    }
+    
+    const unsigned long long DtaDevMacOSBlockStorageDevice::getSize()
+    { return pdevice_info->devSize;
+    }

@@ -80,7 +80,7 @@ protected:
      */
     void osmsSleep(uint32_t ms);
     /** return drive size in bytes */
-    unsigned long long getSize();
+    const unsigned long long getSize();
 
 private:
     bool __init(const char *devref);

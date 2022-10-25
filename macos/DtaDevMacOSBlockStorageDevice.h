@@ -81,6 +81,8 @@ public:
 
     const std::string getDevName ();
 
+    const unsigned long long getSize();
+    
     static std::vector<DtaDevMacOSBlockStorageDevice *> enumerateBlockStorageDevices();
     static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(io_service_t aBlockStorageDevice,
                                                      const char *devref,

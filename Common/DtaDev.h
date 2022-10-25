@@ -121,7 +121,7 @@ public:
 	/** OS specific routine to identify the device and fill out the device information struct*/
 	virtual void identify(void) = 0;
 	/** OS specific routine to get size of the device */
-	virtual unsigned long long getSize() = 0;
+	virtual const unsigned long long getSize() = 0;
 	/*
 	 * virtual functions required to be implemented
 	 * because they are called by sedutil.cpp
