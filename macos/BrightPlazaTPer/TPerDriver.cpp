@@ -68,14 +68,18 @@ void DriverClass::GetDeviceStringsFromIORegistry(DTA_DEVICE_INFO &di) {
 // and we will need to call stop (in the start method) to terminate device support
 bool DriverClass::InitializeDeviceSupport ( void )
 {
-    if (! super::InitializeDeviceSupport())
+    if (! super::InitializeDeviceSupport()) {
+        IOLOG_DEBUG("%s[%p]::%s super::InitializeDeviceSupport() returned false", getName(), this, __FUNCTION__);
         return false;
+    }
+    IOLOG_DEBUG("%s[%p]::%s super::InitializeDeviceSupport() returned true", getName(), this, __FUNCTION__);
 
     InterfaceDeviceID interfaceDeviceIdentification;
     DTA_DEVICE_INFO di;
 
 
     if (!identifyUsingSCSIInquiry(interfaceDeviceIdentification, di)) {
+        IOLOG_DEBUG("%s[%p]::%s Device is NOT SCSI", getName(), this, __FUNCTION__);
         return false;
     }
     IOLOG_DEBUG("%s[%p]::%s Device is SCSI", getName(), this, __FUNCTION__);
