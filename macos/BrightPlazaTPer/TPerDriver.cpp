@@ -28,9 +28,19 @@ OSDefineMetaClassAndStructors(com_brightplaza_BrightPlazaTPer, IOSCSIPeripheralD
 bool DriverClass::start(IOService* provider)
 {
     bool ret;
+    IOLOG_DEBUG("%s",
+                getName());
+    IOLOG_DEBUG("%s[%p]",
+                getName(), this);
+    IOLOG_DEBUG("%s[%p]::%s",
+                getName(), this, __FUNCTION__);
+    IOLOG_DEBUG("%s[%p]::%s(provider = %p)",
+                getName(), this, __FUNCTION__, provider);
     IOLOG_DEBUG("%s[%p]::%s(provider = %p), provider->getName() = %s",
                 getName(), this, __FUNCTION__, provider, provider->getName());
     if ( (ret = super::start(provider) ) ) {
+        IOLOG_DEBUG("%s[%p]::%s - super::start(provider) returned true, calling registerService()",
+              getName(), this, __FUNCTION__);
         registerService();
     }
     else if (getProperty(IOInterfaceTypeKey)) { // pointer is not null => super::InitializeDeviceSupport returned true
@@ -38,7 +48,7 @@ bool DriverClass::start(IOService* provider)
         IOLOG_DEBUG("%s[%p]::%s - leaving start, Device Support was initialized but is NOT TPer, calling stop\n",
               getName(), this, __FUNCTION__);
 
-        super::stop(provider);   // releases provider - having
+        stop(provider);   // releases provider - having
     }
     // if neither case, then super::InitializeDeviceSupport returned false and we don't need to call stop
 
@@ -68,6 +78,7 @@ void DriverClass::GetDeviceStringsFromIORegistry(DTA_DEVICE_INFO &di) {
 // and we will need to call stop (in the start method) to terminate device support
 bool DriverClass::InitializeDeviceSupport ( void )
 {
+    IOLOG_DEBUG("%s[%p]::%s about to call super::InitializeDeviceSupport() ...", getName(), this, __FUNCTION__);
     if (! super::InitializeDeviceSupport()) {
         IOLOG_DEBUG("%s[%p]::%s super::InitializeDeviceSupport() returned false", getName(), this, __FUNCTION__);
         return false;
@@ -76,7 +87,6 @@ bool DriverClass::InitializeDeviceSupport ( void )
 
     InterfaceDeviceID interfaceDeviceIdentification;
     DTA_DEVICE_INFO di;
-
 
     if (!identifyUsingSCSIInquiry(interfaceDeviceIdentification, di)) {
         IOLOG_DEBUG("%s[%p]::%s Device is NOT SCSI", getName(), this, __FUNCTION__);
@@ -1603,15 +1613,12 @@ void DriverClass::close(IOService *  forClient,
     IOLOG_DEBUG("%s[%p]::%s *** after super\n", getName(), this, __FUNCTION__ );
 }
 
-#if DRIVER_DEBUG
 void DriverClass::stop(IOService* provider)
 {
     IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
     super::stop(provider);
     IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
 }
-#endif  // DRIVER_DEBUG
-
 
 
 bool DriverClass::init(OSDictionary* dictionary)

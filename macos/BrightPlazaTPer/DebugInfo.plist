@@ -31,7 +31,7 @@
 			<key>IOKitDebug</key>
 			<integer>65535</integer>
 			<key>IOProbeScore</key>
-			<integer>32000</integer>
+			<integer>16383</integer>
 			<key>IOProviderClass</key>
 			<string>IOSCSIPeripheralDeviceNub</string>
 			<key>IOResourceMatch</key>
@@ -57,7 +57,5 @@
 	</dict>
 	<key>OSBundleRequired</key>
 	<string>Local-Root</string>
-	<key>LSApplicationCategoryType</key>
-	<string>/Users/scott/Library/Developer/Xcode/DerivedData/DTA-emaykawkwetfggaxqqnpsfomwgcp/Build/Intermediates.noindex/ArchiveIntermediates/iSED Bonjour Multistart/IntermediateBuildFilesPath/XCBuildData/92f0d564903b3a4e5e417027d89025fb-manifest.xcbuild:RN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER&quot;:&quot;NO&quot;,&quot;CLANG_WARN_RANGE_LOOP_ANALYSIS&quot;:&quot;YES&quot;,&quot;CLANG_WARN_STRICT_PROTOTYPES&quot;:&quot;YES&quot;,&quot;CLANG_WARN_SUSPICIOUS_MOVE&quot;:&quot;YES&quot;,&quot;CLANG_WARN_SUSPICIOUS_MOVES&quot;:&quot;YES&quot;,&quot;CLANG_WARN_UNREACHABLE_CODE&quot;:&quot;YES&quot;,&quot;CLANG_WARN__DUPLICATE_METHOD_MATCH&quot;:&quot;YES&quot;,&quot;CLASS_FILE_DIR&quot;:&quot;/Users/scott/Library/Developer/Xcode/DerivedData/DTA-emaykawkwetfggaxqqnpsfomwgcp/Build/Intermediates.noindex/ArchiveIntermediates/iSED Bonjour Multistart/IntermediateBuildFilesPath/iSED.build/Release Bonjour Multistart-iphoneos/iSED.build/JavaClasses&quot;,&quot;CLEAN_PRECOMPS&quot;:&quot;YES&quot;,&quot;CLONE_HEADERS&quot;:&quot;NO&quot;,&quot;CODESIGNING_FOLDER_PATH&quot;:&quot;/Users/scott/Library/Developer/Xcode/DerivedData/DTA-emaykawkwetfggaxqqnpsfomwgcp/Build/Intermediates.noindex/ArchiveIntermediates/iSED Bonjour Multistart/InstallationBuildProductsLocation/Applications/iSED.app&quot;,&quot;CODE_SIGNING_ALLOWED&quot;:&quot;YES&quot;,&quot;CODE_SIGNING_REQUIRED&quot;:&quot;YES&quot;,&quot;CODE_SIGN_CONTEXT_CLASS&quot;:&quot;XCiPhoneOSCodeSignContext&quot;,&quot;CODE_SIGN_ENTITLEMENTS&quot;:&quot;iSED.entitlements&quot;,&quot;CODE_SIGN_IDENTITY&quot;:&quot;Apple Development&quot;,&quot;CODE_SIGN_INJECT_BASE_ENTITLEMENTS&quot;:&quot;YES&quot;,&quot;CODE_SIGN_STYLE&quot;:&quot;Automatic&quot;,&quot;COLOR_DIAGNOSTICS&quot;:&quot;NO&quot;,&quot;COMBINE_HIDPI_IMAGES&quot;:&quot;NO&quot;,&quot;COMPILER_INDEX_STORE_ENABLE&quot;:&quot;Default&quot;,&quot;COMPOSITE_SDK_DIRS&quot;:&quot;/Users/scott/Library/Developer/Xcode/DerivedData/DTA-emaykawkwetfggaxqqnpsfomwgcp/Build/Intermediates.noindex/ArchiveIntermediates/iSED Bonjour Multistart/IntermediateBuildFilesPath/CompositeSDKs&quot;,&quot;COMPRESS_PNG_FILES&quot;:&quot;YES&quot;,&quot;CONFIGURATION&quot;:&quot;Release Bonjour Multistart&quot;,&quot;CONFIGURATION_BUILD_DIR&quot;:&quot;/Users/scott/Library/Developer/Xcode/DerivedData/DTA-emaykawkwetfggaxqqnpsfomwgcp/Build/Intermediates.noindex/ArchiveIntermediates/iSED Bonjour Multistart/BuildProductsPath/Release Bonjour Multistart-iphoneos&quot;,&quot;CONFIGURATION_TEMP_DIR&quot;:&quot;/Users/scott/Library/Developer/Xcode/DerivedData/DTA-emaykawkwetfggaxqqnpsfomwgcp/Build/Intermediates.noindex/ArchiveIntermediates/iSED Bonjour Multistart/IntermediateBuildFilesPath/iSED.build/Release Bonjour Multistart-iphoneos&quot;,&quot;CONTENTS_FOLDER_PATH&quot;:&quot;iSED.app&quot;,&quot;COPYING_PRESERVES_HFS_DATA&quot;:&quot;NO&quot;,&quot;COPY_HEADERS_RUN_UNIFDEF&quot;:&quot;NO&quot;,&quot;COPY_PHA</string>
 </dict>
 </plist>
