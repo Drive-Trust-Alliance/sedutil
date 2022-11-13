@@ -1542,7 +1542,12 @@ IOReturn DriverClass::completeSCSICommand(IOBufferMemoryDescriptor * md,
 // apple overrides - debugging only
 //**************
 
-#if DRIVER_DEBUG
+#if !defined(MIN_PROBE)
+#define MIN_PROBE 15001
+#endif // !defined(MIN_PROBE)
+
+#undef MIN_PROBE
+#define MIN_PROBE 0x3eee
 
 IOService* DriverClass::probe(IOService* provider, SInt32* score)
 {
@@ -1558,9 +1563,23 @@ IOService* DriverClass::probe(IOService* provider, SInt32* score)
 
     IOLOG_DEBUG("%s[%p]::%s(provider is %s, score is %d)\n",
           getName(), this, __FUNCTION__, provider->getName(), (int)*score);
-
+#if defined(MIN_PROBE)
+    if ((*score) < MIN_PROBE) {
+        *score = MIN_PROBE;
+        IOLOG_DEBUG("%s[%p]::%s(provider is %s, score raised to %d)\n",
+              getName(), this, __FUNCTION__, provider->getName(), (int)*score);
+    }
+#endif // defined(MIN_PROBE)
+#if DRIVER_DEBUG
+#else // !defined(MIN_PROBE)
+#pragma unused(provider)
+#pragma unused(score)
+#endif
     return this;
 }
+
+#if DRIVER_DEBUG
+
 
 void DriverClass::TerminateDeviceSupport( void )
 {

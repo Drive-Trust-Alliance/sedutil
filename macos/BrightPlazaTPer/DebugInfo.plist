@@ -28,10 +28,6 @@
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 			<key>IOClass</key>
 			<string>com_brightplaza_BrightPlazaTPer</string>
-			<key>IOKitDebug</key>
-			<integer>65535</integer>
-			<key>IOProbeScore</key>
-			<integer>16383</integer>
 			<key>IOProviderClass</key>
 			<string>IOSCSIPeripheralDeviceNub</string>
 			<key>IOResourceMatch</key>
@@ -40,6 +36,8 @@
 			<string>com_brightplaza_BrightPlazaTPerUserClient</string>
 			<key>Peripheral Device Type</key>
 			<integer>0</integer>
+            <key>IOKitDebug</key>
+            <integer>65535</integer>
 		</dict>
 	</dict>
 	<key>NSHumanReadableCopyright</key>

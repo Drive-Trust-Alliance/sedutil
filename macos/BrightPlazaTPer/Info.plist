@@ -28,8 +28,6 @@
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 			<key>IOClass</key>
 			<string>com_brightplaza_BrightPlazaTPer</string>
-			<key>IOProbeScore</key>
-			<integer>16383</integer>
 			<key>IOProviderClass</key>
 			<string>IOSCSIPeripheralDeviceNub</string>
 			<key>IOResourceMatch</key>
