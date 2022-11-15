@@ -47,14 +47,14 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define FC_Min_Vendor_Specific 0xC000
 
 /** The Discovery 0 Header. As defined in
-* Opal SSC Documentation
+* Opal SSC Documentation -- revision 1 of the header is 48 bytes
 */
 typedef struct _Discovery0Header {
-    uint32_t length; /**< the length of the header 48 in 2.00.100*/
+    uint32_t length; /**< the length of the parameter data*/
     uint32_t revision; /**< revision of the header 1 in 2.00.100 */
     uint32_t reserved01;
     uint32_t reserved02;
-    // the remainder of the structure is vendor specific and will not be addressed now
+    uint32_t vendorSpecific[8];
 } Discovery0Header;
 
 /** TPer Feature Descriptor. Contains flags indicating support for the

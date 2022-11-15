@@ -191,16 +191,25 @@ void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO
         LOG(D) << "Level 0 Discovery returned no response";
         return;
     }
-    LOG(D3) << "Dumping D0Response";
-    if ( (length > 8192) || (length < 48) )
-    {
-	  LOG(D) << "Level 0 Discovery header length abnormal " << hex << length;
-	  return;
-    }
-    IFLOG(D3) DtaHexDump(hdr, length);
 
-    uint8_t *cpos = (uint8_t *) d0Response + 48; // TODO: check header version
-    uint8_t *epos = (uint8_t *) d0Response + length;
+    if (MIN_BUFFER_LENGTH < sizeof(hdr->length) + length)
+    {
+      LOG(D) << "Level 0 Discovery header length abnormal " << hex << length;
+      return;
+    }
+
+    uint32_t revision = SWAP32(hdr->revision);
+    if (revision != 1)
+    {
+      LOG(D) << "Level 0 Discovery header data structure revision " << hex << revision << ", but expected to be 1";
+      return;
+    }
+
+    LOG(D3) << "Dumping D0Response";
+    IFLOG(D3) DtaHexDump(hdr, sizeof(hdr->length) + length);
+
+    uint8_t *cpos = (uint8_t *) d0Response + sizeof(Discovery0Header);
+    uint8_t *epos = (uint8_t *) d0Response + sizeof(hdr->length) + length;
 
     do {
         Discovery0Features * body = (Discovery0Features *) cpos;

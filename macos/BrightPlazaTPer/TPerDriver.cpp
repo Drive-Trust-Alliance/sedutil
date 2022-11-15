@@ -28,14 +28,6 @@ OSDefineMetaClassAndStructors(com_brightplaza_BrightPlazaTPer, IOSCSIPeripheralD
 bool DriverClass::start(IOService* provider)
 {
     bool ret;
-    IOLOG_DEBUG("%s",
-                getName());
-    IOLOG_DEBUG("%s[%p]",
-                getName(), this);
-    IOLOG_DEBUG("%s[%p]::%s",
-                getName(), this, __FUNCTION__);
-    IOLOG_DEBUG("%s[%p]::%s(provider = %p)",
-                getName(), this, __FUNCTION__, provider);
     IOLOG_DEBUG("%s[%p]::%s(provider = %p), provider->getName() = %s",
                 getName(), this, __FUNCTION__, provider, provider->getName());
     if ( (ret = super::start(provider) ) ) {
@@ -318,7 +310,23 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID interfaceDeviceIden
             return false;   // Claims to support it on page 00h, but does not
         }
     }
+#if DEBUG
+    else {
+        IOLOG_DEBUG("%s[%p]::%s Device does not claim to support Page 89 -- trying it anyway", getName(), this, __FUNCTION__);
+        if (deviceIsPage89SCSI(di)) {
+            IOLOG_DEBUG("%s[%p]::%s Device is Page 89 SCSI!!", getName(), this, __FUNCTION__);
+        }
+    }
+#endif
 #endif // defined(USE_INQUIRY_PAGE_89h)
+
+#if DEBUG
+    deviceIsPageXXSCSI(kINQUIRY_PageB0_PageCode, IOInquiryPageB0ResponseKey);
+    deviceIsPageXXSCSI(kINQUIRY_PageB1_PageCode, IOInquiryPageB1ResponseKey);
+    deviceIsPageXXSCSI(kINQUIRY_PageB2_PageCode, IOInquiryPageB2ResponseKey);
+    deviceIsPageXXSCSI(kINQUIRY_PageC0_PageCode, IOInquiryPageC0ResponseKey);
+    deviceIsPageXXSCSI(kINQUIRY_PageC1_PageCode, IOInquiryPageC1ResponseKey);
+#endif
 
     return true;
 }
@@ -495,22 +503,10 @@ IOReturn DriverClass::__inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryD
 {
     IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
 
-//    static SCSICommandDescriptorBlock inquiryCDB_SCSI =
-//      { kSCSICmd_INQUIRY,           // Byte  0  INQUIRY 12h
-//        0x00,                       // Byte  1  Logical Unit Number| Reserved | EVPD
-//        0x00,                       // Byte  2  Page Code
-//        0x00,                       // Byte  3  Allocation length (MSB)
-//        0x00,                       // Byte  4  Allocation length (LSB)
-//        0x00,                       // Byte  5  Control
-//      };
-//    unsigned long long len = md->getLength();
-//    inquiryCDB_SCSI[1] = evpd;
-//    inquiryCDB_SCSI[2] = page_code;
-//    inquiryCDB_SCSI[3] = (uint8_t)(len >> 8);
-//    inquiryCDB_SCSI[4] = (uint8_t)(len     );
-//    IOLOG_DEBUG("%s[%p]::%s len=%llu=0x%02X:0x%02X\n", getName(), this, __FUNCTION__,
-//                len, (uint8_t)(len >> 8), (uint8_t)(len     ));
-//    return PerformSCSICommand(inquiryCDB_SCSI, md);
+#define USE_INHERITED_API
+#undef USE_INHERITED_API
+
+#if defined(USE_INHERITED_API)
 
     md->prepare();
     dataSize = (UInt16)md->getLength();
@@ -520,6 +516,34 @@ IOReturn DriverClass::__inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryD
     bool success = RetrieveINQUIRYData(evpd, page_code, (UInt8 *)data, &dataSize );
     md->complete();
     return success ? kIOReturnSuccess : kIOReturnIOError;
+
+#else  // !defined(USE_INHERITED_API)
+
+    static SCSICommandDescriptorBlock inquiryCDB_SCSI =
+      { kSCSICmd_INQUIRY,           // Byte  0  INQUIRY 12h
+        0x00,                       // Byte  1  Logical Unit Number| Reserved | EVPD
+        0x00,                       // Byte  2  Page Code
+        0x00,                       // Byte  3  Allocation length (MSB)
+        0x00,                       // Byte  4  Allocation length (LSB)
+        0x00,                       // Byte  5  Control
+      };
+    unsigned long long len = md->getLength();
+    inquiryCDB_SCSI[1] = evpd;
+    inquiryCDB_SCSI[2] = page_code;
+    inquiryCDB_SCSI[3] = (uint8_t)(len >> 8);
+    inquiryCDB_SCSI[4] = (uint8_t)(len     );
+    IOLOG_DEBUG("%s[%p]::%s len=%llu=0x%02X:0x%02X\n", getName(), this, __FUNCTION__,
+                len, (uint8_t)(len >> 8), (uint8_t)(len     ));
+    uint64_t transferSize = dataSize ;
+    IOReturn ret = PerformSCSICommand(inquiryCDB_SCSI, md, &transferSize);
+    if (ret == kIOReturnSuccess) {
+        dataSize = static_cast<UInt16>(transferSize) ;
+    }
+    return ret;
+
+#endif //  defined(USE_INHERITED_API)
+
+
 }
 
 IOReturn DriverClass::__inquiry__EVPD(uint8_t page_code, IOBufferMemoryDescriptor * md, UInt16 & dataSize )
@@ -532,7 +556,7 @@ IOReturn DriverClass::__inquiry__EVPD(uint8_t page_code, IOBufferMemoryDescripto
 IOReturn DriverClass::inquiryStandardDataAll_SCSI( IOBufferMemoryDescriptor * md )
 {
     IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
-    UInt16 dataSize = (UInt16)md->getLength();
+    UInt16 dataSize = static_cast<UInt16>(md->getLength());
     return __inquiry(0x00, 0x00, md, dataSize);
 }
 
@@ -742,7 +766,7 @@ bool DriverClass::deviceIsPage80SCSI(DTA_DEVICE_INFO &di)
 IOReturn DriverClass::inquiryPage80_SCSI( IOBufferMemoryDescriptor * md)
 {
     IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
-    UInt16 dataSize = (UInt16)md->getLength();
+    UInt16 dataSize = static_cast<UInt16>(md->getLength());
     return __inquiry__EVPD(kINQUIRY_Page80_PageCode, md, dataSize);
 }
 
@@ -793,7 +817,8 @@ bool DriverClass::deviceIsPage83SCSI(DTA_DEVICE_INFO &di)
         isPage83SCSI = ( kIOReturnSuccess == inquiryPage83_SCSI( md, dataSize ) );
         if (isPage83SCSI) {
 #if DEBUG
-            setProperty(IOInquiryPage83ResponseKey, inquiryResponse, dataSize);
+//            setProperty(IOInquiryPage83ResponseKey, inquiryResponse, dataSize);
+            setProperty(IOInquiryPage83ResponseKey, inquiryResponse, static_cast<UInt16>(transferSize));
 #endif // DEBUG
             OSDictionary * characteristics =
                 parseInquiryPage83Response(static_cast <const unsigned char * >(inquiryResponse), dataSize, di);
@@ -982,6 +1007,38 @@ OSDictionary * DriverClass::parseInquiryPage89Response( const unsigned char * re
 }
 #endif // defined(USE_INQUIRY_PAGE_89h)
 
+#if DEBUG
+bool DriverClass::deviceIsPageXXSCSI(uint8_t evpd, const char * key)
+{
+    // Test whether device is a SCSI drive by attempting
+    // SCSI Inquiry command
+    // If it works, as a side effect, parse the Inquiry response
+    // and save it in the IO Registry
+    bool isPageXXSCSI = false;
+    size_t transferSize = 256;
+    IOBufferMemoryDescriptor * md = IOBufferMemoryDescriptor::withCapacity ( transferSize, kIODirectionIn, false );
+    if ( md ) {
+        void * inquiryResponse = md->getBytesNoCopy( );
+        bzero ( inquiryResponse, md->getLength ( ) );
+        isPageXXSCSI = ( kIOReturnSuccess == inquiryPageXX_SCSI(evpd, md ) );
+        if (isPageXXSCSI) {
+            setProperty(key, inquiryResponse, (unsigned int)transferSize);
+        }
+        md->release ( );
+        md = NULL;
+    }
+    IOLOG_DEBUG("%s[%p]::%s *** end of function, isPage%02XSCSI is %d\n", getName(), this, __FUNCTION__, evpd, isPageXXSCSI);
+    return isPageXXSCSI;
+}
+
+IOReturn DriverClass::inquiryPageXX_SCSI(uint8_t evpd, IOBufferMemoryDescriptor * md )
+{
+    IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
+    UInt16 dataSize = static_cast<UInt16>(md->getLength());
+    return __inquiry__EVPD(evpd, md, dataSize);
+}
+#endif // DEBUG
+
 
 #pragma mark -
 
@@ -1012,16 +1069,16 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
     if (0 == length) {
         IOLOG_DEBUG("No D0Response");
         return false;
-    } else {
-        IOLOG_DEBUG("Dumping D0Response");
-        if ( (length > 8192) || (length < 48) )
-        {
-            IOLOG_DEBUG("Level 0 Discovery header length abnormal 0x%08X",  length);
-            return false;
-        }
-        IOLOGBUFFER_DEBUG(NULL, hdr, length);
+    }
+    
+    if (sizeof(hdr->length)+length > 8192 ) {
+        IOLOG_DEBUG("Level 0 Discovery header length abnormal 0x%08X", length);
+        return false;
     }
 
+    IOLOG_DEBUG("Dumping D0Response");
+    IOLOGBUFFER_DEBUG(NULL, d0Response, sizeof(hdr->length)+length);
+    
     di.TPer = 0;
     di.Locking = 0;
     di.Geometry = 0;
@@ -1041,8 +1098,8 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
     di.VendorSpecific = 0;
     di.Unknown = 0;
 
-    uint8_t *cpos = (uint8_t *) d0Response + 48; // TODO: check header version
-    uint8_t *epos = (uint8_t *) d0Response + length;
+    uint8_t *cpos = (uint8_t *) d0Response + sizeof(Discovery0Header);
+    uint8_t *epos = (uint8_t *) d0Response + sizeof(hdr->length) + length;
     do {
         Discovery0Features * body = (Discovery0Features *) cpos;
         uint16_t featureCode = SWAP16(body->TPer.featureCode);
@@ -1434,12 +1491,16 @@ IOReturn DriverClass::prepareSCSICommand(SCSICommandDescriptorBlock cdb,
         default:
             return kIOReturnBadArgument;
     }
+
+    md->prepare();
+    if (direction == kSCSIDataTransfer_FromTargetToInitiator) {
+        bzero(md->getBytesNoCopy(), md->getLength());
+    }
+    SetDataBuffer(request, md);
     SetTimeoutDuration(request, SED_TIMEOUT);
     SetDataTransferDirection(request, direction);
     SetRequestedDataTransferCount(request, count);
 
-    md->prepare();
-    SetDataBuffer(request, md);
     return kIOReturnSuccess;
 }
 
@@ -1537,11 +1598,6 @@ IOReturn DriverClass::completeSCSICommand(IOBufferMemoryDescriptor * md,
     return ret;
 }
 
-
-//**************
-// apple overrides - debugging only
-//**************
-
 #if !defined(MIN_PROBE)
 #define MIN_PROBE 15001
 #endif // !defined(MIN_PROBE)
@@ -1577,6 +1633,11 @@ IOService* DriverClass::probe(IOService* provider, SInt32* score)
 #endif
     return this;
 }
+
+
+//**************
+// apple overrides - debugging only
+//**************
 
 #if DRIVER_DEBUG
 

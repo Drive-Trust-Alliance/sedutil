@@ -116,6 +116,11 @@ private:
     OSDictionary * parseInquiryPage89Response( const unsigned char * response, DTA_DEVICE_INFO & di);
 #endif // defined(USE_INQUIRY_PAGE_89h)
 
+#if DEBUG
+    bool deviceIsPageXXSCSI(uint8_t evpd, const char * key);
+    IOReturn inquiryPageXX_SCSI(uint8_t evpd, IOBufferMemoryDescriptor * md );
+#endif // DEBUG
+
     bool identifyUsingSCSIInquiry(InterfaceDeviceID interfaceDeviceIdentification, DTA_DEVICE_INFO & di);
     
     //
