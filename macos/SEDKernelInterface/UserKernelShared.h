@@ -9,14 +9,13 @@
 #ifndef UserKernelShared_h
 #define UserKernelShared_h
 
+#define DriverClass               com_brightplaza_BrightPlazaTPer
+#define kBrightPlazaDriverClass  "com_brightplaza_BrightPlazaTPer"
+#define ProviderClass             IOSCSIPeripheralDeviceNub
+#define kProviderClass           "IOSCSIPeripheralDeviceNub"
+#define UserClientClass           com_brightplaza_BrightPlazaTPerUserClient
 
-#define DriverClass		com_brightplaza_BrightPlazaTPer
-#define kBrightPlazaDriverClass	"com_brightplaza_BrightPlazaTPer"
-#define ProviderClass   IOSCSIPeripheralDeviceNub
-#define kProviderClass  "IOSCSIPeripheralDeviceNub"
-#define UserClientClass com_brightplaza_BrightPlazaTPerUserClient
-
-#define kIOBlockStorageDriver   "IOBlockStorageDriver"
+#define kIOBlockStorageDriver    "IOBlockStorageDriver"
 
 #define IOIdentifyDeviceResponseKey     "Identify Response"
 #define IODiscovery0ResponseKey         "D0 Response"

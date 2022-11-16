@@ -327,6 +327,22 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID interfaceDeviceIden
     deviceIsPageXXSCSI(kINQUIRY_PageC0_PageCode, IOInquiryPageC0ResponseKey);
     deviceIsPageXXSCSI(kINQUIRY_PageC1_PageCode, IOInquiryPageC1ResponseKey);
 #endif
+    
+    // Random fixups
+    // Samsung PSSD 7 has serial number reversed.  Other devices?
+    // TODO: Unify with InterfaceDeviceID interfaceDeviceIdentification matching
+    if (0==strcmp((const char *)di.vendorName, "Samsung") &&
+        0==strcmp((const char *)di.modelNum, "PSSD T7")) {
+        size_t n = strlen((const char *)(di.serialNum));
+        if (1<n) {
+            uint8_t temp;
+            for (uint8_t * p = di.serialNum, * q = p + n - 1 ; p<q; p++,--q) {
+                temp = *p;
+                *p = *q;
+                *q = temp;
+            }
+        }
+    }
 
     return true;
 }

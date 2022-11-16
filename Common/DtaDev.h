@@ -84,13 +84,13 @@ public:
     DTA_DEVICE_TYPE getDevType();
 	/** displays the information returned by the Discovery 0 reply */
 	virtual void puke();
-
-	/** Decode the Discovery 0 response. Scans the D0 response and creates a structure
-	 * that can be queried later as required.This code also takes care of
-	 * the endianess conversions either via a bitswap in the structure or executing
-	 * a macro when the input buffer is read.
-	 */
-	void discovery0();
+// TODO: triage
+//	/** Decode the Discovery 0 response. Scans the D0 response and creates a structure
+//	 * that can be queried later as required.This code also takes care of
+//	 * the endianess conversions either via a bitswap in the structure or executing
+//	 * a macro when the input buffer is read.
+//	 */
+//	void discovery0();
 	uint8_t TperReset();
 	/*
 	 * virtual methods required in the OS specific
@@ -749,8 +749,8 @@ protected:
      *  */
     uint8_t start(OPAL_UID SP, vector<uint8_t>  HostChallenge, vector<uint8_t> SignAuthority);
 
-    
-    virtual uint8_t acquireDiscovery0Response(uint8_t * d0Response);
+//    TODO: triage
+//    virtual uint8_t acquireDiscovery0Response(uint8_t * d0Response);
 	uint8_t discovery0buffer[MIN_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT] ; // NG->__attribute__((aligned(16)));
     
 	uint32_t Tper_sz_MaxComPacketSize = 2048;

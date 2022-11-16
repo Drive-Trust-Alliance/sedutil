@@ -176,10 +176,11 @@ DTA_DEVICE_TYPE DtaDev::getDevType()
     return disk_info.devType;
 }
 
-uint8_t DtaDev::acquireDiscovery0Response(uint8_t * d0Response)
-{
-    return sendCmd(IF_RECV, 0x01, 0x0001, d0Response, MIN_BUFFER_LENGTH);
-}
+//TODO: triage
+//uint8_t DtaDev::acquireDiscovery0Response(uint8_t * d0Response)
+//{
+//    return sendCmd(IF_RECV, 0x01, 0x0001, d0Response, MIN_BUFFER_LENGTH);
+//}
 
 void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
 {
@@ -453,19 +454,19 @@ uint8_t DtaDev::STACK_Reset()
 
 */
 
-
-void DtaDev::discovery0() {
-    uint8_t * d0Response = (uint8_t *)((uintptr_t)(discovery0buffer + IO_BUFFER_ALIGNMENT) &
-                                 (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
-    memset(d0Response, 0, MIN_BUFFER_LENGTH);
-
-    uint8_t lastRC = acquireDiscovery0Response(d0Response);
-    if ((lastRC ) != 0) {
-        LOG(D) << "Acquiring D0 response failed " << (uint16_t)lastRC;
-        return;
-    }
-    parseDiscovery0Features(d0Response, disk_info);
-}
+//TODO: triage
+//void DtaDev::discovery0() {
+//    uint8_t * d0Response = (uint8_t *)((uintptr_t)(discovery0buffer + IO_BUFFER_ALIGNMENT) &
+//                                 (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+//    memset(d0Response, 0, MIN_BUFFER_LENGTH);
+//
+//    uint8_t lastRC = acquireDiscovery0Response(d0Response);
+//    if ((lastRC ) != 0) {
+//        LOG(D) << "Acquiring D0 response failed " << (uint16_t)lastRC;
+//        return;
+//    }
+//    parseDiscovery0Features(d0Response, disk_info);
+//}
 
 
 void DtaDev::puke()
