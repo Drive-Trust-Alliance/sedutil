@@ -69,23 +69,9 @@ void DriverClass::GetDeviceInfoFromIORegistry(DTA_DEVICE_INFO &di) {
                     getName(), this, __FUNCTION__, di.firmwareRev);
     }
 
-//#if !TARGET_OS_IPHONE
-//    IOLOG_DEBUG("%s[%p]::%s - fDeviceHasSATTranslation is %s\n",
-//                getName(), this, __FUNCTION__, fDeviceHasSATTranslation ? "true" : "false");
-//#endif /* !TARGET_OS_IPHONE */
-//
-//#if !TARGET_OS_IPHONE
-//    IOLOG_DEBUG("%s[%p]::%s - fDeviceHasNVMETranslation is %s\n",
-//                getName(), this, __FUNCTION__, fDeviceHasNVMETranslation ? "true" : "false");
-//#endif /* !TARGET_OS_IPHONE */
-
-//    unsigned long long blockSize  = ReportMediumBlockSize ( ) ;
-//    IOLOG_DEBUG("%s[%p]::%s - blockSize is %llu\n",  getName(), this, __FUNCTION__, blockSize);
-//    unsigned long long blockCount  = ReportMediumTotalBlockCount ( ) ;
-//    IOLOG_DEBUG("%s[%p]::%s - blockCount is %llu\n",  getName(), this, __FUNCTION__, blockCount);
     unsigned long long blockSize = 0;
     unsigned long long blockCount = 0;
-    bool determined = DetermineMediumCapacity (&blockSize, &blockCount);
+    __unused bool determined = DetermineMediumCapacity (&blockSize, &blockCount);
     IOLOG_DEBUG("%s[%p]::%s - DetermineMediumCapacity returned %s",
                 getName(), this, __FUNCTION__, determined ? "true" : "false");
     IOLOG_DEBUG("%s[%p]::%s - blockSize is %llu\n",  getName(), this, __FUNCTION__, blockSize);
