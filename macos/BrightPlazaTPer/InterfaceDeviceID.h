@@ -23,7 +23,22 @@
 typedef unsigned char InterfaceDeviceID[kINQUIRY_VENDOR_IDENTIFICATION_Length +
                                         kINQUIRY_PRODUCT_IDENTIFICATION_Length +
                                         kINQUIRY_PRODUCT_REVISION_LEVEL_Length];
-typedef struct tperOverrideEntry { InterfaceDeviceID value; InterfaceDeviceID mask; } tperOverrideEntry;
+
+typedef enum TperOverrideSpecialAction {
+    tryUnjustifiedLevel0Discovery = 0x0001,
+    
+    reverseInquiryPage80SerialNumber    = 0x0100,
+    
+    noSpecialAction               = 0x0000,
+} TperOverrideSpecialAction;
+
+typedef struct tperOverrideEntry {
+    InterfaceDeviceID value;
+    InterfaceDeviceID mask;
+    TperOverrideSpecialAction action;
+} tperOverrideEntry;
+
 extern tperOverrideEntry tperOverrides[];
 extern size_t nTperOverrides;
 bool idMatches(const InterfaceDeviceID id, const InterfaceDeviceID value, const InterfaceDeviceID mask);
+TperOverrideSpecialAction actionForID(const InterfaceDeviceID id);

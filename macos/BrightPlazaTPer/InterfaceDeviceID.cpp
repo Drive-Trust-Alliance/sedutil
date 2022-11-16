@@ -48,8 +48,24 @@ tperOverrideEntry tperOverrides[] =
         },  // value
         { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, //  |XXXXXXXXXXXXXXXX|
           0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00                          //  |XXXX________|
-        }   // mask
+        },  // mask
+        tryUnjustifiedLevel0Discovery // action
     },
+    
+    {
+        { 0x53, 0x61, 0x6d, 0x73, 0x75, 0x6e, 0x67, 0x20, 0x50, 0x53, 0x53, 0x44, 0x20, 0x54, 0x37, 0x20, //  |Samsung PSSD T7 |
+          0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x30, 0x20, 0x20, 0x20                          //  |        0   |
+        },  // value
+        { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, //  |XXXXXXXXXXXXXXX_|
+          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00                          //  |____________|
+        },  // mask
+        reverseInquiryPage80SerialNumber // action 
+    },
+    
+
+
+
+    
 };
 
 size_t nTperOverrides = sizeof(tperOverrides) / sizeof(tperOverrides[0]);
@@ -61,4 +77,13 @@ bool idMatches(const InterfaceDeviceID id, const InterfaceDeviceID value, const 
         if (0 != (((*pid)^(*pvalue)) & (*pmask)))
             return false;
     return true;
+}
+
+TperOverrideSpecialAction actionForID(const InterfaceDeviceID interfaceDeviceIdentification) {
+    for (size_t i = 0; i < nTperOverrides; i++) {
+        if (idMatches(interfaceDeviceIdentification, tperOverrides[i].value, tperOverrides[i].mask)) {
+            return tperOverrides[i].action;
+        }
+    }
+    return noSpecialAction;
 }
