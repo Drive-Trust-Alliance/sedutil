@@ -49,16 +49,49 @@ bool DriverClass::start(IOService* provider)
     return ret;
 }
 
-void DriverClass::GetDeviceStringsFromIORegistry(DTA_DEVICE_INFO &di) {
+void DriverClass::GetDeviceInfoFromIORegistry(DTA_DEVICE_INFO &di) {
     char * v = GetVendorString ( );
-    if (v != NULL)
+    if (v != NULL) {
         strlcpy((char *)di.vendorName, v, sizeof(di.vendorName));
+        IOLOG_DEBUG("%s[%p]::%s - di.vendorName set to \"%s\"\n",
+                    getName(), this, __FUNCTION__, di.vendorName);
+    }
     char * p = GetProductString ( );
-    if (p != NULL)
+    if (p != NULL) {
         strlcpy((char *)di.modelNum, p, sizeof(di.modelNum));
+        IOLOG_DEBUG("%s[%p]::%s - di.modelNum set to \"%s\"\n",
+                    getName(), this, __FUNCTION__, di.modelNum);
+    }
     char * r = GetRevisionString ( );
-    if (r != NULL)
+    if (r != NULL) {
         strlcpy((char *)di.firmwareRev, r, sizeof(di.firmwareRev));
+        IOLOG_DEBUG("%s[%p]::%s - di.firmwareRev set to \"%s\"\n",
+                    getName(), this, __FUNCTION__, di.firmwareRev);
+    }
+
+//#if !TARGET_OS_IPHONE
+//    IOLOG_DEBUG("%s[%p]::%s - fDeviceHasSATTranslation is %s\n",
+//                getName(), this, __FUNCTION__, fDeviceHasSATTranslation ? "true" : "false");
+//#endif /* !TARGET_OS_IPHONE */
+//
+//#if !TARGET_OS_IPHONE
+//    IOLOG_DEBUG("%s[%p]::%s - fDeviceHasNVMETranslation is %s\n",
+//                getName(), this, __FUNCTION__, fDeviceHasNVMETranslation ? "true" : "false");
+//#endif /* !TARGET_OS_IPHONE */
+
+//    unsigned long long blockSize  = ReportMediumBlockSize ( ) ;
+//    IOLOG_DEBUG("%s[%p]::%s - blockSize is %llu\n",  getName(), this, __FUNCTION__, blockSize);
+//    unsigned long long blockCount  = ReportMediumTotalBlockCount ( ) ;
+//    IOLOG_DEBUG("%s[%p]::%s - blockCount is %llu\n",  getName(), this, __FUNCTION__, blockCount);
+    unsigned long long blockSize = 0;
+    unsigned long long blockCount = 0;
+    bool determined = DetermineMediumCapacity (&blockSize, &blockCount);
+    IOLOG_DEBUG("%s[%p]::%s - DetermineMediumCapacity returned %s",
+                getName(), this, __FUNCTION__, determined ? "true" : "false");
+    IOLOG_DEBUG("%s[%p]::%s - blockSize is %llu\n",  getName(), this, __FUNCTION__, blockSize);
+    IOLOG_DEBUG("%s[%p]::%s - blockCount is %llu\n",  getName(), this, __FUNCTION__, blockCount);
+    di.devSize = blockSize * blockCount;
+    IOLOG_DEBUG("%s[%p]::%s - di.devSize set to %llu\n",  getName(), this, __FUNCTION__, di.devSize);
 }
 
 // IOSCSIPrimaryBlockCommandsDevice method
@@ -282,7 +315,7 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID interfaceDeviceIden
 
 #if defined(USE_INQUIRY_PAGE_80h)
     if (deviceSupportsPage80) {
-        if (deviceIsPage80SCSI(di)) {
+        if (deviceIsPage80SCSI(interfaceDeviceIdentification, di)) {
             IOLOG_DEBUG("%s[%p]::%s Device is Page 80 SCSI", getName(), this, __FUNCTION__);
         } else  {
             IOLOG_DEBUG("%s[%p]::%s Device is not Page 80 SCSI", getName(), this, __FUNCTION__);
@@ -328,21 +361,6 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID interfaceDeviceIden
     deviceIsPageXXSCSI(kINQUIRY_PageC1_PageCode, IOInquiryPageC1ResponseKey);
 #endif
     
-    // Random fixups
-    // Samsung PSSD 7 has serial number reversed.  Other devices?
-    // TODO: Unify with InterfaceDeviceID interfaceDeviceIdentification matching
-    if (0==strcmp((const char *)di.vendorName, "Samsung") &&
-        0==strcmp((const char *)di.modelNum, "PSSD T7")) {
-        size_t n = strlen((const char *)(di.serialNum));
-        if (1<n) {
-            uint8_t temp;
-            for (uint8_t * p = di.serialNum, * q = p + n - 1 ; p<q; p++,--q) {
-                temp = *p;
-                *p = *q;
-                *q = temp;
-            }
-        }
-    }
 
     return true;
 }
@@ -433,15 +451,13 @@ bool DriverClass::deviceIsTPer_SAT(const InterfaceDeviceID interfaceDeviceIdenti
 
     // We are short-circuiting all the careful checking below when we have a known interface
     // device, particularly one that incorrectly fails to claim to be a TPer.
-    for (size_t i = 0; i < nTperOverrides; i++) {
-        if (idMatches(interfaceDeviceIdentification, tperOverrides[i].value, tperOverrides[i].mask)) {
-            IOLOG_DEBUG("%s[%p]::%s *** interface device ID matches tperOverride entry", getName(), this, __FUNCTION__);
-            if (kIOReturnSuccess == updatePropertiesInIORegistry_SAT(di)) {
-                IOLOG_DEBUG("%s[%p]::%s *** level 0 discovery worked", getName(), this, __FUNCTION__);
-                return true;
-            }
-            IOLOG_DEBUG("%s[%p]::%s *** despite matching tperOverride entry, level 0 discovery did not work", getName(), this, __FUNCTION__);
+    if (0 != (tryUnjustifiedLevel0Discovery & actionForID(interfaceDeviceIdentification))) {
+        IOLOG_DEBUG("%s[%p]::%s *** interface device ID matches tperOverride entry", getName(), this, __FUNCTION__);
+        if (kIOReturnSuccess == updatePropertiesInIORegistry_SAT(di)) {
+            IOLOG_DEBUG("%s[%p]::%s *** tperOverride level 0 discovery worked", getName(), this, __FUNCTION__);
+            return true;
         }
+        IOLOG_DEBUG("%s[%p]::%s *** despite matching tperOverride entry, level 0 discovery did not work", getName(), this, __FUNCTION__);
     }
 
 #if defined(UNJUSTIFIED_LEVEL_0_DISCOVERY)
@@ -585,23 +601,7 @@ OSDictionary * DriverClass::parseInquiryStandardDataAllResponse( const unsigned 
                                                             + kINQUIRY_PRODUCT_IDENTIFICATION_Length
                                                             + kINQUIRY_PRODUCT_REVISION_LEVEL_Length);
 
-//    uint8_t vendorName[sizeof(resp->VENDOR_IDENTIFICATION)+1];
-//    memcpy(vendorName, resp->VENDOR_IDENTIFICATION, sizeof(resp->VENDOR_IDENTIFICATION));
-//    vendorName[sizeof(resp->VENDOR_IDENTIFICATION)] = 0;
-//    memcpy(di.vendorName, resp->VENDOR_IDENTIFICATION, sizeof(resp->VENDOR_IDENTIFICATION));
-//
-//    uint8_t firmwareRevision[sizeof(resp->PRODUCT_REVISION_LEVEL)+1];
-//    memcpy(firmwareRevision, resp->PRODUCT_REVISION_LEVEL, sizeof(resp->PRODUCT_REVISION_LEVEL));
-//    firmwareRevision[sizeof(resp->PRODUCT_REVISION_LEVEL)] = 0;
-//    memcpy(di.firmwareRev, resp->PRODUCT_REVISION_LEVEL, sizeof(resp->PRODUCT_REVISION_LEVEL));
-//
-//
-//    uint8_t modelNumber[sizeof(resp->PRODUCT_IDENTIFICATION)+1];
-//    memcpy(modelNumber, resp->PRODUCT_IDENTIFICATION, sizeof(resp->PRODUCT_IDENTIFICATION));
-//    modelNumber[sizeof(resp->PRODUCT_IDENTIFICATION)] = 0;
-//    memcpy(di.modelNum, resp->PRODUCT_IDENTIFICATION, sizeof(resp->PRODUCT_IDENTIFICATION));
-
-    GetDeviceStringsFromIORegistry(di);
+    GetDeviceInfoFromIORegistry(di);
 
     const OSObject * objects[4];
     const OSSymbol * keys[4];
@@ -746,7 +746,7 @@ OSDictionary * DriverClass::parseInquiryPage00Response(const unsigned char * res
 #pragma mark -
 #pragma mark Inquiry Page 80h
 
-bool DriverClass::deviceIsPage80SCSI(DTA_DEVICE_INFO &di)
+bool DriverClass::deviceIsPage80SCSI(InterfaceDeviceID interfaceDeviceIdentification, DTA_DEVICE_INFO &di)
 {
     // Test whether device is a SCSI drive by attempting
     // SCSI Inquiry command
@@ -764,7 +764,7 @@ bool DriverClass::deviceIsPage80SCSI(DTA_DEVICE_INFO &di)
             setProperty(IOInquiryPage80ResponseKey, inquiryResponse, (unsigned int)transferSize);
 #endif // DEBUG
             OSDictionary * characteristics =
-                parseInquiryPage80Response(static_cast <const unsigned char * >(inquiryResponse), di);
+                parseInquiryPage80Response(static_cast <const unsigned char * >(inquiryResponse), interfaceDeviceIdentification, di);
 #if DEBUG
             setProperty(IOInquiryPage80CharacteristicsKey, characteristics);
 #endif // DEBUG
@@ -787,14 +787,30 @@ IOReturn DriverClass::inquiryPage80_SCSI( IOBufferMemoryDescriptor * md)
 }
 
 
-OSDictionary * DriverClass::parseInquiryPage80Response( const unsigned char * response, DTA_DEVICE_INFO & di)
+OSDictionary * DriverClass::parseInquiryPage80Response( const unsigned char * response, InterfaceDeviceID interfaceDeviceIdentification, DTA_DEVICE_INFO & di)
 {
     SCSICmd_INQUIRY_Page80_Header *resp = (SCSICmd_INQUIRY_Page80_Header *)response;
 
     uint8_t serialNumber[257];
     bzero(serialNumber, sizeof(serialNumber));
     memcpy(serialNumber, &resp->PRODUCT_SERIAL_NUMBER, resp->PAGE_LENGTH);
+    if (0 != (reverseInquiryPage80SerialNumber & actionForID(interfaceDeviceIdentification))) {
+        IOLOG_DEBUG("%s[%p]::%s *** reversing Inquiry Page80 serial number", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG("%s[%p]::%s Inquiry Page80 serial number was %s", getName(), this, __FUNCTION__, serialNumber);
+
+        size_t n = strlen((const char *)(serialNumber));
+        if ( 1 < n ) {
+            uint8_t temp;
+            for (uint8_t * p = serialNumber, * q = p + n - 1 ; p<q; p++,--q) {
+                temp = *p;
+                *p = *q;
+                *q = temp;
+            }
+        }
+    }
+    IOLOG_DEBUG("%s[%p]::%s Inquiry Page80 serial number is %s", getName(), this, __FUNCTION__, serialNumber);
     memcpy(di.serialNum, serialNumber, sizeof(di.serialNum));
+
 
     const OSObject * objects[2];
     const OSSymbol * keys[2];

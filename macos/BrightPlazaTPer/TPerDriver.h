@@ -63,7 +63,7 @@ private:
     //
     // Initialization functions
     //
-    void GetDeviceStringsFromIORegistry(DTA_DEVICE_INFO &di);
+    void GetDeviceInfoFromIORegistry(DTA_DEVICE_INFO &di);
     
     void updateIORegistryFromD0Response(const uint8_t * d0Response, DTA_DEVICE_INFO & di);
 
@@ -95,9 +95,11 @@ private:
 
 #define USE_INQUIRY_PAGE_80h
 #if defined(USE_INQUIRY_PAGE_80h)
-    bool deviceIsPage80SCSI(DTA_DEVICE_INFO &di);
+    bool deviceIsPage80SCSI(InterfaceDeviceID interfaceDeviceIdentification, DTA_DEVICE_INFO &di);
     IOReturn inquiryPage80_SCSI( IOBufferMemoryDescriptor * md );
-    OSDictionary * parseInquiryPage80Response( const unsigned char * response, DTA_DEVICE_INFO & di);
+    OSDictionary * parseInquiryPage80Response( const unsigned char * response,
+                                               InterfaceDeviceID interfaceDeviceIdentification,
+                                               DTA_DEVICE_INFO & di);
 #endif // defined(USE_INQUIRY_PAGE_80h)
 
 
