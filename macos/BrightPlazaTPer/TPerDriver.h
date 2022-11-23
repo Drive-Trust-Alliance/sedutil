@@ -63,7 +63,7 @@ private:
     //
     // Initialization functions
     //
-    void GetDeviceInfoFromIORegistry(DTA_DEVICE_INFO &di);
+    void GetDeviceInfo(DTA_DEVICE_INFO &di);
     
     void updateIORegistryFromD0Response(const uint8_t * d0Response, DTA_DEVICE_INFO & di);
 

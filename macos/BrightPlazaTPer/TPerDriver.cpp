@@ -49,7 +49,10 @@ bool DriverClass::start(IOService* provider)
     return ret;
 }
 
-void DriverClass::GetDeviceInfoFromIORegistry(DTA_DEVICE_INFO &di) {
+// Fill in di as much as possible using methods of this
+// class and its superclasses
+//
+void DriverClass::GetDeviceInfo(DTA_DEVICE_INFO &di) {
     char * v = GetVendorString ( );
     if (v != NULL) {
         strlcpy((char *)di.vendorName, v, sizeof(di.vendorName));
@@ -68,7 +71,8 @@ void DriverClass::GetDeviceInfoFromIORegistry(DTA_DEVICE_INFO &di) {
         IOLOG_DEBUG("%s[%p]::%s - di.firmwareRev set to \"%s\"\n",
                     getName(), this, __FUNCTION__, di.firmwareRev);
     }
-
+    
+   
     unsigned long long blockSize = 0;
     unsigned long long blockCount = 0;
     __unused bool determined = DetermineMediumCapacity (&blockSize, &blockCount);
@@ -254,7 +258,7 @@ IOReturn DriverClass::updatePropertiesInIORegistry( void )
     if (NULL == it)
         return kIOReturnUnsupported;
     else {
-        const char * interfaceType = OSRequiredCast(OSString, it)->getCStringNoCopy();
+        const char * interfaceType = (OSRequiredCast(OSString, it))->getCStringNoCopy();
         if (NULL == interfaceType)
             return kIOReturnUnsupported;
         DTA_DEVICE_INFO di;
@@ -409,6 +413,7 @@ bool DriverClass::deviceIsSAT(DTA_DEVICE_INFO &di, OSDictionary ** pIdentifyChar
                                 getName(), this, __FUNCTION__);
                 }
             }
+            
 #if DEBUG
             setProperty(IOIdentifyDeviceResponseKey, identifyResponse, IDENTIFY_RESPONSE_SIZE);
 #endif // DEBUG
@@ -587,7 +592,7 @@ OSDictionary * DriverClass::parseInquiryStandardDataAllResponse( const unsigned 
                                                             + kINQUIRY_PRODUCT_IDENTIFICATION_Length
                                                             + kINQUIRY_PRODUCT_REVISION_LEVEL_Length);
 
-    GetDeviceInfoFromIORegistry(di);
+    GetDeviceInfo(di);
 
     const OSObject * objects[4];
     const OSSymbol * keys[4];
@@ -907,8 +912,9 @@ OSDictionary * DriverClass::parseInquiryPage83Response( const unsigned char * re
                 break;
             case desc_type(kINQUIRY_Page83_CodeSetASCIIData, kINQUIRY_Page83_IdentifierTypeVendorID):
             {
-                OSString * VendorID = OSString::withCString(reinterpret_cast<const char *>(&desc.IDENTIFIER),
-                                                            identifier_length);
+                OSString * VendorID = OSString::withCString(reinterpret_cast<const char *>(&desc.IDENTIFIER)
+//                                                            , identifier_length
+                                                            );
                 result->setObject(IOVendorIDKey, VendorID);
                 VendorID -> release();
                 // We already get Vendor Name and Serial Number using superclass methods
@@ -1442,8 +1448,8 @@ OSDictionary * DriverClass::parseIdentifyResponse( const unsigned char * respons
 
     parseATIdentifyResponse(&resp, &di);
 
-    const OSObject * objects[6];
-    const OSSymbol * keys[6];
+    const OSObject * objects[7];
+    const OSSymbol * keys[7];
 
     objects[0] = OSNumber::withNumber( (unsigned long long)(resp.TCGOptions[1]<<8 | resp.TCGOptions[0]), 16);
     keys[0]    = OSSymbol::withCString( IOTCGOptionsKey );
@@ -1462,6 +1468,11 @@ OSDictionary * DriverClass::parseIdentifyResponse( const unsigned char * respons
 
     objects[5] = OSData::withBytes((const void *)di.worldWideName, sizeof(di.worldWideName));
     keys[5]    = OSSymbol::withCString( IOWorldWideNameKey );
+    
+    if (0==strlen((const char *)di.vendorName)) {
+        
+    }
+#define IOVendorNameKey                 "Vendor Name"
 
     OSDictionary * result = OSDictionary::withObjects(objects, keys, 6, 6);
 

@@ -580,7 +580,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx;
+				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -749,7 +749,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx;
+				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = "Release Bonjour Multistart";
@@ -918,7 +918,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx;
+				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -1090,7 +1090,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx;
+				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -1263,7 +1263,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx;
+				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -1429,7 +1429,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx;
+				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = "Release Bonjour";
@@ -1592,7 +1592,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx;
+				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = "Release Bluetooth";
@@ -1758,7 +1758,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx;
+				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = "Release Bonjour and Bluetooth";
@@ -1924,7 +1924,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx;
+				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -2026,7 +2026,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx;
+				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
