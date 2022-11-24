@@ -778,6 +778,19 @@ IOReturn DriverClass::inquiryPage80_SCSI( IOBufferMemoryDescriptor * md)
 }
 
 
+static void strrev(char *serialNumber) {
+    size_t n = strlen(const_cast<const char *>(serialNumber));
+    if ( 1 < n ) {
+        char temp  ,  * p = serialNumber  ,  * q = p + n - 1 ;
+        do {
+            // Alternatively, *q ^= *p ; *p ^= *q ; *q ^= *p;
+            temp = *p;
+            *p = *q;
+            *q = temp;
+        } while (++p<--q) ;
+    }
+}
+
 OSDictionary * DriverClass::parseInquiryPage80Response( const unsigned char * response, InterfaceDeviceID interfaceDeviceIdentification, DTA_DEVICE_INFO & di)
 {
     SCSICmd_INQUIRY_Page80_Header *resp = (SCSICmd_INQUIRY_Page80_Header *)response;
@@ -788,16 +801,7 @@ OSDictionary * DriverClass::parseInquiryPage80Response( const unsigned char * re
     if (0 != (reverseInquiryPage80SerialNumber & actionForID(interfaceDeviceIdentification))) {
         IOLOG_DEBUG("%s[%p]::%s *** reversing Inquiry Page80 serial number", getName(), this, __FUNCTION__);
         IOLOG_DEBUG("%s[%p]::%s Inquiry Page80 serial number was %s", getName(), this, __FUNCTION__, serialNumber);
-
-        size_t n = strlen((const char *)(serialNumber));
-        if ( 1 < n ) {
-            uint8_t temp;
-            for (uint8_t * p = serialNumber, * q = p + n - 1 ; p<q; p++,--q) {
-                temp = *p;
-                *p = *q;
-                *q = temp;
-            }
-        }
+        strrev((char *)serialNumber);
     }
     IOLOG_DEBUG("%s[%p]::%s Inquiry Page80 serial number is %s", getName(), this, __FUNCTION__, serialNumber);
     memcpy(di.serialNum, serialNumber, sizeof(di.serialNum));
