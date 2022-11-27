@@ -27,6 +27,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <SEDKernelInterface/SEDKernelInterface.h>
 #include "DtaDevMacOSTPer.h"
+#include "oui.hpp"
+#include "t10_vendorid.hpp"
 
 // Some macros to access the properties dicts and values
 #define GetBool(dict,name) (CFBooleanRef)CFDictionaryGetValue(dict, CFSTR(name))
@@ -288,7 +290,7 @@ const DTA_DEVICE_INFO & DtaDevMacOSBlockStorageDevice::device_info() {
 #if defined(TRY_SMART_LIBS)
 void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(io_service_t aBlockStorageDevice) {
 #else // !defined(TRY_SMART_LIBS)
-    void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info() {
+void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info() {
 #endif // defined(TRY_SMART_LIBS)
         if (pdevice_info == NULL)
             return;
@@ -361,6 +363,7 @@ void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(io_service
         }
 #endif // defined(TRY_SMART_LIBS)
         
+// TODO: ??
 #define HACK_MODELNUM_WITH_VENDORNAME
 #if defined(HACK_MODELNUM_WITH_VENDORNAME)
         if (device_info.devType == DEVICE_TYPE_USB )
@@ -395,7 +398,8 @@ void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(io_service
     
     
     // Sorting order
-    bool DtaDevMacOSBlockStorageDevice::bsdNameLessThan(DtaDevMacOSBlockStorageDevice * a, DtaDevMacOSBlockStorageDevice * b) {
+    bool DtaDevMacOSBlockStorageDevice::bsdNameLessThan(DtaDevMacOSBlockStorageDevice * a,
+                                                        DtaDevMacOSBlockStorageDevice * b) {
         const string & aName = a->bsdName;
         const string & bName = b->bsdName;
         const auto aNameLength = aName.length();
@@ -424,7 +428,8 @@ void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(io_service
     }
     
     
-    std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enumerateBlockStorageDevices() {
+    std::vector<DtaDevMacOSBlockStorageDevice *>
+    DtaDevMacOSBlockStorageDevice::enumerateBlockStorageDevices() {
         std::vector<DtaDevMacOSBlockStorageDevice *>devices;
         io_iterator_t iterator = findMatchingServices(kIOBlockStorageDeviceClass);
         io_service_t aBlockStorageDevice;
@@ -529,12 +534,13 @@ void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(io_service
     
     // Factory for this class or subclass instances
 #if defined(TRY_SMART_LIBS)
-    DtaDevMacOSBlockStorageDevice * DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageDevice,
-                                                                                         std::string entryName,
-                                                                                         std::string bsdName,
-                                                                                         CFDictionaryRef properties,
-                                                                                         DTA_DEVICE_INFO * pdi) {
-        
+    DtaDevMacOSBlockStorageDevice *
+    DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageDevice,
+                                                         std::string entryName,
+                                                         std::string bsdName,
+                                                         CFDictionaryRef properties,
+                                                         DTA_DEVICE_INFO * pdi) {
+    
         CFDictionaryRef tPerProperties = GetPropertiesDict("TPer");
         if (NULL != tPerProperties)
             return DtaDevMacOSTPer::getTPer(aBlockStorageDevice, entryName, bsdName, tPerProperties, properties, pdi);
@@ -542,11 +548,12 @@ void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(io_service
             return new DtaDevMacOSBlockStorageDevice(aBlockStorageDevice, entryName, bsdName, properties, pdi);
     }
 #else // !defined(TRY_SMART_LIBS)
-    DtaDevMacOSBlockStorageDevice * DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(std::string entryName,
-                                                                                         std::string bsdName,
-                                                                                         CFDictionaryRef properties,
-                                                                                         DTA_DEVICE_INFO * pdi) {
-        
+    DtaDevMacOSBlockStorageDevice *
+    DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(std::string entryName,
+                                                         std::string bsdName,
+                                                         CFDictionaryRef properties,
+                                                         DTA_DEVICE_INFO * pdi) {
+    
         CFDictionaryRef tPerProperties = GetPropertiesDict("TPer");
         if (NULL != tPerProperties)
             return DtaDevMacOSTPer::getTPer(entryName, bsdName, tPerProperties, properties, pdi);
@@ -555,9 +562,10 @@ void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(io_service
     }
 #endif // defined(TRY_SMART_LIBS)
     
-    DtaDevMacOSBlockStorageDevice * DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageDevice,
-                                                                                         const char *devref,
-                                                                                         DTA_DEVICE_INFO *pdi) {
+    DtaDevMacOSBlockStorageDevice *
+    DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageDevice,
+                                                         const char *devref,
+                                                         DTA_DEVICE_INFO *pdi) {
         DtaDevMacOSBlockStorageDevice * foundDevice = nil;
         io_service_t tPer;
         io_service_t media;
@@ -645,7 +653,8 @@ void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info(io_service
         return foundDevice;
     }
     
-    DtaDevMacOSBlockStorageDevice * DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(const char * devref, DTA_DEVICE_INFO * pdi)
+    DtaDevMacOSBlockStorageDevice *
+    DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(const char * devref, DTA_DEVICE_INFO * pdi)
     {
         DtaDevMacOSBlockStorageDevice * foundDevice = NULL;
         io_iterator_t iterator = findMatchingServices(kIOBlockStorageDeviceClass);

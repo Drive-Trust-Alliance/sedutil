@@ -580,7 +580,9 @@ typedef struct _DTA_DEVICE_INFO {
     uint8_t physicalInterconnect[8];
     uint8_t null4;  // make physical Interconnect a cstring
     uint8_t physicalInterconnectLocation[12];
-    uint8_t null5;  // make physical Interconnect Location a cstring
+    uint8_t null5;  // make physical Interconnect a cstring
+    uint8_t manufacturerName[128];
+    uint8_t null6;  // make physical Interconnect Location a cstring
 
     uint8_t worldWideName[8];    // bytes, not a cstring
 	
