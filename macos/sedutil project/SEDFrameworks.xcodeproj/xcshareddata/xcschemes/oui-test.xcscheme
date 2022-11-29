@@ -53,7 +53,23 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
+            argument = "D003DF"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "149F3C"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "745F00"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "DECAFF"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "20DBAB"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

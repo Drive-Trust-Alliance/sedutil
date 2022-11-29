@@ -414,7 +414,6 @@
 		D2E6FE7F2935E08D00DAB209 /* oui */ = {
 			isa = PBXGroup;
 			children = (
-				D2E6FE9C2935E19700DAB209 /* Info.plist */,
 				D2E6FE802935E08D00DAB209 /* get_vendorid */,
 				D2E6FE812935E08D00DAB209 /* oui.docc */,
 				D2E6FE822935E08D00DAB209 /* CStringMap.hpp */,
@@ -429,6 +428,7 @@
 				D2E6FE8B2935E08D00DAB209 /* t10_vendorid.cpp */,
 				D2E6FE8C2935E08D00DAB209 /* oui.txt */,
 				D2E6FE8D2935E08D00DAB209 /* oui.inc */,
+				D2E6FE9C2935E19700DAB209 /* Info.plist */,
 			);
 			name = oui;
 			path = ../../../../DTA/oui;
