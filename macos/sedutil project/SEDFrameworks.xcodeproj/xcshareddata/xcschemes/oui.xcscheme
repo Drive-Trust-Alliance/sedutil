@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D23720A8201D012500F4F531"
-               BuildableName = "liboui.a"
+               BlueprintIdentifier = "D2941F4E29354E8B00F7F8EE"
+               BuildableName = "oui.framework"
                BlueprintName = "oui"
-               ReferencedContainer = "container:../../../../DTA/sedutilgui/mac/Clients/iSED/iSED.xcodeproj">
+               ReferencedContainer = "container:SEDFrameworks.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D23720A8201D012500F4F531"
-            BuildableName = "liboui.a"
+            BlueprintIdentifier = "D2941F4E29354E8B00F7F8EE"
+            BuildableName = "oui.framework"
             BlueprintName = "oui"
-            ReferencedContainer = "container:../../../../DTA/sedutilgui/mac/Clients/iSED/iSED.xcodeproj">
+            ReferencedContainer = "container:SEDFrameworks.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

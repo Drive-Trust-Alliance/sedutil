@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D2805C672933FB1A00040C98"
+               BlueprintIdentifier = "D2E6FEA22935E67800DAB209"
                BuildableName = "oui-test"
                BlueprintName = "oui-test"
                ReferencedContainer = "container:SEDFrameworks.xcodeproj">
@@ -45,25 +45,13 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D2805C672933FB1A00040C98"
+            BlueprintIdentifier = "D2E6FEA22935E67800DAB209"
             BuildableName = "oui-test"
             BlueprintName = "oui-test"
             ReferencedContainer = "container:SEDFrameworks.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
-         <CommandLineArgument
-            argument = "001DF6"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "745F00"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "D0D003"
-            isEnabled = "YES">
-         </CommandLineArgument>
          <CommandLineArgument
             argument = "DECAFF"
             isEnabled = "YES">
@@ -80,7 +68,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D2805C672933FB1A00040C98"
+            BlueprintIdentifier = "D2E6FEA22935E67800DAB209"
             BuildableName = "oui-test"
             BlueprintName = "oui-test"
             ReferencedContainer = "container:SEDFrameworks.xcodeproj">
