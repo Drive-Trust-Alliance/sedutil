@@ -5586,7 +5586,7 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 {
 	uint8_t lastRC;
     DTA_Header * hdr = (DTA_Header *) cmd->getCmdBuffer();
-	LOG(D) << "Entering DtaDevOpal::exec" << dev;
+	LOG(D) << "Entering DtaDevOpal::exec " << dev;
     LOG(D3) << endl << "Dumping command buffer";
     IFLOG(D) DtaHexDump(cmd->getCmdBuffer(), SWAP32(hdr->cp.length) + sizeof (DTA_ComPacketHeader));
 	LOG(D) << "Entering DtaDevOpal::exec sendCmd(IF_SEND, IO_BUFFER_LENGTH)";
