@@ -6,11 +6,14 @@
 //
 //
 
-#include "oui.hpp"
-#include "t10_vendorid.hpp"
+#include "oui_vendor.hpp"
 #include <iostream>
 
-static const char * vendorID_for_oui_canonically_if_necessary(const char *oui) {
+//
+// Per oui_vendor, but with descriptive output to std::cout and std::err
+//
+
+static const char * vendorID_for_oui_canonically_if_necessary__INSTRUMENTED(const char *oui) {
     CString_Lookup_Table::const_iterator pManufacturer = manufacturer_for_oui.find(oui);
     if (pManufacturer == manufacturer_for_oui.end()) {
         std::cerr << oui << " *** not found ***"  << std::endl;
@@ -48,7 +51,7 @@ static const char * vendorID_for_oui_canonically_if_necessary(const char *oui) {
 }
 
 
-static const char * oui_for_vendorID_canonically_if_necessary(const char *vendorID) {
+static const char * oui_for_vendorID_canonically_if_necessary__INSTRUMENTED(const char *vendorID) {
     CString_Lookup_Table::const_iterator pVendor = vendor_for_vendorID.find(vendorID);
     if (pVendor == vendor_for_vendorID.end()) {
         std::cerr << vendorID << " *** not found ***"  << std::endl;
@@ -85,13 +88,15 @@ static const char * oui_for_vendorID_canonically_if_necessary(const char *vendor
     return NULL;
 }
 
+
 int main(int argc, const char * argv[]) {
     bool thereHaveBeenErrors = false;
     for (int i=1; i<argc; std::cout << std::endl, i++) {
-        const char * vendorID = vendorID_for_oui_canonically_if_necessary(argv[i]);
+        const char * vendorID = vendorID_for_oui_canonically_if_necessary__INSTRUMENTED(argv[i]);
         if (vendorID != NULL) {
-            const char * oui = oui_for_vendorID_canonically_if_necessary(vendorID);
+            const char * oui = oui_for_vendorID_canonically_if_necessary__INSTRUMENTED(vendorID);
             if (oui != NULL) {
+                assert( 0 == strcmp(oui, oui_for_vendorID_canonically_if_necessary(vendorID)) );
                 continue;
             }
         }

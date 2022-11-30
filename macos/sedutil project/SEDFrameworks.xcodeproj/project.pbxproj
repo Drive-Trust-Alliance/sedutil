@@ -11,6 +11,8 @@
 		D21949EE28D7D02D00900FA2 /* DtaAudit.h in Headers */ = {isa = PBXBuildFile; fileRef = D21949ED28D7D02D00900FA2 /* DtaAudit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D22369B928D686C400D7D851 /* sedutil.h in Headers */ = {isa = PBXBuildFile; fileRef = D2D1379E28B55C14003FD51F /* sedutil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2466AF328B5876C009F55D9 /* DtaDevOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D2466A4B28B585F8009F55D9 /* DtaDevOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D263209A2937F65500F0927B /* oui_vendor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D26320982937F65500F0927B /* oui_vendor.cpp */; };
+		D263209B2937F65500F0927B /* oui_vendor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D26320992937F65500F0927B /* oui_vendor.hpp */; };
 		D271A1FB28054AFE00BF043A /* DtaStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F528054AFD00BF043A /* DtaStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D271A1FC28054AFE00BF043A /* DtaDev.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F628054AFD00BF043A /* DtaDev.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D271A1FD28054AFE00BF043A /* DtaOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F728054AFD00BF043A /* DtaOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -146,6 +148,8 @@
 		D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SEDKernelInterface.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2466A4528B58518009F55D9 /* os.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = os.h; path = ../os.h; sourceTree = "<group>"; };
 		D2466A4B28B585F8009F55D9 /* DtaDevOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaDevOS.h; sourceTree = "<group>"; };
+		D26320982937F65500F0927B /* oui_vendor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = oui_vendor.cpp; sourceTree = "<group>"; };
+		D26320992937F65500F0927B /* oui_vendor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = oui_vendor.hpp; sourceTree = "<group>"; };
 		D271A1F528054AFD00BF043A /* DtaStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaStructures.h; sourceTree = "<group>"; };
 		D271A1F628054AFD00BF043A /* DtaDev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDev.h; sourceTree = "<group>"; };
 		D271A1F728054AFD00BF043A /* DtaOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
@@ -429,6 +433,8 @@
 				D2E6FE8C2935E08D00DAB209 /* oui.txt */,
 				D2E6FE8D2935E08D00DAB209 /* oui.inc */,
 				D2E6FE9C2935E19700DAB209 /* Info.plist */,
+				D26320982937F65500F0927B /* oui_vendor.cpp */,
+				D26320992937F65500F0927B /* oui_vendor.hpp */,
 			);
 			name = oui;
 			path = ../../../../DTA/oui;
@@ -493,6 +499,7 @@
 			files = (
 				D2E6FE932935E08D00DAB209 /* oui.h in Headers */,
 				D2E6FE902935E08D00DAB209 /* CStringMap.hpp in Headers */,
+				D263209B2937F65500F0927B /* oui_vendor.hpp in Headers */,
 				D2E6FE972935E08E00DAB209 /* oui.hpp in Headers */,
 				D2E6FE952935E08D00DAB209 /* t10_vendorid.hpp in Headers */,
 			);
@@ -813,6 +820,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D2E6FE992935E08E00DAB209 /* t10_vendorid.cpp in Sources */,
+				D263209A2937F65500F0927B /* oui_vendor.cpp in Sources */,
 				D2E6FE942935E08D00DAB209 /* oui.cpp in Sources */,
 				D2E6FE8F2935E08D00DAB209 /* oui.docc in Sources */,
 			);
@@ -2352,6 +2360,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -2376,6 +2385,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bonjour and Bluetooth";
@@ -2400,6 +2410,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bluetooth";
@@ -2424,6 +2435,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bonjour";
@@ -2448,6 +2460,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bonjour Multistart";
@@ -2467,6 +2480,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -2486,6 +2500,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bonjour";
@@ -2505,6 +2520,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bonjour Multistart";
@@ -2524,6 +2540,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bluetooth";
@@ -2543,6 +2560,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bonjour and Bluetooth";
