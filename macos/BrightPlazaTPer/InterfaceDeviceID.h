@@ -24,21 +24,31 @@ typedef unsigned char InterfaceDeviceID[kINQUIRY_VENDOR_IDENTIFICATION_Length +
                                         kINQUIRY_PRODUCT_IDENTIFICATION_Length +
                                         kINQUIRY_PRODUCT_REVISION_LEVEL_Length];
 
-typedef enum TperOverrideSpecialAction {
-    tryUnjustifiedLevel0Discovery = 0x0001,
-    
-    reverseInquiryPage80SerialNumber    = 0x0100,
-    
-    noSpecialAction               = 0x0000,
-} TperOverrideSpecialAction;
+typedef enum TPerOverrides {
+    // SCSI hacks
+    reverseInquiryPage80SerialNumber    =  0,
 
+    
+    // SAT (SCSI-passthrough) hacks
+    tryUnjustifiedLevel0Discovery       =  8,
+    splitVendorNameFromModelNumber      =  9,
+
+    
+    noSpecialActions                     = 0x0000,
+} TPerOverrides;
+
+typedef uint16_t TPerOverrideActions;
 typedef struct tperOverrideEntry {
     InterfaceDeviceID value;
     InterfaceDeviceID mask;
-    TperOverrideSpecialAction action;
+    TPerOverrideActions actions;
 } tperOverrideEntry;
 
 extern tperOverrideEntry tperOverrides[];
-extern size_t nTperOverrides;
-bool idMatches(const InterfaceDeviceID id, const InterfaceDeviceID value, const InterfaceDeviceID mask);
-TperOverrideSpecialAction actionForID(const InterfaceDeviceID id);
+extern const size_t nTperOverrides;
+bool idMatches(const InterfaceDeviceID id,
+               const InterfaceDeviceID value,
+               const InterfaceDeviceID mask);
+TPerOverrideActions actionsForID(const InterfaceDeviceID id);
+bool deviceNeedsSpecialAction(const InterfaceDeviceID interfaceDeviceIdentification,
+                              TPerOverrides action);

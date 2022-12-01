@@ -49,7 +49,8 @@ tperOverrideEntry tperOverrides[] =
         { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, //  |XXXXXXXXXXXXXXXX|
           0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00                          //  |XXXX________|
         },  // mask
-        tryUnjustifiedLevel0Discovery // action
+        (1 << tryUnjustifiedLevel0Discovery) |
+        (1 << splitVendorNameFromModelNumber  )  // actions
     },
     
     {
@@ -59,19 +60,20 @@ tperOverrideEntry tperOverrides[] =
         { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, //  |XXXXXXXXXXXXXXX_|
           0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00                          //  |____________|
         },  // mask
-        reverseInquiryPage80SerialNumber // action 
+        (1 << reverseInquiryPage80SerialNumber)   // actions
     },
-    
-
-
-
     
 };
 
-size_t nTperOverrides = sizeof(tperOverrides) / sizeof(tperOverrides[0]);
+const size_t nTperOverrides = sizeof(tperOverrides) / sizeof(tperOverrides[0]);
 
-bool idMatches(const InterfaceDeviceID id, const InterfaceDeviceID value, const InterfaceDeviceID mask) {
-    for (const unsigned char * pid = id, * pvalue = value, * pmask = mask, * pend = pid + sizeof(InterfaceDeviceID);
+bool idMatches(const InterfaceDeviceID id,
+               const InterfaceDeviceID value,
+               const InterfaceDeviceID mask) {
+    for (const unsigned char * pid = id,
+                             * pvalue = value,
+                             * pmask = mask,
+                             * pend = pid + sizeof(InterfaceDeviceID);
          pid < pend ;
          pid ++ , pvalue ++ , pmask ++ )
         if (0 != (((*pid)^(*pvalue)) & (*pmask)))
@@ -79,11 +81,19 @@ bool idMatches(const InterfaceDeviceID id, const InterfaceDeviceID value, const 
     return true;
 }
 
-TperOverrideSpecialAction actionForID(const InterfaceDeviceID interfaceDeviceIdentification) {
+TPerOverrideActions actionsForID(const InterfaceDeviceID interfaceDeviceIdentification) {
     for (size_t i = 0; i < nTperOverrides; i++) {
-        if (idMatches(interfaceDeviceIdentification, tperOverrides[i].value, tperOverrides[i].mask)) {
-            return tperOverrides[i].action;
+        if (idMatches(interfaceDeviceIdentification,
+                      tperOverrides[i].value,
+                      tperOverrides[i].mask)) {
+            return tperOverrides[i].actions;
         }
     }
-    return noSpecialAction;
+    return noSpecialActions;
+}
+
+
+bool deviceNeedsSpecialAction(const InterfaceDeviceID interfaceDeviceIdentification,
+                              TPerOverrides action) {
+    return 0 != ((1 << action) & actionsForID(interfaceDeviceIdentification));
 }

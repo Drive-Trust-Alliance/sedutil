@@ -567,25 +567,36 @@ typedef struct _DTA_DEVICE_INFO {
 
 
     // IDENTIFY information
-    uint64_t devSize;
+
     DTA_DEVICE_TYPE devType;
+    
     uint8_t serialNum[20];
-	uint8_t null0;  // make serialNum a cstring
+	uint8_t serialNumNull;  // make serialNum a cstring
+
     uint8_t firmwareRev[8];
-	uint8_t null1;  // make firmware rev a cstring
+	uint8_t firmwareRevNull;  // make firmware rev a cstring
+
     uint8_t modelNum[40];
-	uint8_t null2;  // make model number a cstring
+	uint8_t modelNumNull;  // make model number a cstring
+
     uint8_t vendorName[8];
-    uint8_t null3;  // make vendor Name a cstring
-    uint8_t physicalInterconnect[8];
-    uint8_t null4;  // make physical Interconnect a cstring
-    uint8_t physicalInterconnectLocation[12];
-    uint8_t null5;  // make physical Interconnect a cstring
+    uint8_t vendorNameNull;  // make vendor Name a cstring
+
     uint8_t manufacturerName[128];
-    uint8_t null6;  // make physical Interconnect Location a cstring
+    uint8_t manufacturerNameNull;  // make manufacturer name a cstring
 
     uint8_t worldWideName[8];    // bytes, not a cstring
-	
+
+    uint64_t devSize;
+
+
+    // Physical interconnection information
+    uint8_t physicalInterconnect[8];
+    uint8_t physicalInterconnectNull;  // make physical Interconnect a cstring
+    uint8_t physicalInterconnectLocation[12];
+    uint8_t physicalInterconnectLocationNull;  // make physical Interconnect Location a cstring
+
+
     uint8_t fips; // FIPS Approval mode
 	uint8_t asmedia; 
 	uint8_t enclosure;

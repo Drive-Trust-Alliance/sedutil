@@ -133,8 +133,12 @@ private:
     //
     // SAT (ATA-passthrough) devices
     IOReturn identifyDevice_SAT( IOBufferMemoryDescriptor * md);
-    OSDictionary * parseIdentifyResponse( const unsigned char * response, DTA_DEVICE_INFO & di);
-    bool deviceIsSAT(DTA_DEVICE_INFO &di, OSDictionary **pIdentifyCharacteristics);
+    OSDictionary * parseIdentifyDeviceResponse(InterfaceDeviceID interfaceDeviceIdentification,
+                                               const unsigned char * response,
+                                               DTA_DEVICE_INFO & di);
+    bool deviceIsSAT(InterfaceDeviceID interfaceDeviceIdentification,
+                     DTA_DEVICE_INFO &di,
+                     OSDictionary **pIdentifyCharacteristics);
     IOReturn updatePropertiesInIORegistry_SAT( DTA_DEVICE_INFO & di );
     bool deviceIsTPer_SAT(const InterfaceDeviceID interfaceDeviceIdentification, OSDictionary * identifyCharacteristics, DTA_DEVICE_INFO &di);
 

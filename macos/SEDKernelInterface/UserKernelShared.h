@@ -17,9 +17,6 @@
 
 #define kIOBlockStorageDriver    "IOBlockStorageDriver"
 
-#define IOIdentifyDeviceResponseKey     "Identify Response"
-#define IODiscovery0ResponseKey         "D0 Response"
-#define IOIdentifyCharacteristicsKey    "Identify Characteristics"
 #define IOInquiryDeviceResponseKey      "Inquiry Response"
 #define IOInquiryPage00ResponseKey      "Inquiry Page00 Response"
 #define IOInquiryPage80ResponseKey      "Inquiry Page80 Response"
@@ -37,6 +34,11 @@
 #define IOInquiryPage83CharacteristicsKey     "Inquiry Page 83 Characteristics"
 #define IOInquiryPage86CharacteristicsKey     "Inquiry Page 86 Characteristics"
 #define IOInquiryPage89CharacteristicsKey     "Inquiry Page 89 Characteristics"
+
+#define IOIdentifyDeviceResponseKey        "Identify Device Response"
+#define IOIdentifyDeviceCharacteristicsKey "Identify Device Characteristics"
+
+#define IODiscovery0ResponseKey            "D0 Response"
 #define IOTCGPropertiesKey              "TCG Properties"
 #define IODeviceCharacteristicsKey      "Device Characteristics"
 #define IOProtocolCharacteristicsKey    "Protocol Characteristics"

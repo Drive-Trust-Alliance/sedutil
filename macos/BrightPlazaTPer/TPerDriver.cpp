@@ -119,7 +119,7 @@ bool DriverClass::InitializeDeviceSupport ( void )
     }
 
     OSDictionary * identifyCharacteristics = NULL;
-    if (deviceIsSAT(di, &identifyCharacteristics)) {
+    if (deviceIsSAT(interfaceDeviceIdentification, di, &identifyCharacteristics)) {
         di.devType = DEVICE_TYPE_USB;
         IOLOG_DEBUG("%s[%p]::%s Device is SAT", getName(), this, __FUNCTION__);
         bool result = deviceIsTPer_SAT(interfaceDeviceIdentification, identifyCharacteristics, di) ;
@@ -388,43 +388,57 @@ IOReturn DriverClass::identifyDevice_SAT( IOBufferMemoryDescriptor * md )
     return PerformSCSICommand(identifyCDB_SAT, md);
 }
 
-bool DriverClass::deviceIsSAT(DTA_DEVICE_INFO &di, OSDictionary ** pIdentifyCharacteristics)
+bool DriverClass::deviceIsSAT(InterfaceDeviceID interfaceDeviceIdentification,
+                              DTA_DEVICE_INFO &di,
+                              OSDictionary ** pIdentifyCharacteristics)
 {
     // Test whether device is a SAT drive by attempting
     // SCSI passthrough of ATA Identify Device command
     // If it works, as a side effect, parse the Identify response
     // and save it in the IO Registry
     bool isSAT = false;
-    IOBufferMemoryDescriptor * md = IOBufferMemoryDescriptor::withCapacity ( IDENTIFY_RESPONSE_SIZE, kIODirectionIn, false );
-    if ( md != NULL ) {
-        void * identifyResponse = md->getBytesNoCopy ( );
-        bzero ( identifyResponse, md->getLength ( ) );
-
-        isSAT = (kIOReturnSuccess == identifyDevice_SAT( md ));
-
-        if (isSAT) {
-
-            if (0xA5==((UInt8 *)identifyResponse)[510]) {  // checksum is present
-                UInt8 checksum=0;
-                for (UInt8 * p = ((UInt8 *)identifyResponse), * end = ((UInt8 *)identifyResponse) + 512; p<end ; p++)
-                    checksum=(UInt8)(checksum+(*p));
-                if (checksum != 0) {
-                    IOLOG_DEBUG("%s[%p]::%s *** IDENTIFY DEVICE response checksum failed *** !!!\n",
-                                getName(), this, __FUNCTION__);
-                }
-            }
-            
-#if DEBUG
-            setProperty(IOIdentifyDeviceResponseKey, identifyResponse, IDENTIFY_RESPONSE_SIZE);
-#endif // DEBUG
-
-            *pIdentifyCharacteristics = parseIdentifyResponse(((UInt8 *)identifyResponse), di);
-#if DEBUG
-            setProperty(IOIdentifyCharacteristicsKey, *pIdentifyCharacteristics);
-#endif // DEBUG
-        }
-        md->release ( );
+    IOBufferMemoryDescriptor * md =
+        IOBufferMemoryDescriptor::withCapacity ( IDENTIFY_RESPONSE_SIZE, kIODirectionIn, false );
+    if ( md == NULL ) {
+        IOLOG_DEBUG("%s[%p]::%s *** memory buffer allocation failed *** !!!\n",
+                    getName(), this, __FUNCTION__);
+        return false;
     }
+    
+    void * identifyDeviceResponse = md->getBytesNoCopy ( );
+    bzero ( identifyDeviceResponse, md->getLength ( ) );
+
+    isSAT = (kIOReturnSuccess == identifyDevice_SAT( md ));
+
+    if (isSAT) {
+
+        if (0xA5==((UInt8 *)identifyDeviceResponse)[510]) {  // checksum is present
+            UInt8 checksum=0;
+            for (UInt8 * p = ((UInt8 *)identifyDeviceResponse),
+                       * end = ((UInt8 *)identifyDeviceResponse) + 512;
+                 p<end ;
+                 p++)
+                checksum=(UInt8)(checksum+(*p));
+            if (checksum != 0) {
+                IOLOG_DEBUG("%s[%p]::%s *** IDENTIFY DEVICE response checksum failed *** !!!\n",
+                            getName(), this, __FUNCTION__);
+            }
+        }
+        
+#if DEBUG
+        setProperty(IOIdentifyDeviceResponseKey, identifyDeviceResponse, IDENTIFY_RESPONSE_SIZE);
+#endif // DEBUG
+
+        *pIdentifyCharacteristics =
+            parseIdentifyDeviceResponse(interfaceDeviceIdentification,
+                                        ((UInt8 *)identifyDeviceResponse),
+                                        di);
+#if DEBUG
+        setProperty(IOIdentifyDeviceCharacteristicsKey, *pIdentifyCharacteristics);
+#endif // DEBUG
+    }
+    md->release ( );
+
     IOLOG_DEBUG("%s[%p]::%s *** end of function, isSAT is %d\n", getName(), this, __FUNCTION__, isSAT);
     return isSAT;
 }
@@ -442,7 +456,8 @@ bool DriverClass::deviceIsTPer_SAT(const InterfaceDeviceID interfaceDeviceIdenti
 
     // We are short-circuiting all the careful checking below when we have a known interface
     // device, particularly one that incorrectly fails to claim to be a TPer.
-    if (0 != (tryUnjustifiedLevel0Discovery & actionForID(interfaceDeviceIdentification))) {
+    if (deviceNeedsSpecialAction(interfaceDeviceIdentification,
+                                 tryUnjustifiedLevel0Discovery)) {
         IOLOG_DEBUG("%s[%p]::%s *** interface device ID matches tperOverride entry", getName(), this, __FUNCTION__);
         if (kIOReturnSuccess == updatePropertiesInIORegistry_SAT(di)) {
             IOLOG_DEBUG("%s[%p]::%s *** tperOverride level 0 discovery worked", getName(), this, __FUNCTION__);
@@ -791,14 +806,17 @@ static void strrev(char *serialNumber) {
     }
 }
 
-OSDictionary * DriverClass::parseInquiryPage80Response( const unsigned char * response, InterfaceDeviceID interfaceDeviceIdentification, DTA_DEVICE_INFO & di)
+OSDictionary * DriverClass::parseInquiryPage80Response( const unsigned char * response,
+                                                       InterfaceDeviceID interfaceDeviceIdentification,
+                                                       DTA_DEVICE_INFO & di)
 {
     SCSICmd_INQUIRY_Page80_Header *resp = (SCSICmd_INQUIRY_Page80_Header *)response;
 
     uint8_t serialNumber[257];
     bzero(serialNumber, sizeof(serialNumber));
     memcpy(serialNumber, &resp->PRODUCT_SERIAL_NUMBER, resp->PAGE_LENGTH);
-    if (0 != (reverseInquiryPage80SerialNumber & actionForID(interfaceDeviceIdentification))) {
+    if (deviceNeedsSpecialAction(interfaceDeviceIdentification,
+                                 reverseInquiryPage80SerialNumber)) {
         IOLOG_DEBUG("%s[%p]::%s *** reversing Inquiry Page80 serial number", getName(), this, __FUNCTION__);
         IOLOG_DEBUG("%s[%p]::%s Inquiry Page80 serial number was %s", getName(), this, __FUNCTION__, serialNumber);
         strrev((char *)serialNumber);
@@ -1024,7 +1042,7 @@ OSDictionary * DriverClass::parseInquiryPage89Response( const unsigned char * re
     keys[3]    = OSSymbol::withCString( IOVendorNameKey );
 
     objects[4] = OSData::withBytes((const void *)resp->IDENTIFY_DATA, sizeof(resp->IDENTIFY_DATA));
-    keys[4]    = OSSymbol::withCString( IOIdentifyCharacteristicsKey );
+    keys[4]    = OSSymbol::withCString( IOIdentifyDeviceCharacteristicsKey );
 
     objects[5] = OSData::withBytes((const void *)resp, sizeof(SCSICmd_INQUIRY_Page89_Data));
     keys[5]    = OSSymbol::withCString( IOInquiryPage89ResponseKey );
@@ -1446,11 +1464,28 @@ IOReturn DriverClass::updatePropertiesInIORegistry_SAT( DTA_DEVICE_INFO & di )
     return updatePropertiesInIORegistryWithDiscovery0CDB(acquireDiscovery0ResponseCDB_SAT, di);
 }
 
-OSDictionary * DriverClass::parseIdentifyResponse( const unsigned char * response, DTA_DEVICE_INFO & di)
+OSDictionary *
+DriverClass::parseIdentifyDeviceResponse(InterfaceDeviceID interfaceDeviceIdentification,
+                                         const unsigned char * response,
+                                         DTA_DEVICE_INFO & di)
 {
     const IDENTIFY_RESPONSE & resp = *(IDENTIFY_RESPONSE *)response;
 
     parseATIdentifyResponse(&resp, &di);
+    
+    if (deviceNeedsSpecialAction(interfaceDeviceIdentification,
+                                 splitVendorNameFromModelNumber)) {
+        IOLOG_DEBUG("%s[%p]::%s *** splitting VendorName from ModelNumber", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG("%s[%p]::%s *** previously vendorName=\"%s\" modelNum=\"%s\"", getName(), this, __FUNCTION__, di.vendorName, di.modelNum);
+        memcpy(di.vendorName, di.modelNum, sizeof(di.vendorName));
+        memmove(di.modelNum,
+                di.modelNum+sizeof(di.vendorName),
+                sizeof(di.modelNum)-sizeof(di.vendorName));
+        memset(di.modelNum+sizeof(di.modelNum)-sizeof(di.vendorName),
+               0,
+               sizeof(di.vendorName));
+        IOLOG_DEBUG("%s[%p]::%s *** now vendorName=\"%s\" modelNum=\"%s\"", getName(), this, __FUNCTION__, di.vendorName, di.modelNum);
+    }
 
     const OSObject * objects[7];
     const OSSymbol * keys[7];
@@ -1473,11 +1508,6 @@ OSDictionary * DriverClass::parseIdentifyResponse( const unsigned char * respons
     objects[5] = OSData::withBytes((const void *)di.worldWideName, sizeof(di.worldWideName));
     keys[5]    = OSSymbol::withCString( IOWorldWideNameKey );
     
-    if (0==strlen((const char *)di.vendorName)) {
-        
-    }
-#define IOVendorNameKey                 "Vendor Name"
-
     OSDictionary * result = OSDictionary::withObjects(objects, keys, 6, 6);
 
     return result;

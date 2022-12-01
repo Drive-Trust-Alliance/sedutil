@@ -246,16 +246,16 @@ static bool FillDeviceInfoFromProperties(CFDictionaryRef deviceProperties, CFDic
         if (NULL != deviceCharacteristics) {
             CFStringRef vendorName = GetString(deviceCharacteristics, "Vendor Name");
             if (vendorName != NULL )
-                CFStringGetCString(vendorName, (char *)&device_info.vendorName, sizeof(device_info.vendorName)+sizeof(device_info.null3), kCFStringEncodingASCII);
+                CFStringGetCString(vendorName, (char *)&device_info.vendorName, sizeof(device_info.vendorName)+sizeof(device_info.vendorNameNull), kCFStringEncodingASCII);
             CFStringRef modelNumber = GetString(deviceCharacteristics, "Product Name");
             if (modelNumber != NULL)
-                CFStringGetCString(modelNumber, (char *)&device_info.modelNum, sizeof(device_info.modelNum)+sizeof(device_info.null2), kCFStringEncodingASCII);
+                CFStringGetCString(modelNumber, (char *)&device_info.modelNum, sizeof(device_info.modelNum)+sizeof(device_info.modelNumNull), kCFStringEncodingASCII);
             CFStringRef firmwareRevision = GetString(deviceCharacteristics, "Product Revision Level");
             if (firmwareRevision != NULL)
-                CFStringGetCString(firmwareRevision, (char *)&device_info.firmwareRev, sizeof(device_info.firmwareRev)+sizeof(device_info.null1), kCFStringEncodingASCII);
+                CFStringGetCString(firmwareRevision, (char *)&device_info.firmwareRev, sizeof(device_info.firmwareRev)+sizeof(device_info.firmwareRevNull), kCFStringEncodingASCII);
             CFStringRef serialNumber = GetString(deviceCharacteristics, "Serial Number");
             if (serialNumber != NULL )
-                CFStringGetCString(serialNumber, (char *)&device_info.serialNum, sizeof(device_info.serialNum)+sizeof(device_info.null0), kCFStringEncodingASCII);
+                CFStringGetCString(serialNumber, (char *)&device_info.serialNum, sizeof(device_info.serialNum)+sizeof(device_info.serialNumNull), kCFStringEncodingASCII);
             
         }
             
@@ -265,14 +265,14 @@ static bool FillDeviceInfoFromProperties(CFDictionaryRef deviceProperties, CFDic
             if (NULL != interconnect) {
                 CFStringGetCString(interconnect,
                                    (char *)device_info.physicalInterconnect,
-                                   sizeof(device_info.physicalInterconnect)+sizeof(device_info.null4),
+                                   sizeof(device_info.physicalInterconnect)+sizeof(device_info.physicalInterconnectNull),
                                    kCFStringEncodingASCII);
             }
             CFStringRef interconnectLocation = GetString(protocolProperties, "Physical Interconnect Location");
             if (NULL != interconnectLocation) {
                 CFStringGetCString(interconnectLocation,
                                    (char *)device_info.physicalInterconnectLocation,
-                                   sizeof(device_info.physicalInterconnectLocation)+sizeof(device_info.null5),
+                                   sizeof(device_info.physicalInterconnectLocation)+sizeof(device_info.physicalInterconnectLocationNull),
                                    kCFStringEncodingASCII);
             }
         }
