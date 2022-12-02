@@ -30,12 +30,17 @@ typedef enum TPerOverrideAction {
 
     
     // SAT (SCSI-passthrough) hacks
-    tryUnjustifiedLevel0Discovery       =  6,
+    tryUnjustifiedLevel0Discovery       =  5,
     splitVendorNameFromModelNumber      =  7,
 
     
     noSpecialAction                     =  0,
 } TPerOverrideAction;
+
+static __inline
+int single_action(const int action) {
+    return action==noSpecialAction ? 0 : static_cast<int>(1 << (action - 1)) ;
+}
 
 typedef uint16_t TPerOverrideActions;  // set of TPerOverrideAction bits
 
@@ -47,9 +52,9 @@ typedef struct tperOverrideEntry {
 
 extern tperOverrideEntry tperOverrides[];
 extern const size_t nTperOverrides;
-//bool idMatches(const InterfaceDeviceID id,
-//               const InterfaceDeviceID value,
-//               const InterfaceDeviceID mask);
-// TPerOverrideActions actionsForID(const InterfaceDeviceID id);
+bool idMatches(const InterfaceDeviceID & id,
+               const InterfaceDeviceID & value,
+               const InterfaceDeviceID & mask);
+TPerOverrideActions actionsForID(const InterfaceDeviceID & interfaceDeviceIdentification);
 bool deviceNeedsSpecialAction(const InterfaceDeviceID & interfaceDeviceIdentification,
                               TPerOverrideAction action);

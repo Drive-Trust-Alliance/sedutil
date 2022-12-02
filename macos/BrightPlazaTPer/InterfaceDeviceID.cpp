@@ -44,23 +44,17 @@
 
 static __inline
 int
-single_action(const int action) {
-    return action==noSpecialAction ? 0 : static_cast<int>(1 << (action - 1)) ;
-}
-
-static __inline
-int
 __actions(int action, ...) {
-    va_list args;
     int actions = 0;
+    va_list args;
     va_start(args, action);
-    while( (action=va_arg(args, int)) != static_cast<int>(noSpecialAction) ) {
-        actions |= single_action(action);
+    for ( ; action != noSpecialAction; action=va_arg(args, int)) {
+        actions |= single_action(action);;
     }
     va_end(args);
     return static_cast<int>(actions);
 }
-#define actions(...) static_cast<TPerOverrideActions>(__actions(__VA_ARGS__,noSpecialAction))
+#define actionsIfMatched(...) static_cast<TPerOverrideActions>(__actions(__VA_ARGS__,noSpecialAction))
 
 
 tperOverrideEntry tperOverrides[] =
@@ -72,8 +66,8 @@ tperOverrideEntry tperOverrides[] =
         { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, //  |XXXXXXXXXXXXXXXX|
           0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00                          //  |XXXX________|
         },  // mask
-        actions(tryUnjustifiedLevel0Discovery,
-                splitVendorNameFromModelNumber)  // actions
+        actionsIfMatched(tryUnjustifiedLevel0Discovery,
+                         splitVendorNameFromModelNumber)  // actions
     },
     
     {
@@ -83,14 +77,14 @@ tperOverrideEntry tperOverrides[] =
         { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, //  |XXXXXXXXXXXXXXX_|
           0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00                          //  |____________|
         },  // mask
-        actions(reverseInquiryPage80SerialNumber)   // actions
+        actionsIfMatched(reverseInquiryPage80SerialNumber)   // actions
     },
     
 };
 
 const size_t nTperOverrides = sizeof(tperOverrides) / sizeof(tperOverrides[0]);
 
-static
+
 bool idMatches(const InterfaceDeviceID & id,
                const InterfaceDeviceID & value,
                const InterfaceDeviceID & mask) {
@@ -105,7 +99,7 @@ bool idMatches(const InterfaceDeviceID & id,
     return true;
 }
 
-static
+
 TPerOverrideActions actionsForID(const InterfaceDeviceID & interfaceDeviceIdentification) {
     for (size_t i = 0; i < nTperOverrides; i++) {
         if (idMatches(interfaceDeviceIdentification,
