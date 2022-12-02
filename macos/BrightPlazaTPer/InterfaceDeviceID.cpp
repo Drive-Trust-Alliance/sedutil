@@ -91,9 +91,9 @@ tperOverrideEntry tperOverrides[] =
 const size_t nTperOverrides = sizeof(tperOverrides) / sizeof(tperOverrides[0]);
 
 static
-bool idMatches(const InterfaceDeviceID id,
-               const InterfaceDeviceID value,
-               const InterfaceDeviceID mask) {
+bool idMatches(const InterfaceDeviceID & id,
+               const InterfaceDeviceID & value,
+               const InterfaceDeviceID & mask) {
     for (const unsigned char * pid = id,
                              * pvalue = value,
                              * pmask = mask,
@@ -106,7 +106,7 @@ bool idMatches(const InterfaceDeviceID id,
 }
 
 static
-TPerOverrideActions actionsForID(const InterfaceDeviceID interfaceDeviceIdentification) {
+TPerOverrideActions actionsForID(const InterfaceDeviceID & interfaceDeviceIdentification) {
     for (size_t i = 0; i < nTperOverrides; i++) {
         if (idMatches(interfaceDeviceIdentification,
                       tperOverrides[i].value,
@@ -118,7 +118,7 @@ TPerOverrideActions actionsForID(const InterfaceDeviceID interfaceDeviceIdentifi
 }
 
 
-bool deviceNeedsSpecialAction(const InterfaceDeviceID interfaceDeviceIdentification,
+bool deviceNeedsSpecialAction(const InterfaceDeviceID & interfaceDeviceIdentification,
                               TPerOverrideAction action) {
     return 0 != (single_action(action) & actionsForID(interfaceDeviceIdentification));
 }

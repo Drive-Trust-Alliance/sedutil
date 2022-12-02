@@ -72,12 +72,12 @@ private:
     //
     // General SCSI Interface
     //
-    bool deviceIsStandardSCSI(InterfaceDeviceID deviceIdentification, DTA_DEVICE_INFO &di);
+    bool deviceIsStandardSCSI(InterfaceDeviceID & deviceIdentification, DTA_DEVICE_INFO &di);
     IOReturn __inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryDescriptor * md, UInt16 & dataSize );
     IOReturn __inquiry__EVPD(uint8_t page_code, IOBufferMemoryDescriptor * md, UInt16 & dataSize );
     IOReturn inquiryStandardDataAll_SCSI( IOBufferMemoryDescriptor * md);
     OSDictionary * parseInquiryStandardDataAllResponse(const unsigned char * response,
-                                                       unsigned char deviceIdentification[],
+                                                       InterfaceDeviceID & interfaceDeviceIdentification,
                                                        DTA_DEVICE_INFO & di);
 
 
@@ -95,11 +95,11 @@ private:
 
 #define USE_INQUIRY_PAGE_80h
 #if defined(USE_INQUIRY_PAGE_80h)
-    bool deviceIsPage80SCSI(InterfaceDeviceID interfaceDeviceIdentification, DTA_DEVICE_INFO &di);
+    bool deviceIsPage80SCSI(const InterfaceDeviceID & interfaceDeviceIdentification, DTA_DEVICE_INFO &di);
     IOReturn inquiryPage80_SCSI( IOBufferMemoryDescriptor * md );
-    OSDictionary * parseInquiryPage80Response( const unsigned char * response,
-                                               InterfaceDeviceID interfaceDeviceIdentification,
-                                               DTA_DEVICE_INFO & di);
+    OSDictionary * parseInquiryPage80Response(const InterfaceDeviceID & interfaceDeviceIdentification,
+                                              const unsigned char * response,
+                                              DTA_DEVICE_INFO & di);
 #endif // defined(USE_INQUIRY_PAGE_80h)
 
 
@@ -123,7 +123,8 @@ private:
     IOReturn inquiryPageXX_SCSI(uint8_t evpd, IOBufferMemoryDescriptor * md );
 #endif // DEBUG
 
-    bool identifyUsingSCSIInquiry(InterfaceDeviceID interfaceDeviceIdentification, DTA_DEVICE_INFO & di);
+    bool identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceIdentification,
+                                  DTA_DEVICE_INFO & di);
     
     //
     // SCSI (SAS) devices
@@ -133,14 +134,16 @@ private:
     //
     // SAT (ATA-passthrough) devices
     IOReturn identifyDevice_SAT( IOBufferMemoryDescriptor * md);
-    OSDictionary * parseIdentifyDeviceResponse(InterfaceDeviceID interfaceDeviceIdentification,
+    OSDictionary * parseIdentifyDeviceResponse(const InterfaceDeviceID & interfaceDeviceIdentification,
                                                const unsigned char * response,
                                                DTA_DEVICE_INFO & di);
-    bool deviceIsSAT(InterfaceDeviceID interfaceDeviceIdentification,
+    bool deviceIsSAT(const InterfaceDeviceID & interfaceDeviceIdentification,
                      DTA_DEVICE_INFO &di,
                      OSDictionary **pIdentifyCharacteristics);
     IOReturn updatePropertiesInIORegistry_SAT( DTA_DEVICE_INFO & di );
-    bool deviceIsTPer_SAT(const InterfaceDeviceID interfaceDeviceIdentification, OSDictionary * identifyCharacteristics, DTA_DEVICE_INFO &di);
+    bool deviceIsTPer_SAT(const InterfaceDeviceID & interfaceDeviceIdentification,
+                          OSDictionary * identifyCharacteristics,
+                          DTA_DEVICE_INFO &di);
 
     
 

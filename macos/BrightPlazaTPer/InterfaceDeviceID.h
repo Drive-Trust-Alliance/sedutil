@@ -51,5 +51,5 @@ extern const size_t nTperOverrides;
 //               const InterfaceDeviceID value,
 //               const InterfaceDeviceID mask);
 // TPerOverrideActions actionsForID(const InterfaceDeviceID id);
-bool deviceNeedsSpecialAction(const InterfaceDeviceID interfaceDeviceIdentification,
+bool deviceNeedsSpecialAction(const InterfaceDeviceID & interfaceDeviceIdentification,
                               TPerOverrideAction action);

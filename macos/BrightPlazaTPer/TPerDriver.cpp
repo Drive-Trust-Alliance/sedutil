@@ -275,7 +275,8 @@ IOReturn DriverClass::updatePropertiesInIORegistry( void )
 // private
 //*****************
 
-bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID interfaceDeviceIdentification, DTA_DEVICE_INFO &di) {
+bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceIdentification,
+                                           DTA_DEVICE_INFO &di) {
     if (!deviceIsStandardSCSI(interfaceDeviceIdentification, di)) {
         IOLOG_DEBUG("%s[%p]::%s Device is not Standard SCSI -- not for this driver", getName(), this, __FUNCTION__);
         return false;
@@ -388,7 +389,7 @@ IOReturn DriverClass::identifyDevice_SAT( IOBufferMemoryDescriptor * md )
     return PerformSCSICommand(identifyCDB_SAT, md);
 }
 
-bool DriverClass::deviceIsSAT(InterfaceDeviceID interfaceDeviceIdentification,
+bool DriverClass::deviceIsSAT(const InterfaceDeviceID & interfaceDeviceIdentification,
                               DTA_DEVICE_INFO &di,
                               OSDictionary ** pIdentifyCharacteristics)
 {
@@ -443,7 +444,7 @@ bool DriverClass::deviceIsSAT(InterfaceDeviceID interfaceDeviceIdentification,
     return isSAT;
 }
 
-bool DriverClass::deviceIsTPer_SAT(const InterfaceDeviceID interfaceDeviceIdentification,
+bool DriverClass::deviceIsTPer_SAT(const InterfaceDeviceID & interfaceDeviceIdentification,
                                    OSDictionary * identifyCharacteristics,
                                    DTA_DEVICE_INFO &di)
 {
@@ -456,6 +457,8 @@ bool DriverClass::deviceIsTPer_SAT(const InterfaceDeviceID interfaceDeviceIdenti
 
     // We are short-circuiting all the careful checking below when we have a known interface
     // device, particularly one that incorrectly fails to claim to be a TPer.
+    IOLOG_DEBUG("%s[%p]::%s Device identification fields:", getName(), this, __FUNCTION__);
+    IOLOGBUFFER_DEBUG(NULL, interfaceDeviceIdentification, sizeof(InterfaceDeviceID));
     if (deviceNeedsSpecialAction(interfaceDeviceIdentification,
                                  tryUnjustifiedLevel0Discovery)) {
         IOLOG_DEBUG("%s[%p]::%s *** interface device ID matches tperOverride entry", getName(), this, __FUNCTION__);
@@ -503,7 +506,7 @@ bool DriverClass::deviceIsTPer_SAT(const InterfaceDeviceID interfaceDeviceIdenti
     return isTPer;
 }
 
-bool DriverClass::deviceIsStandardSCSI(InterfaceDeviceID interfaceDeviceIdentification, DTA_DEVICE_INFO &di)
+bool DriverClass::deviceIsStandardSCSI(InterfaceDeviceID & interfaceDeviceIdentification, DTA_DEVICE_INFO &di)
 {
     // Test whether device is a SCSI drive by attempting
     // SCSI Inquiry command
@@ -522,7 +525,8 @@ bool DriverClass::deviceIsStandardSCSI(InterfaceDeviceID interfaceDeviceIdentifi
 #endif // DEBUG
             OSDictionary * characteristics =
                 parseInquiryStandardDataAllResponse(static_cast <const unsigned char * >(inquiryResponse),
-                                                    interfaceDeviceIdentification, di);
+                                                    interfaceDeviceIdentification,
+                                                    di);
 #if DEBUG
             setProperty(IOInquiryCharacteristicsKey, characteristics);
 #endif // DEBUG
@@ -599,13 +603,13 @@ IOReturn DriverClass::inquiryStandardDataAll_SCSI( IOBufferMemoryDescriptor * md
 }
 
 
-OSDictionary * DriverClass::parseInquiryStandardDataAllResponse( const unsigned char * response, unsigned char interfaceDeviceIdentification[], DTA_DEVICE_INFO & di)
+OSDictionary * DriverClass::parseInquiryStandardDataAllResponse(const unsigned char * response,
+                                                                InterfaceDeviceID & interfaceDeviceIdentification,
+                                                                DTA_DEVICE_INFO & di)
 {
     SCSICmd_INQUIRY_StandardDataAll *resp = (SCSICmd_INQUIRY_StandardDataAll *)response;
 
-    memcpy(interfaceDeviceIdentification, resp->VENDOR_IDENTIFICATION, kINQUIRY_VENDOR_IDENTIFICATION_Length
-                                                            + kINQUIRY_PRODUCT_IDENTIFICATION_Length
-                                                            + kINQUIRY_PRODUCT_REVISION_LEVEL_Length);
+    memcpy(interfaceDeviceIdentification, resp->VENDOR_IDENTIFICATION, sizeof(InterfaceDeviceID));
 
     GetDeviceInfo(di);
 
@@ -752,7 +756,8 @@ OSDictionary * DriverClass::parseInquiryPage00Response(const unsigned char * res
 #pragma mark -
 #pragma mark Inquiry Page 80h
 
-bool DriverClass::deviceIsPage80SCSI(InterfaceDeviceID interfaceDeviceIdentification, DTA_DEVICE_INFO &di)
+bool DriverClass::deviceIsPage80SCSI(const InterfaceDeviceID & interfaceDeviceIdentification,
+                                     DTA_DEVICE_INFO &di)
 {
     // Test whether device is a SCSI drive by attempting
     // SCSI Inquiry command
@@ -770,7 +775,9 @@ bool DriverClass::deviceIsPage80SCSI(InterfaceDeviceID interfaceDeviceIdentifica
             setProperty(IOInquiryPage80ResponseKey, inquiryResponse, (unsigned int)transferSize);
 #endif // DEBUG
             OSDictionary * characteristics =
-                parseInquiryPage80Response(static_cast <const unsigned char * >(inquiryResponse), interfaceDeviceIdentification, di);
+                parseInquiryPage80Response(interfaceDeviceIdentification,
+                                           static_cast <const unsigned char * >(inquiryResponse),
+                                           di);
 #if DEBUG
             setProperty(IOInquiryPage80CharacteristicsKey, characteristics);
 #endif // DEBUG
@@ -806,8 +813,8 @@ static void strrev(char *serialNumber) {
     }
 }
 
-OSDictionary * DriverClass::parseInquiryPage80Response( const unsigned char * response,
-                                                       InterfaceDeviceID interfaceDeviceIdentification,
+OSDictionary * DriverClass::parseInquiryPage80Response(const InterfaceDeviceID & interfaceDeviceIdentification,
+                                                       const unsigned char * response,
                                                        DTA_DEVICE_INFO & di)
 {
     SCSICmd_INQUIRY_Page80_Header *resp = (SCSICmd_INQUIRY_Page80_Header *)response;
@@ -1457,7 +1464,7 @@ IOReturn DriverClass::updatePropertiesInIORegistry_SAT( DTA_DEVICE_INFO & di )
         0x01,    // Byte  6  LBA_MID  -- COMID=1 (low byte)
         0x00,    // Byte  7  LBA_HIGH -- COMID=0 (high byte)
         0x00,    // Byte  8  DEVICE -- so far always zero
-        kATACmd_TRUSTED_RECEIVE_PIO,    // Byte  9  COMMAND=ATA TRUSTED RECEIVE (PIO)  TODO: symbolicate
+        kATACmd_TRUSTED_RECEIVE_PIO,    // Byte  9  COMMAND=ATA TRUSTED RECEIVE (PIO)
         0x00,    // Byte 10  Reserved -- zero
         0x00,    // Byte 11  CONTROL -- so far always zero
       };
@@ -1465,7 +1472,7 @@ IOReturn DriverClass::updatePropertiesInIORegistry_SAT( DTA_DEVICE_INFO & di )
 }
 
 OSDictionary *
-DriverClass::parseIdentifyDeviceResponse(InterfaceDeviceID interfaceDeviceIdentification,
+DriverClass::parseIdentifyDeviceResponse(const InterfaceDeviceID & interfaceDeviceIdentification,
                                          const unsigned char * response,
                                          DTA_DEVICE_INFO & di)
 {
@@ -1476,7 +1483,7 @@ DriverClass::parseIdentifyDeviceResponse(InterfaceDeviceID interfaceDeviceIdenti
     if (deviceNeedsSpecialAction(interfaceDeviceIdentification,
                                  splitVendorNameFromModelNumber)) {
         IOLOG_DEBUG("%s[%p]::%s *** splitting VendorName from ModelNumber", getName(), this, __FUNCTION__);
-        IOLOG_DEBUG("%s[%p]::%s *** previously vendorName=\"%s\" modelNum=\"%s\"", getName(), this, __FUNCTION__, di.vendorName, di.modelNum);
+        IOLOG_DEBUG("%s[%p]::%s *** was vendorName=\"%s\" modelNum=\"%s\"", getName(), this, __FUNCTION__, di.vendorName, di.modelNum);
         memcpy(di.vendorName, di.modelNum, sizeof(di.vendorName));
         memmove(di.modelNum,
                 di.modelNum+sizeof(di.vendorName),
