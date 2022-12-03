@@ -111,7 +111,7 @@ int  DtaDevOS::diskScan()
     vector<DtaDevMacOSBlockStorageDevice *> blockStorageDevices=DtaDevMacOSBlockStorageDevice::enumerateBlockStorageDevices();
 
     for (DtaDevMacOSBlockStorageDevice * device : blockStorageDevices){
-        printf("%-10s", device->getDevName().c_str());
+        printf("%-11s", device->getDevName().c_str());
 
         if (device->isAnySSC()) {
             printf(" %s%s%s ",
@@ -143,13 +143,14 @@ int  DtaDevOS::diskScan()
         }
 
 #if DEBUG
-        printf("%-40s %-8s  %-7s  %-8s\n",
+        printf("%-30s %-8s  %-7s  %-8s %-30s\n",
                device->getModelNum(),
                device->getFirmwareRev(),
                devType,
-               device->getVendorName());
+               device->getVendorID(),
+               device->getManufacturerName());
 #else // DEBUG
-        printf("%-40s %-8s  %-7s\n",
+        printf("%-30s %-8s  %-7s\n",
                device->getModelNum(),
                device->getFirmwareRev(),
                devType);

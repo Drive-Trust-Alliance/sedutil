@@ -62,9 +62,11 @@ public:
     uint8_t Locked();
     /** Is the Locking SP enabled */
     uint8_t LockingEnabled();
+    /** Returns the Vendor ID reported by the Identify command */
+    const char *getVendorID();
+    /** Returns the Manufacturer Name reported by the Identify command */
+    const char *getManufacturerName();
     /** Returns the Firmware revision reported by the identify command */
-    const char *getVendorName();
-    /** Returns the Vendor Name reported by the Identify command */
     const char *getFirmwareRev();
     /** Returns the Model Number reported by the Identify command */
     const char *getModelNum();
@@ -88,9 +90,8 @@ public:
                                                      const char *devref,
                                                      DTA_DEVICE_INFO *pdi);
     
-    static void extracted(io_service_t aBlockStorageDevice, CFDictionaryRef &allProperties, std::string &bsdName, CFDictionaryRef &deviceProperties, const char *devref, std::string &entryName, DtaDevMacOSBlockStorageDevice *&foundDevice, CFIndex kCStringSize, io_service_t &media, CFDictionaryRef &mediaProperties, char *nameBuffer, DTA_DEVICE_INFO *pdi, io_service_t &tPer, CFDictionaryRef &tPerProperties);
-    
     static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(const char * devref, DTA_DEVICE_INFO * pdi);  // Factory for this class or subclass instances
+
 #if defined(TRY_SMART_LIBS)
     static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(io_service_t aBlockStorageDevice,
                                                                  std::string entryName,
@@ -103,6 +104,7 @@ public:
                                                                  CFDictionaryRef properties,
                                                                  DTA_DEVICE_INFO * pdi);  // Factory for this class or subclass instances
 #endif // defined(TRY_SMART_LIBS)
+    
     const DTA_DEVICE_INFO & device_info(void);  /**< Weak reference to Structure containing info from properties, including identify and discovery 0 if available
                                            Asserts if no such reference.*/
 

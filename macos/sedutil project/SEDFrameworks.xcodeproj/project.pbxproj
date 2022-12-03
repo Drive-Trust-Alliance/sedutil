@@ -12,7 +12,7 @@
 		D22369B928D686C400D7D851 /* sedutil.h in Headers */ = {isa = PBXBuildFile; fileRef = D2D1379E28B55C14003FD51F /* sedutil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2466AF328B5876C009F55D9 /* DtaDevOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D2466A4B28B585F8009F55D9 /* DtaDevOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D263209A2937F65500F0927B /* oui_vendor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D26320982937F65500F0927B /* oui_vendor.cpp */; };
-		D263209B2937F65500F0927B /* oui_vendor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D26320992937F65500F0927B /* oui_vendor.hpp */; };
+		D263209B2937F65500F0927B /* oui_vendor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D26320992937F65500F0927B /* oui_vendor.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		D271A1FB28054AFE00BF043A /* DtaStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F528054AFD00BF043A /* DtaStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D271A1FC28054AFE00BF043A /* DtaDev.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F628054AFD00BF043A /* DtaDev.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D271A1FD28054AFE00BF043A /* DtaOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F728054AFD00BF043A /* DtaOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -41,6 +41,8 @@
 		D2BDDC9C28A6369A00001E26 /* pyexthash.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BDDC9A28A6369900001E26 /* pyexthash.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2BDDC9D28A6369A00001E26 /* ReadMe.txt in Resources */ = {isa = PBXBuildFile; fileRef = D2BDDC9B28A6369A00001E26 /* ReadMe.txt */; };
 		D2BDDC9F28A63B9200001E26 /* pyextob.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BDDC9E28A63B9200001E26 /* pyextob.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2D0F56B293A85F00077966A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9528B5D88800C0DDB6 /* Foundation.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		D2D0F56D293AA5DA0077966A /* oui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2E6FE7E2935696800DAB209 /* oui.framework */; };
 		D2D1379C28B55BAE003FD51F /* DtaOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D2D1379B28B55B9E003FD51F /* DtaOptions.h */; };
 		D2D137A128B56329003FD51F /* log.h in Headers */ = {isa = PBXBuildFile; fileRef = D20A63A81F731FDB00F154AC /* log.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2E6FE8E2935E08D00DAB209 /* get_vendorid in Resources */ = {isa = PBXBuildFile; fileRef = D2E6FE802935E08D00DAB209 /* get_vendorid */; };
@@ -255,6 +257,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2D0F56B293A85F00077966A /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,6 +273,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2D0F56D293AA5DA0077966A /* oui.framework in Frameworks */,
 				D274DB7228B7FC9D00B9CD1F /* SEDKernelInterface.framework in Frameworks */,
 				D2A06C9D28B5DC7900C0DDB6 /* cifra.framework in Frameworks */,
 				D2A06C9C28B5D8FE00C0DDB6 /* IOKit.framework in Frameworks */,
@@ -498,8 +502,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D2E6FE932935E08D00DAB209 /* oui.h in Headers */,
-				D2E6FE902935E08D00DAB209 /* CStringMap.hpp in Headers */,
 				D263209B2937F65500F0927B /* oui_vendor.hpp in Headers */,
+				D2E6FE902935E08D00DAB209 /* CStringMap.hpp in Headers */,
 				D2E6FE972935E08E00DAB209 /* oui.hpp in Headers */,
 				D2E6FE952935E08D00DAB209 /* t10_vendorid.hpp in Headers */,
 			);

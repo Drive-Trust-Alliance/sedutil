@@ -55,9 +55,9 @@ bool DriverClass::start(IOService* provider)
 void DriverClass::GetDeviceInfo(DTA_DEVICE_INFO &di) {
     char * v = GetVendorString ( );
     if (v != NULL) {
-        strlcpy((char *)di.vendorName, v, sizeof(di.vendorName));
-        IOLOG_DEBUG("%s[%p]::%s - di.vendorName set to \"%s\"\n",
-                    getName(), this, __FUNCTION__, di.vendorName);
+        strlcpy((char *)di.vendorID, v, sizeof(di.vendorID));
+        IOLOG_DEBUG("%s[%p]::%s - di.vendorID set to \"%s\"\n",
+                    getName(), this, __FUNCTION__, di.vendorID);
     }
     char * p = GetProductString ( );
     if (p != NULL) {
@@ -109,36 +109,39 @@ bool DriverClass::InitializeDeviceSupport ( void )
     }
     IOLOG_DEBUG("%s[%p]::%s Device is SCSI", getName(), this, __FUNCTION__);
 
-    di.devType = DEVICE_TYPE_SAS;
-
+    bool result = false;
+    
     if (deviceIsTPer_SCSI(di)) {
         IOLOG_DEBUG("%s[%p]::%s Device is TPer_SCSI", getName(), this, __FUNCTION__);
+        di.devType = DEVICE_TYPE_SAS;
         setProperty(IOInterfaceTypeKey, IOInterfaceTypeSCSI);
+        result = true;
+    } else {
+        
+        OSDictionary * identifyCharacteristics = NULL;
+        if (deviceIsSAT(interfaceDeviceIdentification, di, &identifyCharacteristics)) {
+            di.devType = DEVICE_TYPE_USB;
+            IOLOG_DEBUG("%s[%p]::%s Device is SAT", getName(), this, __FUNCTION__);
+            
+            result = deviceIsTPer_SAT(interfaceDeviceIdentification, identifyCharacteristics, di) ;
+            if ( NULL != identifyCharacteristics ) {
+                identifyCharacteristics -> release();
+                identifyCharacteristics = NULL ;
+            }
+            if (result) {
+                IOLOG_DEBUG("%s[%p]::%s Device is TPer_SAT", getName(), this, __FUNCTION__);
+                setProperty(IOInterfaceTypeKey, IOInterfaceTypeSAT);
+            }
+        }
+    }
+    if (result) {
         setProperty(IODtaDeviceInfoKey, &di, sizeof(di));
-        return true;
+        IOLOG_DEBUG("%s[%p]::%s Device is a TPer", getName(), this, __FUNCTION__);
+    } else {
+        IOLOG_DEBUG("%s[%p]::%s Device is not for this driver", getName(), this, __FUNCTION__);
     }
-
-    OSDictionary * identifyCharacteristics = NULL;
-    if (deviceIsSAT(interfaceDeviceIdentification, di, &identifyCharacteristics)) {
-        di.devType = DEVICE_TYPE_USB;
-        IOLOG_DEBUG("%s[%p]::%s Device is SAT", getName(), this, __FUNCTION__);
-        bool result = deviceIsTPer_SAT(interfaceDeviceIdentification, identifyCharacteristics, di) ;
-        if ( NULL != identifyCharacteristics ) {
-            identifyCharacteristics -> release();
-            identifyCharacteristics = NULL ;
-        }
-        if (result) {
-            IOLOG_DEBUG("%s[%p]::%s Device is TPer_SAT", getName(), this, __FUNCTION__);
-            setProperty(IOInterfaceTypeKey, IOInterfaceTypeSAT);
-            setProperty(IODtaDeviceInfoKey, &di, sizeof(di));
-            return true;
-        }
-    }
-
-    IOLOG_DEBUG("%s[%p]::%s Device is not for this driver", getName(), this, __FUNCTION__);
-    return false;
+    return result;
 }
-
 
 //*****************
 // public
@@ -625,8 +628,8 @@ OSDictionary * DriverClass::parseInquiryStandardDataAllResponse(const unsigned c
     objects[2] = OSString::withCString( (const char *)di.firmwareRev);
     keys[2]    = OSSymbol::withCString( IOFirmwareRevisionKey );
 
-    objects[3] = OSString::withCString( (const char *)di.vendorName);
-    keys[3]    = OSSymbol::withCString( IOVendorNameKey );
+    objects[3] = OSString::withCString( (const char *)di.vendorID);
+    keys[3]    = OSSymbol::withCString( IOVendorIDKey );
 
     OSDictionary * result = OSDictionary::withObjects(objects, keys, 4, 4);
 
@@ -946,7 +949,7 @@ OSDictionary * DriverClass::parseInquiryPage83Response( const unsigned char * re
                                                             );
                 result->setObject(IOVendorIDKey, VendorID);
                 VendorID -> release();
-                // We already get Vendor Name and Serial Number using superclass methods
+                // We already get Vendor ID and Serial Number using superclass methods
             }
                 break;
 
@@ -1016,10 +1019,10 @@ OSDictionary * DriverClass::parseInquiryPage89Response( const unsigned char * re
 {
     SCSICmd_INQUIRY_Page89_Data *resp = (SCSICmd_INQUIRY_Page89_Data *)response;
 
-    uint8_t vendorName[sizeof(resp->SAT_VENDOR_IDENTIFICATION)+1];
-    memcpy(vendorName, resp->SAT_VENDOR_IDENTIFICATION, sizeof(resp->SAT_VENDOR_IDENTIFICATION));
-    vendorName[sizeof(resp->SAT_VENDOR_IDENTIFICATION)] = 0;
-    memcpy(di.vendorName, resp->SAT_VENDOR_IDENTIFICATION, sizeof(resp->SAT_VENDOR_IDENTIFICATION));
+    uint8_t vendorID[sizeof(resp->SAT_VENDOR_IDENTIFICATION)+1];
+    memcpy(vendorID, resp->SAT_VENDOR_IDENTIFICATION, sizeof(resp->SAT_VENDOR_IDENTIFICATION));
+    vendorID[sizeof(resp->SAT_VENDOR_IDENTIFICATION)] = 0;
+    memcpy(di.vendorID, resp->SAT_VENDOR_IDENTIFICATION, sizeof(resp->SAT_VENDOR_IDENTIFICATION));
 
     uint8_t firmwareRevision[sizeof(resp->SAT_PRODUCT_REVISION_LEVEL)+1];
     memcpy(firmwareRevision, resp->SAT_PRODUCT_REVISION_LEVEL, sizeof(resp->SAT_PRODUCT_REVISION_LEVEL));
@@ -1045,8 +1048,8 @@ OSDictionary * DriverClass::parseInquiryPage89Response( const unsigned char * re
     objects[2] = OSString::withCString( (const char *)firmwareRevision);
     keys[2]    = OSSymbol::withCString( IOFirmwareRevisionKey );
 
-    objects[3] = OSString::withCString( (const char *)vendorName);
-    keys[3]    = OSSymbol::withCString( IOVendorNameKey );
+    objects[3] = OSString::withCString( (const char *)vendorID);
+    keys[3]    = OSSymbol::withCString( IOVendorIDKey );
 
     objects[4] = OSData::withBytes((const void *)resp->IDENTIFY_DATA, sizeof(resp->IDENTIFY_DATA));
     keys[4]    = OSSymbol::withCString( IOIdentifyDeviceCharacteristicsKey );
@@ -1483,15 +1486,15 @@ DriverClass::parseIdentifyDeviceResponse(const InterfaceDeviceID & interfaceDevi
     if (deviceNeedsSpecialAction(interfaceDeviceIdentification,
                                  splitVendorNameFromModelNumber)) {
         IOLOG_DEBUG("%s[%p]::%s *** splitting VendorName from ModelNumber", getName(), this, __FUNCTION__);
-        IOLOG_DEBUG("%s[%p]::%s *** was vendorName=\"%s\" modelNum=\"%s\"", getName(), this, __FUNCTION__, di.vendorName, di.modelNum);
-        memcpy(di.vendorName, di.modelNum, sizeof(di.vendorName));
+        IOLOG_DEBUG("%s[%p]::%s *** was vendorID=\"%s\" modelNum=\"%s\"", getName(), this, __FUNCTION__, di.vendorID, di.modelNum);
+        memcpy(di.vendorID, di.modelNum, sizeof(di.vendorID));
         memmove(di.modelNum,
-                di.modelNum+sizeof(di.vendorName),
-                sizeof(di.modelNum)-sizeof(di.vendorName));
-        memset(di.modelNum+sizeof(di.modelNum)-sizeof(di.vendorName),
+                di.modelNum+sizeof(di.vendorID),
+                sizeof(di.modelNum)-sizeof(di.vendorID));
+        memset(di.modelNum+sizeof(di.modelNum)-sizeof(di.vendorID),
                0,
-               sizeof(di.vendorName));
-        IOLOG_DEBUG("%s[%p]::%s *** now vendorName=\"%s\" modelNum=\"%s\"", getName(), this, __FUNCTION__, di.vendorName, di.modelNum);
+               sizeof(di.vendorID));
+        IOLOG_DEBUG("%s[%p]::%s *** now vendorID=\"%s\" modelNum=\"%s\"", getName(), this, __FUNCTION__, di.vendorID, di.modelNum);
     }
 
     const OSObject * objects[7];

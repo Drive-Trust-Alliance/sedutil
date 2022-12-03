@@ -145,7 +145,6 @@ private:
                           OSDictionary * identifyCharacteristics,
                           DTA_DEVICE_INFO &di);
 
-    
 
 #if DRIVER_DEBUG
     

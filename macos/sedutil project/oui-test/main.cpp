@@ -14,20 +14,19 @@
 //
 
 static const char * vendorID_for_oui_canonically_if_necessary__INSTRUMENTED(const char *oui) {
-    CString_Lookup_Table::const_iterator pManufacturer = manufacturer_for_oui.find(oui);
-    if (pManufacturer == manufacturer_for_oui.end()) {
+    const char * manufacturer = manufacturer_for_oui(oui);
+    if (manufacturer == NULL) {
         std::cerr << oui << " *** not found ***"  << std::endl;
         return NULL;
     }
     
-    const char * manufacturer(pManufacturer->second);
     std::cout << oui << " => " << manufacturer << std::endl;
     
     const char * vendorID = NULL ;
 
     {
-        CString_Lookup_Table::const_iterator pVendorID = vendorID_for_vendor.find(manufacturer);
-        if (pVendorID != vendorID_for_vendor.end()) {
+        CString_Lookup_Table::const_iterator pVendorID = vendorID_for_vendor_table.find(manufacturer);
+        if (pVendorID != vendorID_for_vendor_table.end()) {
             vendorID =  pVendorID->second ;
             std::cout << manufacturer << " => " << vendorID << std::endl;
             return vendorID;
@@ -37,8 +36,8 @@ static const char * vendorID_for_oui_canonically_if_necessary__INSTRUMENTED(cons
     std::cerr << manufacturer << " *** not found exactly ***"  << std::endl;
     
     {
-        CString_Canonical_Lookup_Table::const_iterator pVendorID = vendorID_for_vendor_canonically.find(manufacturer);
-        if (pVendorID != vendorID_for_vendor_canonically.end()) {
+        CString_Canonical_Lookup_Table::const_iterator pVendorID = vendorID_for_vendor_canonically_table.find(manufacturer);
+        if (pVendorID != vendorID_for_vendor_canonically_table.end()) {
             vendorID = pVendorID->second;
             std::cout << manufacturer << " ≈> " << vendorID << std::endl;
             return vendorID;
@@ -52,8 +51,8 @@ static const char * vendorID_for_oui_canonically_if_necessary__INSTRUMENTED(cons
 
 
 static const char * oui_for_vendorID_canonically_if_necessary__INSTRUMENTED(const char *vendorID) {
-    CString_Lookup_Table::const_iterator pVendor = vendor_for_vendorID.find(vendorID);
-    if (pVendor == vendor_for_vendorID.end()) {
+    CString_Lookup_Table::const_iterator pVendor = vendor_for_vendorID_table.find(vendorID);
+    if (pVendor == vendor_for_vendorID_table.end()) {
         std::cerr << vendorID << " *** not found ***"  << std::endl;
         return NULL;
     }
@@ -64,8 +63,8 @@ static const char * oui_for_vendorID_canonically_if_necessary__INSTRUMENTED(cons
     const char * oui = NULL ;
 
     {
-        CString_Lookup_Table::const_iterator poui = oui_for_manufacturer.find(vendor);
-        if (poui != oui_for_manufacturer.end()) {
+        CString_Lookup_Table::const_iterator poui = oui_for_manufacturer_table.find(vendor);
+        if (poui != oui_for_manufacturer_table.end()) {
             oui =  poui->second ;
             std::cout << vendor << " ==> " << oui << std::endl;
             return oui;
@@ -75,8 +74,8 @@ static const char * oui_for_vendorID_canonically_if_necessary__INSTRUMENTED(cons
     std::cerr << vendorID << " *** not found exactly ***"  << std::endl;
     
     {
-        CString_Canonical_Lookup_Table::const_iterator poui = oui_for_manufacturer_canonically.find(vendor);
-        if (poui != oui_for_manufacturer_canonically.end()) {
+        CString_Canonical_Lookup_Table::const_iterator poui = oui_for_manufacturer_canonically_table.find(vendor);
+        if (poui != oui_for_manufacturer_canonically_table.end()) {
             oui =  poui->second ;
             std::cout << vendor << " ≈≈> " << oui << std::endl;
             return oui;

@@ -579,8 +579,8 @@ typedef struct _DTA_DEVICE_INFO {
     uint8_t modelNum[40];
 	uint8_t modelNumNull;  // make model number a cstring
 
-    uint8_t vendorName[8];
-    uint8_t vendorNameNull;  // make vendor Name a cstring
+    uint8_t vendorID[8];
+    uint8_t vendorIDNull;  // make vendor ID a cstring
 
     uint8_t manufacturerName[128];
     uint8_t manufacturerNameNull;  // make manufacturer name a cstring

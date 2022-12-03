@@ -96,6 +96,8 @@
 		D2BD8FAF1F02082E00747F4A /* ATAProtocolDirections.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATAProtocolDirections.cpp; sourceTree = "<group>"; };
 		D2BD8FB01F02082E00747F4A /* CDBAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDBAccess.cpp; sourceTree = "<group>"; };
 		D2BD8FB11F02082E00747F4A /* CDBAccess.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CDBAccess.hpp; sourceTree = "<group>"; };
+		D2D0F566293A847D0077966A /* oui.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = oui.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2D0F569293A85B80077966A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2E0B5BF1F2D3C7B00CD66FB /* TPerDriverDispatchTable.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = TPerDriverDispatchTable.inc; sourceTree = "<group>"; };
 		D2F0363D27A1E15B005F02A4 /* DebugInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = DebugInfo.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -130,6 +132,8 @@
 		D20A9E8A28C5BB7500F7985D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D2D0F569293A85B80077966A /* Foundation.framework */,
+				D2D0F566293A847D0077966A /* oui.framework */,
 				D28C720428C6968A00EA1838 /* IOKit.framework */,
 				D20A9E8D28C5BD4900F7985D /* Kernel.framework */,
 			);
