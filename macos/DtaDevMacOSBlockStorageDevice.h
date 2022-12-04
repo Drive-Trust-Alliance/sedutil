@@ -72,6 +72,8 @@ public:
     const char *getModelNum();
     /** Returns the Serial Number reported by the Identify command */
     const char *getSerialNum();
+    /** Returns the World Wide Name reported by the Identify command */
+    const uint8_t * getWorldWideName();
     /** Returns the Physical Interconnect technology */
     const char *getPhysicalInterconnect();
     /** Returns the Physical Interconnect Location */

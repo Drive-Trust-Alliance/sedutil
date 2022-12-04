@@ -562,18 +562,20 @@ static void trimBuffer(char * buffer, size_t len) {
    
 }
 
-static void trimModelNum(DTA_DEVICE_INFO &device_info) {
-    trimBuffer((char *)device_info.modelNum, sizeof(device_info.modelNum));
-}
 
 static void polishDeviceInfo(DTA_DEVICE_INFO *pdi) {
     DTA_DEVICE_INFO & device_info = *pdi;
-        
-#define TRIM_MODEL_NUMBER
-#if defined( TRIM_MODEL_NUMBER )
-    trimModelNum(device_info);
-#endif // defined( TRIM_MODEL_NUMBER )
-        
+    
+
+    
+#define _trim(field) trimBuffer((char *)device_info.field, sizeof(device_info.field))
+    
+    _trim(modelNum);
+    _trim(serialNum);
+    _trim(firmwareRev);
+    _trim(manufacturerName);
+
+#undef _trim
         
 #define EXTEND_DTA_DEVICE_INFO_WITH_OUI_VENDOR_DATA
 #if defined( EXTEND_DTA_DEVICE_INFO_WITH_OUI_VENDOR_DATA )
@@ -843,6 +845,13 @@ const char * DtaDevMacOSBlockStorageDevice::getSerialNum()
 {
     return (const char *)&pdevice_info->serialNum;
 }
+    
+
+const uint8_t * DtaDevMacOSBlockStorageDevice::getWorldWideName()
+{
+    return (const uint8_t *)&pdevice_info->worldWideName;
+}
+
 const char * DtaDevMacOSBlockStorageDevice::getPhysicalInterconnect()
 {
     return (const char *)&pdevice_info->physicalInterconnect;
