@@ -108,7 +108,8 @@ int  DtaDevOS::diskScan()
 
     printf("Scanning for Opal compliant disks\n");
 
-    vector<DtaDevMacOSBlockStorageDevice *> blockStorageDevices=DtaDevMacOSBlockStorageDevice::enumerateBlockStorageDevices();
+    vector<DtaDevMacOSBlockStorageDevice *> blockStorageDevices =
+        DtaDevMacOSBlockStorageDevice::enumerateBlockStorageDevices();
 
     for (DtaDevMacOSBlockStorageDevice * device : blockStorageDevices){
         printf("%-11s", device->getDevName().c_str());
@@ -143,14 +144,23 @@ int  DtaDevOS::diskScan()
         }
 
 #if DEBUG
-        printf("%-30s %-8s  %-7s  %-8s %-30s\n",
+        printf("%-25s %-8s  %-7s  %02X%02X%02X%02X%02X%02X%02X%02X  %-20s %-8s %-30s\n",
                device->getModelNum(),
                device->getFirmwareRev(),
                devType,
+               device->getWorldWideName()[0],
+               device->getWorldWideName()[1],
+               device->getWorldWideName()[2],
+               device->getWorldWideName()[3],
+               device->getWorldWideName()[4],
+               device->getWorldWideName()[5],
+               device->getWorldWideName()[6],
+               device->getWorldWideName()[7],
+               device->getSerialNum(),
                device->getVendorID(),
                device->getManufacturerName());
 #else // DEBUG
-        printf("%-30s %-8s  %-7s\n",
+        printf("%-25s %-8s  %-7s\n",
                device->getModelNum(),
                device->getFirmwareRev(),
                devType);
