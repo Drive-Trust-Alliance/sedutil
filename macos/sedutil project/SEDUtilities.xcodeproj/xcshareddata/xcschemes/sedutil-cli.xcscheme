@@ -54,11 +54,11 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "--scan"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--query"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--printDefaultPassword"
@@ -66,7 +66,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "disk4"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "disk5"
