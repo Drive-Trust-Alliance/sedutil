@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014, 2022 Bright Plaza Inc. <drivetrust@drivetrust.com>
 This software is Copyright 2017 Spectra Logic Corporation
 
 This file is part of sedutil.
@@ -18,11 +18,14 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
+
 #include "os.h"
 #include <stdio.h>
+#include <log/log.h>
+
 #include <iostream>
 #include <fstream>
-#include<iomanip>
+#include <iomanip>
 #include "DtaDevEnterprise.h"
 #include "DtaHashPwd.h"
 #include "DtaEndianFixup.h"

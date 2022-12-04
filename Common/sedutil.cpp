@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014, 2022 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -26,7 +26,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 // this resolve error of uuid
 
 #include <iostream>
-//#include "os.h"
+#include "log.h"
 #include "DtaHashPwd.h"
 #include "DtaOptions.h"
 #include "DtaLexicon.h"

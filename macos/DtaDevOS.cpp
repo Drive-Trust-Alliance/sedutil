@@ -17,6 +17,9 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
+
+#include <log/log.h>
+
 #include "DtaHexDump.h"
 #include "DtaDevGeneric.h"
 #include "DtaStructures.h"

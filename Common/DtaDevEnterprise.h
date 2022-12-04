@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014, 2022 Bright Plaza Inc. <drivetrust@drivetrust.com>
 This software is Copyright 2017 Spectra Logic Corporation
 
 This file is part of sedutil.

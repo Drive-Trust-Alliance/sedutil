@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014, 2022 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -30,6 +30,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 #include "os.h"
+#include <log/log.h>
 
 #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
 #else // Windows

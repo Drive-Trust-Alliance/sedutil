@@ -746,10 +746,10 @@
 			projectRoot = "";
 			targets = (
 				D2EBA3061F0549B7002F8780 /* sedutil */,
-				D20A63961F731F3600F154AC /* log */,
-				D2EBA48E1F055579002F8780 /* cifra */,
 				D2941F4E29354E8B00F7F8EE /* oui */,
 				D2E6FEA22935E67800DAB209 /* oui-test */,
+				D20A63961F731F3600F154AC /* log */,
+				D2EBA48E1F055579002F8780 /* cifra */,
 			);
 		};
 /* End PBXProject section */
@@ -900,6 +900,9 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = Debug;
 		};
@@ -910,6 +913,9 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Debug Bonjour and Bluetooth";
 		};
@@ -920,6 +926,9 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Debug Bluetooth";
 		};
@@ -930,6 +939,9 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Debug Bonjour";
 		};
@@ -940,6 +952,9 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Debug Bonjour Multistart";
 		};
@@ -950,6 +965,9 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = Release;
 		};
@@ -960,6 +978,9 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Release Bonjour";
 		};
@@ -970,6 +991,9 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Release Bonjour Multistart";
 		};
@@ -980,6 +1004,9 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Release Bluetooth";
 		};
@@ -990,6 +1017,9 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Release Bonjour and Bluetooth";
 		};
@@ -1122,6 +1152,10 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug Bonjour Multistart";
 		};
@@ -1258,6 +1292,10 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release Bonjour Multistart";
 		};
@@ -1282,6 +1320,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1297,6 +1339,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug Bonjour and Bluetooth";
 		};
@@ -1312,6 +1358,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug Bluetooth";
 		};
@@ -1327,6 +1377,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug Bonjour";
 		};
@@ -1342,6 +1396,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug Bonjour Multistart";
 		};
@@ -1357,6 +1415,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -1372,6 +1434,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release Bonjour";
 		};
@@ -1387,6 +1453,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release Bonjour Multistart";
 		};
@@ -1402,6 +1472,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release Bluetooth";
 		};
@@ -1417,6 +1491,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release Bonjour and Bluetooth";
 		};
@@ -2363,7 +2441,6 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2389,7 +2466,6 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2415,7 +2491,6 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2441,7 +2516,6 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2467,7 +2541,6 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2489,7 +2562,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2510,7 +2582,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2531,7 +2602,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2552,7 +2622,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2573,7 +2642,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2588,6 +2656,10 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -2600,6 +2672,10 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug Bonjour and Bluetooth";
 		};
@@ -2612,6 +2688,10 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug Bluetooth";
 		};
@@ -2624,6 +2704,10 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug Bonjour";
 		};
@@ -2636,6 +2720,10 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -2648,6 +2736,10 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release Bonjour";
 		};
@@ -2660,6 +2752,10 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release Bluetooth";
 		};
@@ -2672,6 +2768,10 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release Bonjour and Bluetooth";
 		};

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2016 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014, 2022 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -17,7 +17,9 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
+
 #include "os.h"
+#include <log/log.h>
 #include <mach/mach_port.h>
 #include <IOKit/IOKitLib.h>
 #include <IOKit/scsi/SCSITaskLib.h>

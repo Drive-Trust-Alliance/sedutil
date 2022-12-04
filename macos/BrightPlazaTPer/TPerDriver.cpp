@@ -303,7 +303,16 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceId
                     deviceSupportsPage89 ? "DOES" : "DOES NOT");
     } else  {
         IOLOG_DEBUG("%s[%p]::%s Device is not Page 00 SCSI", getName(), this, __FUNCTION__);
+#define ALLOW_INQUIRY_PAGE_00_FAILURES
+#if defined( ALLOW_INQUIRY_PAGE_00_FAILURES )
+        // Some external USB-SATA adapters do not support the VPD pages but it's OK
+        // For instance, the Innostor Technology IS888 USB3.0 to SATA bridge identifies its
+        // medium, not itself, in the Inquiry response, so we have no way of matching on it
+        // short of delving into the USB world
+        ;
+#else // !defined( ALLOW_INQUIRY_PAGE_00_FAILURES )
         return false;  // Mandatory, according to standard
+#endif // defined( ALLOW_INQUIRY_PAGE_00_FAILURES )
     }
 #endif // defined(USE_INQUIRY_PAGE_00h)
 

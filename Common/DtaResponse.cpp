@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2014, 2022 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -18,6 +18,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #include "os.h"
+#include <log/log.h>
 #include "DtaResponse.h"
 #include "DtaEndianFixup.h"
 using namespace std;
