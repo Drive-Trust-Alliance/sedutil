@@ -5623,14 +5623,14 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 
     do {
         osmsSleep(25); // could it be too fast if multiple drive situation ?????, 25->250 does not help; 25->50 better, ->100
-        bzero(cmd->getRespBuffer(), IO_BUFFER_LENGTH);
+        bzero(cmd->getRespBuffer(), cmd->getRespBufferSize());
 # if USING_OPER
         if (oper == 1 )
             lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), 2048); //  IO_BUFFER_LENGTH);
         else
             lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), adj_io_buffer_length); //  IO_BUFFER_LENGTH);
 #else
-        lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), MIN_BUFFER_LENGTH);
+        lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), cmd->getRespBufferSize());
 #endif
 
 		//LOG(D) << "hdr->cp.outstandingData)=" << hdr->cp.outstandingData << " hdr->cp.minTransfer=" << hdr->cp.minTransfer << dev;

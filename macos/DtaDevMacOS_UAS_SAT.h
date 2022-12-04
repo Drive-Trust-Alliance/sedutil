@@ -58,7 +58,7 @@ public:
      * @param bufferlen length of the input/output buffer
      */
     uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                    void * buffer, uint16_t bufferlen);
+                    void * buffer, size_t bufferlen);
     /** USB specific routine to send an identify to the device */
     uint8_t identify(DTA_DEVICE_INFO& disk_info);
     /** USB specific routine to send a discovery0 to the device */

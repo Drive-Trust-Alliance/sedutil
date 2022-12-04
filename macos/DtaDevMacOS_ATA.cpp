@@ -37,7 +37,7 @@ uint8_t DtaDevMacOS_ATA::sendCmd(ATACOMMAND cmd,                  // IF_RECV (0x
                                  uint8_t secProtocol,             // this is ATA sec protocol, not 4,5 for data in/out
                                  uint16_t comID,
                                  void * buffer,                   // either inBuffer or outBuffer, aligned
-                                 uint16_t bufferlen)              // allocated length
+                                 size_t bufferlen)              // allocated length
 {
      return 0xff; // not ATA response -- just for stubbing, not for reals
 }

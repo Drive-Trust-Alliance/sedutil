@@ -38,7 +38,7 @@ uint8_t DtaDevMacOS_UAS_SAT::sendCmd(ATACOMMAND cmd,                  // IF_RECV
                                      uint8_t secProtocol,             // this is ATA sec protocol, not 4,5 for data in/out
                                      uint16_t comID,
                                      void * buffer,                   // either inBuffer or outBuffer, aligned
-                                     uint16_t bufferlen)              // allocated length
+                                     size_t bufferlen)              // allocated length
 {
     kern_return_t kernResult;
     uint64_t bufferLen64 = bufferlen;

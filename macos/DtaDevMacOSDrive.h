@@ -36,7 +36,7 @@ public:
      * @param bufferlen length of the input/output buffer
      */
     virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-            void * buffer, uint16_t bufferlen) = 0;
+            void * buffer, size_t bufferlen) = 0;
 
     /** Mac specific routine to identify the device
      * @param disk_info  DTA_DEVICE_INFO struct describing TPer

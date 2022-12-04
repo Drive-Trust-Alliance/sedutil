@@ -58,15 +58,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--query"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--printDefaultPassword"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "disk4"
+            argument = "--printDefaultPassword"
             isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "disk4"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "disk5"
@@ -82,7 +82,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "disk11"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>

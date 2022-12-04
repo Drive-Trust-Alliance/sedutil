@@ -41,7 +41,7 @@ uint8_t DtaDevMacOSTPer_SAT::sendCmd(ATACOMMAND cmd,                  // IF_RECV
                                      uint8_t secProtocol,             // this is ATA sec protocol, not 4,5 for data in/out
                                      uint16_t comID,
                                      void * buffer,                   // either inBuffer or outBuffer, aligned
-                                     uint16_t bufferlen)              // allocated length
+                                     size_t bufferlen)              // allocated length
 {
     kern_return_t kernResult;
     uint64_t bufferLen64 = bufferlen;
@@ -93,7 +93,7 @@ uint8_t DtaDevMacOSTPer_SAT::sendCmd(ATACOMMAND cmd,                  // IF_RECV
     }
     
     cdb[3] = secProtocol; // ATA features / TRUSTED S/R security protocol
-    cdb[4] = bufferlen / 512; // Sector count / transfer length (512b blocks)
+    cdb[4] = (UInt8)(bufferlen / 512); // Sector count / transfer length (512b blocks)
     //      cdb[5] = reserved;
     cdb[7] = ((comID & 0xff00) >> 8);
     cdb[6] = (comID & 0x00ff);
