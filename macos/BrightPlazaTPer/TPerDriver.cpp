@@ -309,7 +309,7 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceId
         // For instance, the Innostor Technology IS888 USB3.0 to SATA bridge identifies its
         // medium, not itself, in the Inquiry response, so we have no way of matching on it
         // short of delving into the USB world
-        ;
+        return true;  // ¯\_(ツ)_/¯
 #else // !defined( ALLOW_INQUIRY_PAGE_00_FAILURES )
         return false;  // Mandatory, according to standard
 #endif // defined( ALLOW_INQUIRY_PAGE_00_FAILURES )
