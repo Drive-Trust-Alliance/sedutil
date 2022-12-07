@@ -481,6 +481,7 @@ bool DriverClass::deviceIsTPer_SAT(const InterfaceDeviceID & interfaceDeviceIden
         IOLOG_DEBUG("%s[%p]::%s *** despite matching tperOverride entry, level 0 discovery did not work", getName(), this, __FUNCTION__);
     }
 
+#undef UNJUSTIFIED_LEVEL_0_DISCOVERY 
 #if defined(UNJUSTIFIED_LEVEL_0_DISCOVERY)
     if (kIOReturnSuccess == updatePropertiesInIORegistry_SAT(di)) {
         IOLOG_DEBUG("%s[%p]::%s *** unjustified level 0 discovery worked", getName(), this, __FUNCTION__);

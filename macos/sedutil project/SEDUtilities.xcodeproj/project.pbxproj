@@ -11,6 +11,8 @@
 		D287224328B835CB0023404B /* sedutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D287224228B835CB0023404B /* sedutil.cpp */; };
 		D28CFD6428E2C4EE00A33B00 /* sedutil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D287224528B835DF0023404B /* sedutil.framework */; };
 		D28CFD6528E2C50300A33B00 /* log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2ECBD7E28CACC1400D9F997 /* log.framework */; };
+		D29F7FB12940E7AE00206C29 /* oui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D29F7FB02940E7AE00206C29 /* oui.framework */; };
+		D29F7FB22940E7AE00206C29 /* oui.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D29F7FB02940E7AE00206C29 /* oui.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -38,6 +40,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				D29F7FB22940E7AE00206C29 /* oui.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -58,6 +61,7 @@
 		D287224528B835DF0023404B /* sedutil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = sedutil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28CFD6028E2C1AF00A33B00 /* sedutil-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "sedutil-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28CFD6128E2C1AF00A33B00 /* reenumerate */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = reenumerate; sourceTree = BUILT_PRODUCTS_DIR; };
+		D29F7FB02940E7AE00206C29 /* oui.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = oui.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2ECBD7E28CACC1400D9F997 /* log.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -74,6 +78,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D28CFD6428E2C4EE00A33B00 /* sedutil.framework in Frameworks */,
+				D29F7FB12940E7AE00206C29 /* oui.framework in Frameworks */,
 				D28CFD6528E2C50300A33B00 /* log.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -104,6 +109,7 @@
 		D287224428B835DF0023404B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D29F7FB02940E7AE00206C29 /* oui.framework */,
 				D2ECBD7E28CACC1400D9F997 /* log.framework */,
 				D287224528B835DF0023404B /* sedutil.framework */,
 			);

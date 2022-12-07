@@ -534,9 +534,18 @@ std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enum
 
     
     
-static __inline bool __is_not_all_zeros(const uint8_t * b, const size_t n) {
+static __inline bool __is_not_all_NULs(const uint8_t * b, const size_t n) {
     for(const uint8_t * e = b + n; b<e; b++) {
         if (0!=*b)
+            return true;
+    }
+    return false;
+}
+    
+    
+static __inline bool __is_not_all_zeroes(const uint8_t * b, const size_t n) {
+    for(const uint8_t * e = b + n; b<e; b++) {
+        if (0!=*b && '0'!=*b)
             return true;
     }
     return false;
@@ -579,9 +588,10 @@ static void polishDeviceInfo(DTA_DEVICE_INFO *pdi) {
         
 #define EXTEND_DTA_DEVICE_INFO_WITH_OUI_VENDOR_DATA
 #if defined( EXTEND_DTA_DEVICE_INFO_WITH_OUI_VENDOR_DATA )
-#define is_not_all_zeros(field) (__is_not_all_zeros(device_info.field, sizeof(device_info.field)))
-    if (is_not_all_zeros(worldWideName)) {
-        if (!is_not_all_zeros(manufacturerName)) {
+#define is_not_all_NULs(field) (__is_not_all_NULs(device_info.field, sizeof(device_info.field)))
+#define is_not_all_zeroes(field) (__is_not_all_zeroes(device_info.field, sizeof(device_info.field)))
+    if (is_not_all_NULs(worldWideName)) {
+        if (!is_not_all_NULs(manufacturerName)) {
             char oui[8]={0};
             snprintf(oui, 8, "%02X%02X%02X%02X",
                      device_info.worldWideName[0],
@@ -596,7 +606,7 @@ static void polishDeviceInfo(DTA_DEVICE_INFO *pdi) {
                         sizeof(device_info.manufacturerName));
             }
         }
-        if (!is_not_all_zeros(vendorID)) {
+        if (!is_not_all_NULs(vendorID)) {
             const char * vendorID =
             vendorID_for_vendor_canonically_if_necessary((const char *)device_info.manufacturerName);
             if (vendorID != NULL) {
@@ -604,15 +614,39 @@ static void polishDeviceInfo(DTA_DEVICE_INFO *pdi) {
             }
         }
     } else {
-        if (is_not_all_zeros(vendorID)) {
-            if (!is_not_all_zeros(manufacturerName)) {
+        if (is_not_all_NULs(vendorID)) {
+            if (!is_not_all_NULs(manufacturerName)) {
                 const char * vendor =
-                vendor_for_vendorID_canonically_if_necessary((const char *)device_info.vendorID);
+                    vendor_for_vendorID_canonically_if_necessary((const char *)device_info.vendorID);
                 if (vendor != NULL) {
                     strncpy((char *)device_info.manufacturerName, vendor, sizeof(device_info.manufacturerName));
                 }
-                // get oui from vendor/manufacturer name
-                // make up worldWideName from those
+                const char * oui =
+                    oui_for_vendorID_canonically_if_necessary((const char *)device_info.vendorID);
+                if (oui != NULL) {
+                    char worldWideNameHex[17];
+                    
+                    char serialNumberHex[9] = "00000000";
+                    if (is_not_all_zeroes(serialNum)) {
+                        if ( true /* TODO: Is there a stretch of at least 8 hex digits in serialNum? */ ) {
+                            // use the right-most 8 such hex digits
+                        } else {
+                            // use hex of 32-bit hash of vendorID++modelNum++serialNum
+                        }
+                    }
+                    snprintf(worldWideNameHex, 17, "5%6s0%8s", oui, serialNumberHex);
+                    
+                    
+                    for (size_t i=0; i<sizeof(device_info.worldWideName); i++) {
+                        char nybbles[3];
+                        nybbles[0]=worldWideNameHex[2*i  ];
+                        nybbles[1]=worldWideNameHex[2*i+1];
+                        nybbles[2]=0;
+                        device_info.worldWideName[i] = (uint8_t)strtol(nybbles, NULL, 16);
+                    }
+
+                }
+                (void)oui;
             }
         }
     }
