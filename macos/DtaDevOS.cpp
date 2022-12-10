@@ -109,10 +109,19 @@ int  DtaDevOS::diskScan()
 {
     LOG(D1) << "Entering DtaDevOS:diskScan ";
 
+#if !DEBUG
     printf("Scanning for Opal compliant disks\n");
+#endif // DEBUG
 
     vector<DtaDevMacOSBlockStorageDevice *> blockStorageDevices =
         DtaDevMacOSBlockStorageDevice::enumerateBlockStorageDevices();
+
+#if DEBUG
+    if (blockStorageDevices.size()!=0) {
+        printf(" device    SSC         Model Number       Firmware  Locn     World Wide Name    Serial Number       Vendor      Manufacturer Name\n");
+        printf("---------- ---  ------------ ------------ --------  -----    ----- ---- -----  ------- ---------    -------  --------------- -------\n");
+    }
+#endif // DEBUG
 
     for (DtaDevMacOSBlockStorageDevice * device : blockStorageDevices){
         printf("%-11s", device->getDevName().c_str());
@@ -145,20 +154,18 @@ int  DtaDevOS::diskScan()
             default:
                 devType = "UNKNOWN";
         }
-
 #if DEBUG
-        printf("%-25s %-8s  %-7s  %02X%02X%02X%02X%02X%02X%02X%02X  %-20s %-8s %-30s\n",
+        char WWN[17]="                ";  // 16 blanks
+        vector<uint8_t>wwn(device->getWorldWideName());
+        if (__is_not_all_NULs(wwn.data(), wwn.size())) {
+            snprintf(WWN, 17, "%02X%02X%02X%02X%02X%02X%02X%02X",
+                     wwn[0], wwn[1], wwn[2], wwn[3], wwn[4], wwn[5], wwn[6], wwn[7]);
+        }
+        printf("%-25s %-8s  %-7s  %16s  %-20s %-8s %-30s\n",
                device->getModelNum(),
                device->getFirmwareRev(),
                devType,
-               device->getWorldWideName()[0],
-               device->getWorldWideName()[1],
-               device->getWorldWideName()[2],
-               device->getWorldWideName()[3],
-               device->getWorldWideName()[4],
-               device->getWorldWideName()[5],
-               device->getWorldWideName()[6],
-               device->getWorldWideName()[7],
+               WWN,
                device->getSerialNum(),
                device->getVendorID(),
                device->getManufacturerName());

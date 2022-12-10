@@ -479,7 +479,15 @@ void DtaDev::puke()
             disk_info.devType == DEVICE_TYPE_USB ? " USB " :
             disk_info.devType == DEVICE_TYPE_NVME ? " NVMe " :
                     " OTHER ");
-	cout << disk_info.modelNum << " " << disk_info.firmwareRev << " " << disk_info.serialNum << endl;
+    cout << disk_info.modelNum << " " << disk_info.firmwareRev << " " << disk_info.serialNum;
+#if DEBUG
+    cout << "  " ;
+    cout << std::hex << std::setw(2) << std::setfill('0') << std::uppercase ;
+    for (uint8_t b:disk_info.worldWideName) cout << ((unsigned int)b) ;
+    cout << HEXOFF;
+    cout << "  " << disk_info.vendorID << "   " << disk_info.manufacturerName;
+#endif // DEBUG
+    cout << endl;
 	/* TPer */
 	if (disk_info.TPer) {
 		cout << "TPer function (" << HEXON(4) << FC_TPER << HEXOFF << ")" << std::endl;

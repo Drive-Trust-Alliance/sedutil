@@ -32,6 +32,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <SEDKernelInterface/SEDKernelInterface.h>
 #include "DtaHashPwd.h"
 #include "DtaDevMacOSTPer.h"
+#include "DtaDevOS.h"
 
 // Some macros to access the properties dicts and values
 #define GetBool(dict,name) (CFBooleanRef)CFDictionaryGetValue(dict, CFSTR(name))
@@ -507,23 +508,6 @@ std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enum
 }
 
     
-    
-static __inline bool __is_not_all_NULs(const uint8_t * b, const size_t n) {
-    for(const uint8_t * e = b + n; b<e; b++) {
-        if (0!=*b)
-            return true;
-    }
-    return false;
-}
-    
-    
-static __inline bool __is_not_all_zeroes(const uint8_t * b, const size_t n) {
-    for(const uint8_t * e = b + n; b<e; b++) {
-        if (0!=*b && '0'!=*b)
-            return true;
-    }
-    return false;
-}
 
 static void trimBuffer(char * buffer, size_t len) {
     char * b = buffer;
@@ -549,19 +533,48 @@ static void trimBuffer(char * buffer, size_t len) {
 static void polishDeviceInfo(DTA_DEVICE_INFO *pdi) {
     DTA_DEVICE_INFO & device_info = *pdi;
     
+#define is_not_all_NULs(field) (__is_not_all_NULs(device_info.field, sizeof(device_info.field)))
+#define is_not_all_zeroes(field) (__is_not_all_zeroes(device_info.field, sizeof(device_info.field)))
+
 #define _trim(field) trimBuffer((char *)device_info.field, sizeof(device_info.field))
     
     _trim(modelNum);
+    _trim(vendorID);
     _trim(serialNum);
     _trim(firmwareRev);
     _trim(manufacturerName);
 
+    
+    
+#define VENDOR_ID_MIGHT_BE_FIRST_WORD_OF_MODEL_NUMBER
+#if defined( VENDOR_ID_MIGHT_BE_FIRST_WORD_OF_MODEL_NUMBER )
+    if (!is_not_all_NULs(vendorID)) {
+        std::regex leftmostWord("([^ ]*) (.*)");
+        std::cmatch match;
+        if (std::regex_match((const char *)device_info.modelNum,
+                             match,
+                             leftmostWord)) {
+            string vendorName = match.str(1);
+            const char * vendorID = vendorName.c_str();
+            if (vendorID != NULL && 0 < strlen(vendorID)) {
+                // Is the first word of modelNum also a vendorID (canonically, if necessary)?
+                const char * vendor = vendor_for_vendorID_canonically_if_necessary(vendorID);
+                if (vendor != NULL) {
+                    size_t vendorID_length_plus_one=strnlen(vendorID, sizeof(device_info.vendorID))+1;
+                    strncpy((char *)device_info.vendorID, vendorID, vendorID_length_plus_one);
+                    
+                    memset(device_info.modelNum, ' ', vendorID_length_plus_one);
+                    _trim(modelNum);
+                }
+            }
+        }
+    }
+#endif // defined( VENDOR_ID_MIGHT_BE_FIRST_WORD_OF_MODEL_NUMBER )
+
 #undef _trim
-        
+
 #define EXTEND_DTA_DEVICE_INFO_WITH_OUI_VENDOR_DATA
 #if defined( EXTEND_DTA_DEVICE_INFO_WITH_OUI_VENDOR_DATA )
-#define is_not_all_NULs(field) (__is_not_all_NULs(device_info.field, sizeof(device_info.field)))
-#define is_not_all_zeroes(field) (__is_not_all_zeroes(device_info.field, sizeof(device_info.field)))
     if (is_not_all_NULs(worldWideName)) {
         if (!is_not_all_NULs(manufacturerName)) {
             char oui[8]={0};
@@ -604,15 +617,15 @@ static void polishDeviceInfo(DTA_DEVICE_INFO *pdi) {
 
                 char * serialNumberHex = worldWideNameHex+8;
                 if (is_not_all_zeroes(serialNum)) {
+                    // Is there a stretch of at least 8 hex digits in serialNum?
                     std::regex rightmostEightHexDigits(".*([A-Fa-f0-9]{8})");
                     std::cmatch match;
                     if (std::regex_match((const char *)device_info.serialNum,
                                          match,
-                                         rightmostEightHexDigits)
-                        /* TODO: Is there a stretch of at least 8 hex digits in serialNum? */ ) {
-                        auto r=match.str(1);
-                        strncpy(serialNumberHex, (const char *)r.c_str(), 8);
+                                         rightmostEightHexDigits)) {
+                        strncpy(serialNumberHex, (const char *)(match.str(1).c_str()), 8);
                     } else {
+                        // Synthesize WWN serial number as DtaHash of vendorID, modelNum, and serialNum
                         uint8_t uID[sizeof(device_info.vendorID)+ sizeof(device_info.modelNum)+1];
                         memcpy(&uID[0],
                                device_info.vendorID, sizeof(device_info.vendorID));
@@ -638,32 +651,6 @@ static void polishDeviceInfo(DTA_DEVICE_INFO *pdi) {
         }
     }
 #endif // defined( EXTEND_DTA_DEVICE_INFO_WITH_OUI_VENDOR_DATA )
-    
-#define VENDOR_ID_MIGHT_BE_FIRST_WORD_OF_MODEL_NUMBER
-#if defined( VENDOR_ID_MIGHT_BE_FIRST_WORD_OF_MODEL_NUMBER )
-    if (!is_not_all_NULs(vendorID)) {
-        std::regex leftmostWord("([^ ]*) (.*)");
-        std::cmatch match;
-        if (std::regex_match((const char *)device_info.modelNum,
-                             match,
-                             leftmostWord)) {
-            string vendorName = match.str(1);
-            const char * vendorID = vendorName.c_str();
-            if (vendorID != NULL && 0 < strlen(vendorID)) {
-                const char * vendor = vendor_for_vendorID_canonically_if_necessary(vendorID);
-                if (vendor != NULL) {
-                    size_t vendorID_length_plus_one=strnlen(vendorID, sizeof(device_info.vendorID))+1;
-                    strncpy((char *)device_info.vendorID, vendorID, vendorID_length_plus_one);
-                    memmove(device_info.modelNum, device_info.modelNum+vendorID_length_plus_one, sizeof(device_info.modelNum)-vendorID_length_plus_one);
-                    memset(device_info.modelNum+sizeof(device_info.modelNum)-vendorID_length_plus_one, 0, vendorID_length_plus_one);
-                    if (!is_not_all_NULs(manufacturerName)) {
-                        strncpy((char *)device_info.manufacturerName, vendor, sizeof(device_info.manufacturerName));
-                    }
-                }
-            }
-        }
-    }
-#endif // defined( VENDOR_ID_MIGHT_BE_FIRST_WORD_OF_MODEL_NUMBER )
 
     return;
 }
@@ -896,9 +883,10 @@ const char * DtaDevMacOSBlockStorageDevice::getSerialNum()
 }
     
 
-const uint8_t * DtaDevMacOSBlockStorageDevice::getWorldWideName()
+const vector<uint8_t> DtaDevMacOSBlockStorageDevice::getWorldWideName()
 {
-    return (const uint8_t *)&pdevice_info->worldWideName;
+    const uint8_t * b=pdevice_info->worldWideName;
+    return vector<uint8_t>(b,b+sizeof(pdevice_info->worldWideName));
 }
 
 const char * DtaDevMacOSBlockStorageDevice::getPhysicalInterconnect()
