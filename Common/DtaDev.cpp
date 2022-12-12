@@ -482,9 +482,11 @@ void DtaDev::puke()
     cout << disk_info.modelNum << " " << disk_info.firmwareRev << " " << disk_info.serialNum;
 #if DEBUG
     cout << "  " ;
-    cout << std::hex << std::setw(2) << std::setfill('0') << std::uppercase ;
-    for (uint8_t b:disk_info.worldWideName) cout << ((unsigned int)b) ;
-    cout << HEXOFF;
+    for (uint8_t b:disk_info.worldWideName) {
+        char hexdigits[3];
+        snprintf(hexdigits, 3, "%02X", (unsigned int)b);
+        cout << (const char *)hexdigits;
+    }
     cout << "  " << disk_info.vendorID << "   " << disk_info.manufacturerName;
 #endif // DEBUG
     cout << endl;
