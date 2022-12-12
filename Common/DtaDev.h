@@ -697,7 +697,7 @@ public:
     sedutiloutput output_format; /** standard, readable, JSON */  // TODO: really an attribute of the program, not the TPer
 	char LicenseLevel[32];  // TODO: see comment at the top???
 
-    static void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di);
+//    static void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di);
 protected:
 	const char * dev;   /**< character string representing the device in the OS lexicon */
     

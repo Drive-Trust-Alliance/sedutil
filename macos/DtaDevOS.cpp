@@ -24,7 +24,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevGeneric.h"
 #include "DtaStructures.h"
 #include "DtaDevMacOSTPer.h"
-
+#include "DtaConstants.h"
 
 using namespace std;
 
@@ -95,8 +95,11 @@ void DtaDevOS::identify()
         LOG(E) << "DtaDevOS::identify ERROR - unknown drive type";
         return;
     }
-
-    (void)(tPer -> identify(disk_info));
+    kern_return_t ret = tPer -> identify(disk_info);
+    if (kIOReturnSuccess != ret) {
+        LOG(E) << "DtaDevOS::identify ERROR - " << HEXON(8) << ret;
+        return;
+    }
 }
 
 void DtaDevOS::osmsSleep(uint32_t ms)

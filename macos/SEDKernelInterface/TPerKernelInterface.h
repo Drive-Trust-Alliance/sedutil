@@ -23,7 +23,7 @@ extern "C" {
 
 //  Access the drive and update the DTA_DEVICE_INFO produced by Identify/Inquiry
 //  and the cached Discovery0 information from the driver
-    kern_return_t TPerUpdate(io_registry_entry_t driverService, DTA_DEVICE_INFO * pdi);
+    kern_return_t TPerUpdate(io_connect_t connect, io_registry_entry_t driverService, DTA_DEVICE_INFO * pdi);
 
 // Low-level functions
 

@@ -73,6 +73,8 @@ public:
     const char * bsdName() { return tPer->getBSDName();}
     const char * modelNumber() { return tPer->getModelNum();}
     const char * firmwareRevision() { return tPer->getFirmwareRev();}
+    
+    virtual void puke() { identify(); DtaDev::puke(); }
 
 protected:
     /** OS specific command to Wait for specified number of milliseconds 

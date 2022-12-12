@@ -2044,7 +2044,7 @@ void DtaDevEnterprise::puke()
 {
 
 	LOG(D1) << "Entering DtaDevEnterprise::puke()";
-	DtaDev::puke();
+	DtaDevOS::puke();
 	if (disk_info.Properties) {
 		uint32_t i = 0, j = 0;
 

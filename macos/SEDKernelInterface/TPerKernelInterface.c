@@ -130,10 +130,10 @@ kern_return_t updatePropertiesInIORegistry(io_connect_t connect) {
     return IOConnectCallScalarMethod(connect, kSedUserClientUpdatePropertiesInIORegistry, NULL, 0, NULL, NULL);
 }
 
-kern_return_t TPerUpdate(io_connect_t connect, DTA_DEVICE_INFO * pdi) {
+kern_return_t TPerUpdate(io_connect_t connect, io_registry_entry_t driverService, DTA_DEVICE_INFO * pdi) {
     kern_return_t ret = updatePropertiesInIORegistry(connect);
     if (kIOReturnSuccess == ret && pdi != NULL ) {
-        CFDataRef data = (CFDataRef)IORegistryEntryCreateCFProperty(connect,
+        CFDataRef data = (CFDataRef)IORegistryEntryCreateCFProperty(driverService,
                                                                     CFSTR(IODtaDeviceInfoKey),
                                                                     CFAllocatorGetDefault(), 0);
         if ( data == NULL )

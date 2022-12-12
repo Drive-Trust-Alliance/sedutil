@@ -5846,7 +5846,7 @@ void DtaDevOpal::fill_prop(uint8_t show)
 void DtaDevOpal::puke()
 {
 	LOG(D1) << "Entering DtaDevOpal::puke() " << dev;
-	DtaDev::puke();
+	DtaDevOS::puke();
 	if (disk_info.Properties) {
 		fill_prop(TRUE); // fill and display Tper Host property
 	} // diskinfo.propery

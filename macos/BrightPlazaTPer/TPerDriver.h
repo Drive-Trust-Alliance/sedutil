@@ -34,6 +34,7 @@ protected:
     // IOService methods
 
     
+    
     // override of Apple function that is called from start
     // we use this override to determine whether device is a TCG TPer
     // if not, we abort the startup of the driver
@@ -63,6 +64,8 @@ private:
     //
     // Initialization functions
     //
+    bool IdentifyTPer(void);
+    
     void GetDeviceInfo(DTA_DEVICE_INFO &di);
     
     void updateIORegistryFromD0Response(const uint8_t * d0Response, DTA_DEVICE_INFO & di);

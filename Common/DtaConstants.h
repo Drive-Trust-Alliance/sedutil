@@ -38,6 +38,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 /** maximum number of disks to be scanned */
 #define MAX_DISKS 99
 /** iomanip commands to hexdump a field */
+#include <iomanip>
 #define HEXON(x) "0x" << std::hex << std::setw(x) << std::setfill('0')
 /** iomanip command to return to standard ascii output */
 #define HEXOFF std::dec << std::setw(0) << std::setfill(' ')

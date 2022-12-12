@@ -43,7 +43,7 @@ public:
     /** Mac specific routine to identify the device
      * @param disk_info  DTA_DEVICE_INFO struct describing TPer
     */
-    virtual uint8_t identify(DTA_DEVICE_INFO& disk_info);
+    virtual kern_return_t identify(DTA_DEVICE_INFO& disk_info);
 
     /** Initialize a drive object for use
      * @param dev the bsdname (i.e. "disk3") of the device

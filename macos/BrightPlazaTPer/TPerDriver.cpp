@@ -84,31 +84,16 @@ void DriverClass::GetDeviceInfo(DTA_DEVICE_INFO &di) {
     IOLOG_DEBUG("%s[%p]::%s - di.devSize set to %llu\n",  getName(), this, __FUNCTION__, di.devSize);
 }
 
-// IOSCSIPrimaryBlockCommandsDevice method
-// override of Apple function that is called from start  --
-// we use this override to determine whether device is a TCG TPer
-// if not, we abort the startup of the driver.
-// deviceIsTPer will set property IOTCGPropertiesKey
-// it will be an empty dictionary if device is not a TPer
-// and we will need to call stop (in the start method) to terminate device support
-bool DriverClass::InitializeDeviceSupport ( void )
-{
-    IOLOG_DEBUG("%s[%p]::%s about to call super::InitializeDeviceSupport() ...", getName(), this, __FUNCTION__);
-    if (! super::InitializeDeviceSupport()) {
-        IOLOG_DEBUG("%s[%p]::%s super::InitializeDeviceSupport() returned false", getName(), this, __FUNCTION__);
-        return false;
-    }
-    IOLOG_DEBUG("%s[%p]::%s super::InitializeDeviceSupport() returned true", getName(), this, __FUNCTION__);
-
+bool com_brightplaza_BrightPlazaTPer::IdentifyTPer() {
     InterfaceDeviceID interfaceDeviceIdentification;
     DTA_DEVICE_INFO di;
-
+    
     if (!identifyUsingSCSIInquiry(interfaceDeviceIdentification, di)) {
         IOLOG_DEBUG("%s[%p]::%s Device is NOT SCSI", getName(), this, __FUNCTION__);
         return false;
     }
     IOLOG_DEBUG("%s[%p]::%s Device is SCSI", getName(), this, __FUNCTION__);
-
+    
     bool result = false;
     
     if (deviceIsTPer_SCSI(di)) {
@@ -141,6 +126,25 @@ bool DriverClass::InitializeDeviceSupport ( void )
         IOLOG_DEBUG("%s[%p]::%s Device is not for this driver", getName(), this, __FUNCTION__);
     }
     return result;
+}
+
+// IOSCSIPrimaryBlockCommandsDevice method
+// override of Apple function that is called from start  --
+// we use this override to determine whether device is a TCG TPer
+// if not, we abort the startup of the driver.
+// deviceIsTPer will set property IOTCGPropertiesKey
+// it will be an empty dictionary if device is not a TPer
+// and we will need to call stop (in the start method) to terminate device support
+bool DriverClass::InitializeDeviceSupport ( void )
+{
+    IOLOG_DEBUG("%s[%p]::%s about to call super::InitializeDeviceSupport() ...", getName(), this, __FUNCTION__);
+    if (! super::InitializeDeviceSupport()) {
+        IOLOG_DEBUG("%s[%p]::%s super::InitializeDeviceSupport() returned false", getName(), this, __FUNCTION__);
+        return false;
+    }
+    IOLOG_DEBUG("%s[%p]::%s super::InitializeDeviceSupport() returned true", getName(), this, __FUNCTION__);
+
+    return IdentifyTPer();
 }
 
 //*****************
@@ -257,21 +261,7 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
 
 IOReturn DriverClass::updatePropertiesInIORegistry( void )
 {
-    OSObject * it = getProperty(IOInterfaceTypeKey);
-    if (NULL == it)
-        return kIOReturnUnsupported;
-    else {
-        const char * interfaceType = (OSRequiredCast(OSString, it))->getCStringNoCopy();
-        if (NULL == interfaceType)
-            return kIOReturnUnsupported;
-        DTA_DEVICE_INFO di;
-        if (0 == strncmp(interfaceType, IOInterfaceTypeSAT, 3))
-            return updatePropertiesInIORegistry_SAT(di);
-        else if (0 == strncmp(interfaceType, IOInterfaceTypeSCSI, 4))
-            return updatePropertiesInIORegistry_SCSI(di);
-        else
-            return kIOReturnUnsupported;
-    }
+    return IdentifyTPer() ? kIOReturnSuccess : kIOReturnUnsupported;
 }
 
 //*****************
