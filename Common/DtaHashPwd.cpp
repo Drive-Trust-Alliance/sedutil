@@ -269,18 +269,19 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
 	else {
 		DtaHashPassword(hash, password, salt, iter);
 	}
-#if false
+//#if false
+#if true
 	printf("serNum=%s\n", serNum);
 	printf("serNum as data =");
-	for (int i = 0; i < strnlen(serNum,20); i++) printf("%02X", serNum[i]);
+	for (size_t i = 0; i < strnlen(serNum,20); i++) printf("%02X", serNum[i]);
 	printf("\n");
-	printf("salt size = %d ; salt =",salt.size());
-	for (int i = 0; i < salt.size(); i++) printf("%02X", salt[i]);
+	printf("salt size = %lu ; salt =",salt.size());
+	for (size_t i = 0; i < salt.size(); i++) printf("%02X", salt[i]);
 	printf("\n");
 	printf("salt as string =%s\n", salt.data());
 	//printf("password : %s\n",password); // non-printable char cause screen error 
-	printf("Hashed password size = %d ; hashed password =",hash.size());
-	for (int i = 0; i < hash.size(); i++)
+    printf("Hashed password size = %lu ; hashed password =",hash.size());
+	for (size_t i = 0; i < hash.size(); i++)
 		printf("%02x", hash[i]);
 	printf("\n");
 #endif	
