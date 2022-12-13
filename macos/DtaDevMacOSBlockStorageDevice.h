@@ -116,7 +116,7 @@ private:
     std::string bsdName;
     std::string entryName;
     CFDictionaryRef properties;
-    
+
     // derived
 #if defined(TRY_SMART_LIBS)
     void parse_properties_into_device_info(io_service_t aBlockStorageDevice);
@@ -125,4 +125,6 @@ private:
 #endif // defined(TRY_SMART_LIBS)
     static bool bsdNameLessThan(DtaDevMacOSBlockStorageDevice * a,
                                 DtaDevMacOSBlockStorageDevice * b);  // for sorting
+protected:
+    void polishDeviceInfo();
 };

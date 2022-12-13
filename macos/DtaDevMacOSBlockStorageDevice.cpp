@@ -530,8 +530,8 @@ static void trimBuffer(char * buffer, size_t len) {
 }
 
 
-static void polishDeviceInfo(DTA_DEVICE_INFO *pdi) {
-    DTA_DEVICE_INFO & device_info = *pdi;
+void DtaDevMacOSBlockStorageDevice::polishDeviceInfo() {
+    DTA_DEVICE_INFO & device_info = *pdevice_info;
     
 #define is_not_all_NULs(field) (__is_not_all_NULs(device_info.field, sizeof(device_info.field)))
 #define is_not_all_zeroes(field) (__is_not_all_zeroes(device_info.field, sizeof(device_info.field)))
@@ -672,7 +672,7 @@ DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageD
         : new DtaDevMacOSBlockStorageDevice(aBlockStorageDevice,
                                             entryName, bsdName, properties, pdi);
     // Polishing up the DTA_DEVICE_INFO
-    polishDeviceInfo(pdi);
+    d->polishDeviceInfo();
 
     return d;
 }
@@ -693,7 +693,7 @@ DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(std::string entryName,
         : new DtaDevMacOSBlockStorageDevice(entryName, bsdName, properties, pdi);
 
     // Polishing up the DTA_DEVICE_INFO
-    polishDeviceInfo(pdi);
+    d->polishDeviceInfo();
 
     return d;
 }

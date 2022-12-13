@@ -154,7 +154,11 @@ void DtaDevMacOSTPer::init(io_registry_entry_t ds, io_connect_t c)
 kern_return_t DtaDevMacOSTPer::identify(DTA_DEVICE_INFO& disk_info )
 {
     LOG(D4) << "Entering DtaDevMacOSDrive::identify()";
-    return TPerUpdate(connect, driverService, &disk_info) == KERN_SUCCESS ? KERN_SUCCESS : KERN_FAILURE;
+    kern_return_t result = TPerUpdate(connect, driverService, &disk_info);
+    if (result == KERN_SUCCESS) {
+        polishDeviceInfo();
+    }
+    return result;
 }
 
 
