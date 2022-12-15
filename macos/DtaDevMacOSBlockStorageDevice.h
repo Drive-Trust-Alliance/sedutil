@@ -83,7 +83,7 @@ public:
     /* What type of disk attachment is used */
     DTA_DEVICE_TYPE getDevType();
 
-    const std::string getDevName ();
+    const std::string getDevPath ();
 
     const unsigned long long getSize();
     

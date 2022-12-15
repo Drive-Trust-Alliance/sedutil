@@ -29,6 +29,49 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ATAStructures.h"
 
+
+
+/** Response returned by ATA Identify */
+typedef struct _IDENTIFY_RESPONSE {
+    uint8_t ignore1;             //word 0
+    uint8_t ignore2 : 7;         //word 0
+    uint8_t devType : 1;         //word 0
+    
+    uint8_t ignore3[18];         //words 1-9
+    uint8_t serialNumber[20];    //words 10-19
+    uint8_t ignore4[6];          //words 20-22
+    uint8_t firmwareRevision[8]; //words 23-26
+    uint8_t modelNum[40];        //words 27-46
+    uint8_t readMultFlags[2];    //word 47
+    uint8_t TCGOptions[2];       //word 48
+    uint8_t ignore5[102];        //words 49-99
+    uint8_t maxLBA[8];           //words 100-103
+    uint8_t ignore6[8];          //words 104-107
+    uint8_t worldWideName[8];    //words 108-111
+    uint8_t ignore7[32];         //words 112-127
+    uint8_t securityStatus[2];   //word 128
+    uint8_t vendorSpecific[62];  //words 129-159
+    uint8_t ignored8[32];        //words 160-175
+    uint8_t mediaSerialNum[60];  //words 176-205
+    uint8_t ignored9[96];        //words 206-254
+    uint8_t integrityWord[2];    //word 255
+} IDENTIFY_RESPONSE;
+
+typedef struct _UASP_INQUIRY_RESPONSE {
+    uint8_t fill1[20];
+    char ProductSerial[20];
+    uint8_t fill2[6];
+    char ProductRev[8];
+    char ProductID[40];
+} UASP_INQUIRY_RESPONSE;
+
+typedef struct _SCSI_INQUIRY_RESPONSE {
+    uint8_t fill1[16];
+    char ProductID[16];
+    char ProductRev[4];
+} SCSI_INQUIRY_RESPONSE;
+
+
 #define FC_TPER		  0x0001
 #define FC_LOCKING    0x0002
 #define FC_GEOMETRY   0x0003
@@ -600,47 +643,9 @@ typedef struct _DTA_DEVICE_INFO {
     uint8_t fips; // FIPS Approval mode
 	uint8_t asmedia; 
 	uint8_t enclosure;
-} DTA_DEVICE_INFO;
-
-/** Response returned by ATA Identify */
-typedef struct _IDENTIFY_RESPONSE {
-    uint8_t ignore1;             //word 0
-    uint8_t ignore2 : 7;         //word 0
-    uint8_t devType : 1;         //word 0
     
-    uint8_t ignore3[18];         //words 1-9
-    uint8_t serialNumber[20];    //words 10-19
-    uint8_t ignore4[6];          //words 20-22
-    uint8_t firmwareRevision[8]; //words 23-26
-    uint8_t modelNum[40];        //words 27-46
-    uint8_t readMultFlags[2];    //word 47
-    uint8_t TCGOptions[2];       //word 48
-    uint8_t ignore5[102];        //words 49-99
-    uint8_t maxLBA[8];           //words 100-103
-    uint8_t ignore6[8];          //words 104-107
-    uint8_t worldWideName[8];    //words 108-111
-    uint8_t ignore7[32];         //words 112-127
-    uint8_t securityStatus[2];   //word 128
-    uint8_t vendorSpecific[62];  //words 129-159
-    uint8_t ignored8[32];        //words 160-175
-    uint8_t mediaSerialNum[60];  //words 176-205
-    uint8_t ignored9[96];        //words 206-254
-    uint8_t integrityWord[2];    //word 255
-} IDENTIFY_RESPONSE;
-
-typedef struct _UASP_INQUIRY_RESPONSE {
-	uint8_t fill1[20];
-	char ProductSerial[20];
-	uint8_t fill2[6];
-	char ProductRev[8];
-	char ProductID[40];
-} UASP_INQUIRY_RESPONSE;
-
-typedef struct _SCSI_INQUIRY_RESPONSE {
-	uint8_t fill1[16];
-	char ProductID[16];
-	char ProductRev[4];
-} SCSI_INQUIRY_RESPONSE;
+    IDENTIFY_RESPONSE identify_response;  // raw, before byte-swapping, etc.
+} DTA_DEVICE_INFO;
 
 #if defined(__cplusplus)
 

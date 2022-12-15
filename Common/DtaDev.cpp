@@ -170,7 +170,13 @@ char *DtaDev::getModelNum()
 }
 char *DtaDev::getSerialNum()
 {
-	return (char *)&disk_info.serialNum;
+    return (char *)&disk_info.serialNum;
+}
+vector<uint8_t>DtaDev::getPasswordSalt()
+{
+    // TODO: Extract from identify_response instead -- avoids polishing
+    return vector<uint8_t>(disk_info.serialNum,
+                           disk_info.serialNum+sizeof(disk_info.serialNum));
 }
 DTA_DEVICE_TYPE DtaDev::getDevType()
 {

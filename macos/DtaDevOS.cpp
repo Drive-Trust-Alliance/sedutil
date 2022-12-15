@@ -127,7 +127,7 @@ int  DtaDevOS::diskScan()
 #endif // DEBUG
 
     for (DtaDevMacOSBlockStorageDevice * device : blockStorageDevices){
-        printf("%-11s", device->getDevName().c_str());
+        printf("%-11s", device->getDevPath().c_str());
 
         if (device->isAnySSC()) {
             printf(" %s%s%s ",

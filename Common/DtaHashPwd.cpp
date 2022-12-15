@@ -241,7 +241,6 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
 {
 
     LOG(D1) << " Entered DtaHashPwd";
-    char *serNum;
 
 	//d->no_hash_passwords = true; // force no hashing for debug purpose
 	IFLOG(D4) printf("d->translate_req = %d\n", d->translate_req); 
@@ -260,21 +259,16 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
 		LOG(D1) << " Exit DtaHashPwd";
 		return;
     }
-    serNum = d->getSerialNum();
-    vector<uint8_t> salt(serNum, serNum + 20);
+    
+    vector<uint8_t> salt(d->getPasswordSalt());
     //	vector<uint8_t> salt(DEFAULTSALT);
 	if (iter == 75000) {
 		DtaHashPassword(hash, password, salt);
-	}
-	else {
+	} else {
 		DtaHashPassword(hash, password, salt, iter);
 	}
 //#if false
 #if true
-	printf("serNum=%s\n", serNum);
-	printf("serNum as data =");
-	for (size_t i = 0; i < strnlen(serNum,20); i++) printf("%02X", serNum[i]);
-	printf("\n");
 	printf("salt size = %lu ; salt =",salt.size());
 	for (size_t i = 0; i < salt.size(); i++) printf("%02X", salt[i]);
 	printf("\n");
@@ -282,7 +276,7 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
 	//printf("password : %s\n",password); // non-printable char cause screen error 
     printf("Hashed password size = %lu ; hashed password =",hash.size());
 	for (size_t i = 0; i < hash.size(); i++)
-		printf("%02x", hash[i]);
+		printf("%02X", hash[i]);
 	printf("\n");
 #endif	
 }

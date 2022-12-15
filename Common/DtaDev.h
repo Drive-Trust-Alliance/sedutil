@@ -78,19 +78,16 @@ public:
 	char *getFirmwareRev();
 	/** Returns the Model Number reported by the Identify command */
 	char *getModelNum();
-	/** Returns the Serial Number reported by the Identify command */
-	char *getSerialNum();
+    /** Returns the Serial Number reported by the Identify command */
+    char *getSerialNum();
+    /** Returns the device-specific data to be used as a password salt */
+    vector<uint8_t>getPasswordSalt();
+    
     /* What type of disk attachment is used */
     DTA_DEVICE_TYPE getDevType();
 	/** displays the information returned by the Discovery 0 reply */
 	virtual void puke();
-// TODO: triage
-//	/** Decode the Discovery 0 response. Scans the D0 response and creates a structure
-//	 * that can be queried later as required.This code also takes care of
-//	 * the endianess conversions either via a bitswap in the structure or executing
-//	 * a macro when the input buffer is read.
-//	 */
-//	void discovery0();
+    //
 	uint8_t TperReset();
 	/*
 	 * virtual methods required in the OS specific

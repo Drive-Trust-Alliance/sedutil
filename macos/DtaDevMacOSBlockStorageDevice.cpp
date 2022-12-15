@@ -632,7 +632,7 @@ void DtaDevMacOSBlockStorageDevice::polishDeviceInfo() {
                         memcpy(&uID[sizeof(device_info.vendorID)],
                                device_info.modelNum, sizeof(device_info.modelNum));
                         vector<uint8_t> hash={4,0xd0, 0,0,0,0};
-                        vector<uint8_t> salt(device_info.serialNum, device_info.serialNum+sizeof(device_info.serialNum));
+                        vector<uint8_t> salt(device_info.serialNum, device_info.serialNum+sizeof(device_info.serialNum));  // TODO: wrong -- getSalt()
                         DtaHashPassword(hash, (char *)uID, salt);
                         snprintf(serialNumberHex, 9, "%02X%02X%02X%02X", hash[2] , hash[3] , hash[4] , hash[5]);
                     }
@@ -907,7 +907,7 @@ DTA_DEVICE_TYPE DtaDevMacOSBlockStorageDevice::getDevType()
     return pdevice_info->devType;
 }
 
-const std::string DtaDevMacOSBlockStorageDevice::getDevName () {
+const std::string DtaDevMacOSBlockStorageDevice::getDevPath () {
     return ("/dev/"+bsdName).substr(0,25);
 }
 

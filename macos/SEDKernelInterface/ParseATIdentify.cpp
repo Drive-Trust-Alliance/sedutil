@@ -13,6 +13,7 @@
 #define __DBINTERFACE_PRIVATE
 #include <db.h>
 #undef __DBINTERFACE_PRIVATE
+#include <string.h>
 
 void parseATIdentifyResponse( const IDENTIFY_RESPONSE * presp, DTA_DEVICE_INFO * pdi)
 {
@@ -24,12 +25,13 @@ void parseATIdentifyResponse( const IDENTIFY_RESPONSE * presp, DTA_DEVICE_INFO *
         P_16_COPY(resp.respFieldName[i], di.diFieldName[i]); \
     }
 
-    for (size_t i = 0; i < sizeof(di.vendorID); i++) di.vendorID[i]=0;
+    memset(&di.vendorID, 0, sizeof(di.vendorID));
+
     P_16_COPY_RESP_TO_DI(serialNumber    , serialNum    )
     P_16_COPY_RESP_TO_DI(firmwareRevision, firmwareRev  )
     P_16_COPY_RESP_TO_DI(modelNum        , modelNum     )
     P_16_COPY_RESP_TO_DI(worldWideName   , worldWideName)
 
-
+    memcpy(&di.identify_response, &resp, sizeof(IDENTIFY_RESPONSE));
 
 }

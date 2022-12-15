@@ -54,7 +54,7 @@ public:
 
     /** OS specific routine to identify the device and fill out the device information struct
      */
-    void identify(void);
+    void identify();
     
 
         /** OS specific method to send an ATA command to the device
@@ -80,12 +80,14 @@ public:
     }
 
 protected:
-    /** OS specific command to Wait for specified number of milliseconds 
+    
+    /** return drive size in bytes */
+    const unsigned long long getSize ();
+    
+    /** OS specific command to Wait for specified number of milliseconds
      * @param ms  number of milliseconds to wait
      */
     void osmsSleep(uint32_t ms);
-    /** return drive size in bytes */
-    const unsigned long long getSize();
 
 private:
     bool __init(const char *devref);
