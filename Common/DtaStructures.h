@@ -644,6 +644,7 @@ typedef struct _DTA_DEVICE_INFO {
 	uint8_t asmedia; 
 	uint8_t enclosure;
     
+    uint8_t passwordSalt[20];             // copy of serialNum before polishing
     IDENTIFY_RESPONSE identify_response;  // raw, before byte-swapping, etc.
 } DTA_DEVICE_INFO;
 

@@ -293,7 +293,7 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceId
                     deviceSupportsPage89 ? "DOES" : "DOES NOT");
     } else  {
         IOLOG_DEBUG("%s[%p]::%s Device is not Page 00 SCSI", getName(), this, __FUNCTION__);
-#define ALLOW_INQUIRY_PAGE_00_FAILURES
+#undef ALLOW_INQUIRY_PAGE_00_FAILURES
 #if defined( ALLOW_INQUIRY_PAGE_00_FAILURES )
         // Some external USB-SATA adapters do not support the VPD pages but it's OK
         // For instance, the Innostor Technology IS888 USB3.0 to SATA bridge identifies its
@@ -825,6 +825,7 @@ OSDictionary * DriverClass::parseInquiryPage80Response(const InterfaceDeviceID &
     uint8_t serialNumber[257];
     bzero(serialNumber, sizeof(serialNumber));
     memcpy(serialNumber, &resp->PRODUCT_SERIAL_NUMBER, resp->PAGE_LENGTH);
+    memcpy(di.passwordSalt, serialNumber, sizeof(di.passwordSalt));  // save value before polishing
     if (deviceNeedsSpecialAction(interfaceDeviceIdentification,
                                  reverseInquiryPage80SerialNumber)) {
         IOLOG_DEBUG("%s[%p]::%s *** reversing Inquiry Page80 serial number", getName(), this, __FUNCTION__);

@@ -73,6 +73,7 @@ public:
     const char * bsdName() { return tPer->getBSDName();}
     const char * modelNumber() { return tPer->getModelNum();}
     const char * firmwareRevision() { return tPer->getFirmwareRev();}
+    vector<uint8_t> passwordSalt() { return tPer->getPasswordSalt();}
     
     virtual void puke() {
         identify();

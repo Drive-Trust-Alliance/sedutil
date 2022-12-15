@@ -72,6 +72,8 @@ public:
     const char *getModelNum();
     /** Returns the Serial Number reported by the Identify command */
     const char *getSerialNum();
+    /** Returns the password salt, usually the Serial Number reported by the Identify command unmodified by subsequent polishing*/
+    const vector<uint8_t> getPasswordSalt();
     /** Returns the World Wide Name reported by the Identify command */
     const vector<uint8_t> getWorldWideName();
     /** Returns the Physical Interconnect technology */

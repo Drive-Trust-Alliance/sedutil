@@ -883,6 +883,13 @@ const char * DtaDevMacOSBlockStorageDevice::getSerialNum()
 }
     
 
+const vector<uint8_t> DtaDevMacOSBlockStorageDevice::getPasswordSalt()
+{
+    const uint8_t * b=pdevice_info->passwordSalt;
+    return vector<uint8_t>(b,b+sizeof(pdevice_info->passwordSalt));
+}
+    
+
 const vector<uint8_t> DtaDevMacOSBlockStorageDevice::getWorldWideName()
 {
     const uint8_t * b=pdevice_info->worldWideName;

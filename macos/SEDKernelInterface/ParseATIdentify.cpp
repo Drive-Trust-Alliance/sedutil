@@ -28,6 +28,7 @@ void parseATIdentifyResponse( const IDENTIFY_RESPONSE * presp, DTA_DEVICE_INFO *
     memset(&di.vendorID, 0, sizeof(di.vendorID));
 
     P_16_COPY_RESP_TO_DI(serialNumber    , serialNum    )
+    P_16_COPY_RESP_TO_DI(serialNumber    , passwordSalt )  // save a copy before polishing
     P_16_COPY_RESP_TO_DI(firmwareRevision, firmwareRev  )
     P_16_COPY_RESP_TO_DI(modelNum        , modelNum     )
     P_16_COPY_RESP_TO_DI(worldWideName   , worldWideName)
