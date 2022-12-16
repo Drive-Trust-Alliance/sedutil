@@ -263,8 +263,9 @@ static int hashvalidate(char * password, char *devname)
 {
     vector <uint8_t> hash;
     DtaDev * d;
-    d = new DtaDevGeneric(devname);
-
+    uint8_t result = DtaDev::getDtaDev(devname, &d);
+    if (result != DTAERROR_SUCCESS)
+        return result;
     //bool saved_flag = d->no_hash_passwords;
     d->no_hash_passwords = false; // force to hash
     hash.clear();
@@ -638,7 +639,7 @@ int main(int argc, char * argv[])
 {
 	string st1;
 	DTA_OPTIONS opts;
-	DtaDev *tempDev = NULL, *d = NULL;
+	DtaDev *d = NULL;
 	// Log command here
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 	logc(argc, argv);
@@ -803,36 +804,11 @@ int main(int argc, char * argv[])
 		(opts.action != sedutiloption::hashvalidation) &&
 		(opts.action != sedutiloption::isValidSED)) {
 		if (opts.device > (argc - 1)) opts.device = 0;
-		tempDev = new DtaDevGeneric(argv[opts.device]);
-		if (NULL == tempDev) {
-			LOG(E) << "Create device object failed";
-			return DTAERROR_OBJECT_CREATE_FAILED;
-		}
-		if ((!tempDev->isPresent()) || (!tempDev->isAnySSC())) {
-			LOG(E) << "Invalid or unsupported disk " << argv[opts.device];
-			delete tempDev;
-			return DTAERROR_COMMAND_ERROR;
-		}
-        // Delete the tempDev before creating the more specific DtaDev
-        // in case the tempDev was holding some exclusive access
-        if (tempDev->isOpal2()) {
-            delete tempDev;
-			d = new DtaDevOpal2(argv[opts.device]);
-        } else if (tempDev->isOpal1()) {
-            delete tempDev;
-			d = new DtaDevOpal1(argv[opts.device]);
-        } else if (tempDev->isEprise()) {
-            delete tempDev;
-			d = new DtaDevEnterprise(argv[opts.device]);
-        } else {
-            delete tempDev;
-            LOG(E) << "Unknown OPAL SSC ";
-            return DTAERROR_INVALID_COMMAND;
-        }
-		if (NULL == d) {
-			LOG(E) << "Create device object failed";
-			return DTAERROR_OBJECT_CREATE_FAILED;
-		}
+
+        uint8_t result = DtaDev::getDtaDev(argv[opts.device], &d);
+        if (result != DTAERROR_SUCCESS)
+            return result;
+
 		// make sure DtaDev::no_hash_passwords is initialized
 		d->no_hash_passwords = opts.no_hash_passwords;
 

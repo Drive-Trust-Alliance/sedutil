@@ -30,7 +30,10 @@ public:
     DtaDevOS();
     /** Destructor */
     ~DtaDevOS();
-    
+
+    /** Factory method to produce instance of appropriate subclass */
+    static uint8_t getDtaDev(const char * devref, DtaDev * * pdev);
+
     /** OS specific initialization.
      * This function should perform the necessary authority and environment checking
      * to allow proper functioning of the program, open the device, perform an ATA

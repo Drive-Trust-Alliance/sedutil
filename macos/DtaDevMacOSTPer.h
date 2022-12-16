@@ -60,21 +60,26 @@ public:
     virtual void init(io_registry_entry_t driverService,
                       io_connect_t connect);
 
-    
-#if defined(TRY_SMART_LIBS)
-    static DtaDevMacOSTPer * getTPer(io_service_t aBlockStorageDevice,
-                                     std::string entryName,
-                                     std::string bsdName,
-                                     CFDictionaryRef tPerProperties,
-                                     CFDictionaryRef properties,
-                                     DTA_DEVICE_INFO * pdi) ;
-#else // !defined(TRY_SMART_LIBS)
+    /** Does the device conform to the OPAL 2 SSC */
+    uint8_t isOpal2();
+    /** Does the device conform to the OPAL 1.0 SSC */
+    uint8_t isOpal1();
+    /** Does the device conform to the OPAL Enterprise SSC */
+    uint8_t isEprise();
+    /** Is the MBREnabled flag set */
+    uint8_t MBREnabled();
+    /** Is the MBRDone flag set */
+    uint8_t MBRDone();
+    /** Is the Locked flag set */
+    uint8_t Locked();
+    /** Is the Locking SP enabled */
+    uint8_t LockingEnabled();
+
     static DtaDevMacOSTPer * getTPer(std::string entryName,
                                      std::string bsdName,
                                      CFDictionaryRef tPerProperties,
                                      CFDictionaryRef properties,
                                      DTA_DEVICE_INFO * pdi) ;
-#endif // defined(TRY_SMART_LIBS)
 
 
 protected:

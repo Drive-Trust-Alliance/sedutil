@@ -43,7 +43,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 /** iomanip command to return to standard ascii output */
 #define HEXOFF std::dec << std::setw(0) << std::setfill(' ')
 /** Return Codes */
-#define DTAERROR_UNSUPORTED_LOCKING_RANGE	0x81
+#define DTAERROR_SUCCESS                    0x00
+#define DTAERROR_UNSUPORTED_LOCKING_RANGE    0x81
 #define DTAERROR_OBJECT_CREATE_FAILED		0x82
 #define DTAERROR_INVALID_PARAMETER			0x83
 #define DTAERROR_OPEN_ERR					0x84

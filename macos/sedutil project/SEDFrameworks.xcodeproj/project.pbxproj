@@ -45,6 +45,7 @@
 		D2D0F56D293AA5DA0077966A /* oui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2E6FE7E2935696800DAB209 /* oui.framework */; };
 		D2D1379C28B55BAE003FD51F /* DtaOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D2D1379B28B55B9E003FD51F /* DtaOptions.h */; };
 		D2D137A128B56329003FD51F /* log.h in Headers */ = {isa = PBXBuildFile; fileRef = D20A63A81F731FDB00F154AC /* log.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2D6E349294D081500E3C72C /* DtaDevFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2D6E348294D081500E3C72C /* DtaDevFactory.cpp */; };
 		D2E6FE8E2935E08D00DAB209 /* get_vendorid in Resources */ = {isa = PBXBuildFile; fileRef = D2E6FE802935E08D00DAB209 /* get_vendorid */; };
 		D2E6FE8F2935E08D00DAB209 /* oui.docc in Sources */ = {isa = PBXBuildFile; fileRef = D2E6FE812935E08D00DAB209 /* oui.docc */; };
 		D2E6FE902935E08D00DAB209 /* CStringMap.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D2E6FE822935E08D00DAB209 /* CStringMap.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -182,6 +183,7 @@
 		D2BDDC9E28A63B9200001E26 /* pyextob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pyextob.h; sourceTree = "<group>"; };
 		D2D1379B28B55B9E003FD51F /* DtaOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaOptions.h; path = "/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/Common/DtaOptions.h"; sourceTree = "<absolute>"; };
 		D2D1379E28B55C14003FD51F /* sedutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sedutil.h; path = sedutil/sedutil.h; sourceTree = "<group>"; };
+		D2D6E348294D081500E3C72C /* DtaDevFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevFactory.cpp; sourceTree = "<group>"; };
 		D2E6FE7E2935696800DAB209 /* oui.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = oui.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2E6FE802935E08D00DAB209 /* get_vendorid */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = get_vendorid; sourceTree = "<group>"; };
 		D2E6FE812935E08D00DAB209 /* oui.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = oui.docc; sourceTree = "<group>"; };
@@ -315,6 +317,7 @@
 			children = (
 				D2466A4B28B585F8009F55D9 /* DtaDevOS.h */,
 				D2772AD128BBFF8C0005E001 /* DtaDevOS.cpp */,
+				D2D6E348294D081500E3C72C /* DtaDevFactory.cpp */,
 				D2772AD428BBFFB60005E001 /* DtaDevMacOSBlockStorageDevice.h */,
 				D2772AD628BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.cpp */,
 				D2B2036428BBFF1D004C88FF /* DtaDevMacOSTPer.h */,
@@ -855,6 +858,7 @@
 				D2EA848528053B4D00A0F685 /* DtaDevOpal1.cpp in Sources */,
 				D27591BA28B579F1005B9081 /* DtaDevOpal2.cpp in Sources */,
 				D2EA84A328053B4E00A0F685 /* DtaSession.cpp in Sources */,
+				D2D6E349294D081500E3C72C /* DtaDevFactory.cpp in Sources */,
 				D2EA844B28053B4C00A0F685 /* DtaAnnotatedDump.cpp in Sources */,
 				D2EA849428053B4D00A0F685 /* DtaHashPwd.cpp in Sources */,
 				D2EA849528053B4D00A0F685 /* DtaDiskType.cpp in Sources */,

@@ -26,6 +26,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevMacOSTPer.h"
 #include "DtaConstants.h"
 
+#include "DtaDevEnterprise.h"
+#include "DtaDevOpal1.h"
+#include "DtaDevOpal2.h"
+
 using namespace std;
 
 /** The Device class represents a MacOS generic storage device.
@@ -130,10 +134,11 @@ int  DtaDevOS::diskScan()
         printf("%-11s", device->getDevPath().c_str());
 
         if (device->isAnySSC()) {
+            DtaDevMacOSTPer * t = dynamic_cast<DtaDevMacOSTPer *>(device);
             printf(" %s%s%s ",
-                   (device->isOpal1()  ? "1" : " "),
-                   (device->isOpal2()  ? "2" : " "),
-                   (device->isEprise() ? "E" : " "));
+                   (t->isOpal1()  ? "1" : " "),
+                   (t->isOpal2()  ? "2" : " "),
+                   (t->isEprise() ? "E" : " "));
         } else {
             printf(" No  ");
         }

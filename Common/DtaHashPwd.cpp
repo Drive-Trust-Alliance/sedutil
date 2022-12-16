@@ -259,8 +259,17 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
 		LOG(D1) << " Exit DtaHashPwd";
 		return;
     }
-    
+
+#define USE_PASSWORD_SALT
+#if defined( USE_PASSWORD_SALT )
     vector<uint8_t> salt(d->getPasswordSalt());
+#else // ! defined( USE_PASSWORD_SALT )
+    char serialNum[21];
+    bzero(serialNum, sizeof(serialNum));
+    strncpy(serialNum, d->getSerialNum(),sizeof(serialNum));
+    vector<uint8_t> salt(serialNum,serialNum+sizeof(serialNum)-1);
+#endif // defined( USE_PASSWORD_SALT )
+
     //	vector<uint8_t> salt(DEFAULTSALT);
 	if (iter == 75000) {
 		DtaHashPassword(hash, password, salt);
@@ -269,11 +278,14 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
 	}
 //#if false
 #if true
-	printf("salt size = %lu ; salt =",salt.size());
+    //printf("password : %s\n",password); // non-printable char cause screen error
+    printf("password : \n"); // non-printable char cause screen error
+    for (size_t i = 0; i < strlen(password); i++)
+        printf("%02X", password[i]);
+    printf("\n");
 	for (size_t i = 0; i < salt.size(); i++) printf("%02X", salt[i]);
 	printf("\n");
 	printf("salt as string =%s\n", salt.data());
-	//printf("password : %s\n",password); // non-printable char cause screen error 
     printf("Hashed password size = %lu ; hashed password =",hash.size());
 	for (size_t i = 0; i < hash.size(); i++)
 		printf("%02X", hash[i]);

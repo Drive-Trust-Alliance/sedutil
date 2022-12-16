@@ -75,24 +75,6 @@ std::string cfStringToStdString(CFStringRef input)
 
 #define GetString(dict,name) (CFStringRef)CFDictionaryGetValue(dict, CFSTR(name))
 
-#if defined(TRY_SMART_LIBS)
-DtaDevMacOSTPer * DtaDevMacOSTPer::getTPer(io_service_t aBlockStorageDevice,
-                                           std::string entryName,
-                                           std::string bsdName,
-                                           CFDictionaryRef tPerProperties,
-                                           CFDictionaryRef properties,
-                                           DTA_DEVICE_INFO * pdi)
-{
-    const CFStringRef interfaceType=GetString(tPerProperties, IOInterfaceTypeKey);
-    if (CFEqual(interfaceType, CFSTR(IOInterfaceTypeSAT))) {
-        return new DtaDevMacOSTPer_SAT(aBlockStorageDevice, entryName, bsdName, properties, pdi);
-    } else if (CFEqual(interfaceType, CFSTR(IOInterfaceTypeSCSI))) {
-        return new DtaDevMacOSTPer_SCSI(aBlockStorageDevice, entryName, bsdName, properties, pdi);
-    } else {
-        return nil;
-    }
-}
-#else // !defined(TRY_SMART_LIBS)
 DtaDevMacOSTPer * DtaDevMacOSTPer::getTPer(std::string entryName,
                                            std::string bsdName,
                                            CFDictionaryRef tPerProperties,
@@ -108,7 +90,6 @@ DtaDevMacOSTPer * DtaDevMacOSTPer::getTPer(std::string entryName,
         return nil;
     }
 }
-#endif // defined(TRY_SMART_LIBS)
 
 bool DtaDevMacOSTPer::findBrightPlazaDriverService(const char * dev)
 {
@@ -159,6 +140,62 @@ kern_return_t DtaDevMacOSTPer::identify(DTA_DEVICE_INFO& disk_info )
         polishDeviceInfo();
     }
     return result;
+}
+
+uint8_t DtaDevMacOSTPer::isOpal2()
+{
+    if (NULL == pdevice_info)
+        return (uint8_t)NULL;
+    else
+        return pdevice_info->OPAL20;
+}
+
+uint8_t DtaDevMacOSTPer::isOpal1()
+{
+    if (NULL == pdevice_info)
+        return (uint8_t)NULL;
+    else
+        return pdevice_info->OPAL10;
+}
+
+uint8_t DtaDevMacOSTPer::isEprise()
+{
+    if (NULL == pdevice_info)
+        return (uint8_t)NULL;
+    else
+        return pdevice_info->Enterprise;
+}
+
+uint8_t DtaDevMacOSTPer::MBREnabled()
+{
+    if (NULL == pdevice_info)
+        return (uint8_t)NULL;
+    else
+        return pdevice_info->Locking_MBREnabled;
+}
+
+uint8_t DtaDevMacOSTPer::MBRDone()
+{
+    if (NULL == pdevice_info)
+        return (uint8_t)NULL;
+    else
+        return pdevice_info->Locking_MBRDone;
+}
+
+uint8_t DtaDevMacOSTPer::Locked()
+{
+    if (NULL == pdevice_info)
+        return (uint8_t)NULL;
+    else
+        return pdevice_info->Locking_locked;
+}
+
+uint8_t DtaDevMacOSTPer::LockingEnabled()
+{
+    if (NULL == pdevice_info)
+        return (uint8_t)NULL;
+    else
+        return pdevice_info->Locking_lockingEnabled;
 }
 
 

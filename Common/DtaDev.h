@@ -45,7 +45,9 @@ public:
 	DtaDev();
 	/** Default destructor, does nothing*/
 	virtual ~DtaDev();
-	uint8_t isRuby();
+    /** Factory method to produce instance of appropriate subclass */
+    static uint8_t getDtaDev(const char * devref, DtaDev * * pdev);
+    uint8_t isRuby();
 	uint8_t isFIPS();
 	/** Does the device conform to the OPALITE SSC */
 	uint8_t isOpalite();
