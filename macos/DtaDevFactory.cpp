@@ -25,6 +25,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevMacOSTPer.h"
 #include "DtaConstants.h"
 
+#include "DtaDevGeneric.h"
 #include "DtaDevEnterprise.h"
 #include "DtaDevOpal1.h"
 #include "DtaDevOpal2.h"
@@ -32,7 +33,51 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 using namespace std;
 
 
-uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * * pdev)
+static uint8_t getDtaDev(DtaDevMacOSBlockStorageDevice *blockStorageDevice,
+                         const char *devref, DtaDev **pdev, bool genericIfNotTPer) {
+    if (!blockStorageDevice->isAnySSC()) {
+        if (genericIfNotTPer) {
+            * pdev = new DtaDevGeneric(devref);
+            return DTAERROR_SUCCESS;
+        }
+        LOG(E) << "Invalid or unsupported device " << devref;
+        return DTAERROR_COMMAND_ERROR;
+    }
+    
+    DtaDevMacOSTPer * t = dynamic_cast<DtaDevMacOSTPer *>(blockStorageDevice);
+    if (NULL == t) {
+        if (genericIfNotTPer) {
+            * pdev = new DtaDevGeneric(devref);
+            return DTAERROR_SUCCESS;
+        }
+        LOG(E) << "Create DtaDevMacOSTPer object failed";
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    
+    if (t->isOpal2()) {
+        * pdev = new DtaDevOpal2(devref);
+    } else if (t->isOpal1()) {
+        * pdev = new DtaDevOpal1(devref);
+    } else if (t->isEprise()) {
+        * pdev = new DtaDevEnterprise(devref);
+    } else {
+        if (genericIfNotTPer) {
+            * pdev = new DtaDevGeneric(devref);
+            return DTAERROR_SUCCESS;
+        }
+        LOG(E) << "Unknown OPAL SSC ";
+        return DTAERROR_INVALID_COMMAND;
+    }
+    
+    if (NULL == * pdev) {
+        LOG(E) << "Create DtaDev object failed";
+        return DTAERROR_OBJECT_CREATE_FAILED;
+    }
+    
+    return DTAERROR_SUCCESS;
+}
+
+uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * * pdev, bool genericIfNotTPer)
 {
     DTA_DEVICE_INFO di;
     bzero(&di,sizeof(di));
@@ -42,33 +87,6 @@ uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * * pdev)
         LOG(E) << "Create DtaDevMacOSBlockStorageDevice object for " << devref << " failed";
         return DTAERROR_OBJECT_CREATE_FAILED;
     }
-    if (!blockStorageDevice->isAnySSC()) {
-        LOG(E) << "Invalid or unsupported device " << devref;
-        return DTAERROR_COMMAND_ERROR;
-    }
-
-    DtaDevMacOSTPer * t = dynamic_cast<DtaDevMacOSTPer *>(blockStorageDevice);
-    if (NULL == t) {
-       LOG(E) << "Create DtaDevMacOSTPer object failed";
-       return DTAERROR_OBJECT_CREATE_FAILED;
-    }
-
-    if (t->isOpal2()) {
-       * pdev = new DtaDevOpal2(devref);
-    } else if (t->isOpal1()) {
-       * pdev = new DtaDevOpal1(devref);
-    } else if (t->isEprise()) {
-       * pdev = new DtaDevEnterprise(devref);
-    } else {
-       LOG(E) << "Unknown OPAL SSC ";
-       return DTAERROR_INVALID_COMMAND;
-    }
-    
-    if (NULL == * pdev) {
-       LOG(E) << "Create DtaDev object failed";
-       return DTAERROR_OBJECT_CREATE_FAILED;
-    }
-    
-    return DTAERROR_SUCCESS;
+    return ::getDtaDev(blockStorageDevice, devref, pdev, genericIfNotTPer);
 }
 

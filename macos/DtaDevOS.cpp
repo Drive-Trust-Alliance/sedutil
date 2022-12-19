@@ -19,6 +19,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 
 #include <log/log.h>
+#include <stdlib.h>
 
 #include "DtaHexDump.h"
 #include "DtaDevGeneric.h"
@@ -42,15 +43,27 @@ const unsigned long long DtaDevOS::getSize() {
 
 DtaDevOS::DtaDevOS()
 {
-    dev = NULL;
+    if (dev != NULL) {
+        free(const_cast<char *>(dev));
+        dev = NULL;
+    }
+    device = NULL;
     tPer = NULL;
 }
 
 
 bool DtaDevOS::__init(const char *devref) {
-    dev = strdup(devref);
+    dev = const_cast<const char *>(strdup(devref));
     memset(&disk_info, 0, sizeof(DTA_DEVICE_INFO));
-    DtaDevMacOSBlockStorageDevice * device = DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(devref, &disk_info);
+    device = DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(devref, &disk_info);
+    tPer = dynamic_cast <DtaDevMacOSTPer *> (device);
+    return (tPer != NULL);
+}
+
+bool DtaDevOS::__init(const char * devref, DTA_DEVICE_INFO & di) {
+    dev = const_cast<const char *>(strdup(devref));
+    memcpy(&disk_info, &di, sizeof(DTA_DEVICE_INFO));
+    device = DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(devref, &disk_info);
     tPer = dynamic_cast <DtaDevMacOSTPer *> (device);
     return (tPer != NULL);
 }
@@ -74,6 +87,17 @@ void DtaDevOS::init(const char * devref,
         isOpen = true;
     };
 }
+
+
+/** OS specific method to initialize an object to a pre-existing connection
+ *  @param di  reference to already-initialized DTA_DEVICE_INFO
+ */
+void DtaDevOS::init(const char * devref, DTA_DEVICE_INFO &di) {
+    if (__init(devref, di)) {
+        isOpen = tPer->init(devref, true);
+    };
+}
+
 
 uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 	void * buffer, size_t bufferlen)

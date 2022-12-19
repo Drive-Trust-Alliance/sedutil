@@ -31,9 +31,6 @@ public:
     /** Destructor */
     ~DtaDevOS();
 
-    /** Factory method to produce instance of appropriate subclass */
-    static uint8_t getDtaDev(const char * devref, DtaDev * * pdev);
-
     /** OS specific initialization.
      * This function should perform the necessary authority and environment checking
      * to allow proper functioning of the program, open the device, perform an ATA
@@ -52,6 +49,12 @@ public:
     void init(const char * devref,
               io_registry_entry_t driverService,
               io_connect_t connect);
+    
+    /** OS specific method to initialize an object to a pre-existing connection
+     *  @param di  reference to already-initialized DTA_DEVICE_INFO
+     */
+    void init(const char * devref,
+              DTA_DEVICE_INFO &di);
 
     
 
@@ -95,7 +98,8 @@ protected:
 
 private:
     bool __init(const char *devref);
-    
+    bool __init(const char *devref, DTA_DEVICE_INFO &di);
+    DtaDevMacOSBlockStorageDevice * device;
     DtaDevMacOSTPer *tPer;
 };
 

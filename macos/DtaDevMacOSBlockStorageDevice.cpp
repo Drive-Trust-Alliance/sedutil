@@ -40,7 +40,6 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define GetData(dict,name) (CFDataRef)CFDictionaryGetValue(dict, CFSTR(name))
 #define GetString(dict,name) (CFStringRef)CFDictionaryGetValue(dict, CFSTR(name))
 #define GetNumber(dict,name) (CFNumberRef)CFDictionaryGetValue(dict, CFSTR(name))
-#define GetPropertiesDict(name) GetDict(properties, name)
 
 #define ERRORS_TO_STDERR
 //#undef ERRORS_TO_STDERR
@@ -120,6 +119,7 @@ const DTA_DEVICE_INFO & DtaDevMacOSBlockStorageDevice::device_info() {
     return *pdevice_info;
 }
 
+#define GetPropertiesDict(name) GetDict(properties, name)
 void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info() {
         if (pdevice_info == NULL)
             return;
@@ -515,9 +515,9 @@ DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageD
     bzero(nameBuffer,kCStringSize);
     CFStringGetCString(GetString(mediaProperties, "BSD Name"),
                        nameBuffer, (CFIndex)kCStringSize, kCFStringEncodingUTF8);
-    bsdName = string(nameBuffer);
-    
-    if (bsdName == string(devref)) {
+    if (strncmp(nameBuffer, devref, kCStringSize) == 0) {
+        bsdName = string(nameBuffer);
+        
         bzero(nameBuffer,kCStringSize);
         GetName(media,nameBuffer);
         entryName = string(nameBuffer);
