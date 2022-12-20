@@ -48,7 +48,7 @@ DtaSession::start(OPAL_UID SP)
 
 
 uint8_t
-DtaSession::start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority)
+DtaSession::start(OPAL_UID SP, char * password, OPAL_UID SignAuthority)
 {
     LOG(D1) << "Entering DtaSession::startSession OPl_UID";
     vector<uint8_t> auth;
@@ -56,7 +56,7 @@ DtaSession::start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority)
     for (int i = 0; i < 8; i++) {
         auth.push_back(OPALUID[SignAuthority][i]);
     }
-    return(start(SP, HostChallenge, auth));
+    return(start(SP, password, auth));
 }
 
 
@@ -275,7 +275,7 @@ DtaSession::unistart(OPAL_UID SP, vector<uint8_t> HostChallenge, vector<uint8_t>
 
 
 uint8_t
-DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthority)
+DtaSession::start(OPAL_UID SP, char * password, vector<uint8_t> SignAuthority)
 {
     LOG(D1) << "Entering DtaSession::startSession vector";
     vector<uint8_t> hash;
@@ -292,15 +292,15 @@ DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthori
     cmd->addToken(105); // HostSessionID : sessionnumber
     cmd->addToken(SP); // SPID : SP
     cmd->addToken(OPAL_TINY_ATOM::UINT_01); // write
-    if ((NULL != HostChallenge) && (!d->isEprise())) {
+    if ((NULL != password) && (!d->isEprise())) {
         cmd->addToken(OPAL_TOKEN::STARTNAME);
         cmd->addToken(OPAL_TINY_ATOM::UINT_00);
         if (hashPwd) {
             hash.clear();
-            DtaHashPwd(hash, HostChallenge, d);
+            DtaHashPwd(hash, password, d);
             cmd->addToken(hash);
         } else {
-            cmd->addToken(HostChallenge);
+            cmd->addToken(password);
         }
         cmd->addToken(OPAL_TOKEN::ENDNAME);
         cmd->addToken(OPAL_TOKEN::STARTNAME);
@@ -331,8 +331,8 @@ DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthori
     HSN = SWAP32(response.getUint32(4));
     TSN = SWAP32(response.getUint32(5));
     delete cmd;
-    if ((NULL != HostChallenge) && (d->isEprise())) {
-        return(authenticate(SignAuthority, HostChallenge));
+    if ((NULL != password) && (d->isEprise())) {
+        return(authenticate(SignAuthority, password));
     }
     return 0;
 }

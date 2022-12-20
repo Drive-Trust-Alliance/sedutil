@@ -1558,15 +1558,6 @@ uint8_t DtaDevOpal::setMBREnable(uint8_t mbrstate, vector<uint8_t> Admin1HostCha
 
 uint8_t DtaDevOpal::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 {
-    // hijack to setTperResetEnable
-    /*
-    LOG(D) << "Entering HIJACKED DtaDevOpal::setMBRDon " << dev;
-    bool state;
-    state = true;
-    setTperResetEnable(state, Admin1Password);
-    return 0;
-    */
-
     LOG(D1) << "Entering DtaDevOpal::setMBRDone " << dev;
     if (disk_info.Locking_MBRshadowingNotSupported) {
         LOG(E) << "SSC device does not support shadow MBR";
@@ -1602,15 +1593,6 @@ uint8_t DtaDevOpal::setMBRDone(uint8_t mbrstate, char * Admin1Password)
 
 uint8_t DtaDevOpal::setMBRDone(uint8_t state, vector<uint8_t> Admin1HostChallenge)
 {
-    // hijack to setTperResetEnable
-    /*
-    LOG(D) << "Entering HIJACKED DtaDevOpal::setMBRDon " << dev;
-    bool state;
-    state = true;
-    setTperResetEnable(state, Admin1Password);
-    return 0;
-    */
-
     LOG(D1) << "Entering DtaDevOpal::setMBRDone " << dev;
     if (disk_info.Locking_MBRshadowingNotSupported) {
         LOG(E) << "SSC device does not support shadow MBR";

@@ -44,16 +44,16 @@ public:
     
     
     /** Start an authenticated session (OPAL only)
-    * @param SP the securitly provider to start the session with
-    * @param HostChallenge the password to start the session
+    * @param SP the Security Provider to start the session with
+    * @param password the password to start the session
     * @param SignAuthority the Signing authority (in a simple session this is the user)
     */
-    uint8_t start(OPAL_UID SP, char * HostChallenge, OPAL_UID SignAuthority);
+    uint8_t start(OPAL_UID SP, char * password, OPAL_UID SignAuthority);
     
     
     
     /** Start an authenticated session (OPAL only)
-    * @param SP the securitly provider to start the session with
+    * @param SP the Security Provider to start the session with
     * @param HostChallenge the password to start the session
     * @param SignAuthority the Signing authority (in a simple session this is the user)
     */
@@ -62,7 +62,7 @@ public:
 
     
     /** Start an authenticated session (OPAL only)
-     * @param SP the securitly provider to start the session with
+     * @param SP the Security Provider to start the session with
      * @param password the password to start the session
      * @param SignAuthority the Signing authority (in a simple session this is the user)
      *  */
@@ -70,7 +70,7 @@ public:
 
     
     /** Start an authenticated session (OPAL only)
-     * @param SP the securitly provider to start the session with
+     * @param SP the Security Provider to start the session with
      * @param HostChallenge the password to start the session
      * @param SignAuthority the Signing authority (in a simple session this is the user)
      *  */
