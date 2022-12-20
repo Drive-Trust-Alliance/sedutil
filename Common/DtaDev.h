@@ -48,11 +48,11 @@ public:
     
     /** Factory method to produce instance of appropriate subclass
      * @param devref                         name of the device in the OS lexicon
-     * @param pdev                             address of location into which to store the address of the new instance
+     * @param device                         reference into which to store the address of the new instance
      * @param genericIfNotTPer   if true, store an instance of DtaDevGeneric for non-TPers;
      *                          if false, store NULL for non-TPers
      */
-    static uint8_t getDtaDev(const char * devref, DtaDev * * pdev,
+    static uint8_t getDtaDev(const char * devref, DtaDev * & device,
                              bool genericIfNotTPer=false);
 
     /** Does the device conform to FIPS reqs */

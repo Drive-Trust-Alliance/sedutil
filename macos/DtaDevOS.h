@@ -30,6 +30,17 @@ public:
     DtaDevOS();
     /** Destructor */
     ~DtaDevOS();
+    
+    /** Factory method to produce instance of appropriate subclass
+     *   Note that all of DtaDevGeneric, DtaDevEnterprise, DtaDevOpal, ... derive from DtaDevOS
+     * @param devref                         name of the device in the OS lexicon
+     * @param dev                                reference into which to store the address of the new instance
+     * @param genericIfNotTPer   if true, store an instance of DtaDevGeneric for non-TPers;
+     *                          if false, store NULL for non-TPers
+     */
+    static uint8_t getDtaDevOS(const char * devref, DtaDevOS * & dev,
+                               bool genericIfNotTPer=false);
+
 
     /** OS specific initialization.
      * This function should perform the necessary authority and environment checking
@@ -99,7 +110,7 @@ protected:
 private:
     bool __init(const char *devref);
     bool __init(const char *devref, DTA_DEVICE_INFO &di);
-    DtaDevMacOSBlockStorageDevice * device;
+    DtaDevMacOSBlockStorageDevice * blockStorageDevice;
     DtaDevMacOSTPer *tPer;
 };
 

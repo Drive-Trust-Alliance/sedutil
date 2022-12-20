@@ -43,11 +43,8 @@ const unsigned long long DtaDevOS::getSize() {
 
 DtaDevOS::DtaDevOS()
 {
-    if (dev != NULL) {
-        free(const_cast<char *>(dev));
-        dev = NULL;
-    }
-    device = NULL;
+    dev = NULL;
+    blockStorageDevice = NULL;
     tPer = NULL;
 }
 
@@ -55,17 +52,14 @@ DtaDevOS::DtaDevOS()
 bool DtaDevOS::__init(const char *devref) {
     dev = const_cast<const char *>(strdup(devref));
     memset(&disk_info, 0, sizeof(DTA_DEVICE_INFO));
-    device = DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(devref, &disk_info);
-    tPer = dynamic_cast <DtaDevMacOSTPer *> (device);
+    blockStorageDevice = DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(devref, &disk_info);
+    tPer = dynamic_cast <DtaDevMacOSTPer *> (blockStorageDevice);
     return (tPer != NULL);
 }
 
-bool DtaDevOS::__init(const char * devref, DTA_DEVICE_INFO & di) {
-    dev = const_cast<const char *>(strdup(devref));
+bool DtaDevOS::__init(const char * devref, DTA_DEVICE_INFO & di) {  // TODO: ???
     memcpy(&disk_info, &di, sizeof(DTA_DEVICE_INFO));
-    device = DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(devref, &disk_info);
-    tPer = dynamic_cast <DtaDevMacOSTPer *> (device);
-    return (tPer != NULL);
+    return __init(devref);
 }
 
 /* Determine which type of drive we're using and instantiate a derived class of that type */
@@ -154,11 +148,11 @@ int  DtaDevOS::diskScan()
     }
 #endif // DEBUG
 
-    for (DtaDevMacOSBlockStorageDevice * device : blockStorageDevices){
-        printf("%-11s", device->getDevPath().c_str());
+    for (DtaDevMacOSBlockStorageDevice * blockStorageDevice : blockStorageDevices){
+        printf("%-11s", blockStorageDevice->getDevPath().c_str());
 
-        if (device->isAnySSC()) {
-            DtaDevMacOSTPer * t = dynamic_cast<DtaDevMacOSTPer *>(device);
+        if (blockStorageDevice->isAnySSC()) {
+            DtaDevMacOSTPer * t = dynamic_cast<DtaDevMacOSTPer *>(blockStorageDevice);
             printf(" %s%s%s ",
                    (t->isOpal1()  ? "1" : " "),
                    (t->isOpal2()  ? "2" : " "),
@@ -166,8 +160,8 @@ int  DtaDevOS::diskScan()
         } else {
             printf(" No  ");
         }
-        const char * devType;
-        switch (device->getDevType()) {
+        const char * devType = NULL;
+        switch (blockStorageDevice->getDevType()) {
             case DEVICE_TYPE_ATA:
                 devType = "ATA";
                 break;
@@ -187,24 +181,24 @@ int  DtaDevOS::diskScan()
                 devType = "UNKNOWN";
         }
 #if DEBUG
-        char WWN[17]="                ";  // 16 blanks
-        vector<uint8_t>wwn(device->getWorldWideName());
+        char WWN[17]="                ";  // 16 blanks as placeholder if missing
+        vector<uint8_t>wwn(blockStorageDevice->getWorldWideName());
         if (__is_not_all_NULs(wwn.data(), wwn.size())) {
             snprintf(WWN, 17, "%02X%02X%02X%02X%02X%02X%02X%02X",
                      wwn[0], wwn[1], wwn[2], wwn[3], wwn[4], wwn[5], wwn[6], wwn[7]);
         }
         printf("%-25s %-8s  %-7s  %16s  %-20s %-8s %-30s\n",
-               device->getModelNum(),
-               device->getFirmwareRev(),
+               blockStorageDevice->getModelNum(),
+               blockStorageDevice->getFirmwareRev(),
                devType,
                WWN,
-               device->getSerialNum(),
-               device->getVendorID(),
-               device->getManufacturerName());
+               blockStorageDevice->getSerialNum(),
+               blockStorageDevice->getVendorID(),
+               blockStorageDevice->getManufacturerName());
 #else // DEBUG
         printf("%-25s %-8s  %-7s\n",
-               device->getModelNum(),
-               device->getFirmwareRev(),
+               blockStorageDevice->getModelNum(),
+               blockStorageDevice->getFirmwareRev(),
                devType);
 #endif // DEBUG
     }
