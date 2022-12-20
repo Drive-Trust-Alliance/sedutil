@@ -263,7 +263,7 @@ static int hashvalidate(char * password, char *devname)
 {
     vector <uint8_t> hash;
     DtaDev * d;
-    uint8_t result = DtaDev::getDtaDev(devname, &d);
+    uint8_t result = DtaDev::getDtaDev(devname, d);
     if (result != DTAERROR_SUCCESS)
         return result;
     //bool saved_flag = d->no_hash_passwords;
@@ -805,7 +805,7 @@ int main(int argc, char * argv[])
 		(opts.action != sedutiloption::isValidSED)) {
 		if (opts.device > (argc - 1)) opts.device = 0;
 
-        uint8_t result = DtaDev::getDtaDev(argv[opts.device], &d);
+        uint8_t result = DtaDev::getDtaDev(argv[opts.device], d);
         if (result != DTAERROR_SUCCESS)
             return result;
 
