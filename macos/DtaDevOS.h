@@ -86,10 +86,12 @@ public:
     /** A static class to scan for supported drives */
     static int diskScan();
     
-    const char * serialNumber() { return tPer->getSerialNum();}
-    const char * bsdName() { return tPer->getBSDName();}
-    const char * modelNumber() { return tPer->getModelNum();}
-    const char * firmwareRevision() { return tPer->getFirmwareRev();}
+    const char * vendorID() { return blockStorageDevice->getVendorID();}
+    const char * serialNumber() { return blockStorageDevice->getSerialNum();}
+    const char * bsdName() { return blockStorageDevice->getBSDName();}
+    const char * modelNumber() { return blockStorageDevice->getModelNum();}
+    const char * firmwareRevision() { return blockStorageDevice->getFirmwareRev();}
+    const vector <uint8_t> worldWideName() { return blockStorageDevice->getWorldWideName();}
     vector<uint8_t> passwordSalt() { return tPer->getPasswordSalt();}
     
     virtual void puke() {
@@ -97,11 +99,26 @@ public:
         DtaDev::puke();
     }
 
-protected:
-    
+  
     /** return drive size in bytes */
-    const unsigned long long getSize ();
-    
+    const unsigned long long getSize () {
+        return blockStorageDevice->getSize();
+    }
+
+    const char * getPhysicalInterconnect()
+    {
+        return blockStorageDevice->getPhysicalInterconnect();
+    }
+    const char * getPhysicalInterconnectLocation()
+    {
+        return blockStorageDevice->getPhysicalInterconnectLocation();
+    }
+
+    // TODO: private with accessors?
+    DtaDevMacOSBlockStorageDevice * blockStorageDevice;
+    DtaDevMacOSTPer *tPer;
+
+protected:
     /** OS specific command to Wait for specified number of milliseconds
      * @param ms  number of milliseconds to wait
      */
@@ -110,8 +127,6 @@ protected:
 private:
     bool __init(const char *devref);
     bool __init(const char *devref, DTA_DEVICE_INFO &di);
-    DtaDevMacOSBlockStorageDevice * blockStorageDevice;
-    DtaDevMacOSTPer *tPer;
 };
 
 

@@ -36,9 +36,6 @@ using namespace std;
 /** The Device class represents a MacOS generic storage device.
   * At initialization we determine if we map to the NVMe or SATA derived class
  */
-const unsigned long long DtaDevOS::getSize() {
-    return disk_info.devSize;
-}
 
 
 DtaDevOS::DtaDevOS()
