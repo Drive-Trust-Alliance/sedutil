@@ -146,20 +146,23 @@ kern_return_t TPerUpdate(io_connect_t connect, io_registry_entry_t driverService
     return ret;
 }
 
+// TODO: API to access IOServiceRequestProbe??
 
 
 kern_return_t OpenUserClient(io_service_t service, io_connect_t *pConnect)
 {
-    
+    kern_return_t kernResult;
+
     // This call will cause the user client to be instantiated. It returns an io_connect_t handle
     // that is used for all subsequent calls to the user client.
 //#if DEBUG
 //    fprintf(stderr, "OpenUserClient -- service is %d.\n", service);
 //#endif
-    kern_return_t kernResult = IOServiceOpen(service, mach_task_self(), 0, pConnect);
+    kernResult = IOServiceOpen(service, mach_task_self(), 0, pConnect);
     if (kernResult != kIOReturnSuccess) {
 #if DEBUG
         fprintf(stderr, "OpenUserClient: error -- IOServiceOpen returned 0x%08x\n", kernResult);
+        
 #endif
         return kernResult;
     }
@@ -171,10 +174,15 @@ kern_return_t OpenUserClient(io_service_t service, io_connect_t *pConnect)
     kernResult = IOConnectCallScalarMethod(*pConnect, kSedUserClientOpen, NULL, 0, NULL, NULL);
     if (kernResult != kIOReturnSuccess) {
 #if DEBUG
-            fprintf(stderr, "OpenUserClient error -- IOConnectCallScalarMethod returned 0x%08x.\n\n", kernResult);
+        fprintf(stderr, "OpenUserClient error -- IOConnectCallScalarMethod returned 0x%08x.\n", kernResult);
+        if (kernResult == kIOReturnExclusiveAccess) {
+            fprintf(stderr, "Exclusive access requested but already open.\n");
+        }
+        fputs("\n", stderr);
 #endif
         return kernResult;
     }
+
 
     return kernResult;
 }

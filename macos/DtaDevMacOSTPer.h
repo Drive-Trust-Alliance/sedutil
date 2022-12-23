@@ -81,6 +81,10 @@ public:
                                      CFDictionaryRef properties,
                                      DTA_DEVICE_INFO * pdi) ;
 
+    void GetIOObjects(io_registry_entry_t & ds, io_connect_t &c) {
+        ds=driverService;
+        c=connect;
+    }
 
 protected:
     bool findBrightPlazaDriverService(const char * dev);
