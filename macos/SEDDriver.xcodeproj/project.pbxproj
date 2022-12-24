@@ -59,6 +59,7 @@
 		D201C18628D855E200FCD053 /* TPerDriverMethodIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPerDriverMethodIndex.h; sourceTree = "<group>"; };
 		D20A9E8D28C5BD4900F7985D /* Kernel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kernel.framework; path = System/Library/Frameworks/Kernel.framework; sourceTree = SDKROOT; };
 		D20CC9671F69C4A900CE3D72 /* kernel_debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kernel_debug.h; sourceTree = "<group>"; };
+		D24A52A729578B13005E7996 /* debug.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = debug.txt; path = Server/sedd/debug.txt; sourceTree = "<group>"; };
 		D26EB97A1F036671002200A2 /* RegistryUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegistryUtilities.h; sourceTree = "<group>"; };
 		D26EB97B1F036671002200A2 /* RegistryUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RegistryUtilities.mm; sourceTree = "<group>"; };
 		D27129EC28C53FB5007AB870 /* kernel_PrintBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kernel_PrintBuffer.h; sourceTree = "<group>"; };
@@ -143,6 +144,7 @@
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D24A52A729578B13005E7996 /* debug.txt */,
 				D285010F28D677C600230968 /* DtaEndianFixup.h */,
 				D285010D28D6779400230968 /* DtaStructures.h */,
 				D28059A028C912E600EB9C59 /* limits.h */,
