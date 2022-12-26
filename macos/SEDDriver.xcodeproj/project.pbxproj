@@ -621,6 +621,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Debug Bonjour Multistart";
 		};
@@ -789,6 +792,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Release Bonjour Multistart";
 		};
@@ -950,6 +956,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Debug Bonjour";
 		};
@@ -1122,6 +1131,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Debug Bluetooth";
 		};
@@ -1295,6 +1307,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Debug Bonjour and Bluetooth";
 		};
@@ -1460,6 +1475,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Release Bonjour";
 		};
@@ -1623,6 +1641,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Release Bluetooth";
 		};
@@ -1789,6 +1810,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = "Release Bonjour and Bluetooth";
 		};
@@ -2057,6 +2081,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = Debug;
 		};
@@ -2080,6 +2107,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 			};
 			name = Release;
 		};

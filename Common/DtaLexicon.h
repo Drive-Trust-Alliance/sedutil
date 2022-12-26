@@ -18,6 +18,8 @@ This software is Copyright 2014, 2022 Bright Plaza Inc. <drivetrust@drivetrust.c
 
    * C:E********************************************************************** */
 #pragma once
+#if !defined(__DTA_LEXICON__H_INCLUDED__)
+#defined __DTA_LEXICON__H_INCLUDED__
 /*
  * Define the structures and enums needed to map the
  * Opal SSC Pseudo code to procedures.
@@ -28,7 +30,7 @@ This software is Copyright 2014, 2022 Bright Plaza Inc. <drivetrust@drivetrust.c
  */
 
 /** User IDs used in the TCG storage SSCs */
-static const uint8_t OPALUID[][8]{
+static const uint8_t OPALUID[][8]={
   // users
   { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff}, /**< session management  */
   { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 }, /**< special "thisSP" syntax */
@@ -248,7 +250,7 @@ typedef enum _OPAL_UID {
 
 /** TCG Storage SSC Methods.
  */
-static const uint8_t OPALMETHOD[][8]{
+static const uint8_t OPALMETHOD[][8]={
   { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x01}, /**< Properties */
   { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x02}, /**<STARTSESSION */
   { 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x02, 0x02}, /**< Revert */
@@ -410,3 +412,5 @@ typedef enum _OPALSTATUSCODE {
   AUTHORITY_LOCKED_OUT = 0x12,
   FAIL = 0x3f,
 } OPALSTATUSCODE;
+
+#endif //!defined(__DTA_LEXICON__H_INCLUDED__)
