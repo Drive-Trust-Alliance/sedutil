@@ -19,7 +19,7 @@ This software is Copyright 2014, 2022 Bright Plaza Inc. <drivetrust@drivetrust.c
    * C:E********************************************************************** */
 #pragma once
 #if !defined(__DTA_LEXICON__H_INCLUDED__)
-#defined __DTA_LEXICON__H_INCLUDED__
+#define __DTA_LEXICON__H_INCLUDED__
 /*
  * Define the structures and enums needed to map the
  * Opal SSC Pseudo code to procedures.
