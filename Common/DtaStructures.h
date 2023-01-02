@@ -27,9 +27,11 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #pragma pack(push)
 #pragma pack(1)
 
+#if !defined(sizeof_field)
+#define sizeof_field(struct_type,field) sizeof(((struct_type *)0)->field)
+#endif // !defined(sizeof_field)
+
 #include "ATAStructures.h"
-
-
 
 /** Response returned by ATA Identify */
 typedef struct _IDENTIFY_RESPONSE {
@@ -57,35 +59,20 @@ typedef struct _IDENTIFY_RESPONSE {
     uint8_t integrityWord[2];    //word 255
 } IDENTIFY_RESPONSE;
 
-typedef struct _UASP_INQUIRY_RESPONSE {
-    uint8_t fill1[20];
-    char ProductSerial[20];
-    uint8_t fill2[6];
-    char ProductRev[8];
-    char ProductID[40];
-} UASP_INQUIRY_RESPONSE;
-
-typedef struct _SCSI_INQUIRY_RESPONSE {
-    uint8_t fill1[16];
-    char ProductID[16];
-    char ProductRev[4];
-} SCSI_INQUIRY_RESPONSE;
-
-
-#define FC_TPER		  0x0001
-#define FC_LOCKING    0x0002
-#define FC_GEOMETRY   0x0003
-#define FC_ENTERPRISE 0x0100
-#define FC_DATASTORE  0x0202
-#define FC_SINGLEUSER 0x0201
-#define FC_OPALV100   0x0200
-#define FC_OPALV200   0x0203
-#define FC_OPALITE    0x0301
-#define FC_PYRITE     0x0302
-#define FC_PYRITE2    0x0303
-#define FC_RUBY       0x0304
-#define FC_BlockSID   0x0402
-#define FC_NSLocking 0x0403 // Mandatory 2018 TCG feature set  1.32
+#define FC_TPER		   0x0001
+#define FC_LOCKING     0x0002
+#define FC_GEOMETRY    0x0003
+#define FC_ENTERPRISE  0x0100
+#define FC_DATASTORE   0x0202
+#define FC_SINGLEUSER  0x0201
+#define FC_OPALV100    0x0200
+#define FC_OPALV200    0x0203
+#define FC_OPALITE     0x0301
+#define FC_PYRITE      0x0302
+#define FC_PYRITE2     0x0303
+#define FC_RUBY        0x0304
+#define FC_BlockSID    0x0402
+#define FC_NSLocking   0x0403 // Mandatory 2018 TCG feature set  1.32
 #define FC_DataRemoval 0x0404
 #define FC_Min_Vendor_Specific 0xC000
 
@@ -492,7 +479,7 @@ typedef enum _DTA_DEVICE_TYPE {
 
 /** structure to store Disk information. */
 typedef struct _DTA_DEVICE_INFO {
-    // parsed the Feature block?
+    // Information about the presence and values of SSCs and templates
 	uint8_t Unknown;
 	uint8_t VendorSpecific;
     uint8_t TPer : 1;
@@ -609,17 +596,20 @@ typedef struct _DTA_DEVICE_INFO {
     uint32_t Max_Range_Per_NS;
 
 
-    // IDENTIFY information
+    // IDENTIFY information from SCSI INQUIRY and/or ATA IDENTIFY DEVICE
+    // and other OS-specific sources
+
+    uint64_t devSize;
 
     DTA_DEVICE_TYPE devType;
-    
-    uint8_t serialNum[20];
+
+    uint8_t serialNum[sizeof_field(IDENTIFY_RESPONSE,serialNumber)];
 	uint8_t serialNumNull;  // make serialNum a cstring
 
-    uint8_t firmwareRev[8];
+    uint8_t firmwareRev[sizeof_field(IDENTIFY_RESPONSE,firmwareRevision)];
 	uint8_t firmwareRevNull;  // make firmware rev a cstring
 
-    uint8_t modelNum[40];
+    uint8_t modelNum[sizeof_field(IDENTIFY_RESPONSE,modelNum)];
 	uint8_t modelNumNull;  // make model number a cstring
 
     uint8_t vendorID[8];
@@ -630,8 +620,6 @@ typedef struct _DTA_DEVICE_INFO {
 
     uint8_t worldWideName[8];    // bytes, not a cstring
 
-    uint64_t devSize;
-
 
     // Physical interconnection information
     uint8_t physicalInterconnect[8];
@@ -639,13 +627,12 @@ typedef struct _DTA_DEVICE_INFO {
     uint8_t physicalInterconnectLocation[12];
     uint8_t physicalInterconnectLocationNull;  // make physical Interconnect Location a cstring
 
+    uint8_t passwordSalt[20];             // copy of serialNum before polishing -- bytes, not a cstring
 
     uint8_t fips; // FIPS Approval mode
 	uint8_t asmedia; 
 	uint8_t enclosure;
     
-    uint8_t passwordSalt[20];             // copy of serialNum before polishing
-    IDENTIFY_RESPONSE identify_response;  // raw, before byte-swapping, etc.
 } DTA_DEVICE_INFO;
 
 #if defined(__cplusplus)

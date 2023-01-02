@@ -378,7 +378,7 @@ void DtaDevMacOSBlockStorageDevice::polishDeviceInfo() {
         }
         if (!is_not_all_NULs(vendorID)) {
             const char * vendorID =
-            vendorID_for_vendor_canonically_if_necessary((const char *)device_info.manufacturerName);
+                vendorID_for_vendor_canonically_if_necessary((const char *)device_info.manufacturerName);
             if (vendorID != NULL) {
                 strncpy((char *)device_info.vendorID, vendorID, sizeof(device_info.vendorID));
             }

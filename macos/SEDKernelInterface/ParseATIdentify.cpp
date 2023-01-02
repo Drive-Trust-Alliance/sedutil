@@ -32,7 +32,4 @@ void parseATIdentifyResponse( const IDENTIFY_RESPONSE * presp, DTA_DEVICE_INFO *
     P_16_COPY_RESP_TO_DI(firmwareRevision, firmwareRev  )
     P_16_COPY_RESP_TO_DI(modelNum        , modelNum     )
     P_16_COPY_RESP_TO_DI(worldWideName   , worldWideName)
-
-    memcpy(&di.identify_response, &resp, sizeof(IDENTIFY_RESPONSE));
-
 }

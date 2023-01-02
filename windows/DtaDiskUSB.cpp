@@ -126,6 +126,14 @@ uint8_t DtaDiskUSB::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 
 /** adds the IDENTIFY information to the disk_info structure */
 
+typedef struct _UASP_INQUIRY_RESPONSE {
+    uint8_t fill1[20];
+    char ProductSerial[20];
+    uint8_t fill2[6];
+    char ProductRev[8];
+    char ProductID[40];
+} UASP_INQUIRY_RESPONSE;
+
 void DtaDiskUSB::identify(OPAL_DiskInfo& disk_info)
 {
     LOG(D1) << "Entering DtaDiskUSB::identify()";
