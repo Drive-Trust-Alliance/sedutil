@@ -52,6 +52,17 @@ public:
          */
 	void init(const char * devref);
     
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#include <TargetConditionals.h>
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
     /** OS specific method to initialize an object to a pre-existing connection
      *  @param devref the name of the device in the OS lexicon
      *  @param driverService  the I/O Registry entry of the device
@@ -62,7 +73,10 @@ public:
               io_connect_t connect);
         /** Notify the device of the host properties and receive the
          * properties of the device as a reply */
-	void set_prop(DtaCommand * props, uint16_t sz_MaxComPacketSize, uint16_t sz_MaxResponseComPacketSize, uint16_t sz_MaxPacketSize, uint16_t sz_MaxIndTokenSize);
+#endif
+#endif  // defined(__APPLE__) && defined(__MACH__)
+
+    void set_prop(DtaCommand * props, uint16_t sz_MaxComPacketSize, uint16_t sz_MaxResponseComPacketSize, uint16_t sz_MaxPacketSize, uint16_t sz_MaxIndTokenSize);
 	void fill_prop(uint8_t show); // show = TRUE, print property  ; show = 0; fill property variable but no print 
 	uint8_t properties();
          /** Send a command to the device and wait for the response

@@ -20,6 +20,20 @@
                ReferencedContainer = "container:SEDUtilities.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "D26904BD28D7A1530095769E"
+               BuildableName = "reenumerate"
+               BlueprintName = "reenumerate"
+               ReferencedContainer = "container:SEDUtilities.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

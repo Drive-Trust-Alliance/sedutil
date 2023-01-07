@@ -31,9 +31,25 @@ using namespace std;
 class DtaDevOpal2 : public DtaDevOpal {
 public:
     DtaDevOpal2(const char * devref);
+
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#include <TargetConditionals.h>
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
     DtaDevOpal2(const char * devref,
               io_registry_entry_t driverService,
               io_connect_t connect);
+
+#endif
+#endif  // defined(__APPLE__) && defined(__MACH__)
 	~DtaDevOpal2();
         /** return the communication ID to be used with this device */
 	uint16_t comID();

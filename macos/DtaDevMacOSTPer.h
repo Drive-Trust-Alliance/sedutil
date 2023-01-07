@@ -19,6 +19,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 #pragma once
 
+#if defined(__APPLE__) && defined(__MACH__)
+
 #include "DtaDevMacOSBlockStorageDevice.h"
 
 
@@ -98,3 +100,5 @@ protected:
     void ClearOwnedIOObjects();
     void ReleaseOwnedIOObjects();
 };
+
+#endif // defined(__APPLE__) && defined(__MACH__)

@@ -18,6 +18,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
+
+#if defined(__APPLE__) && defined(__MACH__)
+
 #include <IOKit/IOKitLib.h>
 #include <vector>
 #include <string>
@@ -94,3 +97,5 @@ protected:
     DTA_DEVICE_INFO * pdevice_info;  /**< Weak reference to Structure containing info from properties, including identify and discovery 0 if available*/
     void polishDeviceInfo();
 };
+
+#endif // defined(__APPLE__) && defined(__MACH__)

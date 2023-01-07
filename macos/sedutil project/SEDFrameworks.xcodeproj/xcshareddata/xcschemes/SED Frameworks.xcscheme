@@ -28,37 +28,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D2EBA48E1F055579002F8780"
-               BuildableName = "cifra.framework"
-               BlueprintName = "cifra"
-               ReferencedContainer = "container:SEDFrameworks.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D20A63961F731F3600F154AC"
-               BuildableName = "log.framework"
-               BlueprintName = "log"
-               ReferencedContainer = "container:SEDFrameworks.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D2941F4E29354E8B00F7F8EE"
-               BuildableName = "oui.framework"
-               BlueprintName = "oui"
+               BlueprintIdentifier = "D2E6FEA22935E67800DAB209"
+               BuildableName = "oui-test"
+               BlueprintName = "oui-test"
                ReferencedContainer = "container:SEDFrameworks.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -82,6 +54,16 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "D2E6FEA22935E67800DAB209"
+            BuildableName = "oui-test"
+            BlueprintName = "oui-test"
+            ReferencedContainer = "container:SEDFrameworks.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

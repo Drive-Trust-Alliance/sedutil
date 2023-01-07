@@ -42,6 +42,18 @@ public:
          *  */
 	DtaDevEnterprise(const char * devref);
     
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#include <TargetConditionals.h>
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
     /** Constructor using an OS specific device descriptor to initialize an object to a pre-existing connection
      *  @param devref the name of the device in the OS lexicon
      *  @param driverService  the I/O Registry entry of the device
@@ -50,6 +62,9 @@ public:
     DtaDevEnterprise(const char * devref,
                      io_registry_entry_t driverService,
                      io_connect_t connect);
+
+#endif
+#endif  // defined(__APPLE__) && defined(__MACH__)
     
          /** Default destructor, does nothing*/
 	~DtaDevEnterprise();

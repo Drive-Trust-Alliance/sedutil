@@ -29,6 +29,18 @@ DtaDevOpal2::DtaDevOpal2 (const char * devref)
     //assert(isOpal2());
 }
 
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#include <TargetConditionals.h>
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
 DtaDevOpal2::DtaDevOpal2 (const char * devref,
                           io_registry_entry_t driverService,
                           io_connect_t connect)
@@ -36,6 +48,9 @@ DtaDevOpal2::DtaDevOpal2 (const char * devref,
     DtaDevOpal::init(devref, driverService, connect);
     //assert(isOpal2());
 }
+
+#endif
+#endif  // defined(__APPLE__) && defined(__MACH__)
 
 
 

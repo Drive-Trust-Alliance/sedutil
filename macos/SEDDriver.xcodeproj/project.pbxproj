@@ -53,6 +53,13 @@
 			remoteGlobalIDString = D2BD8F8D1F0205F900747F4A;
 			remoteInfo = PrintBuffer;
 		};
+		D2BDCEB42964982700D07633 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2BD8F8D1F0205F900747F4A;
+			remoteInfo = PrintBuffer;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -286,6 +293,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				D2BDCEB52964982700D07633 /* PBXTargetDependency */,
 			);
 			name = SEDKernelInterface;
 			productName = SEDKernelInterface;
@@ -321,8 +329,8 @@
 			buildRules = (
 			);
 			dependencies = (
-				D2953FD228D0DFD70050A950 /* PBXTargetDependency */,
 				D2953FD028D0DFCF0050A950 /* PBXTargetDependency */,
+				D2953FD228D0DFD70050A950 /* PBXTargetDependency */,
 			);
 			name = BrightPlazaTPer;
 			productName = BrightPlazaTPer;
@@ -478,6 +486,11 @@
 			isa = PBXTargetDependency;
 			target = D2BD8F8D1F0205F900747F4A /* PrintBuffer */;
 			targetProxy = D2953FD128D0DFD70050A950 /* PBXContainerItemProxy */;
+		};
+		D2BDCEB52964982700D07633 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2BD8F8D1F0205F900747F4A /* PrintBuffer */;
+			targetProxy = D2BDCEB42964982700D07633 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

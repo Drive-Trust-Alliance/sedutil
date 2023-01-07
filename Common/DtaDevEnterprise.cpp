@@ -162,6 +162,18 @@ DtaDevEnterprise::DtaDevEnterprise(const char * devref)
 	if (properties()) { LOG(E) << "Properties exchange failed"; }
 }
 
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#include <TargetConditionals.h>
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
 DtaDevEnterprise::DtaDevEnterprise(const char * devref,
           io_registry_entry_t driverService,
           io_connect_t connect)
@@ -170,6 +182,9 @@ DtaDevEnterprise::DtaDevEnterprise(const char * devref,
     assert(isEprise());
     if (properties()) { LOG(E) << "Properties exchange failed"; }
 }
+
+#endif
+#endif  // defined(__APPLE__) && defined(__MACH__)
 
 DtaDevEnterprise::~DtaDevEnterprise()
 {

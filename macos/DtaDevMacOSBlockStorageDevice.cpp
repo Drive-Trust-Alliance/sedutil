@@ -17,6 +17,18 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#include <TargetConditionals.h>
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
 #include <IOKit/storage/IOBlockStorageDevice.h>
 #include <IOKit/storage/IOMedia.h>
 #include <IOKit/storage/ata/ATASMARTLib.h>
@@ -633,3 +645,6 @@ const std::string DtaDevMacOSBlockStorageDevice::getDevPath () {
 const unsigned long long DtaDevMacOSBlockStorageDevice::getSize() {
     return pdevice_info->devSize;
 }
+
+#endif
+#endif // defined(__APPLE__) && defined(__MACH__)

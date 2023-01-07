@@ -91,6 +91,18 @@ void DtaDevOpal::init(const char * devref)
 	else fill_prop(false);
 }
 
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#include <TargetConditionals.h>
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
 void DtaDevOpal::init(const char * devref,
           io_registry_entry_t driverService,
           io_connect_t connect)
@@ -100,6 +112,9 @@ void DtaDevOpal::init(const char * devref,
     if(properties() != 0) { LOG(E) << "Properties exchange failed " << dev;}
     else fill_prop(false);
 }
+
+#endif
+#endif  // defined(__APPLE__) && defined(__MACH__)
 
 
 // create an audit user UserN disk_info.OPAL20_numUsers
@@ -6016,4 +6031,3 @@ uint8_t DtaDevOpal::getMSID(string& MSID) {
     LOG(D1) << "MSID=" << MSID;
     return 0;
 }
-

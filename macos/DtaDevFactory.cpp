@@ -17,6 +17,18 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#include <TargetConditionals.h>
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
 
 #include <log/log.h>
 
@@ -101,3 +113,5 @@ uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * & device, bool genericIf
     return result;
 }
 
+#endif
+#endif // defined(__APPLE__) && defined(__MACH__)

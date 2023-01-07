@@ -17,6 +17,11 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#include <TargetConditionals.h>
+#endif  // defined(__APPLE__) && defined(__MACH__)
+
 
 #include <log/log.h>
 #include <stdlib.h>
@@ -24,12 +29,23 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaHexDump.h"
 #include "DtaDevGeneric.h"
 #include "DtaStructures.h"
-#include "DtaDevMacOSTPer.h"
 #include "DtaConstants.h"
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
 
-#include "DtaDevEnterprise.h"
-#include "DtaDevOpal1.h"
-#include "DtaDevOpal2.h"
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
+#include "DtaDevMacOSTPer.h"
+
+#endif
+#endif  // defined(__APPLE__) && defined(__MACH__)
+
 
 using namespace std;
 
@@ -41,17 +57,57 @@ using namespace std;
 DtaDevOS::DtaDevOS()
 {
     dev = NULL;
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
     blockStorageDevice = NULL;
     tPer = NULL;
+
+#endif
+#endif  // defined(__APPLE__) && defined(__MACH__)
 }
 
 
 bool DtaDevOS::__init(const char *devref) {
     dev = const_cast<const char *>(strdup(devref));
     memset(&disk_info, 0, sizeof(DTA_DEVICE_INFO));
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+    
+    return true;
+
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+    
+    return true;
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
     blockStorageDevice = DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(devref, &disk_info);
     tPer = dynamic_cast <DtaDevMacOSTPer *> (blockStorageDevice);
     return (tPer != NULL);
+
+#else
+
+    return true;
+
+#endif
+#else
+
+    return true;
+
+#endif  // defined(__APPLE__) && defined(__MACH__)
 }
 
 bool DtaDevOS::__init(const char * devref, DTA_DEVICE_INFO & di) {  // TODO: ???
@@ -63,10 +119,47 @@ bool DtaDevOS::__init(const char * devref, DTA_DEVICE_INFO & di) {  // TODO: ???
 void DtaDevOS::init(const char * devref)
 {
     if (__init(devref)) {
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+    
+        isOpen = true;
+
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+    
+        isOpen = true;
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
         isOpen = tPer->init(devref, true);
+
+#else
+
+        isOpen = true;
+
+#endif
+#else
+
+        isOpen = true;
+
+#endif  // defined(__APPLE__) && defined(__MACH__)
     };
 }
 
+
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
 
 /* Determine which type of drive we're using and instantiate a derived class of that type */
 void DtaDevOS::init(const char * devref,
@@ -79,13 +172,42 @@ void DtaDevOS::init(const char * devref,
     };
 }
 
+#endif
+#endif  // defined(__APPLE__) && defined(__MACH__)
+
 
 /** OS specific method to initialize an object to a pre-existing connection
  *  @param di  reference to already-initialized DTA_DEVICE_INFO
  */
 void DtaDevOS::init(const char * devref, DTA_DEVICE_INFO &di) {
     if (__init(devref, di)) {
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+    
+        isOpen = true;
+
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+    
+        isOpen = true;
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
         isOpen = tPer->init(devref, true);
+
+#else
+
+        isOpen = true;
+
+#endif
+#else
+
+        isOpen = true;
+
+#endif  // defined(__APPLE__) && defined(__MACH__)
     };
 }
 
@@ -93,20 +215,58 @@ void DtaDevOS::init(const char * devref, DTA_DEVICE_INFO &di) {
 uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 	void * buffer, size_t bufferlen)
 {
-	if (!isOpen) return 0xfe; //disk open failed so this will too
+#pragma unused(cmd,protocol,comID,buffer,bufferlen)
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+    
+    return 0xfe;
 
-	if (NULL == tPer)
-	{
-		LOG(E) << "DtaDevOS::sendCmd ERROR - unknown drive type";
-		return 0xff;
-	}
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+    
+    return 0xfe;
 
-	return tPer->sendCmd(cmd, protocol, comID, buffer, (uint16_t)bufferlen);
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
+    if (!isOpen) return 0xfe; //disk open failed so this will too
+
+    if (NULL == tPer)
+    {
+        LOG(E) << "DtaDevOS::sendCmd ERROR - unknown drive type";
+        return 0xff;
+    }
+
+    return tPer->sendCmd(cmd, protocol, comID, buffer, (uint16_t)bufferlen);
+
+#else
+
+    return 0xfe;
+
+#endif
+#else
+
+    return 0xfe;
+
+#endif  // defined(__APPLE__) && defined(__MACH__)
 }
 
 
 void DtaDevOS::identify()
 {
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+    
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
     if (!isOpen) return; //disk open failed so this will too
 
     if (NULL == tPer)
@@ -119,6 +279,9 @@ void DtaDevOS::identify()
         LOG(E) << "DtaDevOS::identify ERROR - " << HEXON(8) << ret;
         return;
     }
+    
+#endif
+#endif  // defined(__APPLE__) && defined(__MACH__)
 }
 
 void DtaDevOS::osmsSleep(uint32_t ms)
@@ -129,6 +292,17 @@ void DtaDevOS::osmsSleep(uint32_t ms)
 
 int  DtaDevOS::diskScan()
 {
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+    
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
     LOG(D1) << "Entering DtaDevOS:diskScan ";
 
 #if !DEBUG
@@ -201,7 +375,10 @@ int  DtaDevOS::diskScan()
     }
 
     LOG(D1) << "Exiting DtaDevOS::diskScan ";
-	return 0;
+
+#endif
+#endif  // defined(__APPLE__) && defined(__MACH__)
+    return 0;
 }
 
 /** Close the device reference so this object can be delete. */
@@ -212,10 +389,24 @@ DtaDevOS::~DtaDevOS()
     if (NULL != dev) {
         free((void *)dev);
     }
+    dev = NULL;
+
+#if defined(__APPLE__) && defined(__MACH__)
+    /* Apple OSX and iOS (Darwin). ------------------------------ */
+#if TARGET_IPHONE_SIMULATOR == 1
+    /* iOS in Xcode simulator */
+    
+#elif TARGET_OS_IPHONE == 1
+    /* iOS on iPhone, iPad, etc. */
+
+#elif TARGET_OS_MAC == 1
+    /* OSX */
+
     if (NULL != tPer) {
         delete tPer;
     }
-    
-    dev = NULL;
     tPer = NULL;
+
+#endif
+#endif  // defined(__APPLE__) && defined(__MACH__)
 }

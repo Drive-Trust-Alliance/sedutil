@@ -20,7 +20,7 @@
 		D271A1FE28054AFE00BF043A /* DtaConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F828054AFD00BF043A /* DtaConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D271A1FF28054AFE00BF043A /* DtaLexicon.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F928054AFE00BF043A /* DtaLexicon.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D271A20028054AFE00BF043A /* DtaResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1FA28054AFE00BF043A /* DtaResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D274DB7228B7FC9D00B9CD1F /* SEDKernelInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */; };
+		D274DB7228B7FC9D00B9CD1F /* SEDKernelInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */; platformFilters = (macos, ); };
 		D27591BA28B579F1005B9081 /* DtaDevOpal2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */; };
 		D2772AD228BBFF8C0005E001 /* DtaDevOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2772AD128BBFF8C0005E001 /* DtaDevOS.cpp */; };
 		D2772ADA28BBFFB70005E001 /* DtaDevMacOSTPer_SAT.h in Headers */ = {isa = PBXBuildFile; fileRef = D2772AD328BBFFB60005E001 /* DtaDevMacOSTPer_SAT.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -119,6 +119,13 @@
 			remoteGlobalIDString = D2EBA48E1F055579002F8780;
 			remoteInfo = cifra;
 		};
+		D2E60B502963817700EF4C4F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2941F4E29354E8B00F7F8EE;
+			remoteInfo = oui;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -176,6 +183,7 @@
 		D2A06C9528B5D88800C0DDB6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		D2B2036428BBFF1D004C88FF /* DtaDevMacOSTPer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer.h; sourceTree = "<group>"; };
+		D2BDCEB329648F6700D07633 /* oui-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "oui-test"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2BDDC9128A5B23600001E26 /* ATAStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATAStructures.h; path = "/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/Common/ATAStructures.h"; sourceTree = "<absolute>"; };
 		D2BDDC9628A6361600001E26 /* ob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ob.h; sourceTree = "<group>"; };
 		D2BDDC9728A6361600001E26 /* ob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ob.cpp; sourceTree = "<group>"; };
@@ -201,7 +209,6 @@
 		D2E6FE8C2935E08D00DAB209 /* oui.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = oui.txt; sourceTree = "<group>"; };
 		D2E6FE8D2935E08D00DAB209 /* oui.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = oui.inc; sourceTree = "<group>"; };
 		D2E6FE9C2935E19700DAB209 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "../../FH/sedutil/macos/sedutil project/oui/Info.plist"; sourceTree = "<group>"; };
-		D2E6FEA32935E67800DAB209 /* oui-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "oui-test"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2E6FEB32935E6DE00DAB209 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		D2EA83D628053B3400A0F685 /* DtaDevOpal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal.cpp; sourceTree = "<group>"; };
 		D2EA83D828053B3400A0F685 /* DtaAnnotatedDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAnnotatedDump.cpp; sourceTree = "<group>"; };
@@ -372,7 +379,7 @@
 				D23F3DF928B57BB400741CC0 /* cifra.framework */,
 				D23F3E0B28B57E6800741CC0 /* Frameworks */,
 				D2E6FE7E2935696800DAB209 /* oui.framework */,
-				D2E6FEA32935E67800DAB209 /* oui-test */,
+				D2BDCEB329648F6700D07633 /* oui-test */,
 			);
 			sourceTree = "<group>";
 		};
@@ -621,7 +628,7 @@
 			);
 			name = "oui-test";
 			productName = "oui-test";
-			productReference = D2E6FEA32935E67800DAB209 /* oui-test */;
+			productReference = D2BDCEB329648F6700D07633 /* oui-test */;
 			productType = "com.apple.product-type.tool";
 		};
 		D2EBA3061F0549B7002F8780 /* sedutil */ = {
@@ -640,6 +647,7 @@
 			dependencies = (
 				D2A06C9828B5D8BC00C0DDB6 /* PBXTargetDependency */,
 				D2A06C9A28B5D8BE00C0DDB6 /* PBXTargetDependency */,
+				D2E60B512963817700EF4C4F /* PBXTargetDependency */,
 			);
 			name = sedutil;
 			productName = sedutil;
@@ -751,10 +759,10 @@
 			projectRoot = "";
 			targets = (
 				D2EBA3061F0549B7002F8780 /* sedutil */,
-				D2941F4E29354E8B00F7F8EE /* oui */,
-				D2E6FEA22935E67800DAB209 /* oui-test */,
 				D20A63961F731F3600F154AC /* log */,
 				D2EBA48E1F055579002F8780 /* cifra */,
+				D2941F4E29354E8B00F7F8EE /* oui */,
+				D2E6FEA22935E67800DAB209 /* oui-test */,
 			);
 		};
 /* End PBXProject section */
@@ -895,6 +903,11 @@
 			isa = PBXTargetDependency;
 			target = D2EBA48E1F055579002F8780 /* cifra */;
 			targetProxy = D2A06C9928B5D8BE00C0DDB6 /* PBXContainerItemProxy */;
+		};
+		D2E60B512963817700EF4C4F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2941F4E29354E8B00F7F8EE /* oui */;
+			targetProxy = D2E60B502963817700EF4C4F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

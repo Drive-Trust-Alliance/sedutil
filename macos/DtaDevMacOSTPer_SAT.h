@@ -19,6 +19,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 #pragma once
 
+#if defined(__APPLE__) && defined(__MACH__)
+
 #include "DtaDevMacOSTPer.h"
 
 /** Mac specific implementation of DtaDevOS.
@@ -55,3 +57,5 @@ public:
     /** Connect to "user client" (driver shim in userland)
      */
 };
+
+#endif // defined(__APPLE__) && defined(__MACH__)
