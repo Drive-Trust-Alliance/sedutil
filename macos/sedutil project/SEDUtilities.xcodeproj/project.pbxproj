@@ -8,10 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		D26904CE28D7A17B0095769E /* reenumerate.c in Sources */ = {isa = PBXBuildFile; fileRef = D26904CD28D7A17B0095769E /* reenumerate.c */; };
+		D26F2F10296A8180007905F7 /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26F2F0F296A8180007905F7 /* cifra.framework */; };
+		D26F2F12296A8180007905F7 /* log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26F2F11296A8180007905F7 /* log.framework */; };
+		D26F2F14296A8180007905F7 /* oui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26F2F13296A8180007905F7 /* oui.framework */; };
+		D26F2F16296A8180007905F7 /* sedutil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26F2F15296A8180007905F7 /* sedutil.framework */; };
 		D287224328B835CB0023404B /* sedutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D287224228B835CB0023404B /* sedutil.cpp */; };
-		D28CFD6428E2C4EE00A33B00 /* sedutil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D287224528B835DF0023404B /* sedutil.framework */; };
-		D28CFD6528E2C50300A33B00 /* log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2ECBD7E28CACC1400D9F997 /* log.framework */; };
-		D29F7FB12940E7AE00206C29 /* oui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D29F7FB02940E7AE00206C29 /* oui.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -39,6 +40,10 @@
 		D2233E3428D79504006B6974 /* DtaOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
 		D26904CD28D7A17B0095769E /* reenumerate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = reenumerate.c; path = "../../sedutil-cli project/reenumerate/reenumerate.c"; sourceTree = "<group>"; };
 		D26904CF28D7A17F0095769E /* IOUSBFamilyInfoPlist.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOUSBFamilyInfoPlist.pch; path = "../../sedutil-cli project/reenumerate/IOUSBFamilyInfoPlist.pch"; sourceTree = "<group>"; };
+		D26F2F0F296A8180007905F7 /* cifra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = cifra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D26F2F11296A8180007905F7 /* log.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D26F2F13296A8180007905F7 /* oui.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = oui.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D26F2F15296A8180007905F7 /* sedutil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = sedutil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2772B4F28BC354B0005E001 /* DtaStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaStructures.h; sourceTree = "<group>"; };
 		D2772B5A28BC354B0005E001 /* DtaConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaConstants.h; sourceTree = "<group>"; };
 		D2772B5E28BC354B0005E001 /* DtaDev.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaDev.h; sourceTree = "<group>"; };
@@ -65,9 +70,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D28CFD6428E2C4EE00A33B00 /* sedutil.framework in Frameworks */,
-				D29F7FB12940E7AE00206C29 /* oui.framework in Frameworks */,
-				D28CFD6528E2C50300A33B00 /* log.framework in Frameworks */,
+				D26F2F10296A8180007905F7 /* cifra.framework in Frameworks */,
+				D26F2F12296A8180007905F7 /* log.framework in Frameworks */,
+				D26F2F14296A8180007905F7 /* oui.framework in Frameworks */,
+				D26F2F16296A8180007905F7 /* sedutil.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,6 +103,10 @@
 		D287224428B835DF0023404B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D26F2F0F296A8180007905F7 /* cifra.framework */,
+				D26F2F11296A8180007905F7 /* log.framework */,
+				D26F2F13296A8180007905F7 /* oui.framework */,
+				D26F2F15296A8180007905F7 /* sedutil.framework */,
 				D29F7FB02940E7AE00206C29 /* oui.framework */,
 				D2ECBD7E28CACC1400D9F997 /* log.framework */,
 				D287224528B835DF0023404B /* sedutil.framework */,
