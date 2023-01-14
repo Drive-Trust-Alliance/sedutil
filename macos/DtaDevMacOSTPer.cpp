@@ -74,18 +74,18 @@ std::string cfStringToStdString(CFStringRef input)
 
     // Copy the data out to a local buffer.
     auto lengthInUtf16{ CFStringGetLength(input) };
-    unsigned long maxLengthInUtf8 = (unsigned long)CFStringGetMaximumSizeForEncoding(lengthInUtf16,
-        kCFStringEncodingUTF8) + 1 ; // <-- leave room for null terminator
+    unsigned long maxLengthInUtf8 =
+        (unsigned long)CFStringGetMaximumSizeForEncoding(lengthInUtf16, kCFStringEncodingUTF8)
+                        + 1 ; // <-- leave room for null terminator
     std::vector<char> localBuffer(maxLengthInUtf8);
 
-    if (CFStringGetCString(input, localBuffer.data(), (CFIndex)maxLengthInUtf8, (unsigned int)maxLengthInUtf8))
+    if (CFStringGetCString(input, localBuffer.data(),
+                           (CFIndex)maxLengthInUtf8, (unsigned int)maxLengthInUtf8))
         return localBuffer.data();
 
     return {};
 }
 
-
-#define GetString(dict,name) (CFStringRef)CFDictionaryGetValue(dict, CFSTR(name))
 
 DtaDevMacOSTPer * DtaDevMacOSTPer::getTPer(std::string entryName,
                                            std::string bsdName,
@@ -93,14 +93,18 @@ DtaDevMacOSTPer * DtaDevMacOSTPer::getTPer(std::string entryName,
                                            CFDictionaryRef properties,
                                            DTA_DEVICE_INFO * pdi)
 {
-    const CFStringRef interfaceType=GetString(tPerProperties, IOInterfaceTypeKey);
+    const CFStringRef interfaceType=
+        (CFStringRef)CFDictionaryGetValue(tPerProperties, CFSTR(IOInterfaceTypeKey));
+    
     if (CFEqual(interfaceType, CFSTR(IOInterfaceTypeSAT))) {
         return new DtaDevMacOSTPer_SAT(entryName, bsdName, properties, pdi);
-    } else if (CFEqual(interfaceType, CFSTR(IOInterfaceTypeSCSI))) {
-        return new DtaDevMacOSTPer_SCSI(entryName, bsdName, properties, pdi);
-    } else {
-        return nil;
     }
+    
+    if (CFEqual(interfaceType, CFSTR(IOInterfaceTypeSCSI))) {
+        return new DtaDevMacOSTPer_SCSI(entryName, bsdName, properties, pdi);
+    }
+    
+    return nil;
 }
 
 bool DtaDevMacOSTPer::findBrightPlazaDriverService(const char * dev)
@@ -108,6 +112,7 @@ bool DtaDevMacOSTPer::findBrightPlazaDriverService(const char * dev)
     io_registry_entry_t mediaService = findBSDName(dev);
     if (!mediaService)
         return false;
+    
     driverService = findBrightPlazaDriverInParents(mediaService);
     IOObjectRelease(mediaService);
     if (driverService == IO_OBJECT_NULL) {
@@ -134,6 +139,7 @@ uint8_t DtaDevMacOSTPer::connectToUserClient()
 
 bool DtaDevMacOSTPer::init(const char * dev, bool doConnect)
 {
+    ClearOwnedIOObjects();
     return findBrightPlazaDriverService(dev) && (!doConnect || KERN_SUCCESS==connectToUserClient());
 }
 

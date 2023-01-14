@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 #include "InterfaceCommandCodes.h"
 #include "TPerDriverMethodIndex.h"
+#include <mach/mach_error.h>
 
 // ************
 // *** TCG functions
@@ -155,26 +156,27 @@ kern_return_t OpenUserClient(io_service_t service, io_connect_t *pConnect)
 
     // This call will cause the user client to be instantiated. It returns an io_connect_t handle
     // that is used for all subsequent calls to the user client.
-//#if DEBUG
-//    fprintf(stderr, "OpenUserClient -- service is %d.\n", service);
-//#endif
+#if DEBUG
+    fprintf(stderr, "OpenUserClient -- service is %d.\n", service);
+#endif
     kernResult = IOServiceOpen(service, mach_task_self(), 0, pConnect);
     if (kernResult != kIOReturnSuccess) {
 #if DEBUG
         fprintf(stderr, "OpenUserClient: error -- IOServiceOpen returned 0x%08x\n", kernResult);
-        
 #endif
         return kernResult;
     }
 
     // This calls the openUserClient method in SedUserClient inside the kernel.
-//#if DEBUG
-//        fprintf(stderr, "OpenUserClient IOServiceOpen successful -- connect is %d (%d).\n", connect, *pConnect);
-//#endif
+#if DEBUG
+        fprintf(stderr, "OpenUserClient IOServiceOpen successful -- *pConnect is %d.\n",
+                *pConnect);
+#endif
     kernResult = IOConnectCallScalarMethod(*pConnect, kSedUserClientOpen, NULL, 0, NULL, NULL);
     if (kernResult != kIOReturnSuccess) {
 #if DEBUG
-        fprintf(stderr, "OpenUserClient error -- IOConnectCallScalarMethod returned 0x%08x.\n", kernResult);
+        fprintf(stderr, "OpenUserClient error -- IOConnectCallScalarMethod returned 0x%08x (%s).\n",
+                kernResult, mach_error_string(kernResult));
         if (kernResult == kIOReturnExclusiveAccess) {
             fprintf(stderr, "Exclusive access requested but already open.\n");
         }
@@ -192,17 +194,17 @@ kern_return_t CloseUserClient(io_connect_t connect)
 {
     // This calls the closeUserClient method in SedUserClient inside the kernel, which in turn closes
     // the driver.
-//#if DEBUG
-//    fprintf(stderr, "CloseUserClient -- connect is %d.\n", connect);
-//#endif
+#if DEBUG
+    fprintf(stderr, "CloseUserClient -- connect is %d.\n", connect);
+#endif
     kern_return_t SedUserClientCloseResult =
        IOConnectCallScalarMethod(connect, kSedUserClientClose, NULL, 0, NULL, NULL);
-//#if DEBUG
-//    fprintf(stderr, "CloseUserClient -- SedUserClientCloseResult is %d.\n", SedUserClientCloseResult);
-//#endif
+#if DEBUG
+    fprintf(stderr, "CloseUserClient -- SedUserClientCloseResult is %d.\n", SedUserClientCloseResult);
+#endif
     kern_return_t IOServiceCloseResult = IOServiceClose(connect);  // releases connect
-//#if DEBUG
-//    fprintf(stderr, "CloseUserClient -- IOServiceCloseResult is %d.\n", IOServiceCloseResult);
-//#endif
+#if DEBUG
+    fprintf(stderr, "CloseUserClient -- IOServiceCloseResult is %d.\n", IOServiceCloseResult);
+#endif
     return kIOReturnSuccess != SedUserClientCloseResult ? SedUserClientCloseResult : IOServiceCloseResult;
 }
