@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -187,6 +187,7 @@
 					New,
 				);
 				LastUpgradeCheck = 1400;
+				ORGANIZATIONNAME = "Bright Plaza, Inc.";
 				TargetAttributes = {
 					D26904BD28D7A1530095769E = {
 						CreatedOnToolsVersion = 14.0;
@@ -201,7 +202,7 @@
 				};
 			};
 			buildConfigurationList = D2BD8F581F02016B00747F4A /* Build configuration list for PBXProject "SEDUtilities" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (

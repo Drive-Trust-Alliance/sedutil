@@ -679,6 +679,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1410;
+				ORGANIZATIONNAME = "Bright Plaza, Inc.";
 				TargetAttributes = {
 					D20A63961F731F3600F154AC = {
 						CreatedOnToolsVersion = 8.1;
@@ -707,7 +708,7 @@
 				};
 			};
 			buildConfigurationList = D2BD8F581F02016B00747F4A /* Build configuration list for PBXProject "SEDFrameworks" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
