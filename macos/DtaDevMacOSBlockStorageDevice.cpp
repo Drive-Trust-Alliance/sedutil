@@ -422,14 +422,15 @@ void DtaDevMacOSBlockStorageDevice::polishDeviceInfo() {
                                          rightmostEightHexDigits)) {
                         strncpy(serialNumberHex, (const char *)(match.str(1).c_str()), 8);
                     } else {
-                        // Synthesize WWN serial number as DtaHash of vendorID, modelNum, and serialNum
+                        // Synthesize WWN "serial number" suffix as DtaHash of vendorID, modelNum, and passwordSalt
                         uint8_t uID[sizeof(device_info.vendorID)+ sizeof(device_info.modelNum)+1];
                         memcpy(&uID[0],
                                device_info.vendorID, sizeof(device_info.vendorID));
                         memcpy(&uID[sizeof(device_info.vendorID)],
                                device_info.modelNum, sizeof(device_info.modelNum));
                         vector<uint8_t> hash={4,0xd0, 0,0,0,0};
-                        vector<uint8_t> salt(device_info.serialNum, device_info.serialNum+sizeof(device_info.serialNum));  // TODO: wrong -- getSalt()
+                        vector<uint8_t> salt(device_info.passwordSalt,
+                                             device_info.passwordSalt+sizeof(device_info.passwordSalt));
                         DtaHashPassword(hash, (char *)uID, salt);
                         snprintf(serialNumberHex, 9, "%02X%02X%02X%02X", hash[2] , hash[3] , hash[4] , hash[5]);
                     }

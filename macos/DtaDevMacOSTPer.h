@@ -87,6 +87,8 @@ public:
         ds=driverService;
         c=connect;
     }
+    void ClearOwnedIOObjects();
+    void ReleaseOwnedIOObjects();
 
 protected:
     bool findBrightPlazaDriverService(const char * dev);
@@ -97,8 +99,6 @@ protected:
     io_connect_t    connect;
     bool ownConnect;
 
-    void ClearOwnedIOObjects();
-    void ReleaseOwnedIOObjects();
 };
 
 #endif // defined(__APPLE__) && defined(__MACH__)

@@ -31,7 +31,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  */
 class DtaDevMacOSBlockStorageDevice {
 public:
-    DtaDevMacOSBlockStorageDevice(std::string entryName, std::string bsdName, CFDictionaryRef properties, DTA_DEVICE_INFO * pdi)
+    DtaDevMacOSBlockStorageDevice(std::string entryName,
+                                  std::string bsdName,
+                                  CFDictionaryRef properties,
+                                  DTA_DEVICE_INFO * pdi)
         : bsdName(bsdName),
           entryName(entryName),
           properties(properties),
@@ -70,8 +73,8 @@ public:
     
     static std::vector<DtaDevMacOSBlockStorageDevice *> enumerateBlockStorageDevices();
     static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(io_service_t aBlockStorageDevice,
-                                                     const char *devref,
-                                                     DTA_DEVICE_INFO *pdi);
+                                                                 const char *devref,
+                                                                 DTA_DEVICE_INFO *pdi);
     
     static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(const char * devref, DTA_DEVICE_INFO * pdi);  // Factory for this class or subclass instances
 
