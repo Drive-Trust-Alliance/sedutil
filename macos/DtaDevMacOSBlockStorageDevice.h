@@ -85,6 +85,9 @@ public:
     
     const DTA_DEVICE_INFO & device_info(void);  /**< Weak reference to Structure containing info from properties, including identify and discovery 0 if available
                                            Asserts if no such reference.*/
+    
+    void updatePropertiesInIORegistry(void);
+
 
 private:
 
@@ -98,7 +101,7 @@ private:
                                 DtaDevMacOSBlockStorageDevice * b);  // for sorting
 protected:
     DTA_DEVICE_INFO * pdevice_info;  /**< Weak reference to Structure containing info from properties, including identify and discovery 0 if available*/
-    void polishDeviceInfo();
+    static void polishDeviceInfo(DTA_DEVICE_INFO & device_info);
 };
 
 #endif // defined(__APPLE__) && defined(__MACH__)

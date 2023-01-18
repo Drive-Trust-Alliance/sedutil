@@ -190,19 +190,23 @@ static inline vector<uint8_t> vUID(OPAL_UID uid) {
     return v;
 }
 
-static __inline bool __is_not_all_NULs(const uint8_t * b, const size_t n) {
-    for(const uint8_t * e = b + n; b<e; b++) {
-        if (0!=*b)
-            return true;
+static __inline bool __is_all_NULs(const uint8_t * b, const size_t n) {
+    for (const uint8_t * e = b + n; b<e; b++) {
+        if ( 0  == *b) continue;
+        return false;
     }
-    return false;
+    return true;
 }
 
 
-static __inline bool __is_not_all_zeroes(const uint8_t * b, const size_t n) {
-    for(const uint8_t * e = b + n; b<e; b++) {
-        if (0!=*b && '0'!=*b)
-            return true;
+static __inline bool __is_all_zeroes(const uint8_t * b, const size_t n) {
+    for (const uint8_t * e = b + n; b<e; b++) {
+        if ( 0  == *b) continue;
+        if ('0' == *b) continue;
+        return false;
     }
-    return false;
+    return true;
 }
+
+#define __is_not_all_NULs(b,n) (!__is_all_NULs(b,n))
+#define __is_not_all_zeroes(b,n) (!__is_all_zeroes(b,n))

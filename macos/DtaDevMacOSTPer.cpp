@@ -155,7 +155,7 @@ kern_return_t DtaDevMacOSTPer::identify(DTA_DEVICE_INFO& disk_info )
     LOG(D4) << "Entering DtaDevMacOSDrive::identify()";
     kern_return_t result = TPerUpdate(connect, driverService, &disk_info);
     if (result == KERN_SUCCESS) {
-        polishDeviceInfo();
+        polishDeviceInfo(disk_info);
     }
     return result;
 }

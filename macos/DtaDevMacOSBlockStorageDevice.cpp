@@ -327,8 +327,7 @@ static void trimBuffer(char * buffer, size_t len) {
 }
 
 
-void DtaDevMacOSBlockStorageDevice::polishDeviceInfo() {
-    DTA_DEVICE_INFO & device_info = *pdevice_info;
+void DtaDevMacOSBlockStorageDevice::polishDeviceInfo(DTA_DEVICE_INFO & device_info) {
     
 #define is_not_all_NULs(field) (__is_not_all_NULs(device_info.field, sizeof(device_info.field)))
 #define is_not_all_zeroes(field) (__is_not_all_zeroes(device_info.field, sizeof(device_info.field)))
@@ -352,13 +351,13 @@ void DtaDevMacOSBlockStorageDevice::polishDeviceInfo() {
                              match,
                              leftmostWord)) {
             string vendorName = match.str(1);
-            const char * vendorID = vendorName.c_str();
-            if (vendorID != NULL && 0 < strlen(vendorID)) {
+            const char * candidateVendorID = vendorName.c_str();
+            if (candidateVendorID != NULL && 0 < strlen(candidateVendorID)) {
                 // Is the first word of modelNum also a vendorID (canonically, if necessary)?
-                const char * vendor = vendor_for_vendorID_canonically_if_necessary(vendorID);
-                if (vendor != NULL) {
-                    size_t vendorID_length_plus_one=strnlen(vendorID, sizeof(device_info.vendorID))+1;
-                    strncpy((char *)device_info.vendorID, vendorID, vendorID_length_plus_one);
+                const char * vendor = vendor_for_vendorID_canonically_if_necessary(candidateVendorID);
+                if (vendor != NULL) {  // OK then
+                    size_t vendorID_length_plus_one=strnlen(candidateVendorID, sizeof(device_info.vendorID))+1;
+                    strncpy((char *)device_info.vendorID, candidateVendorID, vendorID_length_plus_one);
                     
                     memset(device_info.modelNum, ' ', vendorID_length_plus_one);
                     _trim(modelNum);
@@ -468,7 +467,7 @@ DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(std::string entryName,
         : new DtaDevMacOSBlockStorageDevice(entryName, bsdName, properties, pdi);
 
     // Polishing up the DTA_DEVICE_INFO
-    d->polishDeviceInfo();
+    DtaDevMacOSBlockStorageDevice::polishDeviceInfo(*pdi);
 
     return d;
 }
