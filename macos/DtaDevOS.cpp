@@ -305,19 +305,20 @@ int  DtaDevOS::diskScan()
 
     LOG(D1) << "Entering DtaDevOS:diskScan ";
 
-#if !DEBUG
-    printf("Scanning for Opal compliant disks\n");
-#endif // DEBUG
+    IFLOG(D) {
+        printf("Scanning for TCG SWG compliant disks (debug version, loglevel=%d)\n", CLog::Level());
+    } else {
+        printf("Scanning for Opal compliant disks\n");
+    }
 
     vector<DtaDevMacOSBlockStorageDevice *> blockStorageDevices =
         DtaDevMacOSBlockStorageDevice::enumerateBlockStorageDevices();
 
-#if DEBUG
-    if (blockStorageDevices.size()!=0) {
-        printf(" device    SSC         Model Number       Firmware  Locn     World Wide Name    Serial Number       Vendor      Manufacturer Name\n");
-        printf("---------- ---  ------------ ------------ --------  -----    ----- ---- -----  ------- ---------    -------  --------------- -------\n");
-    }
-#endif // DEBUG
+    IFLOG(D)
+        if (blockStorageDevices.size()!=0) {
+            printf(" device    SSC         Model Number       Firmware  Locn     World Wide Name    Serial Number       Vendor      Manufacturer Name\n");
+            printf("---------- ---  ------------ ------------ --------  -----    ----- ---- -----  ------- ---------    -------  --------------- -------\n");
+        }
 
     for (DtaDevMacOSBlockStorageDevice * blockStorageDevice : blockStorageDevices){
         printf("%-11s", blockStorageDevice->getDevPath().c_str());
@@ -351,27 +352,29 @@ int  DtaDevOS::diskScan()
             default:
                 devType = "UNKNOWN";
         }
-#if DEBUG
-        char WWN[17]="                ";  // 16 blanks as placeholder if missing
-        vector<uint8_t>wwn(blockStorageDevice->getWorldWideName());
-        if (__is_not_all_NULs(wwn.data(), wwn.size())) {
-            snprintf(WWN, 17, "%02X%02X%02X%02X%02X%02X%02X%02X",
-                     wwn[0], wwn[1], wwn[2], wwn[3], wwn[4], wwn[5], wwn[6], wwn[7]);
+
+        IFLOG(D) {
+            char WWN[17]="                ";  // 16 blanks as placeholder if missing
+            vector<uint8_t>wwn(blockStorageDevice->getWorldWideName());
+            if (__is_not_all_NULs(wwn.data(), wwn.size())) {
+                snprintf(WWN, 17, "%02X%02X%02X%02X%02X%02X%02X%02X",
+                         wwn[0], wwn[1], wwn[2], wwn[3], wwn[4], wwn[5], wwn[6], wwn[7]);
+            }
+            printf("%-25s %-8s  %-7s  %16s  %-20s %-8s %-30s\n",
+                   blockStorageDevice->getModelNum(),
+                   blockStorageDevice->getFirmwareRev(),
+                   devType,
+                   WWN,
+                   blockStorageDevice->getSerialNum(),
+                   blockStorageDevice->getVendorID(),
+                   blockStorageDevice->getManufacturerName());
+            
+        } else {
+            printf("%-25s %-8s  %-7s\n",
+                   blockStorageDevice->getModelNum(),
+                   blockStorageDevice->getFirmwareRev(),
+                   devType);
         }
-        printf("%-25s %-8s  %-7s  %16s  %-20s %-8s %-30s\n",
-               blockStorageDevice->getModelNum(),
-               blockStorageDevice->getFirmwareRev(),
-               devType,
-               WWN,
-               blockStorageDevice->getSerialNum(),
-               blockStorageDevice->getVendorID(),
-               blockStorageDevice->getManufacturerName());
-#else // DEBUG
-        printf("%-25s %-8s  %-7s\n",
-               blockStorageDevice->getModelNum(),
-               blockStorageDevice->getFirmwareRev(),
-               devType);
-#endif // DEBUG
     }
 
     LOG(D1) << "Exiting DtaDevOS::diskScan ";

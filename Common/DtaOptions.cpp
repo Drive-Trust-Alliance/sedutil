@@ -24,7 +24,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "Version.h"
 void usage()
 {
-    printf("sedutil v%s Copyright 2014-2022 Bright Plaza Inc. <drivetrust@drivetrust.com>\n", GIT_VERSION);
+    printf("sedutil v%s Copyright 2014-2023 Bright Plaza Inc. <drivetrust@drivetrust.com>\n", GIT_VERSION);
     printf("a utility to manage self encrypting drives that conform\n");
     printf("to the Trusted Computing Group OPAL 2.0 SSC specification\n");
     printf("General Usage:                     (see readme for extended commandset)\n");
@@ -110,13 +110,12 @@ void usage()
 }
 
 /* Default to output that omits timestamps and goes to stdout */
-sedutiloutput outputFormat = sedutilReadable;
-
+sedutiloutput outputFormat = DEFAULT_OUTPUT_FORMAT;
 
 uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 {
     memset(opts, 0, sizeof (DTA_OPTIONS));
-    uint16_t loggingLevel = 2;
+    uint16_t loggingLevel = DEFAULT_LOGGING_LEVEL;
 	uint8_t baseOptions = 2; // program and option
     CLog::Level() = CLog::FromInt(loggingLevel);
     RCLog::Level() = RCLog::FromInt(loggingLevel);
@@ -133,7 +132,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 		{
 			baseOptions += 1;
 			loggingLevel += (uint16_t)(strlen(argv[i]) - 1);
-			if (loggingLevel > 7) loggingLevel = 7;
+			if (loggingLevel > MAX_LOGGING_LEVEL) loggingLevel = MAX_LOGGING_LEVEL;
 			CLog::Level() = CLog::FromInt(loggingLevel);
 			RCLog::Level() = RCLog::FromInt(loggingLevel);
 			LOG(D) << "Log level set to " << CLog::ToString(CLog::FromInt(loggingLevel));

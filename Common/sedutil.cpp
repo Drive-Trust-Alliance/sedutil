@@ -643,8 +643,6 @@ int main(int argc, char * argv[])
 	// Log command here
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 	logc(argc, argv);
-#elif __APPLE__
-    turnOffLogging();
 #endif
 	if (DtaOptions(argc, argv, &opts)) {
 		return DTAERROR_COMMAND_ERROR;

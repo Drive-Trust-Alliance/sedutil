@@ -8,7 +8,7 @@
 
 #include "../Common/log.h"
 
-#define DEBUG_LOGGING_LEVEL 1
+#define DEBUG_LOGGING_LEVEL 0
 //#define DEBUG_LOGGING_LEVEL 4
 //#define DEBUG_LOGGING_LEVEL 0
 #define RELEASE_LOGGING_LEVEL 0
@@ -22,6 +22,7 @@ template<> TLogLevel& Log<Output2FILE>::Level() {
 void SetLoggingLevel(const int loggingLevel)
 {
     CLog::Level() = CLog::FromInt(loggingLevel);
+    RCLog::Level() = RCLog::FromInt(loggingLevel);
 }
 
 void turnOffLogging(void) {

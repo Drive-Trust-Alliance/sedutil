@@ -310,10 +310,15 @@ class FILELOG_DECLSPEC RCLog : public RLog<Output2FILE> {
 	else CLog().Get(level)
 #endif
 
+//#define IFLOG(level) \
+//    if (level > CLOG_MAX_LEVEL) ;\
+//    else if (level > CLog::Level() || !Output2FILE::Stream()) ; \
+//    else
+
+// This version allows an else part
 #define IFLOG(level) \
-	if (level > CLOG_MAX_LEVEL) ;\
-	else if (level > CLog::Level() || !Output2FILE::Stream()) ; \
-	else
+    if (level > CLOG_MAX_LEVEL) ;\
+    else if (!(level > CLog::Level() || !Output2FILE::Stream()))
 
 extern sedutiloutput outputFormat;
 

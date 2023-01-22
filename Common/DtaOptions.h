@@ -28,6 +28,17 @@ typedef enum _sedutiloutput {
 	sedutilJSON
 } sedutiloutput;
 
+
+#define DEFAULT_OUTPUT_FORMAT sedutilReadable
+
+#if DEBUG
+#define DEFAULT_LOGGING_LEVEL 1
+#else // !DEBUG
+#define DEFAULT_LOGGING_LEVEL 0
+#endif // DEBUG
+#define MAX_LOGGING_LEVEL 7
+
+
 /** Structure representing the command line issued to the program */
 typedef struct _DTA_OPTIONS {
     uint8_t password;   /**< password supplied */
@@ -52,6 +63,7 @@ typedef struct _DTA_OPTIONS {
     bool    skip_activate; /* skip activation LockingSP during initial setup */
 	sedutiloutput output_format;
 } DTA_OPTIONS;
+
 /** Print a usage message */
 void usage();
 /** Parse the command line and return a structure that describes the action desired
