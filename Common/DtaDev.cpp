@@ -241,21 +241,24 @@ void DtaDev::puke()
 {
 	LOG(D1) << "Entering DtaDev::puke()";
 	/* IDENTIFY */
-	cout << endl << dev << (disk_info.devType == DEVICE_TYPE_ATA ? " ATA " :
-            disk_info.devType == DEVICE_TYPE_SAS ? " SAS " :
-            disk_info.devType == DEVICE_TYPE_USB ? " USB " :
-            disk_info.devType == DEVICE_TYPE_NVME ? " NVMe " :
-                    " OTHER ");
-    cout << disk_info.modelNum << " " << disk_info.firmwareRev << " " << disk_info.serialNum;
-#if DEBUG
-    cout << "  " ;
-    for (uint8_t b:disk_info.worldWideName) {
-        char hexdigits[3];
-        snprintf(hexdigits, 3, "%02X", (unsigned int)b);
-        cout << (const char *)hexdigits;
+    const char * devType =
+       disk_info.devType == DEVICE_TYPE_ATA  ? " ATA "
+     : disk_info.devType == DEVICE_TYPE_SAS  ? " SAS "
+     : disk_info.devType == DEVICE_TYPE_USB  ? " USB "
+     : disk_info.devType == DEVICE_TYPE_NVME ? " NVMe "
+     :                                         " OTHER ";
+    cout << endl << dev << devType << "  " << disk_info.modelNum << "  " << disk_info.firmwareRev << "   " << disk_info.serialNum;
+    IFLOG(D) {
+        char WWN[17]="                ";  // 16 blanks as placeholder if missing
+        uint8_t (&wwn)[8] = disk_info.worldWideName;
+        if (__is_not_all_NULs(wwn, sizeof(wwn))) {
+            snprintf(WWN, 17, "%02X%02X%02X%02X%02X%02X%02X%02X",
+                     wwn[0], wwn[1], wwn[2], wwn[3], wwn[4], wwn[5], wwn[6], wwn[7]);
+        }
+        cout << "  " << WWN
+             << "  " << disk_info.vendorID
+             << "   " << disk_info.manufacturerName;
     }
-    cout << "  " << disk_info.vendorID << "   " << disk_info.manufacturerName;
-#endif // DEBUG
     cout << endl;
     
 	/* TPer */

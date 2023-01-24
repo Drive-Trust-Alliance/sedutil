@@ -152,7 +152,7 @@ void DtaDevMacOSTPer::init(io_registry_entry_t ds, io_connect_t c)
 
 kern_return_t DtaDevMacOSTPer::identify(DTA_DEVICE_INFO& disk_info )
 {
-    LOG(D4) << "Entering DtaDevMacOSDrive::identify()";
+    LOG(D4) << "Entering DtaDevMacOSTPer::identify()";
     kern_return_t result = TPerUpdate(connect, driverService, &disk_info);
     if (result == KERN_SUCCESS) {
         polishDeviceInfo(disk_info);
@@ -245,7 +245,7 @@ void DtaDevMacOSTPer::ReleaseOwnedIOObjects()
 /** Close the device reference so this object can be delete. */
 DtaDevMacOSTPer::~DtaDevMacOSTPer()
 {
-    LOG(D1) << "Destroying DtaDevMacOSDrive";
+    LOG(D1) << "Destroying DtaDevMacOSTPer";
     ReleaseOwnedIOObjects();
 }
 

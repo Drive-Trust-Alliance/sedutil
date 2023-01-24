@@ -621,3 +621,24 @@ protected:
 	uint32_t Host_sz_MaxIndTokenSize = 1992 ;
 };
 
+
+static __inline bool __is_all_NULs(const uint8_t * b, const size_t n) {
+    for (const uint8_t * e = b + n; b<e; b++) {
+        if ( 0  == *b) continue;
+        return false;
+    }
+    return true;
+}
+
+
+static __inline bool __is_all_zeroes(const uint8_t * b, const size_t n) {
+    for (const uint8_t * e = b + n; b<e; b++) {
+        if ( 0  == *b) continue;
+        if ('0' == *b) continue;
+        return false;
+    }
+    return true;
+}
+
+#define __is_not_all_NULs(b,n) (!__is_all_NULs(b,n))
+#define __is_not_all_zeroes(b,n) (!__is_all_zeroes(b,n))

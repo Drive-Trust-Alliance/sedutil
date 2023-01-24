@@ -174,14 +174,14 @@ kern_return_t OpenUserClient(io_service_t service, io_connect_t *pConnect)
 #endif
     kernResult = IOConnectCallScalarMethod(*pConnect, kSedUserClientOpen, NULL, 0, NULL, NULL);
     if (kernResult != kIOReturnSuccess) {
-#if DEBUG
-        fprintf(stderr, "OpenUserClient error -- IOConnectCallScalarMethod returned 0x%08x (%s).\n",
-                kernResult, mach_error_string(kernResult));
         if (kernResult == kIOReturnExclusiveAccess) {
-            fprintf(stderr, "Exclusive access requested but already open.\n");
+            fprintf(stderr, "OpenUserClient error -- IOConnectCallScalarMethod returned 0x%08x:\n"
+                            "   Exclusive access requested but device already open.\n", kernResult);
+        } else {
+            fprintf(stderr, "OpenUserClient error -- IOConnectCallScalarMethod returned 0x%08x:\n    %s.\n",
+                    kernResult, mach_error_string(kernResult));
         }
         fputs("\n", stderr);
-#endif
         return kernResult;
     }
 

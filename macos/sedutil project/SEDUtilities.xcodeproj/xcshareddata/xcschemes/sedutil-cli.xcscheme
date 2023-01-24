@@ -68,19 +68,27 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-v"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-v"
-            isEnabled = "YES">
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-v"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-v"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--scan"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--query"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--psidRevert"
@@ -127,6 +135,10 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "disk3"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "disk4"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -136,14 +148,14 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "disk6"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "disk7"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "disk10"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "disk11"
+            argument = "disk8"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>

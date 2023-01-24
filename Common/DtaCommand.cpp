@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014, 2022 Bright Plaza Inc. <drivetrust@drivetrust.com>
+ This software is Copyright 2014-2022 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -42,6 +42,7 @@ DtaCommand::DtaCommand()
 DtaCommand::DtaCommand(OPAL_UID InvokingUid, OPAL_METHOD method)
 {
     LOG(D1) << "Creating DtaCommand(ID, InvokingUid, method)";
+    LOG(D2) << "InvokingUID is " << InvokingUid << ", method is " << method;
 	cmdbuf = commandbuffer + IO_BUFFER_ALIGNMENT - 1;
 	cmdbuf = (uint8_t*)((uintptr_t)cmdbuf & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
     assert(cmdbuf + MAX_BUFFER_LENGTH <= commandbuffer + sizeof(commandbuffer));
@@ -61,7 +62,8 @@ DtaCommand::reset()
 }
 void
 DtaCommand::reset(OPAL_UID InvokingUid, vector<uint8_t> method){
-	LOG(D1) << "Entering DtaCommand::reset(OPAL_UID,uint8_t)";
+    LOG(D1) << "Entering DtaCommand::reset(OPAL_UID,vector<uint8_t>)";
+    LOG(D2) << "InvokingUID is " << InvokingUid << ", method is " << method.data();
 	reset();
 	cmdbuf[bufferpos++] = OPAL_TOKEN::CALL;
 	addToken(InvokingUid);
@@ -69,7 +71,8 @@ DtaCommand::reset(OPAL_UID InvokingUid, vector<uint8_t> method){
 }
 void
 DtaCommand::reset(vector<uint8_t> InvokingUid, vector<uint8_t> method){
-	LOG(D1) << "Entering DtaCommand::reset(uint8_t,uint8_t)";
+    LOG(D1) << "Entering DtaCommand::reset(vector<uint8_t>,vector<uint8_t>)";
+    LOG(D2) << "InvokingUID is " << InvokingUid.data() << ", method is " << method.data();
 	reset();
 	cmdbuf[bufferpos++] = OPAL_TOKEN::CALL;
 	addToken(InvokingUid);
@@ -80,6 +83,7 @@ void
 DtaCommand::reset(OPAL_UID InvokingUid, OPAL_METHOD method)
 {
     LOG(D1) << "Entering DtaCommand::reset(OPAL_UID, OPAL_METHOD)";
+    LOG(D2) << "InvokingUID is " << InvokingUid << ", method is " << method;
     reset();
     cmdbuf[bufferpos++] = OPAL_TOKEN::CALL;
 	addToken(InvokingUid);
@@ -93,6 +97,7 @@ DtaCommand::addToken(uint64_t number)
 {
     int startat = 0;
     LOG(D1) << "Entering DtaCommand::addToken(uint64_t)";
+    LOG(D2) << "number is " << number;
     if (number < 64) {
         cmdbuf[bufferpos++] = (uint8_t) number & 0x000000000000003f;
     }
@@ -123,6 +128,7 @@ void
 DtaCommand::addToken(vector<uint8_t> token)
 {
     LOG(D1) << "Entering addToken(vector<uint8_t>)";
+    LOG(D2) << "token is " << token.data();
     for (uint32_t i = 0; i < token.size(); i++) {
         cmdbuf[bufferpos++] = token[i];
     }
@@ -131,7 +137,8 @@ DtaCommand::addToken(vector<uint8_t> token)
 void
 DtaCommand::addToken(const char * bytestring)
 {
-    LOG(D1) << "Entering DtaCommand::addToken(const char * )";
+    LOG(D1) << "Entering DtaCommand::addToken(const char *)";
+    LOG(D2) << "bytestring is \"" << bytestring << "\"";
     uint16_t length = (uint16_t) strlen(bytestring);
     if (length == 0) {
         /* null token e.g. default password */
@@ -161,6 +168,7 @@ void
 DtaCommand::addToken(OPAL_TOKEN token)
 {
     LOG(D1) << "Entering DtaCommand::addToken(OPAL_TOKEN)";
+    LOG(D2) << "token is " << token;
     cmdbuf[bufferpos++] = (uint8_t) token;
 }
 
@@ -168,6 +176,7 @@ void
 DtaCommand::addToken(OPAL_SHORT_ATOM token)
 {
     LOG(D1) << "Entering DtaCommand::addToken(OPAL_SHORT_ATOM)";
+    LOG(D2) << "token is " << token;
     cmdbuf[bufferpos++] = (uint8_t)token;
 }
 
@@ -175,6 +184,7 @@ void
 DtaCommand::addToken(OPAL_TINY_ATOM token)
 {
     LOG(D1) << "Entering DtaCommand::addToken(OPAL_TINY_ATOM)";
+    LOG(D2) << "token is " << token;
     cmdbuf[bufferpos++] = (uint8_t) token;
 }
 
@@ -182,6 +192,7 @@ void
 DtaCommand::addToken(OPAL_UID token)
 {
     LOG(D1) << "Entering DtaCommand::addToken(OPAL_UID)";
+    LOG(D2) << "token is " << token;
     cmdbuf[bufferpos++] = OPAL_SHORT_ATOM::BYTESTRING8;
     memcpy(&cmdbuf[bufferpos], &OPALUID[token][0], 8);
     bufferpos += 8;
@@ -191,6 +202,7 @@ void
 DtaCommand::addToken(OPAL_UID token,uint8_t factor)
 {
 	LOG(D1) << "Entering DtaCommand::addToken(OPAL_UID, factor)";
+    LOG(D2) << "token is " << token << ", factor is " << factor;
 	cmdbuf[bufferpos++] = OPAL_SHORT_ATOM::BYTESTRING4;
 	memcpy(&cmdbuf[bufferpos], &OPALUID[token][0], factor);
 	bufferpos += factor;
@@ -200,6 +212,7 @@ void
 DtaCommand::complete(uint8_t EOD)
 {
     LOG(D1) << "Entering DtaCommand::complete(uint8_t EOD)";
+    LOG(D2) << "EOD is " << (bool)EOD;
     if (EOD) {
         cmdbuf[bufferpos++] = OPAL_TOKEN::ENDOFDATA;
         cmdbuf[bufferpos++] = OPAL_TOKEN::STARTLIST;
@@ -228,6 +241,7 @@ void
 DtaCommand::changeInvokingUid(std::vector<uint8_t> Invoker)
 {
     LOG(D1) << "Entering DtaCommand::changeInvokingUid()";
+    LOG(D2) << "Invoker is " << Invoker.data();
     int offset = sizeof (DTA_Header) + 1; /* bytes 2-9 */
     for (uint32_t i = 0; i < Invoker.size(); i++) {
         cmdbuf[offset + i] = Invoker[i];
@@ -266,9 +280,10 @@ DtaCommand::dumpResponse()
 void
 DtaCommand::setcomID(uint16_t comID)
 {
+    LOG(D1) << "Entering DtaCommand::setcomID()";
+    LOG(D2) << "comID " << comID;
     DTA_Header * hdr;
     hdr = (DTA_Header *) cmdbuf;
-    LOG(D1) << "Entering DtaCommand::setcomID()";
     hdr->cp.extendedComID[0] = ((comID & 0xff00) >> 8);
     hdr->cp.extendedComID[1] = (comID & 0x00ff);
     hdr->cp.extendedComID[2] = 0x00;
@@ -278,7 +293,8 @@ DtaCommand::setcomID(uint16_t comID)
 void
 DtaCommand::setTSN(uint32_t TSN)
 {
-	LOG(D1) << "Entering DtaCommand::setTSN()";
+    LOG(D1) << "Entering DtaCommand::setTSN()";
+    LOG(D2) << "TSN is " << TSN;
     DTA_Header * hdr;
     hdr = (DTA_Header *) cmdbuf;
     hdr->pkt.TSN = TSN;
@@ -287,7 +303,8 @@ DtaCommand::setTSN(uint32_t TSN)
 void
 DtaCommand::setHSN(uint32_t HSN)
 {
-	LOG(D1) << "Entering DtaCommand::setHSN()";
+    LOG(D1) << "Entering DtaCommand::setHSN()";
+    LOG(D2) << "HSN is " << HSN;
     DTA_Header * hdr;
     hdr = (DTA_Header *) cmdbuf;
     hdr->pkt.HSN = HSN;
