@@ -161,7 +161,7 @@ int  DtaDevOS::diskScan()
                 delete d;
           }
 	printf("No more disks present ending scan\n");
-        LOG(D1) << "Exiting DtaDevOS::scanDisk ";
+    LOG(D1) << "Exiting DtaDevOS::scanDisk ";
 	return 0;
 }
 

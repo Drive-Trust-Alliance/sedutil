@@ -372,6 +372,7 @@ void DtaDevMacOSBlockStorageDevice::polishDeviceInfo(DTA_DEVICE_INFO & device_in
 #define EXTEND_DTA_DEVICE_INFO_WITH_OUI_VENDOR_DATA
 #if defined( EXTEND_DTA_DEVICE_INFO_WITH_OUI_VENDOR_DATA )
     if (is_not_all_NULs(worldWideName)) {
+        device_info.worldWideNameIsSynthetic = 0;
         if (!is_not_all_NULs(manufacturerName)) {
             char oui[8]={0};
             snprintf(oui, 8, "%02X%02X%02X%02X",
@@ -442,6 +443,7 @@ void DtaDevMacOSBlockStorageDevice::polishDeviceInfo(DTA_DEVICE_INFO & device_in
                     nybbles[1]=worldWideNameHex[2*i+1];
                     nybbles[2]=0;
                     device_info.worldWideName[i] = (uint8_t)strtol(nybbles, NULL, 16);
+                    device_info.worldWideNameIsSynthetic = 1;
                 }
 
             }
@@ -618,6 +620,11 @@ const vector<uint8_t> DtaDevMacOSBlockStorageDevice::getWorldWideName()
 {
     const uint8_t * b=pdevice_info->worldWideName;
     return vector<uint8_t>(b,b+sizeof(pdevice_info->worldWideName));
+}
+
+uint8_t DtaDevMacOSBlockStorageDevice::getWorldWideNameIsSynthetic()
+{
+    return pdevice_info->worldWideNameIsSynthetic;
 }
 
 const char * DtaDevMacOSBlockStorageDevice::getPhysicalInterconnect()

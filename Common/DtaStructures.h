@@ -619,6 +619,7 @@ typedef struct _DTA_DEVICE_INFO {
     uint8_t manufacturerNameNull;  // make manufacturer name a cstring
 
     uint8_t worldWideName[8];    // bytes, not a cstring
+    uint8_t worldWideNameIsSynthetic;  // that is, not read from the device
 
 
     // Physical interconnection information

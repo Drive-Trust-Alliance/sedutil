@@ -249,11 +249,12 @@ void DtaDev::puke()
      :                                         " OTHER ";
     cout << endl << dev << devType << "  " << disk_info.modelNum << "  " << disk_info.firmwareRev << "   " << disk_info.serialNum;
     IFLOG(D) {
-        char WWN[17]="                ";  // 16 blanks as placeholder if missing
+        char WWN[19]="                ";  // 16 blanks as placeholder if missing
         uint8_t (&wwn)[8] = disk_info.worldWideName;
         if (__is_not_all_NULs(wwn, sizeof(wwn))) {
-            snprintf(WWN, 17, "%02X%02X%02X%02X%02X%02X%02X%02X",
-                     wwn[0], wwn[1], wwn[2], wwn[3], wwn[4], wwn[5], wwn[6], wwn[7]);
+            snprintf(WWN, 19, "%02X%02X%02X%02X%02X%02X%02X%02X %c",
+                     wwn[0], wwn[1], wwn[2], wwn[3], wwn[4], wwn[5], wwn[6], wwn[7],
+                     disk_info.worldWideNameIsSynthetic ? '*' : ' ');
         }
         cout << "  " << WWN
              << "  " << disk_info.vendorID

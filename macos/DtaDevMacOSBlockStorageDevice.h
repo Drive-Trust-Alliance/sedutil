@@ -58,6 +58,8 @@ public:
     const vector<uint8_t> getPasswordSalt();
     /** Returns the World Wide Name reported by the Identify command */
     const vector<uint8_t> getWorldWideName();
+    /** Returns whether that World Wide Name was actually derived using OUI data based heuristics */
+    uint8_t getWorldWideNameIsSynthetic();
     /** Returns the Physical Interconnect technology */
     const char *getPhysicalInterconnect();
     /** Returns the Physical Interconnect Location */

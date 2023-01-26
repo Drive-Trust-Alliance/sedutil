@@ -137,6 +137,11 @@ public:
     const char * modelNumber() { return blockStorageDevice->getModelNum();}
     const char * firmwareRevision() { return blockStorageDevice->getFirmwareRev();}
     const vector <uint8_t> worldWideName() { return blockStorageDevice->getWorldWideName();}
+    uint8_t getWorldWideNameIsSynthetic () {
+        return blockStorageDevice->getWorldWideNameIsSynthetic();
+
+    }
+
     vector<uint8_t> passwordSalt() { return tPer->getPasswordSalt();}
     /** return drive size in bytes */
     const unsigned long long getSize () {
