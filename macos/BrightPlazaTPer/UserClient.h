@@ -3,7 +3,7 @@
 //  UserClient
 //
 //  Created by Jackie Marks on 9/21/15.
-//  Copyright © 2015 Bright Plaza Inc. All rights reserved.
+//  Copyright © 2015, 2023 Bright Plaza Inc. All rights reserved.
 //
 
 #include "TPerDriver.h"
@@ -70,8 +70,8 @@ protected:
 
     
     static IOReturn sUserClientUpdatePropertiesInIORegistry(UserClientClass* target,
-                                                                   void* reference,
-                                                                   IOExternalMethodArguments* arguments);
+                                                            void* reference,
+                                                            IOExternalMethodArguments* arguments);
     IOReturn UserClientUpdatePropertiesInIORegistry(void);
     
 };

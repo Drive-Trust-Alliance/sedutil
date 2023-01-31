@@ -353,10 +353,10 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceId
     deviceIsPageXXSCSI(kINQUIRY_PageC0_PageCode, IOInquiryPageC0ResponseKey);
     deviceIsPageXXSCSI(kINQUIRY_PageC1_PageCode, IOInquiryPageC1ResponseKey);
 #endif
-    
 
     return true;
 }
+
 
 IOReturn DriverClass::identifyDevice_SAT( IOBufferMemoryDescriptor * md )
 {
@@ -862,7 +862,7 @@ bool DriverClass::deviceIsPage83SCSI(DTA_DEVICE_INFO &di)
     // Test whether device is a SCSI drive by attempting
     // SCSI Inquiry command
     // If it works, as a side effect, parse the Inquiry response
-    // and save it in the IO Registry
+    // and save its information in the DTA_DEVICE_INFO &di
     bool isPage83SCSI = false;
     size_t transferSize = 256;
     IOBufferMemoryDescriptor * md = IOBufferMemoryDescriptor::withCapacity ( transferSize, kIODirectionIn, false );
@@ -916,7 +916,7 @@ OSDictionary * DriverClass::parseInquiryPage83Response( const unsigned char * re
             * reinterpret_cast <const SCSICmd_INQUIRY_Page83_Identification_Descriptor *> (p);
         const unsigned char identifier_length = desc.IDENTIFIER_LENGTH ;
 
-        // Because we must use dataSize instead of PAGE_LENGTH, we just stop if when it looks like we
+        // Because we must use dataSize instead of PAGE_LENGTH, we just stop if it looks like we
         // are parsing garbage
         if (0 == identifier_length)
             break;
@@ -1030,12 +1030,10 @@ OSDictionary * DriverClass::parseInquiryPage89Response( const unsigned char * re
     firmwareRevision[sizeof(resp->SAT_PRODUCT_REVISION_LEVEL)] = 0;
     memcpy(di.firmwareRev, resp->SAT_PRODUCT_REVISION_LEVEL, sizeof(di.firmwareRev));
 
-
     uint8_t modelNumber[sizeof(resp->SAT_PRODUCT_IDENTIFICATION)+1];
     memcpy(modelNumber, resp->SAT_PRODUCT_IDENTIFICATION, sizeof(resp->SAT_PRODUCT_IDENTIFICATION));
     modelNumber[sizeof(resp->SAT_PRODUCT_IDENTIFICATION)] = 0;
     memcpy(di.modelNum, resp->SAT_PRODUCT_IDENTIFICATION, sizeof(di.modelNum));
-
 
     const OSObject * objects[6];
     const OSSymbol * keys[6];
@@ -1105,7 +1103,7 @@ bool DriverClass::deviceIsTPer_SCSI(DTA_DEVICE_INFO &di)
     // retrieving level 0 discovery information via SCSI
     // using SCSI SECURITY PROTOCOL IN
     // If it works, as a side effect, parse the discovery0 response
-    // and save it in the IO Registry
+    // and save it in the DTA_DEVICE_INFO &di
     bool isTPer = false;
 
     isTPer = (kIOReturnSuccess == updatePropertiesInIORegistry_SCSI(di));
@@ -1274,7 +1272,7 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
             di.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
             di.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
             di.OPAL20_version = body->opalv200.version;
-            // does pyrite has data store. no feature set for data store default vaule 128K
+            // does pyrite has data store. no feature set for data store default value 128K
             di.DataStore = 1;
             di.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
             di.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
@@ -1300,7 +1298,7 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
             di.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
             di.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
             di.OPAL20_version = body->opalv200.version;
-            // does pyrite has data store. no feature set for data store default vaule 128K
+            // does pyrite has data store. no feature set for data store default value 128K
             di.DataStore = 1;
             di.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
             di.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
@@ -1681,16 +1679,6 @@ IOReturn DriverClass::completeSCSICommand(IOBufferMemoryDescriptor * md,
 
 IOService* DriverClass::probe(IOService* provider, SInt32* score)
 {
-    // tried using getName(), this, __FUNCTION__ in snprint
-    // and kernel panics.
-    // it does work directly, however, in IOLOG
-    // does IOLOG do some testing and still perform (a different sort?) getName() on the
-    // driver, even though it is not yet published???
-    // (just hand-waving)
-    //
-    // cannot determine applicability of our driver to this device
-    // in the probe function because device support is not initialized
-
     IOLOG_DEBUG("%s[%p]::%s(provider is %s, score is %d)\n",
           getName(), this, __FUNCTION__, provider->getName(), (int)*score);
 #if defined(MIN_PROBE)
@@ -1755,7 +1743,7 @@ bool DriverClass::open(IOService *  forClient,
                        IOOptionBits options,
                        void *       arg)
 {
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG("%s[%p]::%s(%p,%08x,%p) *** before super\n", getName(), this, __FUNCTION__, forClient, options, arg);
     return super::open(forClient, options, arg);
 }
 
@@ -1779,7 +1767,7 @@ bool DriverClass::init(OSDictionary* dictionary)
 {
 
     if (!super::init(dictionary)) {
-        IOLOG_DEBUG("%s[%p]::%s *** after super, no dict \n", getName(), this, __FUNCTION__ );
+        IOLOG_DEBUG("%s[%p]::%s *** after super failed \n", getName(), this, __FUNCTION__ );
         return false;
     }
     IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );

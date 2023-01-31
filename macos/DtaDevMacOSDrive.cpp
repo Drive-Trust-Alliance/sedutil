@@ -168,7 +168,10 @@ void DtaDevMacOSDrive::ReleaseOwnedIOObjects()
 {
     if ( connect && ownConnect ) {
         LOG(D1) << "Releasing owned connection";
-        CloseUserClient(connect);
+        kern_return_t ret = CloseUserClient(connect);
+        if ( kIOReturnNotOpen != ret) {
+            LOG(D) << "CloseUserClient returned " << ret;
+        }
     }
     if ( driverService && ownDriverService ) {
         LOG(D1) << "Releasing owned driver service";

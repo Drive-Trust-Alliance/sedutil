@@ -314,7 +314,7 @@ IOReturn UserClientClass::openUserClient(void)
 		result = kIOReturnExclusiveAccess;
 	}
         
-    IOLOG_DEBUG("%s() => 0x%04x\n", tagstring, result);
+    IOLOG_DEBUG("%s() => 0x%08x\n", tagstring, result);
     return result;
 }
 
@@ -323,7 +323,11 @@ IOReturn UserClientClass::sCloseUserClient(UserClientClass* target,
                                            void* reference __unused,
                                            IOExternalMethodArguments* arguments __unused)
 {
-    return target->closeUserClient();
+    IOReturn ret = target->closeUserClient();
+    if ( kIOReturnSuccess != ret) {
+        IOLOG_DEBUG("%s[%p]::%s]closeUserClient failed, returned 0x%08x\n", target->getName(), target, __FUNCTION__, ret);
+    }
+    return ret;
 }
 
 
@@ -343,6 +347,7 @@ IOReturn UserClientClass::closeUserClient(void)
 	}
 	else if (fProvider->isOpen(this)) {
 		// Make sure we're the one who opened our provider before we tell it to close.
+        IOLOG_DEBUG("%s(): calling fProvider->close(%p).\n", tagstring, this);
 		fProvider->close(this);
 	}
 	else {
@@ -440,9 +445,13 @@ bool UserClientClass::didTerminate(IOService* provider, IOOptionBits options, bo
     
     IOLOG_DEBUG("%s(%p, %u, %p)\n", tagstring, provider, (unsigned int)options, defer);
     
-    // If all pending I/O has been terminated, close our provider. If I/O is still outstanding, set defer to true
-    // and the user client will not have stop called on it.
-    closeUserClient();
+//    // If all pending I/O has been terminated, close our provider. If I/O is still outstanding, set defer to true
+//    // and the user client will not have stop called on it.
+//    kern_return_t ret = closeUserClient();
+//    if (kIOReturnSuccess != ret) {
+//        IOLOG_DEBUG("%s -- closeUserClient returned 0x%08x\n", tagstring, ret;
+//    }
+
     *defer = false;
     
     return super::didTerminate(provider, options, defer);
