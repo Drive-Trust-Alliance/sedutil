@@ -445,12 +445,12 @@ bool UserClientClass::didTerminate(IOService* provider, IOOptionBits options, bo
     
     IOLOG_DEBUG("%s(%p, %u, %p)\n", tagstring, provider, (unsigned int)options, defer);
     
-//    // If all pending I/O has been terminated, close our provider. If I/O is still outstanding, set defer to true
-//    // and the user client will not have stop called on it.
-//    kern_return_t ret = closeUserClient();
-//    if (kIOReturnSuccess != ret) {
-//        IOLOG_DEBUG("%s -- closeUserClient returned 0x%08x\n", tagstring, ret;
-//    }
+    // If all pending I/O has been terminated, close our provider. If I/O is still outstanding, set defer to true
+    // and the user client will not have stop called on it.
+    kern_return_t ret = closeUserClient();
+    if (kIOReturnSuccess != ret) {
+        IOLOG_DEBUG("%s -- closeUserClient returned 0x%08x\n", tagstring, ret);
+    }
 
     *defer = false;
     
