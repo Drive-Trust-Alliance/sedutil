@@ -1703,6 +1703,47 @@ IOService* DriverClass::probe(IOService* provider, SInt32* score)
 
 #if DRIVER_DEBUG
 
+#define REVEAL_THIS IOLOG_DEBUG("%s this=0x%016lX", getName(), (size_t)(void *)this)
+
+bool DriverClass::init(OSDictionary* propTable)
+{
+    if (!super::init(propTable)) {
+        IOLOG_DEBUG("%s[%p]::%s *** after super::init failed \n", getName(), this, __FUNCTION__ );
+        return false;
+    }
+    IOLOG_DEBUG("%s[%p]::%s *** after super::init(%p) \n", getName(), this, __FUNCTION__, propTable );
+
+    return true;
+}
+
+void DriverClass::free(void){
+    IOLOG_DEBUG("%s[%p]::%s *** before super::free\n", getName(), this, __FUNCTION__ );
+    super::free();
+}
+
+bool DriverClass::handleOpen (
+                          IOService *    client,
+                          IOOptionBits   options,
+                          void *         access )
+{
+    IOLOG_DEBUG("%s[%p]::%s(%p,%08x,%p) *** before super::handleOpen(\n", getName(), this, __FUNCTION__, client, options, access);
+    return super::open(client, options, access);
+}
+
+void DriverClass::handleClose (
+                        IOService *     client,
+                        IOOptionBits    options )
+{
+    IOLOG_DEBUG("%s[%p]::%s(%p,%08x) *** before super::handleClose(\n", getName(), this, __FUNCTION__, client, options);
+    return super::handleClose(client, options);
+}
+
+bool DriverClass::handleIsOpen ( const IOService * client ) const
+{
+    IOLOG_DEBUG("%s[%p]::%s(%p) *** before super::handleIsOpen(\n", getName(), this, __FUNCTION__, client);
+    return super::handleIsOpen(client);
+}
+
 
 void DriverClass::TerminateDeviceSupport( void )
 {
@@ -1726,59 +1767,45 @@ void DriverClass::StopDeviceSupport( void )
 }
 
 
-bool DriverClass::attach(IOService* provider)
-{
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
-    return super::attach(provider);
-}
-
-void DriverClass::detach(IOService* provider)
-{
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__);
-    super::detach(provider);
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
-}
+//bool DriverClass::attach(IOService* provider)
+//{
+//    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+//    return super::attach(provider);
+//}
+//
+//void DriverClass::detach(IOService* provider)
+//{
+//    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__);
+//    super::detach(provider);
+//    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
+//}
 
 bool DriverClass::open(IOService *  forClient,
                        IOOptionBits options,
                        void *       arg)
 {
-    IOLOG_DEBUG("%s[%p]::%s(%p,%08x,%p) *** before super\n", getName(), this, __FUNCTION__, forClient, options, arg);
+    IOLOG_DEBUG("%s[%p]::%s(%p,%08x,%p) *** before super::open(\n", getName(), this, __FUNCTION__, forClient, options, arg);
+    REVEAL_THIS;
     return super::open(forClient, options, arg);
 }
 
 void DriverClass::close(IOService *  forClient,
                         IOOptionBits options)
 {
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG("%s[%p]::%s(%p,%08x) *** before super::close(\n", getName(), this, __FUNCTION__, forClient, options);
+    REVEAL_THIS;
     super::close(forClient, options);
-    IOLOG_DEBUG("%s[%p]::%s *** after super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG("%s[%p]::%s *** after super::close\n", getName(), this, __FUNCTION__ );
+    REVEAL_THIS;
 }
 
 void DriverClass::stop(IOService* provider)
 {
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG("%s[%p]::%s *** before super::stop\n", getName(), this, __FUNCTION__ );
+    REVEAL_THIS;
     super::stop(provider);
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
-}
-
-
-bool DriverClass::init(OSDictionary* dictionary)
-{
-
-    if (!super::init(dictionary)) {
-        IOLOG_DEBUG("%s[%p]::%s *** after super failed \n", getName(), this, __FUNCTION__ );
-        return false;
-    }
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
-
-    return true;
-}
-
-void DriverClass::free(void)
-{
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
-    super::free();
+    IOLOG_DEBUG("%s[%p]::%s *** after super::stop\n", getName(), this, __FUNCTION__ );
+    REVEAL_THIS;
 }
 
 // willTerminate is called at the beginning of the termination process. It is a notification
@@ -1790,8 +1817,10 @@ bool DriverClass::willTerminate(IOService* provider, IOOptionBits options)
 {
     bool	success;
     IOLOG_DEBUG("%s[%p]::%s(%p, %u)\n", getName(), this, __FUNCTION__, provider, (unsigned int)options);
+    REVEAL_THIS;
     success = super::willTerminate(provider, options);
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG("%s[%p]::%s *** after super::willTerminate\n", getName(), this, __FUNCTION__ );
+    REVEAL_THIS;
     return success;
 }
 
@@ -1800,10 +1829,13 @@ bool DriverClass::willTerminate(IOService* provider, IOOptionBits options)
 bool DriverClass::didTerminate(IOService* provider, IOOptionBits options, bool* defer)
 {
     bool	success;
-    IOLOG_DEBUG("%s[%p]::%s(%p, %u, %p)\n", getName(), this, __FUNCTION__, provider, (unsigned int)options, defer);
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG("%s[%p]::%s(%p, %u, %p %s)\n", getName(), this, __FUNCTION__,
+                provider, (unsigned int)options, defer, ((defer==NULL) ? "is null" : (*defer) ? "=> true" : "=> false"));
+    REVEAL_THIS;
+    IOLOG_DEBUG("%s[%p]::%s *** before super::didTerminate\n", getName(), this, __FUNCTION__ );
     success = super::didTerminate(provider, options, defer);
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );  // never get here???
+    IOLOG_DEBUG("%s[%p]::%s *** after super::didTerminate\n", getName(), this, __FUNCTION__ );  // never get here???
+    REVEAL_THIS;
     return success;
 }
 
@@ -1812,9 +1844,11 @@ bool DriverClass::didTerminate(IOService* provider, IOOptionBits options, bool* 
 bool DriverClass::terminate(IOOptionBits options)
 {
     bool	success;
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG("%s[%p]::%s *** before super::terminate\n", getName(), this, __FUNCTION__ );
+    REVEAL_THIS;
     success = super::terminate(options);
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG("%s[%p]::%s *** after super::terminate\n", getName(), this, __FUNCTION__ );
+    REVEAL_THIS;
     return success;
 }
 
