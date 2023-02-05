@@ -1703,7 +1703,8 @@ IOService* DriverClass::probe(IOService* provider, SInt32* score)
 
 #if DRIVER_DEBUG
 
-#define REVEAL_THIS IOLOG_DEBUG("%s this=0x%016lX", getName(), (size_t)(void *)this)
+#define IOLOG_REVEAL(s,tag) IOLOG_DEBUG("%s %s=0x%06X", getName(), (tag), (uint16_t)(((size_t)(void *)(s))&(2^24-1)))
+#define REVEAL_THIS IOLOG_REVEAL(this,"this")
 
 bool DriverClass::init(OSDictionary* propTable)
 {
@@ -1803,6 +1804,7 @@ void DriverClass::stop(IOService* provider)
 {
     IOLOG_DEBUG("%s[%p]::%s *** before super::stop\n", getName(), this, __FUNCTION__ );
     REVEAL_THIS;
+    IOLOG_REVEAL(provider,"provider");
     super::stop(provider);
     IOLOG_DEBUG("%s[%p]::%s *** after super::stop\n", getName(), this, __FUNCTION__ );
     REVEAL_THIS;
