@@ -6,7 +6,8 @@
 //  Copyright © 2022 Bright Plaza Inc. All rights reserved.
 //
 
-#include <IOKit/IOUserClient.h>
+#include <IOKit/IOService.h>
+#include <IOKit/pwr_mgt/RootDomain.h>
 #include "TPerDriver.h"
 #include "CDBAccess.hpp"
 
@@ -47,6 +48,14 @@ bool DriverClass::start(IOService* provider)
     IOLOG_DEBUG("%s[%p]::%s - leaving start, returning %d\n",
           getName(), this, __FUNCTION__, ret);
     return ret;
+}
+
+void DriverClass::systemWillShutdown(IOOptionBits specifier)
+{
+    IOService::systemWillShutdown(specifier);
+
+    // Indicate that the driver should not be terminated during sleep
+    setProperty("IOPMDriverAssertionLevel", kIOPMDriverAssertionLevelOn, 32);
 }
 
 // Fill in di as much as possible using methods of this
@@ -1867,3 +1876,4 @@ bool DriverClass::finalize(IOOptionBits options)
 }
 
 #endif // if DRIVER_DEBUG
+
