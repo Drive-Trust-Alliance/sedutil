@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Source from the same directory as this script
+cur=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. "${cur}/Utility_functions.sh"
+
+./test_creating_CA           || fail "creating CA identity"         101
+./test_creating_SED_keychain || fail "creating SED keychain"        102
+./test_creating_SED_Server   || fail "creating SED Server identity" 103

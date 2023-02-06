@@ -1,0 +1,3 @@
+#!/bin/bash
+echo product postinstall | tee /Users/scott/Desktop/product_postinstall.txt
+exit 0 

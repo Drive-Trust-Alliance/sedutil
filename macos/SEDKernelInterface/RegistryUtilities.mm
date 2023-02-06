@@ -45,7 +45,7 @@ io_registry_entry_t findBrightPlazaDriverInParents(io_registry_entry_t service)
     if (KERN_SUCCESS != kernRet || iterator == IO_OBJECT_NULL)
         return IO_OBJECT_NULL;           // error - BUG should only be here if does match.
     // but user may unplug or something
-    CFDictionaryRef matching=IOServiceMatching(kBrightPlazaDriverClass);
+    CFDictionaryRef matching=IOServiceMatching(kDriverClass);
     while ( ( driverService = IOIteratorNext(iterator) ) ) {
         kernRet = IOServiceMatchPropertyTable( driverService,
                                               matching,
@@ -106,7 +106,7 @@ io_registry_entry_t findServiceForClassInChildrenBelowIterator(io_iterator_t ite
 }
 
 io_registry_entry_t findBrightPlazaDriverInChildrenBelowIterator(io_iterator_t iterator) {
-    return findServiceForClassInChildrenBelowIterator(iterator, kBrightPlazaDriverClass);
+    return findServiceForClassInChildrenBelowIterator(iterator, kDriverClass);
 }
 
 io_registry_entry_t findServiceForClassInChildren(io_registry_entry_t entry, const char * className)
@@ -121,7 +121,7 @@ io_registry_entry_t findServiceForClassInChildren(io_registry_entry_t entry, con
 io_registry_entry_t findBrightPlazaDriverInChildren(io_registry_entry_t service)
 {
     // NSLOG_DEBUG(@"findBrightPlazaDriverInChildren\n");
-    return findServiceForClassInChildren(service, kBrightPlazaDriverClass);
+    return findServiceForClassInChildren(service, kDriverClass);
 }
 
 

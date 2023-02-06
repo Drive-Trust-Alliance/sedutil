@@ -1,0 +1,2 @@
+#!/bin/bash -xv
+sudo security delete-certificate -c "COMODO RSA Code Signing CA"  /Library/Keychains/System.keychain

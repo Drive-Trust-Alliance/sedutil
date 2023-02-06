@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Source from the same directory as this script
+cur=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. "${cur}/Bright_Plaza_customizations.sh"
+
+
+function main {
+     KEYCHAIN_PASSWORD="$( read_SED_keychain_password_from_system_keychain )" ||
+        fail "Could not find System keychain item \"${KEYCHAIN_PASSWORD_LABEL}\""  $?
+    unlock_SED_keychain ||
+        fail "Could not unlock \"${KEYCHAIN_PATH}\""  $?
+}
+
+main

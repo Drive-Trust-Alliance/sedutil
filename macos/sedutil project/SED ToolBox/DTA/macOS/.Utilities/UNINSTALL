@@ -1,0 +1,10 @@
+#!/bin/bash
+echo "UNINSTALL: $0 $@"
+ 
+# Source Utility_functions.sh from the same directory as this script
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+. "${dir}/Utility_functions.sh"
+
+beroot
+
+for f in "${dir}"/Uninstall_*.sh "${dir}"/unload_*.sh ; do "$f" ; done

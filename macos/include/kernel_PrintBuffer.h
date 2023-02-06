@@ -71,7 +71,7 @@ do { \
         IOSleep(1);
     }
     // Print an indication of suppressed rows
-    if (effectiveBufferSize + 16 <= bufferSize) { pf("*"); flush(); }
+    if (effectiveBufferSize + 16 <= bufferSize) { pf("*"); flush(); }
     // Finally print actual bufferSize
     pf("%08lx", bufferSize);
     flush();

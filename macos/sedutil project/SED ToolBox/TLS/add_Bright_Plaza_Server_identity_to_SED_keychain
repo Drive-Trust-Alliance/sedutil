@@ -1,0 +1,19 @@
+#!/bin/bash
+cur=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. "${cur}/Bright_Plaza_customizations.sh"
+
+SERVER_IDENTITY_PATH="${SERVER_NAME}.p12"
+SERVER_IDENTITY_PASSWORD='De1taTang0A1fa'  # TODO: read it in
+
+function add_identity {
+    >/dev/null sudo security import "${SERVER_IDENTITY_PATH}" -k "${KEYCHAIN_PATH}" -f pkcs12 -P "${SERVER_IDENTITY_PASSWORD}" -T "${DAEMON_PATH}" -T "${TLSTOOL_PATH}"
+}
+
+function main {
+    add_identity
+}
+
+main
+
+
+

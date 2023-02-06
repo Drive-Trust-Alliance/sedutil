@@ -1,0 +1,9 @@
+#!/bin/bash
+./make_self_signed_tls_cert_and_identity \
+    -c="US"                              \
+    -s="Pennsylvania"                    \
+    -l="Pittsburgh"                      \
+    -o="Bright Plaza, Inc."              \
+    -u="Drive Trust Alliance"            \
+    -n="Bright Plaza, Inc. SED Server"   \
+    -P="DTA" 

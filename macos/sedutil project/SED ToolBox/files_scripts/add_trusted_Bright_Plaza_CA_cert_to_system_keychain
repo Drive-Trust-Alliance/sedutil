@@ -1,0 +1,7 @@
+#!/bin/bash
+# Source Utility_functions.sh from the same directory as this script
+cur=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. "${cur}/Bright_Plaza_customizations.sh"
+
+
+add_CA_cert_to_system_keychain

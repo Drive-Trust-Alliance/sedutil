@@ -1,0 +1,6 @@
+#!/bin/bash -xv
+./make_certs_and_identity
+./add_identity_to_SED_keychain
+./add_trusted_CA_cert_to_system_keychain
+# ./add_trusted_cert_to_system_keychain
+echo 'Use Keychain Access to trust Server cert for SSL'

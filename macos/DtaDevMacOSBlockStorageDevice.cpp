@@ -268,7 +268,7 @@ std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enum
         
         
         tPer = findParent(aBlockStorageDevice);
-        if (IOObjectConformsTo(tPer, kBrightPlazaDriverClass)) {
+        if (IOObjectConformsTo(tPer, kDriverClass)) {
             tPerProperties = copyProperties( tPer );
             keys.push_back( CFSTR("TPer"));
             values.push_back(tPerProperties);
@@ -519,7 +519,7 @@ DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageD
     
     
     tPer = findParent(aBlockStorageDevice);
-    if (IOObjectConformsTo(tPer, kBrightPlazaDriverClass)) {
+    if (IOObjectConformsTo(tPer, kDriverClass)) {
         tPerProperties = copyProperties( tPer );
         keys.push_back( CFSTR("TPer"));
         values.push_back(tPerProperties);

@@ -149,17 +149,17 @@ inline unsigned char hex_digit_to_nybble(char ch)
 	case '7': return 0x7;
 	case '8': return 0x8;
 	case '9': return 0x9;
-	case 'a': return 0xa;
+	case 'a':
 	case 'A': return 0xa;
-	case 'b': return 0xb;
+	case 'b':
 	case 'B': return 0xb;
-	case 'c': return 0xc;
+	case 'c':
 	case 'C': return 0xc;
-	case 'd': return 0xd;
+	case 'd':
 	case 'D': return 0xd;
-	case 'e': return 0xe;
+	case 'e':
 	case 'E': return 0xe;
-	case 'f': return 0xf;
+	case 'f':
 	case 'F': return 0xf;
 	default: return 0xff;  // throw std::invalid_argument();
 	}
@@ -187,8 +187,8 @@ vector<uint8_t> hex2data(char * password)
                              |((hex_digit_to_nybble(password[i + 1]) ) & 0x0f)));
 	}
 	//for (uint16_t i = 0; i < (uint16_t)h.size(); i++)
-	//	printf("%02x", h[i]);
-	//printf("\n");
+	//	fprintf(Output2FILE::Stream(), "%02x", h[i]);
+	//fprintf(Output2FILE::Stream(), "\n");
 	return h;
 }
 
@@ -230,8 +230,8 @@ void data2ascii(vector<uint8_t> &h , vector<uint8_t> &password)
 #if 0
 	printf("32-byte hex to 64-byte ascii : ");
 	for (uint16_t i = 0; i < password.size(); i++)
-		printf("%02X", password[i]);
-	printf("\n");
+        fprintf(Output2FILE::Stream(), "%02X", password[i]);
+    fprintf(Output2FILE::Stream(), "\n");
 #endif
 
 }
@@ -243,7 +243,7 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
     LOG(D1) << " Entered DtaHashPwd";
 
 	//d->no_hash_passwords = true; // force no hashing for debug purpose
-	IFLOG(D4) printf("d->translate_req = %d\n", d->translate_req); 
+	IFLOG(D4) fprintf(Output2FILE::Stream(), "d->translate_req = %d\n", d->translate_req);
 	if (d->no_hash_passwords) {
 		if (d->translate_req) { // host-hashed password, convert 64-byte ascii into 32-byte data ???????
 			hash = hex2data(password); 
@@ -276,21 +276,25 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
 	} else {
 		DtaHashPassword(hash, password, salt, iter);
 	}
-//#if false
-#if true
-    //printf("password : %s\n",password); // non-printable char cause screen error
-    printf("password : \n"); // non-printable char cause screen error
-    for (size_t i = 0; i < strlen(password); i++)
-        printf("%02X", password[i]);
-    printf("\n");
-	for (size_t i = 0; i < salt.size(); i++) printf("%02X", salt[i]);
-	printf("\n");
-	printf("salt as string =%s\n", salt.data());
-    printf("Hashed password size = %lu ; hashed password =",hash.size());
-	for (size_t i = 0; i < hash.size(); i++)
-		printf("%02X", hash[i]);
-	printf("\n");
-#endif	
+
+    // non-printable char cause screen error
+//    IFLOG(D4) fprintf(Output2FILE::Stream(), "password as string =%s", password);
+//    IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "password:\n");
+    for (size_t i = 0; i < strlen(password); i++) IFLOG(D4) fprintf(Output2FILE::Stream(), "%02X", password[i]);
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "salt:\n");
+	for (size_t i = 0; i < salt.size(); i++) IFLOG(D4) fprintf(Output2FILE::Stream(), "%02X", salt[i]);
+	IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+	IFLOG(D4) fprintf(Output2FILE::Stream(), "salt as string =%s", salt.data());
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+    
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "Hashed password size = %lu",hash.size());
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "hashed password:\n");
+	for (size_t i = 0; i < hash.size(); i++) IFLOG(D4) fprintf(Output2FILE::Stream(), "%02X", hash[i]);
+	IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+
 }
 
 
