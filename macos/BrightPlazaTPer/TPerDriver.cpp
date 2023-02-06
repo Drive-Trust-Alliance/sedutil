@@ -6,7 +6,8 @@
 //  Copyright © 2022 Bright Plaza Inc. All rights reserved.
 //
 
-#include <IOKit/IOUserClient.h>
+#include <IOKit/IOService.h>
+#include <IOKit/pwr_mgt/RootDomain.h>
 #include "TPerDriver.h"
 #include "CDBAccess.hpp"
 
@@ -21,6 +22,13 @@
 
 OSDefineMetaClassAndStructors(com_brightplaza_BrightPlazaTPer, IOSCSIPeripheralDeviceType00 ) //IOService)
 
+#define REVEAL(p)((uint16_t)(0x0FFFFFF & (intptr_t)(p)))
+#define IOLOG_DEBUG_METHOD(fmt, ...) IOLOG_DEBUG("%s[0x%06X]::%s" fmt, getName(), REVEAL(this), __FUNCTION__ ,##__VA_ARGS__)
+
+#define IOLOG_REVEAL(tag,value) IOLOG_DEBUG_METHOD(" %s = 0x%06X", (tag), REVEAL(value))
+#define IOLOG_REVEAL_THIS IOLOG_REVEAL("this",this)
+#define IOLOG_REVEAL_PROVIDER IOLOG_REVEAL("provider",provider)
+#define IOLOG_REVEAL_PROVIDER_NAME IOLOG_DEBUG_METHOD(" provider(0x%06X)->getName() = %s", REVEAL(provider), provider->getName())
 
 //*****************
 // apple IOService override
@@ -28,25 +36,39 @@ OSDefineMetaClassAndStructors(com_brightplaza_BrightPlazaTPer, IOSCSIPeripheralD
 bool DriverClass::start(IOService* provider)
 {
     bool ret;
-    IOLOG_DEBUG("%s[%p]::%s(provider = %p), provider->getName() = %s",
-                getName(), this, __FUNCTION__, provider, provider->getName());
+    IOLOG_DEBUG_METHOD("(provider = 0x%06X), provider->getName() = %s", REVEAL(provider), provider->getName());
+    IOLOG_REVEAL_THIS;
+    IOLOG_REVEAL_PROVIDER;
+    IOLOG_REVEAL_PROVIDER_NAME;
     if ( (ret = super::start(provider) ) ) {
-        IOLOG_DEBUG("%s[%p]::%s - super::start(provider) returned true, calling registerService()",
-              getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" - super::start(provider) returned true, calling registerService()");
         registerService();
+        IOLOG_DEBUG_METHOD(" - super::start(provider) returned true, calling changePowerStateTo(0)");
+        changePowerStateTo(0);
     }
     else if (getProperty(IOInterfaceTypeKey)) { // pointer is not null => super::InitializeDeviceSupport returned true
                                              // and deviceIsTPer returned false
-        IOLOG_DEBUG("%s[%p]::%s - leaving start, Device Support was initialized but is NOT TPer, calling stop\n",
-              getName(), this, __FUNCTION__);
-
+        IOLOG_DEBUG_METHOD(" - leaving start, Device Support was initialized but is NOT TPer; calling stop");
         stop(provider);   // releases provider - having
     }
     // if neither case, then super::InitializeDeviceSupport returned false and we don't need to call stop
 
-    IOLOG_DEBUG("%s[%p]::%s - leaving start, returning %d\n",
-          getName(), this, __FUNCTION__, ret);
+    IOLOG_DEBUG_METHOD(" - leaving start, returning %d", ret);
     return ret;
+}
+
+void DriverClass::systemWillShutdown(IOOptionBits specifier)
+{
+    IOLOG_DEBUG_METHOD("(%d)", specifier);
+
+    // Indicate that the driver should not be terminated during sleep
+    IOLOG_DEBUG_METHOD(" setProperty(\"IOPMDriverAssertionLevel\", kIOPMDriverAssertionLevelOn, 32)");
+    setProperty("IOPMDriverAssertionLevel", kIOPMDriverAssertionLevelOn, 32);
+
+    IOLOG_DEBUG_METHOD(" calling IOService::systemWillShutdown(%d8x)", specifier);
+    IOService::systemWillShutdown(specifier);
+
+    IOLOG_DEBUG_METHOD(" exiting");
 }
 
 // Fill in di as much as possible using methods of this
@@ -56,32 +78,28 @@ void DriverClass::GetDeviceInfo(DTA_DEVICE_INFO &di) {
     char * v = GetVendorString ( );
     if (v != NULL) {
         strlcpy((char *)di.vendorID, v, sizeof(di.vendorID));
-        IOLOG_DEBUG("%s[%p]::%s - di.vendorID set to \"%s\"\n",
-                    getName(), this, __FUNCTION__, di.vendorID);
+        IOLOG_DEBUG_METHOD(" - di.vendorID set to \"%s\"", di.vendorID);
     }
     char * p = GetProductString ( );
     if (p != NULL) {
         strlcpy((char *)di.modelNum, p, sizeof(di.modelNum));
-        IOLOG_DEBUG("%s[%p]::%s - di.modelNum set to \"%s\"\n",
-                    getName(), this, __FUNCTION__, di.modelNum);
+        IOLOG_DEBUG_METHOD(" - di.modelNum set to \"%s\"", di.modelNum);
     }
     char * r = GetRevisionString ( );
     if (r != NULL) {
         strlcpy((char *)di.firmwareRev, r, sizeof(di.firmwareRev));
-        IOLOG_DEBUG("%s[%p]::%s - di.firmwareRev set to \"%s\"\n",
-                    getName(), this, __FUNCTION__, di.firmwareRev);
+        IOLOG_DEBUG_METHOD(" - di.firmwareRev set to \"%s\"", di.firmwareRev);
     }
     
    
     unsigned long long blockSize = 0;
     unsigned long long blockCount = 0;
     __unused bool determined = DetermineMediumCapacity (&blockSize, &blockCount);
-    IOLOG_DEBUG("%s[%p]::%s - DetermineMediumCapacity returned %s",
-                getName(), this, __FUNCTION__, determined ? "true" : "false");
-    IOLOG_DEBUG("%s[%p]::%s - blockSize is %llu\n",  getName(), this, __FUNCTION__, blockSize);
-    IOLOG_DEBUG("%s[%p]::%s - blockCount is %llu\n",  getName(), this, __FUNCTION__, blockCount);
+    IOLOG_DEBUG_METHOD(" - DetermineMediumCapacity returned %s", determined ? "true" : "false");
+    IOLOG_DEBUG_METHOD(" - blockSize is %llu", blockSize);
+    IOLOG_DEBUG_METHOD(" - blockCount is %llu", blockCount);
     di.devSize = blockSize * blockCount;
-    IOLOG_DEBUG("%s[%p]::%s - di.devSize set to %llu\n",  getName(), this, __FUNCTION__, di.devSize);
+    IOLOG_DEBUG_METHOD(" - di.devSize set to %llu", di.devSize);
 }
 
 bool com_brightplaza_BrightPlazaTPer::IdentifyTPer() {
@@ -89,15 +107,15 @@ bool com_brightplaza_BrightPlazaTPer::IdentifyTPer() {
     DTA_DEVICE_INFO di;
     
     if (!identifyUsingSCSIInquiry(interfaceDeviceIdentification, di)) {
-        IOLOG_DEBUG("%s[%p]::%s Device is NOT SCSI", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" Device is NOT SCSI");
         return false;
     }
-    IOLOG_DEBUG("%s[%p]::%s Device is SCSI", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD(" Device is SCSI");
     
     bool result = false;
     
     if (deviceIsTPer_SCSI(di)) {
-        IOLOG_DEBUG("%s[%p]::%s Device is TPer_SCSI", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" Device is TPer_SCSI");
         di.devType = DEVICE_TYPE_SAS;
         setProperty(IOInterfaceTypeKey, IOInterfaceTypeSCSI);
         result = true;
@@ -106,7 +124,7 @@ bool com_brightplaza_BrightPlazaTPer::IdentifyTPer() {
         OSDictionary * identifyCharacteristics = NULL;
         if (deviceIsSAT(interfaceDeviceIdentification, di, &identifyCharacteristics)) {
             di.devType = DEVICE_TYPE_USB;
-            IOLOG_DEBUG("%s[%p]::%s Device is SAT", getName(), this, __FUNCTION__);
+            IOLOG_DEBUG_METHOD(" Device is SAT");
             
             result = deviceIsTPer_SAT(interfaceDeviceIdentification, identifyCharacteristics, di) ;
             if ( NULL != identifyCharacteristics ) {
@@ -114,16 +132,16 @@ bool com_brightplaza_BrightPlazaTPer::IdentifyTPer() {
                 identifyCharacteristics = NULL ;
             }
             if (result) {
-                IOLOG_DEBUG("%s[%p]::%s Device is TPer_SAT", getName(), this, __FUNCTION__);
+                IOLOG_DEBUG_METHOD(" Device is TPer_SAT");
                 setProperty(IOInterfaceTypeKey, IOInterfaceTypeSAT);
             }
         }
     }
     if (result) {
         setProperty(IODtaDeviceInfoKey, &di, sizeof(di));
-        IOLOG_DEBUG("%s[%p]::%s Device is a TPer", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" Device is a TPer");
     } else {
-        IOLOG_DEBUG("%s[%p]::%s Device is not for this driver", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" Device is not for this driver");
     }
     return result;
 }
@@ -137,12 +155,12 @@ bool com_brightplaza_BrightPlazaTPer::IdentifyTPer() {
 // and we will need to call stop (in the start method) to terminate device support
 bool DriverClass::InitializeDeviceSupport ( void )
 {
-    IOLOG_DEBUG("%s[%p]::%s about to call super::InitializeDeviceSupport() ...", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD(" about to call super::InitializeDeviceSupport() ...");
     if (! super::InitializeDeviceSupport()) {
-        IOLOG_DEBUG("%s[%p]::%s super::InitializeDeviceSupport() returned false", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" super::InitializeDeviceSupport() returned false");
         return false;
     }
-    IOLOG_DEBUG("%s[%p]::%s super::InitializeDeviceSupport() returned true", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD(" super::InitializeDeviceSupport() returned true");
 
     return IdentifyTPer();
 }
@@ -157,7 +175,7 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
                                          IOBufferMemoryDescriptor * md,
                                          uint64_t * pTransferSize)
 {
-    IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD("");
     IOReturn ret = kIOReturnUnsupported;
 
     if ( md == NULL ) {
@@ -181,18 +199,18 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
         case kSCSICmd_REQUEST_SENSE:
             cdbSize = 6;
             direction = kSCSIDataTransfer_FromTargetToInitiator;
-            IOLOG_DEBUG("%s[%p]::%s REQUEST SENSE, direction=In", getName(), this, __FUNCTION__);
+            IOLOG_DEBUG_METHOD(" REQUEST SENSE, direction=In");
             break;
         case kSCSICmd_INQUIRY: // INQUIRY
             cdbSize = 6;
             direction = kSCSIDataTransfer_FromTargetToInitiator;
-            IOLOG_DEBUG("%s[%p]::%s INQUIRY, direction=In", getName(), this, __FUNCTION__);
+            IOLOG_DEBUG_METHOD(" INQUIRY, direction=In");
             break;
         case kSCSICmd_ATA_PASS_THROUGH: // ATA PASS-THROUGH
             cdbSize = 12; // 16; ?? Variable?
             direction = getATATaskCommandDir(cdb);
             transferSize = getATATransferSize(cdb);
-            IOLOG_DEBUG("%s[%p]::%s ATA PASS-THROUGH, direction=%s transfersize=%llu", getName(), this, __FUNCTION__,
+            IOLOG_DEBUG_METHOD(" ATA PASS-THROUGH, direction=%s transfersize=%llu",
                         (direction==kSCSIDataTransfer_FromTargetToInitiator ? "In"
                          : direction==kSCSIDataTransfer_FromInitiatorToTarget ? "Out" : "?!?"),
                         transferSize);
@@ -200,15 +218,15 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
         case kSCSICmd_SECURITY_PROTOCOL_IN: // SECURITY PROTOCOL IN
             cdbSize = 12;
             direction = kSCSIDataTransfer_FromTargetToInitiator;
-            IOLOG_DEBUG("%s[%p]::%s SECURITY PROTOCOL IN, direction=In", getName(), this, __FUNCTION__);
+            IOLOG_DEBUG_METHOD(" SECURITY PROTOCOL IN, direction=In");
             break;
         case kSCSICmd_SECURITY_PROTOCOL_OUT: // SECURITY PROTOCOL OUT
             cdbSize = 12;
             direction = kSCSIDataTransfer_FromInitiatorToTarget;
-            IOLOG_DEBUG("%s[%p]::%s SECURITY PROTOCOL OUT, direction=Out", getName(), this, __FUNCTION__);
+            IOLOG_DEBUG_METHOD(" SECURITY PROTOCOL OUT, direction=Out");
             break;
         default:
-            IOLOG_DEBUG("%s[%p]::%s UNRECOGNIZED COMMAND=0x%02X", getName(), this, __FUNCTION__, cdb[0]);
+            IOLOG_DEBUG_METHOD(" UNRECOGNIZED COMMAND=0x%02X", cdb[0]);
             return ret;
     }
 
@@ -216,7 +234,7 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
     ret = prepareSCSICommand(cdb, cdbSize, md, request, direction, transferSize);
 
     if ( ret != kIOReturnSuccess ) {
-        IOLOG_DEBUG("%s[%p]::%s prepareSCSICommand failed, ret=0x%08X", getName(), this, __FUNCTION__, ret);
+        IOLOG_DEBUG_METHOD(" prepareSCSICommand failed, ret=0x%08X", ret);
         return ret;
     }
 
@@ -231,13 +249,13 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
     SCSIServiceResponse serviceResponse = SendCommand(request, SED_TIMEOUT);
 
     if ( serviceResponse != kSCSIServiceResponse_TASK_COMPLETE) {
-        IOLOG_DEBUG("%s[%p]::%s Hmm, SendCommand returned %d", getName(), this, __FUNCTION__, serviceResponse);
+        IOLOG_DEBUG_METHOD(" Hmm, SendCommand returned %d", serviceResponse);
     }
 
     ret = completeSCSICommand(md, request, serviceResponse, &transferSize);
 
     if ( ret != kIOReturnSuccess ) {
-        IOLOG_DEBUG("%s[%p]::%s completeSCSICommand failed, ret=0x%08X", getName(), this, __FUNCTION__, ret);
+        IOLOG_DEBUG_METHOD(" completeSCSICommand failed, ret=0x%08X", ret);
         return ret;
     }
 
@@ -271,10 +289,10 @@ IOReturn DriverClass::updatePropertiesInIORegistry( void )
 bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceIdentification,
                                            DTA_DEVICE_INFO &di) {
     if (!deviceIsStandardSCSI(interfaceDeviceIdentification, di)) {
-        IOLOG_DEBUG("%s[%p]::%s Device is not Standard SCSI -- not for this driver", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" Device is not Standard SCSI -- not for this driver");
         return false;
     }
-    IOLOG_DEBUG("%s[%p]::%s Device identification fields:", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD(" Device identification fields:");
     IOLOGBUFFER_DEBUG(NULL, interfaceDeviceIdentification, sizeof(InterfaceDeviceID));
 
 
@@ -286,13 +304,13 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceId
 #if defined(USE_INQUIRY_PAGE_00h)
     if (deviceIsPage00SCSI(deviceSupportsPage80,
                            deviceSupportsPage89)) {
-        IOLOG_DEBUG("%s[%p]::%s Device is Page 00 SCSI", getName(), this, __FUNCTION__);
-        IOLOG_DEBUG("%s[%p]::%s Device %s support Page 80h", getName(), this, __FUNCTION__,
+        IOLOG_DEBUG_METHOD(" Device is Page 00 SCSI");
+        IOLOG_DEBUG_METHOD(" Device %s support Page 80h",
                     deviceSupportsPage80 ? "DOES" : "DOES NOT");
-        IOLOG_DEBUG("%s[%p]::%s Device %s support Page 89h", getName(), this, __FUNCTION__,
+        IOLOG_DEBUG_METHOD(" Device %s support Page 89h",
                     deviceSupportsPage89 ? "DOES" : "DOES NOT");
     } else  {
-        IOLOG_DEBUG("%s[%p]::%s Device is not Page 00 SCSI", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" Device is not Page 00 SCSI");
 #undef ALLOW_INQUIRY_PAGE_00_FAILURES
 #if defined( ALLOW_INQUIRY_PAGE_00_FAILURES )
         // Some external USB-SATA adapters do not support the VPD pages but it's OK
@@ -309,9 +327,9 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceId
 #if defined(USE_INQUIRY_PAGE_80h)
     if (deviceSupportsPage80) {
         if (deviceIsPage80SCSI(interfaceDeviceIdentification, di)) {
-            IOLOG_DEBUG("%s[%p]::%s Device is Page 80 SCSI", getName(), this, __FUNCTION__);
+            IOLOG_DEBUG_METHOD(" Device is Page 80 SCSI");
         } else  {
-            IOLOG_DEBUG("%s[%p]::%s Device is not Page 80 SCSI", getName(), this, __FUNCTION__);
+            IOLOG_DEBUG_METHOD(" Device is not Page 80 SCSI");
             return false;  // Claims to support it on Page 00h, but does not
         }
     }
@@ -319,9 +337,9 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceId
 
 #if defined(USE_INQUIRY_PAGE_83h)
     if (deviceIsPage83SCSI(di)) {
-        IOLOG_DEBUG("%s[%p]::%s Device is Page 83 SCSI", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" Device is Page 83 SCSI");
     } else  {
-        IOLOG_DEBUG("%s[%p]::%s Device is not Page 83 SCSI", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" Device is not Page 83 SCSI");
         return false;  // Mandatory, according to standard
     }
 #endif // defined(USE_INQUIRY_PAGE_83h)
@@ -330,17 +348,17 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceId
 #if defined(USE_INQUIRY_PAGE_89h)
     if (deviceSupportsPage89) {
         if (deviceIsPage89SCSI(di)) {
-            IOLOG_DEBUG("%s[%p]::%s Device is Page 89 SCSI", getName(), this, __FUNCTION__);
+            IOLOG_DEBUG_METHOD(" Device is Page 89 SCSI");
         } else  {
-            IOLOG_DEBUG("%s[%p]::%s Device is not Page 89 SCSI", getName(), this, __FUNCTION__);
+            IOLOG_DEBUG_METHOD(" Device is not Page 89 SCSI");
             return false;   // Claims to support it on page 00h, but does not
         }
     }
 #if DEBUG
     else {
-        IOLOG_DEBUG("%s[%p]::%s Device does not claim to support Page 89 -- trying it anyway", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" Device does not claim to support Page 89 -- trying it anyway");
         if (deviceIsPage89SCSI(di)) {
-            IOLOG_DEBUG("%s[%p]::%s Device is Page 89 SCSI!!", getName(), this, __FUNCTION__);
+            IOLOG_DEBUG_METHOD(" Device is Page 89 SCSI!!");
         }
     }
 #endif
@@ -360,7 +378,7 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceId
 
 IOReturn DriverClass::identifyDevice_SAT( IOBufferMemoryDescriptor * md )
 {
-    IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD("");
 
     static SCSICommandDescriptorBlock identifyCDB_SAT =
       { kSCSICmd_ATA_PASS_THROUGH,    // Byte  0  ATA PASS-THROUGH (12)
@@ -403,8 +421,7 @@ bool DriverClass::deviceIsSAT(const InterfaceDeviceID & interfaceDeviceIdentific
     IOBufferMemoryDescriptor * md =
         IOBufferMemoryDescriptor::withCapacity ( IDENTIFY_RESPONSE_SIZE, kIODirectionIn, false );
     if ( md == NULL ) {
-        IOLOG_DEBUG("%s[%p]::%s *** memory buffer allocation failed *** !!!\n",
-                    getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" *** memory buffer allocation failed *** !!!");
         return false;
     }
     
@@ -423,8 +440,7 @@ bool DriverClass::deviceIsSAT(const InterfaceDeviceID & interfaceDeviceIdentific
                  p++)
                 checksum=(UInt8)(checksum+(*p));
             if (checksum != 0) {
-                IOLOG_DEBUG("%s[%p]::%s *** IDENTIFY DEVICE response checksum failed *** !!!\n",
-                            getName(), this, __FUNCTION__);
+                IOLOG_DEBUG_METHOD(" *** IDENTIFY DEVICE response checksum failed *** !!!");
             }
         }
         
@@ -442,7 +458,7 @@ bool DriverClass::deviceIsSAT(const InterfaceDeviceID & interfaceDeviceIdentific
     }
     md->release ( );
 
-    IOLOG_DEBUG("%s[%p]::%s *** end of function, isSAT is %d\n", getName(), this, __FUNCTION__, isSAT);
+    IOLOG_DEBUG_METHOD(" *** end of function, isSAT is %d", isSAT);
     return isSAT;
 }
 
@@ -459,51 +475,51 @@ bool DriverClass::deviceIsTPer_SAT(const InterfaceDeviceID & interfaceDeviceIden
 
     // We are short-circuiting all the careful checking below when we have a known interface
     // device, particularly one that incorrectly fails to claim to be a TPer.
-    IOLOG_DEBUG("%s[%p]::%s Device identification fields:", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD(" Device identification fields:");
     IOLOGBUFFER_DEBUG(NULL, interfaceDeviceIdentification, sizeof(InterfaceDeviceID));
     if (deviceNeedsSpecialAction(interfaceDeviceIdentification,
                                  tryUnjustifiedLevel0Discovery)) {
-        IOLOG_DEBUG("%s[%p]::%s *** interface device ID matches tperOverride entry", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" *** interface device ID matches tperOverride entry");
         if (kIOReturnSuccess == updatePropertiesInIORegistry_SAT(di)) {
-            IOLOG_DEBUG("%s[%p]::%s *** tperOverride level 0 discovery worked", getName(), this, __FUNCTION__);
+            IOLOG_DEBUG_METHOD(" *** tperOverride level 0 discovery worked");
             return true;
         }
-        IOLOG_DEBUG("%s[%p]::%s *** despite matching tperOverride entry, level 0 discovery did not work", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" *** despite matching tperOverride entry, level 0 discovery did not work");
     }
 
 #undef UNJUSTIFIED_LEVEL_0_DISCOVERY 
 #if defined(UNJUSTIFIED_LEVEL_0_DISCOVERY)
     if (kIOReturnSuccess == updatePropertiesInIORegistry_SAT(di)) {
-        IOLOG_DEBUG("%s[%p]::%s *** unjustified level 0 discovery worked", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" *** unjustified level 0 discovery worked");
         return true;
     }
 #endif // defined(UNJUSTIFIED_LEVEL_0_DISCOVERY)
 
 
     if (identifyCharacteristics == NULL){
-        IOLOG_DEBUG("%s[%p]::%s *** identifyCharacteristics is NULL", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" *** identifyCharacteristics is NULL");
         return false;
     }
 
     OSNumber * tcgOptions = OSRequiredCast(OSNumber,identifyCharacteristics->getObject(IOTCGOptionsKey));
     if (tcgOptions == NULL) {
-        IOLOG_DEBUG("%s[%p]::%s *** tcgOptions is NULL", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" *** tcgOptions is NULL");
         return false;
     }
 
 
     // TCG Options word is valid and TCG Features present bit is one
-    IOLOG_DEBUG("%s[%p]::%s *** from tcgOptions->unsigned16BitValue() is 0x%04X", getName(), this, __FUNCTION__,
+    IOLOG_DEBUG_METHOD(" *** from tcgOptions->unsigned16BitValue() is 0x%04X",
                 tcgOptions->unsigned16BitValue());
     bool isTPer = (tcgOptions->unsigned16BitValue() & 0xE001) == 0x4001;
-    IOLOG_DEBUG("%s[%p]::%s *** from tcgOptions, isTPer is %s", getName(), this, __FUNCTION__,
+    IOLOG_DEBUG_METHOD(" *** from tcgOptions, isTPer is %s",
                 isTPer ? "true" : "false");
 
     if (isTPer) {
         isTPer = (kIOReturnSuccess == updatePropertiesInIORegistry_SAT(di));
-        IOLOG_DEBUG("%s[%p]::%s *** level 0 discovery worked", getName(), this, __FUNCTION__);
+        IOLOG_DEBUG_METHOD(" *** level 0 discovery worked");
     }
-    IOLOG_DEBUG("%s[%p]::%s *** end of function, isTPer is %s", getName(), this, __FUNCTION__,
+    IOLOG_DEBUG_METHOD(" *** end of function, isTPer is %s",
                 isTPer ? "true" : "false");
 
     return isTPer;
@@ -539,14 +555,14 @@ bool DriverClass::deviceIsStandardSCSI(InterfaceDeviceID & interfaceDeviceIdenti
         md->release ( );
         md = NULL;
     }
-    IOLOG_DEBUG("%s[%p]::%s *** end of function, isStandardSCSI is %d\n", getName(), this, __FUNCTION__, isStandardSCSI);
+    IOLOG_DEBUG_METHOD(" *** end of function, isStandardSCSI is %d", isStandardSCSI);
     return isStandardSCSI;
 }
 
 
 IOReturn DriverClass::__inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryDescriptor * md, UInt16 & dataSize)
 {
-    IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD("");
 
 #define USE_INHERITED_API
 #undef USE_INHERITED_API
@@ -577,7 +593,7 @@ IOReturn DriverClass::__inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryD
     inquiryCDB_SCSI[2] = page_code;
     inquiryCDB_SCSI[3] = (uint8_t)(len >> 8);
     inquiryCDB_SCSI[4] = (uint8_t)(len     );
-    IOLOG_DEBUG("%s[%p]::%s len=%llu=0x%02X:0x%02X\n", getName(), this, __FUNCTION__,
+    IOLOG_DEBUG_METHOD(" len=%llu=0x%02X:0x%02X",
                 len, (uint8_t)(len >> 8), (uint8_t)(len     ));
     uint64_t transferSize = dataSize ;
     IOReturn ret = PerformSCSICommand(inquiryCDB_SCSI, md, &transferSize);
@@ -593,14 +609,14 @@ IOReturn DriverClass::__inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryD
 
 IOReturn DriverClass::__inquiry__EVPD(uint8_t page_code, IOBufferMemoryDescriptor * md, UInt16 & dataSize )
 {
-    IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD("");
     return __inquiry(0x01, page_code, md, dataSize);
 }
 
 
 IOReturn DriverClass::inquiryStandardDataAll_SCSI( IOBufferMemoryDescriptor * md )
 {
-    IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD("");
     UInt16 dataSize = static_cast<UInt16>(md->getLength());
     return __inquiry(0x00, 0x00, md, dataSize);
 }
@@ -674,10 +690,10 @@ bool DriverClass::deviceIsPage00SCSI(bool & deviceSupportsPage80,
                                            deviceSupportsPage89);
             if (!(deviceSupportsPage00 && deviceSupportsPage83)) {
                 if (!deviceSupportsPage00) {
-                    IOLOG_DEBUG("%s[%p]::%s Mandatory Inquiry VPD page code 00h support not indicated", getName(), this, __FUNCTION__);
+                    IOLOG_DEBUG_METHOD(" Mandatory Inquiry VPD page code 00h support not indicated");
                 }
                 if (!deviceSupportsPage83) {
-                    IOLOG_DEBUG("%s[%p]::%s Mandatory Inquiry VPD page code 83h support not indicated", getName(), this, __FUNCTION__);
+                    IOLOG_DEBUG_METHOD(" Mandatory Inquiry VPD page code 83h support not indicated");
                 }
                 isPage00SCSI = false;
             }
@@ -690,14 +706,14 @@ bool DriverClass::deviceIsPage00SCSI(bool & deviceSupportsPage80,
         md->release ( );
         md = NULL;
     }
-    IOLOG_DEBUG("%s[%p]::%s *** end of function, isPage00SCSI is %d\n", getName(), this, __FUNCTION__, isPage00SCSI);
+    IOLOG_DEBUG_METHOD(" *** end of function, isPage00SCSI is %d", isPage00SCSI);
     return isPage00SCSI;
 }
 
 
 IOReturn DriverClass::inquiryPage00_SCSI( IOBufferMemoryDescriptor * md, UInt16 & dataSize )
 {
-    IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD("");
     return __inquiry__EVPD(kINQUIRY_Page00_PageCode, md, dataSize);
 }
 
@@ -710,29 +726,29 @@ OSDictionary * DriverClass::parseInquiryPage00Response(const unsigned char * res
 {
     SCSICmd_INQUIRY_Page00_Header *resp = (SCSICmd_INQUIRY_Page00_Header *)response;
 
-    IOLOG_DEBUG("%s[%p]::%s supported VPD page codes:", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD(" supported VPD page codes:");
     IOLOGBUFFER_DEBUG(NULL, 1+(&resp->PAGE_LENGTH), resp->PAGE_LENGTH);
     for (UInt8 *p = &resp->PAGE_LENGTH, * const pLast = p+*p; ++p<=pLast ;) {
         UInt8 pageCode = *p;
         switch (pageCode) {
             case kINQUIRY_Page00_PageCode:
                 deviceSupportsPage00=true;
-                IOLOG_DEBUG("%s[%p]::%s deviceSupportsPage00=true", getName(), this, __FUNCTION__);
+                IOLOG_DEBUG_METHOD(" deviceSupportsPage00=true");
                 break;
             case kINQUIRY_Page80_PageCode:
                 deviceSupportsPage80=true;
-                IOLOG_DEBUG("%s[%p]::%s deviceSupportsPage80=true", getName(), this, __FUNCTION__);
+                IOLOG_DEBUG_METHOD(" deviceSupportsPage80=true");
                 break;
             case kINQUIRY_Page83_PageCode:
                 deviceSupportsPage83=true;
-                IOLOG_DEBUG("%s[%p]::%s deviceSupportsPage83=true", getName(), this, __FUNCTION__);
+                IOLOG_DEBUG_METHOD(" deviceSupportsPage83=true");
                 break;
             case kINQUIRY_Page89_PageCode:
                 deviceSupportsPage89=true;
-                IOLOG_DEBUG("%s[%p]::%s deviceSupportsPage89=true", getName(), this, __FUNCTION__);
+                IOLOG_DEBUG_METHOD(" deviceSupportsPage89=true");
                 break;
             default:  // Others ignored
-                IOLOG_DEBUG("%s[%p]::%s VPD page code %02Xh ignored", getName(), this, __FUNCTION__,
+                IOLOG_DEBUG_METHOD(" VPD page code %02Xh ignored",
                             pageCode);
                 ;
         }
@@ -790,14 +806,14 @@ bool DriverClass::deviceIsPage80SCSI(const InterfaceDeviceID & interfaceDeviceId
         md->release ( );
         md = NULL;
     }
-    IOLOG_DEBUG("%s[%p]::%s *** end of function, isPage80SCSI is %d\n", getName(), this, __FUNCTION__, isPage80SCSI);
+    IOLOG_DEBUG_METHOD(" *** end of function, isPage80SCSI is %d", isPage80SCSI);
     return isPage80SCSI;
 }
 
 
 IOReturn DriverClass::inquiryPage80_SCSI( IOBufferMemoryDescriptor * md)
 {
-    IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD("");
     UInt16 dataSize = static_cast<UInt16>(md->getLength());
     return __inquiry__EVPD(kINQUIRY_Page80_PageCode, md, dataSize);
 }
@@ -828,11 +844,11 @@ OSDictionary * DriverClass::parseInquiryPage80Response(const InterfaceDeviceID &
     memcpy(di.passwordSalt, serialNumber, sizeof(di.passwordSalt));  // save value before polishing
     if (deviceNeedsSpecialAction(interfaceDeviceIdentification,
                                  reverseInquiryPage80SerialNumber)) {
-        IOLOG_DEBUG("%s[%p]::%s *** reversing Inquiry Page80 serial number", getName(), this, __FUNCTION__);
-        IOLOG_DEBUG("%s[%p]::%s Inquiry Page80 serial number was %s", getName(), this, __FUNCTION__, serialNumber);
+        IOLOG_DEBUG_METHOD(" *** reversing Inquiry Page80 serial number");
+        IOLOG_DEBUG_METHOD(" Inquiry Page80 serial number was %s", serialNumber);
         strrev((char *)serialNumber);
     }
-    IOLOG_DEBUG("%s[%p]::%s Inquiry Page80 serial number is %s", getName(), this, __FUNCTION__, serialNumber);
+    IOLOG_DEBUG_METHOD(" Inquiry Page80 serial number is %s", serialNumber);
     memcpy(di.serialNum, serialNumber, sizeof(di.serialNum));
 
 
@@ -887,14 +903,14 @@ bool DriverClass::deviceIsPage83SCSI(DTA_DEVICE_INFO &di)
         md->release ( );
         md = NULL;
     }
-    IOLOG_DEBUG("%s[%p]::%s *** end of function, isPage83SCSI is %d\n", getName(), this, __FUNCTION__, isPage83SCSI);
+    IOLOG_DEBUG_METHOD(" *** end of function, isPage83SCSI is %d", isPage83SCSI);
     return isPage83SCSI;
 }
 
 
 IOReturn DriverClass::inquiryPage83_SCSI( IOBufferMemoryDescriptor * md, UInt16 & dataSize )
 {
-    IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD("");
     return __inquiry__EVPD(kINQUIRY_Page83_PageCode, md, dataSize);
 }
 
@@ -1003,14 +1019,14 @@ bool DriverClass::deviceIsPage89SCSI(DTA_DEVICE_INFO &di)
         md->release ( );
         md = NULL;
     }
-    IOLOG_DEBUG("%s[%p]::%s *** end of function, isPage89SCSI is %d\n", getName(), this, __FUNCTION__, isPage89SCSI);
+    IOLOG_DEBUG_METHOD(" *** end of function, isPage89SCSI is %d", isPage89SCSI);
     return isPage89SCSI;
 }
 
 
 IOReturn DriverClass::inquiryPage89_SCSI( IOBufferMemoryDescriptor * md )
 {
-    IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD("");
     UInt16 dataSize = static_cast<UInt16>(md->getLength());
     return __inquiry__EVPD(kINQUIRY_Page89_PageCode, md, dataSize);
 }
@@ -1084,13 +1100,13 @@ bool DriverClass::deviceIsPageXXSCSI(uint8_t evpd, const char * key)
         md->release ( );
         md = NULL;
     }
-    IOLOG_DEBUG("%s[%p]::%s *** end of function, isPage%02XSCSI is %d\n", getName(), this, __FUNCTION__, evpd, isPageXXSCSI);
+    IOLOG_DEBUG_METHOD(" *** end of function, isPage%02XSCSI is %d", evpd, isPageXXSCSI);
     return isPageXXSCSI;
 }
 
 IOReturn DriverClass::inquiryPageXX_SCSI(uint8_t evpd, IOBufferMemoryDescriptor * md )
 {
-    IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD("");
     UInt16 dataSize = static_cast<UInt16>(md->getLength());
     return __inquiry__EVPD(evpd, md, dataSize);
 }
@@ -1110,7 +1126,7 @@ bool DriverClass::deviceIsTPer_SCSI(DTA_DEVICE_INFO &di)
 
     isTPer = (kIOReturnSuccess == updatePropertiesInIORegistry_SCSI(di));
 
-    IOLOG_DEBUG("%s[%p]::%s *** end of function, isTPer is %d\n", getName(), this, __FUNCTION__, isTPer);
+    IOLOG_DEBUG_METHOD(" *** end of function, isTPer is %d", isTPer);
     return isTPer;
 }
 
@@ -1367,7 +1383,7 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
 
 //IOReturn DriverClass::securityProctocolOut_SCSI( IOBufferMemoryDescriptor * md )
 // {
-//     IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
+//     IOLOG_DEBUG_METHOD("");
 //
 //     static SCSICommandDescriptorBlock securityProtocolOutCDB_SCSI =
 //       { kSCSICmd_SECURITY_PROTOCOL_OUT,    // Byte  0  SECURITY PROTOCOL OUT B5h
@@ -1423,7 +1439,7 @@ IOReturn DriverClass::updatePropertiesInIORegistryWithDiscovery0CDB(SCSICommandD
 
 IOReturn DriverClass::updatePropertiesInIORegistry_SCSI( DTA_DEVICE_INFO & di )
 {
-    IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD("");
 
     static SCSICommandDescriptorBlock acquireDiscovery0ResponseCDB_SCSI =
       { kSCSICmd_SECURITY_PROTOCOL_IN,    // Byte  0  SECURITY PROTOCOL IN  A2h
@@ -1444,7 +1460,7 @@ IOReturn DriverClass::updatePropertiesInIORegistry_SCSI( DTA_DEVICE_INFO & di )
 
 IOReturn DriverClass::updatePropertiesInIORegistry_SAT( DTA_DEVICE_INFO & di )
 {
-    IOLOG_DEBUG("%s[%p]::%s", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD("");
 
     static SCSICommandDescriptorBlock acquireDiscovery0ResponseCDB_SAT =
       { kSCSICmd_ATA_PASS_THROUGH,    // Byte  0  ATA PASS-THROUGH (12)
@@ -1486,8 +1502,8 @@ DriverClass::parseIdentifyDeviceResponse(const InterfaceDeviceID & interfaceDevi
     
     if (deviceNeedsSpecialAction(interfaceDeviceIdentification,
                                  splitVendorNameFromModelNumber)) {
-        IOLOG_DEBUG("%s[%p]::%s *** splitting VendorName from ModelNumber", getName(), this, __FUNCTION__);
-        IOLOG_DEBUG("%s[%p]::%s *** was vendorID=\"%s\" modelNum=\"%s\"", getName(), this, __FUNCTION__, di.vendorID, di.modelNum);
+        IOLOG_DEBUG_METHOD(" *** splitting VendorName from ModelNumber");
+        IOLOG_DEBUG_METHOD(" *** was vendorID=\"%s\" modelNum=\"%s\"", di.vendorID, di.modelNum);
         memcpy(di.vendorID, di.modelNum, sizeof(di.vendorID));
         memmove(di.modelNum,
                 di.modelNum+sizeof(di.vendorID),
@@ -1495,7 +1511,7 @@ DriverClass::parseIdentifyDeviceResponse(const InterfaceDeviceID & interfaceDevi
         memset(di.modelNum+sizeof(di.modelNum)-sizeof(di.vendorID),
                0,
                sizeof(di.vendorID));
-        IOLOG_DEBUG("%s[%p]::%s *** now vendorID=\"%s\" modelNum=\"%s\"", getName(), this, __FUNCTION__, di.vendorID, di.modelNum);
+        IOLOG_DEBUG_METHOD(" *** now vendorID=\"%s\" modelNum=\"%s\"", di.vendorID, di.modelNum);
     }
 
     const OSObject * objects[7];
@@ -1609,22 +1625,21 @@ IOReturn DriverClass::completeSCSICommand(IOBufferMemoryDescriptor * md,
 
     taskStatus = GetTaskStatus(request);
 
-    IOLOG_DEBUG("%s[%p]::%s(): service response: %u, task status: %u\n",
-          getName(), this, __FUNCTION__, serviceResponse, taskStatus);
+    IOLOG_DEBUG_METHOD(" service response: %u, task status: %u", serviceResponse, taskStatus);
 
     if ( serviceResponse == kSCSIServiceResponse_TASK_COMPLETE ) {
-        IOLOG_DEBUG( "%s::%s service response is Task_Complete!!!\n", getName ( ), __FUNCTION__);
+        IOLOG_DEBUG_METHOD( "service response is Task_Complete!!!");
 
         switch (taskStatus) {
             case kSCSITaskStatus_GOOD:
-                IOLOG_DEBUG( "%s::%s task status is GOOD!", getName ( ), __FUNCTION__);
+                IOLOG_DEBUG_METHOD("task status is GOOD!");
                 ret = kIOReturnSuccess;
                 if (pTransferSize) {
                     *pTransferSize = GetRealizedDataTransferCount(request);
                 }
                 break;
             case kSCSITaskStatus_CHECK_CONDITION:
-                IOLOG_DEBUG( "%s::%s task status is CHECK_CONDITION", getName ( ), __FUNCTION__);
+                IOLOG_DEBUG_METHOD("task status is CHECK_CONDITION");
                 senseDataSize = GetAutoSenseDataSize( request );
 
                 GetAutoSenseData(request, &senseData, senseDataSize);
@@ -1632,10 +1647,8 @@ IOReturn DriverClass::completeSCSICommand(IOBufferMemoryDescriptor * md,
                 if (senseData.VALID_RESPONSE_CODE & kSENSE_DATA_VALID) {
                     printSenseData( &senseData );
                 } else {
-                    IOLOG_DEBUG( "%s::%s senseData is Invalid!!!, size is %d",
-                                getName ( ), __FUNCTION__, senseDataSize );
-                    IOLOG_DEBUG( "%s::%s senseData is %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
-                                getName ( ), __FUNCTION__,
+                    IOLOG_DEBUG_METHOD( "senseData is Invalid!!!, size is %d", senseDataSize );
+                    IOLOG_DEBUG_METHOD( "senseData is %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
                                 senseData.VALID_RESPONSE_CODE,
                                 senseData.SEGMENT_NUMBER,
                                 senseData.SENSE_KEY,
@@ -1658,14 +1671,13 @@ IOReturn DriverClass::completeSCSICommand(IOBufferMemoryDescriptor * md,
                 }
                 break;
             default:
-                IOLOG_DEBUG( "%s::%s task status is some other task status 0x%02X", getName ( ), __FUNCTION__,
-                            (uint8_t)taskStatus);
+                IOLOG_DEBUG_METHOD( "task status is some other task status 0x%02X", (uint8_t)taskStatus);
                 break;
         }
     }
     else
     {
-        IOLOG_DEBUG( "%s::%s service response is Task Not Complete", getName ( ), __FUNCTION__);
+        IOLOG_DEBUG_METHOD( "service response is Task Not Complete");
     }
     md->complete();
 
@@ -1691,13 +1703,11 @@ IOService* DriverClass::probe(IOService* provider, SInt32* score)
     // cannot determine applicability of our driver to this device
     // in the probe function because device support is not initialized
 
-    IOLOG_DEBUG("%s[%p]::%s(provider is %s, score is %d)\n",
-          getName(), this, __FUNCTION__, provider->getName(), (int)*score);
+    IOLOG_DEBUG_METHOD("(provider is %s, score is %d)", provider->getName(), (int)*score);
 #if defined(MIN_PROBE)
     if ((*score) < MIN_PROBE) {
         *score = MIN_PROBE;
-        IOLOG_DEBUG("%s[%p]::%s(provider is %s, score raised to %d)\n",
-              getName(), this, __FUNCTION__, provider->getName(), (int)*score);
+        IOLOG_DEBUG_METHOD("(provider is %s, score raised to %d)", provider->getName(), (int)*score);
     }
 #endif // defined(MIN_PROBE)
 #if DRIVER_DEBUG
@@ -1718,60 +1728,60 @@ IOService* DriverClass::probe(IOService* provider, SInt32* score)
 
 void DriverClass::TerminateDeviceSupport( void )
 {
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** before super" );
     super::TerminateDeviceSupport();
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** after super " );
 }
 
 void DriverClass::StartDeviceSupport( void )
 {
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** before super" );
     super::StartDeviceSupport();
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** after super " );
 }
 
 void DriverClass::StopDeviceSupport( void )
 {
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** before super" );
     super::StopDeviceSupport();
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** after super " );
 }
 
 
 bool DriverClass::attach(IOService* provider)
 {
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** before super" );
     return super::attach(provider);
 }
 
 void DriverClass::detach(IOService* provider)
 {
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__);
+    IOLOG_DEBUG_METHOD(" *** before super");
     super::detach(provider);
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** after super " );
 }
 
 bool DriverClass::open(IOService *  forClient,
                        IOOptionBits options,
                        void *       arg)
 {
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** before super" );
     return super::open(forClient, options, arg);
 }
 
 void DriverClass::close(IOService *  forClient,
                         IOOptionBits options)
 {
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** before super" );
     super::close(forClient, options);
-    IOLOG_DEBUG("%s[%p]::%s *** after super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** after super" );
 }
 
 void DriverClass::stop(IOService* provider)
 {
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** before super" );
     super::stop(provider);
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** after super " );
 }
 
 
@@ -1779,17 +1789,17 @@ bool DriverClass::init(OSDictionary* dictionary)
 {
 
     if (!super::init(dictionary)) {
-        IOLOG_DEBUG("%s[%p]::%s *** after super, no dict \n", getName(), this, __FUNCTION__ );
+        IOLOG_DEBUG_METHOD(" *** after super, no dict " );
         return false;
     }
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** after super " );
 
     return true;
 }
 
 void DriverClass::free(void)
 {
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** before super" );
     super::free();
 }
 
@@ -1801,9 +1811,9 @@ void DriverClass::free(void)
 bool DriverClass::willTerminate(IOService* provider, IOOptionBits options)
 {
     bool	success;
-    IOLOG_DEBUG("%s[%p]::%s(%p, %u)\n", getName(), this, __FUNCTION__, provider, (unsigned int)options);
+    IOLOG_DEBUG_METHOD("(0x%06X, %u)", REVEAL(provider), (unsigned int)options);
     success = super::willTerminate(provider, options);
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** after super " );
     return success;
 }
 
@@ -1812,10 +1822,10 @@ bool DriverClass::willTerminate(IOService* provider, IOOptionBits options)
 bool DriverClass::didTerminate(IOService* provider, IOOptionBits options, bool* defer)
 {
     bool	success;
-    IOLOG_DEBUG("%s[%p]::%s(%p, %u, %p)\n", getName(), this, __FUNCTION__, provider, (unsigned int)options, defer);
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD("(0x%06X, %u, %p)", REVEAL(provider), (unsigned int)options, defer);
+    IOLOG_DEBUG_METHOD(" *** before super" );
     success = super::didTerminate(provider, options, defer);
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );  // never get here???
+    IOLOG_DEBUG_METHOD(" *** after super " );  // never get here???
     return success;
 }
 
@@ -1824,9 +1834,9 @@ bool DriverClass::didTerminate(IOService* provider, IOOptionBits options, bool* 
 bool DriverClass::terminate(IOOptionBits options)
 {
     bool	success;
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** before super" );
     success = super::terminate(options);
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** after super " );
     return success;
 }
 
@@ -1836,10 +1846,11 @@ bool DriverClass::terminate(IOOptionBits options)
 bool DriverClass::finalize(IOOptionBits options)
 {
     bool	success;
-    IOLOG_DEBUG("%s[%p]::%s *** before super\n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** before super" );
     success = super::finalize(options);
-    IOLOG_DEBUG("%s[%p]::%s *** after super \n", getName(), this, __FUNCTION__ );
+    IOLOG_DEBUG_METHOD(" *** after super " );
     return success;
 }
 
 #endif // if DRIVER_DEBUG
+
