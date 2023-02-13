@@ -27,8 +27,9 @@ public:
 
     // IOService methods
     virtual bool start(IOService* provider) APPLE_KEXT_OVERRIDE;
+    virtual void stop(IOService* provider) APPLE_KEXT_OVERRIDE;
     virtual IOService* probe(IOService* provider, SInt32* score) APPLE_KEXT_OVERRIDE;
-    virtual void systemWillShutdown(IOOptionBits specifier);
+//    virtual void systemWillShutdown(IOOptionBits specifier);
 
 protected:
     
@@ -156,7 +157,6 @@ private:
 public:
     virtual bool init(OSDictionary* dictionary = 0) APPLE_KEXT_OVERRIDE;
     virtual void free(void) APPLE_KEXT_OVERRIDE;
-    virtual void stop(IOService* provider) APPLE_KEXT_OVERRIDE;
     virtual bool willTerminate(IOService* provider, IOOptionBits options) APPLE_KEXT_OVERRIDE;
     virtual bool didTerminate(IOService* provider, IOOptionBits options, bool* defer) APPLE_KEXT_OVERRIDE;
     virtual bool terminate(IOOptionBits options = 0) APPLE_KEXT_OVERRIDE;

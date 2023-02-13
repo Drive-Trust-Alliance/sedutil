@@ -35,16 +35,13 @@ OSDefineMetaClassAndStructors(com_brightplaza_BrightPlazaTPer, IOSCSIPeripheralD
 //*****************
 bool DriverClass::start(IOService* provider)
 {
-    bool ret;
-    IOLOG_DEBUG_METHOD("(provider = 0x%06X), provider->getName() = %s", REVEAL(provider), provider->getName());
-    IOLOG_REVEAL_THIS;
-    IOLOG_REVEAL_PROVIDER;
-    IOLOG_REVEAL_PROVIDER_NAME;
-    if ( (ret = super::start(provider) ) ) {
-        IOLOG_DEBUG_METHOD(" - super::start(provider) returned true, calling registerService()");
+    IOLOG_DEBUG_METHOD("(0x%06X), provider->getName() = %s", REVEAL(provider), provider->getName());
+    IOLOG_DEBUG_METHOD(" *** before super" );
+    bool result = super::start(provider);
+    IOLOG_DEBUG_METHOD(" *** after super, result is %s", result ? "true" : "false" );
+    if ( result ) {
+        IOLOG_DEBUG_METHOD(" - calling registerService()");
         registerService();
-        IOLOG_DEBUG_METHOD(" - super::start(provider) returned true, calling changePowerStateTo(0)");
-        changePowerStateTo(0);
     }
     else if (getProperty(IOInterfaceTypeKey)) { // pointer is not null => super::InitializeDeviceSupport returned true
                                              // and deviceIsTPer returned false
@@ -53,23 +50,31 @@ bool DriverClass::start(IOService* provider)
     }
     // if neither case, then super::InitializeDeviceSupport returned false and we don't need to call stop
 
-    IOLOG_DEBUG_METHOD(" - leaving start, returning %d", ret);
-    return ret;
+    IOLOG_DEBUG_METHOD(" - leaving start, returning %d", result);
+    return result;
 }
 
-void DriverClass::systemWillShutdown(IOOptionBits specifier)
+void DriverClass::stop(IOService* provider)
 {
-    IOLOG_DEBUG_METHOD("(%d)", specifier);
-
-    // Indicate that the driver should not be terminated during sleep
-    IOLOG_DEBUG_METHOD(" setProperty(\"IOPMDriverAssertionLevel\", kIOPMDriverAssertionLevelOn, 32)");
-    setProperty("IOPMDriverAssertionLevel", kIOPMDriverAssertionLevelOn, 32);
-
-    IOLOG_DEBUG_METHOD(" calling IOService::systemWillShutdown(%d8x)", specifier);
-    IOService::systemWillShutdown(specifier);
-
-    IOLOG_DEBUG_METHOD(" exiting");
+    IOLOG_DEBUG_METHOD("(0x%06X), provider->getName() = %s", REVEAL(provider), provider->getName());
+    IOLOG_DEBUG_METHOD(" *** before super" );
+    super::stop(provider);
+    IOLOG_DEBUG_METHOD(" *** after super " );
 }
+
+//void DriverClass::systemWillShutdown(IOOptionBits specifier)
+//{
+//    IOLOG_DEBUG_METHOD("(%d)", specifier);
+//
+//    // Indicate that the driver should not be terminated during sleep
+//    IOLOG_DEBUG_METHOD(" setProperty(\"IOPMDriverAssertionLevel\", kIOPMDriverAssertionLevelOn, 32)");
+//    setProperty("IOPMDriverAssertionLevel", kIOPMDriverAssertionLevelOn, 32);
+//
+//    IOLOG_DEBUG_METHOD(" calling IOService::systemWillShutdown(%d8x)", specifier);
+//    IOService::systemWillShutdown(specifier);
+//
+//    IOLOG_DEBUG_METHOD(" exiting");
+//}
 
 // Fill in di as much as possible using methods of this
 // class and its superclasses
@@ -1775,13 +1780,6 @@ void DriverClass::close(IOService *  forClient,
     IOLOG_DEBUG_METHOD(" *** before super" );
     super::close(forClient, options);
     IOLOG_DEBUG_METHOD(" *** after super" );
-}
-
-void DriverClass::stop(IOService* provider)
-{
-    IOLOG_DEBUG_METHOD(" *** before super" );
-    super::stop(provider);
-    IOLOG_DEBUG_METHOD(" *** after super " );
 }
 
 
