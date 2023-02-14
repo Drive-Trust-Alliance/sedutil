@@ -1785,14 +1785,10 @@ void DriverClass::close(IOService *  forClient,
 
 bool DriverClass::init(OSDictionary* dictionary)
 {
-
-    if (!super::init(dictionary)) {
-        IOLOG_DEBUG_METHOD(" *** after super, no dict " );
-        return false;
-    }
-    IOLOG_DEBUG_METHOD(" *** after super " );
-
-    return true;
+    IOLOG_DEBUG_METHOD(" *** before super " );
+    bool result = super::init(dictionary);
+    IOLOG_DEBUG_METHOD(" *** after super, result is %s", result ? "true" : "false" );
+    return result;
 }
 
 void DriverClass::free(void)
