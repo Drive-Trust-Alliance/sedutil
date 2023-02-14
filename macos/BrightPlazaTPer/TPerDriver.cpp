@@ -1786,15 +1786,16 @@ void DriverClass::close(IOService *  forClient,
 bool DriverClass::init(OSDictionary* dictionary)
 {
     IOLOG_DEBUG_METHOD(" *** before super " );
-    bool result = super::init(dictionary);
-    IOLOG_DEBUG_METHOD(" *** after super, result is %s", result ? "true" : "false" );
-    return result;
+    bool success = super::init(dictionary);
+    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false" );
+    return success;
 }
 
 void DriverClass::free(void)
 {
     IOLOG_DEBUG_METHOD(" *** before super" );
     super::free();
+    IOLOG_DEBUG_METHOD(" *** after super " );
 }
 
 // willTerminate is called at the beginning of the termination process. It is a notification
@@ -1819,7 +1820,7 @@ bool DriverClass::didTerminate(IOService* provider, IOOptionBits options, bool* 
     IOLOG_DEBUG_METHOD("(0x%06X, %u, %p)", REVEAL(provider), (unsigned int)options, defer);
     IOLOG_DEBUG_METHOD(" *** before super" );
     success = super::didTerminate(provider, options, defer);
-    IOLOG_DEBUG_METHOD(" *** after super " );  // never get here???
+    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false" );
     return success;
 }
 
@@ -1830,7 +1831,7 @@ bool DriverClass::terminate(IOOptionBits options)
     bool	success;
     IOLOG_DEBUG_METHOD(" *** before super" );
     success = super::terminate(options);
-    IOLOG_DEBUG_METHOD(" *** after super " );
+    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false" );
     return success;
 }
 
