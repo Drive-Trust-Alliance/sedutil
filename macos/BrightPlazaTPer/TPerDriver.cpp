@@ -174,13 +174,23 @@ bool DriverClass::InitializeDeviceSupport ( void )
 // public
 //*****************
 
+//#define DEBUG_PERFORMSCSICOMMAND 1
+#undef DEBUG_PERFORMSCSICOMMAND
+#if defined(DEBUG_PERFORMSCSICOMMAND)
+#define PSC_IOLOG_DEBUG_METHOD IOLOG_DEBUG_METHOD
+#define PSC_IOLOGBUFFER_DEBUG IOLOGBUFFER_DEBUG
+#else // !defined(DEBUG_PERFORMSCSICOMMAND)
+#define PSC_IOLOG_DEBUG_METHOD(...) do ; while (0)
+#define PSC_IOLOGBUFFER_DEBUG(...)  do ; while (0)
+#endif // defined(DEBUG_PERFORMSCSICOMMAND)
+
 
 // SCSI Passthrough function called from user client
 IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
                                          IOBufferMemoryDescriptor * md,
                                          uint64_t * pTransferSize)
 {
-    IOLOG_DEBUG_METHOD("");
+    PSC_IOLOG_DEBUG_METHOD("");
     IOReturn ret = kIOReturnUnsupported;
 
     if ( md == NULL ) {
@@ -204,18 +214,18 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
         case kSCSICmd_REQUEST_SENSE:
             cdbSize = 6;
             direction = kSCSIDataTransfer_FromTargetToInitiator;
-            IOLOG_DEBUG_METHOD(" REQUEST SENSE, direction=In");
+            PSC_IOLOG_DEBUG_METHOD(" REQUEST SENSE, direction=In");
             break;
         case kSCSICmd_INQUIRY: // INQUIRY
             cdbSize = 6;
             direction = kSCSIDataTransfer_FromTargetToInitiator;
-            IOLOG_DEBUG_METHOD(" INQUIRY, direction=In");
+            PSC_IOLOG_DEBUG_METHOD(" INQUIRY, direction=In");
             break;
         case kSCSICmd_ATA_PASS_THROUGH: // ATA PASS-THROUGH
             cdbSize = 12; // 16; ?? Variable?
             direction = getATATaskCommandDir(cdb);
             transferSize = getATATransferSize(cdb);
-            IOLOG_DEBUG_METHOD(" ATA PASS-THROUGH, direction=%s transfersize=%llu",
+            PSC_IOLOG_DEBUG_METHOD(" ATA PASS-THROUGH, direction=%s transfersize=%llu",
                         (direction==kSCSIDataTransfer_FromTargetToInitiator ? "In"
                          : direction==kSCSIDataTransfer_FromInitiatorToTarget ? "Out" : "?!?"),
                         transferSize);
@@ -223,15 +233,15 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
         case kSCSICmd_SECURITY_PROTOCOL_IN: // SECURITY PROTOCOL IN
             cdbSize = 12;
             direction = kSCSIDataTransfer_FromTargetToInitiator;
-            IOLOG_DEBUG_METHOD(" SECURITY PROTOCOL IN, direction=In");
+            PSC_IOLOG_DEBUG_METHOD(" SECURITY PROTOCOL IN, direction=In");
             break;
         case kSCSICmd_SECURITY_PROTOCOL_OUT: // SECURITY PROTOCOL OUT
             cdbSize = 12;
             direction = kSCSIDataTransfer_FromInitiatorToTarget;
-            IOLOG_DEBUG_METHOD(" SECURITY PROTOCOL OUT, direction=Out");
+            PSC_IOLOG_DEBUG_METHOD(" SECURITY PROTOCOL OUT, direction=Out");
             break;
         default:
-            IOLOG_DEBUG_METHOD(" UNRECOGNIZED COMMAND=0x%02X", cdb[0]);
+            PSC_IOLOG_DEBUG_METHOD(" UNRECOGNIZED COMMAND=0x%02X", cdb[0]);
             return ret;
     }
 
@@ -239,14 +249,14 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
     ret = prepareSCSICommand(cdb, cdbSize, md, request, direction, transferSize);
 
     if ( ret != kIOReturnSuccess ) {
-        IOLOG_DEBUG_METHOD(" prepareSCSICommand failed, ret=0x%08X", ret);
+        PSC_IOLOG_DEBUG_METHOD(" prepareSCSICommand failed, ret=0x%08X", ret);
         return ret;
     }
 
 #if DEBUG
     if (direction == kSCSIDataTransfer_FromInitiatorToTarget) {
-        IOLOG_DEBUG("%s::%s, output buffer is ", getName ( ), __FUNCTION__ );
-        IOLOGBUFFER_DEBUG(NULL, md->getBytesNoCopy(), transferSize);
+        PSC_IOLOG_DEBUG_METHOD("output buffer is");
+        PSC_IOLOGBUFFER_DEBUG(NULL, md->getBytesNoCopy(), transferSize);
     }
 #endif //DEBUG
 
@@ -254,20 +264,20 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
     SCSIServiceResponse serviceResponse = SendCommand(request, SED_TIMEOUT);
 
     if ( serviceResponse != kSCSIServiceResponse_TASK_COMPLETE) {
-        IOLOG_DEBUG_METHOD(" Hmm, SendCommand returned %d", serviceResponse);
+        PSC_IOLOG_DEBUG_METHOD(" Hmm, SendCommand returned %d", serviceResponse);
     }
 
     ret = completeSCSICommand(md, request, serviceResponse, &transferSize);
 
     if ( ret != kIOReturnSuccess ) {
-        IOLOG_DEBUG_METHOD(" completeSCSICommand failed, ret=0x%08X", ret);
+        PSC_IOLOG_DEBUG_METHOD(" completeSCSICommand failed, ret=0x%08X", ret);
         return ret;
     }
 
 #if DEBUG
     if (direction == kSCSIDataTransfer_FromTargetToInitiator) {
-        IOLOG_DEBUG("%s::%s, input buffer is ", getName ( ), __FUNCTION__ );
-        IOLOGBUFFER_DEBUG(NULL, md->getBytesNoCopy(), transferSize);
+        PSC_IOLOG_DEBUG_METHOD("input buffer is");
+        PSC_IOLOGBUFFER_DEBUG(NULL, md->getBytesNoCopy(), transferSize);
     }
 #endif //DEBUG
 
@@ -1139,6 +1149,16 @@ bool DriverClass::deviceIsTPer_SCSI(DTA_DEVICE_INFO &di)
  Adapted from void DtaDev::parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
  */
 
+//#define DEBUG_PARSEDISCOVERY0FEATURES 1
+#undef DEBUG_PARSEDISCOVERY0FEATURES
+#if defined(DEBUG_PARSEDISCOVERY0FEATURES)
+#define PDF_IOLOG_DEBUG IOLOG_DEBUG
+#define PDF_IOLOGBUFFER_DEBUG IOLOGBUFFER_DEBUG
+#else // !defined(DEBUG_PARSEDISCOVERY0FEATURES)
+#define PDF_IOLOG_DEBUG(...) do ; while (0)
+#define PDF_IOLOGBUFFER_DEBUG(...)  do ; while (0)
+#endif // defined(DEBUG_PARSEDISCOVERY0FEATURES)
+
 static
 bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
 {
@@ -1150,12 +1170,12 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
     }
     
     if (sizeof(hdr->length)+length > 8192 ) {
-        IOLOG_DEBUG("Level 0 Discovery header length abnormal 0x%08X", length);
+        PDF_IOLOG_DEBUG("Level 0 Discovery header length abnormal 0x%08X", length);
         return false;
     }
 
-    IOLOG_DEBUG("Dumping D0Response");
-    IOLOGBUFFER_DEBUG(NULL, d0Response, sizeof(hdr->length)+length);
+    PDF_IOLOG_DEBUG("Dumping D0Response");
+    PDF_IOLOGBUFFER_DEBUG(NULL, d0Response, sizeof(hdr->length)+length);
     
     di.TPer = 0;
     di.Locking = 0;
@@ -1181,10 +1201,10 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
     do {
         Discovery0Features * body = (Discovery0Features *) cpos;
         uint16_t featureCode = SWAP16(body->TPer.featureCode);
-        IOLOG_DEBUG("Discovery0 FeatureCode: 0x%04X", featureCode);
+        PDF_IOLOG_DEBUG("Discovery0 FeatureCode: 0x%04X", featureCode);
         switch (featureCode) { /* could use of the structures here is a common field */
         case FC_TPER: /* TPer */
-            IOLOG_DEBUG("TPer Feature");
+            PDF_IOLOG_DEBUG("TPer Feature");
             di.TPer = 1;
             di.TPer_ACKNACK = body->TPer.acknack;
             di.TPer_async = body->TPer.async;
@@ -1194,7 +1214,7 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
             di.TPer_sync = body->TPer.sync;
             break;
         case FC_LOCKING: /* Locking*/
-            IOLOG_DEBUG("Locking Feature");
+            PDF_IOLOG_DEBUG("Locking Feature");
             di.Locking = 1;
             di.Locking_locked = body->locking.locked;
             di.Locking_lockingEnabled = body->locking.lockingEnabled;
@@ -1204,7 +1224,7 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
             di.Locking_mediaEncrypt = body->locking.mediaEncryption;
             break;
         case FC_GEOMETRY: /* Geometry Features */
-            IOLOG_DEBUG("Geometry Feature");
+            PDF_IOLOG_DEBUG("Geometry Feature");
             di.Geometry = 1;
             di.Geometry_align = body->geometry.align;
             di.Geometry_alignmentGranularity = SWAP64(body->geometry.alignmentGranularity);
@@ -1212,7 +1232,7 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
             di.Geometry_lowestAlignedLBA = SWAP64(body->geometry.lowestAlighedLBA);
             break;
         case FC_ENTERPRISE: /* Enterprise SSC */
-            IOLOG_DEBUG("Enterprise SSC Feature");
+            PDF_IOLOG_DEBUG("Enterprise SSC Feature");
             di.Enterprise = 1;
             di.ANY_OPAL_SSC = 1;  // TODO: Surely ANY_OPAL_SSC is misnamed.  Enterprise SSC is not an Opal SSC.
             di.Enterprise_rangeCrossing = body->enterpriseSSC.rangeCrossing;
@@ -1220,14 +1240,14 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
             di.Enterprise_numcomID = SWAP16(body->enterpriseSSC.numberComIDs);
             break;
         case FC_OPALV100: /* Opal V1 */
-            IOLOG_DEBUG("Opal v1.0 SSC Feature");
+            PDF_IOLOG_DEBUG("Opal v1.0 SSC Feature");
             di.OPAL10 = 1;
             di.ANY_OPAL_SSC = 1;
             di.OPAL10_basecomID = SWAP16(body->opalv100.baseComID);
             di.OPAL10_numcomIDs = SWAP16(body->opalv100.numberComIDs);
             break;
         case FC_SINGLEUSER: /* Single User Mode */
-            IOLOG_DEBUG("Single User Mode Feature");
+            PDF_IOLOG_DEBUG("Single User Mode Feature");
             di.SingleUser = 1;
             di.SingleUser_all = body->singleUserMode.all;
             di.SingleUser_any = body->singleUserMode.any;
@@ -1235,14 +1255,14 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
             di.SingleUser_lockingObjects = SWAP32(body->singleUserMode.numberLockingObjects);
             break;
         case FC_DATASTORE: /* Datastore Tables */
-            IOLOG_DEBUG("Datastore Feature");
+            PDF_IOLOG_DEBUG("Datastore Feature");
             di.DataStore = 1;
             di.DataStore_maxTables = SWAP16(body->datastore.maxTables);
             di.DataStore_maxTableSize = SWAP32(body->datastore.maxSizeTables);
             di.DataStore_alignment = SWAP32(body->datastore.tableSizeAlignment);
             break;
         case FC_OPALV200: /* OPAL V200 */
-            IOLOG_DEBUG("Opal v2.0 SSC Feature");
+            PDF_IOLOG_DEBUG("Opal v2.0 SSC Feature");
             di.ANY_OPAL_SSC = 1;
             di.OPAL20 = 1;
             di.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
@@ -1254,7 +1274,7 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
             di.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
             break;
         case FC_PYRITE: /* PYRITE 0x302 */
-            IOLOG_DEBUG("Pyrite SSC Feature");
+            PDF_IOLOG_DEBUG("Pyrite SSC Feature");
             di.ANY_OPAL_SSC = 1;
             di.PYRITE= 1;
             di.PYRITE_version = body->opalv200.version;
@@ -1278,7 +1298,7 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
             di.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
             break;
         case FC_PYRITE2: /* PYRITE 2 0x303 */
-            IOLOG_DEBUG("Pyrite 2 SSC Feature");
+            PDF_IOLOG_DEBUG("Pyrite 2 SSC Feature");
             di.ANY_OPAL_SSC = 1;
             di.PYRITE2 = 1;
             di.PYRITE2_version = body->opalv200.version;
@@ -1302,7 +1322,7 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
             di.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
             break;
         case FC_RUBY: /* RUBY 0x304 */
-            IOLOG_DEBUG("Ruby SSC Feature");
+            PDF_IOLOG_DEBUG("Ruby SSC Feature");
             di.ANY_OPAL_SSC = 1;
             di.RUBY = 1;
             di.RUBY_version = body->opalv200.version;
@@ -1329,14 +1349,14 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
 
             break;
         case FC_BlockSID: /* Block SID 0x402 */
-            IOLOG_DEBUG("Block SID Feature");
+            PDF_IOLOG_DEBUG("Block SID Feature");
             di.BlockSID = 1;
             di.BlockSID_BlockSIDState = body->blocksidauth.BlockSIDState;
             di.BlockSID_SIDvalueState = body->blocksidauth.SIDvalueState;
             di.BlockSID_HardReset = body->blocksidauth.HardReset;
             break;
         case FC_NSLocking:
-            IOLOG_DEBUG("Namespace Locking Feature");
+            PDF_IOLOG_DEBUG("Namespace Locking Feature");
             di.NSLocking = 1;
             di.NSLocking_version = body->Configurable_Namespace_LockingFeature.version;
             di.Max_Key_Count = body->Configurable_Namespace_LockingFeature.Max_Key_Count;
@@ -1344,7 +1364,7 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
             di.Max_Range_Per_NS = body->Configurable_Namespace_LockingFeature.Max_Range_Per_NS;
             break;
         case FC_DataRemoval: /* Data Removal mechanism 0x404 */
-            IOLOG_DEBUG("Data Removal Feature");
+            PDF_IOLOG_DEBUG("Data Removal Feature");
             di.DataRemoval = 1;
             di.DataRemoval_version = body->dataremoval.version;
             di.DataRemoval_Mechanism = body->dataremoval.DataRemoval_Mechanism;
@@ -1365,11 +1385,11 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
             if (FC_Min_Vendor_Specific <= featureCode) {
                 // silently ignore vendor specific segments as there is no public doc on them
                 di.VendorSpecific += 1;
-                IOLOG_DEBUG("Vendor Specific Feature Code 0x%04X", featureCode);
+                PDF_IOLOG_DEBUG("Vendor Specific Feature Code 0x%04X", featureCode);
             }
             else {
                 di.Unknown += 1;
-                IOLOG_DEBUG("Unknown Feature Code 0x%04X", featureCode);
+                PDF_IOLOG_DEBUG("Unknown Feature Code 0x%04X", featureCode);
                 /* should do something here */
             }
             break;
@@ -1428,13 +1448,13 @@ IOReturn DriverClass::updatePropertiesInIORegistryWithDiscovery0CDB(SCSICommandD
 
     updateIORegistryFromD0Response(d0Response, di);
 
-#if DEBUG
+#if DEBUG && defined(DEBUG_PARSEDISCOVERY0FEATURES)
     OSData * d0Buffer = OSData::withBytes(d0Response, DISCOVERY0_RESPONSE_SIZE);
     if ( getProperty(IODiscovery0ResponseKey) )
         removeProperty(IODiscovery0ResponseKey);
     setProperty(IODiscovery0ResponseKey, d0Buffer);
     d0Buffer -> release( );
-#endif // DEBUG
+#endif // DEBUG && defined(DEBUG_PARSEDISCOVERY0FEATURES)
 
     md->release ( );
 
@@ -1560,13 +1580,13 @@ IOReturn DriverClass::prepareSCSICommand(SCSICommandDescriptorBlock cdb,
                                          UInt64 count)
 {
     if ( ! md ) {
-        IOLOG_DEBUG( "%s::%s data BufferDescriptor error", getName ( ), __FUNCTION__);
+        IOLOG_DEBUG_METHOD("data BufferDescriptor error");
         return kIOReturnVMError;                                            // !!immediate exit, do not pass through!!
     }
 
 
-    IOLOG_DEBUG("%s::%s, CDB is ", getName ( ), __FUNCTION__ );
-    IOLOGBUFFER_DEBUG(NULL, cdb, cdbSize);
+    PSC_IOLOG_DEBUG_METHOD("CDB is");
+    PSC_IOLOGBUFFER_DEBUG(NULL, cdb, cdbSize);
 
     switch (cdbSize) {
         case 6:
@@ -1614,7 +1634,7 @@ void DriverClass::printSenseData ( SCSI_Sense_Data * sense )
     ASC     = sense->ADDITIONAL_SENSE_CODE;
     ASCQ    = sense->ADDITIONAL_SENSE_CODE_QUALIFIER;
     snprintf ( str, 64, "Key: $%02hhx, ASC: $%02hhx, ASCQ: $%02hhx  ", key, ASC, ASCQ );
-    IOLOG_DEBUG_METHOD("sense data is:   %s", str);
+    PSC_IOLOG_DEBUG_METHOD("sense data is:   %s", str);
 }
 
 IOReturn DriverClass::completeSCSICommand(IOBufferMemoryDescriptor * md,
@@ -1630,14 +1650,14 @@ IOReturn DriverClass::completeSCSICommand(IOBufferMemoryDescriptor * md,
 
     taskStatus = GetTaskStatus(request);
 
-    IOLOG_DEBUG_METHOD(" service response: %u, task status: %u", serviceResponse, taskStatus);
+    PSC_IOLOG_DEBUG_METHOD(" service response: %u, task status: %u", serviceResponse, taskStatus);
 
     if ( serviceResponse == kSCSIServiceResponse_TASK_COMPLETE ) {
-        IOLOG_DEBUG_METHOD( "service response is Task_Complete!!!");
+        PSC_IOLOG_DEBUG_METHOD( "service response is Task_Complete!!!");
 
         switch (taskStatus) {
             case kSCSITaskStatus_GOOD:
-                IOLOG_DEBUG_METHOD("task status is GOOD!");
+                PSC_IOLOG_DEBUG_METHOD("task status is GOOD!");
                 ret = kIOReturnSuccess;
                 if (pTransferSize) {
                     *pTransferSize = GetRealizedDataTransferCount(request);
@@ -1712,11 +1732,11 @@ IOService* DriverClass::probe(IOService* provider, SInt32* score)
 #if defined(MIN_PROBE)
     if ((*score) < MIN_PROBE) {
         *score = MIN_PROBE;
-        IOLOG_DEBUG_METHOD("(provider is %s, score raised to %d)", provider->getName(), (int)*score);
+        IOLOG_DEBUG_METHOD("score raised to %d", (int)*score);
     }
 #endif // defined(MIN_PROBE)
-#if DRIVER_DEBUG
-#else // !defined(MIN_PROBE)
+
+#if !DRIVER_DEBUG
 #pragma unused(provider)
 #pragma unused(score)
 #endif
@@ -1772,7 +1792,8 @@ bool DriverClass::open(IOService *  forClient,
                        IOOptionBits options,
                        void *       arg)
 {
-    IOLOG_DEBUG_METHOD(" *** before super");
+    IOLOG_DEBUG_METHOD(" *** before super(0x%06X,%u,0x%06X)",
+                       REVEAL(forClient), (unsigned int)options, REVEAL(arg));
     bool success = super::open(forClient, options, arg);
     IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
     return success;
@@ -1781,7 +1802,8 @@ bool DriverClass::open(IOService *  forClient,
 void DriverClass::close(IOService *  forClient,
                         IOOptionBits options)
 {
-    IOLOG_DEBUG_METHOD(" *** before super");
+    IOLOG_DEBUG_METHOD(" *** before super(0x%06X,%u)",
+                       REVEAL(forClient), (unsigned int)options);
     super::close(forClient, options);
     IOLOG_DEBUG_METHOD(" *** after super");
 }
@@ -1790,7 +1812,8 @@ void DriverClass::close(IOService *  forClient,
 bool DriverClass::init(OSDictionary* dictionary)
 {
 //    Can not use IOLOG_DEBUG_METHOD, because can not yet use getName()
-    IOLOG_DEBUG(kDriverClass  "::[0x%06X]::%s" " *** before super(%p))", REVEAL(this), __FUNCTION__, dictionary);
+    IOLOG_DEBUG(kDriverClass  "::[0x%06X]::%s" " *** before super(0x%06X))", REVEAL(this), __FUNCTION__,
+                REVEAL(dictionary));
     bool success = super::init(dictionary);
     IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
     return success;
@@ -1834,7 +1857,7 @@ bool DriverClass::didTerminate(IOService* provider, IOOptionBits options, bool* 
 bool DriverClass::terminate(IOOptionBits options)
 {
     bool	success;
-    IOLOG_DEBUG_METHOD(" *** before super");
+    IOLOG_DEBUG_METHOD("(%u)", (unsigned int)options);
     success = super::terminate(options);
     IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
     return success;
@@ -1846,9 +1869,10 @@ bool DriverClass::terminate(IOOptionBits options)
 bool DriverClass::finalize(IOOptionBits options)
 {
     bool	success;
-    IOLOG_DEBUG_METHOD(" *** before super");
+    IOLOG_DEBUG_METHOD("(%u)", (unsigned int)options);
     success = super::finalize(options);
-    IOLOG_DEBUG_METHOD(" *** after super");
+    //  Can not use IOLOG_DEBUG_METHOD, because can no longer use getName()
+    IOLOG_DEBUG(kDriverClass  "::[0x%06X]::%s" " *** after super", REVEAL(this), __FUNCTION__);
     return success;
 }
 
