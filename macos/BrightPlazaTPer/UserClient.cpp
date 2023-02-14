@@ -428,18 +428,21 @@ IOReturn UserClientClass::clientClose(void)
 // that a provider has been terminated, sent after recursing up the stack, in leaf-to-root order.
 bool UserClientClass::didTerminate(IOService* provider, IOOptionBits options, bool* defer)
 {
-    char tagstring[128];
-    snprintf( tagstring, sizeof(tagstring), "%s[%p]::%s", getName(), this, __FUNCTION__);
-
-    
-    IOLOG_DEBUG("%s(%p, %u, %p)", tagstring, provider, (unsigned int)options, defer);
-    
+    UC_IOLOG_DEBUG_METHOD("*** before super(" REVEALFMT ", %d)", REVEAL(provider), options);
     // If all pending I/O has been terminated, close our provider. If I/O is still outstanding, set defer to true
     // and the user client will not have stop called on it.
-    closeUserClient();
-    *defer = false;
+    UC_IOLOG_DEBUG_METHOD("defer is " REVEALFMT ", *defer is %s", REVEAL(defer), defer==NULL ? "*NULL" : *defer ? "true" : "false");
+    if (defer != NULL && !*defer) {
+        UC_IOLOG_DEBUG_METHOD("calling closeUserClient");
+        closeUserClient();
+        UC_IOLOG_DEBUG_METHOD("back from closeUserClient");
+        *defer = false;
+    }
     
-    return super::didTerminate(provider, options, defer);
+    bool success = super::didTerminate(provider, options, defer);
+    UC_IOLOG_DEBUG_METHOD("*** after super, success is %s", success ? "true" : "false");
+
+    return success;
 }
 
 //*****************
