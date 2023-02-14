@@ -14,6 +14,7 @@
 #define ProviderClass             IOSCSIPeripheralDeviceNub
 #define kProviderClass           "IOSCSIPeripheralDeviceNub"
 #define UserClientClass           com_brightplaza_BrightPlazaTPerUserClient
+#define kUserClientClass         "com_brightplaza_BrightPlazaTPerUserClient"
 
 #define kIOBlockStorageDriver    "IOBlockStorageDriver"
 

@@ -174,3 +174,15 @@ protected:
 #endif
 
 };
+
+// Smuggling low pointer bits out of the driver to trace objects and providers in the kernel
+//
+#define REVEAL(p)((uint16_t)(0x0FFFFFF & (intptr_t)(p)))
+#define REVEALFMT "0x%06X"
+#define IOLOG_DEBUG_METHOD(fmt, ...) IOLOG_DEBUG("%s[" REVEALFMT "]::%s" fmt, getName(), REVEAL(this), __FUNCTION__ ,##__VA_ARGS__)
+
+#define IOLOG_REVEAL(tag,value) IOLOG_DEBUG_METHOD(" %s = " REVEALFMT, (tag), REVEAL(value))
+#define IOLOG_REVEAL_THIS IOLOG_REVEAL("this",this)
+#define IOLOG_REVEAL_PROVIDER IOLOG_REVEAL("provider",provider)
+#define IOLOG_REVEAL_PROVIDER_NAME IOLOG_DEBUG_METHOD(" provider(" REVEALFMT ")->getName() = %s", REVEAL(provider), provider->getName())
+

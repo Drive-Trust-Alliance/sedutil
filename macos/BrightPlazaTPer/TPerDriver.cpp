@@ -22,20 +22,12 @@
 
 OSDefineMetaClassAndStructors(com_brightplaza_BrightPlazaTPer, IOSCSIPeripheralDeviceType00 ) //IOService)
 
-#define REVEAL(p)((uint16_t)(0x0FFFFFF & (intptr_t)(p)))
-#define IOLOG_DEBUG_METHOD(fmt, ...) IOLOG_DEBUG("%s[0x%06X]::%s" fmt, getName(), REVEAL(this), __FUNCTION__ ,##__VA_ARGS__)
-
-#define IOLOG_REVEAL(tag,value) IOLOG_DEBUG_METHOD(" %s = 0x%06X", (tag), REVEAL(value))
-#define IOLOG_REVEAL_THIS IOLOG_REVEAL("this",this)
-#define IOLOG_REVEAL_PROVIDER IOLOG_REVEAL("provider",provider)
-#define IOLOG_REVEAL_PROVIDER_NAME IOLOG_DEBUG_METHOD(" provider(0x%06X)->getName() = %s", REVEAL(provider), provider->getName())
-
 //*****************
 // apple IOService override
 //*****************
 bool DriverClass::start(IOService* provider)
 {
-    IOLOG_DEBUG_METHOD("(0x%06X), provider->getName() = %s", REVEAL(provider), provider->getName());
+    IOLOG_DEBUG_METHOD("(" REVEALFMT "), provider->getName() = %s", REVEAL(provider), provider->getName());
     IOLOG_DEBUG_METHOD(" *** before super");
     bool result = super::start(provider);
     IOLOG_DEBUG_METHOD(" *** after super, result is %s", result ? "true" : "false");
@@ -56,7 +48,7 @@ bool DriverClass::start(IOService* provider)
 
 void DriverClass::stop(IOService* provider)
 {
-    IOLOG_DEBUG_METHOD("(0x%06X), provider->getName() = %s", REVEAL(provider), provider->getName());
+    IOLOG_DEBUG_METHOD("(" REVEALFMT "), provider->getName() = %s", REVEAL(provider), provider->getName());
     IOLOG_DEBUG_METHOD(" *** before super");
     super::stop(provider);
     IOLOG_DEBUG_METHOD(" *** after super");
@@ -1775,7 +1767,7 @@ void DriverClass::StopDeviceSupport( void )
 
 bool DriverClass::attach(IOService* provider)
 {
-    IOLOG_DEBUG_METHOD(" *** before super(0x%06X)", REVEAL(provider));
+    IOLOG_DEBUG_METHOD(" *** before super(" REVEALFMT ")", REVEAL(provider));
     bool success = super::attach(provider);
     IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
     return success;
@@ -1783,7 +1775,7 @@ bool DriverClass::attach(IOService* provider)
 
 void DriverClass::detach(IOService* provider)
 {
-    IOLOG_DEBUG_METHOD(" *** before super(0x%06X)", REVEAL(provider));
+    IOLOG_DEBUG_METHOD(" *** before super(" REVEALFMT ")", REVEAL(provider));
     super::detach(provider);
     IOLOG_DEBUG_METHOD(" *** after super");
 }
@@ -1792,7 +1784,7 @@ bool DriverClass::open(IOService *  forClient,
                        IOOptionBits options,
                        void *       arg)
 {
-    IOLOG_DEBUG_METHOD(" *** before super(0x%06X,%u,0x%06X)",
+    IOLOG_DEBUG_METHOD(" *** before super(" REVEALFMT ",%u," REVEALFMT ")",
                        REVEAL(forClient), (unsigned int)options, REVEAL(arg));
     bool success = super::open(forClient, options, arg);
     IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
@@ -1802,7 +1794,7 @@ bool DriverClass::open(IOService *  forClient,
 void DriverClass::close(IOService *  forClient,
                         IOOptionBits options)
 {
-    IOLOG_DEBUG_METHOD(" *** before super(0x%06X,%u)",
+    IOLOG_DEBUG_METHOD(" *** before super(" REVEALFMT ",%u)",
                        REVEAL(forClient), (unsigned int)options);
     super::close(forClient, options);
     IOLOG_DEBUG_METHOD(" *** after super");
@@ -1812,7 +1804,7 @@ void DriverClass::close(IOService *  forClient,
 bool DriverClass::init(OSDictionary* dictionary)
 {
 //    Can not use IOLOG_DEBUG_METHOD, because can not yet use getName()
-    IOLOG_DEBUG(kDriverClass  "::[0x%06X]::%s" " *** before super(0x%06X))", REVEAL(this), __FUNCTION__,
+    IOLOG_DEBUG(kDriverClass  "::[" REVEALFMT "]::%s" " *** before super(" REVEALFMT "))", REVEAL(this), __FUNCTION__,
                 REVEAL(dictionary));
     bool success = super::init(dictionary);
     IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
@@ -1834,7 +1826,7 @@ void DriverClass::free(void)
 bool DriverClass::willTerminate(IOService* provider, IOOptionBits options)
 {
     bool	success;
-    IOLOG_DEBUG_METHOD("(0x%06X, %u)", REVEAL(provider), (unsigned int)options);
+    IOLOG_DEBUG_METHOD("(" REVEALFMT ", %u)", REVEAL(provider), (unsigned int)options);
     success = super::willTerminate(provider, options);
     IOLOG_DEBUG_METHOD(" *** after super");
     return success;
@@ -1845,7 +1837,7 @@ bool DriverClass::willTerminate(IOService* provider, IOOptionBits options)
 bool DriverClass::didTerminate(IOService* provider, IOOptionBits options, bool* defer)
 {
     bool	success;
-    IOLOG_DEBUG_METHOD("(0x%06X, %u, %p)", REVEAL(provider), (unsigned int)options, defer);
+    IOLOG_DEBUG_METHOD("(" REVEALFMT ", %u, %p)", REVEAL(provider), (unsigned int)options, defer);
     IOLOG_DEBUG_METHOD(" *** before super");
     success = super::didTerminate(provider, options, defer);
     IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
@@ -1872,7 +1864,7 @@ bool DriverClass::finalize(IOOptionBits options)
     IOLOG_DEBUG_METHOD("(%u)", (unsigned int)options);
     success = super::finalize(options);
     //  Can not use IOLOG_DEBUG_METHOD, because can no longer use getName()
-    IOLOG_DEBUG(kDriverClass  "::[0x%06X]::%s" " *** after super", REVEAL(this), __FUNCTION__);
+    IOLOG_DEBUG(kDriverClass  "::[" REVEALFMT "]::%s" " *** after super", REVEAL(this), __FUNCTION__);
     return success;
 }
 
