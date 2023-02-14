@@ -36,9 +36,9 @@ OSDefineMetaClassAndStructors(com_brightplaza_BrightPlazaTPer, IOSCSIPeripheralD
 bool DriverClass::start(IOService* provider)
 {
     IOLOG_DEBUG_METHOD("(0x%06X), provider->getName() = %s", REVEAL(provider), provider->getName());
-    IOLOG_DEBUG_METHOD(" *** before super" );
+    IOLOG_DEBUG_METHOD(" *** before super");
     bool result = super::start(provider);
-    IOLOG_DEBUG_METHOD(" *** after super, result is %s", result ? "true" : "false" );
+    IOLOG_DEBUG_METHOD(" *** after super, result is %s", result ? "true" : "false");
     if ( result ) {
         IOLOG_DEBUG_METHOD(" - calling registerService()");
         registerService();
@@ -57,9 +57,9 @@ bool DriverClass::start(IOService* provider)
 void DriverClass::stop(IOService* provider)
 {
     IOLOG_DEBUG_METHOD("(0x%06X), provider->getName() = %s", REVEAL(provider), provider->getName());
-    IOLOG_DEBUG_METHOD(" *** before super" );
+    IOLOG_DEBUG_METHOD(" *** before super");
     super::stop(provider);
-    IOLOG_DEBUG_METHOD(" *** after super " );
+    IOLOG_DEBUG_METHOD(" *** after super");
 }
 
 //void DriverClass::systemWillShutdown(IOOptionBits specifier)
@@ -1614,7 +1614,7 @@ void DriverClass::printSenseData ( SCSI_Sense_Data * sense )
     ASC     = sense->ADDITIONAL_SENSE_CODE;
     ASCQ    = sense->ADDITIONAL_SENSE_CODE_QUALIFIER;
     snprintf ( str, 64, "Key: $%02hhx, ASC: $%02hhx, ASCQ: $%02hhx  ", key, ASC, ASCQ );
-    IOLOG_DEBUG( "%s::%s sense data is:   %s", getName ( ), __FUNCTION__, str);
+    IOLOG_DEBUG_METHOD("sense data is:   %s", str);
 }
 
 IOReturn DriverClass::completeSCSICommand(IOBufferMemoryDescriptor * md,
@@ -1733,69 +1733,74 @@ IOService* DriverClass::probe(IOService* provider, SInt32* score)
 
 void DriverClass::TerminateDeviceSupport( void )
 {
-    IOLOG_DEBUG_METHOD(" *** before super" );
+    IOLOG_DEBUG_METHOD(" *** before super");
     super::TerminateDeviceSupport();
-    IOLOG_DEBUG_METHOD(" *** after super " );
+    IOLOG_DEBUG_METHOD(" *** after super");
 }
 
 void DriverClass::StartDeviceSupport( void )
 {
-    IOLOG_DEBUG_METHOD(" *** before super" );
+    IOLOG_DEBUG_METHOD(" *** before super");
     super::StartDeviceSupport();
-    IOLOG_DEBUG_METHOD(" *** after super " );
+    IOLOG_DEBUG_METHOD(" *** after super");
 }
 
 void DriverClass::StopDeviceSupport( void )
 {
-    IOLOG_DEBUG_METHOD(" *** before super" );
+    IOLOG_DEBUG_METHOD(" *** before super");
     super::StopDeviceSupport();
-    IOLOG_DEBUG_METHOD(" *** after super " );
+    IOLOG_DEBUG_METHOD(" *** after super");
 }
 
 
 bool DriverClass::attach(IOService* provider)
 {
-    IOLOG_DEBUG_METHOD(" *** before super" );
-    return super::attach(provider);
+    IOLOG_DEBUG_METHOD(" *** before super(0x%06X)", REVEAL(provider));
+    bool success = super::attach(provider);
+    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
+    return success;
 }
 
 void DriverClass::detach(IOService* provider)
 {
-    IOLOG_DEBUG_METHOD(" *** before super");
+    IOLOG_DEBUG_METHOD(" *** before super(0x%06X)", REVEAL(provider));
     super::detach(provider);
-    IOLOG_DEBUG_METHOD(" *** after super " );
+    IOLOG_DEBUG_METHOD(" *** after super");
 }
 
 bool DriverClass::open(IOService *  forClient,
                        IOOptionBits options,
                        void *       arg)
 {
-    IOLOG_DEBUG_METHOD(" *** before super" );
-    return super::open(forClient, options, arg);
+    IOLOG_DEBUG_METHOD(" *** before super");
+    bool success = super::open(forClient, options, arg);
+    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
+    return success;
 }
 
 void DriverClass::close(IOService *  forClient,
                         IOOptionBits options)
 {
-    IOLOG_DEBUG_METHOD(" *** before super" );
+    IOLOG_DEBUG_METHOD(" *** before super");
     super::close(forClient, options);
-    IOLOG_DEBUG_METHOD(" *** after super" );
+    IOLOG_DEBUG_METHOD(" *** after super");
 }
 
 
 bool DriverClass::init(OSDictionary* dictionary)
 {
-    IOLOG_DEBUG_METHOD(" *** before super " );
+//    Can not use IOLOG_DEBUG_METHOD, because can not yet use getName()
+    IOLOG_DEBUG(kDriverClass  "::[0x%06X]::%s" " *** before super(%p))", REVEAL(this), __FUNCTION__, dictionary);
     bool success = super::init(dictionary);
-    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false" );
+    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
     return success;
 }
 
 void DriverClass::free(void)
 {
-    IOLOG_DEBUG_METHOD(" *** before super" );
+    IOLOG_DEBUG_METHOD(" *** before super");
     super::free();
-    IOLOG_DEBUG_METHOD(" *** after super " );
+    IOLOG_DEBUG_METHOD(" *** after super");
 }
 
 // willTerminate is called at the beginning of the termination process. It is a notification
@@ -1808,7 +1813,7 @@ bool DriverClass::willTerminate(IOService* provider, IOOptionBits options)
     bool	success;
     IOLOG_DEBUG_METHOD("(0x%06X, %u)", REVEAL(provider), (unsigned int)options);
     success = super::willTerminate(provider, options);
-    IOLOG_DEBUG_METHOD(" *** after super " );
+    IOLOG_DEBUG_METHOD(" *** after super");
     return success;
 }
 
@@ -1818,9 +1823,9 @@ bool DriverClass::didTerminate(IOService* provider, IOOptionBits options, bool* 
 {
     bool	success;
     IOLOG_DEBUG_METHOD("(0x%06X, %u, %p)", REVEAL(provider), (unsigned int)options, defer);
-    IOLOG_DEBUG_METHOD(" *** before super" );
+    IOLOG_DEBUG_METHOD(" *** before super");
     success = super::didTerminate(provider, options, defer);
-    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false" );
+    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
     return success;
 }
 
@@ -1829,9 +1834,9 @@ bool DriverClass::didTerminate(IOService* provider, IOOptionBits options, bool* 
 bool DriverClass::terminate(IOOptionBits options)
 {
     bool	success;
-    IOLOG_DEBUG_METHOD(" *** before super" );
+    IOLOG_DEBUG_METHOD(" *** before super");
     success = super::terminate(options);
-    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false" );
+    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
     return success;
 }
 
@@ -1841,9 +1846,9 @@ bool DriverClass::terminate(IOOptionBits options)
 bool DriverClass::finalize(IOOptionBits options)
 {
     bool	success;
-    IOLOG_DEBUG_METHOD(" *** before super" );
+    IOLOG_DEBUG_METHOD(" *** before super");
     success = super::finalize(options);
-    IOLOG_DEBUG_METHOD(" *** after super " );
+    IOLOG_DEBUG_METHOD(" *** after super");
     return success;
 }
 
