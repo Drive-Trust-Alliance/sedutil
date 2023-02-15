@@ -152,14 +152,19 @@ bool com_brightplaza_BrightPlazaTPer::IdentifyTPer() {
 // and we will need to call stop (in the start method) to terminate device support
 bool DriverClass::InitializeDeviceSupport ( void )
 {
-    IOLOG_DEBUG_METHOD(" about to call super::InitializeDeviceSupport() ...");
-    if (! super::InitializeDeviceSupport()) {
-        IOLOG_DEBUG_METHOD(" super::InitializeDeviceSupport() returned false");
+    IOLOG_DEBUG_METHOD();
+    IOLOG_DEBUG_METHOD(" *** before super");
+    bool success = super::InitializeDeviceSupport();
+    IOLOG_DEBUG_METHOD(" *** after super, success = %s", success ? "true" : "false");
+    if (!success ) {
+        IOLOG_DEBUG_METHOD(" InitializeDeviceSupport returning false");
         return false;
     }
-    IOLOG_DEBUG_METHOD(" super::InitializeDeviceSupport() returned true");
 
-    return IdentifyTPer();
+    success = IdentifyTPer();
+    IOLOG_DEBUG_METHOD(" *** after IdentifyTPer, success = %s", success ? "true" : "false");
+    IOLOG_DEBUG_METHOD(" InitializeDeviceSupport returning %s", success ? "true" : "false");
+    return success ;
 }
 
 //*****************
@@ -1778,7 +1783,9 @@ void DriverClass::detach(IOService* provider)
 {
     IOLOG_DEBUG_METHOD("(" REVEALFMT ")", REVEAL(provider));
     UInt32 busyState = getBusyState();
-    IOLOG_DEBUG_METHOD("busyState=%u", busyState);
+    IOLOG_DEBUG_METHOD(" busyState=%u", busyState);
+    busyState = provider->getBusyState();
+    IOLOG_DEBUG_METHOD(" provider->busyState=%u", busyState);
     IOLOG_DEBUG_METHOD(" *** before super");
     super::detach(provider);
     IOLOG_DEBUG_METHOD(" *** after super");
