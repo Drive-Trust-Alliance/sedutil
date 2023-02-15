@@ -27,7 +27,7 @@ OSDefineMetaClassAndStructors(com_brightplaza_BrightPlazaTPer, IOSCSIPeripheralD
 //*****************
 
 #define DO_INITIAL_PM_STUFF 1
-#define DO_REMAINING_PM_STUFF 0
+#define DO_REMAINING_PM_STUFF 1
 
 bool DriverClass::start(IOService* provider)
 {
@@ -61,7 +61,6 @@ bool DriverClass::start(IOService* provider)
 #endif  // defined(DO_INITIAL_PM_STUFF)
 
 #if DO_REMAINING_PM_STUFF
-#error Did I somehow define
         static IOPMPowerState powerStates [] = {
             {
                 kIOPMPowerStateVersion1, // unsigned long       version;
