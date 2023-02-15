@@ -182,7 +182,7 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
                                          IOBufferMemoryDescriptor * md,
                                          uint64_t * pTransferSize)
 {
-    PSC_IOLOG_DEBUG_METHOD("");
+    PSC_IOLOG_DEBUG_METHOD(" ");
     IOReturn ret = kIOReturnUnsupported;
 
     if ( md == NULL ) {
@@ -247,7 +247,7 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
 
 #if DEBUG
     if (direction == kSCSIDataTransfer_FromInitiatorToTarget) {
-        PSC_IOLOG_DEBUG_METHOD("output buffer is");
+        PSC_IOLOG_DEBUG_METHOD(" output buffer is");
         PSC_IOLOGBUFFER_DEBUG(NULL, md->getBytesNoCopy(), transferSize);
     }
 #endif //DEBUG
@@ -268,7 +268,7 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
 
 #if DEBUG
     if (direction == kSCSIDataTransfer_FromTargetToInitiator) {
-        PSC_IOLOG_DEBUG_METHOD("input buffer is");
+        PSC_IOLOG_DEBUG_METHOD(" input buffer is");
         PSC_IOLOGBUFFER_DEBUG(NULL, md->getBytesNoCopy(), transferSize);
     }
 #endif //DEBUG
@@ -385,7 +385,7 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceId
 
 IOReturn DriverClass::identifyDevice_SAT( IOBufferMemoryDescriptor * md )
 {
-    IOLOG_DEBUG_METHOD("");
+    IOLOG_DEBUG_METHOD(" ");
 
     static SCSICommandDescriptorBlock identifyCDB_SAT =
       { kSCSICmd_ATA_PASS_THROUGH,    // Byte  0  ATA PASS-THROUGH (12)
@@ -569,7 +569,7 @@ bool DriverClass::deviceIsStandardSCSI(InterfaceDeviceID & interfaceDeviceIdenti
 
 IOReturn DriverClass::__inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryDescriptor * md, UInt16 & dataSize)
 {
-    IOLOG_DEBUG_METHOD("");
+    IOLOG_DEBUG_METHOD(" ");
 
 #define USE_INHERITED_API
 #undef USE_INHERITED_API
@@ -616,14 +616,14 @@ IOReturn DriverClass::__inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryD
 
 IOReturn DriverClass::__inquiry__EVPD(uint8_t page_code, IOBufferMemoryDescriptor * md, UInt16 & dataSize )
 {
-    IOLOG_DEBUG_METHOD("");
+    IOLOG_DEBUG_METHOD(" ");
     return __inquiry(0x01, page_code, md, dataSize);
 }
 
 
 IOReturn DriverClass::inquiryStandardDataAll_SCSI( IOBufferMemoryDescriptor * md )
 {
-    IOLOG_DEBUG_METHOD("");
+    IOLOG_DEBUG_METHOD(" ");
     UInt16 dataSize = static_cast<UInt16>(md->getLength());
     return __inquiry(0x00, 0x00, md, dataSize);
 }
@@ -720,7 +720,7 @@ bool DriverClass::deviceIsPage00SCSI(bool & deviceSupportsPage80,
 
 IOReturn DriverClass::inquiryPage00_SCSI( IOBufferMemoryDescriptor * md, UInt16 & dataSize )
 {
-    IOLOG_DEBUG_METHOD("");
+    IOLOG_DEBUG_METHOD(" ");
     return __inquiry__EVPD(kINQUIRY_Page00_PageCode, md, dataSize);
 }
 
@@ -820,7 +820,7 @@ bool DriverClass::deviceIsPage80SCSI(const InterfaceDeviceID & interfaceDeviceId
 
 IOReturn DriverClass::inquiryPage80_SCSI( IOBufferMemoryDescriptor * md)
 {
-    IOLOG_DEBUG_METHOD("");
+    IOLOG_DEBUG_METHOD(" ");
     UInt16 dataSize = static_cast<UInt16>(md->getLength());
     return __inquiry__EVPD(kINQUIRY_Page80_PageCode, md, dataSize);
 }
@@ -917,7 +917,7 @@ bool DriverClass::deviceIsPage83SCSI(DTA_DEVICE_INFO &di)
 
 IOReturn DriverClass::inquiryPage83_SCSI( IOBufferMemoryDescriptor * md, UInt16 & dataSize )
 {
-    IOLOG_DEBUG_METHOD("");
+    IOLOG_DEBUG_METHOD(" ");
     return __inquiry__EVPD(kINQUIRY_Page83_PageCode, md, dataSize);
 }
 
@@ -1033,7 +1033,7 @@ bool DriverClass::deviceIsPage89SCSI(DTA_DEVICE_INFO &di)
 
 IOReturn DriverClass::inquiryPage89_SCSI( IOBufferMemoryDescriptor * md )
 {
-    IOLOG_DEBUG_METHOD("");
+    IOLOG_DEBUG_METHOD(" ");
     UInt16 dataSize = static_cast<UInt16>(md->getLength());
     return __inquiry__EVPD(kINQUIRY_Page89_PageCode, md, dataSize);
 }
@@ -1113,7 +1113,7 @@ bool DriverClass::deviceIsPageXXSCSI(uint8_t evpd, const char * key)
 
 IOReturn DriverClass::inquiryPageXX_SCSI(uint8_t evpd, IOBufferMemoryDescriptor * md )
 {
-    IOLOG_DEBUG_METHOD("");
+    IOLOG_DEBUG_METHOD(" ");
     UInt16 dataSize = static_cast<UInt16>(md->getLength());
     return __inquiry__EVPD(evpd, md, dataSize);
 }
@@ -1400,7 +1400,7 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
 
 //IOReturn DriverClass::securityProctocolOut_SCSI( IOBufferMemoryDescriptor * md )
 // {
-//     IOLOG_DEBUG_METHOD("");
+//     IOLOG_DEBUG_METHOD(" ");
 //
 //     static SCSICommandDescriptorBlock securityProtocolOutCDB_SCSI =
 //       { kSCSICmd_SECURITY_PROTOCOL_OUT,    // Byte  0  SECURITY PROTOCOL OUT B5h
@@ -1456,7 +1456,7 @@ IOReturn DriverClass::updatePropertiesInIORegistryWithDiscovery0CDB(SCSICommandD
 
 IOReturn DriverClass::updatePropertiesInIORegistry_SCSI( DTA_DEVICE_INFO & di )
 {
-    IOLOG_DEBUG_METHOD("");
+    IOLOG_DEBUG_METHOD(" ");
 
     static SCSICommandDescriptorBlock acquireDiscovery0ResponseCDB_SCSI =
       { kSCSICmd_SECURITY_PROTOCOL_IN,    // Byte  0  SECURITY PROTOCOL IN  A2h
@@ -1477,7 +1477,7 @@ IOReturn DriverClass::updatePropertiesInIORegistry_SCSI( DTA_DEVICE_INFO & di )
 
 IOReturn DriverClass::updatePropertiesInIORegistry_SAT( DTA_DEVICE_INFO & di )
 {
-    IOLOG_DEBUG_METHOD("");
+    IOLOG_DEBUG_METHOD(" ");
 
     static SCSICommandDescriptorBlock acquireDiscovery0ResponseCDB_SAT =
       { kSCSICmd_ATA_PASS_THROUGH,    // Byte  0  ATA PASS-THROUGH (12)
@@ -1572,12 +1572,12 @@ IOReturn DriverClass::prepareSCSICommand(SCSICommandDescriptorBlock cdb,
                                          UInt64 count)
 {
     if ( ! md ) {
-        IOLOG_DEBUG_METHOD("data BufferDescriptor error");
+        IOLOG_DEBUG_METHOD(" data BufferDescriptor error");
         return kIOReturnVMError;                                            // !!immediate exit, do not pass through!!
     }
 
 
-    PSC_IOLOG_DEBUG_METHOD("CDB is");
+    PSC_IOLOG_DEBUG_METHOD(" CDB is");
     PSC_IOLOGBUFFER_DEBUG(NULL, cdb, cdbSize);
 
     switch (cdbSize) {
@@ -1626,7 +1626,7 @@ void DriverClass::printSenseData ( SCSI_Sense_Data * sense )
     ASC     = sense->ADDITIONAL_SENSE_CODE;
     ASCQ    = sense->ADDITIONAL_SENSE_CODE_QUALIFIER;
     snprintf ( str, 64, "Key: $%02hhx, ASC: $%02hhx, ASCQ: $%02hhx  ", key, ASC, ASCQ );
-    PSC_IOLOG_DEBUG_METHOD("sense data is:   %s", str);
+    PSC_IOLOG_DEBUG_METHOD(" sense data is:   %s", str);
 }
 
 IOReturn DriverClass::completeSCSICommand(IOBufferMemoryDescriptor * md,
@@ -1649,14 +1649,14 @@ IOReturn DriverClass::completeSCSICommand(IOBufferMemoryDescriptor * md,
 
         switch (taskStatus) {
             case kSCSITaskStatus_GOOD:
-                PSC_IOLOG_DEBUG_METHOD("task status is GOOD!");
+                PSC_IOLOG_DEBUG_METHOD(" task status is GOOD!");
                 ret = kIOReturnSuccess;
                 if (pTransferSize) {
                     *pTransferSize = GetRealizedDataTransferCount(request);
                 }
                 break;
             case kSCSITaskStatus_CHECK_CONDITION:
-                IOLOG_DEBUG_METHOD("task status is CHECK_CONDITION");
+                IOLOG_DEBUG_METHOD(" task status is CHECK_CONDITION");
                 senseDataSize = GetAutoSenseDataSize( request );
 
                 GetAutoSenseData(request, &senseData, senseDataSize);
@@ -1724,7 +1724,7 @@ IOService* DriverClass::probe(IOService* provider, SInt32* score)
 #if defined(MIN_PROBE)
     if ((*score) < MIN_PROBE) {
         *score = MIN_PROBE;
-        IOLOG_DEBUG_METHOD("score raised to %d", (int)*score);
+        IOLOG_DEBUG_METHOD(" score raised to %d", (int)*score);
     }
 #endif // defined(MIN_PROBE)
 
@@ -1767,7 +1767,8 @@ void DriverClass::StopDeviceSupport( void )
 
 bool DriverClass::attach(IOService* provider)
 {
-    IOLOG_DEBUG_METHOD(" *** before super(" REVEALFMT ")", REVEAL(provider));
+    IOLOG_DEBUG_METHOD("(" REVEALFMT ")", REVEAL(provider));
+    IOLOG_DEBUG_METHOD(" *** before super");
     bool success = super::attach(provider);
     IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
     return success;
@@ -1775,7 +1776,10 @@ bool DriverClass::attach(IOService* provider)
 
 void DriverClass::detach(IOService* provider)
 {
-    IOLOG_DEBUG_METHOD(" *** before super(" REVEALFMT ")", REVEAL(provider));
+    IOLOG_DEBUG_METHOD("(" REVEALFMT ")", REVEAL(provider));
+    UInt32 busyState = getBusyState();
+    IOLOG_DEBUG_METHOD("busyState=%u", busyState);
+    IOLOG_DEBUG_METHOD(" *** before super");
     super::detach(provider);
     IOLOG_DEBUG_METHOD(" *** after super");
 }
@@ -1784,8 +1788,9 @@ bool DriverClass::open(IOService *  forClient,
                        IOOptionBits options,
                        void *       arg)
 {
-    IOLOG_DEBUG_METHOD(" *** before super(" REVEALFMT ",%u," REVEALFMT ")",
+    IOLOG_DEBUG_METHOD("(" REVEALFMT ",%u," REVEALFMT ")",
                        REVEAL(forClient), (unsigned int)options, REVEAL(arg));
+    IOLOG_DEBUG_METHOD(" *** before super");
     bool success = super::open(forClient, options, arg);
     IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
     return success;
@@ -1794,8 +1799,8 @@ bool DriverClass::open(IOService *  forClient,
 void DriverClass::close(IOService *  forClient,
                         IOOptionBits options)
 {
-    IOLOG_DEBUG_METHOD(" *** before super(" REVEALFMT ",%u)",
-                       REVEAL(forClient), (unsigned int)options);
+    IOLOG_DEBUG_METHOD("(" REVEALFMT ",%u)", REVEAL(forClient), (unsigned int)options);
+    IOLOG_DEBUG_METHOD(" *** before super");
     super::close(forClient, options);
     IOLOG_DEBUG_METHOD(" *** after super");
 }
@@ -1804,8 +1809,9 @@ void DriverClass::close(IOService *  forClient,
 bool DriverClass::init(OSDictionary* dictionary)
 {
 //    Can not use IOLOG_DEBUG_METHOD, because can not yet use getName()
-    IOLOG_DEBUG(kDriverClass  "::[" REVEALFMT "]::%s" " *** before super(" REVEALFMT "))", REVEAL(this), __FUNCTION__,
+    IOLOG_DEBUG(kDriverClass  "::[" REVEALFMT "]::%s" "(" REVEALFMT "))", REVEAL(this), __FUNCTION__,
                 REVEAL(dictionary));
+    IOLOG_DEBUG_METHOD(" *** before super");
     bool success = super::init(dictionary);
     IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
     return success;
@@ -1827,6 +1833,7 @@ bool DriverClass::willTerminate(IOService* provider, IOOptionBits options)
 {
     bool	success;
     IOLOG_DEBUG_METHOD("(" REVEALFMT ", %u)", REVEAL(provider), (unsigned int)options);
+    IOLOG_DEBUG_METHOD(" *** before super");
     success = super::willTerminate(provider, options);
     IOLOG_DEBUG_METHOD(" *** after super");
     return success;
@@ -1850,6 +1857,7 @@ bool DriverClass::terminate(IOOptionBits options)
 {
     bool	success;
     IOLOG_DEBUG_METHOD("(%u)", (unsigned int)options);
+    IOLOG_DEBUG_METHOD(" *** before super");
     success = super::terminate(options);
     IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
     return success;
@@ -1863,8 +1871,9 @@ bool DriverClass::finalize(IOOptionBits options)
     bool	success;
     IOLOG_DEBUG_METHOD("(%u)", (unsigned int)options);
     success = super::finalize(options);
-    //  Can not use IOLOG_DEBUG_METHOD, because can no longer use getName()
-    IOLOG_DEBUG(kDriverClass  "::[" REVEALFMT "]::%s" " *** after super", REVEAL(this), __FUNCTION__);
+//    //  Can not use IOLOG_DEBUG_METHOD, because can no longer use getName()
+//    IOLOG_DEBUG(kDriverClass  "[" REVEALFMT "]::%s" " *** after super", REVEAL(this), __FUNCTION__);
+    IOLOG_DEBUG_METHOD(" *** after super");
     return success;
 }
 
