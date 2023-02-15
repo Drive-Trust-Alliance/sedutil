@@ -182,7 +182,7 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
                                          IOBufferMemoryDescriptor * md,
                                          uint64_t * pTransferSize)
 {
-    PSC_IOLOG_DEBUG_METHOD(" ");
+    PSC_IOLOG_DEBUG_METHOD();
     IOReturn ret = kIOReturnUnsupported;
 
     if ( md == NULL ) {
@@ -385,7 +385,7 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceId
 
 IOReturn DriverClass::identifyDevice_SAT( IOBufferMemoryDescriptor * md )
 {
-    IOLOG_DEBUG_METHOD(" ");
+    IOLOG_DEBUG_METHOD();
 
     static SCSICommandDescriptorBlock identifyCDB_SAT =
       { kSCSICmd_ATA_PASS_THROUGH,    // Byte  0  ATA PASS-THROUGH (12)
@@ -569,7 +569,7 @@ bool DriverClass::deviceIsStandardSCSI(InterfaceDeviceID & interfaceDeviceIdenti
 
 IOReturn DriverClass::__inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryDescriptor * md, UInt16 & dataSize)
 {
-    IOLOG_DEBUG_METHOD(" ");
+    IOLOG_DEBUG_METHOD();
 
 #define USE_INHERITED_API
 #undef USE_INHERITED_API
@@ -616,14 +616,14 @@ IOReturn DriverClass::__inquiry(uint8_t evpd, uint8_t page_code, IOBufferMemoryD
 
 IOReturn DriverClass::__inquiry__EVPD(uint8_t page_code, IOBufferMemoryDescriptor * md, UInt16 & dataSize )
 {
-    IOLOG_DEBUG_METHOD(" ");
+    IOLOG_DEBUG_METHOD();
     return __inquiry(0x01, page_code, md, dataSize);
 }
 
 
 IOReturn DriverClass::inquiryStandardDataAll_SCSI( IOBufferMemoryDescriptor * md )
 {
-    IOLOG_DEBUG_METHOD(" ");
+    IOLOG_DEBUG_METHOD();
     UInt16 dataSize = static_cast<UInt16>(md->getLength());
     return __inquiry(0x00, 0x00, md, dataSize);
 }
@@ -720,7 +720,7 @@ bool DriverClass::deviceIsPage00SCSI(bool & deviceSupportsPage80,
 
 IOReturn DriverClass::inquiryPage00_SCSI( IOBufferMemoryDescriptor * md, UInt16 & dataSize )
 {
-    IOLOG_DEBUG_METHOD(" ");
+    IOLOG_DEBUG_METHOD();
     return __inquiry__EVPD(kINQUIRY_Page00_PageCode, md, dataSize);
 }
 
@@ -820,7 +820,7 @@ bool DriverClass::deviceIsPage80SCSI(const InterfaceDeviceID & interfaceDeviceId
 
 IOReturn DriverClass::inquiryPage80_SCSI( IOBufferMemoryDescriptor * md)
 {
-    IOLOG_DEBUG_METHOD(" ");
+    IOLOG_DEBUG_METHOD();
     UInt16 dataSize = static_cast<UInt16>(md->getLength());
     return __inquiry__EVPD(kINQUIRY_Page80_PageCode, md, dataSize);
 }
@@ -917,7 +917,7 @@ bool DriverClass::deviceIsPage83SCSI(DTA_DEVICE_INFO &di)
 
 IOReturn DriverClass::inquiryPage83_SCSI( IOBufferMemoryDescriptor * md, UInt16 & dataSize )
 {
-    IOLOG_DEBUG_METHOD(" ");
+    IOLOG_DEBUG_METHOD();
     return __inquiry__EVPD(kINQUIRY_Page83_PageCode, md, dataSize);
 }
 
@@ -1033,7 +1033,7 @@ bool DriverClass::deviceIsPage89SCSI(DTA_DEVICE_INFO &di)
 
 IOReturn DriverClass::inquiryPage89_SCSI( IOBufferMemoryDescriptor * md )
 {
-    IOLOG_DEBUG_METHOD(" ");
+    IOLOG_DEBUG_METHOD();
     UInt16 dataSize = static_cast<UInt16>(md->getLength());
     return __inquiry__EVPD(kINQUIRY_Page89_PageCode, md, dataSize);
 }
@@ -1113,7 +1113,7 @@ bool DriverClass::deviceIsPageXXSCSI(uint8_t evpd, const char * key)
 
 IOReturn DriverClass::inquiryPageXX_SCSI(uint8_t evpd, IOBufferMemoryDescriptor * md )
 {
-    IOLOG_DEBUG_METHOD(" ");
+    IOLOG_DEBUG_METHOD();
     UInt16 dataSize = static_cast<UInt16>(md->getLength());
     return __inquiry__EVPD(evpd, md, dataSize);
 }
@@ -1400,7 +1400,7 @@ bool parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
 
 //IOReturn DriverClass::securityProctocolOut_SCSI( IOBufferMemoryDescriptor * md )
 // {
-//     IOLOG_DEBUG_METHOD(" ");
+//     IOLOG_DEBUG_METHOD();
 //
 //     static SCSICommandDescriptorBlock securityProtocolOutCDB_SCSI =
 //       { kSCSICmd_SECURITY_PROTOCOL_OUT,    // Byte  0  SECURITY PROTOCOL OUT B5h
@@ -1456,7 +1456,7 @@ IOReturn DriverClass::updatePropertiesInIORegistryWithDiscovery0CDB(SCSICommandD
 
 IOReturn DriverClass::updatePropertiesInIORegistry_SCSI( DTA_DEVICE_INFO & di )
 {
-    IOLOG_DEBUG_METHOD(" ");
+    IOLOG_DEBUG_METHOD();
 
     static SCSICommandDescriptorBlock acquireDiscovery0ResponseCDB_SCSI =
       { kSCSICmd_SECURITY_PROTOCOL_IN,    // Byte  0  SECURITY PROTOCOL IN  A2h
@@ -1477,7 +1477,7 @@ IOReturn DriverClass::updatePropertiesInIORegistry_SCSI( DTA_DEVICE_INFO & di )
 
 IOReturn DriverClass::updatePropertiesInIORegistry_SAT( DTA_DEVICE_INFO & di )
 {
-    IOLOG_DEBUG_METHOD(" ");
+    IOLOG_DEBUG_METHOD();
 
     static SCSICommandDescriptorBlock acquireDiscovery0ResponseCDB_SAT =
       { kSCSICmd_ATA_PASS_THROUGH,    // Byte  0  ATA PASS-THROUGH (12)
@@ -1811,7 +1811,7 @@ bool DriverClass::init(OSDictionary* dictionary)
 //    Can not use IOLOG_DEBUG_METHOD, because can not yet use getName()
     IOLOG_DEBUG(kDriverClass  "::[" REVEALFMT "]::%s" "(" REVEALFMT "))", REVEAL(this), __FUNCTION__,
                 REVEAL(dictionary));
-    IOLOG_DEBUG_METHOD(" *** before super");
+    IOLOG_DEBUG(kDriverClass  "::[" REVEALFMT "]::%s" " *** before super", REVEAL(this), __FUNCTION__);
     bool success = super::init(dictionary);
     IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
     return success;
