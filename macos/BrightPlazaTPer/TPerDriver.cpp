@@ -29,6 +29,42 @@ OSDefineMetaClassAndStructors(com_brightplaza_BrightPlazaTPer, IOSCSIPeripheralD
 #define DO_INITIAL_PM_STUFF 1
 #define DO_REMAINING_PM_STUFF 1
 
+
+#if DO_REMAINING_PM_STUFF
+static IOPMPowerState powerStates [] = {
+    {
+        kIOPMPowerStateVersion1, // unsigned long       version;
+        0,                       // IOPMPowerFlags      capabilityFlags;
+        0,                       // IOPMPowerFlags      outputPowerCharacter;
+        0,                       // IOPMPowerFlags      inputPowerRequirement;
+        0,                       // unsigned long       staticPower;
+        0,                       // unsigned long       stateOrder;
+        0,                       // unsigned long       powerToAttain;
+        0,                       // unsigned long       timeToAttain;
+        0,                       // unsigned long       settleUpTime;
+        0,                       // unsigned long       timeToLower;
+        0,                       // unsigned long       settleDownTime;
+        0,                       // unsigned long       powerDomainBudget;
+    },
+    {
+        kIOPMPowerStateVersion1, // unsigned long       version;
+        kIOPMDeviceUsable      , // IOPMPowerFlags      capabilityFlags;
+        kIOPMPowerOn           , // IOPMPowerFlags      outputPowerCharacter;
+        kIOPMPowerOn           , // IOPMPowerFlags      inputPowerRequirement;
+        0,                       // unsigned long       staticPower;
+        0,                       // unsigned long       stateOrder;
+        0,                       // unsigned long       powerToAttain;
+        0,                       // unsigned long       timeToAttain;
+        0,                       // unsigned long       settleUpTime;
+        0,                       // unsigned long       timeToLower;
+        0,                       // unsigned long       settleDownTime;
+        0,                       // unsigned long       powerDomainBudget;
+    },
+};
+const unsigned long nPowerStates = sizeof(powerStates)/sizeof(powerStates[0]);
+
+#endif  // defined(DO_REMAINING_PM_STUFF)
+
 bool DriverClass::start(IOService* provider)
 {
     IOLOG_DEBUG_METHOD("(" REVEALFMT "), provider->getName() = %s", REVEAL(provider), provider->getName());
@@ -54,47 +90,20 @@ bool DriverClass::start(IOService* provider)
 #if DO_INITIAL_PM_STUFF
 //    IOLOG_DEBUG_METHOD(" - calling InitializePowerManagement(0x%06X)", REVEAL(provider));
 //    InitializePowerManagement(provider);
+    bool isPowerManagementAlreadyIntialized = IsPowerManagementIntialized();
+    IOLOG_DEBUG_METHOD(" Is this trip really necessary?  IsPowerManagementIntialized returned %s",
+                       isPowerManagementAlreadyIntialized ? "true" : "false");
     IOLOG_DEBUG_METHOD(" - calling PMinit()");
     PMinit();
     IOLOG_DEBUG_METHOD(" - calling joinPMtree(" REVEALFMT ")", REVEAL(this));
     joinPMtree(this);
 #endif  // defined(DO_INITIAL_PM_STUFF)
 
-#if DO_REMAINING_PM_STUFF
-        static IOPMPowerState powerStates [] = {
-            {
-                kIOPMPowerStateVersion1, // unsigned long       version;
-                0,                       // IOPMPowerFlags      capabilityFlags;
-                0,                       // IOPMPowerFlags      outputPowerCharacter;
-                0,                       // IOPMPowerFlags      inputPowerRequirement;
-                0,                       // unsigned long       staticPower;
-                0,                       // unsigned long       stateOrder;
-                0,                       // unsigned long       powerToAttain;
-                0,                       // unsigned long       timeToAttain;
-                0,                       // unsigned long       settleUpTime;
-                0,                       // unsigned long       timeToLower;
-                0,                       // unsigned long       settleDownTime;
-                0,                       // unsigned long       powerDomainBudget;
-            },
-            {
-                kIOPMPowerStateVersion1, // unsigned long       version;
-                kIOPMDeviceUsable      , // IOPMPowerFlags      capabilityFlags;
-                kIOPMPowerOn           , // IOPMPowerFlags      outputPowerCharacter;
-                kIOPMPowerOn           , // IOPMPowerFlags      inputPowerRequirement;
-                0,                       // unsigned long       staticPower;
-                0,                       // unsigned long       stateOrder;
-                0,                       // unsigned long       powerToAttain;
-                0,                       // unsigned long       timeToAttain;
-                0,                       // unsigned long       settleUpTime;
-                0,                       // unsigned long       timeToLower;
-                0,                       // unsigned long       settleDownTime;
-                0,                       // unsigned long       powerDomainBudget;
-            },
-        };
         IOLOG_DEBUG_METHOD(" - calling registerPowerDriver(" REVEALFMT ", " REVEALFMT ", %lu)",
-                           REVEAL(this), REVEAL(powerStates), sizeof(powerStates)/sizeof(powerStates[0]));
-        registerPowerDriver(this, powerStates, sizeof(powerStates)/sizeof(powerStates[0])); //  and @link registerPowerDriver
+                           REVEAL(this), REVEAL(powerStates), nPowerStates);
+        registerPowerDriver(this, powerStates, nPowerStates); //  and @link registerPowerDriver
 
+#if DO_REMAINING_PM_STUFF
         IOLOG_DEBUG_METHOD(" - calling changePowerStateTo(0)");
         (void)changePowerStateTo(0);
         IOLOG_DEBUG_METHOD(" - calling changePowerStateToPriv(1)");
@@ -116,6 +125,31 @@ void DriverClass::stop(IOService* provider)
     super::stop(provider);
     IOLOG_DEBUG_METHOD(" *** after super");
 }
+
+
+#if DO_INITIAL_PM_STUFF
+IOReturn DriverClass::setPowerState(unsigned long powerStateOrdinal,
+                                    IOService *   whatDevice ){
+    IOLOG_DEBUG_METHOD("(%lu, " REVEALFMT ")", powerStateOrdinal, REVEAL(whatDevice));
+    if (whatDevice != this) {
+        IOLOG_DEBUG_METHOD(" can't set power state on other devices, returning 0");
+        return kIOPMParameterError;
+    }
+  
+    if (powerStateOrdinal >= nPowerStates) {
+        IOLOG_DEBUG_METHOD(" *** illegal powerStateOrdinal %lu, >= %lu", powerStateOrdinal, nPowerStates);
+        return kIOPMParameterError;
+    }
+    
+    IOLOG_DEBUG_METHOD(" *** before super");
+    IOReturn result = super::setPowerState(powerStateOrdinal, whatDevice);
+    IOLOG_DEBUG_METHOD(" *** after super, result=0x%08X", result);
+    
+    return result;
+}
+#endif  // defined(DO_INITIAL_PM_STUFF)
+
+
 
 //void DriverClass::systemWillShutdown(IOOptionBits specifier)
 //{
@@ -1948,4 +1982,3 @@ bool DriverClass::finalize(IOOptionBits options)
 }
 
 #endif // if DRIVER_DEBUG
-

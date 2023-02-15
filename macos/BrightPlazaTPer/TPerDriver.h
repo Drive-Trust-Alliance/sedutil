@@ -30,7 +30,23 @@ public:
     virtual void stop(IOService* provider) APPLE_KEXT_OVERRIDE;
     virtual IOService* probe(IOService* provider, SInt32* score) APPLE_KEXT_OVERRIDE;
 //    virtual void systemWillShutdown(IOOptionBits specifier);
-
+    
+    /*!
+    @function setPowerState
+    @abstract Requests a power managed driver to change the power state of its device.
+    @discussion Requests a power managed driver to change the power state of its device. Most subclasses
+    of IOSCSIProtocolInterface have class-specific mechanisms and should not override this routine.
+    See IOSCSIProtocolServices.h, IOSCSIBlockCommandsDevice.h, IOSCSIReducedBlockCommandsDevice.h, and
+    IOSCSIMultimediaCommandsDevice.h for more information about power management changes.
+    Subclasses should not need to override this method.
+    @param powerStateOrdinal The number in the power state array to which the drive is being instructed to change.
+    @param whichDevice A pointer to the power management object which registered to manage power for this device.
+    The whichDevice field is not pertinent to us since the driver is both the "policy maker" for the device,
+    and the "policy implementor" for the device.
+    @result See IOService.h for details.
+    */
+    virtual IOReturn     setPowerState ( unsigned long powerStateOrdinal, IOService * whichDevice ) APPLE_KEXT_OVERRIDE;
+    
 protected:
     
     // IOService methods
