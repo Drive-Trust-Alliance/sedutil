@@ -25,31 +25,95 @@ OSDefineMetaClassAndStructors(com_brightplaza_BrightPlazaTPer, IOSCSIPeripheralD
 //*****************
 // apple IOService override
 //*****************
+
+#define DO_INITIAL_PM_STUFF 1
+#define DO_REMAINING_PM_STUFF 0
+
 bool DriverClass::start(IOService* provider)
 {
     IOLOG_DEBUG_METHOD("(" REVEALFMT "), provider->getName() = %s", REVEAL(provider), provider->getName());
     IOLOG_DEBUG_METHOD(" *** before super");
-    bool result = super::start(provider);
-    IOLOG_DEBUG_METHOD(" *** after super, result is %s", result ? "true" : "false");
-    if ( result ) {
-        IOLOG_DEBUG_METHOD(" - calling registerService()");
-        registerService();
+    bool success = super::start(provider);
+    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
+    if (!success) {
+        if (getProperty(IOInterfaceTypeKey)) { // pointer is not null => super::InitializeDeviceSupport returned true
+                                                 // and deviceIsTPer returned false
+            IOLOG_DEBUG_METHOD(" - leaving start, Device Support was initialized but is NOT TPer; calling stop");
+            stop(provider);   // releases provider
+        }
+        // if neither case, then super::InitializeDeviceSupport returned false and we don't need to call stop
+        return false;
     }
-    else if (getProperty(IOInterfaceTypeKey)) { // pointer is not null => super::InitializeDeviceSupport returned true
-                                             // and deviceIsTPer returned false
-        IOLOG_DEBUG_METHOD(" - leaving start, Device Support was initialized but is NOT TPer; calling stop");
-        stop(provider);   // releases provider - having
-    }
-    // if neither case, then super::InitializeDeviceSupport returned false and we don't need to call stop
 
-    IOLOG_DEBUG_METHOD(" - leaving start, returning %d", result);
-    return result;
+    
+    IOLOG_DEBUG_METHOD(" - calling registerService()");
+    registerService();
+
+    
+
+#if DO_INITIAL_PM_STUFF
+//    IOLOG_DEBUG_METHOD(" - calling InitializePowerManagement(0x%06X)", REVEAL(provider));
+//    InitializePowerManagement(provider);
+    IOLOG_DEBUG_METHOD(" - calling PMinit()");
+    PMinit();
+    IOLOG_DEBUG_METHOD(" - calling joinPMtree(" REVEALFMT ")", REVEAL(this));
+    joinPMtree(this);
+#endif  // defined(DO_INITIAL_PM_STUFF)
+
+#if DO_REMAINING_PM_STUFF
+#error Did I somehow define
+        static IOPMPowerState powerStates [] = {
+            {
+                kIOPMPowerStateVersion1, // unsigned long       version;
+                0,                       // IOPMPowerFlags      capabilityFlags;
+                0,                       // IOPMPowerFlags      outputPowerCharacter;
+                0,                       // IOPMPowerFlags      inputPowerRequirement;
+                0,                       // unsigned long       staticPower;
+                0,                       // unsigned long       stateOrder;
+                0,                       // unsigned long       powerToAttain;
+                0,                       // unsigned long       timeToAttain;
+                0,                       // unsigned long       settleUpTime;
+                0,                       // unsigned long       timeToLower;
+                0,                       // unsigned long       settleDownTime;
+                0,                       // unsigned long       powerDomainBudget;
+            },
+            {
+                kIOPMPowerStateVersion1, // unsigned long       version;
+                kIOPMDeviceUsable      , // IOPMPowerFlags      capabilityFlags;
+                kIOPMPowerOn           , // IOPMPowerFlags      outputPowerCharacter;
+                kIOPMPowerOn           , // IOPMPowerFlags      inputPowerRequirement;
+                0,                       // unsigned long       staticPower;
+                0,                       // unsigned long       stateOrder;
+                0,                       // unsigned long       powerToAttain;
+                0,                       // unsigned long       timeToAttain;
+                0,                       // unsigned long       settleUpTime;
+                0,                       // unsigned long       timeToLower;
+                0,                       // unsigned long       settleDownTime;
+                0,                       // unsigned long       powerDomainBudget;
+            },
+        };
+        IOLOG_DEBUG_METHOD(" - calling registerPowerDriver(" REVEALFMT ", " REVEALFMT ", %lu)",
+                           REVEAL(this), REVEAL(powerStates), sizeof(powerStates)/sizeof(powerStates[0]));
+        registerPowerDriver(this, powerStates, sizeof(powerStates)/sizeof(powerStates[0])); //  and @link registerPowerDriver
+
+        IOLOG_DEBUG_METHOD(" - calling changePowerStateTo(0)");
+        (void)changePowerStateTo(0);
+        IOLOG_DEBUG_METHOD(" - calling changePowerStateToPriv(1)");
+        (void)changePowerStateToPriv(1);
+#endif  // defined(DO_REMAINING_PM_STUFF)
+
+    IOLOG_DEBUG_METHOD(" returning true");
+    return true;
 }
 
 void DriverClass::stop(IOService* provider)
 {
     IOLOG_DEBUG_METHOD("(" REVEALFMT "), provider->getName() = %s", REVEAL(provider), provider->getName());
-    IOLOG_DEBUG_METHOD(" *** before super");
+#if DO_INITIAL_PM_STUFF
+    IOLOG_DEBUG_METHOD(" - calling PMstop()");
+    PMstop();
+#endif  // defined(DO_INITIAL_PM_STUFF)
+    IOLOG_DEBUG_METHOD(" *** before super(" REVEALFMT ")", REVEAL(provider));
     super::stop(provider);
     IOLOG_DEBUG_METHOD(" *** after super");
 }
