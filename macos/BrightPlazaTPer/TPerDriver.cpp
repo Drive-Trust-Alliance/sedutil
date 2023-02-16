@@ -30,40 +30,40 @@ OSDefineMetaClassAndStructors(com_brightplaza_BrightPlazaTPer, IOSCSIPeripheralD
 #define DO_REMAINING_PM_STUFF 1
 
 
-#if DO_REMAINING_PM_STUFF
-static IOPMPowerState powerStates [] = {
-    {
-        kIOPMPowerStateVersion1, // unsigned long       version;
-        0,                       // IOPMPowerFlags      capabilityFlags;
-        0,                       // IOPMPowerFlags      outputPowerCharacter;
-        0,                       // IOPMPowerFlags      inputPowerRequirement;
-        0,                       // unsigned long       staticPower;
-        0,                       // unsigned long       stateOrder;
-        0,                       // unsigned long       powerToAttain;
-        0,                       // unsigned long       timeToAttain;
-        0,                       // unsigned long       settleUpTime;
-        0,                       // unsigned long       timeToLower;
-        0,                       // unsigned long       settleDownTime;
-        0,                       // unsigned long       powerDomainBudget;
-    },
-    {
-        kIOPMPowerStateVersion1, // unsigned long       version;
-        kIOPMDeviceUsable      , // IOPMPowerFlags      capabilityFlags;
-        kIOPMPowerOn           , // IOPMPowerFlags      outputPowerCharacter;
-        kIOPMPowerOn           , // IOPMPowerFlags      inputPowerRequirement;
-        0,                       // unsigned long       staticPower;
-        0,                       // unsigned long       stateOrder;
-        0,                       // unsigned long       powerToAttain;
-        0,                       // unsigned long       timeToAttain;
-        0,                       // unsigned long       settleUpTime;
-        0,                       // unsigned long       timeToLower;
-        0,                       // unsigned long       settleDownTime;
-        0,                       // unsigned long       powerDomainBudget;
-    },
-};
-const unsigned long nPowerStates = sizeof(powerStates)/sizeof(powerStates[0]);
-
-#endif  // defined(DO_REMAINING_PM_STUFF)
+//#if DO_REMAINING_PM_STUFF
+//static IOPMPowerState powerStates [] = {
+//    {
+//        kIOPMPowerStateVersion1, // unsigned long       version;
+//        0,                       // IOPMPowerFlags      capabilityFlags;
+//        0,                       // IOPMPowerFlags      outputPowerCharacter;
+//        0,                       // IOPMPowerFlags      inputPowerRequirement;
+//        0,                       // unsigned long       staticPower;
+//        0,                       // unsigned long       stateOrder;
+//        0,                       // unsigned long       powerToAttain;
+//        0,                       // unsigned long       timeToAttain;
+//        0,                       // unsigned long       settleUpTime;
+//        0,                       // unsigned long       timeToLower;
+//        0,                       // unsigned long       settleDownTime;
+//        0,                       // unsigned long       powerDomainBudget;
+//    },
+//    {
+//        kIOPMPowerStateVersion1, // unsigned long       version;
+//        kIOPMDeviceUsable      , // IOPMPowerFlags      capabilityFlags;
+//        kIOPMPowerOn           , // IOPMPowerFlags      outputPowerCharacter;
+//        kIOPMPowerOn           , // IOPMPowerFlags      inputPowerRequirement;
+//        0,                       // unsigned long       staticPower;
+//        0,                       // unsigned long       stateOrder;
+//        0,                       // unsigned long       powerToAttain;
+//        0,                       // unsigned long       timeToAttain;
+//        0,                       // unsigned long       settleUpTime;
+//        0,                       // unsigned long       timeToLower;
+//        0,                       // unsigned long       settleDownTime;
+//        0,                       // unsigned long       powerDomainBudget;
+//    },
+//};
+//const unsigned long nPowerStates = sizeof(powerStates)/sizeof(powerStates[0]);
+//
+//#endif  // defined(DO_REMAINING_PM_STUFF)
 
 bool DriverClass::start(IOService* provider)
 {
@@ -137,10 +137,10 @@ IOReturn DriverClass::setPowerState(unsigned long powerStateOrdinal,
         return kIOPMParameterError;
     }
   
-    if (powerStateOrdinal >= nPowerStates) {
-        IOLOG_DEBUG_METHOD(" *** illegal powerStateOrdinal %lu, >= %lu", powerStateOrdinal, nPowerStates);
-        return kIOPMParameterError;
-    }
+//    if (powerStateOrdinal >= nPowerStates) {
+//        IOLOG_DEBUG_METHOD(" *** illegal powerStateOrdinal %lu, >= %lu", powerStateOrdinal, nPowerStates);
+//        return kIOPMParameterError;
+//    }
     
     IOLOG_DEBUG_METHOD(" *** before super");
     IOReturn result = super::setPowerState(powerStateOrdinal, whatDevice);
