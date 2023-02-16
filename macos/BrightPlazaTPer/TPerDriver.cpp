@@ -97,11 +97,10 @@ bool DriverClass::start(IOService* provider)
     PMinit();
     IOLOG_DEBUG_METHOD(" - calling joinPMtree(" REVEALFMT ")", REVEAL(this));
     joinPMtree(this);
-#endif  // defined(DO_INITIAL_PM_STUFF)
 
-        IOLOG_DEBUG_METHOD(" - calling registerPowerDriver(" REVEALFMT ", " REVEALFMT ", %lu)",
-                           REVEAL(this), REVEAL(powerStates), nPowerStates);
-        registerPowerDriver(this, powerStates, nPowerStates); //  and @link registerPowerDriver
+    IOLOG_DEBUG_METHOD(" - calling registerPowerDriver(" REVEALFMT ", " REVEALFMT ", %lu)",
+                       REVEAL(this), REVEAL(powerStates), nPowerStates);
+    registerPowerDriver(this, powerStates, nPowerStates); //  and @link registerPowerDriver
 
 #if DO_REMAINING_PM_STUFF
         IOLOG_DEBUG_METHOD(" - calling changePowerStateTo(0)");
@@ -109,6 +108,7 @@ bool DriverClass::start(IOService* provider)
         IOLOG_DEBUG_METHOD(" - calling changePowerStateToPriv(1)");
         (void)changePowerStateToPriv(1);
 #endif  // defined(DO_REMAINING_PM_STUFF)
+#endif  // defined(DO_INITIAL_PM_STUFF)
 
     IOLOG_DEBUG_METHOD(" returning true");
     return true;
