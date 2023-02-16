@@ -129,6 +129,18 @@ void DriverClass::stop(IOService* provider)
 
 
 #if DO_INITIAL_PM_STUFF
+
+unsigned long DriverClass::initialPowerStateForDomainState ( IOPMPowerFlags flags ) {
+    IOLOG_DEBUG_METHOD("(%lu)", flags);
+
+    IOLOG_DEBUG_METHOD(" *** before super");
+    unsigned long result = super::initialPowerStateForDomainState(flags);
+    IOLOG_DEBUG_METHOD(" *** after super, result=%lu", result);
+    
+    return result;
+}
+
+
 IOReturn DriverClass::setPowerState(unsigned long powerStateOrdinal,
                                     IOService *   whatDevice ){
     IOLOG_DEBUG_METHOD("(%lu, " REVEALFMT ")", powerStateOrdinal, REVEAL(whatDevice));
@@ -142,6 +154,12 @@ IOReturn DriverClass::setPowerState(unsigned long powerStateOrdinal,
 //        return kIOPMParameterError;
 //    }
     
+    if (powerStateOrdinal == 0) {
+        IOLOG_DEBUG_METHOD(" can't set power state to 0, bumping up to 1");
+        powerStateOrdinal = 1;
+    }
+
+    
     IOLOG_DEBUG_METHOD(" *** before super");
     IOReturn result = super::setPowerState(powerStateOrdinal, whatDevice);
     IOLOG_DEBUG_METHOD(" *** after super, result=0x%08X", result);
@@ -151,6 +169,19 @@ IOReturn DriverClass::setPowerState(unsigned long powerStateOrdinal,
 #endif  // defined(DO_INITIAL_PM_STUFF)
 
 
+
+void DriverClass::systemWillShutdown(IOOptionBits specifier)
+{
+    IOLOG_DEBUG_METHOD("(%d)", specifier);
+
+//    // Indicate that the driver should not be terminated during sleep
+//    IOLOG_DEBUG_METHOD(" setProperty(\"IOPMDriverAssertionLevel\", kIOPMDriverAssertionLevelOn, 32)");
+//    setProperty("IOPMDriverAssertionLevel", kIOPMDriverAssertionLevelOn, 32);
+
+    IOLOG_DEBUG_METHOD(" *** before super(%d)", specifier);
+    super::systemWillShutdown(specifier);
+    IOLOG_DEBUG_METHOD(" *** after super, exiting");
+}
 
 //void DriverClass::systemWillShutdown(IOOptionBits specifier)
 //{

@@ -29,7 +29,20 @@ public:
     virtual bool start(IOService* provider) APPLE_KEXT_OVERRIDE;
     virtual void stop(IOService* provider) APPLE_KEXT_OVERRIDE;
     virtual IOService* probe(IOService* provider, SInt32* score) APPLE_KEXT_OVERRIDE;
-//    virtual void systemWillShutdown(IOOptionBits specifier);
+    virtual void systemWillShutdown(IOOptionBits specifier);
+    
+    
+    
+    /*!
+    @function initialPowerStateForDomainState
+    @abstract Determines which power state a device is in, given the current power domain state.
+    @discussion Power management calls this method once, when the driver is initializing power management.
+    Subclasses should not need to override this method.
+    @param flags Flags that describe the character of "domain power"; they represent the <code>outputPowerCharacter</code> field of a state in the power domain's power state array.
+    @result A state number.
+    */
+    virtual unsigned long    initialPowerStateForDomainState ( IOPMPowerFlags flags ) APPLE_KEXT_OVERRIDE;
+    
     
     /*!
     @function setPowerState
