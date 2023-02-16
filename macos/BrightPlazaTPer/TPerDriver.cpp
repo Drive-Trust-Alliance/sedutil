@@ -69,12 +69,6 @@ bool DriverClass::start(IOService* provider)
 {
     IOLOG_DEBUG_METHOD("(" REVEALFMT "), provider->getName() = %s", REVEAL(provider), provider->getName());
 
-#if DO_INITIAL_PM_STUFF
-    bool isPowerManagementAlreadyIntialized = IsPowerManagementIntialized();
-    IOLOG_DEBUG_METHOD(" Is this trip really necessary?  IsPowerManagementIntialized returned %s",
-                       isPowerManagementAlreadyIntialized ? "true" : "false");
-#endif  // defined(DO_INITIAL_PM_STUFF)
-
     IOLOG_DEBUG_METHOD(" *** before super");
     bool success = super::start(provider);
     IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
@@ -97,24 +91,23 @@ bool DriverClass::start(IOService* provider)
 //    IOLOG_DEBUG_METHOD(" - calling InitializePowerManagement(0x%06X)", REVEAL(provider));
 //    InitializePowerManagement(provider);
     
-    isPowerManagementAlreadyIntialized = IsPowerManagementIntialized();
-    IOLOG_DEBUG_METHOD(" Are we there yet?  IsPowerManagementIntialized returned %s",
+    bool isPowerManagementAlreadyIntialized = IsPowerManagementIntialized();
+    IOLOG_DEBUG_METHOD(" Is this trip really necessary?  IsPowerManagementIntialized returned %s",
                        isPowerManagementAlreadyIntialized ? "true" : "false");
 
-    IOLOG_DEBUG_METHOD(" - calling PMinit()");
-    PMinit();
-    IOLOG_DEBUG_METHOD(" - calling joinPMtree(" REVEALFMT ")", REVEAL(this));
-    joinPMtree(this);
 
-    IOLOG_DEBUG_METHOD(" - calling registerPowerDriver(" REVEALFMT ", " REVEALFMT ", %lu)",
-                       REVEAL(this), REVEAL(powerStates), nPowerStates);
-    registerPowerDriver(this, powerStates, nPowerStates); //  and @link registerPowerDriver
+//    IOLOG_DEBUG_METHOD(" - calling PMinit()");
+//    PMinit();
+//    IOLOG_DEBUG_METHOD(" - calling joinPMtree(" REVEALFMT ")", REVEAL(this));
+//    joinPMtree(this);
+
+//    IOLOG_DEBUG_METHOD(" - calling registerPowerDriver(" REVEALFMT ", " REVEALFMT ", %lu)",
+//                       REVEAL(this), REVEAL(powerStates), nPowerStates);
+//    registerPowerDriver(this, powerStates, nPowerStates); //  and @link registerPowerDriver
 
 #if DO_REMAINING_PM_STUFF
-        IOLOG_DEBUG_METHOD(" - calling changePowerStateTo(0)");
-        (void)changePowerStateTo(0);
-        IOLOG_DEBUG_METHOD(" - calling changePowerStateToPriv(1)");
-        (void)changePowerStateToPriv(1);
+        IOLOG_DEBUG_METHOD(" - calling changePowerStateTo(1)");
+        (void)changePowerStateTo(1);
 #endif  // defined(DO_REMAINING_PM_STUFF)
 #endif  // defined(DO_INITIAL_PM_STUFF)
 
@@ -125,10 +118,10 @@ bool DriverClass::start(IOService* provider)
 void DriverClass::stop(IOService* provider)
 {
     IOLOG_DEBUG_METHOD("(" REVEALFMT "), provider->getName() = %s", REVEAL(provider), provider->getName());
-#if DO_INITIAL_PM_STUFF
-    IOLOG_DEBUG_METHOD(" - calling PMstop()");
-    PMstop();
-#endif  // defined(DO_INITIAL_PM_STUFF)
+//#if DO_INITIAL_PM_STUFF
+//    IOLOG_DEBUG_METHOD(" - calling PMstop()");
+//    PMstop();
+//#endif  // defined(DO_INITIAL_PM_STUFF)
     IOLOG_DEBUG_METHOD(" *** before super(" REVEALFMT ")", REVEAL(provider));
     super::stop(provider);
     IOLOG_DEBUG_METHOD(" *** after super");
