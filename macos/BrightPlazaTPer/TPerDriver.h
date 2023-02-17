@@ -152,10 +152,10 @@ private:
     OSDictionary * parseInquiryPage89Response( const unsigned char * response, DTA_DEVICE_INFO & di);
 #endif // defined(USE_INQUIRY_PAGE_89h)
 
-#if DEBUG
+#if DRIVER_DEBUG
     bool deviceIsPageXXSCSI(uint8_t evpd, const char * key);
     IOReturn inquiryPageXX_SCSI(uint8_t evpd, IOBufferMemoryDescriptor * md );
-#endif // DEBUG
+#endif // DRIVER_DEBUG
 
     bool identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceIdentification,
                                   DTA_DEVICE_INFO & di);
@@ -202,7 +202,7 @@ protected:
     void TerminateDeviceSupport( void ) APPLE_KEXT_OVERRIDE;
     void StartDeviceSupport( void ) APPLE_KEXT_OVERRIDE;
     void StopDeviceSupport( void ) APPLE_KEXT_OVERRIDE;
-#endif
+#endif  // DRIVER_DEBUG
 
 };
 
