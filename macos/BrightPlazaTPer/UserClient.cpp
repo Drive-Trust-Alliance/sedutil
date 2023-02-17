@@ -44,15 +44,13 @@ const IOExternalMethodDispatch UserClientClass::sMethods[kSedUserClientNumberOfM
 #undef __TPerDriverMethod__
 
 
-#define DEBUG_USERCLIENT 1
-//#undef DEBUG_USERCLIENT
-#if defined(DEBUG_USERCLIENT)
+#if DRIVER_DEBUG
 #define UC_IOLOG_DEBUG IOLOG_DEBUG
 #define UC_IOLOG_DEBUG_METHOD IOLOG_DEBUG_METHOD
 #else // !defined(DEBUG_USERCLIENT)
 #define UC_IOLOG_DEBUG(...) do ; while (0)
 #define UC_IOLOG_DEBUG_METHOD(...) do ; while (0)
-#endif // defined(DEBUG_USERCLIENT)
+#endif // DRIVER_DEBUG
 
 IOReturn UserClientClass::externalMethod(uint32_t selector, IOExternalMethodArguments* arguments,
                                                 IOExternalMethodDispatch* dispatch, OSObject* target, void* reference)

@@ -212,4 +212,6 @@ protected:
 #define REVEAL(p)((uint16_t)(0x0FFFFFF & (intptr_t)(p)))
 #define REVEALFMT "0x%06X"
 #define IOLOG_DEBUG_METHOD(fmt, ...) IOLOG_DEBUG("%s[" REVEALFMT "]::%s" fmt, getName(), REVEAL(this), __FUNCTION__ ,##__VA_ARGS__)
+#else
+#define IOLOG_DEBUG_METHOD(fmt, ...) do ; while(0)
 #endif  // DRIVER_DEBUG
