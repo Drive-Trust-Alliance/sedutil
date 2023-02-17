@@ -179,7 +179,9 @@ private:
                           OSDictionary * identifyCharacteristics,
                           DTA_DEVICE_INFO &di);
 
-
+private:
+    bool allowPowerOff;
+    
 #if DRIVER_DEBUG
     
     // IOService methods
@@ -204,8 +206,10 @@ protected:
 
 };
 
+#if DRIVER_DEBUG
 // Smuggling low pointer bits out of the driver to trace objects and providers in the kernel
 //
 #define REVEAL(p)((uint16_t)(0x0FFFFFF & (intptr_t)(p)))
 #define REVEALFMT "0x%06X"
 #define IOLOG_DEBUG_METHOD(fmt, ...) IOLOG_DEBUG("%s[" REVEALFMT "]::%s" fmt, getName(), REVEAL(this), __FUNCTION__ ,##__VA_ARGS__)
+#endif  // DRIVER_DEBUG

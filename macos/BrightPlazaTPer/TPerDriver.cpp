@@ -26,45 +26,6 @@ OSDefineMetaClassAndStructors(com_brightplaza_BrightPlazaTPer, IOSCSIPeripheralD
 // apple IOService override
 //*****************
 
-#define DO_INITIAL_PM_STUFF 1
-#define DO_REMAINING_PM_STUFF 1
-
-
-//#if DO_REMAINING_PM_STUFF
-//static IOPMPowerState powerStates [] = {
-//    {
-//        kIOPMPowerStateVersion1, // unsigned long       version;
-//        0,                       // IOPMPowerFlags      capabilityFlags;
-//        0,                       // IOPMPowerFlags      outputPowerCharacter;
-//        0,                       // IOPMPowerFlags      inputPowerRequirement;
-//        0,                       // unsigned long       staticPower;
-//        0,                       // unsigned long       stateOrder;
-//        0,                       // unsigned long       powerToAttain;
-//        0,                       // unsigned long       timeToAttain;
-//        0,                       // unsigned long       settleUpTime;
-//        0,                       // unsigned long       timeToLower;
-//        0,                       // unsigned long       settleDownTime;
-//        0,                       // unsigned long       powerDomainBudget;
-//    },
-//    {
-//        kIOPMPowerStateVersion1, // unsigned long       version;
-//        kIOPMDeviceUsable      , // IOPMPowerFlags      capabilityFlags;
-//        kIOPMPowerOn           , // IOPMPowerFlags      outputPowerCharacter;
-//        kIOPMPowerOn           , // IOPMPowerFlags      inputPowerRequirement;
-//        0,                       // unsigned long       staticPower;
-//        0,                       // unsigned long       stateOrder;
-//        0,                       // unsigned long       powerToAttain;
-//        0,                       // unsigned long       timeToAttain;
-//        0,                       // unsigned long       settleUpTime;
-//        0,                       // unsigned long       timeToLower;
-//        0,                       // unsigned long       settleDownTime;
-//        0,                       // unsigned long       powerDomainBudget;
-//    },
-//};
-//const unsigned long nPowerStates = sizeof(powerStates)/sizeof(powerStates[0]);
-//
-//#endif  // defined(DO_REMAINING_PM_STUFF)
-
 bool DriverClass::start(IOService* provider)
 {
     IOLOG_DEBUG_METHOD("(" REVEALFMT "), provider->getName() = %s", REVEAL(provider), provider->getName());
@@ -82,53 +43,42 @@ bool DriverClass::start(IOService* provider)
         return false;
     }
 
-    
     IOLOG_DEBUG_METHOD(" - calling registerService()");
     registerService();
-    
-
-#if DO_INITIAL_PM_STUFF
-//    IOLOG_DEBUG_METHOD(" - calling InitializePowerManagement(0x%06X)", REVEAL(provider));
-//    InitializePowerManagement(provider);
-    
-    bool isPowerManagementAlreadyIntialized = IsPowerManagementIntialized();
-    IOLOG_DEBUG_METHOD(" Is this trip really necessary?  IsPowerManagementIntialized returned %s",
-                       isPowerManagementAlreadyIntialized ? "true" : "false");
-
-
-//    IOLOG_DEBUG_METHOD(" - calling PMinit()");
-//    PMinit();
-//    IOLOG_DEBUG_METHOD(" - calling joinPMtree(" REVEALFMT ")", REVEAL(this));
-//    joinPMtree(this);
-
-//    IOLOG_DEBUG_METHOD(" - calling registerPowerDriver(" REVEALFMT ", " REVEALFMT ", %lu)",
-//                       REVEAL(this), REVEAL(powerStates), nPowerStates);
-//    registerPowerDriver(this, powerStates, nPowerStates); //  and @link registerPowerDriver
-
-#if DO_REMAINING_PM_STUFF
-        IOLOG_DEBUG_METHOD(" - calling changePowerStateTo(1)");
-        (void)changePowerStateTo(1);
-#endif  // defined(DO_REMAINING_PM_STUFF)
-#endif  // defined(DO_INITIAL_PM_STUFF)
+    allowPowerOff = false;
 
     IOLOG_DEBUG_METHOD(" returning true");
     return true;
 }
 
+
+IOReturn DriverClass::setPowerState(unsigned long powerStateOrdinal,
+                                    IOService *   whatDevice ){
+    IOLOG_DEBUG_METHOD("(%lu, " REVEALFMT ")", powerStateOrdinal, REVEAL(whatDevice));
+
+    // Avoid being shut off
+    if (powerStateOrdinal == 0 && !allowPowerOff) {
+        IOLOG_DEBUG_METHOD(" do not set power state to 0; setting to 1 instead");
+        powerStateOrdinal = 1;
+    }
+
+    IOLOG_DEBUG_METHOD(" *** before super");
+    IOReturn result = super::setPowerState(powerStateOrdinal, whatDevice);
+    IOLOG_DEBUG_METHOD(" *** after super, result=0x%08X", result);
+    
+    return result;
+}
+
+#if DRIVER_DEBUG
 void DriverClass::stop(IOService* provider)
 {
     IOLOG_DEBUG_METHOD("(" REVEALFMT "), provider->getName() = %s", REVEAL(provider), provider->getName());
-//#if DO_INITIAL_PM_STUFF
-//    IOLOG_DEBUG_METHOD(" - calling PMstop()");
-//    PMstop();
-//#endif  // defined(DO_INITIAL_PM_STUFF)
+
     IOLOG_DEBUG_METHOD(" *** before super(" REVEALFMT ")", REVEAL(provider));
     super::stop(provider);
     IOLOG_DEBUG_METHOD(" *** after super");
 }
 
-
-#if DO_INITIAL_PM_STUFF
 
 unsigned long DriverClass::initialPowerStateForDomainState ( IOPMPowerFlags flags ) {
     IOLOG_DEBUG_METHOD("(%lu)", flags);
@@ -141,61 +91,19 @@ unsigned long DriverClass::initialPowerStateForDomainState ( IOPMPowerFlags flag
 }
 
 
-IOReturn DriverClass::setPowerState(unsigned long powerStateOrdinal,
-                                    IOService *   whatDevice ){
-    IOLOG_DEBUG_METHOD("(%lu, " REVEALFMT ")", powerStateOrdinal, REVEAL(whatDevice));
-    if (whatDevice != this) {
-        IOLOG_DEBUG_METHOD(" can't set power state on other devices, returning 0");
-        return kIOPMParameterError;
-    }
-  
-//    if (powerStateOrdinal >= nPowerStates) {
-//        IOLOG_DEBUG_METHOD(" *** illegal powerStateOrdinal %lu, >= %lu", powerStateOrdinal, nPowerStates);
-//        return kIOPMParameterError;
-//    }
-    
-    if (powerStateOrdinal == 0) {
-        IOLOG_DEBUG_METHOD(" can't set power state to 0, bumping up to 1");
-        powerStateOrdinal = 1;
-    }
-
-    
-    IOLOG_DEBUG_METHOD(" *** before super");
-    IOReturn result = super::setPowerState(powerStateOrdinal, whatDevice);
-    IOLOG_DEBUG_METHOD(" *** after super, result=0x%08X", result);
-    
-    return result;
-}
-#endif  // defined(DO_INITIAL_PM_STUFF)
-
-
-
 void DriverClass::systemWillShutdown(IOOptionBits specifier)
 {
     IOLOG_DEBUG_METHOD("(%d)", specifier);
 
-//    // Indicate that the driver should not be terminated during sleep
-//    IOLOG_DEBUG_METHOD(" setProperty(\"IOPMDriverAssertionLevel\", kIOPMDriverAssertionLevelOn, 32)");
-//    setProperty("IOPMDriverAssertionLevel", kIOPMDriverAssertionLevelOn, 32);
-
+    allowPowerOff = true;
+    
     IOLOG_DEBUG_METHOD(" *** before super(%d)", specifier);
     super::systemWillShutdown(specifier);
     IOLOG_DEBUG_METHOD(" *** after super, exiting");
 }
 
-//void DriverClass::systemWillShutdown(IOOptionBits specifier)
-//{
-//    IOLOG_DEBUG_METHOD("(%d)", specifier);
-//
-//    // Indicate that the driver should not be terminated during sleep
-//    IOLOG_DEBUG_METHOD(" setProperty(\"IOPMDriverAssertionLevel\", kIOPMDriverAssertionLevelOn, 32)");
-//    setProperty("IOPMDriverAssertionLevel", kIOPMDriverAssertionLevelOn, 32);
-//
-//    IOLOG_DEBUG_METHOD(" calling IOService::systemWillShutdown(%d8x)", specifier);
-//    IOService::systemWillShutdown(specifier);
-//
-//    IOLOG_DEBUG_METHOD(" exiting");
-//}
+#endif // DRIVER_DEBUG
+
 
 // Fill in di as much as possible using methods of this
 // class and its superclasses
@@ -379,12 +287,12 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
         return ret;
     }
 
-#if DEBUG
+#if DRIVER_DEBUG
     if (direction == kSCSIDataTransfer_FromInitiatorToTarget) {
         PSC_IOLOG_DEBUG_METHOD(" output buffer is");
         PSC_IOLOGBUFFER_DEBUG(NULL, md->getBytesNoCopy(), transferSize);
     }
-#endif //DEBUG
+#endif //DRIVER_DEBUG
 
     // Call IOSCSIPrimaryCommandsDevice::SendCommand
     SCSIServiceResponse serviceResponse = SendCommand(request, SED_TIMEOUT);
@@ -400,12 +308,12 @@ IOReturn DriverClass::PerformSCSICommand(SCSICommandDescriptorBlock cdb,
         return ret;
     }
 
-#if DEBUG
+#if DRIVER_DEBUG
     if (direction == kSCSIDataTransfer_FromTargetToInitiator) {
         PSC_IOLOG_DEBUG_METHOD(" input buffer is");
         PSC_IOLOGBUFFER_DEBUG(NULL, md->getBytesNoCopy(), transferSize);
     }
-#endif //DEBUG
+#endif //DRIVER_DEBUG
 
     if (pTransferSize != NULL)
         *pTransferSize = transferSize;
@@ -495,7 +403,7 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceId
             return false;   // Claims to support it on page 00h, but does not
         }
     }
-#if DEBUG
+#if DRIVER_DEBUG
     else {
         IOLOG_DEBUG_METHOD(" Device does not claim to support Page 89 -- trying it anyway");
         if (deviceIsPage89SCSI(di)) {
@@ -505,7 +413,7 @@ bool DriverClass::identifyUsingSCSIInquiry(InterfaceDeviceID & interfaceDeviceId
 #endif
 #endif // defined(USE_INQUIRY_PAGE_89h)
 
-#if DEBUG
+#if DRIVER_DEBUG
     deviceIsPageXXSCSI(kINQUIRY_PageB0_PageCode, IOInquiryPageB0ResponseKey);
     deviceIsPageXXSCSI(kINQUIRY_PageB1_PageCode, IOInquiryPageB1ResponseKey);
     deviceIsPageXXSCSI(kINQUIRY_PageB2_PageCode, IOInquiryPageB2ResponseKey);
@@ -585,17 +493,17 @@ bool DriverClass::deviceIsSAT(const InterfaceDeviceID & interfaceDeviceIdentific
             }
         }
         
-#if DEBUG
+#if DRIVER_DEBUG
         setProperty(IOIdentifyDeviceResponseKey, identifyDeviceResponse, IDENTIFY_RESPONSE_SIZE);
-#endif // DEBUG
+#endif // DRIVER_DEBUG
 
         *pIdentifyCharacteristics =
             parseIdentifyDeviceResponse(interfaceDeviceIdentification,
                                         ((UInt8 *)identifyDeviceResponse),
                                         di);
-#if DEBUG
+#if DRIVER_DEBUG
         setProperty(IOIdentifyDeviceCharacteristicsKey, *pIdentifyCharacteristics);
-#endif // DEBUG
+#endif // DRIVER_DEBUG
     }
     md->release ( );
 
@@ -680,16 +588,16 @@ bool DriverClass::deviceIsStandardSCSI(InterfaceDeviceID & interfaceDeviceIdenti
         bzero ( inquiryResponse, md->getLength ( ) );
         isStandardSCSI = ( kIOReturnSuccess == inquiryStandardDataAll_SCSI( md ) );
         if (isStandardSCSI) {
-#if DEBUG
+#if DRIVER_DEBUG
             setProperty(IOInquiryDeviceResponseKey, inquiryResponse, static_cast<unsigned int>(transferSize));
-#endif // DEBUG
+#endif // DRIVER_DEBUG
             OSDictionary * characteristics =
                 parseInquiryStandardDataAllResponse(static_cast <const unsigned char * >(inquiryResponse),
                                                     interfaceDeviceIdentification,
                                                     di);
-#if DEBUG
+#if DRIVER_DEBUG
             setProperty(IOInquiryCharacteristicsKey, characteristics);
-#endif // DEBUG
+#endif // DRIVER_DEBUG
             characteristics -> release () ;
             characteristics = NULL ;
         }
@@ -820,9 +728,9 @@ bool DriverClass::deviceIsPage00SCSI(bool & deviceSupportsPage80,
         UInt16 dataSize = static_cast<UInt16>(transferSize);
         isPage00SCSI = ( kIOReturnSuccess == inquiryPage00_SCSI( md, dataSize ) );
         if (isPage00SCSI) {
-#if DEBUG
+#if DRIVER_DEBUG
             setProperty(IOInquiryPage00ResponseKey, inquiryResponse, dataSize);
-#endif // DEBUG
+#endif // DRIVER_DEBUG
             OSDictionary * characteristics =
                 parseInquiryPage00Response(static_cast <const unsigned char * >(inquiryResponse),
                                            deviceSupportsPage00,
@@ -838,9 +746,9 @@ bool DriverClass::deviceIsPage00SCSI(bool & deviceSupportsPage80,
                 }
                 isPage00SCSI = false;
             }
-#if DEBUG
+#if DRIVER_DEBUG
             setProperty(IOInquiryPage00CharacteristicsKey, characteristics);
-#endif // DEBUG
+#endif // DRIVER_DEBUG
             characteristics -> release () ;
             characteristics = NULL ;
         }
@@ -931,16 +839,16 @@ bool DriverClass::deviceIsPage80SCSI(const InterfaceDeviceID & interfaceDeviceId
         bzero ( inquiryResponse, md->getLength ( ) );
         isPage80SCSI = ( kIOReturnSuccess == inquiryPage80_SCSI( md ) );
         if (isPage80SCSI) {
-#if DEBUG
+#if DRIVER_DEBUG
             setProperty(IOInquiryPage80ResponseKey, inquiryResponse, (unsigned int)transferSize);
-#endif // DEBUG
+#endif // DRIVER_DEBUG
             OSDictionary * characteristics =
                 parseInquiryPage80Response(interfaceDeviceIdentification,
                                            static_cast <const unsigned char * >(inquiryResponse),
                                            di);
-#if DEBUG
+#if DRIVER_DEBUG
             setProperty(IOInquiryPage80CharacteristicsKey, characteristics);
-#endif // DEBUG
+#endif // DRIVER_DEBUG
             characteristics -> release () ;
             characteristics = NULL ;
         }
@@ -960,10 +868,10 @@ IOReturn DriverClass::inquiryPage80_SCSI( IOBufferMemoryDescriptor * md)
 }
 
 
-static void strrev(char *serialNumber) {
-    size_t n = strlen(const_cast<const char *>(serialNumber));
+static void strrev(char *cString) {
+    size_t n = strlen(const_cast<const char *>(cString)); // depend on NUL-termination
     if ( 1 < n ) {
-        char temp  ,  * p = serialNumber  ,  * q = p + n - 1 ;
+        char temp, * p = cString , * q = p + n - 1 ;
         do {
             // Alternatively, *q ^= *p ; *p ^= *q ; *q ^= *p;
             temp = *p;
@@ -1029,15 +937,14 @@ bool DriverClass::deviceIsPage83SCSI(DTA_DEVICE_INFO &di)
         UInt16 dataSize = static_cast<UInt16>(transferSize);
         isPage83SCSI = ( kIOReturnSuccess == inquiryPage83_SCSI( md, dataSize ) );
         if (isPage83SCSI) {
-#if DEBUG
-//            setProperty(IOInquiryPage83ResponseKey, inquiryResponse, dataSize);
+#if DRIVER_DEBUG
             setProperty(IOInquiryPage83ResponseKey, inquiryResponse, static_cast<UInt16>(transferSize));
-#endif // DEBUG
+#endif // DRIVER_DEBUG
             OSDictionary * characteristics =
                 parseInquiryPage83Response(static_cast <const unsigned char * >(inquiryResponse), dataSize, di);
-#if DEBUG
+#if DRIVER_DEBUG
             setProperty(IOInquiryPage83CharacteristicsKey, characteristics);
-#endif // DEBUG
+#endif // DRIVER_DEBUG
             characteristics -> release () ;
             characteristics = NULL ;
         }
@@ -1102,9 +1009,7 @@ OSDictionary * DriverClass::parseInquiryPage83Response( const unsigned char * re
                 break;
             case desc_type(kINQUIRY_Page83_CodeSetASCIIData, kINQUIRY_Page83_IdentifierTypeVendorID):
             {
-                OSString * VendorID = OSString::withCString(reinterpret_cast<const char *>(&desc.IDENTIFIER)
-//                                                            , identifier_length
-                                                            );
+                OSString * VendorID = OSString::withCString(reinterpret_cast<const char *>(&desc.IDENTIFIER));
                 result->setObject(IOVendorIDKey, VendorID);
                 VendorID -> release();
                 // We already get Vendor ID and Serial Number using superclass methods
@@ -1145,15 +1050,14 @@ bool DriverClass::deviceIsPage89SCSI(DTA_DEVICE_INFO &di)
         bzero ( inquiryResponse, md->getLength ( ) );
         isPage89SCSI = ( kIOReturnSuccess == inquiryPage89_SCSI( md ) );
         if (isPage89SCSI) {
-#if DEBUG
-//#error DEBUG is defined
+#if DRIVER_DEBUG
             setProperty(IOInquiryPage89ResponseKey, inquiryResponse, (unsigned int)transferSize);
-#endif // DEBUG
+#endif // DRIVER_DEBUG
             OSDictionary * characteristics =
                 parseInquiryPage89Response(static_cast <const unsigned char * >(inquiryResponse), di);
-#if DEBUG
+#if DRIVER_DEBUG
             setProperty(IOInquiryPage89CharacteristicsKey, characteristics);
-#endif // DEBUG
+#endif // DRIVER_DEBUG
             characteristics -> release () ;
             characteristics = NULL ;
         }
@@ -1221,7 +1125,7 @@ OSDictionary * DriverClass::parseInquiryPage89Response( const unsigned char * re
 }
 #endif // defined(USE_INQUIRY_PAGE_89h)
 
-#if DEBUG
+#if DRIVER_DEBUG
 bool DriverClass::deviceIsPageXXSCSI(uint8_t evpd, const char * key)
 {
     // Test whether device is a SCSI drive by attempting
@@ -1251,7 +1155,7 @@ IOReturn DriverClass::inquiryPageXX_SCSI(uint8_t evpd, IOBufferMemoryDescriptor 
     UInt16 dataSize = static_cast<UInt16>(md->getLength());
     return __inquiry__EVPD(evpd, md, dataSize);
 }
-#endif // DEBUG
+#endif // DRIVER_DEBUG
 
 
 #pragma mark -
@@ -1574,13 +1478,13 @@ IOReturn DriverClass::updatePropertiesInIORegistryWithDiscovery0CDB(SCSICommandD
 
     updateIORegistryFromD0Response(d0Response, di);
 
-#if DEBUG && defined(DEBUG_PARSEDISCOVERY0FEATURES)
+#if DRIVER_DEBUG && defined(DEBUG_PARSEDISCOVERY0FEATURES)
     OSData * d0Buffer = OSData::withBytes(d0Response, DISCOVERY0_RESPONSE_SIZE);
     if ( getProperty(IODiscovery0ResponseKey) )
         removeProperty(IODiscovery0ResponseKey);
     setProperty(IODiscovery0ResponseKey, d0Buffer);
     d0Buffer -> release( );
-#endif // DEBUG && defined(DEBUG_PARSEDISCOVERY0FEATURES)
+#endif // DRIVER_DEBUG && defined(DEBUG_PARSEDISCOVERY0FEATURES)
 
     md->release ( );
 
@@ -1844,13 +1748,6 @@ IOReturn DriverClass::completeSCSICommand(IOBufferMemoryDescriptor * md,
 
 IOService* DriverClass::probe(IOService* provider, SInt32* score)
 {
-    // tried using getName(), this, __FUNCTION__ in snprint
-    // and kernel panics.
-    // it does work directly, however, in IOLOG
-    // does IOLOG do some testing and still perform (a different sort?) getName() on the
-    // driver, even though it is not yet published???
-    // (just hand-waving)
-    //
     // cannot determine applicability of our driver to this device
     // in the probe function because device support is not initialized
 
@@ -1915,6 +1812,7 @@ void DriverClass::detach(IOService* provider)
     IOLOG_DEBUG_METHOD(" busyState=%u", busyState);
     busyState = provider->getBusyState();
     IOLOG_DEBUG_METHOD(" provider->busyState=%u", busyState);
+    
     IOLOG_DEBUG_METHOD(" *** before super");
     super::detach(provider);
     IOLOG_DEBUG_METHOD(" *** after super");
