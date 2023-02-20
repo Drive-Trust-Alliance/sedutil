@@ -21,6 +21,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _DTAOPTIONS_H
 #define	_DTAOPTIONS_H
 
+#include <stdint.h>
+
 /** Output modes */
 typedef enum _sedutiloutput {
 	sedutilNormal,
