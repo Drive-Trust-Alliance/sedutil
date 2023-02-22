@@ -276,20 +276,25 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
 	} else {
 		DtaHashPassword(hash, password, salt, iter);
 	}
-//#if false
-#if true
-    //printf("password : %s\n",password); // non-printable char cause screen error
-    printf("password : \n"); // non-printable char cause screen error
-    for (size_t i = 0; i < strlen(password); i++)
-        printf("%02X", password[i]);
-    printf("\n");
-	for (size_t i = 0; i < salt.size(); i++) printf("%02X", salt[i]);
-	printf("\n");
-	printf("salt as string =%s\n", salt.data());
-    printf("Hashed password size = %lu ; hashed password =",hash.size());
-	for (size_t i = 0; i < hash.size(); i++)
-		printf("%02X", hash[i]);
-	printf("\n");
+
+#if DEBUG
+    // non-printable char cause screen error
+//    IFLOG(D4) printf("password as string =%s", password);
+//    IFLOG(D4) printf("\n");
+    IFLOG(D4) printf("password:\n");
+    for (size_t i = 0; i < strlen(password); i++) IFLOG(D4) printf("%02X", password[i]);
+    IFLOG(D4) printf("\n");
+    IFLOG(D4) printf("salt:\n");
+	for (size_t i = 0; i < salt.size(); i++) IFLOG(D4) printf("%02X", salt[i]);
+	IFLOG(D4) printf("\n");
+	IFLOG(D4) printf("salt as string =%s", salt.data());
+    IFLOG(D4) printf("\n");
+    
+    IFLOG(D4) printf("Hashed password size = %lu",hash.size());
+    IFLOG(D4) printf("\n");
+    IFLOG(D4) printf("hashed password:\n");
+	for (size_t i = 0; i < hash.size(); i++) IFLOG(D4) printf("%02X", hash[i]);
+	IFLOG(D4) printf("\n");
 #endif	
 }
 
