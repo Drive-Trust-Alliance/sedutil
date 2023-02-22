@@ -278,22 +278,22 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
 	}
 
     // non-printable char cause screen error
-//    IFLOG(D4) printf("password as string =%s", password);
-//    IFLOG(D4) printf("\n");
-    IFLOG(D4) printf("password:\n");
-    for (size_t i = 0; i < strlen(password); i++) IFLOG(D4) printf("%02X", password[i]);
-    IFLOG(D4) printf("\n");
-    IFLOG(D4) printf("salt:\n");
-	for (size_t i = 0; i < salt.size(); i++) IFLOG(D4) printf("%02X", salt[i]);
-	IFLOG(D4) printf("\n");
-	IFLOG(D4) printf("salt as string =%s", salt.data());
-    IFLOG(D4) printf("\n");
+//    IFLOG(D4) fprintf(Output2FILE::Stream(), "password as string =%s", password);
+//    IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "password:\n");
+    for (size_t i = 0; i < strlen(password); i++) IFLOG(D4) fprintf(Output2FILE::Stream(), "%02X", password[i]);
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "salt:\n");
+	for (size_t i = 0; i < salt.size(); i++) IFLOG(D4) fprintf(Output2FILE::Stream(), "%02X", salt[i]);
+	IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+	IFLOG(D4) fprintf(Output2FILE::Stream(), "salt as string =%s", salt.data());
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
     
-    IFLOG(D4) printf("Hashed password size = %lu",hash.size());
-    IFLOG(D4) printf("\n");
-    IFLOG(D4) printf("hashed password:\n");
-	for (size_t i = 0; i < hash.size(); i++) IFLOG(D4) printf("%02X", hash[i]);
-	IFLOG(D4) printf("\n");
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "Hashed password size = %lu",hash.size());
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "hashed password:\n");
+	for (size_t i = 0; i < hash.size(); i++) IFLOG(D4) fprintf(Output2FILE::Stream(), "%02X", hash[i]);
+	IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
 
 }
 
