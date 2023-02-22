@@ -277,7 +277,6 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
 		DtaHashPassword(hash, password, salt, iter);
 	}
 
-#if DEBUG
     // non-printable char cause screen error
 //    IFLOG(D4) printf("password as string =%s", password);
 //    IFLOG(D4) printf("\n");
@@ -295,7 +294,7 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
     IFLOG(D4) printf("hashed password:\n");
 	for (size_t i = 0; i < hash.size(); i++) IFLOG(D4) printf("%02X", hash[i]);
 	IFLOG(D4) printf("\n");
-#endif	
+
 }
 
 
