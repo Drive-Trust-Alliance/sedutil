@@ -1,0 +1,42 @@
+Generic parts:
+CA:
+Bright Plaza CA.pem  (cert)
+Bright Plaza CA.key  (private key for issuance)
+Bright Plaza CA.p12  (above two combined in a pkcs12 file)
+Bright Plaza CA password.txt (unwrapping password for the above)
+SED Server:
+Bright Plaza SED Server.crt (SSL cert)
+Bright Plaza SED Server.key (private key for daemon use only)
+Bright Plaza SED Server.p12 (above two combined as a pkcs12 file)
+Bright Plaza SED Server password.txt (unwrapping password for the above)
+
+macOS parts:
+Bright Plaza SED Server.keychain (to hold the Bright Plaza SED Server identity)
+Bright Plaza SED Server Keychain password (to unlock the keychain, installed in the System keychain as a generic password item)
+
+
+
+One time, create Bright Plaza CA cert and key.  CA Cert will be distributed and installed in system roots on each device, key kept at Bright Plaza office for use there.
+
+When each SED ToolBox is made, use CA cert and key to create SED Server and key and combine the two as a pcks12 .p12 file to be installed on macos as the SED Server "identity".  Also create SED Server keychain and SED Server keychain password generic password item  The CA cert, the server cert, and the server cert private key are bundled in certs.pkg and included in the distribution.  Per-device license cert will be issued at the same time and also included in certs.pkg.
+
+When each SED ToolBox is installed, the certs.pkg files are unpacked.
+The system keychain is checked for a CA cert; if present, it must be identical; if absent, the new one is installed.  On macOS, it needs to be installed with X.509 Basic Policy ("basic") trust for all users.
+
+The SED keychain generic password item is looked for in the System keychain, as well as the SED keychain in the System keychain dir.
+If they are both present, and the password can unlock the keychain, they will be used.  Otherwise, if either is present, an error is generated, and if the error is ignored or neither is present, the new keychain password item is created and stored in the system keychain, and the new SED keychain is created.  In either case an unlocked SED Server keychain is now present.
+The keychain password item should have ACLs that allow access without prompting by
+SECURITY_PATH="/usr/bin/security"
+DAEMON_PATH="/usr/local/libexec/sedd"
+SEDDAEMONTEST_PATH="/Applications/Utilities/SEDDaemonTest.app"
+SEDPREFERENCESTEST_PATH="/Applications/Utilities/SEDPreferencesTest.app"
+SEDACCESS_PATH="/usr/local/libexec/SEDAccess.app"
+SYSTEM_PREFERENCES_PATH="/System/Applications/System Preferences.app"
+
+
+The SED Server identity (cert+key) is copied in to the unlocked SED Server keychain.
+The SED Server cert should be valid without further trust.  The SED Server key should have ACLs that allow access without prompting by the daemon.
+
+When debugging, in both places where ACLs allow daemon access, access without prompting should also be allowed by
+TLSTOOL_PATH="/Users/scott/Library/Developer/Xcode/DerivedData/DTA-emaykawkwetfggaxqqnpsfomwgcp/Build/Products/Debug/TLSTool"
+whatever the path to TLSTool is.

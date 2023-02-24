@@ -6,7 +6,34 @@
 	objectVersion = 55;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		D20A95F629A6E9E600B2FCF2 /* SED ToolBox */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = D20A960129A6E9F100B2FCF2 /* Build configuration list for PBXAggregateTarget "SED ToolBox" */;
+			buildPhases = (
+				D20A960629A6EA8B00B2FCF2 /* CopyFiles */,
+				D20A960929A6ED7600B2FCF2 /* CopyFiles */,
+				D20A961829A7065700B2FCF2 /* CopyFiles */,
+				D20A960A29A6EDA000B2FCF2 /* ShellScript */,
+			);
+			dependencies = (
+				D20A960529A6EA2300B2FCF2 /* PBXTargetDependency */,
+				D20A960329A6EA1F00B2FCF2 /* PBXTargetDependency */,
+			);
+			name = "SED ToolBox";
+			productName = "SED ToolBox";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
+		D20A960C29A6EF5500B2FCF2 /* cifra.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D26F2F0F296A8180007905F7 /* cifra.framework */; };
+		D20A960D29A6EF5700B2FCF2 /* log.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D26F2F11296A8180007905F7 /* log.framework */; };
+		D20A960E29A6EF5A00B2FCF2 /* oui.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D26F2F13296A8180007905F7 /* oui.framework */; };
+		D20A960F29A6EF6000B2FCF2 /* sedutil.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D26F2F15296A8180007905F7 /* sedutil.framework */; };
+		D20A961629A6EFC900B2FCF2 /* SEDKernelInterface.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D20A961329A6EF8E00B2FCF2 /* SEDKernelInterface.framework */; };
+		D20A961729A6EFD200B2FCF2 /* BrightPlazaTPer.kext in CopyFiles */ = {isa = PBXBuildFile; fileRef = D20A960729A6EC3800B2FCF2 /* BrightPlazaTPer.kext */; };
+		D20A961929A706C800B2FCF2 /* sedutil-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28CFD6028E2C1AF00A33B00 /* sedutil-cli */; };
+		D20A961A29A706CE00B2FCF2 /* reenumerate in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28CFD6128E2C1AF00A33B00 /* reenumerate */; };
 		D26904CE28D7A17B0095769E /* reenumerate.c in Sources */ = {isa = PBXBuildFile; fileRef = D26904CD28D7A17B0095769E /* reenumerate.c */; };
 		D26F2F10296A8180007905F7 /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26F2F0F296A8180007905F7 /* cifra.framework */; };
 		D26F2F12296A8180007905F7 /* log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26F2F11296A8180007905F7 /* log.framework */; };
@@ -15,7 +42,59 @@
 		D287224328B835CB0023404B /* sedutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D287224228B835CB0023404B /* sedutil.cpp */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		D20A960229A6EA1F00B2FCF2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D26B3B511F6FB6BC004571A8;
+			remoteInfo = "sedutil-cli";
+		};
+		D20A960429A6EA2300B2FCF2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D26904BD28D7A1530095769E;
+			remoteInfo = reenumerate;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
+		D20A960629A6EA8B00B2FCF2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = bundles/Library/Extensions;
+			dstSubfolderSpec = 16;
+			files = (
+				D20A961729A6EFD200B2FCF2 /* BrightPlazaTPer.kext in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D20A960929A6ED7600B2FCF2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = bundles/Library/Frameworks;
+			dstSubfolderSpec = 16;
+			files = (
+				D20A960E29A6EF5A00B2FCF2 /* oui.framework in CopyFiles */,
+				D20A960C29A6EF5500B2FCF2 /* cifra.framework in CopyFiles */,
+				D20A960D29A6EF5700B2FCF2 /* log.framework in CopyFiles */,
+				D20A960F29A6EF6000B2FCF2 /* sedutil.framework in CopyFiles */,
+				D20A961629A6EFC900B2FCF2 /* SEDKernelInterface.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D20A961829A7065700B2FCF2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = files/opt/local/bin;
+			dstSubfolderSpec = 16;
+			files = (
+				D20A961A29A706CE00B2FCF2 /* reenumerate in CopyFiles */,
+				D20A961929A706C800B2FCF2 /* sedutil-cli in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D2336D7C28E2845900F199EA /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -37,6 +116,245 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D20A960729A6EC3800B2FCF2 /* BrightPlazaTPer.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; path = BrightPlazaTPer.kext; sourceTree = BUILT_PRODUCTS_DIR; };
+		D20A961329A6EF8E00B2FCF2 /* SEDKernelInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SEDKernelInterface.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D20A962029A8025600B2FCF2 /* image00.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image00.png; sourceTree = "<group>"; };
+		D20A962129A8025600B2FCF2 /* Installer_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Installer_background.png; sourceTree = "<group>"; };
+		D20A962229A8025600B2FCF2 /* UninstallIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = UninstallIcon.icns; sourceTree = "<group>"; };
+		D20A962329A8025600B2FCF2 /* DTA_with_iSED_folder_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DTA_with_iSED_folder_background.png; sourceTree = "<group>"; };
+		D20A962429A8025600B2FCF2 /* DTA_folder_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DTA_folder_background.png; sourceTree = "<group>"; };
+		D20A962529A8025600B2FCF2 /* fileicon */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fileicon; sourceTree = "<group>"; };
+		D20A962629A8025600B2FCF2 /* EULA_SED_Applications_v1.0.2forMacInstaller.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = EULA_SED_Applications_v1.0.2forMacInstaller.html; sourceTree = "<group>"; };
+		D20A962729A8025600B2FCF2 /* Uninstall */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall; sourceTree = "<group>"; };
+		D20A962929A8025600B2FCF2 /* Uninstall_driver.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_driver.sh; sourceTree = "<group>"; };
+		D20A962A29A8025600B2FCF2 /* Uninstall_daemon.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_daemon.sh; sourceTree = "<group>"; };
+		D20A962B29A8025600B2FCF2 /* Uninstall_preference_pane.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_preference_pane.sh; sourceTree = "<group>"; };
+		D20A962C29A8025600B2FCF2 /* Uninstall_SEDPreferences.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_SEDPreferences.sh; sourceTree = "<group>"; };
+		D20A962D29A8025600B2FCF2 /* Uninstall_SEDAccess.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_SEDAccess.sh; sourceTree = "<group>"; };
+		D20A962E29A8025600B2FCF2 /* Uninstall_SEDDaemonTest.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_SEDDaemonTest.sh; sourceTree = "<group>"; };
+		D20A962F29A8025600B2FCF2 /* unload_driver.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = unload_driver.sh; sourceTree = "<group>"; };
+		D20A963029A8025600B2FCF2 /* Utility_functions.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Utility_functions.sh; sourceTree = "<group>"; };
+		D20A963129A8025600B2FCF2 /* UNINSTALL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = UNINSTALL; sourceTree = "<group>"; };
+		D20A963229A8025600B2FCF2 /* Unload_daemon.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Unload_daemon.sh; sourceTree = "<group>"; };
+		D20A963329A8025600B2FCF2 /* Uninstall_packages.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_packages.sh; sourceTree = "<group>"; };
+		D20A963429A8025600B2FCF2 /* Uninstall_frameworks.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_frameworks.sh; sourceTree = "<group>"; };
+		D20A963529A8025600B2FCF2 /* Uninstall_libraries.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_libraries.sh; sourceTree = "<group>"; };
+		D20A963629A8025600B2FCF2 /* Install_daemon.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Install_daemon.sh; sourceTree = "<group>"; };
+		D20A963729A8025600B2FCF2 /* Install_driver.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Install_driver.sh; sourceTree = "<group>"; };
+		D20A963829A8025600B2FCF2 /* Install_SEDAccess.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Install_SEDAccess.sh; sourceTree = "<group>"; };
+		D20A963B29A8025600B2FCF2 /* DTA_Self-Encrypting_Box_Eval_Kit_Install_Guide_Mac_v1.2.0RC1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "DTA_Self-Encrypting_Box_Eval_Kit_Install_Guide_Mac_v1.2.0RC1.pdf"; sourceTree = "<group>"; };
+		D20A963C29A8025600B2FCF2 /* vcredist_x64.exe */ = {isa = PBXFileReference; lastKnownFileType = file; path = vcredist_x64.exe; sourceTree = "<group>"; };
+		D20A963E29A8025600B2FCF2 /* DTA USB Drive Quick Start Guide for Developer Kit.docx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DTA USB Drive Quick Start Guide for Developer Kit.docx"; sourceTree = "<group>"; };
+		D20A963F29A8025600B2FCF2 /* sedprotect.exe */ = {isa = PBXFileReference; lastKnownFileType = file; path = sedprotect.exe; sourceTree = "<group>"; };
+		D20A964029A8025600B2FCF2 /* Self-Encrypting_Box_Eval_Kit_Installation_Win_v1.2.0RC1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Self-Encrypting_Box_Eval_Kit_Installation_Win_v1.2.0RC1.pdf"; sourceTree = "<group>"; };
+		D20A964129A8025600B2FCF2 /* DTA.msi */ = {isa = PBXFileReference; lastKnownFileType = file; path = DTA.msi; sourceTree = "<group>"; };
+		D20A964329A8025600B2FCF2 /* postinstall */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
+		D20A964429A8025600B2FCF2 /* preinstall */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = preinstall; sourceTree = "<group>"; };
+		D20A964629A8025600B2FCF2 /* postinstall */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
+		D20A964729A8025600B2FCF2 /* preinstall */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = preinstall; sourceTree = "<group>"; };
+		D20A964B29A8025600B2FCF2 /* image00.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image00.png; sourceTree = "<group>"; };
+		D20A964C29A8025600B2FCF2 /* EULA_SED_Applications_v1.0.2forMacInstaller.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = EULA_SED_Applications_v1.0.2forMacInstaller.html; sourceTree = "<group>"; };
+		D20A964E29A8025600B2FCF2 /* image00.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image00.png; sourceTree = "<group>"; };
+		D20A964F29A8025600B2FCF2 /* DTA.VolumeIcon.icns.rsrc */ = {isa = PBXFileReference; lastKnownFileType = archive.rsrc; path = DTA.VolumeIcon.icns.rsrc; sourceTree = "<group>"; };
+		D20A965029A8025600B2FCF2 /* SED ToolBox Background.xcf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SED ToolBox Background.xcf"; sourceTree = "<group>"; };
+		D20A965129A8025600B2FCF2 /* DTA.VolumeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = DTA.VolumeIcon.icns; sourceTree = "<group>"; };
+		D20A965229A8025600B2FCF2 /* Installer_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Installer_background.png; sourceTree = "<group>"; };
+		D20A965329A8025600B2FCF2 /* Self-Encrypting-Box.VolumeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "Self-Encrypting-Box.VolumeIcon.icns"; sourceTree = "<group>"; };
+		D20A965429A8025600B2FCF2 /* SED ToolBox Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SED ToolBox Background.png"; sourceTree = "<group>"; };
+		D20A965529A8025600B2FCF2 /* Self-Encrypting-Box.VolumeIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Self-Encrypting-Box.VolumeIcon.png"; sourceTree = "<group>"; };
+		D20A965629A8025600B2FCF2 /* SED ToolBox Label.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SED ToolBox Label.png"; sourceTree = "<group>"; };
+		D20A965729A8025600B2FCF2 /* UninstallIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = UninstallIcon.icns; sourceTree = "<group>"; };
+		D20A965829A8025600B2FCF2 /* DTA_with_iSED_folder_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DTA_with_iSED_folder_background.png; sourceTree = "<group>"; };
+		D20A965929A8025600B2FCF2 /* DTA.VolumeIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DTA.VolumeIcon.png; sourceTree = "<group>"; };
+		D20A965A29A8025600B2FCF2 /* DTA_folder_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DTA_folder_background.png; sourceTree = "<group>"; };
+		D20A965B29A8025600B2FCF2 /* Uninstall */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall; sourceTree = "<group>"; };
+		D20A965C29A8025600B2FCF2 /* tweak_DTA_folder.scpt */ = {isa = PBXFileReference; lastKnownFileType = file; path = tweak_DTA_folder.scpt; sourceTree = "<group>"; };
+		D20A965D29A8025600B2FCF2 /* fileicon */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fileicon; sourceTree = "<group>"; };
+		D20A965E29A8025600B2FCF2 /* tweak_DTA_folder saved.scpt */ = {isa = PBXFileReference; lastKnownFileType = file; path = "tweak_DTA_folder saved.scpt"; sourceTree = "<group>"; };
+		D20A965F29A8025600B2FCF2 /* EULA_SED_Applications_v1.0.2forMacInstaller.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = EULA_SED_Applications_v1.0.2forMacInstaller.html; sourceTree = "<group>"; };
+		D20A966029A8025600B2FCF2 /* try_create_dmg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = try_create_dmg; sourceTree = "<group>"; };
+		D20A966229A8025600B2FCF2 /* Bright Plaza CA.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza CA.pem"; sourceTree = "<group>"; };
+		D20A966329A8025600B2FCF2 /* Bright Plaza SED Server.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bright Plaza SED Server.p12"; sourceTree = "<group>"; };
+		D20A966529A8025600B2FCF2 /* make_Bright_Plaza_CA_identity */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_Bright_Plaza_CA_identity; sourceTree = "<group>"; };
+		D20A966629A8025600B2FCF2 /* test_creating_SED_Server */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test_creating_SED_Server; sourceTree = "<group>"; };
+		D20A966729A8025600B2FCF2 /* remove_trusted_CA_identity_from_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_trusted_CA_identity_from_system_keychain; sourceTree = "<group>"; };
+		D20A966829A8025600B2FCF2 /* Bright Plaza CA.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bright Plaza CA.p12"; sourceTree = "<group>"; };
+		D20A966929A8025600B2FCF2 /* test_removing_CA */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test_removing_CA; sourceTree = "<group>"; };
+		D20A966A29A8025600B2FCF2 /* extract_CA_cer_from_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = extract_CA_cer_from_system_keychain; sourceTree = "<group>"; };
+		D20A966B29A8025600B2FCF2 /* Bright Plaza SED Server.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza SED Server.pem"; sourceTree = "<group>"; };
+		D20A966C29A8025600B2FCF2 /* postinstall */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = postinstall; sourceTree = "<group>"; };
+		D20A966D29A8025600B2FCF2 /* local_network_customizations.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = local_network_customizations.sh; sourceTree = "<group>"; };
+		D20A966E29A8025600B2FCF2 /* test_creating_CA */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test_creating_CA; sourceTree = "<group>"; };
+		D20A966F29A8025600B2FCF2 /* local_network_customizations_for_Magnolia_Heights.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = local_network_customizations_for_Magnolia_Heights.sh; sourceTree = "<group>"; };
+		D20A967029A8025600B2FCF2 /* add_trusted_Bright_Plaza_CA_identity_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_trusted_Bright_Plaza_CA_identity_to_system_keychain; sourceTree = "<group>"; };
+		D20A967129A8025600B2FCF2 /* make_self_signed_ca_cert_and_key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_self_signed_ca_cert_and_key; sourceTree = "<group>"; };
+		D20A967229A8025600B2FCF2 /* Big Picture.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Big Picture.txt"; sourceTree = "<group>"; };
+		D20A967329A8025600B2FCF2 /* test_removing */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test_removing; sourceTree = "<group>"; };
+		D20A967429A8025600B2FCF2 /* Bright Plaza SED Server.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza SED Server.key"; sourceTree = "<group>"; };
+		D20A967529A8025600B2FCF2 /* add_trusted_CA_identity_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_trusted_CA_identity_to_system_keychain; sourceTree = "<group>"; };
+		D20A967629A8025600B2FCF2 /* issue_SSL_Server_cert_and_key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = issue_SSL_Server_cert_and_key; sourceTree = "<group>"; };
+		D20A967729A8025600B2FCF2 /* remove_trusted_CA_cert_from_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_trusted_CA_cert_from_system_keychain; sourceTree = "<group>"; };
+		D20A967829A8025600B2FCF2 /* add_Bright_Plaza_CA_identity_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_Bright_Plaza_CA_identity_to_system_keychain; sourceTree = "<group>"; };
+		D20A967929A8025600B2FCF2 /* Utility_functions.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Utility_functions.sh; sourceTree = "<group>"; };
+		D20A967A29A8025600B2FCF2 /* test_creating_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test_creating_SED_keychain; sourceTree = "<group>"; };
+		D20A967B29A8025600B2FCF2 /* unlock_Bright_Plaza_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = unlock_Bright_Plaza_SED_keychain; sourceTree = "<group>"; };
+		D20A967C29A8025600B2FCF2 /* Bright Plaza CA.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza CA.pem"; sourceTree = "<group>"; };
+		D20A967D29A8025600B2FCF2 /* Bright Plaza SED Server.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bright Plaza SED Server.p12"; sourceTree = "<group>"; };
+		D20A967E29A8025600B2FCF2 /* add_trusted_CA_cert_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_trusted_CA_cert_to_system_keychain; sourceTree = "<group>"; };
+		D20A967F29A8025600B2FCF2 /* add_Bright_Plaza_Server_identity_to_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_Bright_Plaza_Server_identity_to_SED_keychain; sourceTree = "<group>"; };
+		D20A968029A8025600B2FCF2 /* make_Bright_Plaza_SED_Server_identity */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_Bright_Plaza_SED_Server_identity; sourceTree = "<group>"; };
+		D20A968129A8025600B2FCF2 /* preinstall */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = preinstall; sourceTree = "<group>"; };
+		D20A968229A8025600B2FCF2 /* make_Bright_Plaza_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_Bright_Plaza_SED_keychain; sourceTree = "<group>"; };
+		D20A968329A8025600B2FCF2 /* Bright Plaza CA.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bright Plaza CA.cer"; sourceTree = "<group>"; };
+		D20A968429A8025600B2FCF2 /* Bright Plaza CA.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza CA.key"; sourceTree = "<group>"; };
+		D20A968529A8025600B2FCF2 /* add_trusted_Bright_Plaza_CA_cert_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_trusted_Bright_Plaza_CA_cert_to_system_keychain; sourceTree = "<group>"; };
+		D20A968629A8025600B2FCF2 /* test_creating */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test_creating; sourceTree = "<group>"; };
+		D20A968729A8025600B2FCF2 /* Bright_Plaza_customizations.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Bright_Plaza_customizations.sh; sourceTree = "<group>"; };
+		D20A968829A8025600B2FCF2 /* test_removing_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test_removing_SED_keychain; sourceTree = "<group>"; };
+		D20A968929A8025600B2FCF2 /* remove_Bright_Plaza_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_Bright_Plaza_SED_keychain; sourceTree = "<group>"; };
+		D20A968A29A8025600B2FCF2 /* SED ToolBox settings.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "SED ToolBox settings.py"; sourceTree = "<group>"; };
+		D20A968B29A8025600B2FCF2 /* macOS settings.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "macOS settings.py"; sourceTree = "<group>"; };
+		D20A968C29A8025600B2FCF2 /* pi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = pi; sourceTree = "<group>"; };
+		D20A968D29A8025600B2FCF2 /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
+		D20A968F29A8025600B2FCF2 /* make_Bright_Plaza_CA_identity */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_Bright_Plaza_CA_identity; sourceTree = "<group>"; };
+		D20A969129A8025600B2FCF2 /* pkcs12.man */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = pkcs12.man; sourceTree = "<group>"; };
+		D20A969229A8025600B2FCF2 /* certtool.man */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = certtool.man; sourceTree = "<group>"; };
+		D20A969329A8025600B2FCF2 /* x509.man */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = x509.man; sourceTree = "<group>"; };
+		D20A969429A8025600B2FCF2 /* req.man */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = req.man; sourceTree = "<group>"; };
+		D20A969529A8025600B2FCF2 /* security.man */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = security.man; sourceTree = "<group>"; };
+		D20A969629A8025600B2FCF2 /* openssl.man */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = openssl.man; sourceTree = "<group>"; };
+		D20A969729A8025600B2FCF2 /* test_creating_SED_Server */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test_creating_SED_Server; sourceTree = "<group>"; };
+		D20A969829A8025600B2FCF2 /* remove_trusted_CA_identity_from_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_trusted_CA_identity_from_system_keychain; sourceTree = "<group>"; };
+		D20A969929A8025600B2FCF2 /* test_removing_CA */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test_removing_CA; sourceTree = "<group>"; };
+		D20A969A29A8025600B2FCF2 /* local_network_customizations.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = local_network_customizations.sh; sourceTree = "<group>"; };
+		D20A969B29A8025600B2FCF2 /* test_creating_CA */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test_creating_CA; sourceTree = "<group>"; };
+		D20A969C29A8025600B2FCF2 /* local_network_customizations_for_Magnolia_Heights.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = local_network_customizations_for_Magnolia_Heights.sh; sourceTree = "<group>"; };
+		D20A969D29A8025600B2FCF2 /* add_trusted_Bright_Plaza_CA_identity_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_trusted_Bright_Plaza_CA_identity_to_system_keychain; sourceTree = "<group>"; };
+		D20A969E29A8025600B2FCF2 /* make_self_signed_ca_cert_and_key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_self_signed_ca_cert_and_key; sourceTree = "<group>"; };
+		D20A969F29A8025600B2FCF2 /* Big Picture.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Big Picture.txt"; sourceTree = "<group>"; };
+		D20A96A029A8025600B2FCF2 /* test_removing */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test_removing; sourceTree = "<group>"; };
+		D20A96A129A8025600B2FCF2 /* add_trusted_CA_identity_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_trusted_CA_identity_to_system_keychain; sourceTree = "<group>"; };
+		D20A96A229A8025600B2FCF2 /* issue_SSL_Server_cert_and_key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = issue_SSL_Server_cert_and_key; sourceTree = "<group>"; };
+		D20A96A329A8025600B2FCF2 /* remove_trusted_CA_cert_from_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_trusted_CA_cert_from_system_keychain; sourceTree = "<group>"; };
+		D20A96A429A8025600B2FCF2 /* add_Bright_Plaza_CA_identity_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_Bright_Plaza_CA_identity_to_system_keychain; sourceTree = "<group>"; };
+		D20A96A529A8025600B2FCF2 /* Utility_functions.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Utility_functions.sh; sourceTree = "<group>"; };
+		D20A96A629A8025600B2FCF2 /* test_creating_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test_creating_SED_keychain; sourceTree = "<group>"; };
+		D20A96A729A8025600B2FCF2 /* unlock_Bright_Plaza_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = unlock_Bright_Plaza_SED_keychain; sourceTree = "<group>"; };
+		D20A96A829A8025600B2FCF2 /* add_trusted_CA_cert_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_trusted_CA_cert_to_system_keychain; sourceTree = "<group>"; };
+		D20A96A929A8025600B2FCF2 /* add_Bright_Plaza_Server_identity_to_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_Bright_Plaza_Server_identity_to_SED_keychain; sourceTree = "<group>"; };
+		D20A96AA29A8025600B2FCF2 /* make_Bright_Plaza_SED_Server_identity */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_Bright_Plaza_SED_Server_identity; sourceTree = "<group>"; };
+		D20A96AD29A8025600B2FCF2 /* add_trusted_CA_cert_to_system_roots_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_trusted_CA_cert_to_system_roots_keychain; sourceTree = "<group>"; };
+		D20A96AE29A8025600B2FCF2 /* add_trusted_cert_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_trusted_cert_to_system_keychain; sourceTree = "<group>"; };
+		D20A96AF29A8025600B2FCF2 /* Bright Plaza SED Server.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza SED Server.pem"; sourceTree = "<group>"; };
+		D20A96B129A8025600B2FCF2 /* tmp.csr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tmp.csr; sourceTree = "<group>"; };
+		D20A96B229A8025600B2FCF2 /* tmp.csr.cnf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tmp.csr.cnf; sourceTree = "<group>"; };
+		D20A96B329A8025600B2FCF2 /* v3.ext */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = v3.ext; sourceTree = "<group>"; };
+		D20A96B429A8025600B2FCF2 /* test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test; sourceTree = "<group>"; };
+		D20A96B529A8025600B2FCF2 /* make_self_signed_ca_cert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_self_signed_ca_cert; sourceTree = "<group>"; };
+		D20A96B629A8025600B2FCF2 /* Bright Plaza SED Server CA.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza SED Server CA.pem"; sourceTree = "<group>"; };
+		D20A96B729A8025600B2FCF2 /* server_with_identityFile_and_CACert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = server_with_identityFile_and_CACert; sourceTree = "<group>"; };
+		D20A96B829A8025600B2FCF2 /* Bright Plaza SED Server CA.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza SED Server CA.key"; sourceTree = "<group>"; };
+		D20A96B929A8025600B2FCF2 /* server_using_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = server_using_SED_keychain; sourceTree = "<group>"; };
+		D20A96BA29A8025600B2FCF2 /* make_certs_and_identity */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_certs_and_identity; sourceTree = "<group>"; };
+		D20A96BB29A8025600B2FCF2 /* teardown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = teardown; sourceTree = "<group>"; };
+		D20A96BC29A8025600B2FCF2 /* setup */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = setup; sourceTree = "<group>"; };
+		D20A96BD29A8025600B2FCF2 /* Bright Plaza SED Server.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza SED Server.key"; sourceTree = "<group>"; };
+		D20A96BE29A8025600B2FCF2 /* server */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = server; sourceTree = "<group>"; };
+		D20A96BF29A8025600B2FCF2 /* setup.new */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = setup.new; sourceTree = "<group>"; };
+		D20A96C029A8025600B2FCF2 /* server_with_identityFile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = server_with_identityFile; sourceTree = "<group>"; };
+		D20A96C129A8025600B2FCF2 /* make_cert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_cert; sourceTree = "<group>"; };
+		D20A96C329A8025600B2FCF2 /* tmp.csr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tmp.csr; sourceTree = "<group>"; };
+		D20A96C429A8025600B2FCF2 /* tmp.csr.cnf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tmp.csr.cnf; sourceTree = "<group>"; };
+		D20A96C529A8025600B2FCF2 /* v3.ext */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = v3.ext; sourceTree = "<group>"; };
+		D20A96C629A8025600B2FCF2 /* remove_identity_from_login_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_identity_from_login_keychain; sourceTree = "<group>"; };
+		D20A96C729A8025600B2FCF2 /* remove_trusted_CA_cert_from_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_trusted_CA_cert_from_system_keychain; sourceTree = "<group>"; };
+		D20A96C829A8025600B2FCF2 /* add_identity_to_login_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_identity_to_login_keychain; sourceTree = "<group>"; };
+		D20A96C929A8025600B2FCF2 /* Utility_functions.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Utility_functions.sh; sourceTree = "<group>"; };
+		D20A96CA29A8025600B2FCF2 /* make_identity */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_identity; sourceTree = "<group>"; };
+		D20A96CB29A8025600B2FCF2 /* make_ca_cert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_ca_cert; sourceTree = "<group>"; };
+		D20A96CC29A8025600B2FCF2 /* remove_identity_from_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_identity_from_system_keychain; sourceTree = "<group>"; };
+		D20A96CD29A8025600B2FCF2 /* remove_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_SED_keychain; sourceTree = "<group>"; };
+		D20A96CE29A8025600B2FCF2 /* SED CA.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "SED CA.pem"; sourceTree = "<group>"; };
+		D20A96CF29A8025600B2FCF2 /* add_identity_to_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_identity_to_SED_keychain; sourceTree = "<group>"; };
+		D20A96D029A8025600B2FCF2 /* Uninstall_certificates.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_certificates.sh; sourceTree = "<group>"; };
+		D20A96D129A8025600B2FCF2 /* Bright Plaza SED Server.p12 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza SED Server.p12"; sourceTree = "<group>"; };
+		D20A96D229A8025600B2FCF2 /* add_trusted_CA_cert_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_trusted_CA_cert_to_system_keychain; sourceTree = "<group>"; };
+		D20A96D329A8025600B2FCF2 /* make_self_signed_tls_cert_and_identity */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_self_signed_tls_cert_and_identity; sourceTree = "<group>"; };
+		D20A96D429A8025600B2FCF2 /* remove_trusted_cert_from_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_trusted_cert_from_system_keychain; sourceTree = "<group>"; };
+		D20A96D629A8025600B2FCF2 /* CAv3.ext */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CAv3.ext; sourceTree = "<group>"; };
+		D20A96D829A8025600B2FCF2 /* tmp.csr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tmp.csr; sourceTree = "<group>"; };
+		D20A96D929A8025600B2FCF2 /* tmp.csr.cnf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tmp.csr.cnf; sourceTree = "<group>"; };
+		D20A96DA29A8025600B2FCF2 /* v3.ext */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = v3.ext; sourceTree = "<group>"; };
+		D20A96DB29A8025600B2FCF2 /* make_tls_cert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_tls_cert; sourceTree = "<group>"; };
+		D20A96DC29A8025600B2FCF2 /* remove_trusted_CA_cert_from_system_roots_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_trusted_CA_cert_from_system_roots_keychain; sourceTree = "<group>"; };
+		D20A96DD29A8025600B2FCF2 /* client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = client; sourceTree = "<group>"; };
+		D20A96DE29A8025600B2FCF2 /* copy_trusted_cert_from_SED_keychain_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = copy_trusted_cert_from_SED_keychain_to_system_keychain; sourceTree = "<group>"; };
+		D20A96DF29A8025600B2FCF2 /* SED CA.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SED CA.cer"; sourceTree = "<group>"; };
+		D20A96E029A8025600B2FCF2 /* add_trusted_cert_key_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_trusted_cert_key_to_system_keychain; sourceTree = "<group>"; };
+		D20A96E129A8025600B2FCF2 /* create_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = create_SED_keychain; sourceTree = "<group>"; };
+		D20A96E229A8025600B2FCF2 /* test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test; sourceTree = "<group>"; };
+		D20A96E429A8025600B2FCF2 /* SED Server.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "SED Server.key"; sourceTree = "<group>"; };
+		D20A96E529A8025600B2FCF2 /* SED.keychain-db */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SED.keychain-db"; sourceTree = "<group>"; };
+		D20A96E629A8025600B2FCF2 /* SED CA.pem.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "SED CA.pem.txt"; sourceTree = "<group>"; };
+		D20A96E729A8025600B2FCF2 /* SED CA.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "SED CA.pem"; sourceTree = "<group>"; };
+		D20A96E829A8025600B2FCF2 /* SED Server.crt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "SED Server.crt"; sourceTree = "<group>"; };
+		D20A96E929A8025600B2FCF2 /* Notes per Technical Note TN2326.rtfd */ = {isa = PBXFileReference; lastKnownFileType = wrapper.rtfd; path = "Notes per Technical Note TN2326.rtfd"; sourceTree = "<group>"; };
+		D20A96EA29A8025600B2FCF2 /* SED CA.pretrust.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "SED CA.pretrust.pem"; sourceTree = "<group>"; };
+		D20A96EB29A8025600B2FCF2 /* SED Server.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SED Server.p12"; sourceTree = "<group>"; };
+		D20A96EC29A8025600B2FCF2 /* SED CA.trusted.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "SED CA.trusted.pem"; sourceTree = "<group>"; };
+		D20A96ED29A8025600B2FCF2 /* SED CA.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SED CA.cer"; sourceTree = "<group>"; };
+		D20A96EE29A8025600B2FCF2 /* Bright Plaza, Inc. SED Server.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bright Plaza, Inc. SED Server.p12"; sourceTree = "<group>"; };
+		D20A96EF29A8025600B2FCF2 /* Bright Plaza, Inc. SED Server.crt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza, Inc. SED Server.crt"; sourceTree = "<group>"; };
+		D20A96F029A8025600B2FCF2 /* Bright Plaza, Inc. SED Server_CA.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza, Inc. SED Server_CA.pem"; sourceTree = "<group>"; };
+		D20A96F129A8025600B2FCF2 /* make_certs_and_identity */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_certs_and_identity; sourceTree = "<group>"; };
+		D20A96F229A8025600B2FCF2 /* Bright Plaza, Inc. SED Server.srl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza, Inc. SED Server.srl"; sourceTree = "<group>"; };
+		D20A96F329A8025600B2FCF2 /* copy_identity_to_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = copy_identity_to_SED_keychain; sourceTree = "<group>"; };
+		D20A96F429A8025600B2FCF2 /* remove_identity_from_login_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_identity_from_login_keychain; sourceTree = "<group>"; };
+		D20A96F529A8025600B2FCF2 /* remove_trusted_CA_cert_from_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_trusted_CA_cert_from_system_keychain; sourceTree = "<group>"; };
+		D20A96F629A8025600B2FCF2 /* Utility_functions.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Utility_functions.sh; sourceTree = "<group>"; };
+		D20A96F729A8025600B2FCF2 /* delete_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = delete_SED_keychain; sourceTree = "<group>"; };
+		D20A96F829A8025600B2FCF2 /* Uninstall_certificates.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_certificates.sh; sourceTree = "<group>"; };
+		D20A96F929A8025600B2FCF2 /* add_trusted_CA_cert_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_trusted_CA_cert_to_system_keychain; sourceTree = "<group>"; };
+		D20A96FA29A8025600B2FCF2 /* make_self_signed_tls_cert_and_identity */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_self_signed_tls_cert_and_identity; sourceTree = "<group>"; };
+		D20A96FB29A8025600B2FCF2 /* add_identity_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_identity_to_system_keychain; sourceTree = "<group>"; };
+		D20A96FD29A8025600B2FCF2 /* add_trusted_COMODO_RSA_Signing_CA_cert_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_trusted_COMODO_RSA_Signing_CA_cert_to_system_keychain; sourceTree = "<group>"; };
+		D20A96FE29A8025600B2FCF2 /* extract_OnTV_CA_key.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = extract_OnTV_CA_key.pl; sourceTree = "<group>"; };
+		D20A96FF29A8025600B2FCF2 /* extract_OnTV_CA_cert.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = extract_OnTV_CA_cert.pl; sourceTree = "<group>"; };
+		D20A970029A8025600B2FCF2 /* remove_trusted_COMODO_RSA_Signing_CA_cert_from_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_trusted_COMODO_RSA_Signing_CA_cert_from_system_keychain; sourceTree = "<group>"; };
+		D20A970129A8025600B2FCF2 /* OnTV_CA.crt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OnTV_CA.crt; sourceTree = "<group>"; };
+		D20A970229A8025600B2FCF2 /* extract_from_DTA_Code_Cert_pfx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = extract_from_DTA_Code_Cert_pfx; sourceTree = "<group>"; };
+		D20A970329A8025600B2FCF2 /* COMODO_RSA_Code_Signing_CA.crt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COMODO_RSA_Code_Signing_CA.crt; sourceTree = "<group>"; };
+		D20A970429A8025600B2FCF2 /* make_OnTV_CA_signed_tls_cert_and_identity */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_OnTV_CA_signed_tls_cert_and_identity; sourceTree = "<group>"; };
+		D20A970529A8025600B2FCF2 /* extract_COMODO_RSA_Code_Signing_CA_cert.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = extract_COMODO_RSA_Code_Signing_CA_cert.pl; sourceTree = "<group>"; };
+		D20A970629A8025600B2FCF2 /* OnTV_CA.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OnTV_CA.key; sourceTree = "<group>"; };
+		D20A970729A8025600B2FCF2 /* Bright Plaza, Inc. SED Server.key */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza, Inc. SED Server.key"; sourceTree = "<group>"; };
+		D20A970829A8025600B2FCF2 /* make_Bright_Plaza_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_Bright_Plaza_SED_keychain; sourceTree = "<group>"; };
+		D20A970929A8025600B2FCF2 /* add_trusted_Bright_Plaza_CA_cert_to_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = add_trusted_Bright_Plaza_CA_cert_to_system_keychain; sourceTree = "<group>"; };
+		D20A970A29A8025600B2FCF2 /* test_creating */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test_creating; sourceTree = "<group>"; };
+		D20A970B29A8025600B2FCF2 /* Bright_Plaza_customizations.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Bright_Plaza_customizations.sh; sourceTree = "<group>"; };
+		D20A970C29A8025600B2FCF2 /* test_removing_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test_removing_SED_keychain; sourceTree = "<group>"; };
+		D20A970D29A8025600B2FCF2 /* remove_Bright_Plaza_SED_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_Bright_Plaza_SED_keychain; sourceTree = "<group>"; };
+		D20A970E29A8025600B2FCF2 /* settings.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = settings.py; sourceTree = "<group>"; };
+		D20A970F29A8025600B2FCF2 /* build_packages.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build_packages.sh; sourceTree = "<group>"; };
+		D20A971029A8025600B2FCF2 /* build_disk_image.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build_disk_image.sh; sourceTree = "<group>"; };
+		D20A971129A8025600B2FCF2 /* distribution.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = distribution.xml; sourceTree = "<group>"; };
+		D20A971329A8025600B2FCF2 /* Uninstall_driver.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_driver.sh; sourceTree = "<group>"; };
+		D20A971429A8025600B2FCF2 /* Uninstall_daemon.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_daemon.sh; sourceTree = "<group>"; };
+		D20A971529A8025600B2FCF2 /* Uninstall_preference_pane.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_preference_pane.sh; sourceTree = "<group>"; };
+		D20A971629A8025600B2FCF2 /* Uninstall_SEDPreferences.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_SEDPreferences.sh; sourceTree = "<group>"; };
+		D20A971729A8025600B2FCF2 /* Uninstall_SEDAccess.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_SEDAccess.sh; sourceTree = "<group>"; };
+		D20A971829A8025600B2FCF2 /* Uninstall_SEDDaemonTest.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_SEDDaemonTest.sh; sourceTree = "<group>"; };
+		D20A971929A8025600B2FCF2 /* unload_driver.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = unload_driver.sh; sourceTree = "<group>"; };
+		D20A971A29A8025600B2FCF2 /* Utility_functions.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Utility_functions.sh; sourceTree = "<group>"; };
+		D20A971B29A8025600B2FCF2 /* UNINSTALL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = UNINSTALL; sourceTree = "<group>"; };
+		D20A971C29A8025600B2FCF2 /* Unload_daemon.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Unload_daemon.sh; sourceTree = "<group>"; };
+		D20A971D29A8025600B2FCF2 /* Uninstall_packages.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_packages.sh; sourceTree = "<group>"; };
+		D20A971E29A8025600B2FCF2 /* Uninstall_frameworks.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_frameworks.sh; sourceTree = "<group>"; };
+		D20A971F29A8025600B2FCF2 /* Uninstall_libraries.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Uninstall_libraries.sh; sourceTree = "<group>"; };
+		D20A972029A8025600B2FCF2 /* Install_daemon.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Install_daemon.sh; sourceTree = "<group>"; };
+		D20A972129A8025600B2FCF2 /* Install_driver.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Install_driver.sh; sourceTree = "<group>"; };
+		D20A972229A8025600B2FCF2 /* Install_SEDAccess.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Install_SEDAccess.sh; sourceTree = "<group>"; };
+		D20A972329A8025600B2FCF2 /* DTABundles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DTABundles.plist; sourceTree = "<group>"; };
 		D2233E3428D79504006B6974 /* DtaOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
 		D26904CD28D7A17B0095769E /* reenumerate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = reenumerate.c; path = "../../sedutil-cli project/reenumerate/reenumerate.c"; sourceTree = "<group>"; };
 		D26904CF28D7A17F0095769E /* IOUSBFamilyInfoPlist.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOUSBFamilyInfoPlist.pch; path = "../../sedutil-cli project/reenumerate/IOUSBFamilyInfoPlist.pch"; sourceTree = "<group>"; };
@@ -80,6 +398,466 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D20A961B29A8025600B2FCF2 /* SED ToolBox */ = {
+			isa = PBXGroup;
+			children = (
+				D20A961C29A8025600B2FCF2 /* DTA */,
+				D20A964229A8025600B2FCF2 /* product_scripts */,
+				D20A964529A8025600B2FCF2 /* bundles_scripts */,
+				D20A964829A8025600B2FCF2 /* resources */,
+				D20A966029A8025600B2FCF2 /* try_create_dmg */,
+				D20A966129A8025600B2FCF2 /* Certificates */,
+				D20A966429A8025600B2FCF2 /* files_scripts */,
+				D20A968A29A8025600B2FCF2 /* SED ToolBox settings.py */,
+				D20A968B29A8025600B2FCF2 /* macOS settings.py */,
+				D20A968C29A8025600B2FCF2 /* pi */,
+				D20A968D29A8025600B2FCF2 /* build.sh */,
+				D20A968E29A8025600B2FCF2 /* TLS */,
+				D20A970E29A8025600B2FCF2 /* settings.py */,
+				D20A970F29A8025600B2FCF2 /* build_packages.sh */,
+				D20A971029A8025600B2FCF2 /* build_disk_image.sh */,
+				D20A971129A8025600B2FCF2 /* distribution.xml */,
+				D20A971229A8025600B2FCF2 /* .Utilities */,
+				D20A972329A8025600B2FCF2 /* DTABundles.plist */,
+			);
+			path = "SED ToolBox";
+			sourceTree = "<group>";
+		};
+		D20A961C29A8025600B2FCF2 /* DTA */ = {
+			isa = PBXGroup;
+			children = (
+				D20A961D29A8025600B2FCF2 /* macOS */,
+				D20A963929A8025600B2FCF2 /* SED Developer */,
+			);
+			path = DTA;
+			sourceTree = "<group>";
+		};
+		D20A961D29A8025600B2FCF2 /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				D20A961E29A8025600B2FCF2 /* .resources */,
+				D20A962729A8025600B2FCF2 /* Uninstall */,
+				D20A962829A8025600B2FCF2 /* .Utilities */,
+			);
+			path = macOS;
+			sourceTree = "<group>";
+		};
+		D20A961E29A8025600B2FCF2 /* .resources */ = {
+			isa = PBXGroup;
+			children = (
+				D20A961F29A8025600B2FCF2 /* images */,
+				D20A962529A8025600B2FCF2 /* fileicon */,
+				D20A962629A8025600B2FCF2 /* EULA_SED_Applications_v1.0.2forMacInstaller.html */,
+			);
+			path = .resources;
+			sourceTree = "<group>";
+		};
+		D20A961F29A8025600B2FCF2 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				D20A962029A8025600B2FCF2 /* image00.png */,
+				D20A962129A8025600B2FCF2 /* Installer_background.png */,
+				D20A962229A8025600B2FCF2 /* UninstallIcon.icns */,
+				D20A962329A8025600B2FCF2 /* DTA_with_iSED_folder_background.png */,
+				D20A962429A8025600B2FCF2 /* DTA_folder_background.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		D20A962829A8025600B2FCF2 /* .Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				D20A962929A8025600B2FCF2 /* Uninstall_driver.sh */,
+				D20A962A29A8025600B2FCF2 /* Uninstall_daemon.sh */,
+				D20A962B29A8025600B2FCF2 /* Uninstall_preference_pane.sh */,
+				D20A962C29A8025600B2FCF2 /* Uninstall_SEDPreferences.sh */,
+				D20A962D29A8025600B2FCF2 /* Uninstall_SEDAccess.sh */,
+				D20A962E29A8025600B2FCF2 /* Uninstall_SEDDaemonTest.sh */,
+				D20A962F29A8025600B2FCF2 /* unload_driver.sh */,
+				D20A963029A8025600B2FCF2 /* Utility_functions.sh */,
+				D20A963129A8025600B2FCF2 /* UNINSTALL */,
+				D20A963229A8025600B2FCF2 /* Unload_daemon.sh */,
+				D20A963329A8025600B2FCF2 /* Uninstall_packages.sh */,
+				D20A963429A8025600B2FCF2 /* Uninstall_frameworks.sh */,
+				D20A963529A8025600B2FCF2 /* Uninstall_libraries.sh */,
+				D20A963629A8025600B2FCF2 /* Install_daemon.sh */,
+				D20A963729A8025600B2FCF2 /* Install_driver.sh */,
+				D20A963829A8025600B2FCF2 /* Install_SEDAccess.sh */,
+			);
+			path = .Utilities;
+			sourceTree = "<group>";
+		};
+		D20A963929A8025600B2FCF2 /* SED Developer */ = {
+			isa = PBXGroup;
+			children = (
+				D20A963A29A8025600B2FCF2 /* Mac */,
+				D20A963C29A8025600B2FCF2 /* vcredist_x64.exe */,
+				D20A963D29A8025600B2FCF2 /* Windows */,
+			);
+			path = "SED Developer";
+			sourceTree = "<group>";
+		};
+		D20A963A29A8025600B2FCF2 /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				D20A963B29A8025600B2FCF2 /* DTA_Self-Encrypting_Box_Eval_Kit_Install_Guide_Mac_v1.2.0RC1.pdf */,
+			);
+			path = Mac;
+			sourceTree = "<group>";
+		};
+		D20A963D29A8025600B2FCF2 /* Windows */ = {
+			isa = PBXGroup;
+			children = (
+				D20A963E29A8025600B2FCF2 /* DTA USB Drive Quick Start Guide for Developer Kit.docx */,
+				D20A963F29A8025600B2FCF2 /* sedprotect.exe */,
+				D20A964029A8025600B2FCF2 /* Self-Encrypting_Box_Eval_Kit_Installation_Win_v1.2.0RC1.pdf */,
+				D20A964129A8025600B2FCF2 /* DTA.msi */,
+			);
+			path = Windows;
+			sourceTree = "<group>";
+		};
+		D20A964229A8025600B2FCF2 /* product_scripts */ = {
+			isa = PBXGroup;
+			children = (
+				D20A964329A8025600B2FCF2 /* postinstall */,
+				D20A964429A8025600B2FCF2 /* preinstall */,
+			);
+			path = product_scripts;
+			sourceTree = "<group>";
+		};
+		D20A964529A8025600B2FCF2 /* bundles_scripts */ = {
+			isa = PBXGroup;
+			children = (
+				D20A964629A8025600B2FCF2 /* postinstall */,
+				D20A964729A8025600B2FCF2 /* preinstall */,
+			);
+			path = bundles_scripts;
+			sourceTree = "<group>";
+		};
+		D20A964829A8025600B2FCF2 /* resources */ = {
+			isa = PBXGroup;
+			children = (
+				D20A964929A8025600B2FCF2 /* .EULA */,
+				D20A964D29A8025600B2FCF2 /* images */,
+				D20A965B29A8025600B2FCF2 /* Uninstall */,
+				D20A965C29A8025600B2FCF2 /* tweak_DTA_folder.scpt */,
+				D20A965D29A8025600B2FCF2 /* fileicon */,
+				D20A965E29A8025600B2FCF2 /* tweak_DTA_folder saved.scpt */,
+				D20A965F29A8025600B2FCF2 /* EULA_SED_Applications_v1.0.2forMacInstaller.html */,
+			);
+			path = resources;
+			sourceTree = "<group>";
+		};
+		D20A964929A8025600B2FCF2 /* .EULA */ = {
+			isa = PBXGroup;
+			children = (
+				D20A964A29A8025600B2FCF2 /* images */,
+				D20A964C29A8025600B2FCF2 /* EULA_SED_Applications_v1.0.2forMacInstaller.html */,
+			);
+			path = .EULA;
+			sourceTree = "<group>";
+		};
+		D20A964A29A8025600B2FCF2 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				D20A964B29A8025600B2FCF2 /* image00.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		D20A964D29A8025600B2FCF2 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				D20A964E29A8025600B2FCF2 /* image00.png */,
+				D20A964F29A8025600B2FCF2 /* DTA.VolumeIcon.icns.rsrc */,
+				D20A965029A8025600B2FCF2 /* SED ToolBox Background.xcf */,
+				D20A965129A8025600B2FCF2 /* DTA.VolumeIcon.icns */,
+				D20A965229A8025600B2FCF2 /* Installer_background.png */,
+				D20A965329A8025600B2FCF2 /* Self-Encrypting-Box.VolumeIcon.icns */,
+				D20A965429A8025600B2FCF2 /* SED ToolBox Background.png */,
+				D20A965529A8025600B2FCF2 /* Self-Encrypting-Box.VolumeIcon.png */,
+				D20A965629A8025600B2FCF2 /* SED ToolBox Label.png */,
+				D20A965729A8025600B2FCF2 /* UninstallIcon.icns */,
+				D20A965829A8025600B2FCF2 /* DTA_with_iSED_folder_background.png */,
+				D20A965929A8025600B2FCF2 /* DTA.VolumeIcon.png */,
+				D20A965A29A8025600B2FCF2 /* DTA_folder_background.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		D20A966129A8025600B2FCF2 /* Certificates */ = {
+			isa = PBXGroup;
+			children = (
+				D20A966229A8025600B2FCF2 /* Bright Plaza CA.pem */,
+				D20A966329A8025600B2FCF2 /* Bright Plaza SED Server.p12 */,
+			);
+			path = Certificates;
+			sourceTree = "<group>";
+		};
+		D20A966429A8025600B2FCF2 /* files_scripts */ = {
+			isa = PBXGroup;
+			children = (
+				D20A966529A8025600B2FCF2 /* make_Bright_Plaza_CA_identity */,
+				D20A966629A8025600B2FCF2 /* test_creating_SED_Server */,
+				D20A966729A8025600B2FCF2 /* remove_trusted_CA_identity_from_system_keychain */,
+				D20A966829A8025600B2FCF2 /* Bright Plaza CA.p12 */,
+				D20A966929A8025600B2FCF2 /* test_removing_CA */,
+				D20A966A29A8025600B2FCF2 /* extract_CA_cer_from_system_keychain */,
+				D20A966B29A8025600B2FCF2 /* Bright Plaza SED Server.pem */,
+				D20A966C29A8025600B2FCF2 /* postinstall */,
+				D20A966D29A8025600B2FCF2 /* local_network_customizations.sh */,
+				D20A966E29A8025600B2FCF2 /* test_creating_CA */,
+				D20A966F29A8025600B2FCF2 /* local_network_customizations_for_Magnolia_Heights.sh */,
+				D20A967029A8025600B2FCF2 /* add_trusted_Bright_Plaza_CA_identity_to_system_keychain */,
+				D20A967129A8025600B2FCF2 /* make_self_signed_ca_cert_and_key */,
+				D20A967229A8025600B2FCF2 /* Big Picture.txt */,
+				D20A967329A8025600B2FCF2 /* test_removing */,
+				D20A967429A8025600B2FCF2 /* Bright Plaza SED Server.key */,
+				D20A967529A8025600B2FCF2 /* add_trusted_CA_identity_to_system_keychain */,
+				D20A967629A8025600B2FCF2 /* issue_SSL_Server_cert_and_key */,
+				D20A967729A8025600B2FCF2 /* remove_trusted_CA_cert_from_system_keychain */,
+				D20A967829A8025600B2FCF2 /* add_Bright_Plaza_CA_identity_to_system_keychain */,
+				D20A967929A8025600B2FCF2 /* Utility_functions.sh */,
+				D20A967A29A8025600B2FCF2 /* test_creating_SED_keychain */,
+				D20A967B29A8025600B2FCF2 /* unlock_Bright_Plaza_SED_keychain */,
+				D20A967C29A8025600B2FCF2 /* Bright Plaza CA.pem */,
+				D20A967D29A8025600B2FCF2 /* Bright Plaza SED Server.p12 */,
+				D20A967E29A8025600B2FCF2 /* add_trusted_CA_cert_to_system_keychain */,
+				D20A967F29A8025600B2FCF2 /* add_Bright_Plaza_Server_identity_to_SED_keychain */,
+				D20A968029A8025600B2FCF2 /* make_Bright_Plaza_SED_Server_identity */,
+				D20A968129A8025600B2FCF2 /* preinstall */,
+				D20A968229A8025600B2FCF2 /* make_Bright_Plaza_SED_keychain */,
+				D20A968329A8025600B2FCF2 /* Bright Plaza CA.cer */,
+				D20A968429A8025600B2FCF2 /* Bright Plaza CA.key */,
+				D20A968529A8025600B2FCF2 /* add_trusted_Bright_Plaza_CA_cert_to_system_keychain */,
+				D20A968629A8025600B2FCF2 /* test_creating */,
+				D20A968729A8025600B2FCF2 /* Bright_Plaza_customizations.sh */,
+				D20A968829A8025600B2FCF2 /* test_removing_SED_keychain */,
+				D20A968929A8025600B2FCF2 /* remove_Bright_Plaza_SED_keychain */,
+			);
+			path = files_scripts;
+			sourceTree = "<group>";
+		};
+		D20A968E29A8025600B2FCF2 /* TLS */ = {
+			isa = PBXGroup;
+			children = (
+				D20A968F29A8025600B2FCF2 /* make_Bright_Plaza_CA_identity */,
+				D20A969029A8025600B2FCF2 /* man */,
+				D20A969729A8025600B2FCF2 /* test_creating_SED_Server */,
+				D20A969829A8025600B2FCF2 /* remove_trusted_CA_identity_from_system_keychain */,
+				D20A969929A8025600B2FCF2 /* test_removing_CA */,
+				D20A969A29A8025600B2FCF2 /* local_network_customizations.sh */,
+				D20A969B29A8025600B2FCF2 /* test_creating_CA */,
+				D20A969C29A8025600B2FCF2 /* local_network_customizations_for_Magnolia_Heights.sh */,
+				D20A969D29A8025600B2FCF2 /* add_trusted_Bright_Plaza_CA_identity_to_system_keychain */,
+				D20A969E29A8025600B2FCF2 /* make_self_signed_ca_cert_and_key */,
+				D20A969F29A8025600B2FCF2 /* Big Picture.txt */,
+				D20A96A029A8025600B2FCF2 /* test_removing */,
+				D20A96A129A8025600B2FCF2 /* add_trusted_CA_identity_to_system_keychain */,
+				D20A96A229A8025600B2FCF2 /* issue_SSL_Server_cert_and_key */,
+				D20A96A329A8025600B2FCF2 /* remove_trusted_CA_cert_from_system_keychain */,
+				D20A96A429A8025600B2FCF2 /* add_Bright_Plaza_CA_identity_to_system_keychain */,
+				D20A96A529A8025600B2FCF2 /* Utility_functions.sh */,
+				D20A96A629A8025600B2FCF2 /* test_creating_SED_keychain */,
+				D20A96A729A8025600B2FCF2 /* unlock_Bright_Plaza_SED_keychain */,
+				D20A96A829A8025600B2FCF2 /* add_trusted_CA_cert_to_system_keychain */,
+				D20A96A929A8025600B2FCF2 /* add_Bright_Plaza_Server_identity_to_SED_keychain */,
+				D20A96AA29A8025600B2FCF2 /* make_Bright_Plaza_SED_Server_identity */,
+				D20A96AB29A8025600B2FCF2 /* older */,
+				D20A970829A8025600B2FCF2 /* make_Bright_Plaza_SED_keychain */,
+				D20A970929A8025600B2FCF2 /* add_trusted_Bright_Plaza_CA_cert_to_system_keychain */,
+				D20A970A29A8025600B2FCF2 /* test_creating */,
+				D20A970B29A8025600B2FCF2 /* Bright_Plaza_customizations.sh */,
+				D20A970C29A8025600B2FCF2 /* test_removing_SED_keychain */,
+				D20A970D29A8025600B2FCF2 /* remove_Bright_Plaza_SED_keychain */,
+			);
+			path = TLS;
+			sourceTree = "<group>";
+		};
+		D20A969029A8025600B2FCF2 /* man */ = {
+			isa = PBXGroup;
+			children = (
+				D20A969129A8025600B2FCF2 /* pkcs12.man */,
+				D20A969229A8025600B2FCF2 /* certtool.man */,
+				D20A969329A8025600B2FCF2 /* x509.man */,
+				D20A969429A8025600B2FCF2 /* req.man */,
+				D20A969529A8025600B2FCF2 /* security.man */,
+				D20A969629A8025600B2FCF2 /* openssl.man */,
+			);
+			path = man;
+			sourceTree = "<group>";
+		};
+		D20A96AB29A8025600B2FCF2 /* older */ = {
+			isa = PBXGroup;
+			children = (
+				D20A96AC29A8025600B2FCF2 /* self-signed */,
+				D20A96E129A8025600B2FCF2 /* create_SED_keychain */,
+				D20A96E229A8025600B2FCF2 /* test */,
+				D20A96E329A8025600B2FCF2 /* CertificateAssistant */,
+				D20A96EE29A8025600B2FCF2 /* Bright Plaza, Inc. SED Server.p12 */,
+				D20A96EF29A8025600B2FCF2 /* Bright Plaza, Inc. SED Server.crt */,
+				D20A96F029A8025600B2FCF2 /* Bright Plaza, Inc. SED Server_CA.pem */,
+				D20A96F129A8025600B2FCF2 /* make_certs_and_identity */,
+				D20A96F229A8025600B2FCF2 /* Bright Plaza, Inc. SED Server.srl */,
+				D20A96F329A8025600B2FCF2 /* copy_identity_to_SED_keychain */,
+				D20A96F429A8025600B2FCF2 /* remove_identity_from_login_keychain */,
+				D20A96F529A8025600B2FCF2 /* remove_trusted_CA_cert_from_system_keychain */,
+				D20A96F629A8025600B2FCF2 /* Utility_functions.sh */,
+				D20A96F729A8025600B2FCF2 /* delete_SED_keychain */,
+				D20A96F829A8025600B2FCF2 /* Uninstall_certificates.sh */,
+				D20A96F929A8025600B2FCF2 /* add_trusted_CA_cert_to_system_keychain */,
+				D20A96FA29A8025600B2FCF2 /* make_self_signed_tls_cert_and_identity */,
+				D20A96FB29A8025600B2FCF2 /* add_identity_to_system_keychain */,
+				D20A96FC29A8025600B2FCF2 /* OnTV */,
+				D20A970729A8025600B2FCF2 /* Bright Plaza, Inc. SED Server.key */,
+			);
+			path = older;
+			sourceTree = "<group>";
+		};
+		D20A96AC29A8025600B2FCF2 /* self-signed */ = {
+			isa = PBXGroup;
+			children = (
+				D20A96AD29A8025600B2FCF2 /* add_trusted_CA_cert_to_system_roots_keychain */,
+				D20A96AE29A8025600B2FCF2 /* add_trusted_cert_to_system_keychain */,
+				D20A96AF29A8025600B2FCF2 /* Bright Plaza SED Server.pem */,
+				D20A96B029A8025600B2FCF2 /* TLS_TEMP.2jkVwPe9 */,
+				D20A96B429A8025600B2FCF2 /* test */,
+				D20A96B529A8025600B2FCF2 /* make_self_signed_ca_cert */,
+				D20A96B629A8025600B2FCF2 /* Bright Plaza SED Server CA.pem */,
+				D20A96B729A8025600B2FCF2 /* server_with_identityFile_and_CACert */,
+				D20A96B829A8025600B2FCF2 /* Bright Plaza SED Server CA.key */,
+				D20A96B929A8025600B2FCF2 /* server_using_SED_keychain */,
+				D20A96BA29A8025600B2FCF2 /* make_certs_and_identity */,
+				D20A96BB29A8025600B2FCF2 /* teardown */,
+				D20A96BC29A8025600B2FCF2 /* setup */,
+				D20A96BD29A8025600B2FCF2 /* Bright Plaza SED Server.key */,
+				D20A96BE29A8025600B2FCF2 /* server */,
+				D20A96BF29A8025600B2FCF2 /* setup.new */,
+				D20A96C029A8025600B2FCF2 /* server_with_identityFile */,
+				D20A96C129A8025600B2FCF2 /* make_cert */,
+				D20A96C229A8025600B2FCF2 /* TLS_TEMP.xgRyfnKY */,
+				D20A96C629A8025600B2FCF2 /* remove_identity_from_login_keychain */,
+				D20A96C729A8025600B2FCF2 /* remove_trusted_CA_cert_from_system_keychain */,
+				D20A96C829A8025600B2FCF2 /* add_identity_to_login_keychain */,
+				D20A96C929A8025600B2FCF2 /* Utility_functions.sh */,
+				D20A96CA29A8025600B2FCF2 /* make_identity */,
+				D20A96CB29A8025600B2FCF2 /* make_ca_cert */,
+				D20A96CC29A8025600B2FCF2 /* remove_identity_from_system_keychain */,
+				D20A96CD29A8025600B2FCF2 /* remove_SED_keychain */,
+				D20A96CE29A8025600B2FCF2 /* SED CA.pem */,
+				D20A96CF29A8025600B2FCF2 /* add_identity_to_SED_keychain */,
+				D20A96D029A8025600B2FCF2 /* Uninstall_certificates.sh */,
+				D20A96D129A8025600B2FCF2 /* Bright Plaza SED Server.p12 */,
+				D20A96D229A8025600B2FCF2 /* add_trusted_CA_cert_to_system_keychain */,
+				D20A96D329A8025600B2FCF2 /* make_self_signed_tls_cert_and_identity */,
+				D20A96D429A8025600B2FCF2 /* remove_trusted_cert_from_system_keychain */,
+				D20A96D529A8025600B2FCF2 /* TLS_TEMP.6WrdxPAd */,
+				D20A96D729A8025600B2FCF2 /* TLS_TEMP.KtOr2P7E */,
+				D20A96DB29A8025600B2FCF2 /* make_tls_cert */,
+				D20A96DC29A8025600B2FCF2 /* remove_trusted_CA_cert_from_system_roots_keychain */,
+				D20A96DD29A8025600B2FCF2 /* client */,
+				D20A96DE29A8025600B2FCF2 /* copy_trusted_cert_from_SED_keychain_to_system_keychain */,
+				D20A96DF29A8025600B2FCF2 /* SED CA.cer */,
+				D20A96E029A8025600B2FCF2 /* add_trusted_cert_key_to_system_keychain */,
+			);
+			path = "self-signed";
+			sourceTree = "<group>";
+		};
+		D20A96B029A8025600B2FCF2 /* TLS_TEMP.2jkVwPe9 */ = {
+			isa = PBXGroup;
+			children = (
+				D20A96B129A8025600B2FCF2 /* tmp.csr */,
+				D20A96B229A8025600B2FCF2 /* tmp.csr.cnf */,
+				D20A96B329A8025600B2FCF2 /* v3.ext */,
+			);
+			path = TLS_TEMP.2jkVwPe9;
+			sourceTree = "<group>";
+		};
+		D20A96C229A8025600B2FCF2 /* TLS_TEMP.xgRyfnKY */ = {
+			isa = PBXGroup;
+			children = (
+				D20A96C329A8025600B2FCF2 /* tmp.csr */,
+				D20A96C429A8025600B2FCF2 /* tmp.csr.cnf */,
+				D20A96C529A8025600B2FCF2 /* v3.ext */,
+			);
+			path = TLS_TEMP.xgRyfnKY;
+			sourceTree = "<group>";
+		};
+		D20A96D529A8025600B2FCF2 /* TLS_TEMP.6WrdxPAd */ = {
+			isa = PBXGroup;
+			children = (
+				D20A96D629A8025600B2FCF2 /* CAv3.ext */,
+			);
+			path = TLS_TEMP.6WrdxPAd;
+			sourceTree = "<group>";
+		};
+		D20A96D729A8025600B2FCF2 /* TLS_TEMP.KtOr2P7E */ = {
+			isa = PBXGroup;
+			children = (
+				D20A96D829A8025600B2FCF2 /* tmp.csr */,
+				D20A96D929A8025600B2FCF2 /* tmp.csr.cnf */,
+				D20A96DA29A8025600B2FCF2 /* v3.ext */,
+			);
+			path = TLS_TEMP.KtOr2P7E;
+			sourceTree = "<group>";
+		};
+		D20A96E329A8025600B2FCF2 /* CertificateAssistant */ = {
+			isa = PBXGroup;
+			children = (
+				D20A96E429A8025600B2FCF2 /* SED Server.key */,
+				D20A96E529A8025600B2FCF2 /* SED.keychain-db */,
+				D20A96E629A8025600B2FCF2 /* SED CA.pem.txt */,
+				D20A96E729A8025600B2FCF2 /* SED CA.pem */,
+				D20A96E829A8025600B2FCF2 /* SED Server.crt */,
+				D20A96E929A8025600B2FCF2 /* Notes per Technical Note TN2326.rtfd */,
+				D20A96EA29A8025600B2FCF2 /* SED CA.pretrust.pem */,
+				D20A96EB29A8025600B2FCF2 /* SED Server.p12 */,
+				D20A96EC29A8025600B2FCF2 /* SED CA.trusted.pem */,
+				D20A96ED29A8025600B2FCF2 /* SED CA.cer */,
+			);
+			path = CertificateAssistant;
+			sourceTree = "<group>";
+		};
+		D20A96FC29A8025600B2FCF2 /* OnTV */ = {
+			isa = PBXGroup;
+			children = (
+				D20A96FD29A8025600B2FCF2 /* add_trusted_COMODO_RSA_Signing_CA_cert_to_system_keychain */,
+				D20A96FE29A8025600B2FCF2 /* extract_OnTV_CA_key.pl */,
+				D20A96FF29A8025600B2FCF2 /* extract_OnTV_CA_cert.pl */,
+				D20A970029A8025600B2FCF2 /* remove_trusted_COMODO_RSA_Signing_CA_cert_from_system_keychain */,
+				D20A970129A8025600B2FCF2 /* OnTV_CA.crt */,
+				D20A970229A8025600B2FCF2 /* extract_from_DTA_Code_Cert_pfx */,
+				D20A970329A8025600B2FCF2 /* COMODO_RSA_Code_Signing_CA.crt */,
+				D20A970429A8025600B2FCF2 /* make_OnTV_CA_signed_tls_cert_and_identity */,
+				D20A970529A8025600B2FCF2 /* extract_COMODO_RSA_Code_Signing_CA_cert.pl */,
+				D20A970629A8025600B2FCF2 /* OnTV_CA.key */,
+			);
+			path = OnTV;
+			sourceTree = "<group>";
+		};
+		D20A971229A8025600B2FCF2 /* .Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				D20A971329A8025600B2FCF2 /* Uninstall_driver.sh */,
+				D20A971429A8025600B2FCF2 /* Uninstall_daemon.sh */,
+				D20A971529A8025600B2FCF2 /* Uninstall_preference_pane.sh */,
+				D20A971629A8025600B2FCF2 /* Uninstall_SEDPreferences.sh */,
+				D20A971729A8025600B2FCF2 /* Uninstall_SEDAccess.sh */,
+				D20A971829A8025600B2FCF2 /* Uninstall_SEDDaemonTest.sh */,
+				D20A971929A8025600B2FCF2 /* unload_driver.sh */,
+				D20A971A29A8025600B2FCF2 /* Utility_functions.sh */,
+				D20A971B29A8025600B2FCF2 /* UNINSTALL */,
+				D20A971C29A8025600B2FCF2 /* Unload_daemon.sh */,
+				D20A971D29A8025600B2FCF2 /* Uninstall_packages.sh */,
+				D20A971E29A8025600B2FCF2 /* Uninstall_frameworks.sh */,
+				D20A971F29A8025600B2FCF2 /* Uninstall_libraries.sh */,
+				D20A972029A8025600B2FCF2 /* Install_daemon.sh */,
+				D20A972129A8025600B2FCF2 /* Install_driver.sh */,
+				D20A972229A8025600B2FCF2 /* Install_SEDAccess.sh */,
+			);
+			path = .Utilities;
+			sourceTree = "<group>";
+		};
 		D26904BF28D7A1530095769E /* reenumerate */ = {
 			isa = PBXGroup;
 			children = (
@@ -112,8 +890,7 @@
 				D287224528B835DF0023404B /* sedutil.framework */,
 			);
 			name = Frameworks;
-			path = "../../../../../../../../Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project";
-			sourceTree = BUILT_PRODUCTS_DIR;
+			sourceTree = "<group>";
 		};
 		D2B2025F28BBFD8F004C88FF /* Common */ = {
 			isa = PBXGroup;
@@ -130,6 +907,9 @@
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D20A961B29A8025600B2FCF2 /* SED ToolBox */,
+				D20A961329A6EF8E00B2FCF2 /* SEDKernelInterface.framework */,
+				D20A960729A6EC3800B2FCF2 /* BrightPlazaTPer.kext */,
 				D2772B5F28BC354B0005E001 /* macos */,
 				D2B2025F28BBFD8F004C88FF /* Common */,
 				D287224228B835CB0023404B /* sedutil.cpp */,
@@ -186,9 +966,12 @@
 				KnownAssetTags = (
 					New,
 				);
-				LastUpgradeCheck = 1400;
+				LastUpgradeCheck = 1410;
 				ORGANIZATIONNAME = "Bright Plaza, Inc.";
 				TargetAttributes = {
+					D20A95F629A6E9E600B2FCF2 = {
+						CreatedOnToolsVersion = 14.1;
+					};
 					D26904BD28D7A1530095769E = {
 						CreatedOnToolsVersion = 14.0;
 						DevelopmentTeam = UES63D9K7E;
@@ -255,9 +1038,31 @@
 			targets = (
 				D26B3B511F6FB6BC004571A8 /* sedutil-cli */,
 				D26904BD28D7A1530095769E /* reenumerate */,
+				D20A95F629A6E9E600B2FCF2 /* SED ToolBox */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D20A960A29A6EDA000B2FCF2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"/Users/scott/Library/Python/3.9/bin:$PATH\"\n\"${SRCROOT}/SED ToolBox/build.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D26904BA28D7A1530095769E /* Sources */ = {
@@ -278,7 +1083,110 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		D20A960329A6EA1F00B2FCF2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D26B3B511F6FB6BC004571A8 /* sedutil-cli */;
+			targetProxy = D20A960229A6EA1F00B2FCF2 /* PBXContainerItemProxy */;
+		};
+		D20A960529A6EA2300B2FCF2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D26904BD28D7A1530095769E /* reenumerate */;
+			targetProxy = D20A960429A6EA2300B2FCF2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		D20A95F729A6E9F100B2FCF2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Debug;
+		};
+		D20A95F829A6E9F100B2FCF2 /* Debug Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D20A95F929A6E9F100B2FCF2 /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Debug Bluetooth";
+		};
+		D20A95FA29A6E9F100B2FCF2 /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Debug Bonjour";
+		};
+		D20A95FB29A6E9F100B2FCF2 /* Debug Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Debug Bonjour Multistart";
+		};
+		D20A95FC29A6E9F100B2FCF2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Release;
+		};
+		D20A95FD29A6E9F100B2FCF2 /* Release Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Release Bonjour";
+		};
+		D20A95FE29A6E9F100B2FCF2 /* Release Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Release Bonjour Multistart";
+		};
+		D20A95FF29A6E9F100B2FCF2 /* Release Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Release Bluetooth";
+		};
+		D20A960029A6E9F100B2FCF2 /* Release Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Release Bonjour and Bluetooth";
+		};
 		D26904C328D7A1530095769E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -287,6 +1195,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -304,6 +1213,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -321,6 +1231,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -338,6 +1249,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -355,6 +1267,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -372,6 +1285,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -388,6 +1302,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -404,6 +1319,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -420,6 +1336,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -436,6 +1353,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -448,6 +1366,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -463,6 +1382,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -478,6 +1398,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -493,6 +1414,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -508,6 +1430,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -523,6 +1446,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -538,6 +1462,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -553,6 +1478,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -568,6 +1494,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -583,6 +1510,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CODE_SIGN_IDENTITY = "-";
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -650,7 +1578,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 625;
 				DEAD_CODE_STRIPPING = YES;
@@ -760,7 +1688,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 626;
 				DEAD_CODE_STRIPPING = YES;
@@ -865,7 +1793,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 625;
 				DEAD_CODE_STRIPPING = YES;
@@ -974,7 +1902,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 625;
 				DEAD_CODE_STRIPPING = YES;
@@ -1083,7 +2011,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 625;
 				DEAD_CODE_STRIPPING = YES;
@@ -1193,7 +2121,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 626;
 				DEAD_CODE_STRIPPING = YES;
@@ -1295,7 +2223,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 626;
 				DEAD_CODE_STRIPPING = YES;
@@ -1397,7 +2325,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 626;
 				DEAD_CODE_STRIPPING = YES;
@@ -1502,7 +2430,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 625;
 				DEAD_CODE_STRIPPING = YES;
@@ -1608,7 +2536,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 626;
 				DEAD_CODE_STRIPPING = YES;
@@ -1656,6 +2584,23 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D20A960129A6E9F100B2FCF2 /* Build configuration list for PBXAggregateTarget "SED ToolBox" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D20A95F729A6E9F100B2FCF2 /* Debug */,
+				D20A95F829A6E9F100B2FCF2 /* Debug Bonjour and Bluetooth */,
+				D20A95F929A6E9F100B2FCF2 /* Debug Bluetooth */,
+				D20A95FA29A6E9F100B2FCF2 /* Debug Bonjour */,
+				D20A95FB29A6E9F100B2FCF2 /* Debug Bonjour Multistart */,
+				D20A95FC29A6E9F100B2FCF2 /* Release */,
+				D20A95FD29A6E9F100B2FCF2 /* Release Bonjour */,
+				D20A95FE29A6E9F100B2FCF2 /* Release Bonjour Multistart */,
+				D20A95FF29A6E9F100B2FCF2 /* Release Bluetooth */,
+				D20A960029A6E9F100B2FCF2 /* Release Bonjour and Bluetooth */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release Bonjour Multistart";
+		};
 		D26904C228D7A1530095769E /* Build configuration list for PBXNativeTarget "reenumerate" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

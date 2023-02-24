@@ -1,0 +1,2 @@
+#!/bin/bash -xv
+sudo security import './COMODO_RSA_Code_Signing_CA.crt' -k /Library/Keychains/System.keychain

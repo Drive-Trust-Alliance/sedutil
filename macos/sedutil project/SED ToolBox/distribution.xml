@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<installer-gui-script minSpecVersion="1">
+  <title>DTA SED ToolBox</title>
+  
+  <organization>com.brightplaza</organization>
+  <domains enable_localSystem="true"/>
+
+  <!-- Define documents displayed at various steps -->
+  <background file="images/Installer_background.png" scaling="tofit"/>
+  <welcome    file="welcome.html"    mime-type="text/html" />
+  <readme     file="readme.html"     mime-type="text/html" />
+  <license    file="EULA_SED_Applications_v1.0.2forMacInstaller.html"    mime-type="text/html" />
+  <conclusion file="conclusion.html" mime-type="text/html" />
+
+  <options customize="never"
+           hostArchitectures="x86_64"
+           require-scripts="true"
+           rootVolumeOnly="true"/>
+
+  <!-- List all component packages -->
+  <pkg-ref id="com.brightplaza.dtabundles"
+           version="2.0"
+           auth="root">DTAbundles.pkg</pkg-ref>
+  <pkg-ref id="com.brightplaza.dtafiles"
+           version="2.0"
+           auth="root">DTAfiles.pkg</pkg-ref>
+  
+  <!-- Define each choice -->
+  <choice
+      id="com.brightplaza.dtabundles"
+      visible="false"
+      title="SED Bundles"
+      description="SED Application, Framework and Kernel Extension bundles"
+      start_selected="true">
+    <pkg-ref id="com.brightplaza.dtabundles" onConclusion="RequireRestart"/>
+  </choice>
+  <choice
+      id="com.brightplaza.dtafiles"
+      visible="false"
+      title="SED files"
+      description="SED command line programs, daemons and property lists"
+      start_selected="true">
+    <pkg-ref id="com.brightplaza.dtafiles"/>
+  </choice>
+  
+  <!-- List them again here. They can now be organized
+       as a hierarchy if you want. -->
+  <choices-outline>
+    <line choice="com.brightplaza.dtabundles"/>
+    <line choice="com.brightplaza.dtafiles"/>
+  </choices-outline>
+  
+</installer-gui-script>

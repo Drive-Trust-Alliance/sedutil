@@ -1,0 +1,10 @@
+#!/bin/bash -xv
+./make_tls_cert                          \
+    -CA="SED CA"                         \
+    -c="US"                              \
+    -s="Pennsylvania"                    \
+    -l="Pittsburgh"                      \
+    -o="Bright Plaza, Inc."              \
+    -u="Drive Trust Alliance"            \
+    -n="Bright Plaza SED Server"         \
+    -P="DTA" 

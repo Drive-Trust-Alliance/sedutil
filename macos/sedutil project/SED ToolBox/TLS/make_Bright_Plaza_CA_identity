@@ -1,0 +1,16 @@
+#!/bin/bash
+# Source Utility_functions.sh from the same directory as this script
+cur=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. "${cur}/Bright_Plaza_customizations.sh"
+
+# export KEEPTEMP=yes
+DURATION="$( dc -e "2 31 ^ 1 - $( date '+%s' ) - 86399 + 86400 / p" )" # days until the Unix 32-bit epoch
+./make_self_signed_ca_cert_and_key       \
+    -c="US"                              \
+    -s="Pennsylvania"                    \
+    -l="Pittsburgh"                      \
+    -o="Bright Plaza, Inc."              \
+    -u="Drive Trust Alliance"            \
+    -n="${CA_NAME}"                      \
+    -d=${DURATION}                       \
+    -P='De1taTang0A1fa'

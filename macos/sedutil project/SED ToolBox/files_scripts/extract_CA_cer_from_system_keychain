@@ -1,0 +1,5 @@
+#!/bin/bash
+BUILT_PRODUCTS_DIR="${BUILT_PRODUCTS_DIR:-.}"
+UNLOCALIZED_RESOURCES_FOLDER_PATH="${UNLOCALIZED_RESOURCES_FOLDER_PATH:-.}"
+security find-certificate -c 'Bright Plaza CA' -p | \
+    openssl x509 -outform der -out "${BUILT_PRODUCTS_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Bright Plaza CA.cer"
