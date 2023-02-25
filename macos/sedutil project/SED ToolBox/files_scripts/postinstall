@@ -135,16 +135,17 @@ function save_SED_keychain_password { #DEBUGGING
 
 function install {
     DEBUG_PRINT "install"
-    add_CA_cert_to_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1       \
-        || return $(DEBUG_FAILURE_RETURN "adding CA cert to system keychain")
-    generate_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1       \
-        || return $(DEBUG_FAILURE_RETURN "generating SED keychain password")
-    save_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1                        \
-        || return $(DEBUG_FAILURE_RETURN "saving SED keychain password in system keychain item")
-    create_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1                  \
-        || return $(DEBUG_FAILURE_RETURN "creating SED keychain")
-    add_server_identity_to_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1  \
-        || return $(DEBUG_FAILURE_RETURN "adding server identity to SED keychain")
+#    add_CA_cert_to_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1       \
+#        || return $(DEBUG_FAILURE_RETURN "adding CA cert to system keychain")
+#    generate_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1       \
+#        || return $(DEBUG_FAILURE_RETURN "generating SED keychain password")
+#    save_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1                        \
+#        || return $(DEBUG_FAILURE_RETURN "saving SED keychain password in system keychain item")
+#    create_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1                  \
+#        || return $(DEBUG_FAILURE_RETURN "creating SED keychain")
+#    add_server_identity_to_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1  \
+#        || return $(DEBUG_FAILURE_RETURN "adding server identity to SED keychain")
+    return
 }
 
 
