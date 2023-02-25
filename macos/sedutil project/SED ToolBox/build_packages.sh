@@ -94,3 +94,5 @@ productbuild --distribution "${distribution_XML}"                               
              --sign "${prodcert}"                                               \
              --timestamp                                                        \
              DTATools.pkg  ||  exit 1
+             
+spew "$(ls -al "$(realpath DTATools.pkg)")"
