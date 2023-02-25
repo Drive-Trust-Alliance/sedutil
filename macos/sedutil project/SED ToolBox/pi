@@ -40,6 +40,9 @@ else
 fi
 
 
+DEBUG_PRINT "Source for this file is "\
+"/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project/SED ToolBox/pi"
+
 # Certificates should be in a folder that is a peer of the pkg being installed
 DEBUG_PRINT "pkg being installed is ${1}"
 DEBUG_PRINT "dir of pkg being installed is $(dirname "${1}")"
@@ -132,16 +135,17 @@ function save_SED_keychain_password { #DEBUGGING
 
 function install {
     DEBUG_PRINT "install"
-    add_CA_cert_to_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1       \
-        || return DEBUG_FAILURE_RETURN "adding CA cert to system keychain"
-    generate_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1       \
-        || return DEBUG_FAILURE_RETURN "generating SED keychain password"
-    save_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1                        \
-        || return DEBUG_FAILURE_RETURN "saving SED keychain password in system keychain item"
-    create_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1                  \
-        || return DEBUG_FAILURE_RETURN "creating SED keychain"
-    add_server_identity_to_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1  \
-        || return DEBUG_FAILURE_RETURN "adding server identity to SED keychain"
+#    add_CA_cert_to_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1       \
+#        || return DEBUG_FAILURE_RETURN "adding CA cert to system keychain"
+#    generate_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1       \
+#        || return DEBUG_FAILURE_RETURN "generating SED keychain password"
+#    save_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1                        \
+#        || return DEBUG_FAILURE_RETURN "saving SED keychain password in system keychain item"
+#    create_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1                  \
+#        || return DEBUG_FAILURE_RETURN "creating SED keychain"
+#    add_server_identity_to_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1  \
+#        || return DEBUG_FAILURE_RETURN "adding server identity to SED keychain"
+    return
 }
 
 

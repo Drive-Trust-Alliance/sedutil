@@ -39,6 +39,10 @@ else
     }
 fi
 
+DEBUG_PRINT "Source for this file is "\
+"/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project/SED ToolBox/files_scripts/postinstall"
+
+
 
 # Certificates should be in a folder that is a peer of the pkg being installed
 DEBUG_PRINT "pkg being installed is ${1}"
@@ -113,6 +117,11 @@ function remove_SED_keychain_password {
     system_keychain_has_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1 || return
     delete_SED_keychain_password_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1 ||
         DEBUG_FAIL "deleting System keychain item \"${KEYCHAIN_PASSWORD_LABEL}\""  $?
+}
+
+function remove_CA_cert_from_system_keychain {
+    DEBUG_PRINT "remove_CA_cert_from_system_keychain"
+    DEBUG_FAIL "remove_CA_cert_from_system_keychain unimplemented" 58
 }
 
 function erase_old_installation {
