@@ -121,7 +121,7 @@ function remove_SED_keychain_password {
 
 function remove_CA_cert_from_system_keychain {
     DEBUG_PRINT "remove_CA_cert_from_system_keychain"
-    DEBUG_FAIL "remove_CA_cert_from_system_keychain unimplemented" 58
+    remove_trusted_CA_cert_from_system_keychain
 }
 
 function erase_old_installation {

@@ -41,8 +41,8 @@ mkdir "${mac_dir}"
 # Fill out the macOS subfolder
 
 # DTATools.pkg
-spew cp -v DTATools.pkg "${mac_dir}/DTA.pkg"
-cp -v DTATools.pkg "${mac_dir}/DTA.pkg"  \
+spew cp -v DTATools.pkg "${mac_dir}/DTATools.pkg"
+cp -v DTATools.pkg "${mac_dir}/DTATools.pkg"  \
     ||  fail 133 "Failed copying DTATools.pkg to ${mac_dir}"
 
 # .Utilites and .resources and Uninstall
