@@ -32,7 +32,8 @@
       title="SED Bundles"
       description="SED Application, Framework and Kernel Extension bundles"
       start_selected="true">
-    <pkg-ref id="com.brightplaza.dtabundles" onConclusion="RequireRestart"/>
+    <!-- No longer restart from installer <pkg-ref id="com.brightplaza.dtabundles" onConclusion="RequireRestart"/> -->
+    <pkg-ref id="com.brightplaza.dtabundles"/>
   </choice>
   <choice
       id="com.brightplaza.dtafiles"
