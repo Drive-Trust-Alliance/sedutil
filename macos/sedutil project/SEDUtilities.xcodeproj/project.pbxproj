@@ -597,6 +597,7 @@
 		D20A966429A8025600B2FCF2 /* files_scripts */ = {
 			isa = PBXGroup;
 			children = (
+				D20A966C29A8025600B2FCF2 /* postinstall */,
 				D20A966529A8025600B2FCF2 /* make_Bright_Plaza_CA_identity */,
 				D20A966629A8025600B2FCF2 /* test_creating_SED_Server */,
 				D20A966729A8025600B2FCF2 /* remove_trusted_CA_identity_from_system_keychain */,
@@ -604,7 +605,6 @@
 				D20A966929A8025600B2FCF2 /* test_removing_CA */,
 				D20A966A29A8025600B2FCF2 /* extract_CA_cer_from_system_keychain */,
 				D20A966B29A8025600B2FCF2 /* Bright Plaza SED Server.pem */,
-				D20A966C29A8025600B2FCF2 /* postinstall */,
 				D20A966D29A8025600B2FCF2 /* local_network_customizations.sh */,
 				D20A966E29A8025600B2FCF2 /* test_creating_CA */,
 				D20A966F29A8025600B2FCF2 /* local_network_customizations_for_Magnolia_Heights.sh */,

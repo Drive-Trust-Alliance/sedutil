@@ -40,10 +40,10 @@ mkdir "${mac_dir}"
 
 # Fill out the macOS subfolder
 
-# DTA.pkg
-spew cp -v DTA.pkg "${mac_dir}/DTA.pkg"
-cp -v DTA.pkg "${mac_dir}/DTA.pkg"  \
-    ||  fail 133 "Failed copying DTA.pkg to ${mac_dir}"
+# DTATools.pkg
+spew cp -v DTATools.pkg "${mac_dir}/DTA.pkg"
+cp -v DTATools.pkg "${mac_dir}/DTA.pkg"  \
+    ||  fail 133 "Failed copying DTATools.pkg to ${mac_dir}"
 
 # .Utilites and .resources and Uninstall
 spew cp -r "${TARGETROOT}/.Utilities" "${mac_dir}/.Utilities"

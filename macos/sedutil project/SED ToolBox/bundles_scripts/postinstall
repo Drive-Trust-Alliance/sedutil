@@ -1,2 +1,3 @@
 #!/bin/bash
-exit 0 
+echo bundles postinstall | tee /Users/scott/Desktop/bundles_postinstall.txt
+exit 0

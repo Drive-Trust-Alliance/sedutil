@@ -17,7 +17,7 @@ format = 'UDZO'
 # Volume size
 size = defines.get('size', None)
 
-pkg = os.path.join(macOS, 'DTA.pkg')
+pkg = os.path.join(macOS, 'DTATools.pkg')
 pkg_name = os.path.basename(pkg)
 
 certificates = os.path.join(build, 'Certificates')

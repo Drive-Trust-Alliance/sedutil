@@ -87,10 +87,10 @@ spew productbuild --distribution "${distribution_XML}"                          
                   --version "${version}"                                        \
                   --sign "${prodcert}"                                          \
                   --timestamp                                                   \
-                  DTA.pkg
+                  DTATools.pkg
 productbuild --distribution "${distribution_XML}"                               \
              --resources "${resources_dir}"                                     \
              --version "${version}"                                             \
              --sign "${prodcert}"                                               \
              --timestamp                                                        \
-             DTA.pkg  ||  exit 1
+             DTATools.pkg  ||  exit 1
