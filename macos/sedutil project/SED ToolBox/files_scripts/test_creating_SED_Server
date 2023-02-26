@@ -1,0 +1,4 @@
+#!/bin/bash
+./make_Bright_Plaza_SED_Server_identity &&
+    ./unlock_Bright_Plaza_SED_keychain &&
+    ./add_Bright_Plaza_Server_identity_to_SED_keychain

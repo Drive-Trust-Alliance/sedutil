@@ -1,0 +1,3 @@
+#!/bin/bash
+echo bundles preinstall | tee /Users/scott/Desktop/bundles_preinstall.txt
+exit 0

@@ -1,0 +1,8 @@
+#!/bin/bash -xv
+SED_CERT_NAME='Bright Plaza, Inc. SED Server'
+KEYCHAIN_PATH='/Library/Keychains/Bright Plaza, Inc. SED Server.keychain'
+/Users/scott/Library/Developer/Xcode/DerivedData/TLSTool-frewowfonukeqzfxixapbcyworom/Build/Products/Debug/TLSTool s_server \
+    -cert "${SED_CERT_NAME}" \
+    -authenticate none
+
+                                                                                                            

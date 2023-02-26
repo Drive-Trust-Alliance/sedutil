@@ -1,0 +1,12 @@
+rm -rf '/Users/scott/Desktop/SED ToolBox (debug).dmg'
+../../create-dmg/create-dmg \
+   --no-internet-enable     \
+   --volname 'SED ToolBox' \
+   --volicon SED\ ToolBox/resources/images/Self-Encrypting-Box.VolumeIcon.icns \
+   --background SED\ ToolBox/resources/images/Self-Encrypting\ Box\ Label.png \
+   --icon Certificates      40 100 \
+   --icon macOS            240 100 \
+   --icon Windows          440 100 \
+   --hdiutil-quiet \
+   '/Users/scott/Desktop/SED ToolBox (debug).dmg' \
+   build/SED.build/Debug\ Bonjour\ Multistart/SED\ ToolBox.build/DTA

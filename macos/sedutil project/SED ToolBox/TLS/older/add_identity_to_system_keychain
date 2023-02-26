@@ -1,0 +1,2 @@
+#!/bin/bash -xv
+sudo security import 'Bright Plaza, Inc. SED Server.p12' -P DTA  -k /Library/Keychains/System.keychain

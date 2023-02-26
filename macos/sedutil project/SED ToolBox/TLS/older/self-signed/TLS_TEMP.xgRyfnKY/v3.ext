@@ -1,0 +1,10 @@
+keyUsage=critical,digitalSignature, keyEncipherment
+extendedKeyUsage=critical,serverAuth
+subjectAltName=@alt_names
+
+[alt_names]
+DNS.1 = "fawkes1.magnolia-heights.com"
+DNS.2 = "localhost"
+DNS.3 = "Scott-Markss-MacBook-Pro.local"
+IP.1 = "192.168.25.1"
+IP.2 = "127.0.0.1"

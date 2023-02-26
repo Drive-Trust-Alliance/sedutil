@@ -19,7 +19,7 @@ static void PrintBufferToIOLog( const char * tagstring, const void * buffer, siz
     char outputBuf[200];
     char * outputBufPtr = outputBuf;
     const char * outputBufEnd = outputBuf+sizeof(outputBuf);
-    
+
 #define pf(...) \
 do { \
     int nPrinted = snprintf(outputBufPtr, (size_t)(outputBufEnd-outputBufPtr), __VA_ARGS__) ; \
