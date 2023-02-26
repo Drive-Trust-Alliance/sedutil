@@ -119,16 +119,16 @@ function remove_SED_keychain_password {
         DEBUG_FAIL "deleting System keychain item \"${KEYCHAIN_PASSWORD_LABEL}\""  $?
 }
 
-function remove_CA_cert_from_system_keychain {
-    DEBUG_PRINT "remove_CA_cert_from_system_keychain"
-    remove_trusted_CA_cert_from_system_keychain
+function remove_SED_server_CA_cert_from_system_keychain {
+    DEBUG_PRINT "remove_SED_server_CA_cert_from_system_keychain"
+    remove_CA_cert_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1
 }
 
 function erase_old_installation {
     DEBUG_PRINT "erase_old_installation"
     remove_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1
     remove_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1
-    remove_CA_cert_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1
+    remove_SED_server_CA_cert_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1
     return 0
 }
 
