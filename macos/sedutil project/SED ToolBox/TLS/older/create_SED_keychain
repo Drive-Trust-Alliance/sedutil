@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Source Utility_functions.sh from the same directory as this script
+cur=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. "${cur}/../.Utilities/Utility_functions.sh"
+
+beroot
+
+KEYCHAIN_NAME="Bright Plaza, Inc. SED Server"
+KEYCHAIN_PATH="/Library/Keychains/${KEYCHAIN_NAME}.keychain"
+
+
+KEYCHAIN_PASSWORD="$1"
+
+get_password() {
+    while [ -z "${KEYCHAIN_PASSWORD}" ]
+    do
+        local PASSWORD CONFIRM
+        echo -n "Enter password for ${KEYCHAIN_NAME} keychain:"
+        read -s PASSWORD
+        echo
+        echo -n "Confirm password for ${KEYCHAIN_NAME} keychain:"
+        read -s CONFIRM
+        echo
+        if [ "${PASSWORD}" == "${CONFIRM}" ]
+        then
+            KEYCHAIN_PASSWORD="${PASSWORD}"
+        else
+            echo "Passwords do no match -- try again"
+        fi
+    done
+}
+
+main () {
+    get_password
+    security create-keychain -p "${KEYCHAIN_PASSWORD}"  "${KEYCHAIN_PATH}"
+}
+
+main
+

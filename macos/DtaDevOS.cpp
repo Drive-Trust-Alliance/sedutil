@@ -306,9 +306,9 @@ int  DtaDevOS::diskScan()
     LOG(D1) << "Entering DtaDevOS:diskScan ";
 
     IFLOG(D) {
-        printf("Scanning for TCG SWG compliant disks (debug version, loglevel=%d)\n", CLog::Level());
+        fprintf(Output2FILE::Stream(), "Scanning for TCG SWG compliant disks (debug version, loglevel=%d)\n", CLog::Level());
     } else {
-        printf("Scanning for Opal compliant disks\n");
+        fprintf(Output2FILE::Stream(), "Scanning for Opal compliant disks\n");
     }
 
     vector<DtaDevMacOSBlockStorageDevice *> blockStorageDevices =
@@ -316,21 +316,21 @@ int  DtaDevOS::diskScan()
 
     IFLOG(D)
         if (blockStorageDevices.size()!=0) {
-            printf(" device    SSC         Model Number       Firmware  Locn     World Wide Name      Serial Number       Vendor      Manufacturer Name\n");
-            printf("---------- ---  ------------ ------------ --------  -----    ----- ---- -----    ------- ---------    -------  --------------- -------\n");
+            fprintf(Output2FILE::Stream(), " device    SSC         Model Number       Firmware  Locn     World Wide Name      Serial Number       Vendor      Manufacturer Name\n");
+            fprintf(Output2FILE::Stream(), "---------- ---  ------------ ------------ --------  -----    ----- ---- -----    ------- ---------    -------  --------------- -------\n");
         }
 
     for (DtaDevMacOSBlockStorageDevice * blockStorageDevice : blockStorageDevices){
-        printf("%-11s", blockStorageDevice->getDevPath().c_str());
+        fprintf(Output2FILE::Stream(), "%-11s", blockStorageDevice->getDevPath().c_str());
 
         if (blockStorageDevice->isAnySSC()) {
             DtaDevMacOSTPer * t = dynamic_cast<DtaDevMacOSTPer *>(blockStorageDevice);
-            printf(" %s%s%s ",
+            fprintf(Output2FILE::Stream(), " %s%s%s ",
                    (t->isOpal1()  ? "1" : " "),
                    (t->isOpal2()  ? "2" : " "),
                    (t->isEprise() ? "E" : " "));
         } else {
-            printf(" No  ");
+            fprintf(Output2FILE::Stream(), " No  ");
         }
         const char * devType = NULL;
         switch (blockStorageDevice->getDevType()) {
@@ -361,7 +361,7 @@ int  DtaDevOS::diskScan()
                          wwn[0], wwn[1], wwn[2], wwn[3], wwn[4], wwn[5], wwn[6], wwn[7],
                          blockStorageDevice->getWorldWideNameIsSynthetic() ? '*' : ' ');
             }
-            printf("%-25s %-8s  %-7s  %18s  %-20s %-8s %-30s\n",
+            fprintf(Output2FILE::Stream(), "%-25s %-8s  %-7s  %18s  %-20s %-8s %-30s\n",
                    blockStorageDevice->getModelNum(),
                    blockStorageDevice->getFirmwareRev(),
                    devType,
@@ -371,7 +371,7 @@ int  DtaDevOS::diskScan()
                    blockStorageDevice->getManufacturerName());
             
         } else {
-            printf("%-25s %-8s  %-7s\n",
+            fprintf(Output2FILE::Stream(), "%-25s %-8s  %-7s\n",
                    blockStorageDevice->getModelNum(),
                    blockStorageDevice->getFirmwareRev(),
                    devType);

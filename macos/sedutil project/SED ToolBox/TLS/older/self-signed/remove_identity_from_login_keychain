@@ -1,0 +1,3 @@
+#!/bin/bash
+security -v delete-identity -t -c "Bright Plaza, Inc. SED Server"
+security -v delete-identity -c "Bright Plaza, Inc. SED Server"

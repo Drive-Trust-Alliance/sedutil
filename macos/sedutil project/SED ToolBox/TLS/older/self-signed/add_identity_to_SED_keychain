@@ -1,0 +1,8 @@
+#!/bin/bash -xv
+KEYCHAIN_PASSWORD='Drive Trust Alliance'
+SED_IDENTITY_PASSWORD='DTA'
+KEYCHAIN_PATH='/Library/Keychains/Bright Plaza SED Server.keychain'
+SED_IDENTITY_PATH='Bright Plaza SED Server.p12'
+sudo security -v create-keychain -p "${KEYCHAIN_PASSWORD}" "${KEYCHAIN_PATH}"
+# TODO: add to search list?
+sudo security -v import "${SED_IDENTITY_PATH}" -k "${KEYCHAIN_PATH}" -P "${SED_IDENTITY_PASSWORD}"

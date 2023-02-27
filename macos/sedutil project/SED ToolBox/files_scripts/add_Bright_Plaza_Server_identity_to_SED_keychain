@@ -1,0 +1,12 @@
+#!/bin/bash
+cur=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. "${cur}/Bright_Plaza_customizations.sh"
+
+function main {
+    add_server_identity_to_SED_keychain || fail "adding server identity to SED keychain" 99
+}
+
+main
+
+
+

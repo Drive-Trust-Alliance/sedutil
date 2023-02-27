@@ -10,10 +10,11 @@
 #define UserKernelShared_h
 
 #define DriverClass               com_brightplaza_BrightPlazaTPer
-#define kBrightPlazaDriverClass  "com_brightplaza_BrightPlazaTPer"
+#define kDriverClass             "com_brightplaza_BrightPlazaTPer"
 #define ProviderClass             IOSCSIPeripheralDeviceNub
 #define kProviderClass           "IOSCSIPeripheralDeviceNub"
 #define UserClientClass           com_brightplaza_BrightPlazaTPerUserClient
+#define kUserClientClass         "com_brightplaza_BrightPlazaTPerUserClient"
 
 #define kIOBlockStorageDriver    "IOBlockStorageDriver"
 

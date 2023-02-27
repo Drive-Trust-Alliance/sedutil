@@ -1,0 +1,34 @@
+#!/bin/bash
+
+PFX="DTA Code Cert.pfx"
+
+PASSWORD="$1"
+if [ -z "${PASSWORD}" ]
+then
+    echo -n "Enter password for ${PFX}:"
+    read -s PASSWORD
+    echo
+fi
+
+
+extract () {
+    CERTSOPT="$1"
+    KEYSOPT="$2"
+    PERLSCRIPT="$3"
+    OUTPUT="$4"
+    openssl pkcs12 -in "${PFX}" -passin pass:"${PASSWORD}" "${CERTSOPT}" "${KEYSOPT}" \
+            1> >(perl "${PERLSCRIPT}" > "${OUTPUT}") \
+            2> >(perl -lne 'print unless /MAC verified OK/' 1>&2)
+    STATUS=$?
+    if (( $STATUS ))
+    then
+        echo "Failed creating ${OUTPUT}"
+        exit $STATUS
+    fi    
+}
+
+extract -cacerts -nokeys extract_COMODO_RSA_Code_Signing_CA_cert.pl "COMODO_RSA_Code_Signing_CA.crt"
+
+extract -clcerts -nokeys extract_OnTV_CA_cert.pl                    "OnTV_CA.crt"
+
+extract -nocerts -nodes extract_OnTV_CA_key.pl                      "OnTV_CA.key"
