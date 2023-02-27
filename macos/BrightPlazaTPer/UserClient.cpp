@@ -294,8 +294,8 @@ IOReturn UserClientClass::openUserClient(void)
     IOReturn	success = kIOReturnSuccess;
 
 //    UC_IOLOG_DEBUG_METHOD("(" REVEALFMT ")", REVEAL(fProvider));
-    UC_IOLOG_DEBUG("%s[" REVEALFMT "]::%s" "  fProvider=" REVEALFMT , kUserClientClass, REVEAL(this), __FUNCTION__ ,
-                   REVEAL(fProvider));
+//    UC_IOLOG_DEBUG("%s[" REVEALFMT "]::%s" "  fProvider=" REVEALFMT , kUserClientClass, REVEAL(this), __FUNCTION__ ,
+//                   REVEAL(fProvider));
 
     if (fProvider == NULL || isInactive()) {
 		// Return an error if we don't have a provider. This could happen if the user process
@@ -310,8 +310,8 @@ IOReturn UserClientClass::openUserClient(void)
 	}
 
 //    UC_IOLOG_DEBUG_METHOD(" success is 0x%04x",success);
-    UC_IOLOG_DEBUG("%s[" REVEALFMT "]::%s" " success is 0x%04x", kUserClientClass, REVEAL(this), __FUNCTION__ ,
-                   success);
+//    UC_IOLOG_DEBUG("%s[" REVEALFMT "]::%s" " success is 0x%04x", kUserClientClass, REVEAL(this), __FUNCTION__ ,
+//                   success);
     return success;
 }
 
