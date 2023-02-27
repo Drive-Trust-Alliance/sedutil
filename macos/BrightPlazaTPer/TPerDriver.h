@@ -30,8 +30,6 @@ public:
     virtual void stop(IOService* provider) APPLE_KEXT_OVERRIDE;
     virtual IOService* probe(IOService* provider, SInt32* score) APPLE_KEXT_OVERRIDE;
     virtual void systemWillShutdown(IOOptionBits specifier);
-<<<<<<< HEAD
-=======
 
 
 
@@ -61,7 +59,6 @@ public:
     @result See IOService.h for details.
     */
     virtual IOReturn     setPowerState ( unsigned long powerStateOrdinal, IOService * whichDevice ) APPLE_KEXT_OVERRIDE;
->>>>>>> ee96782aea1a7b9dfb673933b17fcf89692201c9
 
 protected:
 

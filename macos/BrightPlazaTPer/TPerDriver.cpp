@@ -28,7 +28,14 @@ OSDefineMetaClassAndStructors(com_brightplaza_BrightPlazaTPer, IOSCSIPeripheralD
 
 bool DriverClass::start(IOService* provider)
 {
-    IOLOG_DEBUG_METHOD("(" REVEALFMT "), provider->getName() = %s", REVEAL(provider), provider->getName());
+    // Instead of this, we must avoid using this->getName() inside IOLOG_DEBUG_METHOD,
+    // as we are not yet sufficiently initialized.
+    //
+    //    IOLOG_DEBUG_METHOD("(" REVEALFMT "), provider->getName() = %s",
+    //                       REVEAL(provider), provider->getName());
+    //
+    IOLOG_DEBUG("%s[%p]::%s(provider = %p), provider->getName() = %s",
+                kDriverClass, this, __FUNCTION__, provider, provider->getName());
 
     IOLOG_DEBUG_METHOD(" *** before super");
     bool success = super::start(provider);
@@ -51,16 +58,6 @@ bool DriverClass::start(IOService* provider)
     return true;
 }
 
-<<<<<<< HEAD
-void DriverClass::systemWillShutdown(IOOptionBits specifier)
-{
-    IOService::systemWillShutdown(specifier);
-
-    // Indicate that the driver should not be terminated during sleep
-    setProperty("IOPMDriverAssertionLevel", kIOPMDriverAssertionLevelOn, 32);
-}
-
-=======
 
 IOReturn DriverClass::setPowerState(unsigned long powerStateOrdinal,
                                     IOService *   whatDevice ){
@@ -115,7 +112,6 @@ void DriverClass::systemWillShutdown(IOOptionBits specifier)
 #endif // DRIVER_DEBUG
 
 
->>>>>>> ee96782aea1a7b9dfb673933b17fcf89692201c9
 // Fill in di as much as possible using methods of this
 // class and its superclasses
 //
@@ -1890,22 +1886,7 @@ void DriverClass::close(IOService *  forClient,
     IOLOG_DEBUG_METHOD("(" REVEALFMT ",%u)", REVEAL(forClient), (unsigned int)options);
     IOLOG_DEBUG_METHOD(" *** before super");
     super::close(forClient, options);
-<<<<<<< HEAD
-    IOLOG_DEBUG("%s[%p]::%s *** after super::close\n", getName(), this, __FUNCTION__ );
-    REVEAL_THIS;
-}
-
-void DriverClass::stop(IOService* provider)
-{
-    IOLOG_DEBUG("%s[%p]::%s *** before super::stop\n", getName(), this, __FUNCTION__ );
-    REVEAL_THIS;
-    IOLOG_REVEAL(provider,"provider");
-    super::stop(provider);
-    IOLOG_DEBUG("%s[%p]::%s *** after super::stop\n", getName(), this, __FUNCTION__ );
-    REVEAL_THIS;
-=======
     IOLOG_DEBUG_METHOD(" *** after super");
->>>>>>> ee96782aea1a7b9dfb673933b17fcf89692201c9
 }
 
 // willTerminate is called at the beginning of the termination process. It is a notification
