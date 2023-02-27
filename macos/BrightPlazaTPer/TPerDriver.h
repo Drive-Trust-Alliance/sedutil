@@ -187,7 +187,7 @@ private:
 
     public:
 
-        bool                init ( OSDictionary * propTable ) APPLE_KEXT_OVERRIDE;
+        virtual bool        init ( OSDictionary * propTable ) APPLE_KEXT_OVERRIDE;
         virtual void        free ( void ) APPLE_KEXT_OVERRIDE;
 
         virtual bool        handleOpen (
@@ -204,14 +204,12 @@ private:
 
     // IOService methods
 public:
-    virtual bool init(OSDictionary* dictionary = 0) APPLE_KEXT_OVERRIDE;
-    virtual void free(void) APPLE_KEXT_OVERRIDE;
     virtual bool willTerminate(IOService* provider, IOOptionBits options) APPLE_KEXT_OVERRIDE;
     virtual bool didTerminate(IOService* provider, IOOptionBits options, bool* defer) APPLE_KEXT_OVERRIDE;
     virtual bool terminate(IOOptionBits options = 0) APPLE_KEXT_OVERRIDE;
     virtual bool finalize(IOOptionBits options) APPLE_KEXT_OVERRIDE;
-//    virtual bool attach(IOService * provider) APPLE_KEXT_OVERRIDE;
-//    virtual void detach(IOService *provider) APPLE_KEXT_OVERRIDE;
+    virtual bool attach(IOService * provider) APPLE_KEXT_OVERRIDE;
+    virtual void detach(IOService *provider) APPLE_KEXT_OVERRIDE;
     virtual bool open(IOService * forClient, IOOptionBits options=0, void * arg=0) APPLE_KEXT_OVERRIDE;
     virtual void close(IOService * forClient, IOOptionBits options=0) APPLE_KEXT_OVERRIDE;
 

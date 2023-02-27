@@ -1773,20 +1773,22 @@ IOService* DriverClass::probe(IOService* provider, SInt32* score)
 
 #define REVEAL_THIS IOLOG_DEBUG("%s this=0x%016lX", getName(), (size_t)(void *)this)
 
-bool DriverClass::init(OSDictionary* propTable)
+bool DriverClass::init(OSDictionary* dictionary)
 {
-    if (!super::init(propTable)) {
-        IOLOG_DEBUG("%s[%p]::%s *** after super::init failed \n", getName(), this, __FUNCTION__ );
-        return false;
-    }
-    IOLOG_DEBUG("%s[%p]::%s *** after super::init(%p) \n", getName(), this, __FUNCTION__, propTable );
-
-    return true;
+//    Can not use IOLOG_DEBUG_METHOD, because can not yet use getName()
+    IOLOG_DEBUG(kDriverClass  "::[" REVEALFMT "]::%s" "(" REVEALFMT "))", REVEAL(this), __FUNCTION__,
+                REVEAL(dictionary));
+    IOLOG_DEBUG(kDriverClass  "::[" REVEALFMT "]::%s" " *** before super", REVEAL(this), __FUNCTION__);
+    bool success = super::init(dictionary);
+    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
+    return success;
 }
 
-void DriverClass::free(void){
-    IOLOG_DEBUG("%s[%p]::%s *** before super::free\n", getName(), this, __FUNCTION__ );
+void DriverClass::free(void)
+{
+    IOLOG_DEBUG_METHOD(" *** before super");
     super::free();
+    IOLOG_DEBUG_METHOD(" *** after super");
 }
 
 bool DriverClass::handleOpen (
@@ -1876,25 +1878,6 @@ void DriverClass::close(IOService *  forClient,
     IOLOG_DEBUG_METHOD("(" REVEALFMT ",%u)", REVEAL(forClient), (unsigned int)options);
     IOLOG_DEBUG_METHOD(" *** before super");
     super::close(forClient, options);
-    IOLOG_DEBUG_METHOD(" *** after super");
-}
-
-
-bool DriverClass::init(OSDictionary* dictionary)
-{
-//    Can not use IOLOG_DEBUG_METHOD, because can not yet use getName()
-    IOLOG_DEBUG(kDriverClass  "::[" REVEALFMT "]::%s" "(" REVEALFMT "))", REVEAL(this), __FUNCTION__,
-                REVEAL(dictionary));
-    IOLOG_DEBUG(kDriverClass  "::[" REVEALFMT "]::%s" " *** before super", REVEAL(this), __FUNCTION__);
-    bool success = super::init(dictionary);
-    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
-    return success;
-}
-
-void DriverClass::free(void)
-{
-    IOLOG_DEBUG_METHOD(" *** before super");
-    super::free();
     IOLOG_DEBUG_METHOD(" *** after super");
 }
 
