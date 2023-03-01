@@ -291,11 +291,9 @@ IOReturn UserClientClass::sOpenUserClient(UserClientClass* target,
 
 IOReturn UserClientClass::openUserClient(void)
 {
-    IOReturn	success = kIOReturnSuccess;
+    IOReturn	success = kIOReturnUnsupported; // kIOReturnSuccess;
 
-//    UC_IOLOG_DEBUG_METHOD("(" REVEALFMT ")", REVEAL(fProvider));
-//    UC_IOLOG_DEBUG("%s[" REVEALFMT "]::%s" "  fProvider=" REVEALFMT , kUserClientClass, REVEAL(this), __FUNCTION__ ,
-//                   REVEAL(fProvider));
+    UC_IOLOG_DEBUG_METHOD(" fProvider=" REVEALFMT, REVEAL(fProvider) );
 
     if (fProvider == NULL || isInactive()) {
 		// Return an error if we don't have a provider. This could happen if the user process
@@ -303,15 +301,14 @@ IOReturn UserClientClass::openUserClient(void)
 		// in the process of being terminated and is thus inactive.
         success = kIOReturnNotAttached;
 	}
-    else if (!fProvider->open(this)) {
-		// The most common reason this open call will fail is because the provider is already open
-		// and it doesn't support being opened by more than one client at a time.
-		success = kIOReturnExclusiveAccess;
-	}
 
-//    UC_IOLOG_DEBUG_METHOD(" success is 0x%04x",success);
-//    UC_IOLOG_DEBUG("%s[" REVEALFMT "]::%s" " success is 0x%04x", kUserClientClass, REVEAL(this), __FUNCTION__ ,
-//                   success);
+//    else if (!fProvider->open(this)) {
+//	      // The most common reason this open call will fail is because the provider is already open
+//	      // and it doesn't support being opened by more than one client at a time.
+//		success = kIOReturnExclusiveAccess;
+//	}
+
+    UC_IOLOG_DEBUG_METHOD(" success is 0x%08X",success);
     return success;
 }
 
@@ -346,10 +343,12 @@ IOReturn UserClientClass::closeUserClient(void)
 		IOLOG_DEBUG_METHOD(" fProvider = " REVEALFMT " is not Open, returning kIOReturnNotOpen", REVEAL(fProvider));
 	}
     else {
+        UC_IOLOG_DEBUG_METHOD(" *** before fProvider->close(" REVEALFMT ")", REVEAL(this));
         fProvider->close(this);
+        UC_IOLOG_DEBUG_METHOD(" *** after fProvider->close(" REVEALFMT ")", REVEAL(this));
     }
 
-    UC_IOLOG_DEBUG_METHOD(" *** after super, success is %s", success ? "true" : "false");
+    UC_IOLOG_DEBUG_METHOD(" *** success is 0x%08X", success);
     return success;
 }
 

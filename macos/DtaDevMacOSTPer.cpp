@@ -130,7 +130,7 @@ uint8_t DtaDevMacOSTPer::connectToUserClient()
     }
     kern_return_t  kernResult = OpenUserClient(driverService, &connect);
     if (kernResult != kIOReturnSuccess || connect == IO_OBJECT_NULL) {
-        fprintf(stderr, "Failed to open user client -- error =0x%08X\n", kernResult);
+        fprintf(stderr, "Failed to open user client -- error=0x%08X\n", kernResult);
         return DTAERROR_DRIVER_CONNECTION_FAILED;
     }
     ownConnect=true;

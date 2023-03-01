@@ -26,6 +26,13 @@ OSDefineMetaClassAndStructors(com_brightplaza_BrightPlazaTPer, IOSCSIPeripheralD
 // apple IOService override
 //*****************
 
+// Specialization of IOLOG_DEBUG_METHOD for kDriverClass, for when this->getName() is not yet functional
+#if DRIVER_DEBUG
+#define TD_IOLOG_DEBUG_METHOD(fmt, ...) IOLOG_DEBUG("%s[" REVEALFMT "]::%s" fmt, kDriverClass, REVEAL(this), __FUNCTION__ ,##__VA_ARGS__)
+#else
+#define TD_IOLOG_DEBUG_METHOD(fmt, ...) do ; while(0)
+#endif  // DRIVER_DEBUG
+
 bool DriverClass::start(IOService* provider)
 {
     // Instead of this, we must avoid using this->getName() inside IOLOG_DEBUG_METHOD,
@@ -34,27 +41,26 @@ bool DriverClass::start(IOService* provider)
     //    IOLOG_DEBUG_METHOD("(" REVEALFMT "), provider->getName() = %s",
     //                       REVEAL(provider), provider->getName());
     //
-    IOLOG_DEBUG("%s[%p]::%s(provider = %p), provider->getName() = %s",
-                kDriverClass, this, __FUNCTION__, provider, provider->getName());
-
-    IOLOG_DEBUG_METHOD(" *** before super");
+    TD_IOLOG_DEBUG_METHOD("(" REVEALFMT "), provider->getName() = %s",
+                          REVEAL(provider), provider->getName());
+    TD_IOLOG_DEBUG_METHOD(" *** before super");
     bool success = super::start(provider);
-    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
+    TD_IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
     if (!success) {
         if (getProperty(IOInterfaceTypeKey)) { // pointer is not null => super::InitializeDeviceSupport returned true
                                                  // and deviceIsTPer returned false
-            IOLOG_DEBUG_METHOD(" - leaving start, Device Support was initialized but is NOT TPer; calling stop");
+            TD_IOLOG_DEBUG_METHOD(" - leaving start, Device Support was initialized but is NOT TPer; calling stop");
             stop(provider);   // releases provider
         }
         // if neither case, then super::InitializeDeviceSupport returned false and we don't need to call stop
         return false;
     }
 
-    IOLOG_DEBUG_METHOD(" - calling registerService()");
+    TD_IOLOG_DEBUG_METHOD(" - calling registerService()");
     registerService();
     allowPowerOff = false;
 
-    IOLOG_DEBUG_METHOD(" returning true");
+    TD_IOLOG_DEBUG_METHOD(" returning true");
     return true;
 }
 
@@ -1872,11 +1878,11 @@ bool DriverClass::open(IOService *  forClient,
                        IOOptionBits options,
                        void *       arg)
 {
-    IOLOG_DEBUG_METHOD("(" REVEALFMT ",%u," REVEALFMT ")",
-                       REVEAL(forClient), (unsigned int)options, REVEAL(arg));
-    IOLOG_DEBUG_METHOD(" *** before super");
+//    IOLOG_DEBUG_METHOD("(" REVEALFMT ",%u," REVEALFMT ")",
+//                       REVEAL(forClient), (unsigned int)options, REVEAL(arg));
+//    IOLOG_DEBUG_METHOD(" *** before super");
     bool success = super::open(forClient, options, arg);
-    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
+//    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
     return success;
 }
 
