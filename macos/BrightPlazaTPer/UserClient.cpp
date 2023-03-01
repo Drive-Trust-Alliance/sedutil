@@ -291,7 +291,7 @@ IOReturn UserClientClass::sOpenUserClient(UserClientClass* target,
 
 IOReturn UserClientClass::openUserClient(void)
 {
-    IOReturn	success = kIOReturnUnsupported; // kIOReturnSuccess;
+    IOReturn	success = kIOReturnSuccess;
 
     UC_IOLOG_DEBUG_METHOD(" fProvider=" REVEALFMT, REVEAL(fProvider) );
 
@@ -302,11 +302,11 @@ IOReturn UserClientClass::openUserClient(void)
         success = kIOReturnNotAttached;
 	}
 
-//    else if (!fProvider->open(this)) {
-//	      // The most common reason this open call will fail is because the provider is already open
-//	      // and it doesn't support being opened by more than one client at a time.
-//		success = kIOReturnExclusiveAccess;
-//	}
+    else if (!fProvider->open(this)) {
+	      // The most common reason this open call will fail is because the provider is already open
+	      // and it doesn't support being opened by more than one client at a time.
+		success = kIOReturnExclusiveAccess;
+	}
 
     UC_IOLOG_DEBUG_METHOD(" success is 0x%08X",success);
     return success;
