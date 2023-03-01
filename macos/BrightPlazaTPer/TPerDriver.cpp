@@ -1790,11 +1790,12 @@ IOService* DriverClass::probe(IOService* provider, SInt32* score)
 bool DriverClass::init(OSDictionary* dictionary)
 {
 //    Can not use IOLOG_DEBUG_METHOD, because can not yet use getName()
-    IOLOG_DEBUG(kDriverClass  "::[" REVEALFMT "]::%s" "(" REVEALFMT "))", REVEAL(this), __FUNCTION__,
+    IOLOG_DEBUG(kDriverClass  "[" REVEALFMT "]::%s" "(" REVEALFMT "))", REVEAL(this), __FUNCTION__,
                 REVEAL(dictionary));
-    IOLOG_DEBUG(kDriverClass  "::[" REVEALFMT "]::%s" " *** before super", REVEAL(this), __FUNCTION__);
+    IOLOG_DEBUG(kDriverClass  "[" REVEALFMT "]::%s" " *** before super", REVEAL(this), __FUNCTION__);
     bool success = super::init(dictionary);
-    IOLOG_DEBUG_METHOD(" *** after super, result is %s", success ? "true" : "false");
+    IOLOG_DEBUG(kDriverClass  "[" REVEALFMT "]::%s *** after super, result is %s",REVEAL(this), __FUNCTION__,
+                success ? "true" : "false");
     return success;
 }
 
@@ -1810,22 +1811,35 @@ bool DriverClass::handleOpen (
                           IOOptionBits   options,
                           void *         access )
 {
-    IOLOG_DEBUG("%s[%p]::%s(%p,%08x,%p) *** before super::handleOpen(\n", getName(), this, __FUNCTION__, client, options, access);
-    return super::open(client, options, access);
+    IOLOG_DEBUG("%s[" REVEALFMT "]::%s(" REVEALFMT ",%08x,%p)", kDriverClass, REVEAL(this), __FUNCTION__,
+                REVEAL(client), options, access);
+    IOLOG_DEBUG("%s[" REVEALFMT "]::%s *** before super", kDriverClass, REVEAL(this), __FUNCTION__);
+    bool success = super::handleOpen(client, options, access);
+    IOLOG_DEBUG("%s[" REVEALFMT "]::%s *** after super, result is %s", kDriverClass, REVEAL(this), __FUNCTION__,
+                success ? "true" : "false");
+    return success;
 }
 
 void DriverClass::handleClose (
                         IOService *     client,
                         IOOptionBits    options )
 {
-    IOLOG_DEBUG("%s[%p]::%s(%p,%08x) *** before super::handleClose(\n", getName(), this, __FUNCTION__, client, options);
-    return super::handleClose(client, options);
+    IOLOG_DEBUG("%s[" REVEALFMT "]::%s(" REVEALFMT ",%08x)", kDriverClass, REVEAL(this), __FUNCTION__,
+                REVEAL(client), options);
+    IOLOG_DEBUG("%s[" REVEALFMT "]::%s *** before super", kDriverClass, REVEAL(this), __FUNCTION__);
+    super::handleClose(client, options);
+    IOLOG_DEBUG("%s[" REVEALFMT "]::%s *** after super", kDriverClass, REVEAL(this), __FUNCTION__);
 }
 
 bool DriverClass::handleIsOpen ( const IOService * client ) const
 {
-    IOLOG_DEBUG("%s[%p]::%s(%p) *** before super::handleIsOpen(\n", getName(), this, __FUNCTION__, client);
-    return super::handleIsOpen(client);
+    IOLOG_DEBUG("%s[" REVEALFMT "]::%s(" REVEALFMT ")", kDriverClass, REVEAL(this), __FUNCTION__,
+                REVEAL(client));
+    IOLOG_DEBUG("%s[" REVEALFMT "]::%s *** before super", kDriverClass, REVEAL(this), __FUNCTION__);
+    bool success = super::handleIsOpen(client);
+    IOLOG_DEBUG("%s[" REVEALFMT "]::%s *** after super, result is %s", kDriverClass, REVEAL(this), __FUNCTION__,
+                success ? "true" : "false");
+    return success;
 }
 
 
