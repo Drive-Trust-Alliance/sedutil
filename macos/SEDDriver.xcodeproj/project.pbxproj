@@ -551,8 +551,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 625;
 				DEAD_CODE_STRIPPING = YES;
@@ -618,13 +618,8 @@
 		D2763BE41F1273A50015B62C /* Debug Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = UES63D9K7E;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 603;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -638,7 +633,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -649,13 +643,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = UES63D9K7E;
-				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"SED_KERNEL=1",
 					"DEBUG=1",
@@ -670,7 +658,6 @@
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.BrightPlazaTPer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = kext;
 			};
@@ -731,8 +718,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 626;
 				DEAD_CODE_STRIPPING = YES;
@@ -793,13 +780,8 @@
 		D2763BED1F1273B40015B62C /* Release Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = UES63D9K7E;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 603;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -813,7 +795,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -824,13 +805,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = UES63D9K7E;
-				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"SED_KERNEL=1",
 					"TARGET_OS_OSX=1",
@@ -843,7 +818,6 @@
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.BrightPlazaTPer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = kext;
 			};
@@ -904,8 +878,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 625;
 				DEAD_CODE_STRIPPING = YES;
@@ -961,13 +935,8 @@
 		D2B7FA691F02ABC600F2D820 /* Debug Bonjour */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = UES63D9K7E;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 603;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -981,7 +950,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1001,13 +969,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = UES63D9K7E;
-				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"SED_KERNEL=1",
 					"DEBUG=1",
@@ -1022,7 +984,6 @@
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.BrightPlazaTPer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = kext;
 			};
@@ -1083,8 +1044,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 625;
 				DEAD_CODE_STRIPPING = YES;
@@ -1140,13 +1101,8 @@
 		D2B7FA6E1F02ABD100F2D820 /* Debug Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = UES63D9K7E;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 603;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1160,7 +1116,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1180,13 +1135,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = UES63D9K7E;
-				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"SED_KERNEL=1",
 					"DEBUG=1",
@@ -1201,7 +1150,6 @@
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.BrightPlazaTPer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = kext;
 			};
@@ -1262,8 +1210,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 625;
 				DEAD_CODE_STRIPPING = YES;
@@ -1320,13 +1268,8 @@
 		D2B7FA731F02ABDB00F2D820 /* Debug Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = UES63D9K7E;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 603;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1340,7 +1283,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1360,13 +1302,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = UES63D9K7E;
-				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"SED_KERNEL=1",
 					"DEBUG=1",
@@ -1381,7 +1317,6 @@
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.BrightPlazaTPer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = kext;
 			};
@@ -1442,8 +1377,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 626;
 				DEAD_CODE_STRIPPING = YES;
@@ -1492,13 +1427,8 @@
 		D2B7FA781F02ABEF00F2D820 /* Release Bonjour */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = UES63D9K7E;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 603;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1512,7 +1442,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1532,13 +1461,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = UES63D9K7E;
-				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"SED_KERNEL=1",
 					"TARGET_OS_OSX=1",
@@ -1551,7 +1474,6 @@
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.BrightPlazaTPer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = kext;
 			};
@@ -1612,8 +1534,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 626;
 				DEAD_CODE_STRIPPING = YES;
@@ -1662,13 +1584,8 @@
 		D2B7FA7D1F02ABFA00F2D820 /* Release Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = UES63D9K7E;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 603;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1682,7 +1599,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1702,13 +1618,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = UES63D9K7E;
-				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"SED_KERNEL=1",
 					"TARGET_OS_OSX=1",
@@ -1721,7 +1631,6 @@
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.BrightPlazaTPer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = kext;
 			};
@@ -1782,8 +1691,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 626;
 				DEAD_CODE_STRIPPING = YES;
@@ -1835,13 +1744,8 @@
 		D2B7FA821F02AC1000F2D820 /* Release Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = UES63D9K7E;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 603;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1855,7 +1759,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1875,13 +1778,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = UES63D9K7E;
-				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"SED_KERNEL=1",
 					"TARGET_OS_OSX=1",
@@ -1894,7 +1791,6 @@
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.BrightPlazaTPer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = kext;
 			};
@@ -1955,8 +1851,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 625;
 				DEAD_CODE_STRIPPING = YES;
@@ -2061,8 +1957,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 626;
 				DEAD_CODE_STRIPPING = YES;
@@ -2110,13 +2006,8 @@
 		D2BD8F671F02017B00747F4A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = UES63D9K7E;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 603;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2130,7 +2021,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -2140,13 +2030,8 @@
 		D2BD8F681F02017B00747F4A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = UES63D9K7E;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 603;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2160,7 +2045,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.SEDKernelInterface;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -2189,13 +2073,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = UES63D9K7E;
-				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"SED_KERNEL=1",
 					"DEBUG=1",
@@ -2210,7 +2088,6 @@
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.BrightPlazaTPer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = kext;
 			};
@@ -2220,13 +2097,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
-				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = UES63D9K7E;
-				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"SED_KERNEL=1",
 					"TARGET_OS_OSX=1",
@@ -2239,7 +2110,6 @@
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.BrightPlazaTPer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = kext;
 			};
