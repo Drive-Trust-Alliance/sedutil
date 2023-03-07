@@ -20,8 +20,8 @@ size = defines.get('size', None)
 pkg = os.path.join(macOS, 'DTATools.pkg')
 pkg_name = os.path.basename(pkg)
 
-certificates = os.path.join(build, 'Certificates')
-certs_name = os.path.basename(certificates)
+# certificates = os.path.join(build, 'Certificates')
+# certs_name = os.path.basename(certificates)
 
 utilities = os.path.join(macOS, '.Utilities')
 ut_name = os.path.basename(utilities)
@@ -34,7 +34,8 @@ unin_name = os.path.basename(uninstall)
 
 
 # Files to include
-files = [ pkg, uninstall, certificates, utilities, resources ]
+# files = [ pkg, uninstall, certificates, utilities, resources ]
+files = [ pkg, uninstall, utilities, resources ]
 images = defines.get('images', os.path.join(resources, 'images'))
 icon = os.path.join(images, 'DTA.VolumeIcon.icns')
 _icon_name = '.VolumeIcon.icns'
@@ -52,7 +53,7 @@ icon_size = 48
 icon_locations = {
     pkg_name   : (600,   0),
     unin_name  : (600, 100),
-    certs_name : (600, 200),
+#     certs_name : (600, 200),
 
     ut_name    : (820, 100),
     res_name   : (820, 200),
@@ -61,7 +62,7 @@ icon_locations = {
     _icon_name : (999, 200)
     }
 hide = [
-    certs_name,
+#     certs_name,
     ut_name,
     res_name,
     _bg_name,

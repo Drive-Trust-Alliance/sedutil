@@ -14,23 +14,24 @@ macOS = os.path.join(build, 'macOS')
 
 format = 'UDZO'
 
-certificates = os.path.join(build, 'Certificates')
-certs_name = os.path.basename(certificates)
+# certificates = os.path.join(build, 'Certificates')
+# certs_name = os.path.basename(certificates)
 
 macOS = os.path.join(build, 'macOS.dmg')
 macOS_name = os.path.basename(macOS)
 
-windows = defines.get('windows', os.path.join(static, 'DTA/SED Developer/Windows'))
-windows_name = os.path.basename(windows)
+# windows = defines.get('windows', os.path.join(static, 'DTA/SED Developer/Windows'))
+# windows_name = os.path.basename(windows)
 
-vcredist = defines.get('vcredist', os.path.join(static, 'DTA/SED Developer/vcredist_x64.exe'))
-vcred_name = os.path.basename(vcredist)
+# vcredist = defines.get('vcredist', os.path.join(static, 'DTA/SED Developer/vcredist_x64.exe'))
+# vcred_name = os.path.basename(vcredist)
 
 # Volume size
 size = defines.get('size', None)
 
 # Files to include
-files = [ certificates, macOS, windows, vcredist ]
+# files = [ certificates, macOS, windows, vcredist ]
+files = [  macOS ]
 
 images = defines.get('images', os.path.join(static, 'resources/images'))
 icon = os.path.join(images, 'Self-Encrypting-Box.VolumeIcon.icns')
@@ -44,11 +45,11 @@ background = os.path.join(images, 'SED ToolBox Background.png')
 _bg_name = '.background.png'
 
 icon_locations = {
-    certs_name   : (140, 120),
+#     certs_name   : (140, 120),
     macOS_name   : (340, 120),
-    windows_name : (540, 120),
+#     windows_name : (540, 120),
 
-    vcred_name   : (540, 300),
+#     vcred_name   : (540, 300),
 
     _bg_name     : (999, 100),
     _icon_name   : (999, 200)

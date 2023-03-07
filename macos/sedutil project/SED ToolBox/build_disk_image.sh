@@ -19,17 +19,17 @@ image_root="${TEMP_FILES_DIR}/DTA"
 mkdir "${image_root}"
 spew image_root="${image_root}"
 
-# Certificates from the same directory as this script
-CERTIFICATES_DIR="$(cd "${cur}/Certificates" ; pwd)"
-spew "CERTIFICATES_DIR=${CERTIFICATES_DIR}"
-[ -d "${CERTIFICATES_DIR}" ] || fail 131 "Couldn't find Certificates directory"
-
-
-# Copy in the certificates, creating the Certificates subfolder
-spew cp -r "${CERTIFICATES_DIR}" "${image_root}"
-cp -r "${CERTIFICATES_DIR}" "${image_root}" \
-    ||  fail 132 "Failed copying Certificates subfolder ${CERTIFICATES_DIR}"
-certificates="${image_root}/${CERTIFICATES_DIR}"
+## Certificates from the same directory as this script
+#CERTIFICATES_DIR="$(cd "${cur}/Certificates" ; pwd)"
+#spew "CERTIFICATES_DIR=${CERTIFICATES_DIR}"
+#[ -d "${CERTIFICATES_DIR}" ] || fail 131 "Couldn't find Certificates directory"
+#
+#
+## Copy in the certificates, creating the Certificates subfolder
+#spew cp -r "${CERTIFICATES_DIR}" "${image_root}"
+#cp -r "${CERTIFICATES_DIR}" "${image_root}" \
+#    ||  fail 132 "Failed copying Certificates subfolder ${CERTIFICATES_DIR}"
+#certificates="${image_root}/${CERTIFICATES_DIR}"
 
 # Create the macOS subfolder
 spew mac_dir="${image_root}/macOS"
@@ -153,7 +153,11 @@ SetFile -a C "${SEB_dmg}" || \
 
 # Make the containing SED ToolBox iso
 
-SEB_iso="${BUILT_PRODUCTS_DIR}/SED ToolBox.iso"
+set -xv
+env
+config="$(${build_sh_dir}/extract_configuration_type_from_Xcode_build_environment)"
+[ -n "${config}" ] || fail 199 "Can not extract configuration type from environment"
+SEB_iso="${BUILT_PRODUCTS_DIR}/SED ToolBox \(${config}\).iso"
 [ -f "${SEB_iso}" ] && rm -rf "${SEB_iso}"
 spew SEB_iso="${SEB_iso}"
 
@@ -182,8 +186,8 @@ hdiutil makehybrid                               \
 # TODO: use hdiutil udifrez instead
 spew Rez -append "${resources_dir}/images/DTA.VolumeIcon.icns.rsrc" -o "${SEB_iso}"
 Rez -append "${resources_dir}/images/DTA.VolumeIcon.icns.rsrc" -o "${SEB_iso}" || \
-    fail 199 "Rez -append failed with exit code $?"
+    fail 200 "Rez -append failed with exit code $?"
 spew SetFile -a C "${SEB_iso}"
 SetFile -a C "${SEB_iso}" || \
-    fail 200 "SetFile -a C failed with exit code $?"
+    fail 201 "SetFile -a C failed with exit code $?"
 echo Created ${SEB_iso}

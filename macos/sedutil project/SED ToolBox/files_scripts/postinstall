@@ -44,18 +44,6 @@ DEBUG_PRINT "Source for this file is "\
 
 
 
-# Certificates should be in a folder that is a peer of the pkg being installed
-DEBUG_PRINT "pkg being installed is ${1}"
-DEBUG_PRINT "dir of pkg being installed is $(dirname "${1}")"
-#CERTIFICATES_DIR_PATH="$( cd "$( dirname "${1}" )/.." && pwd )/Certificates/"
-#DEBUG_PRINT "CERTIFICATES_DIR_PATH=${CERTIFICATES_DIR_PATH}"
-#[ -d "${CERTIFICATES_DIR_PATH}." ] ||
-#    DEBUG_FAIL "checking for Certificates folder ${CERTIFICATES_DIR_PATH}." 1
-CERTIFICATES_DIR_PATH="$( cd "$( dirname "${1}" )" && pwd )/Certificates/"
-DEBUG_PRINT "CERTIFICATES_DIR_PATH=${CERTIFICATES_DIR_PATH}"
-[ -d "${CERTIFICATES_DIR_PATH}." ] ||
-    DEBUG_FAIL "checking for Certificates folder ${CERTIFICATES_DIR_PATH}." 1
-
 
 # Source from the same directory as this script
 cur=$( cd "$( dirname "${0}" )" && pwd )
@@ -144,17 +132,7 @@ function save_SED_keychain_password { #DEBUGGING
 
 function install {
     DEBUG_PRINT "install"
-#    add_CA_cert_to_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1       \
-#        || return $(DEBUG_FAILURE_RETURN "adding CA cert to system keychain")
-#    generate_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1       \
-#        || return $(DEBUG_FAILURE_RETURN "generating SED keychain password")
-#    save_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1                        \
-#        || return $(DEBUG_FAILURE_RETURN "saving SED keychain password in system keychain item")
-#    create_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1                  \
-#        || return $(DEBUG_FAILURE_RETURN "creating SED keychain")
-#    add_server_identity_to_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1  \
-#        || return $(DEBUG_FAILURE_RETURN "adding server identity to SED keychain")
-    return
+   return
 }
 
 
@@ -171,13 +149,13 @@ function main {
                 if confirm_replace "Replace partial or broken installation?"
                 then
                     erase_old_installation || DEBUG_FAIL "erasing old installation"    132
-                    install                || DEBUG_FAIL "installing as replacement"   133
+#                     install                || DEBUG_FAIL "installing as replacement"   133
                 else
                     stop_installation
                 fi ;;
 
         none)   DEBUG_PRINT "none"
-                install                    || DEBUG_FAIL "installing new installation" 134
+#                 install                    || DEBUG_FAIL "installing new installation" 134
                 ;;
     esac
     safeExit

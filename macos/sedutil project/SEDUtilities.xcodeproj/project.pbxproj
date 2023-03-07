@@ -17,10 +17,21 @@
 				D20A960A29A6EDA000B2FCF2 /* ShellScript */,
 			);
 			dependencies = (
-				D20A960529A6EA2300B2FCF2 /* PBXTargetDependency */,
-				D20A960329A6EA1F00B2FCF2 /* PBXTargetDependency */,
+				D213260429B3DCAC00EE2613 /* PBXTargetDependency */,
+				D213260629B3DCAC00EE2613 /* PBXTargetDependency */,
 			);
 			name = "SED ToolBox";
+			productName = "SED ToolBox";
+		};
+		D21325C729B3C13400EE2613 /* All targets */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = D21325D829B3C13400EE2613 /* Build configuration list for PBXAggregateTarget "All targets" */;
+			buildPhases = (
+			);
+			dependencies = (
+				D21325E829B3D54F00EE2613 /* PBXTargetDependency */,
+			);
+			name = "All targets";
 			productName = "SED ToolBox";
 		};
 /* End PBXAggregateTarget section */
@@ -43,19 +54,26 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		D20A960229A6EA1F00B2FCF2 /* PBXContainerItemProxy */ = {
+		D21325E729B3D54F00EE2613 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D26B3B511F6FB6BC004571A8;
-			remoteInfo = "sedutil-cli";
+			remoteGlobalIDString = D20A95F629A6E9E600B2FCF2;
+			remoteInfo = "SED ToolBox";
 		};
-		D20A960429A6EA2300B2FCF2 /* PBXContainerItemProxy */ = {
+		D213260329B3DCAC00EE2613 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = D26904BD28D7A1530095769E;
 			remoteInfo = reenumerate;
+		};
+		D213260529B3DCAC00EE2613 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D26B3B511F6FB6BC004571A8;
+			remoteInfo = "sedutil-cli";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -173,8 +191,6 @@
 		D20A965E29A8025600B2FCF2 /* tweak_DTA_folder saved.scpt */ = {isa = PBXFileReference; lastKnownFileType = file; path = "tweak_DTA_folder saved.scpt"; sourceTree = "<group>"; };
 		D20A965F29A8025600B2FCF2 /* EULA_SED_Applications_v1.0.2forMacInstaller.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = EULA_SED_Applications_v1.0.2forMacInstaller.html; sourceTree = "<group>"; };
 		D20A966029A8025600B2FCF2 /* try_create_dmg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = try_create_dmg; sourceTree = "<group>"; };
-		D20A966229A8025600B2FCF2 /* Bright Plaza CA.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza CA.pem"; sourceTree = "<group>"; };
-		D20A966329A8025600B2FCF2 /* Bright Plaza SED Server.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bright Plaza SED Server.p12"; sourceTree = "<group>"; };
 		D20A966529A8025600B2FCF2 /* make_Bright_Plaza_CA_identity */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_Bright_Plaza_CA_identity; sourceTree = "<group>"; };
 		D20A966629A8025600B2FCF2 /* test_creating_SED_Server */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test_creating_SED_Server; sourceTree = "<group>"; };
 		D20A966729A8025600B2FCF2 /* remove_trusted_CA_identity_from_system_keychain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = remove_trusted_CA_identity_from_system_keychain; sourceTree = "<group>"; };
@@ -355,6 +371,8 @@
 		D20A972129A8025600B2FCF2 /* Install_driver.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Install_driver.sh; sourceTree = "<group>"; };
 		D20A972229A8025600B2FCF2 /* Install_SEDAccess.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Install_SEDAccess.sh; sourceTree = "<group>"; };
 		D20A972329A8025600B2FCF2 /* DTABundles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DTABundles.plist; sourceTree = "<group>"; };
+		D213260729B3F77B00EE2613 /* extract_configuration_from_Xcode_build_environment */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = extract_configuration_from_Xcode_build_environment; path = ../../../../../DTA/sedutilgui/mac/extract_configuration_from_Xcode_build_environment; sourceTree = "<group>"; };
+		D213260829B3F77B00EE2613 /* extract_configuration_type_from_Xcode_build_environment */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = extract_configuration_type_from_Xcode_build_environment; path = ../../../../../DTA/sedutilgui/mac/extract_configuration_type_from_Xcode_build_environment; sourceTree = "<group>"; };
 		D2233E3428D79504006B6974 /* DtaOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
 		D26904CD28D7A17B0095769E /* reenumerate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = reenumerate.c; path = "../../sedutil-cli project/reenumerate/reenumerate.c"; sourceTree = "<group>"; };
 		D26904CF28D7A17F0095769E /* IOUSBFamilyInfoPlist.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOUSBFamilyInfoPlist.pch; path = "../../sedutil-cli project/reenumerate/IOUSBFamilyInfoPlist.pch"; sourceTree = "<group>"; };
@@ -406,7 +424,6 @@
 				D20A964529A8025600B2FCF2 /* bundles_scripts */,
 				D20A964829A8025600B2FCF2 /* resources */,
 				D20A966029A8025600B2FCF2 /* try_create_dmg */,
-				D20A966129A8025600B2FCF2 /* Certificates */,
 				D20A966429A8025600B2FCF2 /* files_scripts */,
 				D20A968A29A8025600B2FCF2 /* SED ToolBox settings.py */,
 				D20A968B29A8025600B2FCF2 /* macOS settings.py */,
@@ -414,6 +431,8 @@
 				D20A968D29A8025600B2FCF2 /* build.sh */,
 				D20A968E29A8025600B2FCF2 /* TLS */,
 				D20A970E29A8025600B2FCF2 /* settings.py */,
+				D213260729B3F77B00EE2613 /* extract_configuration_from_Xcode_build_environment */,
+				D213260829B3F77B00EE2613 /* extract_configuration_type_from_Xcode_build_environment */,
 				D20A970F29A8025600B2FCF2 /* build_packages.sh */,
 				D20A971029A8025600B2FCF2 /* build_disk_image.sh */,
 				D20A971129A8025600B2FCF2 /* distribution.xml */,
@@ -583,15 +602,6 @@
 				D20A965A29A8025600B2FCF2 /* DTA_folder_background.png */,
 			);
 			path = images;
-			sourceTree = "<group>";
-		};
-		D20A966129A8025600B2FCF2 /* Certificates */ = {
-			isa = PBXGroup;
-			children = (
-				D20A966229A8025600B2FCF2 /* Bright Plaza CA.pem */,
-				D20A966329A8025600B2FCF2 /* Bright Plaza SED Server.p12 */,
-			);
-			path = Certificates;
 			sourceTree = "<group>";
 		};
 		D20A966429A8025600B2FCF2 /* files_scripts */ = {
@@ -1039,6 +1049,7 @@
 				D26B3B511F6FB6BC004571A8 /* sedutil-cli */,
 				D26904BD28D7A1530095769E /* reenumerate */,
 				D20A95F629A6E9E600B2FCF2 /* SED ToolBox */,
+				D21325C729B3C13400EE2613 /* All targets */,
 			);
 		};
 /* End PBXProject section */
@@ -1084,15 +1095,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		D20A960329A6EA1F00B2FCF2 /* PBXTargetDependency */ = {
+		D21325E829B3D54F00EE2613 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D26B3B511F6FB6BC004571A8 /* sedutil-cli */;
-			targetProxy = D20A960229A6EA1F00B2FCF2 /* PBXContainerItemProxy */;
+			target = D20A95F629A6E9E600B2FCF2 /* SED ToolBox */;
+			targetProxy = D21325E729B3D54F00EE2613 /* PBXContainerItemProxy */;
 		};
-		D20A960529A6EA2300B2FCF2 /* PBXTargetDependency */ = {
+		D213260429B3DCAC00EE2613 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D26904BD28D7A1530095769E /* reenumerate */;
-			targetProxy = D20A960429A6EA2300B2FCF2 /* PBXContainerItemProxy */;
+			targetProxy = D213260329B3DCAC00EE2613 /* PBXContainerItemProxy */;
+		};
+		D213260629B3DCAC00EE2613 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D26B3B511F6FB6BC004571A8 /* sedutil-cli */;
+			targetProxy = D213260529B3DCAC00EE2613 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1179,6 +1195,96 @@
 			name = "Release Bluetooth";
 		};
 		D20A960029A6E9F100B2FCF2 /* Release Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Release Bonjour and Bluetooth";
+		};
+		D21325D929B3C13400EE2613 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Debug;
+		};
+		D21325DA29B3C13400EE2613 /* Debug Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D21325DB29B3C13400EE2613 /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Debug Bluetooth";
+		};
+		D21325DC29B3C13400EE2613 /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Debug Bonjour";
+		};
+		D21325DD29B3C13400EE2613 /* Debug Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Debug Bonjour Multistart";
+		};
+		D21325DE29B3C13400EE2613 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Release;
+		};
+		D21325DF29B3C13400EE2613 /* Release Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Release Bonjour";
+		};
+		D21325E029B3C13400EE2613 /* Release Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Release Bonjour Multistart";
+		};
+		D21325E129B3C13400EE2613 /* Release Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = "Release Bluetooth";
+		};
+		D21325E229B3C13400EE2613 /* Release Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -2597,6 +2703,23 @@
 				D20A95FE29A6E9F100B2FCF2 /* Release Bonjour Multistart */,
 				D20A95FF29A6E9F100B2FCF2 /* Release Bluetooth */,
 				D20A960029A6E9F100B2FCF2 /* Release Bonjour and Bluetooth */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release Bonjour Multistart";
+		};
+		D21325D829B3C13400EE2613 /* Build configuration list for PBXAggregateTarget "All targets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D21325D929B3C13400EE2613 /* Debug */,
+				D21325DA29B3C13400EE2613 /* Debug Bonjour and Bluetooth */,
+				D21325DB29B3C13400EE2613 /* Debug Bluetooth */,
+				D21325DC29B3C13400EE2613 /* Debug Bonjour */,
+				D21325DD29B3C13400EE2613 /* Debug Bonjour Multistart */,
+				D21325DE29B3C13400EE2613 /* Release */,
+				D21325DF29B3C13400EE2613 /* Release Bonjour */,
+				D21325E029B3C13400EE2613 /* Release Bonjour Multistart */,
+				D21325E129B3C13400EE2613 /* Release Bluetooth */,
+				D21325E229B3C13400EE2613 /* Release Bonjour and Bluetooth */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Release Bonjour Multistart";

@@ -54,16 +54,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D26B3B511F6FB6BC004571A8"
-            BuildableName = "sedutil-cli"
-            BlueprintName = "sedutil-cli"
-            ReferencedContainer = "container:SEDUtilities.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
             argument = "--scan"

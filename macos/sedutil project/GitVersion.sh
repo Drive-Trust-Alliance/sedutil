@@ -8,7 +8,7 @@ else
     GITVER=tarball
 fi
 
-configuration="$( echo "${BUILT_PRODUCTS_DIR}" | cut -c "$(expr ${#BUILD_ROOT} + 2)-${#BUILT_PRODUCTS_DIR}" | awk '{print $1}' )"
+configuration="$(extract_configuration_from_Xcode_build_environment)"
 if [ "${configuration}" == "Debug" ]
 then
     GITVER="${GITVER} (Debug build)"

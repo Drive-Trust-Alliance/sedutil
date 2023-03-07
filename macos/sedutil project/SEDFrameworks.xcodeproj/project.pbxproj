@@ -47,18 +47,13 @@
 		D2D1379C28B55BAE003FD51F /* DtaOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D2D1379B28B55B9E003FD51F /* DtaOptions.h */; };
 		D2D137A128B56329003FD51F /* log.h in Headers */ = {isa = PBXBuildFile; fileRef = D20A63A81F731FDB00F154AC /* log.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2D6E349294D081500E3C72C /* DtaDevFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2D6E348294D081500E3C72C /* DtaDevFactory.cpp */; };
-		D2E6FE8E2935E08D00DAB209 /* get_vendorid in Resources */ = {isa = PBXBuildFile; fileRef = D2E6FE802935E08D00DAB209 /* get_vendorid */; };
 		D2E6FE8F2935E08D00DAB209 /* oui.docc in Sources */ = {isa = PBXBuildFile; fileRef = D2E6FE812935E08D00DAB209 /* oui.docc */; };
 		D2E6FE902935E08D00DAB209 /* CStringMap.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D2E6FE822935E08D00DAB209 /* CStringMap.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
-		D2E6FE922935E08D00DAB209 /* t10_vendorid.txt in Resources */ = {isa = PBXBuildFile; fileRef = D2E6FE842935E08D00DAB209 /* t10_vendorid.txt */; };
 		D2E6FE932935E08D00DAB209 /* oui.h in Headers */ = {isa = PBXBuildFile; fileRef = D2E6FE852935E08D00DAB209 /* oui.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2E6FE942935E08D00DAB209 /* oui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2E6FE862935E08D00DAB209 /* oui.cpp */; };
 		D2E6FE952935E08D00DAB209 /* t10_vendorid.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D2E6FE872935E08D00DAB209 /* t10_vendorid.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
-		D2E6FE962935E08E00DAB209 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D2E6FE882935E08D00DAB209 /* README.md */; };
 		D2E6FE972935E08E00DAB209 /* oui.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D2E6FE892935E08D00DAB209 /* oui.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
-		D2E6FE982935E08E00DAB209 /* make_oui_db in Resources */ = {isa = PBXBuildFile; fileRef = D2E6FE8A2935E08D00DAB209 /* make_oui_db */; };
 		D2E6FE992935E08E00DAB209 /* t10_vendorid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2E6FE8B2935E08D00DAB209 /* t10_vendorid.cpp */; };
-		D2E6FE9A2935E08E00DAB209 /* oui.txt in Resources */ = {isa = PBXBuildFile; fileRef = D2E6FE8C2935E08D00DAB209 /* oui.txt */; };
 		D2E6FEB52935E6F600DAB209 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2E6FEB32935E6DE00DAB209 /* main.cpp */; };
 		D2E6FEB62935E80500DAB209 /* oui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2E6FE7E2935696800DAB209 /* oui.framework */; };
 		D2EA844728053B4C00A0F685 /* DtaDevOpal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83D628053B3400A0F685 /* DtaDevOpal.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
@@ -603,7 +598,6 @@
 				D2941F4F29354E8B00F7F8EE /* Headers */,
 				D2941F5329354E8B00F7F8EE /* Sources */,
 				D2941F5629354E8B00F7F8EE /* Frameworks */,
-				D2941F5729354E8B00F7F8EE /* Resources */,
 			);
 			buildRules = (
 			);
@@ -769,18 +763,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D2941F5729354E8B00F7F8EE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D2E6FE962935E08E00DAB209 /* README.md in Resources */,
-				D2E6FE8E2935E08D00DAB209 /* get_vendorid in Resources */,
-				D2E6FE982935E08E00DAB209 /* make_oui_db in Resources */,
-				D2E6FE922935E08D00DAB209 /* t10_vendorid.txt in Resources */,
-				D2E6FE9A2935E08E00DAB209 /* oui.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1176,6 +1158,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1327,6 +1310,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1640,6 +1624,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1765,6 +1750,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1891,6 +1877,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -2010,6 +1997,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -2128,6 +2116,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -2249,6 +2238,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -2370,6 +2360,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -2488,6 +2479,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
