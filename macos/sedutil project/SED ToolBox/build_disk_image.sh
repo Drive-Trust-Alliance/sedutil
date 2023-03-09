@@ -153,11 +153,9 @@ SetFile -a C "${SEB_dmg}" || \
 
 # Make the containing SED ToolBox iso
 
-set -xv
-env
-config="$(${build_sh_dir}/extract_configuration_type_from_Xcode_build_environment)"
+config="$("${mac_root}/extract_configuration_type_from_Xcode_build_environment")"
 [ -n "${config}" ] || fail 199 "Can not extract configuration type from environment"
-SEB_iso="${BUILT_PRODUCTS_DIR}/SED ToolBox \(${config}\).iso"
+SEB_iso="${BUILT_PRODUCTS_DIR}/SED ToolBox (${config}).iso"
 [ -f "${SEB_iso}" ] && rm -rf "${SEB_iso}"
 spew SEB_iso="${SEB_iso}"
 
