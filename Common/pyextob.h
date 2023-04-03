@@ -1,3 +1,3 @@
-#ifdef PYEXTOB
-#undef PYEXTOB
+#ifndef PYEXTOB
+#define PYEXTOB 1
 #endif

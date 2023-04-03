@@ -22,11 +22,11 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef PYEXTHASH
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 #include "..\License\include.h"
-#else
+#else  // not Windows
 // python.h is included in includ.h and must be include python.h first, it is python bug
 #include "../License/include.h" 
-#endif
-#endif
+#endif // Windows
+#endif // PYEXTHASH
 
 #include "os.h"
 #include <iostream>
@@ -34,7 +34,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "pyexthash.h"
 #ifndef PYEXTHASH
 #include "DtaHashPwd.h"
-#endif
+#endif // PYEXTHASH
 #include "DtaLexicon.h"
 #include "DtaOptions.h"
 #include "DtaDev.h"
@@ -65,10 +65,10 @@ hashpwd::~hashpwd()
 //vector<uint8_t> 
 void hashpwd::DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
 	unsigned int iter, uint8_t hashsize) {
-#else
+#else // PYEXTHASH
 void DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
 	unsigned int iter, uint8_t hashsize) {
-#endif
+#endif // PYEXTHASH
 	LOG(D1) << " Entered DtaHashPassword";
 	// if the hashsize can be > 255 the token overhead logic needs to be fixed
 	assert(1 == sizeof(hashsize));
@@ -100,9 +100,13 @@ exit:	// add the token overhead
 
 // hashing for logging ON OFF command
 
-
-void DtaHashPasswordLogging(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
-	unsigned int iter, uint8_t hashsize) {
+#ifdef PYEXTHASH
+void hashpwd::DtaHashPasswordLogging(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
+        unsigned int iter, uint8_t hashsize) {
+#else // PYEXTHASH
+    void DtaHashPasswordLogging(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
+        unsigned int iter, uint8_t hashsize) {
+#endif // PYEXTHASH
 
 	hash.clear();
 	hash.reserve(hashsize); // hope this will prevent reallocation
@@ -165,6 +169,7 @@ inline unsigned char hex_digit_to_nybble(char ch)
 	}
 }
 
+#ifndef PYEXTHASH
 vector<uint8_t> hex2data(char * password)
 {
 	vector<uint8_t> h;
@@ -176,7 +181,7 @@ vector<uint8_t> hex2data(char * password)
 		//LOG(D) << "Hashed Password length isn't 64-byte, no translation";
 		h.clear();
 		for (uint16_t i = 0; i < (uint16_t)strnlen(password, 32); i++)
-			h.push_back(password[i]);
+			h.push_back((uint8_t)password[i]);
 		return h;
 	}
 
@@ -191,6 +196,7 @@ vector<uint8_t> hex2data(char * password)
 	//fprintf(Output2FILE::Stream(), "\n");
 	return h;
 }
+#endif // PYEXTHASH
 
 // hex data to asci Upper case 
 inline unsigned char hex_nibble_to_ascii(uint8_t ch)
@@ -217,6 +223,7 @@ inline unsigned char hex_nibble_to_ascii(uint8_t ch)
 	}
 }
 
+#ifndef PYEXTHASH
 void data2ascii(vector<uint8_t> &h , vector<uint8_t> &password)
 {
 	// 32-byte hash hex to 64 byte ascii 
@@ -235,6 +242,9 @@ void data2ascii(vector<uint8_t> &h , vector<uint8_t> &password)
 #endif
 
 }
+#endif // PYEXTHASH
+
+    
 #ifndef PYEXTHASH
 //void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int iter){}
 void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int iter)
@@ -376,9 +386,13 @@ int TestPBKDF2()
 #ifdef PYEXTHASH
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 #pragma warning(disable: 4996)
-#endif
+#endif // PYEXTHASH
 
-PyObject* hash_function1(PyObject* self, PyObject* args)
+
+#ifdef PYEXTHASH
+static
+#endif // PYEXTHASH
+PyObject* hash_function1(__unused PyObject* self, PyObject* args)
 {
 	vector<uint8_t>  hashstr; // returned hash
 	char * password;
@@ -398,11 +412,11 @@ PyObject* hash_function1(PyObject* self, PyObject* args)
 		return 0;
 	};
 	salt.clear();
-	for (int jj = 0; jj < strnlen(saltstr, 255); jj++) salt.push_back(saltstr[jj]);
-	printf("%s %s %d %d %d %d\n",password, saltstr,iter, sz, strnlen(saltstr, 255), salt.size());
+	for (size_t jj = 0; jj < strnlen(saltstr, 255); jj++) salt.push_back((uint8_t)saltstr[jj]);
+    printf("%s %s %d %d %zu %lu\n",password, saltstr,iter, sz, strnlen(saltstr, 255), salt.size());
  	hh.DtaHashPassword(hashstr, password, salt, iter, sz);
 	
-	for (int ii = 0; ii < (int)(hashstr.size() - 2); ii += 1) { // first 2 byte of hash vector is header
+	for (size_t ii = 0; ii < hashstr.size() - 2; ii += 1) { // first 2 byte of hash vector is header
 		snprintf((char *)hp + (ii * 2), 4, "%02x", hashstr.at(ii + 2));
 	}
 	return PyString_FromStringAndSize((char *)hp,sz*2);
@@ -416,7 +430,8 @@ PyMethodDef hashMethods[] =
 };
 
 
-PyMODINIT_FUNC
+#ifndef PYEXTHASH
+    PyMODINIT_FUNC
 initPyExtHash(void)
 {
 	PyObject *m;
@@ -425,4 +440,7 @@ initPyExtHash(void)
 	if (m == NULL)
 		return;
 }
-#endif
+#endif // PYEXTHASH
+    
+    
+#endif // PYEXTHASH  -- from line 248

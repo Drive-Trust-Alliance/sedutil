@@ -4,7 +4,7 @@ module = Extension('PyExtLic',
                     sources = ['lic.cpp'],
                     #language = ["g++"],
                     #linker = ["g++"],
-                    extra_compile_args=["-Wno-narrowing",  "-std=c++0x"],
+                    extra_compile_args=["-Wno-narrowing", "-Wno-deprecated-register", "-std=c++0x"],
                     extra_link_args=["-fno-exceptions"]
                     )
 

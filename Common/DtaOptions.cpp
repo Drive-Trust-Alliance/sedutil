@@ -18,7 +18,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #include "os.h"
-#include <log/log.h>
+#include "log.h"
 #include "DtaOptions.h"
 #include "DtaLexicon.h"
 #include "Version.h"

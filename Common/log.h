@@ -320,7 +320,7 @@ class FILELOG_DECLSPEC RCLog : public RLog<Output2FILE> {
     if (level > CLOG_MAX_LEVEL) ;\
     else if (!(level > CLog::Level() || !Output2FILE::Stream()))
 
-extern sedutiloutput outputFormat;
+extern "C" sedutiloutput outputFormat;
 
 #define	LOGX(level) \
 	if (level > CLOG_MAX_LEVEL) ;\

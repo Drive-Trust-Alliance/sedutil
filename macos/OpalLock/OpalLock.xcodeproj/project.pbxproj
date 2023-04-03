@@ -1,0 +1,80 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXGroup section */
+		D2DA72F229CE254A00F6ADD2 = {
+			isa = PBXGroup;
+			children = (
+				D2DA731A29CF985E00F6ADD2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D2DA731A29CF985E00F6ADD2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXProject section */
+		D2DA72F329CE254A00F6ADD2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1410;
+			};
+			buildConfigurationList = D2DA72F629CE254A00F6ADD2 /* Build configuration list for PBXProject "OpalLock" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D2DA72F229CE254A00F6ADD2;
+			productRefGroup = D2DA731A29CF985E00F6ADD2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		D2DA72F729CE254A00F6ADD2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+			};
+			name = Debug;
+		};
+		D2DA72F829CE254A00F6ADD2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D2DA72F629CE254A00F6ADD2 /* Build configuration list for PBXProject "OpalLock" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D2DA72F729CE254A00F6ADD2 /* Debug */,
+				D2DA72F829CE254A00F6ADD2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D2DA72F329CE254A00F6ADD2 /* Project object */;
+}

@@ -5,7 +5,8 @@
 #undef _DEBUG
 #endif
 
-#include <Python.h>
+#define register
+#include "Python.h"
 
 #ifdef _DEBUG_WAS_DEFINED
 #define _DEBUG 1

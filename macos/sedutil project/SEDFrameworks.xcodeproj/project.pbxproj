@@ -32,6 +32,21 @@
 		D2772AE028BBFFB70005E001 /* DtaDevMacOSTPer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2772AD928BBFFB70005E001 /* DtaDevMacOSTPer.cpp */; };
 		D2772B1C28BC32330005E001 /* os.h in Headers */ = {isa = PBXBuildFile; fileRef = D2466A4528B58518009F55D9 /* os.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2772B1E28BC345A0005E001 /* ATAStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BDDC9128A5B23600001E26 /* ATAStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D280CCC129DA5DC900BE604D /* DtaHashPwd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA842728053B3F00A0F685 /* DtaHashPwd.cpp */; };
+		D280CCC229DA5DC900BE604D /* DtaOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA841528053B3D00A0F685 /* DtaOptions.cpp */; };
+		D280CCC429DA5DC900BE604D /* log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF828B57BB400741CC0 /* log.framework */; };
+		D280CCC529DA5DC900BE604D /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
+		D280CCC629DA5DC900BE604D /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; };
+		D280CCC829DA5DC900BE604D /* buildhash2.sh in Resources */ = {isa = PBXBuildFile; fileRef = D280CCB829DA5B9200BE604D /* buildhash2.sh */; };
+		D280CCCA29DA5DC900BE604D /* cifra.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D280CCCB29DA5DC900BE604D /* log.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF828B57BB400741CC0 /* log.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D280CCCC29DA5DC900BE604D /* Python.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D280CCE929DA5FAF00BE604D /* DtaOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA841528053B3D00A0F685 /* DtaOptions.cpp */; };
+		D280CCEA29DA5FC700BE604D /* DtaHashPwd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA842728053B3F00A0F685 /* DtaHashPwd.cpp */; };
+		D280CCEE29DB2D8600BE604D /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; };
+		D280CCEF29DB2D8600BE604D /* Python.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D280CCF129DB2DFA00BE604D /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
+		D280CCF229DB2DFA00BE604D /* cifra.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D29321E128E1086600558642 /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = D29C45F828C186920093AC75 /* Version.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2A06C9628B5D88800C0DDB6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9528B5D88800C0DDB6 /* Foundation.framework */; };
 		D2A06C9C28B5D8FE00C0DDB6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */; };
@@ -100,6 +115,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		D280CCBC29DA5DC900BE604D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2EBA48E1F055579002F8780;
+			remoteInfo = cifra;
+		};
+		D280CCBE29DA5DC900BE604D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D20A63961F731F3600F154AC;
+			remoteInfo = log;
+		};
+		D280CCF329DB2DFB00BE604D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2EBA48E1F055579002F8780;
+			remoteInfo = cifra;
+		};
 		D2A06C9728B5D8BC00C0DDB6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
@@ -131,6 +167,31 @@
 			dstSubfolderSpec = 16;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D280CCC929DA5DC900BE604D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D280CCCA29DA5DC900BE604D /* cifra.framework in Embed Frameworks */,
+				D280CCCB29DA5DC900BE604D /* log.framework in Embed Frameworks */,
+				D280CCCC29DA5DC900BE604D /* Python.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D280CCF029DB2D8600BE604D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D280CCF229DB2DFA00BE604D /* cifra.framework in Embed Frameworks */,
+				D280CCEF29DB2D8600BE604D /* Python.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		D2E6FEA12935E67800DAB209 /* CopyFiles */ = {
@@ -171,6 +232,27 @@
 		D2772AD728BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSTPer_SCSI.cpp; sourceTree = "<group>"; };
 		D2772AD828BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer_SCSI.h; sourceTree = "<group>"; };
 		D2772AD928BBFFB70005E001 /* DtaDevMacOSTPer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSTPer.cpp; sourceTree = "<group>"; };
+		D280CC7629D7515300BE604D /* buildob.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildob.sh; sourceTree = "<group>"; };
+		D280CC7729D7515300BE604D /* setup.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
+		D280CC7829D7515300BE604D /* ob.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ob.vcxproj.filters; sourceTree = "<group>"; };
+		D280CC7929D7515300BE604D /* ob.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ob.vcxproj; sourceTree = "<group>"; };
+		D280CC7B29D7515400BE604D /* buildhash.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildhash.sh; sourceTree = "<group>"; };
+		D280CC7D29D7515400BE604D /* hash.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hash.vcxproj; sourceTree = "<group>"; };
+		D280CC7E29D7515400BE604D /* PyExtTestHash.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = PyExtTestHash.py; sourceTree = "<group>"; };
+		D280CC8129D7515400BE604D /* setup.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
+		D280CC8329D7515400BE604D /* PyExtTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = PyExtTest.py; sourceTree = "<group>"; };
+		D280CC8429D7515400BE604D /* hash.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hash.vcxproj.filters; sourceTree = "<group>"; };
+		D280CC8F29D7541000BE604D /* PyExtHashTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PyExtHashTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D280CC9E29D7582500BE604D /* PyExtuD.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = PyExtuD.sh; sourceTree = "<group>"; };
+		D280CC9F29D7582500BE604D /* PyExtD.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = PyExtD.sh; sourceTree = "<group>"; };
+		D280CCA229D75AA300BE604D /* Python3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python3.framework; path = Library/Frameworks/Python3.framework; sourceTree = DEVELOPER_DIR; };
+		D280CCA429D75AD300BE604D /* Xcode.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; name = Xcode.app; path = ../../../../../../../../../Applications/Xcode.app; sourceTree = "<group>"; };
+		D280CCA629D75C9500BE604D /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = ../../../../../../../../../opt/local/Library/Frameworks/Python.framework; sourceTree = "<group>"; };
+		D280CCAA29D77EDD00BE604D /* Python.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Python.h; path = ../../../../../../../../../opt/local/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7/Python.h; sourceTree = "<group>"; };
+		D280CCB329DA51A400BE604D /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Python.framework; sourceTree = DEVELOPER_DIR; };
+		D280CCB829DA5B9200BE604D /* buildhash2.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildhash2.sh; sourceTree = "<group>"; };
+		D280CCD829DA5DC900BE604D /* PyExtHash copy.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "PyExtHash copy.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D280CCDD29DA5EBF00BE604D /* libPyExtHash.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libPyExtHash.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		D29C45F328C185150093AC75 /* GitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GitVersion.sh; sourceTree = "<group>"; };
 		D29C45F528C185590093AC75 /* MakeVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = MakeVersion.sh; sourceTree = "<group>"; };
 		D29C45F628C185590093AC75 /* CleanVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CleanVersion.sh; sourceTree = "<group>"; };
@@ -258,6 +340,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D280CCC329DA5DC900BE604D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D280CCC429DA5DC900BE604D /* log.framework in Frameworks */,
+				D280CCC529DA5DC900BE604D /* cifra.framework in Frameworks */,
+				D280CCC629DA5DC900BE604D /* Python.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D280CCDB29DA5EBF00BE604D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D280CCF129DB2DFA00BE604D /* cifra.framework in Frameworks */,
+				D280CCEE29DB2D8600BE604D /* Python.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D2941F5629354E8B00F7F8EE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -309,6 +410,10 @@
 		D23F3E0B28B57E6800741CC0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D280CCA629D75C9500BE604D /* Python.framework */,
+				D280CCB329DA51A400BE604D /* Python.framework */,
+				D280CCA429D75AD300BE604D /* Xcode.app */,
+				D280CCA229D75AA300BE604D /* Python3.framework */,
 				D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */,
 				D2A06C9528B5D88800C0DDB6 /* Foundation.framework */,
 				D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */,
@@ -319,6 +424,8 @@
 		D2466A4628B585F8009F55D9 /* macos */ = {
 			isa = PBXGroup;
 			children = (
+				D280CC9F29D7582500BE604D /* PyExtD.sh */,
+				D280CC9E29D7582500BE604D /* PyExtuD.sh */,
 				D2466A4B28B585F8009F55D9 /* DtaDevOS.h */,
 				D2772AD128BBFF8C0005E001 /* DtaDevOS.cpp */,
 				D2D6E348294D081500E3C72C /* DtaDevFactory.cpp */,
@@ -333,6 +440,41 @@
 			);
 			name = macos;
 			path = ..;
+			sourceTree = "<group>";
+		};
+		D280CC7529D7515300BE604D /* ob */ = {
+			isa = PBXGroup;
+			children = (
+				D280CC7629D7515300BE604D /* buildob.sh */,
+				D280CC7729D7515300BE604D /* setup.py */,
+				D280CC7829D7515300BE604D /* ob.vcxproj.filters */,
+				D280CC7929D7515300BE604D /* ob.vcxproj */,
+			);
+			name = ob;
+			path = ../../ob;
+			sourceTree = "<group>";
+		};
+		D280CC7A29D7515300BE604D /* hash */ = {
+			isa = PBXGroup;
+			children = (
+				D280CCB829DA5B9200BE604D /* buildhash2.sh */,
+				D280CC7B29D7515400BE604D /* buildhash.sh */,
+				D280CC7D29D7515400BE604D /* hash.vcxproj */,
+				D280CC7E29D7515400BE604D /* PyExtTestHash.py */,
+				D280CC8129D7515400BE604D /* setup.py */,
+				D280CC8329D7515400BE604D /* PyExtTest.py */,
+				D280CC8429D7515400BE604D /* hash.vcxproj.filters */,
+				D280CC8529D7515400BE604D /* build */,
+			);
+			name = hash;
+			path = ../../hash;
+			sourceTree = "<group>";
+		};
+		D280CC8529D7515400BE604D /* build */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = build;
 			sourceTree = "<group>";
 		};
 		D29C45F428C185590093AC75 /* sedutil */ = {
@@ -358,6 +500,9 @@
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D280CCAA29D77EDD00BE604D /* Python.h */,
+				D280CC7A29D7515300BE604D /* hash */,
+				D280CC7529D7515300BE604D /* ob */,
 				D21949ED28D7D02D00900FA2 /* DtaAudit.h */,
 				D2D1379B28B55B9E003FD51F /* DtaOptions.h */,
 				D2D1379E28B55C14003FD51F /* sedutil.h */,
@@ -375,6 +520,9 @@
 				D23F3E0B28B57E6800741CC0 /* Frameworks */,
 				D2E6FE7E2935696800DAB209 /* oui.framework */,
 				D2BDCEB329648F6700D07633 /* oui-test */,
+				D280CC8F29D7541000BE604D /* PyExtHashTest */,
+				D280CCD829DA5DC900BE604D /* PyExtHash copy.bundle */,
+				D280CCDD29DA5EBF00BE604D /* libPyExtHash.dylib */,
 			);
 			sourceTree = "<group>";
 		};
@@ -504,6 +652,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D280CCD929DA5EBF00BE604D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D2941F4F29354E8B00F7F8EE /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -590,6 +745,61 @@
 			productName = log;
 			productReference = D23F3DF828B57BB400741CC0 /* log.framework */;
 			productType = "com.apple.product-type.framework";
+		};
+		D280CC8E29D7540F00BE604D /* PyExtHashTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D280CC9329D7541100BE604D /* Build configuration list for PBXNativeTarget "PyExtHashTest" */;
+			buildPhases = (
+				D280CCAC29D7881D00BE604D /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PyExtHashTest;
+			productName = PyExtHashTest;
+			productReference = D280CC8F29D7541000BE604D /* PyExtHashTest */;
+			productType = "com.apple.product-type.tool";
+		};
+		D280CCBA29DA5DC900BE604D /* PyExtHash copy */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D280CCCD29DA5DC900BE604D /* Build configuration list for PBXNativeTarget "PyExtHash copy" */;
+			buildPhases = (
+				D280CCBF29DA5DC900BE604D /* ShellScript */,
+				D280CCC029DA5DC900BE604D /* Sources */,
+				D280CCC329DA5DC900BE604D /* Frameworks */,
+				D280CCC729DA5DC900BE604D /* Resources */,
+				D280CCC929DA5DC900BE604D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D280CCBB29DA5DC900BE604D /* PBXTargetDependency */,
+				D280CCBD29DA5DC900BE604D /* PBXTargetDependency */,
+			);
+			name = "PyExtHash copy";
+			productName = PyExtHash;
+			productReference = D280CCD829DA5DC900BE604D /* PyExtHash copy.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+		D280CCDC29DA5EBF00BE604D /* PyExtHash */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D280CCDE29DA5EC300BE604D /* Build configuration list for PBXNativeTarget "PyExtHash" */;
+			buildPhases = (
+				D280CCD929DA5EBF00BE604D /* Headers */,
+				D280CCDA29DA5EBF00BE604D /* Sources */,
+				D280CCDB29DA5EBF00BE604D /* Frameworks */,
+				D280CCF029DB2D8600BE604D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D280CCF429DB2DFB00BE604D /* PBXTargetDependency */,
+			);
+			name = PyExtHash;
+			productName = PyExtHash;
+			productReference = D280CCDD29DA5EBF00BE604D /* libPyExtHash.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 		D2941F4E29354E8B00F7F8EE /* oui */ = {
 			isa = PBXNativeTarget;
@@ -680,6 +890,12 @@
 						DevelopmentTeam = UES63D9K7E;
 						ProvisioningStyle = Automatic;
 					};
+					D280CC8E29D7540F00BE604D = {
+						CreatedOnToolsVersion = 14.1;
+					};
+					D280CCDC29DA5EBF00BE604D = {
+						CreatedOnToolsVersion = 14.1;
+					};
 					D2E6FEA22935E67800DAB209 = {
 						CreatedOnToolsVersion = 14.1;
 						DevelopmentTeam = UES63D9K7E;
@@ -754,6 +970,9 @@
 				D2EBA48E1F055579002F8780 /* cifra */,
 				D2941F4E29354E8B00F7F8EE /* oui */,
 				D2E6FEA22935E67800DAB209 /* oui-test */,
+				D280CC8E29D7540F00BE604D /* PyExtHashTest */,
+				D280CCBA29DA5DC900BE604D /* PyExtHash copy */,
+				D280CCDC29DA5EBF00BE604D /* PyExtHash */,
 			);
 		};
 /* End PBXProject section */
@@ -763,6 +982,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D280CCC729DA5DC900BE604D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D280CCC829DA5DC900BE604D /* buildhash2.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -800,6 +1027,41 @@
 			shellPath = /bin/bash;
 			shellScript = "pwd\n../sedutil/MakeVersion.sh \n";
 		};
+		D280CCAC29D7881D00BE604D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "PATH=/opt/local/bin:$PATH\necho BUILT_PRODUCTS_DIR=$BUILT_PRODUCTS_DIR\nls -ald $BUILT_PRODUCTS_DIR/*\nexport PYTHONPATH=$BUILT_PRODUCTS_DIR:.:/opt/local/lib\necho PYTHONPATH=$PYTHONPATH\ncd \"${SRCROOT}/..\"\npwd\nls -ald ../hash/PyExtTestHash.py\npython  ../hash/PyExtTestHash.py\n";
+		};
+		D280CCBF29DA5DC900BE604D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "cd \"${SRCROOT}/..\"\npwd\ncat \"./PyExtD.sh\"\n\"./PyExtD.sh\"\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -808,6 +1070,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				D20A63AB1F73204000F154AC /* log.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D280CCC029DA5DC900BE604D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D280CCC129DA5DC900BE604D /* DtaHashPwd.cpp in Sources */,
+				D280CCC229DA5DC900BE604D /* DtaOptions.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D280CCDA29DA5EBF00BE604D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D280CCEA29DA5FC700BE604D /* DtaHashPwd.cpp in Sources */,
+				D280CCE929DA5FAF00BE604D /* DtaOptions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -873,6 +1153,21 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		D280CCBB29DA5DC900BE604D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2EBA48E1F055579002F8780 /* cifra */;
+			targetProxy = D280CCBC29DA5DC900BE604D /* PBXContainerItemProxy */;
+		};
+		D280CCBD29DA5DC900BE604D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D20A63961F731F3600F154AC /* log */;
+			targetProxy = D280CCBE29DA5DC900BE604D /* PBXContainerItemProxy */;
+		};
+		D280CCF429DB2DFB00BE604D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2EBA48E1F055579002F8780 /* cifra */;
+			targetProxy = D280CCF329DB2DFB00BE604D /* PBXContainerItemProxy */;
+		};
 		D2A06C9828B5D8BC00C0DDB6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D20A63961F731F3600F154AC /* log */;
@@ -1177,10 +1472,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug Bonjour Multistart";
 		};
@@ -1328,10 +1620,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release Bonjour Multistart";
 		};
@@ -1347,6 +1636,416 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release Bonjour Multistart";
+		};
+		D280CC9429D7541100BE604D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = Debug;
+		};
+		D280CC9529D7541100BE604D /* Debug Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D280CC9629D7541100BE604D /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Debug Bluetooth";
+		};
+		D280CC9729D7541100BE604D /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Debug Bonjour";
+		};
+		D280CC9829D7541100BE604D /* Debug Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Debug Bonjour Multistart";
+		};
+		D280CC9929D7541100BE604D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = Release;
+		};
+		D280CC9A29D7541100BE604D /* Release Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Release Bonjour";
+		};
+		D280CC9B29D7541100BE604D /* Release Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Release Bonjour Multistart";
+		};
+		D280CC9C29D7541100BE604D /* Release Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Release Bluetooth";
+		};
+		D280CC9D29D7541100BE604D /* Release Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Release Bonjour and Bluetooth";
+		};
+		D280CCCE29DA5DC900BE604D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Bright Plaza, Inc. All rights reserved.";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHash;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = Debug;
+		};
+		D280CCCF29DA5DC900BE604D /* Debug Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Bright Plaza, Inc. All rights reserved.";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHash;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D280CCD029DA5DC900BE604D /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Bright Plaza, Inc. All rights reserved.";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHash;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Debug Bluetooth";
+		};
+		D280CCD129DA5DC900BE604D /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Bright Plaza, Inc. All rights reserved.";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHash;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Debug Bonjour";
+		};
+		D280CCD229DA5DC900BE604D /* Debug Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Bright Plaza, Inc. All rights reserved.";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHash;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Debug Bonjour Multistart";
+		};
+		D280CCD329DA5DC900BE604D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Bright Plaza, Inc. All rights reserved.";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHash;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = Release;
+		};
+		D280CCD429DA5DC900BE604D /* Release Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Bright Plaza, Inc. All rights reserved.";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHash;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Release Bonjour";
+		};
+		D280CCD529DA5DC900BE604D /* Release Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Bright Plaza, Inc. All rights reserved.";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHash;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Release Bonjour Multistart";
+		};
+		D280CCD629DA5DC900BE604D /* Release Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Bright Plaza, Inc. All rights reserved.";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHash;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Release Bluetooth";
+		};
+		D280CCD729DA5DC900BE604D /* Release Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Bright Plaza, Inc. All rights reserved.";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHash;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx11.3;
+			};
+			name = "Release Bonjour and Bluetooth";
+		};
+		D280CCDF29DA5EC300BE604D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		D280CCE029DA5EC300BE604D /* Debug Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D280CCE129DA5EC300BE604D /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "Debug Bluetooth";
+		};
+		D280CCE229DA5EC300BE604D /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "Debug Bonjour";
+		};
+		D280CCE329DA5EC300BE604D /* Debug Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "Debug Bonjour Multistart";
+		};
+		D280CCE429DA5EC300BE604D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		D280CCE529DA5EC300BE604D /* Release Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "Release Bonjour";
+		};
+		D280CCE629DA5EC300BE604D /* Release Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "Release Bonjour Multistart";
+		};
+		D280CCE729DA5EC300BE604D /* Release Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "Release Bluetooth";
+		};
+		D280CCE829DA5EC300BE604D /* Release Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/Library/Frameworks,
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = "Release Bonjour and Bluetooth";
 		};
 		D2941F5929354E8B00F7F8EE /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -2722,10 +3421,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -2738,10 +3434,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug Bonjour and Bluetooth";
 		};
@@ -2754,10 +3447,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug Bluetooth";
 		};
@@ -2770,10 +3460,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Debug Bonjour";
 		};
@@ -2786,10 +3473,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -2802,10 +3486,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release Bonjour";
 		};
@@ -2818,10 +3499,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release Bluetooth";
 		};
@@ -2834,10 +3512,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
-				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release Bonjour and Bluetooth";
 		};
@@ -2961,6 +3636,57 @@
 				D20A63A41F731F3600F154AC /* Release Bonjour Multistart */,
 				D20A63A51F731F3600F154AC /* Release Bluetooth */,
 				D20A63A61F731F3600F154AC /* Release Bonjour and Bluetooth */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release Bonjour Multistart";
+		};
+		D280CC9329D7541100BE604D /* Build configuration list for PBXNativeTarget "PyExtHashTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D280CC9429D7541100BE604D /* Debug */,
+				D280CC9529D7541100BE604D /* Debug Bonjour and Bluetooth */,
+				D280CC9629D7541100BE604D /* Debug Bluetooth */,
+				D280CC9729D7541100BE604D /* Debug Bonjour */,
+				D280CC9829D7541100BE604D /* Debug Bonjour Multistart */,
+				D280CC9929D7541100BE604D /* Release */,
+				D280CC9A29D7541100BE604D /* Release Bonjour */,
+				D280CC9B29D7541100BE604D /* Release Bonjour Multistart */,
+				D280CC9C29D7541100BE604D /* Release Bluetooth */,
+				D280CC9D29D7541100BE604D /* Release Bonjour and Bluetooth */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release Bonjour Multistart";
+		};
+		D280CCCD29DA5DC900BE604D /* Build configuration list for PBXNativeTarget "PyExtHash copy" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D280CCCE29DA5DC900BE604D /* Debug */,
+				D280CCCF29DA5DC900BE604D /* Debug Bonjour and Bluetooth */,
+				D280CCD029DA5DC900BE604D /* Debug Bluetooth */,
+				D280CCD129DA5DC900BE604D /* Debug Bonjour */,
+				D280CCD229DA5DC900BE604D /* Debug Bonjour Multistart */,
+				D280CCD329DA5DC900BE604D /* Release */,
+				D280CCD429DA5DC900BE604D /* Release Bonjour */,
+				D280CCD529DA5DC900BE604D /* Release Bonjour Multistart */,
+				D280CCD629DA5DC900BE604D /* Release Bluetooth */,
+				D280CCD729DA5DC900BE604D /* Release Bonjour and Bluetooth */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release Bonjour Multistart";
+		};
+		D280CCDE29DA5EC300BE604D /* Build configuration list for PBXNativeTarget "PyExtHash" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D280CCDF29DA5EC300BE604D /* Debug */,
+				D280CCE029DA5EC300BE604D /* Debug Bonjour and Bluetooth */,
+				D280CCE129DA5EC300BE604D /* Debug Bluetooth */,
+				D280CCE229DA5EC300BE604D /* Debug Bonjour */,
+				D280CCE329DA5EC300BE604D /* Debug Bonjour Multistart */,
+				D280CCE429DA5EC300BE604D /* Release */,
+				D280CCE529DA5EC300BE604D /* Release Bonjour */,
+				D280CCE629DA5EC300BE604D /* Release Bonjour Multistart */,
+				D280CCE729DA5EC300BE604D /* Release Bluetooth */,
+				D280CCE829DA5EC300BE604D /* Release Bonjour and Bluetooth */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Release Bonjour Multistart";

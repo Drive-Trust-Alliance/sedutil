@@ -1,3 +1,3 @@
-#ifdef PYEXTHASH
-#undef PYEXTHASH
+#ifndef PYEXTHASH
+#define PYEXTHASH
 #endif
