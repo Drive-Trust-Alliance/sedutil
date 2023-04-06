@@ -22,6 +22,10 @@
 		D271A20028054AFE00BF043A /* DtaResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1FA28054AFE00BF043A /* DtaResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D274DB7228B7FC9D00B9CD1F /* SEDKernelInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */; platformFilters = (macos, ); };
 		D27591BA28B579F1005B9081 /* DtaDevOpal2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */; };
+		D275CDFF29DB39EF00DD1C27 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D275CDFE29DB39ED00DD1C27 /* DtaHashPassword.cpp */; };
+		D275CE0129DB3DAD00DD1C27 /* PyDtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D275CE0029DB3DAB00DD1C27 /* PyDtaHashPassword.cpp */; };
+		D275CE0329DB414200DD1C27 /* DtaHashPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = D275CE0229DB414000DD1C27 /* DtaHashPassword.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D275CE0529DB419200DD1C27 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D275CE0429DB419000DD1C27 /* DtaHashPassword.cpp */; };
 		D2772AD228BBFF8C0005E001 /* DtaDevOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2772AD128BBFF8C0005E001 /* DtaDevOS.cpp */; };
 		D2772ADA28BBFFB70005E001 /* DtaDevMacOSTPer_SAT.h in Headers */ = {isa = PBXBuildFile; fileRef = D2772AD328BBFFB60005E001 /* DtaDevMacOSTPer_SAT.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2772ADB28BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = D2772AD428BBFFB60005E001 /* DtaDevMacOSBlockStorageDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -42,7 +46,6 @@
 		D280CCCB29DA5DC900BE604D /* log.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF828B57BB400741CC0 /* log.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D280CCCC29DA5DC900BE604D /* Python.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D280CCE929DA5FAF00BE604D /* DtaOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA841528053B3D00A0F685 /* DtaOptions.cpp */; };
-		D280CCEA29DA5FC700BE604D /* DtaHashPwd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA842728053B3F00A0F685 /* DtaHashPwd.cpp */; };
 		D280CCEE29DB2D8600BE604D /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; };
 		D280CCEF29DB2D8600BE604D /* Python.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D280CCF129DB2DFA00BE604D /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
@@ -53,7 +56,6 @@
 		D2A06C9D28B5DC7900C0DDB6 /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
 		D2B2036528BBFF1D004C88FF /* DtaDevMacOSTPer.h in Headers */ = {isa = PBXBuildFile; fileRef = D2B2036428BBFF1D004C88FF /* DtaDevMacOSTPer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2BDDC9828A6361600001E26 /* ob.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BDDC9628A6361600001E26 /* ob.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D2BDDC9928A6361600001E26 /* ob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2BDDC9728A6361600001E26 /* ob.cpp */; };
 		D2BDDC9C28A6369A00001E26 /* pyexthash.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BDDC9A28A6369900001E26 /* pyexthash.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2BDDC9D28A6369A00001E26 /* ReadMe.txt in Resources */ = {isa = PBXBuildFile; fileRef = D2BDDC9B28A6369A00001E26 /* ReadMe.txt */; };
 		D2BDDC9F28A63B9200001E26 /* pyextob.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BDDC9E28A63B9200001E26 /* pyextob.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -224,6 +226,11 @@
 		D271A1F928054AFE00BF043A /* DtaLexicon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaLexicon.h; sourceTree = "<group>"; };
 		D271A1FA28054AFE00BF043A /* DtaResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaResponse.h; sourceTree = "<group>"; };
 		D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal2.cpp; sourceTree = "<group>"; };
+		D275CDFE29DB39ED00DD1C27 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
+		D275CE0029DB3DAB00DD1C27 /* PyDtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PyDtaHashPassword.cpp; path = ../../Common/PyDtaHashPassword.cpp; sourceTree = "<group>"; };
+		D275CE0229DB414000DD1C27 /* DtaHashPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaHashPassword.h; path = ../../Common/DtaHashPassword.h; sourceTree = "<group>"; };
+		D275CE0429DB419000DD1C27 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
+		D275CE0629DE58CD00DD1C27 /* include.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = include.h; path = ../../License/include.h; sourceTree = "<group>"; };
 		D2772AD128BBFF8C0005E001 /* DtaDevOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOS.cpp; sourceTree = "<group>"; };
 		D2772AD328BBFFB60005E001 /* DtaDevMacOSTPer_SAT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer_SAT.h; sourceTree = "<group>"; };
 		D2772AD428BBFFB60005E001 /* DtaDevMacOSBlockStorageDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSBlockStorageDevice.h; sourceTree = "<group>"; };
@@ -500,6 +507,11 @@
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D275CE0629DE58CD00DD1C27 /* include.h */,
+				D275CE0429DB419000DD1C27 /* DtaHashPassword.cpp */,
+				D275CE0229DB414000DD1C27 /* DtaHashPassword.h */,
+				D275CE0029DB3DAB00DD1C27 /* PyDtaHashPassword.cpp */,
+				D275CDFE29DB39ED00DD1C27 /* DtaHashPassword.cpp */,
 				D280CCAA29D77EDD00BE604D /* Python.h */,
 				D280CC7A29D7515300BE604D /* hash */,
 				D280CC7529D7515300BE604D /* ob */,
@@ -696,6 +708,7 @@
 				D2EA849928053B4D00A0F685 /* DtaSession.h in Headers */,
 				D2EA84AA28053B4E00A0F685 /* DtaAnnotatedDump.h in Headers */,
 				D2EA849128053B4D00A0F685 /* DtaHashPwd.h in Headers */,
+				D275CE0329DB414200DD1C27 /* DtaHashPassword.h in Headers */,
 				D2EA848128053B4D00A0F685 /* DtaDiskType.h in Headers */,
 				D2EA84B228053B4E00A0F685 /* DtaCommand.h in Headers */,
 				D271A20028054AFE00BF043A /* DtaResponse.h in Headers */,
@@ -1086,7 +1099,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D280CCEA29DA5FC700BE604D /* DtaHashPwd.cpp in Sources */,
+				D275CE0129DB3DAD00DD1C27 /* PyDtaHashPassword.cpp in Sources */,
+				D275CDFF29DB39EF00DD1C27 /* DtaHashPassword.cpp in Sources */,
 				D280CCE929DA5FAF00BE604D /* DtaOptions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1130,11 +1144,11 @@
 				D2D6E349294D081500E3C72C /* DtaDevFactory.cpp in Sources */,
 				D2EA844B28053B4C00A0F685 /* DtaAnnotatedDump.cpp in Sources */,
 				D2EA849428053B4D00A0F685 /* DtaHashPwd.cpp in Sources */,
+				D275CE0529DB419200DD1C27 /* DtaHashPassword.cpp in Sources */,
 				D2EA849528053B4D00A0F685 /* DtaDiskType.cpp in Sources */,
 				D2EA849C28053B4D00A0F685 /* DtaHexDump.cpp in Sources */,
 				D2EA847D28053B4D00A0F685 /* DtaCommand.cpp in Sources */,
 				D2EA84A728053B4E00A0F685 /* DtaResponse.cpp in Sources */,
-				D2BDDC9928A6361600001E26 /* ob.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

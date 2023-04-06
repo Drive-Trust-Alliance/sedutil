@@ -18,121 +18,25 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 
-#include "pyexthash.h"
-#ifdef PYEXTHASH
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-#include "..\License\include.h"
-#else  // not Windows
-// python.h is included in includ.h and must be include python.h first, it is python bug
-#include "../License/include.h" 
-#endif // Windows
-#endif // PYEXTHASH
 
 #include "os.h"
 #include <iostream>
 #include <iomanip>
-#include "pyexthash.h"
-#ifndef PYEXTHASH
 #include "DtaHashPwd.h"
-#endif // PYEXTHASH
 #include "DtaLexicon.h"
 #include "DtaOptions.h"
 #include "DtaDev.h"
 #include "log.h"
 
-#if 1 // defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
 extern "C" {
 #include "pbkdf2.h"
 #include "sha1.h"
 }
-#endif
 
 
 #include <stdio.h>
 
-
-#ifdef PYEXTHASH
-#include "hash.h"
-
-hashpwd::hashpwd()
-{
-}
-
-hashpwd::~hashpwd()
-{
-}
-
-//vector<uint8_t> 
-void hashpwd::DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
-	unsigned int iter, uint8_t hashsize) {
-#else // PYEXTHASH
-void DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
-	unsigned int iter, uint8_t hashsize) {
-#endif // PYEXTHASH
-	LOG(D1) << " Entered DtaHashPassword";
-	// if the hashsize can be > 255 the token overhead logic needs to be fixed
-	assert(1 == sizeof(hashsize));
-	if (253 < hashsize) { LOG(E) << "Hashsize > 253 incorrect token generated"; }
-	
-	hash.clear();
-	// don't hash the default OPAL password ''
-	if (0 == strnlen(password, 32)) {
-		goto exit;
-	}
-	hash.reserve(hashsize + 2); // hope this will prevent reallocation
-	for (uint8_t i = 0; i < hashsize; i++) {
-		hash.push_back(' ');
-	}
-#if 1 // defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-	cf_pbkdf2_hmac((uint8_t *)password, strnlen(password, 256),
-		salt.data(), salt.size(),
-		iter,
-		hash.data(), hash.size(),
-		&cf_sha1);
-#endif
-//	gc_pbkdf2_sha1(password, strnlen(password, 256), (const char *)salt.data(), salt.size(), iter,
-//		(char *)hash.data(), hash.size());
-exit:	// add the token overhead
-	hash.insert(hash.begin(), (uint8_t)hash.size());
-	hash.insert(hash.begin(), 0xd0);
-	LOG(D1) << " Exited DtaHashPassword";
-}
-
-// hashing for logging ON OFF command
-
-#ifdef PYEXTHASH
-void hashpwd::DtaHashPasswordLogging(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
-        unsigned int iter, uint8_t hashsize) {
-#else // PYEXTHASH
-    void DtaHashPasswordLogging(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
-        unsigned int iter, uint8_t hashsize) {
-#endif // PYEXTHASH
-
-	hash.clear();
-	hash.reserve(hashsize); // hope this will prevent reallocation
-	for (uint8_t i = 0; i < hashsize; i++) {
-		hash.push_back(' ');
-	}
-#if 1 // defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-	cf_pbkdf2_hmac((uint8_t *)password, strnlen(password, 256),
-		salt.data(), salt.size(),
-		iter,
-		hash.data(), hash.size(),
-		&cf_sha1);
-#endif
-	//	gc_pbkdf2_sha1(password, strnlen(password, 256), (const char *)salt.data(), salt.size(), iter,
-	//		(char *)hash.data(), hash.size());
-	//exit:	// add the token overhead
-#if 0
-	hash.insert(hash.begin(), (uint8_t)hash.size());
-	hash.insert(hash.begin(), 0xd0);
-#endif
-	//LOG(D1) << " Exited DtaHashPassword";
-}
-
-
-
-
+#include "DtaHashPassword.h"
 
 
 // credit
@@ -169,7 +73,7 @@ inline unsigned char hex_digit_to_nybble(char ch)
 	}
 }
 
-#ifndef PYEXTHASH
+static
 vector<uint8_t> hex2data(char * password)
 {
 	vector<uint8_t> h;
@@ -196,7 +100,6 @@ vector<uint8_t> hex2data(char * password)
 	//fprintf(Output2FILE::Stream(), "\n");
 	return h;
 }
-#endif // PYEXTHASH
 
 // hex data to asci Upper case 
 inline unsigned char hex_nibble_to_ascii(uint8_t ch)
@@ -223,7 +126,6 @@ inline unsigned char hex_nibble_to_ascii(uint8_t ch)
 	}
 }
 
-#ifndef PYEXTHASH
 void data2ascii(vector<uint8_t> &h , vector<uint8_t> &password)
 {
 	// 32-byte hash hex to 64 byte ascii 
@@ -242,11 +144,8 @@ void data2ascii(vector<uint8_t> &h , vector<uint8_t> &password)
 #endif
 
 }
-#endif // PYEXTHASH
 
-    
-#ifndef PYEXTHASH
-//void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int iter){}
+
 void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int iter)
 {
 
@@ -261,7 +160,7 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
 		else {
 			hash.clear();
 			for (uint16_t i = 0; i < strnlen(password, 32); i++)
-				hash.push_back(password[i]);
+				hash.push_back((uint8_t)password[i]);
 		}
 		// add the token overhead
 		hash.insert(hash.begin(), (uint8_t)hash.size());
@@ -315,6 +214,8 @@ struct PBKDF_TestTuple
     const char *Password, *Salt, *hexDerivedKey;
 };
 
+
+static
 int testresult(std::vector<uint8_t> &result, const char * expected, size_t len) {
 	char work[50];
 	if (len > 50) return 1;
@@ -329,6 +230,7 @@ int testresult(std::vector<uint8_t> &result, const char * expected, size_t len) 
 	return memcmp(result.data()+2, work, len);
 }
 
+static
 int Testsedutil(const PBKDF_TestTuple *testSet, unsigned int testSetSize)
 {
     int pass = 1;
@@ -339,7 +241,7 @@ int Testsedutil(const PBKDF_TestTuple *testSet, unsigned int testSetSize)
         hash.clear();
         seaSalt.clear();
         for (uint16_t j = 0; j < strnlen(tuple.Salt, 255); j++) {
-            seaSalt.push_back(tuple.Salt[j]);
+            seaSalt.push_back((uint8_t)tuple.Salt[j]);
         }
 		printf("Password %s Salt %s Iterations %i Length %i\n", (char *)tuple.Password,
 			(char *) tuple.Salt, tuple.iterations, tuple.hashlen);
@@ -350,6 +252,7 @@ int Testsedutil(const PBKDF_TestTuple *testSet, unsigned int testSetSize)
 
     return pass;
 }
+
 int TestPBKDF2()
 {
     int pass = 1;
@@ -381,66 +284,3 @@ int TestPBKDF2()
         cout << "**FAILED**\n";
     return 0;
 }
-#endif
-
-#ifdef PYEXTHASH
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-#pragma warning(disable: 4996)
-#endif // PYEXTHASH
-
-
-#ifdef PYEXTHASH
-static
-#endif // PYEXTHASH
-PyObject* hash_function1(__unused PyObject* self, PyObject* args)
-{
-	vector<uint8_t>  hashstr; // returned hash
-	char * password;
-	char * saltstr;
-	vector<uint8_t> salt;
-	uint32_t iter;
-	uint8_t sz;
-	uint8_t hp[128]; // converted ascii from hashstr
-	hashpwd hh;
-
-	memset(hp, 0, 128);
-	//void hashpwd::DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
-	//unsigned int iter, uint8_t hashsize)
-	if (!PyArg_ParseTuple(args, "ssib", &password, &saltstr,&iter, &sz)) // str:password,str:salt,int(iteration,short i:hash size
-	{
-		//goto error; // why use go to 
-		return 0;
-	};
-	salt.clear();
-	for (size_t jj = 0; jj < strnlen(saltstr, 255); jj++) salt.push_back((uint8_t)saltstr[jj]);
-    printf("%s %s %d %d %zu %lu\n",password, saltstr,iter, sz, strnlen(saltstr, 255), salt.size());
- 	hh.DtaHashPassword(hashstr, password, salt, iter, sz);
-	
-	for (size_t ii = 0; ii < hashstr.size() - 2; ii += 1) { // first 2 byte of hash vector is header
-		snprintf((char *)hp + (ii * 2), 4, "%02x", hashstr.at(ii + 2));
-	}
-	return PyString_FromStringAndSize((char *)hp,sz*2);
-}
-
-
-PyMethodDef hashMethods[] =
-{
-	{ "hashpwd",(PyCFunction)hash_function1,METH_VARARGS,0 },
-	{ 0,0,0,0 }  // leave it empty for now
-};
-
-
-#ifndef PYEXTHASH
-    PyMODINIT_FUNC
-initPyExtHash(void)
-{
-	PyObject *m;
-
-	m = Py_InitModule("PyExtHash", hashMethods); // array of exported function 
-	if (m == NULL)
-		return;
-}
-#endif // PYEXTHASH
-    
-    
-#endif // PYEXTHASH  -- from line 248

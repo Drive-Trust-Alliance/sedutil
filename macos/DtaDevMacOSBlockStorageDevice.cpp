@@ -42,7 +42,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "stdio.h"
 
 #include <SEDKernelInterface/SEDKernelInterface.h>
-#include "DtaHashPwd.h"
+#include "DtaHashPassword.h"
 #include "DtaDevMacOSTPer.h"
 #include "DtaDevOS.h"
 

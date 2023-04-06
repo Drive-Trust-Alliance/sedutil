@@ -35,10 +35,14 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaSession.h"
 #include "DtaCommand.h"
 
+
+#if OB // ob for License
 #include "ob.h"
+#endif // ob for License
 
 void setlic(unsigned char * lic_level, const char * LicenseLevel)
 {
+#if OB // ob for License
     unsigned char sbnk[16] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', };
     obfs ob;
 
@@ -49,16 +53,22 @@ void setlic(unsigned char * lic_level, const char * LicenseLevel)
         memcpy(lic_level, sbnk, 16);
         printf("no license = %s\n", lic_level);
     }
+#else // OB // ob for License
+#pragma unused(lic_level,LicenseLevel)
+#endif // ob for License
 }
 
 
 
 void auditpass(unsigned char * apass)
 {
+#if OB // ob for License
     obfs ob;
     ob.setaudpass(apass);
+#else // OB // ob for License
+#pragma unused(apass)
+#endif // ob for License
 }
-
 
 using namespace std;
 
