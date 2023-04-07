@@ -112,6 +112,52 @@ void usage()
 /* Default to output that omits timestamps and goes to stdout */
 sedutiloutput outputFormat = DEFAULT_OUTPUT_FORMAT;
 
+#define LOCKINGRANGEARG(lockingrange) \
+TESTARG(0, lockingrange, 0)            \
+TESTARG(1, lockingrange, 1)            \
+TESTARG(2, lockingrange, 2)            \
+TESTARG(3, lockingrange, 3)            \
+TESTARG(4, lockingrange, 4)            \
+TESTARG(5, lockingrange, 5)            \
+TESTARG(6, lockingrange, 6)            \
+TESTARG(7, lockingrange, 7)            \
+TESTARG(8, lockingrange, 8)            \
+TESTARG(9, lockingrange, 9)            \
+TESTARG(10, lockingrange, 10)          \
+TESTARG(11, lockingrange, 11)          \
+TESTARG(12, lockingrange, 12)          \
+TESTARG(13, lockingrange, 13)          \
+TESTARG(14, lockingrange, 14)          \
+TESTARG(15, lockingrange, 15)          \
+TESTFAIL("Invalid Locking Range (0-15)")
+
+#define MBRSTATEARG(arg,mbrstate) \
+TESTARG(ON, mbrstate, 1)      \
+TESTARG(on, mbrstate, 1)      \
+TESTARG(Y, mbrstate, 1)       \
+TESTARG(y, mbrstate, 1)       \
+TESTARG(n, mbrstate, 0)       \
+TESTARG(N, mbrstate, 0)       \
+TESTARG(off, mbrstate, 0)     \
+TESTARG(OFF, mbrstate, 0)     \
+TESTFAIL("Invalid " #arg "argument not <ON|on|Y|y|OFF|off|N|n>")
+
+#define LOCKINGSTATEARG(lockingstate) \
+TESTARG(RW, lockingstate, OPAL_LOCKINGSTATE::READWRITE) \
+TESTARG(rw, lockingstate, OPAL_LOCKINGSTATE::READWRITE) \
+TESTARG(RO, lockingstate, OPAL_LOCKINGSTATE::READONLY)  \
+TESTARG(ro, lockingstate, OPAL_LOCKINGSTATE::READONLY)  \
+TESTARG(LK, lockingstate, OPAL_LOCKINGSTATE::LOCKED)    \
+TESTARG(lk, lockingstate, OPAL_LOCKINGSTATE::LOCKED)    \
+TESTFAIL("Invalid locking state <RW|rw|RO|ro|LK|lk>")
+
+#define TCGRESETTYPEARG(resettype) \
+TESTARG(0, resettype, 0) \
+TESTARG(1, resettype, 1) \
+TESTARG(2, resettype, 2) \
+TESTARG(3, resettype, 3) \
+TESTFAIL("Invalid TCGreset argument not <0|1|2|3>")
+
 uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 {
     memset(opts, 0, sizeof (DTA_OPTIONS));
@@ -173,334 +219,162 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 		BEGIN_OPTION(setSIDPassword, 3) OPTION_IS(password) OPTION_IS(newpassword)
 		         OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(setup_SUM, 6)
-			TESTARG(0, lockingrange, 0)
-			TESTARG(1, lockingrange, 1)
-			TESTARG(2, lockingrange, 2)
-			TESTARG(3, lockingrange, 3)
-			TESTARG(4, lockingrange, 4)
-			TESTARG(5, lockingrange, 5)
-			TESTARG(6, lockingrange, 6)
-			TESTARG(7, lockingrange, 7)
-			TESTARG(8, lockingrange, 8)
-			TESTARG(9, lockingrange, 9)
-			TESTARG(10, lockingrange, 10)
-			TESTARG(11, lockingrange, 11)
-			TESTARG(12, lockingrange, 12)
-			TESTARG(13, lockingrange, 13)
-			TESTARG(14, lockingrange, 14)
-			TESTARG(15, lockingrange, 15)
-			TESTFAIL("Invalid Locking Range (0-15)")
+			LOCKINGRANGEARG(lockingrange)
 			OPTION_IS(lrstart)
 			OPTION_IS(lrlength)
 			OPTION_IS(password)
 			OPTION_IS(newpassword)
 			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(setAdmin1Pwd, 3) OPTION_IS(password) OPTION_IS(newpassword)
-			OPTION_IS(device) END_OPTION
+        END_OPTION
+		BEGIN_OPTION(setAdmin1Pwd, 3)
+            OPTION_IS(password)
+            OPTION_IS(newpassword)
+			OPTION_IS(device)
+        END_OPTION
 		BEGIN_OPTION(pbaValid, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(activate, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(auditWrite, 4)
-		OPTION_IS(eventid) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
+            OPTION_IS(eventid)
+            OPTION_IS(password)
+            OPTION_IS(userid)
+            OPTION_IS(device)
+        END_OPTION
 		BEGIN_OPTION(auditRead, 3) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(auditErase, 3) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(getmfgstate, 1) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(DataStoreWrite, 7) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(pbafile)
-			OPTION_IS(dsnum) OPTION_IS(startpos) OPTION_IS(len)
-			OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(DataStoreRead, 7) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(pbafile)
-			OPTION_IS(dsnum) OPTION_IS(startpos) OPTION_IS(len)
-			OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(MBRRead, 5) OPTION_IS(password) OPTION_IS(pbafile)
-			OPTION_IS(startpos) OPTION_IS(len)
-			OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(DataStoreWrite, 7)
+            OPTION_IS(password)
+            OPTION_IS(userid)
+            OPTION_IS(pbafile)
+			OPTION_IS(dsnum)
+            OPTION_IS(startpos)
+            OPTION_IS(len)
+			OPTION_IS(device)
+        END_OPTION
+		BEGIN_OPTION(DataStoreRead, 7)
+            OPTION_IS(password)
+            OPTION_IS(userid)
+            OPTION_IS(pbafile)
+			OPTION_IS(dsnum)
+            OPTION_IS(startpos)
+            OPTION_IS(len)
+			OPTION_IS(device)
+        END_OPTION
+		BEGIN_OPTION(MBRRead, 5)
+            OPTION_IS(password)
+            OPTION_IS(pbafile)
+			OPTION_IS(startpos)
+            OPTION_IS(len)
+			OPTION_IS(device)
+        END_OPTION
 		BEGIN_OPTION(getMBRsize, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(createUSB, 3) OPTION_IS(pbafile)
-			OPTION_IS(device) OPTION_IS(devusb) END_OPTION
-		BEGIN_OPTION(loadPBAimage, 3) OPTION_IS(password) OPTION_IS(pbafile)
-			OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(createUSB, 3) OPTION_IS(pbafile) OPTION_IS(device) OPTION_IS(devusb) END_OPTION
+		BEGIN_OPTION(loadPBAimage, 3) OPTION_IS(password) OPTION_IS(pbafile) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(revertTPer, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(revertNoErase, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(PSIDrevert, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(PSIDrevertAdminSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2) OPTION_IS(password)
-			OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2) OPTION_IS(password)	OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(enableuser, 4)
-			TESTARG(ON, mbrstate, 1)
-			TESTARG(on, mbrstate, 1)
-			TESTARG(off, mbrstate, 0)
-			TESTARG(OFF, mbrstate, 0)
-			TESTFAIL("Invalid enableuser argument not <on|off>")
-			OPTION_IS(password) OPTION_IS(userid)
-			OPTION_IS(device) END_OPTION
+            MBRSTATEARG(enableuser,mbrstate)
+			OPTION_IS(password)
+            OPTION_IS(userid)
+			OPTION_IS(device)
+        END_OPTION
 		BEGIN_OPTION(enableuserread, 4)
-			TESTARG(ON, mbrstate, 1)
-			TESTARG(on, mbrstate, 1)
-			TESTARG(off, mbrstate, 0)
-			TESTARG(OFF, mbrstate, 0)
-			TESTFAIL("Invalid enableuser argument not <on|off>")
-			OPTION_IS(password) OPTION_IS(userid)
-			OPTION_IS(device) END_OPTION
+            MBRSTATEARG(enableuser,mbrstate)
+			OPTION_IS(password)
+            OPTION_IS(userid)
+			OPTION_IS(device)
+        END_OPTION
 		BEGIN_OPTION(activateLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(activateLockingSP_SUM, 3)
-			TESTARG(0, lockingrange, 0)
-			TESTARG(1, lockingrange, 1)
-			TESTARG(2, lockingrange, 2)
-			TESTARG(3, lockingrange, 3)
-			TESTARG(4, lockingrange, 4)
-			TESTARG(5, lockingrange, 5)
-			TESTARG(6, lockingrange, 6)
-			TESTARG(7, lockingrange, 7)
-			TESTARG(8, lockingrange, 8)
-			TESTARG(9, lockingrange, 9)
-			TESTARG(10, lockingrange, 10)
-			TESTARG(11, lockingrange, 11)
-			TESTARG(12, lockingrange, 12)
-			TESTARG(13, lockingrange, 13)
-			TESTARG(14, lockingrange, 14)
-			TESTARG(15, lockingrange, 15)
-			TESTFAIL("Invalid Locking Range (0-15)")
-			OPTION_IS(password) OPTION_IS(device) END_OPTION
+            LOCKINGRANGEARG(lockingrange)
+			OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
 		BEGIN_OPTION(eraseLockingRange_SUM, 3)
-			TESTARG(0, lockingrange, 0)
-			TESTARG(1, lockingrange, 1)
-			TESTARG(2, lockingrange, 2)
-			TESTARG(3, lockingrange, 3)
-			TESTARG(4, lockingrange, 4)
-			TESTARG(5, lockingrange, 5)
-			TESTARG(6, lockingrange, 6)
-			TESTARG(7, lockingrange, 7)
-			TESTARG(8, lockingrange, 8)
-			TESTARG(9, lockingrange, 9)
-			TESTARG(10, lockingrange, 10)
-			TESTARG(11, lockingrange, 11)
-			TESTARG(12, lockingrange, 12)
-			TESTARG(13, lockingrange, 13)
-			TESTARG(14, lockingrange, 14)
-			TESTARG(15, lockingrange, 15)
-			TESTFAIL("Invalid Locking Range (1-15)")
-			OPTION_IS(password) OPTION_IS(device) END_OPTION
+            LOCKINGRANGEARG(lockingrange)
+			OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
 		BEGIN_OPTION(query, 1) OPTION_IS(device) END_OPTION
 //        BEGIN_OPTION(scan, 1) OPTION_IS(device) END_OPTION
         BEGIN_OPTION(scan, 0) END_OPTION
 		BEGIN_OPTION(version, 0)  END_OPTION
 		BEGIN_OPTION(isValidSED, 1) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(eraseLockingRange, 3)
-			TESTARG(0, lockingrange, 0)
-			TESTARG(1, lockingrange, 1)
-			TESTARG(2, lockingrange, 2)
-			TESTARG(3, lockingrange, 3)
-			TESTARG(4, lockingrange, 4)
-			TESTARG(5, lockingrange, 5)
-			TESTARG(6, lockingrange, 6)
-			TESTARG(7, lockingrange, 7)
-			TESTARG(8, lockingrange, 8)
-			TESTARG(9, lockingrange, 9)
-			TESTARG(10, lockingrange, 10)
-			TESTARG(11, lockingrange, 11)
-			TESTARG(12, lockingrange, 12)
-			TESTARG(13, lockingrange, 13)
-			TESTARG(14, lockingrange, 14)
-			TESTARG(15, lockingrange, 15)
-			TESTFAIL("Invalid Locking Range (0-15)")
+            LOCKINGRANGEARG(lockingrange)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
 		BEGIN_OPTION(takeOwnership, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(revertLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(setPassword, 4) OPTION_IS(password) OPTION_IS(userid)
-			OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(setPassword_SUM, 4) OPTION_IS(password) OPTION_IS(userid)
-			OPTION_IS(newpassword) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(setPassword, 4)
+            OPTION_IS(password)
+            OPTION_IS(userid)
+            OPTION_IS(newpassword)
+            OPTION_IS(device)
+        END_OPTION
+		BEGIN_OPTION(setPassword_SUM, 4)
+            OPTION_IS(password)
+            OPTION_IS(userid)
+            OPTION_IS(newpassword)
+            OPTION_IS(device)
+        END_OPTION
 		BEGIN_OPTION(validatePBKDF2, 0) END_OPTION
 		BEGIN_OPTION(setMBREnable, 3)
-			TESTARG(ON, mbrstate, 1)
-			TESTARG(on, mbrstate, 1)
-			TESTARG(off, mbrstate, 0)
-			TESTARG(OFF, mbrstate, 0)
-			TESTFAIL("Invalid setMBREnable argument not <on|off>")
+            MBRSTATEARG(MBREnable,mbrstate)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
 		BEGIN_OPTION(setMBRDone, 3)
-			TESTARG(ON, mbrstate, 1)
-			TESTARG(on, mbrstate, 1)
-			TESTARG(off, mbrstate, 0)
-			TESTARG(OFF, mbrstate, 0)
-			TESTFAIL("Invalid setMBRDone argument not <on|off>")
+            MBRSTATEARG(MBRDone,mbrstate)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
 		BEGIN_OPTION(TCGreset, 2)
-			TESTARG(0, mbrstate, 0)
-			TESTARG(1, mbrstate, 1)
-			TESTARG(2, mbrstate, 2)
-			TESTARG(3, mbrstate, 3)
-			TESTFAIL("Invalid TCGreset argument not <0|1|2|3>")
+            TCGRESETTYPEARG(resettype)
 			OPTION_IS(device)
 			END_OPTION
 		BEGIN_OPTION(setLockingRange, 4)
-			TESTARG(0, lockingrange, 0)
-			TESTARG(1, lockingrange, 1)
-			TESTARG(2, lockingrange, 2)
-			TESTARG(3, lockingrange, 3)
-			TESTARG(4, lockingrange, 4)
-			TESTARG(5, lockingrange, 5)
-			TESTARG(6, lockingrange, 6)
-			TESTARG(7, lockingrange, 7)
-			TESTARG(8, lockingrange, 8)
-			TESTARG(9, lockingrange, 9)
-			TESTARG(10, lockingrange, 10)
-			TESTARG(11, lockingrange, 11)
-			TESTARG(12, lockingrange, 12)
-			TESTARG(13, lockingrange, 13)
-			TESTARG(14, lockingrange, 14)
-			TESTARG(15, lockingrange, 15)
-			TESTFAIL("Invalid Locking Range (0-15)")
-			TESTARG(RW, lockingstate, OPAL_LOCKINGSTATE::READWRITE)
-			TESTARG(rw, lockingstate, OPAL_LOCKINGSTATE::READWRITE)
-			TESTARG(RO, lockingstate, OPAL_LOCKINGSTATE::READONLY)
-			TESTARG(ro, lockingstate, OPAL_LOCKINGSTATE::READONLY)
-			TESTARG(LK, lockingstate, OPAL_LOCKINGSTATE::LOCKED)
-			TESTARG(lk, lockingstate, OPAL_LOCKINGSTATE::LOCKED)
-			TESTFAIL("Invalid locking state <ro|rw|lk>")
+            LOCKINGRANGEARG(lockingrange)
+            LOCKINGSTATEARG(lockingstate)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
 		BEGIN_OPTION(setLockingRange_SUM, 4)
-			TESTARG(0, lockingrange, 0)
-			TESTARG(1, lockingrange, 1)
-			TESTARG(2, lockingrange, 2)
-			TESTARG(3, lockingrange, 3)
-			TESTARG(4, lockingrange, 4)
-			TESTARG(5, lockingrange, 5)
-			TESTARG(6, lockingrange, 6)
-			TESTARG(7, lockingrange, 7)
-			TESTARG(8, lockingrange, 8)
-			TESTARG(9, lockingrange, 9)
-			TESTARG(10, lockingrange, 10)
-			TESTARG(11, lockingrange, 11)
-			TESTARG(12, lockingrange, 12)
-			TESTARG(13, lockingrange, 13)
-			TESTARG(14, lockingrange, 14)
-			TESTARG(15, lockingrange, 15)
-			TESTFAIL("Invalid Locking Range (0-15)")
-			TESTARG(RW, lockingstate, OPAL_LOCKINGSTATE::READWRITE)
-			TESTARG(rw, lockingstate, OPAL_LOCKINGSTATE::READWRITE)
-			TESTARG(RO, lockingstate, OPAL_LOCKINGSTATE::READONLY)
-			TESTARG(ro, lockingstate, OPAL_LOCKINGSTATE::READONLY)
-			TESTARG(LK, lockingstate, OPAL_LOCKINGSTATE::LOCKED)
-			TESTARG(lk, lockingstate, OPAL_LOCKINGSTATE::LOCKED)
-			TESTFAIL("Invalid locking state <ro|rw|lk>")
+            LOCKINGRANGEARG(lockingrange)
+            LOCKINGSTATEARG(lockingstate)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
 		BEGIN_OPTION(enableLockingRange, 3)
-			TESTARG(0, lockingrange, 0)
-			TESTARG(1, lockingrange, 1)
-			TESTARG(2, lockingrange, 2)
-			TESTARG(3, lockingrange, 3)
-			TESTARG(4, lockingrange, 4)
-			TESTARG(5, lockingrange, 5)
-			TESTARG(6, lockingrange, 6)
-			TESTARG(7, lockingrange, 7)
-			TESTARG(8, lockingrange, 8)
-			TESTARG(9, lockingrange, 9)
-			TESTARG(10, lockingrange, 10)
-			TESTARG(11, lockingrange, 11)
-			TESTARG(12, lockingrange, 12)
-			TESTARG(13, lockingrange, 13)
-			TESTARG(14, lockingrange, 14)
-			TESTARG(15, lockingrange, 15)
-			TESTFAIL("Invalid Locking Range (0-15)")
+            LOCKINGRANGEARG(lockingrange)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
 		BEGIN_OPTION(disableLockingRange, 3)
-			TESTARG(0, lockingrange, 0)
-			TESTARG(1, lockingrange, 1)
-			TESTARG(2, lockingrange, 2)
-			TESTARG(3, lockingrange, 3)
-			TESTARG(4, lockingrange, 4)
-			TESTARG(5, lockingrange, 5)
-			TESTARG(6, lockingrange, 6)
-			TESTARG(7, lockingrange, 7)
-			TESTARG(8, lockingrange, 8)
-			TESTARG(9, lockingrange, 9)
-			TESTARG(10, lockingrange, 10)
-			TESTARG(11, lockingrange, 11)
-			TESTARG(12, lockingrange, 12)
-			TESTARG(13, lockingrange, 13)
-			TESTARG(14, lockingrange, 14)
-			TESTARG(15, lockingrange, 15)
-			TESTFAIL("Invalid Locking Range (0-15)")
+            LOCKINGRANGEARG(lockingrange)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
 		BEGIN_OPTION(setupLockingRange, 5)
-			TESTARG(0, lockingrange, 0)
-			TESTARG(1, lockingrange, 1)
-			TESTARG(2, lockingrange, 2)
-			TESTARG(3, lockingrange, 3)
-			TESTARG(4, lockingrange, 4)
-			TESTARG(5, lockingrange, 5)
-			TESTARG(6, lockingrange, 6)
-			TESTARG(7, lockingrange, 7)
-			TESTARG(8, lockingrange, 8)
-			TESTARG(9, lockingrange, 9)
-			TESTARG(10, lockingrange, 10)
-			TESTARG(11, lockingrange, 11)
-			TESTARG(12, lockingrange, 12)
-			TESTARG(13, lockingrange, 13)
-			TESTARG(14, lockingrange, 14)
-			TESTARG(15, lockingrange, 15)
-			TESTFAIL("Invalid Locking Range (0-15)")
+            LOCKINGRANGEARG(lockingrange)
 			OPTION_IS(lrstart)
 			OPTION_IS(lrlength)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
 		BEGIN_OPTION(setupLockingRange_SUM, 5)
-			TESTARG(0, lockingrange, 0)
-			TESTARG(1, lockingrange, 1)
-			TESTARG(2, lockingrange, 2)
-			TESTARG(3, lockingrange, 3)
-			TESTARG(4, lockingrange, 4)
-			TESTARG(5, lockingrange, 5)
-			TESTARG(6, lockingrange, 6)
-			TESTARG(7, lockingrange, 7)
-			TESTARG(8, lockingrange, 8)
-			TESTARG(9, lockingrange, 9)
-			TESTARG(10, lockingrange, 10)
-			TESTARG(11, lockingrange, 11)
-			TESTARG(12, lockingrange, 12)
-			TESTARG(13, lockingrange, 13)
-			TESTARG(14, lockingrange, 14)
-			TESTARG(15, lockingrange, 15)
-			TESTFAIL("Invalid Locking Range (0-15)")
+            LOCKINGRANGEARG(lockingrange)
 			OPTION_IS(lrstart)
 			OPTION_IS(lrlength)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
 		BEGIN_OPTION(readonlyLockingRange, 3)
-			TESTARG(0, lockingrange, 0)
-			TESTARG(1, lockingrange, 1)
-			TESTARG(2, lockingrange, 2)
-			TESTARG(3, lockingrange, 3)
-			TESTARG(4, lockingrange, 4)
-			TESTARG(5, lockingrange, 5)
-			TESTARG(6, lockingrange, 6)
-			TESTARG(7, lockingrange, 7)
-			TESTARG(8, lockingrange, 8)
-			TESTARG(9, lockingrange, 9)
-			TESTARG(10, lockingrange, 10)
-			TESTARG(11, lockingrange, 11)
-			TESTARG(12, lockingrange, 12)
-			TESTARG(13, lockingrange, 13)
-			TESTARG(14, lockingrange, 14)
-			TESTARG(15, lockingrange, 15)
-			TESTFAIL("Invalid Locking Range (0-15)")
+            LOCKINGRANGEARG(lockingrange)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
@@ -509,44 +383,12 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(device)
 			END_OPTION
 		BEGIN_OPTION(listLockingRange, 3)
-			TESTARG(0, lockingrange, 0)
-			TESTARG(1, lockingrange, 1)
-			TESTARG(2, lockingrange, 2)
-			TESTARG(3, lockingrange, 3)
-			TESTARG(4, lockingrange, 4)
-			TESTARG(5, lockingrange, 5)
-			TESTARG(6, lockingrange, 6)
-			TESTARG(7, lockingrange, 7)
-			TESTARG(8, lockingrange, 8)
-			TESTARG(9, lockingrange, 9)
-			TESTARG(10, lockingrange, 10)
-			TESTARG(11, lockingrange, 11)
-			TESTARG(12, lockingrange, 12)
-			TESTARG(13, lockingrange, 13)
-			TESTARG(14, lockingrange, 14)
-			TESTARG(15, lockingrange, 15)
-			TESTFAIL("Invalid Locking Range (0-15)")
+            LOCKINGRANGEARG(lockingrange)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
 		BEGIN_OPTION(rekeyLockingRange, 3)
-			TESTARG(0, lockingrange, 0)
-			TESTARG(1, lockingrange, 1)
-			TESTARG(2, lockingrange, 2)
-			TESTARG(3, lockingrange, 3)
-			TESTARG(4, lockingrange, 4)
-			TESTARG(5, lockingrange, 5)
-			TESTARG(6, lockingrange, 6)
-			TESTARG(7, lockingrange, 7)
-			TESTARG(8, lockingrange, 8)
-			TESTARG(9, lockingrange, 9)
-			TESTARG(10, lockingrange, 10)
-			TESTARG(11, lockingrange, 11)
-			TESTARG(12, lockingrange, 12)
-			TESTARG(13, lockingrange, 13)
-			TESTARG(14, lockingrange, 14)
-			TESTARG(15, lockingrange, 15)
-			TESTFAIL("Invalid Locking Range (0-15)")
+            LOCKINGRANGEARG(lockingrange)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
@@ -555,29 +397,19 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			OPTION_IS(device)
 			END_OPTION
 		BEGIN_OPTION(setBandEnabled, 3)
-			TESTARG(0, lockingrange, 0)
-			TESTARG(1, lockingrange, 1)
-			TESTARG(2, lockingrange, 2)
-			TESTARG(3, lockingrange, 3)
-			TESTARG(4, lockingrange, 4)
-			TESTARG(5, lockingrange, 5)
-			TESTARG(6, lockingrange, 6)
-			TESTARG(7, lockingrange, 7)
-			TESTARG(8, lockingrange, 8)
-			TESTARG(9, lockingrange, 9)
-			TESTARG(10, lockingrange, 10)
-			TESTARG(11, lockingrange, 11)
-			TESTARG(12, lockingrange, 12)
-			TESTARG(13, lockingrange, 13)
-			TESTARG(14, lockingrange, 14)
-			TESTARG(15, lockingrange, 15)
-			TESTFAIL("Invalid Locking Range (0-15)")
+            LOCKINGRANGEARG(lockingrange)
 			OPTION_IS(password)
 			OPTION_IS(device)
 			END_OPTION
-		BEGIN_OPTION(objDump, 5) i += 4; OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(objDump, 5)
+            i += 4;
+            OPTION_IS(device)
+        END_OPTION
         BEGIN_OPTION(printDefaultPassword, 1) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(rawCmd, 7) i += 6; OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(rawCmd, 7)
+            i += 6;
+            OPTION_IS(device)
+        END_OPTION
 		BEGIN_OPTION(hashvalidation, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		else {
             LOG(E) << "Invalid command line argument " << argv[i];

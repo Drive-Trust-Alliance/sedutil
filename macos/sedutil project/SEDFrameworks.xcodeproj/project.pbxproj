@@ -22,10 +22,12 @@
 		D271A20028054AFE00BF043A /* DtaResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1FA28054AFE00BF043A /* DtaResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D274DB7228B7FC9D00B9CD1F /* SEDKernelInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */; platformFilters = (macos, ); };
 		D27591BA28B579F1005B9081 /* DtaDevOpal2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */; };
-		D275CDFF29DB39EF00DD1C27 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D275CDFE29DB39ED00DD1C27 /* DtaHashPassword.cpp */; };
 		D275CE0129DB3DAD00DD1C27 /* PyDtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D275CE0029DB3DAB00DD1C27 /* PyDtaHashPassword.cpp */; };
 		D275CE0329DB414200DD1C27 /* DtaHashPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = D275CE0229DB414000DD1C27 /* DtaHashPassword.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D275CE0529DB419200DD1C27 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D275CE0429DB419000DD1C27 /* DtaHashPassword.cpp */; };
+		D275ED1529DF667F00DD1C27 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D275CE0429DB419000DD1C27 /* DtaHashPassword.cpp */; };
+		D275ED1A29E0A0C200DD1C27 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; };
+		D275ED1B29E0A0C200DD1C27 /* Python.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D2772AD228BBFF8C0005E001 /* DtaDevOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2772AD128BBFF8C0005E001 /* DtaDevOS.cpp */; };
 		D2772ADA28BBFFB70005E001 /* DtaDevMacOSTPer_SAT.h in Headers */ = {isa = PBXBuildFile; fileRef = D2772AD328BBFFB60005E001 /* DtaDevMacOSTPer_SAT.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2772ADB28BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = D2772AD428BBFFB60005E001 /* DtaDevMacOSBlockStorageDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -41,13 +43,9 @@
 		D280CCC429DA5DC900BE604D /* log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF828B57BB400741CC0 /* log.framework */; };
 		D280CCC529DA5DC900BE604D /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
 		D280CCC629DA5DC900BE604D /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; };
-		D280CCC829DA5DC900BE604D /* buildhash2.sh in Resources */ = {isa = PBXBuildFile; fileRef = D280CCB829DA5B9200BE604D /* buildhash2.sh */; };
 		D280CCCA29DA5DC900BE604D /* cifra.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D280CCCB29DA5DC900BE604D /* log.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF828B57BB400741CC0 /* log.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D280CCCC29DA5DC900BE604D /* Python.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		D280CCE929DA5FAF00BE604D /* DtaOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA841528053B3D00A0F685 /* DtaOptions.cpp */; };
-		D280CCEE29DB2D8600BE604D /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; };
-		D280CCEF29DB2D8600BE604D /* Python.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D280CCF129DB2DFA00BE604D /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
 		D280CCF229DB2DFA00BE604D /* cifra.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D29321E128E1086600558642 /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = D29C45F828C186920093AC75 /* Version.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -190,8 +188,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				D275ED1B29E0A0C200DD1C27 /* Python.framework in Embed Frameworks */,
 				D280CCF229DB2DFA00BE604D /* cifra.framework in Embed Frameworks */,
-				D280CCEF29DB2D8600BE604D /* Python.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -226,11 +224,11 @@
 		D271A1F928054AFE00BF043A /* DtaLexicon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaLexicon.h; sourceTree = "<group>"; };
 		D271A1FA28054AFE00BF043A /* DtaResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaResponse.h; sourceTree = "<group>"; };
 		D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal2.cpp; sourceTree = "<group>"; };
-		D275CDFE29DB39ED00DD1C27 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
 		D275CE0029DB3DAB00DD1C27 /* PyDtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PyDtaHashPassword.cpp; path = ../../Common/PyDtaHashPassword.cpp; sourceTree = "<group>"; };
 		D275CE0229DB414000DD1C27 /* DtaHashPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaHashPassword.h; path = ../../Common/DtaHashPassword.h; sourceTree = "<group>"; };
 		D275CE0429DB419000DD1C27 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
 		D275CE0629DE58CD00DD1C27 /* include.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = include.h; path = ../../License/include.h; sourceTree = "<group>"; };
+		D275ED1C29E0A33E00DD1C27 /* Python.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Python.h; path = ../../../../../../../../../opt/local/Library/Frameworks/Python.framework/Versions/3.10/include/python3.10/Python.h; sourceTree = "<group>"; };
 		D2772AD128BBFF8C0005E001 /* DtaDevOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOS.cpp; sourceTree = "<group>"; };
 		D2772AD328BBFFB60005E001 /* DtaDevMacOSTPer_SAT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer_SAT.h; sourceTree = "<group>"; };
 		D2772AD428BBFFB60005E001 /* DtaDevMacOSBlockStorageDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSBlockStorageDevice.h; sourceTree = "<group>"; };
@@ -255,9 +253,7 @@
 		D280CCA229D75AA300BE604D /* Python3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python3.framework; path = Library/Frameworks/Python3.framework; sourceTree = DEVELOPER_DIR; };
 		D280CCA429D75AD300BE604D /* Xcode.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; name = Xcode.app; path = ../../../../../../../../../Applications/Xcode.app; sourceTree = "<group>"; };
 		D280CCA629D75C9500BE604D /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = ../../../../../../../../../opt/local/Library/Frameworks/Python.framework; sourceTree = "<group>"; };
-		D280CCAA29D77EDD00BE604D /* Python.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Python.h; path = ../../../../../../../../../opt/local/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7/Python.h; sourceTree = "<group>"; };
 		D280CCB329DA51A400BE604D /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Python.framework; sourceTree = DEVELOPER_DIR; };
-		D280CCB829DA5B9200BE604D /* buildhash2.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildhash2.sh; sourceTree = "<group>"; };
 		D280CCD829DA5DC900BE604D /* PyExtHash copy.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "PyExtHash copy.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D280CCDD29DA5EBF00BE604D /* libPyExtHash.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libPyExtHash.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		D29C45F328C185150093AC75 /* GitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GitVersion.sh; sourceTree = "<group>"; };
@@ -361,8 +357,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D275ED1A29E0A0C200DD1C27 /* Python.framework in Frameworks */,
 				D280CCF129DB2DFA00BE604D /* cifra.framework in Frameworks */,
-				D280CCEE29DB2D8600BE604D /* Python.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -464,7 +460,6 @@
 		D280CC7A29D7515300BE604D /* hash */ = {
 			isa = PBXGroup;
 			children = (
-				D280CCB829DA5B9200BE604D /* buildhash2.sh */,
 				D280CC7B29D7515400BE604D /* buildhash.sh */,
 				D280CC7D29D7515400BE604D /* hash.vcxproj */,
 				D280CC7E29D7515400BE604D /* PyExtTestHash.py */,
@@ -507,12 +502,11 @@
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D275ED1C29E0A33E00DD1C27 /* Python.h */,
 				D275CE0629DE58CD00DD1C27 /* include.h */,
 				D275CE0429DB419000DD1C27 /* DtaHashPassword.cpp */,
 				D275CE0229DB414000DD1C27 /* DtaHashPassword.h */,
 				D275CE0029DB3DAB00DD1C27 /* PyDtaHashPassword.cpp */,
-				D275CDFE29DB39ED00DD1C27 /* DtaHashPassword.cpp */,
-				D280CCAA29D77EDD00BE604D /* Python.h */,
 				D280CC7A29D7515300BE604D /* hash */,
 				D280CC7529D7515300BE604D /* ob */,
 				D21949ED28D7D02D00900FA2 /* DtaAudit.h */,
@@ -1002,7 +996,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D280CCC829DA5DC900BE604D /* buildhash2.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1099,9 +1092,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D275ED1529DF667F00DD1C27 /* DtaHashPassword.cpp in Sources */,
 				D275CE0129DB3DAD00DD1C27 /* PyDtaHashPassword.cpp in Sources */,
-				D275CDFF29DB39EF00DD1C27 /* DtaHashPassword.cpp in Sources */,
-				D280CCE929DA5FAF00BE604D /* DtaOptions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1207,7 +1199,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1222,7 +1213,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1237,7 +1227,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1252,7 +1241,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1267,7 +1255,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1282,7 +1269,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1297,7 +1283,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1312,7 +1297,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1327,7 +1311,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1342,7 +1325,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1467,6 +1449,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
@@ -1485,7 +1468,6 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 			};
 			name = "Debug Bonjour Multistart";
@@ -1495,7 +1477,6 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1616,6 +1597,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
@@ -1633,7 +1615,6 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 			};
 			name = "Release Bonjour Multistart";
@@ -1643,7 +1624,6 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1655,7 +1635,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 			};
 			name = Debug;
@@ -1664,7 +1643,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 			};
 			name = "Debug Bonjour and Bluetooth";
@@ -1673,7 +1651,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 			};
 			name = "Debug Bluetooth";
@@ -1682,7 +1659,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 			};
 			name = "Debug Bonjour";
@@ -1691,7 +1667,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 			};
 			name = "Debug Bonjour Multistart";
@@ -1700,7 +1675,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 			};
 			name = Release;
@@ -1709,7 +1683,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 			};
 			name = "Release Bonjour";
@@ -1718,7 +1691,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 			};
 			name = "Release Bonjour Multistart";
@@ -1727,7 +1699,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 			};
 			name = "Release Bluetooth";
@@ -1736,7 +1707,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.PyExtHashTest;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 			};
 			name = "Release Bonjour and Bluetooth";
@@ -1921,8 +1891,6 @@
 					/opt/local/Library/Frameworks,
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -1936,8 +1904,6 @@
 					/opt/local/Library/Frameworks,
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = "Debug Bonjour and Bluetooth";
 		};
@@ -1951,8 +1917,6 @@
 					/opt/local/Library/Frameworks,
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = "Debug Bluetooth";
 		};
@@ -1966,8 +1930,6 @@
 					/opt/local/Library/Frameworks,
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = "Debug Bonjour";
 		};
@@ -1981,8 +1943,6 @@
 					/opt/local/Library/Frameworks,
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = "Debug Bonjour Multistart";
 		};
@@ -1996,8 +1956,6 @@
 					/opt/local/Library/Frameworks,
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -2011,8 +1969,6 @@
 					/opt/local/Library/Frameworks,
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = "Release Bonjour";
 		};
@@ -2026,8 +1982,6 @@
 					/opt/local/Library/Frameworks,
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = "Release Bonjour Multistart";
 		};
@@ -2041,8 +1995,6 @@
 					/opt/local/Library/Frameworks,
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = "Release Bluetooth";
 		};
@@ -2056,8 +2008,6 @@
 					/opt/local/Library/Frameworks,
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = "Release Bonjour and Bluetooth";
 		};
@@ -2069,7 +2019,6 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2085,7 +2034,6 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2101,7 +2049,6 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2117,7 +2064,6 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2133,7 +2079,6 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2149,7 +2094,6 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2165,7 +2109,6 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2181,7 +2124,6 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2197,7 +2139,6 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2213,7 +2154,6 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2337,6 +2277,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
@@ -2463,6 +2404,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
@@ -2590,6 +2532,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
@@ -2710,6 +2653,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
@@ -2829,6 +2773,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
@@ -2951,6 +2896,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
@@ -3073,6 +3019,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
@@ -3192,6 +3139,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
@@ -3222,7 +3170,6 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -3247,7 +3194,6 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bonjour and Bluetooth";
 		};
@@ -3272,7 +3218,6 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bluetooth";
 		};
@@ -3297,7 +3242,6 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bonjour";
 		};
@@ -3322,7 +3266,6 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bonjour Multistart";
 		};
@@ -3342,7 +3285,6 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -3362,7 +3304,6 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bonjour";
 		};
@@ -3382,7 +3323,6 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bonjour Multistart";
 		};
@@ -3402,7 +3342,6 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bluetooth";
 		};
@@ -3422,7 +3361,6 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bonjour and Bluetooth";
 		};
@@ -3434,7 +3372,6 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 			};
 			name = Debug;
@@ -3447,7 +3384,6 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 			};
 			name = "Debug Bonjour and Bluetooth";
@@ -3460,7 +3396,6 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 			};
 			name = "Debug Bluetooth";
@@ -3473,7 +3408,6 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 			};
 			name = "Debug Bonjour";
@@ -3486,7 +3420,6 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 			};
 			name = Release;
@@ -3499,7 +3432,6 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 			};
 			name = "Release Bonjour";
@@ -3512,7 +3444,6 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 			};
 			name = "Release Bluetooth";
@@ -3525,7 +3456,6 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 			};
 			name = "Release Bonjour and Bluetooth";
@@ -3535,7 +3465,6 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -3548,7 +3477,6 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -3561,7 +3489,6 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -3574,7 +3501,6 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -3587,7 +3513,6 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -3600,7 +3525,6 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -3613,7 +3537,6 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -3626,7 +3549,6 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;

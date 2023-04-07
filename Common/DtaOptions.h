@@ -56,6 +56,7 @@ typedef struct _DTA_OPTIONS {
 	uint8_t dsnum;			/** which data store to read write*/
 	uint32_t startpos;		/** data store start position  */
 	uint32_t len;			/** data store length */
+    uint8_t resettype;   /**< type of TCG reset */
 	bool no_hash_passwords; /** global parameter, disables hashing of passwords */
     bool usermode; /* true : start session with UserN UID, otherwise with AdminN UID */
     uint8_t devusb;            /** usb devname */

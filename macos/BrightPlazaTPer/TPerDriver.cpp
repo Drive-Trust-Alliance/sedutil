@@ -7,7 +7,6 @@
 //
 
 #include <IOKit/IOService.h>
-#include <IOKit/pwr_mgt/RootDomain.h>
 #include "TPerDriver.h"
 #include "CDBAccess.hpp"
 

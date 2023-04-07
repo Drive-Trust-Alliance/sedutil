@@ -271,9 +271,17 @@ static int hashvalidate(char * password, char *devname)
     hash.clear();
     LOG(D1) << "start hashing random password";
     DtaHashPwd(hash, password, d);
-    printf("hashed password : ");
-    for (unsigned long i = 2; i < hash.size(); i++) printf("%02X",hash.at(i));
+    
+    printf("password: %s", password);
+    
+    printf("unhashed in hex: ");
+    for (size_t i = 0; i < strlen(password); i++) printf("%02X",password[i]);
     printf("\n");
+    
+    printf("hashed password: ");
+    for (size_t i = 2; i < hash.size(); i++) printf("%02X",hash.at(i));
+    printf("\n");
+    
     return 0;
 }
 
@@ -284,10 +292,9 @@ static int diskUSBwrite(char *devname, char * USBname, char * LicenseLevel)
 #pragma unused(devname)
 #pragma unused(USBname)
 #pragma unused(LicenseLevel)
-	LOG(D1) << "createUSB() isn't supported in Linux, Windows 7";
+	LOG(D1) << "createUSB() isn't supported in Linux, Windows 7, macos, ... :(";
 	return 0;
-#else
-//#elif (defined(WIN32) || defined(_WIN32) || defined(__WIN32__) ) && (!WINDOWS7)
+#else  //#elif (defined(WIN32) || defined(_WIN32) || defined(__WIN32__) ) && (!WINDOWS7)
 	HANDLE vol_handle;
 	int status;
 	int lp;
@@ -1039,37 +1046,36 @@ int main(int argc, char * argv[])
 		LOG(D) << "Performing cmdDump ";
 		return d->rawCmd(argv[argc - 7], argv[argc - 6], argv[argc - 5], argv[argc - 4], argv[argc - 3], argv[argc - 2]);
 		break;
-	case sedutiloption::version:
+            
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+#define OSNAME "linux"
+#elif defined(APPLE) || defined(_APPLE) || defined(__APPLE__)
+#define OSNAME "macOS"
+#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+#define OSNAME "window"    // TODO: why not "windows"?
+#include <..\linux\VersionPBA.h>
+#else
+#define OSNAME "unknownOS";
+#endif
+        case sedutiloption::version:
 		LOG(D) << "print version number ";
-		st1 = "unknownOS";
-        #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-		st1 = "linux";
-        #endif
-        #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-		st1 = "window";
-		#include <..\linux\VersionPBA.h>
-        #endif
-
-        #if defined(APPLE) || defined(_APPLE) || defined(__APPLE__)
-		st1 = "macOS";
-        #endif
-
 #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
-		printf("Opal Lock Version : 0.9.5.%s.%s 20220218-B001\n", st1.c_str(), GIT_VERSION);
+		printf("Opal Lock Version : 0.9.5.%s.%s 20220218-B001\n", OSNAME, GIT_VERSION);
 #else
 		//printf("Opal Lock Version : 0.9.5.%s.%s 20220211-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(),GIT_VERSION,GIT_VERSION_PBA);
 		//printf("Opal Lock Version : 0.9.6.%s.%s 20220223-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(), GIT_VERSION, GIT_VERSION_PBA);
-		printf("Opal Lock Version : 0.9.8.%s.%s 20220621-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(), GIT_VERSION, GIT_VERSION_PBA);
+		printf("Opal Lock Version : 0.9.8.%s.%s 20220621-A001 PBA.0.9.5.linux.%s 20220218-B001\n", OSNAME, GIT_VERSION, GIT_VERSION_PBA);
 #endif
 		return 0;
 		break;
+            
 	case sedutiloption::hashvalidation:
 		LOG(D) << "Hash Validation";
 		return hashvalidate(argv[opts.password],argv[opts.device]);
 		break;
 	case sedutiloption::TCGreset:
 		LOG(D) << "TCG Reset " <<  " " << argv[opts.device];
-		return (d->TCGreset(opts.mbrstate));
+		return (d->TCGreset(opts.resettype));
 		break;
     default:
         LOG(E) << "Unable to determine what you want to do ";

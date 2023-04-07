@@ -28,6 +28,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDev.h"
 #include "log.h"
 
+
 extern "C" {
 #include "pbkdf2.h"
 #include "sha1.h"
