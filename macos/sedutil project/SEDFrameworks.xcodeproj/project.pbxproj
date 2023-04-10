@@ -26,7 +26,6 @@
 		D275CE0329DB414200DD1C27 /* DtaHashPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = D275CE0229DB414000DD1C27 /* DtaHashPassword.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D275CE0529DB419200DD1C27 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D275CE0429DB419000DD1C27 /* DtaHashPassword.cpp */; };
 		D275ED1529DF667F00DD1C27 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D275CE0429DB419000DD1C27 /* DtaHashPassword.cpp */; };
-		D275ED1A29E0A0C200DD1C27 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; };
 		D275ED1B29E0A0C200DD1C27 /* Python.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D2772AD228BBFF8C0005E001 /* DtaDevOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2772AD128BBFF8C0005E001 /* DtaDevOS.cpp */; };
 		D2772ADA28BBFFB70005E001 /* DtaDevMacOSTPer_SAT.h in Headers */ = {isa = PBXBuildFile; fileRef = D2772AD328BBFFB60005E001 /* DtaDevMacOSTPer_SAT.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -49,6 +48,7 @@
 		D280CCF129DB2DFA00BE604D /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
 		D280CCF229DB2DFA00BE604D /* cifra.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D29321E128E1086600558642 /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = D29C45F828C186920093AC75 /* Version.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D293F29F29E4B67600364CDB /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; };
 		D2A06C9628B5D88800C0DDB6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9528B5D88800C0DDB6 /* Foundation.framework */; };
 		D2A06C9C28B5D8FE00C0DDB6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */; };
 		D2A06C9D28B5DC7900C0DDB6 /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
@@ -135,6 +135,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = D2EBA48E1F055579002F8780;
 			remoteInfo = cifra;
+		};
+		D293F29D29E4ADFF00364CDB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D280CCDC29DA5EBF00BE604D;
+			remoteInfo = PyExtHash;
 		};
 		D2A06C9728B5D8BC00C0DDB6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -255,7 +262,7 @@
 		D280CCA629D75C9500BE604D /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = ../../../../../../../../../opt/local/Library/Frameworks/Python.framework; sourceTree = "<group>"; };
 		D280CCB329DA51A400BE604D /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Python.framework; sourceTree = DEVELOPER_DIR; };
 		D280CCD829DA5DC900BE604D /* PyExtHash copy.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "PyExtHash copy.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D280CCDD29DA5EBF00BE604D /* libPyExtHash.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libPyExtHash.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		D280CCDD29DA5EBF00BE604D /* PyExtHash.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = PyExtHash.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		D29C45F328C185150093AC75 /* GitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GitVersion.sh; sourceTree = "<group>"; };
 		D29C45F528C185590093AC75 /* MakeVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = MakeVersion.sh; sourceTree = "<group>"; };
 		D29C45F628C185590093AC75 /* CleanVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CleanVersion.sh; sourceTree = "<group>"; };
@@ -357,7 +364,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D275ED1A29E0A0C200DD1C27 /* Python.framework in Frameworks */,
+				D293F29F29E4B67600364CDB /* Python.framework in Frameworks */,
 				D280CCF129DB2DFA00BE604D /* cifra.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -528,7 +535,7 @@
 				D2BDCEB329648F6700D07633 /* oui-test */,
 				D280CC8F29D7541000BE604D /* PyExtHashTest */,
 				D280CCD829DA5DC900BE604D /* PyExtHash copy.bundle */,
-				D280CCDD29DA5EBF00BE604D /* libPyExtHash.dylib */,
+				D280CCDD29DA5EBF00BE604D /* PyExtHash.so */,
 			);
 			sourceTree = "<group>";
 		};
@@ -762,6 +769,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				D293F29E29E4ADFF00364CDB /* PBXTargetDependency */,
 			);
 			name = PyExtHashTest;
 			productName = PyExtHashTest;
@@ -805,7 +813,7 @@
 			);
 			name = PyExtHash;
 			productName = PyExtHash;
-			productReference = D280CCDD29DA5EBF00BE604D /* libPyExtHash.dylib */;
+			productReference = D280CCDD29DA5EBF00BE604D /* PyExtHash.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		D2941F4E29354E8B00F7F8EE /* oui */ = {
@@ -1035,6 +1043,7 @@
 		};
 		D280CCAC29D7881D00BE604D /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -1173,6 +1182,11 @@
 			isa = PBXTargetDependency;
 			target = D2EBA48E1F055579002F8780 /* cifra */;
 			targetProxy = D280CCF329DB2DFB00BE604D /* PBXContainerItemProxy */;
+		};
+		D293F29E29E4ADFF00364CDB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D280CCDC29DA5EBF00BE604D /* PyExtHash */;
+			targetProxy = D293F29D29E4ADFF00364CDB /* PBXContainerItemProxy */;
 		};
 		D2A06C9828B5D8BC00C0DDB6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1885,7 +1899,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_EXTENSION = so;
+				EXECUTABLE_PREFIX = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/Library/Frameworks,
@@ -1898,7 +1913,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_EXTENSION = so;
+				EXECUTABLE_PREFIX = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/Library/Frameworks,
@@ -1911,7 +1927,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_EXTENSION = so;
+				EXECUTABLE_PREFIX = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/Library/Frameworks,
@@ -1924,7 +1941,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_EXTENSION = so;
+				EXECUTABLE_PREFIX = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/Library/Frameworks,
@@ -1937,7 +1955,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_EXTENSION = so;
+				EXECUTABLE_PREFIX = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/Library/Frameworks,
@@ -1950,7 +1969,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_EXTENSION = so;
+				EXECUTABLE_PREFIX = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/Library/Frameworks,
@@ -1963,7 +1983,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_EXTENSION = so;
+				EXECUTABLE_PREFIX = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/Library/Frameworks,
@@ -1976,7 +1997,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_EXTENSION = so;
+				EXECUTABLE_PREFIX = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/Library/Frameworks,
@@ -1989,7 +2011,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_EXTENSION = so;
+				EXECUTABLE_PREFIX = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/Library/Frameworks,
@@ -2002,7 +2025,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_EXTENSION = so;
+				EXECUTABLE_PREFIX = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/Library/Frameworks,
