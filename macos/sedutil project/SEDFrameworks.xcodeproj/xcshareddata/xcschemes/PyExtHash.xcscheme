@@ -40,26 +40,27 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D280CC8E29D7540F00BE604D"
-            BuildableName = "PyExtHashTest"
-            BlueprintName = "PyExtHashTest"
-            ReferencedContainer = "container:SEDFrameworks.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
+      <PathRunnable
+         runnableDebuggingMode = "0"
+         FilePath = "/bin/bash">
+      </PathRunnable>
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-c"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "&quot;echo pwd $(pwd); ../hash/PyExtHashTest.py&quot;"
+            argument = "&quot;cd \&quot;${HOME}/Drive Trust Alliance/DTA/submodules/FH/sedutil/hash\&quot; ; python PyExtTestHash.py&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "PYTHONPATH"
+            value = "/Users/scott/Library/Developer/Xcode/DerivedData/DTA-emaykawkwetfggaxqqnpsfomwgcp/Build/Products/Debug/"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

@@ -21,8 +21,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 #include "..\License\include.h"
 #else  // not Windows
-// python.h is included in includ.h and must be include python.h first, it is python bug
-#include "../License/include.h" 
+// python.h is included in include.h and must be include python.h first, it is python bug
+#include "includePython.h"
 #endif // Windows
 
 #include "os.h"
