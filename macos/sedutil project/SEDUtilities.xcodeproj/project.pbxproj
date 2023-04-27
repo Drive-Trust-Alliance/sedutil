@@ -14,6 +14,8 @@
 				D20A960629A6EA8B00B2FCF2 /* CopyFiles */,
 				D20A960929A6ED7600B2FCF2 /* CopyFiles */,
 				D20A961829A7065700B2FCF2 /* CopyFiles */,
+				D2034CA329F9D135006DACA1 /* ShellScript */,
+				D2034CB629F9D631006DACA1 /* CopyFiles */,
 				D20A960A29A6EDA000B2FCF2 /* ShellScript */,
 			);
 			dependencies = (
@@ -78,6 +80,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		D2034CB629F9D631006DACA1 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "files/$(PYSITEPACKAGES)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D20A960629A6EA8B00B2FCF2 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -134,6 +145,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D2034CBA29F9D6C9006DACA1 /* Python3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python3.framework; path = Library/Frameworks/Python3.framework; sourceTree = DEVELOPER_DIR; };
+		D2034CBD29F9DB1F006DACA1 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
+		D2034CBE29F9DB1F006DACA1 /* PyDtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PyDtaHashPassword.cpp; path = ../../Common/PyDtaHashPassword.cpp; sourceTree = "<group>"; };
+		D2034CC129F9DB75006DACA1 /* includePython.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = includePython.h; sourceTree = "<group>"; };
 		D20A960729A6EC3800B2FCF2 /* BrightPlazaTPer.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; path = BrightPlazaTPer.kext; sourceTree = BUILT_PRODUCTS_DIR; };
 		D20A961329A6EF8E00B2FCF2 /* SEDKernelInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SEDKernelInterface.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D20A962029A8025600B2FCF2 /* image00.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image00.png; sourceTree = "<group>"; };
@@ -891,6 +906,7 @@
 		D287224428B835DF0023404B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D2034CBA29F9D6C9006DACA1 /* Python3.framework */,
 				D26F2F0F296A8180007905F7 /* cifra.framework */,
 				D26F2F11296A8180007905F7 /* log.framework */,
 				D26F2F13296A8180007905F7 /* oui.framework */,
@@ -917,6 +933,9 @@
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D2034CC129F9DB75006DACA1 /* includePython.h */,
+				D2034CBD29F9DB1F006DACA1 /* DtaHashPassword.cpp */,
+				D2034CBE29F9DB1F006DACA1 /* PyDtaHashPassword.cpp */,
 				D20A961B29A8025600B2FCF2 /* SED ToolBox */,
 				D20A961329A6EF8E00B2FCF2 /* SEDKernelInterface.framework */,
 				D20A960729A6EC3800B2FCF2 /* BrightPlazaTPer.kext */,
@@ -1055,6 +1074,23 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		D2034CA329F9D135006DACA1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PYSITEPACKAGES=\"$(python -c 'import site; print(site.getsitepackages()[0]);')\"\n";
+		};
 		D20A960A29A6EDA000B2FCF2 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -1071,7 +1107,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export PATH=\"/Users/scott/Library/Python/3.9/bin:$PATH\"\n\"${SRCROOT}/SED ToolBox/build.sh\"\n";
+			shellScript = "\"${SRCROOT}/SED ToolBox/build.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1307,7 +1343,6 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -1325,7 +1360,6 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bonjour and Bluetooth";
 		};
@@ -1343,7 +1377,6 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bluetooth";
 		};
@@ -1361,7 +1394,6 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bonjour";
 		};
@@ -1379,7 +1411,6 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bonjour Multistart";
 		};
@@ -1396,7 +1427,6 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -1413,7 +1443,6 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bonjour";
 		};
@@ -1430,7 +1459,6 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bonjour Multistart";
 		};
@@ -1447,7 +1475,6 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bluetooth";
 		};
@@ -1464,7 +1491,6 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bonjour and Bluetooth";
 		};
@@ -1480,7 +1506,6 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -1496,7 +1521,6 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bonjour and Bluetooth";
 		};
@@ -1512,7 +1536,6 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bluetooth";
 		};
@@ -1528,7 +1551,6 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bonjour";
 		};
@@ -1544,7 +1566,6 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug Bonjour Multistart";
 		};
@@ -1560,7 +1581,6 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -1576,7 +1596,6 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bonjour";
 		};
@@ -1592,7 +1611,6 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bonjour Multistart";
 		};
@@ -1608,7 +1626,6 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bluetooth";
 		};
@@ -1624,7 +1641,6 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release Bonjour and Bluetooth";
 		};
@@ -1732,6 +1748,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
@@ -1838,6 +1855,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1946,6 +1964,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
@@ -2055,6 +2074,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
@@ -2165,6 +2185,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
@@ -2268,6 +2289,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -2370,6 +2392,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -2475,6 +2498,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -2580,6 +2604,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
@@ -2682,6 +2707,7 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
