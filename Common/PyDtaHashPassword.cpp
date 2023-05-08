@@ -38,10 +38,15 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 extern sedutiloutput outputFormat;
 sedutiloutput outputFormat = sedutilNormal;
 
-#if 1 // defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
+#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
 extern "C" {
 #include "pbkdf2.h"
 #include "sha1.h"
+}
+#elif  __APPLE__
+extern "C" {
+#include <cifra/pbkdf2.h>
+#include <cifra/sha1.h>
 }
 #endif
 

@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D280CCDC29DA5EBF00BE604D"
+               BlueprintIdentifier = "D21670E029FC3FAA0080D08B"
                BuildableName = "PyExtHash.so"
                BlueprintName = "PyExtHash"
-               ReferencedContainer = "container:SEDFrameworks.xcodeproj">
+               ReferencedContainer = "container:SEDUtilities.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -71,10 +71,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D280CCDC29DA5EBF00BE604D"
+            BlueprintIdentifier = "D21670E029FC3FAA0080D08B"
             BuildableName = "PyExtHash.so"
             BlueprintName = "PyExtHash"
-            ReferencedContainer = "container:SEDFrameworks.xcodeproj">
+            ReferencedContainer = "container:SEDUtilities.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

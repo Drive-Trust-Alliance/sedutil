@@ -8,8 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		D20A63AB1F73204000F154AC /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D20A63AA1F73204000F154AC /* log.cpp */; settings = {COMPILER_FLAGS = "-Wno-missing-field-initializers -Wno-missing-prototypes"; }; };
-		D21949EE28D7D02D00900FA2 /* DtaAudit.h in Headers */ = {isa = PBXBuildFile; fileRef = D21949ED28D7D02D00900FA2 /* DtaAudit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D22369B928D686C400D7D851 /* sedutil.h in Headers */ = {isa = PBXBuildFile; fileRef = D2D1379E28B55C14003FD51F /* sedutil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D22A693D2A096F6F00EF864A /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D22A69392A096F6700EF864A /* DtaHashPassword.cpp */; };
+		D22A69402A096F6F00EF864A /* DtaHashPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = D22A693C2A096F6D00EF864A /* DtaHashPassword.h */; };
 		D2466AF328B5876C009F55D9 /* DtaDevOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D2466A4B28B585F8009F55D9 /* DtaDevOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D263209A2937F65500F0927B /* oui_vendor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D26320982937F65500F0927B /* oui_vendor.cpp */; };
 		D263209B2937F65500F0927B /* oui_vendor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D26320992937F65500F0927B /* oui_vendor.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -22,10 +23,6 @@
 		D271A20028054AFE00BF043A /* DtaResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1FA28054AFE00BF043A /* DtaResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D274DB7228B7FC9D00B9CD1F /* SEDKernelInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */; platformFilters = (macos, ); };
 		D27591BA28B579F1005B9081 /* DtaDevOpal2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */; };
-		D275CE0129DB3DAD00DD1C27 /* PyDtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D275CE0029DB3DAB00DD1C27 /* PyDtaHashPassword.cpp */; };
-		D275CE0329DB414200DD1C27 /* DtaHashPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = D275CE0229DB414000DD1C27 /* DtaHashPassword.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D275CE0529DB419200DD1C27 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D275CE0429DB419000DD1C27 /* DtaHashPassword.cpp */; };
-		D275ED1529DF667F00DD1C27 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D275CE0429DB419000DD1C27 /* DtaHashPassword.cpp */; };
 		D2772AD228BBFF8C0005E001 /* DtaDevOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2772AD128BBFF8C0005E001 /* DtaDevOS.cpp */; };
 		D2772ADA28BBFFB70005E001 /* DtaDevMacOSTPer_SAT.h in Headers */ = {isa = PBXBuildFile; fileRef = D2772AD328BBFFB60005E001 /* DtaDevMacOSTPer_SAT.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2772ADB28BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = D2772AD428BBFFB60005E001 /* DtaDevMacOSBlockStorageDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -36,8 +33,6 @@
 		D2772AE028BBFFB70005E001 /* DtaDevMacOSTPer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2772AD928BBFFB70005E001 /* DtaDevMacOSTPer.cpp */; };
 		D2772B1C28BC32330005E001 /* os.h in Headers */ = {isa = PBXBuildFile; fileRef = D2466A4528B58518009F55D9 /* os.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2772B1E28BC345A0005E001 /* ATAStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BDDC9128A5B23600001E26 /* ATAStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D280CCF129DB2DFA00BE604D /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
-		D280CCF229DB2DFA00BE604D /* cifra.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D29321E128E1086600558642 /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = D29C45F828C186920093AC75 /* Version.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2A06C9628B5D88800C0DDB6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9528B5D88800C0DDB6 /* Foundation.framework */; };
 		D2A06C9C28B5D8FE00C0DDB6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */; };
@@ -47,8 +42,6 @@
 		D2BDDC9C28A6369A00001E26 /* pyexthash.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BDDC9A28A6369900001E26 /* pyexthash.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2BDDC9D28A6369A00001E26 /* ReadMe.txt in Resources */ = {isa = PBXBuildFile; fileRef = D2BDDC9B28A6369A00001E26 /* ReadMe.txt */; };
 		D2BDDC9F28A63B9200001E26 /* pyextob.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BDDC9E28A63B9200001E26 /* pyextob.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D2C3FB4729F0D623004FBFC8 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; };
-		D2C3FB4829F0D623004FBFC8 /* Python.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D280CCA629D75C9500BE604D /* Python.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D2D0F56B293A85F00077966A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9528B5D88800C0DDB6 /* Foundation.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		D2D0F56D293AA5DA0077966A /* oui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2E6FE7E2935696800DAB209 /* oui.framework */; };
 		D2D1379C28B55BAE003FD51F /* DtaOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D2D1379B28B55B9E003FD51F /* DtaOptions.h */; };
@@ -107,13 +100,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		D280CCF329DB2DFB00BE604D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D2EBA48E1F055579002F8780;
-			remoteInfo = cifra;
-		};
 		D2A06C9728B5D8BC00C0DDB6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
@@ -147,18 +133,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D280CCF029DB2D8600BE604D /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				D2C3FB4829F0D623004FBFC8 /* Python.framework in Embed Frameworks */,
-				D280CCF229DB2DFA00BE604D /* cifra.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D2E6FEA12935E67800DAB209 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -173,7 +147,8 @@
 /* Begin PBXFileReference section */
 		D20A63A81F731FDB00F154AC /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = log.h; path = ../../../Common/log.h; sourceTree = "<group>"; };
 		D20A63AA1F73204000F154AC /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = log.cpp; path = ../../log.cpp; sourceTree = "<group>"; };
-		D21949ED28D7D02D00900FA2 /* DtaAudit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaAudit.h; path = ../../Common/DtaAudit.h; sourceTree = "<group>"; };
+		D22A69392A096F6700EF864A /* DtaHashPassword.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
+		D22A693C2A096F6D00EF864A /* DtaHashPassword.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DtaHashPassword.h; path = ../../Common/DtaHashPassword.h; sourceTree = "<group>"; };
 		D23F3DF728B57BB400741CC0 /* sedutil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sedutil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D23F3DF828B57BB400741CC0 /* log.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D23F3DF928B57BB400741CC0 /* cifra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = cifra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -189,9 +164,6 @@
 		D271A1F928054AFE00BF043A /* DtaLexicon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaLexicon.h; sourceTree = "<group>"; };
 		D271A1FA28054AFE00BF043A /* DtaResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaResponse.h; sourceTree = "<group>"; };
 		D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal2.cpp; sourceTree = "<group>"; };
-		D275CE0029DB3DAB00DD1C27 /* PyDtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PyDtaHashPassword.cpp; path = ../../Common/PyDtaHashPassword.cpp; sourceTree = "<group>"; };
-		D275CE0229DB414000DD1C27 /* DtaHashPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaHashPassword.h; path = ../../Common/DtaHashPassword.h; sourceTree = "<group>"; };
-		D275CE0429DB419000DD1C27 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
 		D2772AD128BBFF8C0005E001 /* DtaDevOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOS.cpp; sourceTree = "<group>"; };
 		D2772AD328BBFFB60005E001 /* DtaDevMacOSTPer_SAT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer_SAT.h; sourceTree = "<group>"; };
 		D2772AD428BBFFB60005E001 /* DtaDevMacOSBlockStorageDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSBlockStorageDevice.h; sourceTree = "<group>"; };
@@ -200,23 +172,12 @@
 		D2772AD728BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSTPer_SCSI.cpp; sourceTree = "<group>"; };
 		D2772AD828BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer_SCSI.h; sourceTree = "<group>"; };
 		D2772AD928BBFFB70005E001 /* DtaDevMacOSTPer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSTPer.cpp; sourceTree = "<group>"; };
-		D280CC7629D7515300BE604D /* buildob.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildob.sh; sourceTree = "<group>"; };
-		D280CC7729D7515300BE604D /* setup.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
-		D280CC7829D7515300BE604D /* ob.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ob.vcxproj.filters; sourceTree = "<group>"; };
-		D280CC7929D7515300BE604D /* ob.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ob.vcxproj; sourceTree = "<group>"; };
-		D280CC7B29D7515400BE604D /* buildhash.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildhash.sh; sourceTree = "<group>"; };
-		D280CC7D29D7515400BE604D /* hash.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hash.vcxproj; sourceTree = "<group>"; };
-		D280CC7E29D7515400BE604D /* PyExtTestHash.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = PyExtTestHash.py; sourceTree = "<group>"; };
-		D280CC8129D7515400BE604D /* setup.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
-		D280CC8329D7515400BE604D /* PyExtTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = PyExtTest.py; sourceTree = "<group>"; };
-		D280CC8429D7515400BE604D /* hash.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hash.vcxproj.filters; sourceTree = "<group>"; };
 		D280CC9E29D7582500BE604D /* PyExtuD.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = PyExtuD.sh; sourceTree = "<group>"; };
 		D280CC9F29D7582500BE604D /* PyExtD.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = PyExtD.sh; sourceTree = "<group>"; };
 		D280CCA229D75AA300BE604D /* Python3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python3.framework; path = Library/Frameworks/Python3.framework; sourceTree = DEVELOPER_DIR; };
 		D280CCA429D75AD300BE604D /* Xcode.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; name = Xcode.app; path = ../../../../../../../../../Applications/Xcode.app; sourceTree = "<group>"; };
 		D280CCA629D75C9500BE604D /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = ../../../../../../../../../opt/local/Library/Frameworks/Python.framework; sourceTree = "<group>"; };
 		D280CCB329DA51A400BE604D /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Python.framework; sourceTree = DEVELOPER_DIR; };
-		D280CCDD29DA5EBF00BE604D /* PyExtHash.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = PyExtHash.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		D29C45F328C185150093AC75 /* GitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GitVersion.sh; sourceTree = "<group>"; };
 		D29C45F528C185590093AC75 /* MakeVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = MakeVersion.sh; sourceTree = "<group>"; };
 		D29C45F628C185590093AC75 /* CleanVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CleanVersion.sh; sourceTree = "<group>"; };
@@ -234,7 +195,6 @@
 		D2D1379B28B55B9E003FD51F /* DtaOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaOptions.h; path = "/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/Common/DtaOptions.h"; sourceTree = "<absolute>"; };
 		D2D1379E28B55C14003FD51F /* sedutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sedutil.h; path = sedutil/sedutil.h; sourceTree = "<group>"; };
 		D2D6E348294D081500E3C72C /* DtaDevFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevFactory.cpp; sourceTree = "<group>"; };
-		D2DBE50729F3128800149480 /* includePython.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = includePython.h; sourceTree = "<group>"; };
 		D2E6FE7E2935696800DAB209 /* oui.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = oui.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2E6FE802935E08D00DAB209 /* get_vendorid */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = get_vendorid; sourceTree = "<group>"; };
 		D2E6FE812935E08D00DAB209 /* oui.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = oui.docc; sourceTree = "<group>"; };
@@ -302,15 +262,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D280CCDB29DA5EBF00BE604D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D2C3FB4729F0D623004FBFC8 /* Python.framework in Frameworks */,
-				D280CCF129DB2DFA00BE604D /* cifra.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -397,40 +348,6 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
-		D280CC7529D7515300BE604D /* ob */ = {
-			isa = PBXGroup;
-			children = (
-				D280CC7629D7515300BE604D /* buildob.sh */,
-				D280CC7729D7515300BE604D /* setup.py */,
-				D280CC7829D7515300BE604D /* ob.vcxproj.filters */,
-				D280CC7929D7515300BE604D /* ob.vcxproj */,
-			);
-			name = ob;
-			path = ../../ob;
-			sourceTree = "<group>";
-		};
-		D280CC7A29D7515300BE604D /* hash */ = {
-			isa = PBXGroup;
-			children = (
-				D280CC7B29D7515400BE604D /* buildhash.sh */,
-				D280CC7D29D7515400BE604D /* hash.vcxproj */,
-				D280CC7E29D7515400BE604D /* PyExtTestHash.py */,
-				D280CC8129D7515400BE604D /* setup.py */,
-				D280CC8329D7515400BE604D /* PyExtTest.py */,
-				D280CC8429D7515400BE604D /* hash.vcxproj.filters */,
-				D280CC8529D7515400BE604D /* build */,
-			);
-			name = hash;
-			path = ../../hash;
-			sourceTree = "<group>";
-		};
-		D280CC8529D7515400BE604D /* build */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = build;
-			sourceTree = "<group>";
-		};
 		D29C45F428C185590093AC75 /* sedutil */ = {
 			isa = PBXGroup;
 			children = (
@@ -454,13 +371,8 @@
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
-				D2DBE50729F3128800149480 /* includePython.h */,
-				D275CE0429DB419000DD1C27 /* DtaHashPassword.cpp */,
-				D275CE0229DB414000DD1C27 /* DtaHashPassword.h */,
-				D275CE0029DB3DAB00DD1C27 /* PyDtaHashPassword.cpp */,
-				D280CC7A29D7515300BE604D /* hash */,
-				D280CC7529D7515300BE604D /* ob */,
-				D21949ED28D7D02D00900FA2 /* DtaAudit.h */,
+				D22A693C2A096F6D00EF864A /* DtaHashPassword.h */,
+				D22A69392A096F6700EF864A /* DtaHashPassword.cpp */,
 				D2D1379B28B55B9E003FD51F /* DtaOptions.h */,
 				D2D1379E28B55C14003FD51F /* sedutil.h */,
 				D2466A4528B58518009F55D9 /* os.h */,
@@ -477,7 +389,6 @@
 				D23F3E0B28B57E6800741CC0 /* Frameworks */,
 				D2E6FE7E2935696800DAB209 /* oui.framework */,
 				D2BDCEB329648F6700D07633 /* oui-test */,
-				D280CCDD29DA5EBF00BE604D /* PyExtHash.so */,
 			);
 			sourceTree = "<group>";
 		};
@@ -607,13 +518,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D280CCD929DA5EBF00BE604D /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D2941F4F29354E8B00F7F8EE /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -651,8 +555,8 @@
 				D2EA849928053B4D00A0F685 /* DtaSession.h in Headers */,
 				D2EA84AA28053B4E00A0F685 /* DtaAnnotatedDump.h in Headers */,
 				D2EA849128053B4D00A0F685 /* DtaHashPwd.h in Headers */,
-				D275CE0329DB414200DD1C27 /* DtaHashPassword.h in Headers */,
 				D2EA848128053B4D00A0F685 /* DtaDiskType.h in Headers */,
+				D22A69402A096F6F00EF864A /* DtaHashPassword.h in Headers */,
 				D2EA84B228053B4E00A0F685 /* DtaCommand.h in Headers */,
 				D271A20028054AFE00BF043A /* DtaResponse.h in Headers */,
 				D2EA84AB28053B4E00A0F685 /* DtaEndianFixup.h in Headers */,
@@ -660,7 +564,6 @@
 				D2BDDC9F28A63B9200001E26 /* pyextob.h in Headers */,
 				D2BDDC9C28A6369A00001E26 /* pyexthash.h in Headers */,
 				D2EA84AF28053B4E00A0F685 /* DtaHexDump.h in Headers */,
-				D21949EE28D7D02D00900FA2 /* DtaAudit.h in Headers */,
 				D29321E128E1086600558642 /* Version.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -701,25 +604,6 @@
 			productName = log;
 			productReference = D23F3DF828B57BB400741CC0 /* log.framework */;
 			productType = "com.apple.product-type.framework";
-		};
-		D280CCDC29DA5EBF00BE604D /* PyExtHash */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D280CCDE29DA5EC300BE604D /* Build configuration list for PBXNativeTarget "PyExtHash" */;
-			buildPhases = (
-				D280CCD929DA5EBF00BE604D /* Headers */,
-				D280CCDA29DA5EBF00BE604D /* Sources */,
-				D280CCDB29DA5EBF00BE604D /* Frameworks */,
-				D280CCF029DB2D8600BE604D /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				D280CCF429DB2DFB00BE604D /* PBXTargetDependency */,
-			);
-			name = PyExtHash;
-			productName = PyExtHash;
-			productReference = D280CCDD29DA5EBF00BE604D /* PyExtHash.so */;
-			productType = "com.apple.product-type.library.dynamic";
 		};
 		D2941F4E29354E8B00F7F8EE /* oui */ = {
 			isa = PBXNativeTarget;
@@ -810,9 +694,6 @@
 						DevelopmentTeam = UES63D9K7E;
 						ProvisioningStyle = Automatic;
 					};
-					D280CCDC29DA5EBF00BE604D = {
-						CreatedOnToolsVersion = 14.1;
-					};
 					D2E6FEA22935E67800DAB209 = {
 						CreatedOnToolsVersion = 14.1;
 						DevelopmentTeam = UES63D9K7E;
@@ -887,7 +768,6 @@
 				D2EBA48E1F055579002F8780 /* cifra */,
 				D2941F4E29354E8B00F7F8EE /* oui */,
 				D2E6FEA22935E67800DAB209 /* oui-test */,
-				D280CCDC29DA5EBF00BE604D /* PyExtHash */,
 			);
 		};
 /* End PBXProject section */
@@ -945,15 +825,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D280CCDA29DA5EBF00BE604D /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D275ED1529DF667F00DD1C27 /* DtaHashPassword.cpp in Sources */,
-				D275CE0129DB3DAD00DD1C27 /* PyDtaHashPassword.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D2941F5329354E8B00F7F8EE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -993,8 +864,8 @@
 				D2D6E349294D081500E3C72C /* DtaDevFactory.cpp in Sources */,
 				D2EA844B28053B4C00A0F685 /* DtaAnnotatedDump.cpp in Sources */,
 				D2EA849428053B4D00A0F685 /* DtaHashPwd.cpp in Sources */,
-				D275CE0529DB419200DD1C27 /* DtaHashPassword.cpp in Sources */,
 				D2EA849528053B4D00A0F685 /* DtaDiskType.cpp in Sources */,
+				D22A693D2A096F6F00EF864A /* DtaHashPassword.cpp in Sources */,
 				D2EA849C28053B4D00A0F685 /* DtaHexDump.cpp in Sources */,
 				D2EA847D28053B4D00A0F685 /* DtaCommand.cpp in Sources */,
 				D2EA84A728053B4E00A0F685 /* DtaResponse.cpp in Sources */,
@@ -1016,11 +887,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		D280CCF429DB2DFB00BE604D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D2EBA48E1F055579002F8780 /* cifra */;
-			targetProxy = D280CCF329DB2DFB00BE604D /* PBXContainerItemProxy */;
-		};
 		D2A06C9828B5D8BC00C0DDB6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D20A63961F731F3600F154AC /* log */;
@@ -1477,166 +1343,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = "Release Bonjour Multistart";
-		};
-		D280CCDF29DA5EC300BE604D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				COPY_PHASE_STRIP = NO;
-				EXECUTABLE_EXTENSION = so;
-				EXECUTABLE_PREFIX = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					/opt/local/Library/Frameworks,
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				OTHER_LDFLAGS = "-w";
-			};
-			name = Debug;
-		};
-		D280CCE029DA5EC300BE604D /* Debug Bonjour and Bluetooth */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				COPY_PHASE_STRIP = NO;
-				EXECUTABLE_EXTENSION = so;
-				EXECUTABLE_PREFIX = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					/opt/local/Library/Frameworks,
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				OTHER_LDFLAGS = "-w";
-			};
-			name = "Debug Bonjour and Bluetooth";
-		};
-		D280CCE129DA5EC300BE604D /* Debug Bluetooth */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				COPY_PHASE_STRIP = NO;
-				EXECUTABLE_EXTENSION = so;
-				EXECUTABLE_PREFIX = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					/opt/local/Library/Frameworks,
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				OTHER_LDFLAGS = "-w";
-			};
-			name = "Debug Bluetooth";
-		};
-		D280CCE229DA5EC300BE604D /* Debug Bonjour */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				COPY_PHASE_STRIP = NO;
-				EXECUTABLE_EXTENSION = so;
-				EXECUTABLE_PREFIX = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					/opt/local/Library/Frameworks,
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				OTHER_LDFLAGS = "-w";
-			};
-			name = "Debug Bonjour";
-		};
-		D280CCE329DA5EC300BE604D /* Debug Bonjour Multistart */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				COPY_PHASE_STRIP = NO;
-				EXECUTABLE_EXTENSION = so;
-				EXECUTABLE_PREFIX = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					/opt/local/Library/Frameworks,
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				OTHER_LDFLAGS = "-w";
-			};
-			name = "Debug Bonjour Multistart";
-		};
-		D280CCE429DA5EC300BE604D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				COPY_PHASE_STRIP = NO;
-				EXECUTABLE_EXTENSION = so;
-				EXECUTABLE_PREFIX = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					/opt/local/Library/Frameworks,
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				OTHER_LDFLAGS = "-w";
-			};
-			name = Release;
-		};
-		D280CCE529DA5EC300BE604D /* Release Bonjour */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				COPY_PHASE_STRIP = NO;
-				EXECUTABLE_EXTENSION = so;
-				EXECUTABLE_PREFIX = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					/opt/local/Library/Frameworks,
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				OTHER_LDFLAGS = "-w";
-			};
-			name = "Release Bonjour";
-		};
-		D280CCE629DA5EC300BE604D /* Release Bonjour Multistart */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				COPY_PHASE_STRIP = NO;
-				EXECUTABLE_EXTENSION = so;
-				EXECUTABLE_PREFIX = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					/opt/local/Library/Frameworks,
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				OTHER_LDFLAGS = "-w";
-			};
-			name = "Release Bonjour Multistart";
-		};
-		D280CCE729DA5EC300BE604D /* Release Bluetooth */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				COPY_PHASE_STRIP = NO;
-				EXECUTABLE_EXTENSION = so;
-				EXECUTABLE_PREFIX = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					/opt/local/Library/Frameworks,
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				OTHER_LDFLAGS = "-w";
-			};
-			name = "Release Bluetooth";
-		};
-		D280CCE829DA5EC300BE604D /* Release Bonjour and Bluetooth */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				COPY_PHASE_STRIP = NO;
-				EXECUTABLE_EXTENSION = so;
-				EXECUTABLE_PREFIX = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					/opt/local/Library/Frameworks,
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				OTHER_LDFLAGS = "-w";
-			};
-			name = "Release Bonjour and Bluetooth";
 		};
 		D2941F5929354E8B00F7F8EE /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -3199,23 +2905,6 @@
 				D20A63A41F731F3600F154AC /* Release Bonjour Multistart */,
 				D20A63A51F731F3600F154AC /* Release Bluetooth */,
 				D20A63A61F731F3600F154AC /* Release Bonjour and Bluetooth */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Release Bonjour Multistart";
-		};
-		D280CCDE29DA5EC300BE604D /* Build configuration list for PBXNativeTarget "PyExtHash" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D280CCDF29DA5EC300BE604D /* Debug */,
-				D280CCE029DA5EC300BE604D /* Debug Bonjour and Bluetooth */,
-				D280CCE129DA5EC300BE604D /* Debug Bluetooth */,
-				D280CCE229DA5EC300BE604D /* Debug Bonjour */,
-				D280CCE329DA5EC300BE604D /* Debug Bonjour Multistart */,
-				D280CCE429DA5EC300BE604D /* Release */,
-				D280CCE529DA5EC300BE604D /* Release Bonjour */,
-				D280CCE629DA5EC300BE604D /* Release Bonjour Multistart */,
-				D280CCE729DA5EC300BE604D /* Release Bluetooth */,
-				D280CCE829DA5EC300BE604D /* Release Bonjour and Bluetooth */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Release Bonjour Multistart";

@@ -30,8 +30,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 
 extern "C" {
-#include "pbkdf2.h"
-#include "sha1.h"
+#include <cifra/pbkdf2.h>
+#include <cifra/sha1.h>
 }
 
 
