@@ -10,7 +10,8 @@
 		D20A63AB1F73204000F154AC /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D20A63AA1F73204000F154AC /* log.cpp */; settings = {COMPILER_FLAGS = "-Wno-missing-field-initializers -Wno-missing-prototypes"; }; };
 		D22369B928D686C400D7D851 /* sedutil.h in Headers */ = {isa = PBXBuildFile; fileRef = D2D1379E28B55C14003FD51F /* sedutil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D22A693D2A096F6F00EF864A /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D22A69392A096F6700EF864A /* DtaHashPassword.cpp */; };
-		D22A69402A096F6F00EF864A /* DtaHashPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = D22A693C2A096F6D00EF864A /* DtaHashPassword.h */; };
+		D22A69402A096F6F00EF864A /* DtaHashPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = D22A693C2A096F6D00EF864A /* DtaHashPassword.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D22A69432A09788E00EF864A /* DtaAudit.h in Headers */ = {isa = PBXBuildFile; fileRef = D22A69422A09788E00EF864A /* DtaAudit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2466AF328B5876C009F55D9 /* DtaDevOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D2466A4B28B585F8009F55D9 /* DtaDevOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D263209A2937F65500F0927B /* oui_vendor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D26320982937F65500F0927B /* oui_vendor.cpp */; };
 		D263209B2937F65500F0927B /* oui_vendor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D26320992937F65500F0927B /* oui_vendor.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -149,6 +150,7 @@
 		D20A63AA1F73204000F154AC /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = log.cpp; path = ../../log.cpp; sourceTree = "<group>"; };
 		D22A69392A096F6700EF864A /* DtaHashPassword.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
 		D22A693C2A096F6D00EF864A /* DtaHashPassword.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DtaHashPassword.h; path = ../../Common/DtaHashPassword.h; sourceTree = "<group>"; };
+		D22A69422A09788E00EF864A /* DtaAudit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaAudit.h; sourceTree = "<group>"; };
 		D23F3DF728B57BB400741CC0 /* sedutil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sedutil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D23F3DF828B57BB400741CC0 /* log.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D23F3DF928B57BB400741CC0 /* cifra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = cifra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -395,6 +397,7 @@
 		D2D137A028B55C15003FD51F /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D22A69422A09788E00EF864A /* DtaAudit.h */,
 				D2BDDC9728A6361600001E26 /* ob.cpp */,
 				D2BDDC9A28A6369900001E26 /* pyexthash.h */,
 				D2BDDC9E28A63B9200001E26 /* pyextob.h */,
@@ -556,7 +559,6 @@
 				D2EA84AA28053B4E00A0F685 /* DtaAnnotatedDump.h in Headers */,
 				D2EA849128053B4D00A0F685 /* DtaHashPwd.h in Headers */,
 				D2EA848128053B4D00A0F685 /* DtaDiskType.h in Headers */,
-				D22A69402A096F6F00EF864A /* DtaHashPassword.h in Headers */,
 				D2EA84B228053B4E00A0F685 /* DtaCommand.h in Headers */,
 				D271A20028054AFE00BF043A /* DtaResponse.h in Headers */,
 				D2EA84AB28053B4E00A0F685 /* DtaEndianFixup.h in Headers */,
@@ -564,6 +566,8 @@
 				D2BDDC9F28A63B9200001E26 /* pyextob.h in Headers */,
 				D2BDDC9C28A6369A00001E26 /* pyexthash.h in Headers */,
 				D2EA84AF28053B4E00A0F685 /* DtaHexDump.h in Headers */,
+				D22A69432A09788E00EF864A /* DtaAudit.h in Headers */,
+				D22A69402A096F6F00EF864A /* DtaHashPassword.h in Headers */,
 				D29321E128E1086600558642 /* Version.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
