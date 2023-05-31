@@ -277,8 +277,8 @@ int main( int argc, const char *argv[] )
         CFDictionarySetValue(matchingDict, CFSTR(kUSBProductID),  numberRef);
         CFRelease(numberRef);
      
-        kr = IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDict, &foundDevices);    //consumes matchingDIct reference
-//        kr = IOServiceGetMatchingServices(kIOMainPortDefault, matchingDict, &foundDevices);    //consumes matchingDIct reference
+//        kr = IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDict, &foundDevices);    //consumes matchingDIct reference
+        kr = IOServiceGetMatchingServices(kIOMainPortDefault, matchingDict, &foundDevices);    //consumes matchingDIct reference
         if ( 0 != kr)
         {
             elog("Error 0x%x trying to find matching services\n", kr);

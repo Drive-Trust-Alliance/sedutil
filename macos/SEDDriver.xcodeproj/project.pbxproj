@@ -600,7 +600,6 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -653,6 +652,7 @@
 				INFOPLIST_FILE = BrightPlazaTPer/DebugInfo.plist;
 				INSTALL_PATH = /Library/Extensions;
 				LD_GENERATE_MAP_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MODULE_NAME = com.brightplaza.BrightPlazaTPer;
 				MODULE_VERSION = 625;
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
@@ -763,7 +763,6 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = "Release Bonjour Multistart";
@@ -813,6 +812,7 @@
 				INFOPLIST_FILE = BrightPlazaTPer/Info.plist;
 				INSTALL_PATH = /Library/Extensions;
 				LD_GENERATE_MAP_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MODULE_NAME = com.brightplaza.BrightPlazaTPer;
 				MODULE_VERSION = 626;
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
@@ -926,7 +926,6 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -979,6 +978,7 @@
 				INFOPLIST_FILE = BrightPlazaTPer/DebugInfo.plist;
 				INSTALL_PATH = /Library/Extensions;
 				LD_GENERATE_MAP_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MODULE_NAME = com.brightplaza.BrightPlazaTPer;
 				MODULE_VERSION = 625;
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
@@ -1092,7 +1092,6 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -1145,6 +1144,7 @@
 				INFOPLIST_FILE = BrightPlazaTPer/DebugInfo.plist;
 				INSTALL_PATH = /Library/Extensions;
 				LD_GENERATE_MAP_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MODULE_NAME = com.brightplaza.BrightPlazaTPer;
 				MODULE_VERSION = 625;
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
@@ -1259,7 +1259,6 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -1312,6 +1311,7 @@
 				INFOPLIST_FILE = BrightPlazaTPer/DebugInfo.plist;
 				INSTALL_PATH = /Library/Extensions;
 				LD_GENERATE_MAP_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MODULE_NAME = com.brightplaza.BrightPlazaTPer;
 				MODULE_VERSION = 625;
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
@@ -1419,7 +1419,6 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = "Release Bonjour";
@@ -1469,6 +1468,7 @@
 				INFOPLIST_FILE = BrightPlazaTPer/Info.plist;
 				INSTALL_PATH = /Library/Extensions;
 				LD_GENERATE_MAP_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MODULE_NAME = com.brightplaza.BrightPlazaTPer;
 				MODULE_VERSION = 626;
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
@@ -1576,7 +1576,6 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = "Release Bluetooth";
@@ -1626,6 +1625,7 @@
 				INFOPLIST_FILE = BrightPlazaTPer/Info.plist;
 				INSTALL_PATH = /Library/Extensions;
 				LD_GENERATE_MAP_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MODULE_NAME = com.brightplaza.BrightPlazaTPer;
 				MODULE_VERSION = 626;
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
@@ -1736,7 +1736,6 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = "Release Bonjour and Bluetooth";
@@ -1786,6 +1785,7 @@
 				INFOPLIST_FILE = BrightPlazaTPer/Info.plist;
 				INSTALL_PATH = /Library/Extensions;
 				LD_GENERATE_MAP_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MODULE_NAME = com.brightplaza.BrightPlazaTPer;
 				MODULE_VERSION = 626;
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
@@ -1896,7 +1896,6 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -1998,7 +1997,6 @@
 					"$(OTHER_CFLAGS)",
 					"-Wno-inconsistent-missing-override",
 				);
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -2083,6 +2081,7 @@
 				INFOPLIST_FILE = BrightPlazaTPer/DebugInfo.plist;
 				INSTALL_PATH = /Library/Extensions;
 				LD_GENERATE_MAP_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MODULE_NAME = com.brightplaza.BrightPlazaTPer;
 				MODULE_VERSION = 625;
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";
@@ -2105,6 +2104,7 @@
 				INFOPLIST_FILE = BrightPlazaTPer/Info.plist;
 				INSTALL_PATH = /Library/Extensions;
 				LD_GENERATE_MAP_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MODULE_NAME = com.brightplaza.BrightPlazaTPer;
 				MODULE_VERSION = 626;
 				OTHER_LDFLAGS = "\"-isysroot$(DEVELOPER_SDK_DIR)/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk\"";

@@ -55,14 +55,15 @@
 		D216711C29FC903F0080D08B /* DtaAudit.h in Headers */ = {isa = PBXBuildFile; fileRef = D21670FF29FC903E0080D08B /* DtaAudit.h */; };
 		D216711E29FC903F0080D08B /* DtaHashPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = D216710129FC903E0080D08B /* DtaHashPassword.h */; };
 		D216711F29FC903F0080D08B /* PyDtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D216710229FC903E0080D08B /* PyDtaHashPassword.cpp */; };
-		D22A69362A096C9B00EF864A /* Python3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2034CBA29F9D6C9006DACA1 /* Python3.framework */; };
-		D22A69372A096C9B00EF864A /* Python3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D2034CBA29F9D6C9006DACA1 /* Python3.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D26904CE28D7A17B0095769E /* reenumerate.c in Sources */ = {isa = PBXBuildFile; fileRef = D26904CD28D7A17B0095769E /* reenumerate.c */; };
 		D26F2F10296A8180007905F7 /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26F2F0F296A8180007905F7 /* cifra.framework */; };
 		D26F2F12296A8180007905F7 /* log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26F2F11296A8180007905F7 /* log.framework */; };
 		D26F2F14296A8180007905F7 /* oui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26F2F13296A8180007905F7 /* oui.framework */; };
 		D26F2F16296A8180007905F7 /* sedutil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26F2F15296A8180007905F7 /* sedutil.framework */; };
 		D287224328B835CB0023404B /* sedutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D287224228B835CB0023404B /* sedutil.cpp */; };
+		D2C5E6732A2807F1009CDAF5 /* Python3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2034CBA29F9D6C9006DACA1 /* Python3.framework */; };
+		D2C5E6742A2807F1009CDAF5 /* Python3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D2034CBA29F9D6C9006DACA1 /* Python3.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D2FE6D922A15BC49002CC6AC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2FE6D912A15BC49002CC6AC /* Cocoa.framework */; platformFilters = (macos, ); };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -148,7 +149,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				D22A69372A096C9B00EF864A /* Python3.framework in Embed Frameworks */,
+				D2C5E6742A2807F1009CDAF5 /* Python3.framework in Embed Frameworks */,
 				D21670EF29FC3FEB0080D08B /* cifra.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -178,6 +179,7 @@
 		D2034CBA29F9D6C9006DACA1 /* Python3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python3.framework; path = Library/Frameworks/Python3.framework; sourceTree = DEVELOPER_DIR; };
 		D2034CBD29F9DB1F006DACA1 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
 		D2034CC129F9DB75006DACA1 /* includePython.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = includePython.h; sourceTree = "<group>"; };
+		D20A40DD2A15ADF500DE42A2 /* Python3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python3.framework; path = "../../../../../../../../../Applications/Xcode 14.3.app/Contents/Developer/Library/Frameworks/Python3.framework"; sourceTree = "<group>"; };
 		D20A960729A6EC3800B2FCF2 /* BrightPlazaTPer.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; path = BrightPlazaTPer.kext; sourceTree = BUILT_PRODUCTS_DIR; };
 		D20A961329A6EF8E00B2FCF2 /* SEDKernelInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SEDKernelInterface.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D20A962029A8025600B2FCF2 /* image00.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image00.png; sourceTree = "<group>"; };
@@ -463,7 +465,9 @@
 		D28CFD6028E2C1AF00A33B00 /* sedutil-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "sedutil-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28CFD6128E2C1AF00A33B00 /* reenumerate */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = reenumerate; sourceTree = BUILT_PRODUCTS_DIR; };
 		D29F7FB02940E7AE00206C29 /* oui.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = oui.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2A367032A15A7200051129D /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = Library/Frameworks/Python.framework; sourceTree = DEVELOPER_DIR; };
 		D2ECBD7E28CACC1400D9F997 /* log.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2FE6D912A15BC49002CC6AC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -471,8 +475,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D22A69362A096C9B00EF864A /* Python3.framework in Frameworks */,
+				D2FE6D922A15BC49002CC6AC /* Cocoa.framework in Frameworks */,
 				D21670EE29FC3FEB0080D08B /* cifra.framework in Frameworks */,
+				D2C5E6732A2807F1009CDAF5 /* Python3.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1024,6 +1029,8 @@
 		D287224428B835DF0023404B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D2FE6D912A15BC49002CC6AC /* Cocoa.framework */,
+				D2A367032A15A7200051129D /* Python.framework */,
 				D21670ED29FC3FEB0080D08B /* cifra.framework */,
 				D2034CBA29F9D6C9006DACA1 /* Python3.framework */,
 				D26F2F0F296A8180007905F7 /* cifra.framework */,
@@ -1052,6 +1059,7 @@
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D20A40DD2A15ADF500DE42A2 /* Python3.framework */,
 				D2034CBD29F9DB1F006DACA1 /* DtaHashPassword.cpp */,
 				D2034CC129F9DB75006DACA1 /* includePython.h */,
 				D21670DC29FC360B0080D08B /* DtaHashPassword.h */,
@@ -1149,10 +1157,11 @@
 		D2BD8F551F02016B00747F4A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				KnownAssetTags = (
 					New,
 				);
-				LastUpgradeCheck = 1410;
+				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = "Bright Plaza, Inc.";
 				TargetAttributes = {
 					D20A95F629A6E9E600B2FCF2 = {
@@ -1227,9 +1236,9 @@
 			targets = (
 				D26B3B511F6FB6BC004571A8 /* sedutil-cli */,
 				D26904BD28D7A1530095769E /* reenumerate */,
+				D21670E029FC3FAA0080D08B /* PyExtHash */,
 				D20A95F629A6E9E600B2FCF2 /* SED ToolBox */,
 				D21325C729B3C13400EE2613 /* All targets */,
-				D21670E029FC3FAA0080D08B /* PyExtHash */,
 			);
 		};
 /* End PBXProject section */
@@ -1491,8 +1500,11 @@
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_EXTENSION = so;
 				EXECUTABLE_PREFIX = "";
+				FRAMEWORK_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				OTHER_LDFLAGS = "-w";
+				USER_HEADER_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks/Python3.framework/Headers;
 			};
 			name = Debug;
 		};
@@ -1503,8 +1515,11 @@
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_EXTENSION = so;
 				EXECUTABLE_PREFIX = "";
+				FRAMEWORK_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				OTHER_LDFLAGS = "-w";
+				USER_HEADER_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks/Python3.framework/Headers;
 			};
 			name = "Debug Bonjour and Bluetooth";
 		};
@@ -1515,8 +1530,11 @@
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_EXTENSION = so;
 				EXECUTABLE_PREFIX = "";
+				FRAMEWORK_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				OTHER_LDFLAGS = "-w";
+				USER_HEADER_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks/Python3.framework/Headers;
 			};
 			name = "Debug Bluetooth";
 		};
@@ -1527,8 +1545,11 @@
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_EXTENSION = so;
 				EXECUTABLE_PREFIX = "";
+				FRAMEWORK_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				OTHER_LDFLAGS = "-w";
+				USER_HEADER_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks/Python3.framework/Headers;
 			};
 			name = "Debug Bonjour";
 		};
@@ -1539,8 +1560,11 @@
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_EXTENSION = so;
 				EXECUTABLE_PREFIX = "";
+				FRAMEWORK_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				OTHER_LDFLAGS = "-w";
+				USER_HEADER_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks/Python3.framework/Headers;
 			};
 			name = "Debug Bonjour Multistart";
 		};
@@ -1551,8 +1575,11 @@
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_EXTENSION = so;
 				EXECUTABLE_PREFIX = "";
+				FRAMEWORK_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				OTHER_LDFLAGS = "-w";
+				USER_HEADER_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks/Python3.framework/Headers;
 			};
 			name = Release;
 		};
@@ -1563,8 +1590,11 @@
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_EXTENSION = so;
 				EXECUTABLE_PREFIX = "";
+				FRAMEWORK_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				OTHER_LDFLAGS = "-w";
+				USER_HEADER_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks/Python3.framework/Headers;
 			};
 			name = "Release Bonjour";
 		};
@@ -1575,8 +1605,11 @@
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_EXTENSION = so;
 				EXECUTABLE_PREFIX = "";
+				FRAMEWORK_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				OTHER_LDFLAGS = "-w";
+				USER_HEADER_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks/Python3.framework/Headers;
 			};
 			name = "Release Bonjour Multistart";
 		};
@@ -1587,8 +1620,11 @@
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_EXTENSION = so;
 				EXECUTABLE_PREFIX = "";
+				FRAMEWORK_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				OTHER_LDFLAGS = "-w";
+				USER_HEADER_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks/Python3.framework/Headers;
 			};
 			name = "Release Bluetooth";
 		};
@@ -1599,24 +1635,23 @@
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_EXTENSION = so;
 				EXECUTABLE_PREFIX = "";
+				FRAMEWORK_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				OTHER_LDFLAGS = "-w";
+				USER_HEADER_SEARCH_PATHS = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks/Python3.framework/Headers;
 			};
 			name = "Release Bonjour and Bluetooth";
 		};
 		D26904C328D7A1530095769E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
 			};
 			name = Debug;
@@ -1624,16 +1659,12 @@
 		D26904C428D7A1530095769E /* Debug Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
 			};
 			name = "Debug Bonjour and Bluetooth";
@@ -1641,16 +1672,12 @@
 		D26904C528D7A1530095769E /* Debug Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
 			};
 			name = "Debug Bluetooth";
@@ -1658,16 +1685,12 @@
 		D26904C628D7A1530095769E /* Debug Bonjour */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
 			};
 			name = "Debug Bonjour";
@@ -1675,16 +1698,12 @@
 		D26904C728D7A1530095769E /* Debug Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
 			};
 			name = "Debug Bonjour Multistart";
@@ -1692,15 +1711,12 @@
 		D26904C828D7A1530095769E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				COPY_PHASE_STRIP = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
 			};
 			name = Release;
@@ -1708,15 +1724,12 @@
 		D26904C928D7A1530095769E /* Release Bonjour */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				COPY_PHASE_STRIP = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
 			};
 			name = "Release Bonjour";
@@ -1724,15 +1737,12 @@
 		D26904CA28D7A1530095769E /* Release Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				COPY_PHASE_STRIP = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
 			};
 			name = "Release Bonjour Multistart";
@@ -1740,15 +1750,12 @@
 		D26904CB28D7A1530095769E /* Release Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				COPY_PHASE_STRIP = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
 			};
 			name = "Release Bluetooth";
@@ -1756,15 +1763,12 @@
 		D26904CC28D7A1530095769E /* Release Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				COPY_PHASE_STRIP = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.reenumerate;
 			};
 			name = "Release Bonjour and Bluetooth";
@@ -1772,9 +1776,7 @@
 		D26B3B561F6FB6BC004571A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1787,9 +1789,7 @@
 		D26B3B571F6FB6BC004571A8 /* Debug Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1802,9 +1802,7 @@
 		D26B3B581F6FB6BC004571A8 /* Debug Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1817,9 +1815,7 @@
 		D26B3B591F6FB6BC004571A8 /* Debug Bonjour */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1832,9 +1828,7 @@
 		D26B3B5A1F6FB6BC004571A8 /* Debug Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1847,9 +1841,7 @@
 		D26B3B5B1F6FB6BC004571A8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1862,9 +1854,7 @@
 		D26B3B5C1F6FB6BC004571A8 /* Release Bonjour */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1877,9 +1867,7 @@
 		D26B3B5D1F6FB6BC004571A8 /* Release Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1892,9 +1880,7 @@
 		D26B3B5E1F6FB6BC004571A8 /* Release Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1907,9 +1893,7 @@
 		D26B3B5F1F6FB6BC004571A8 /* Release Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1922,7 +1906,6 @@
 		D2763BE21F1273A50015B62C /* Debug Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -2014,7 +1997,6 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.5;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				MTL_FAST_MATH = YES;
@@ -2024,7 +2006,6 @@
 					"-Wno-inconsistent-missing-override",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -2033,7 +2014,6 @@
 		D2763BEB1F1273B40015B62C /* Release Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -2122,7 +2102,6 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -2131,7 +2110,6 @@
 					"-Wno-inconsistent-missing-override",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = "Release Bonjour Multistart";
@@ -2139,7 +2117,6 @@
 		D2B7FA681F02ABC600F2D820 /* Debug Bonjour */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -2230,7 +2207,6 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.5;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				MTL_FAST_MATH = YES;
@@ -2240,7 +2216,6 @@
 					"-Wno-inconsistent-missing-override",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -2249,7 +2224,6 @@
 		D2B7FA6D1F02ABD100F2D820 /* Debug Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -2340,7 +2314,6 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.5;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				MTL_FAST_MATH = YES;
@@ -2350,7 +2323,6 @@
 					"-Wno-inconsistent-missing-override",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -2359,7 +2331,6 @@
 		D2B7FA721F02ABDB00F2D820 /* Debug Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -2451,7 +2422,6 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.5;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				MTL_FAST_MATH = YES;
@@ -2461,7 +2431,6 @@
 					"-Wno-inconsistent-missing-override",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -2470,7 +2439,6 @@
 		D2B7FA771F02ABEF00F2D820 /* Release Bonjour */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -2556,7 +2524,6 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -2565,7 +2532,6 @@
 					"-Wno-inconsistent-missing-override",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = "Release Bonjour";
@@ -2573,7 +2539,6 @@
 		D2B7FA7C1F02ABFA00F2D820 /* Release Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -2659,7 +2624,6 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -2668,7 +2632,6 @@
 					"-Wno-inconsistent-missing-override",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = "Release Bluetooth";
@@ -2676,7 +2639,6 @@
 		D2B7FA811F02AC1000F2D820 /* Release Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -2765,7 +2727,6 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -2774,7 +2735,6 @@
 					"-Wno-inconsistent-missing-override",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = "Release Bonjour and Bluetooth";
@@ -2782,7 +2742,6 @@
 		D2BD8F591F02016B00747F4A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -2870,7 +2829,6 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.5;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				MTL_FAST_MATH = YES;
@@ -2880,7 +2838,6 @@
 					"-Wno-inconsistent-missing-override",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = "-Wall";
 			};
@@ -2889,7 +2846,6 @@
 		D2BD8F5A1F02016B00747F4A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -2974,7 +2930,6 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -2983,7 +2938,6 @@
 					"-Wno-inconsistent-missing-override",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx11.3;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
