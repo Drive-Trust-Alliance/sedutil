@@ -448,6 +448,8 @@
 		D216711929FC903F0080D08B /* hash.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hash.vcxproj; sourceTree = "<group>"; };
 		D216711A29FC903F0080D08B /* buildhash.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildhash.sh; sourceTree = "<group>"; };
 		D2233E3428D79504006B6974 /* DtaOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
+		D26496E62A36849E00F09A67 /* extract_configuration_type_from_Xcode_build_environment */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = extract_configuration_type_from_Xcode_build_environment; sourceTree = "<group>"; };
+		D26496E72A36849F00F09A67 /* extract_configuration_from_Xcode_build_environment */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = extract_configuration_from_Xcode_build_environment; sourceTree = "<group>"; };
 		D26904CD28D7A17B0095769E /* reenumerate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = reenumerate.c; path = "../../sedutil-cli project/reenumerate/reenumerate.c"; sourceTree = "<group>"; };
 		D26904CF28D7A17F0095769E /* IOUSBFamilyInfoPlist.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOUSBFamilyInfoPlist.pch; path = "../../sedutil-cli project/reenumerate/IOUSBFamilyInfoPlist.pch"; sourceTree = "<group>"; };
 		D26F2F0F296A8180007905F7 /* cifra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = cifra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1059,6 +1061,8 @@
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D26496E72A36849F00F09A67 /* extract_configuration_from_Xcode_build_environment */,
+				D26496E62A36849E00F09A67 /* extract_configuration_type_from_Xcode_build_environment */,
 				D20A40DD2A15ADF500DE42A2 /* Python3.framework */,
 				D2034CBD29F9DB1F006DACA1 /* DtaHashPassword.cpp */,
 				D2034CC129F9DB75006DACA1 /* includePython.h */,
@@ -1259,7 +1263,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export PYSITEPACKAGES=\"$(python -c 'import site; print(site.getsitepackages()[0]);')\"\n";
+			shellScript = "export PYSITEPACKAGES=\"$(python3 -c 'import site; print(site.getsitepackages()[0]);')\"\n";
 		};
 		D20A960A29A6EDA000B2FCF2 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

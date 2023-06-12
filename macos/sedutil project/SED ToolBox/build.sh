@@ -10,6 +10,8 @@ spew "verbose=${verbose}, spewing"
 export build_sh_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 spew "build_sh_dir=${build_sh_dir}"
 
+export mac_root="$( cd "${build_sh_dir}/.." && pwd )"
+spew "mac_root=${mac_root}"
 
 spew "${build_sh_dir}/build_packages.sh"
 . "${build_sh_dir}/build_packages.sh"
