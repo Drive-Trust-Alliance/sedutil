@@ -31,7 +31,8 @@ DAEMON_PATH="/usr/local/libexec/sedd"
 SEDDAEMONTEST_PATH="/Applications/Utilities/SEDDaemonTest.app"
 SEDPREFERENCESTEST_PATH="/Applications/Utilities/SEDPreferencesTest.app"
 SEDACCESS_PATH="/usr/local/libexec/SEDAccess.app"
-SYSTEM_PREFERENCES_PATH="/System/Applications/System Preferences.app"
+# SYSTEM_PREFERENCES_PATH="/System/Applications/System Preferences.app"
+SYSTEM_PREFERENCES_PATH="/System/Applications/System Settings.app"
 
 
 The SED Server identity (cert+key) is copied in to the unlocked SED Server keychain.

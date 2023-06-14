@@ -1,0 +1,7 @@
+#!/bin/bash
+[ -n "${BUILT_PRODUCTS_DIR}" ] || die 1 "BUILT_PRODUCTS_DIR not defined"
+[ -n "${BUILD_ROOT}" ] || die 2 "BUILD_ROOT not defined"
+cutpoint="$(expr ${#BUILD_ROOT} + 2)"
+[[ (("0" < "$cutpoint")) ]] || die 3 "cut point index is $cutpoint but must be greater than zero"
+configuration="$( echo "${BUILT_PRODUCTS_DIR}" | cut -c "${cutpoint}-${#BUILT_PRODUCTS_DIR}" )"
+echo "${configuration}"

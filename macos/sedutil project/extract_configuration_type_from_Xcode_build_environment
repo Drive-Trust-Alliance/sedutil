@@ -1,0 +1,4 @@
+#!/bin/bash
+# TODO: should not need mac_root below, needed now because of FH/DTA confusion
+# extract_configuration_from_Xcode_build_environment  | awk '{print $1}'
+"${mac_root}/extract_configuration_from_Xcode_build_environment" | awk '{print $1}'
