@@ -382,8 +382,9 @@ function add_CA_cert_to_system_keychain {
 
 function remove_CA_cert_from_system_keychain {
     CAFILENAME="${CA_NAME/\*\./}"
-    sudo security -v delete-certificate -t -c "Bright Plaza CA"  "${SYSTEM_KEYCHAIN_PATH}" ||
-    sudo security -v delete-certificate    -c "Bright Plaza CA"  "${SYSTEM_KEYCHAIN_PATH}"
+    CAFILEPATH="${CERTIFICATES_DIR_PATH}${CAFILENAME}.pem"
+    sudo security remove-trusted-cert -d \
+         "${CAFILEPATH}"
 }
 
 function save_SED_keychain_password_in_system_keychain_item {

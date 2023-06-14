@@ -53,7 +53,7 @@ cur=$( cd "$( dirname "${0}" )" && pwd )
 ############## Verification functions ################
 
 function system_keychain_has_SED_keychain_password {
-    DEBUG_PRINT "system_keychain_has_SED_keychain_password"
+    DEBUG_PRINT "system_keychain_has_SED_keychain_password?"
     KEYCHAIN_PASSWORD="$( read_SED_keychain_password_from_system_keychain )"
     local -i result=$?
     DEBUG_PRINT "KEYCHAIN_PASSWORD=${KEYCHAIN_PASSWORD}"  ## TODO: naughty
@@ -62,13 +62,13 @@ function system_keychain_has_SED_keychain_password {
 }
 
 function system_keychain_has_CA_cert {
-    DEBUG_PRINT "system_keychain_has_CA_cert"
-    >/dev/null 2>&1 find_CA_cert
+    DEBUG_PRINT "system_keychain_has_CA_cert?"
+    find_CA_cert
 }
 
 function SED_keychain_has_SED_identity {
-    DEBUG_PRINT "SED_keychain_has_SED_identity"
-    >/dev/null 2>&1 find_server_identity_in_SED_keychain
+    DEBUG_PRINT "SED_keychain_has_SED_identity?"
+    find_server_identity_in_SED_keychain
 }
 
 function validate_installation {

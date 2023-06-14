@@ -21,7 +21,8 @@ DAEMON_PATH="/usr/local/libexec/sedd"
 SEDDAEMONTEST_PATH="/Applications/Utilities/SEDDaemonTest.app"
 SEDPREFERENCESTEST_PATH="/Applications/Utilities/SEDPreferencesTest.app"
 SEDACCESS_PATH="/usr/local/libexec/SEDAccess.app"
-SYSTEM_PREFERENCES_PATH="${SYSTEM_APPLICATIONS_DIR}/System Preferences.app"
+# SYSTEM_PREFERENCES_PATH="${SYSTEM_APPLICATIONS_DIR}/System Preferences.app"
+SYSTEM_PREFERENCES_PATH="${SYSTEM_APPLICATIONS_DIR}/System Settings.app"
 KEYCHAIN_ACCESS_PATH="${SYSTEM_APPLICATIONS_DIR}/Utilities/Keychain Access.app"
 
 # TLSTOOL_PATH=/Users/scott/Library/Developer/Xcode/DerivedData/DTA-*/Build/Products/*/TLSTool  # TODO: DEBUGGING
