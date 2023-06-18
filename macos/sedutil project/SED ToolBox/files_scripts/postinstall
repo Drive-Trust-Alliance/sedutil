@@ -42,6 +42,17 @@ fi
 DEBUG_PRINT "Source for this file is "\
 "/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project/SED ToolBox/files_scripts/postinstall"
 
+# Certificates should be in a folder that is a peer of the pkg being installed
+DEBUG_PRINT "pkg being installed is ${1}"
+DEBUG_PRINT "dir of pkg being installed is $(dirname "${1}")"
+#CERTIFICATES_DIR_PATH="$( cd "$( dirname "${1}" )/.." && pwd )/Certificates/"
+#DEBUG_PRINT "CERTIFICATES_DIR_PATH=${CERTIFICATES_DIR_PATH}"
+#[ -d "${CERTIFICATES_DIR_PATH}." ] ||
+#    DEBUG_FAIL "checking for Certificates folder ${CERTIFICATES_DIR_PATH}." 1
+CERTIFICATES_DIR_PATH="$( cd "$( dirname "${1}" )" && pwd )/Certificates/"
+DEBUG_PRINT "CERTIFICATES_DIR_PATH=${CERTIFICATES_DIR_PATH}"
+[ -d "${CERTIFICATES_DIR_PATH}." ] ||
+    DEBUG_FAIL "checking for Certificates folder ${CERTIFICATES_DIR_PATH}." 1
 
 
 

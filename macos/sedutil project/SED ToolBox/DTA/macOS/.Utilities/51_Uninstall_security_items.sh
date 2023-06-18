@@ -19,11 +19,11 @@ function SED_keychain_exists {
 }
 
 function read_SED_keychain_password_from_system_keychain {
-   2>/dev/null sudo security find-generic-password -l "${KEYCHAIN_PASSWORD_LABEL}" -w "${SYSTEM_KEYCHAIN_PATH}"
+    sudo security find-generic-password -l "${KEYCHAIN_PASSWORD_LABEL}" -w "${SYSTEM_KEYCHAIN_PATH}"
 }
 
 function delete_SED_keychain {
-    2>/dev/null sudo security delete-keychain  "${KEYCHAIN_PATH}"
+    sudo security delete-keychain  "${KEYCHAIN_PATH}"
 }
 
 function remove_SED_keychain {
@@ -55,18 +55,12 @@ function remove_CA_cert_from_system_keychain {
          "${CAFILEPATH}"
 }
 
-
-beroot
-
-
-
 DEBUG_PRINT "Removing security items"
-remove_server_identity_from_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1       \
-        || DEBUG_FAIL "removing server identity from SED keychain" 10
 remove_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1       \
-        || DEBUG_FAIL "removing server identity from SED keychain" 10
+        || DEBUG_FAIL "removing SED keychain" 10
 remove_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1       \
-        || DEBUG_FAIL "removing server identity from SED keychain" 10
+        || DEBUG_FAIL "removing SED keychain password from system keychain" 10
 remove_CA_cert_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1       \
-        || DEBUG_FAIL "removing server identity from SED keychain" 10
+        || DEBUG_FAIL "removing CA cert from system keychain" 10
+
 
