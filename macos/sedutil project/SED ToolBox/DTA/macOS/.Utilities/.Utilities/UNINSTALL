@@ -1,0 +1,62 @@
+#!/bin/bash
+beroot
+
+echo "UNINSTALL: $0 $@"
+ 
+DEBUG=${DEBUG:-1}
+if [ $DEBUG -eq 1 ]
+then
+    DEBUGGING_OUTPUT="${HOME}/Desktop/uninstall.txt"
+    echo "$0" at $(date) > "${DEBUGGING_OUTPUT}"
+    function DEBUG_PRINT {
+        echo "$*" >> "${DEBUGGING_OUTPUT}"
+    }
+    function DEBUG_FAIL {
+        DEBUG_PRINT "Failed $1" "$2"
+        fail "$1" "$2"
+    }
+    function DEBUG_FAILURE_RETURN {
+        local exit_code=$?
+        DEBUG_PRINT "Failed $*"
+        return $exit_code
+    }
+    function PAUSE {
+        local ignore
+        echo -n "Hit Enter to continue..."
+        read ignore
+        echo ""
+        return 0
+    }
+else
+    function DEBUG_PRINT {
+        return
+    }
+    function DEBUG_FAIL {
+        fail "$1" "$2"
+    }
+    function DEBUG_FAILURE_RETURN {
+        return $?
+    }
+    function PAUSE {
+        return 0
+    }
+fi
+export DEBUGGING_OUTPUT
+export -f DEBUG_PRINT
+export -f DEBUG_FAIL
+export -f DEBUG_FAILURE_RETURN
+export -f PAUSE
+
+set -xv
+
+# Source Utility_functions.sh from the same directory as this script
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+. "${dir}/Utility_functions.sh"
+
+for f in "${dir}"/*_Uninstall_*.sh "${dir}"/*_unload_*.sh
+do
+    DEBUG_PRINT "$f"
+    "$f"
+    result=$?
+    [ $result == 0 ] || DEBUG_FAIL "Executing ${f}" "with return code ${result}"
+done
