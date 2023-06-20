@@ -338,7 +338,7 @@ function fail {
     1>&2 echo "Failed $1"
     exit $2
 }
-
+export -f fail
 
 function warn {
     1>&2 echo "Failed $1"

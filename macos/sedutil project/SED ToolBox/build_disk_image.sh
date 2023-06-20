@@ -6,6 +6,7 @@ function fail {
     echo $@
     exit $code
 }
+export -f fail
 
 [ -n "${TARGETROOT}" ] || fail 129 "TARGETROOT not defined"
 spew "TARGETROOT=${TARGETROOT}"
@@ -19,17 +20,17 @@ image_root="${TEMP_FILES_DIR}/DTA"
 mkdir "${image_root}"
 spew image_root="${image_root}"
 
-## Certificates from the same directory as this script
-#CERTIFICATES_DIR="$(cd "${cur}/Certificates" ; pwd)"
-#spew "CERTIFICATES_DIR=${CERTIFICATES_DIR}"
-#[ -d "${CERTIFICATES_DIR}" ] || fail 131 "Couldn't find Certificates directory"
-#
-#
-## Copy in the certificates, creating the Certificates subfolder
-#spew cp -r "${CERTIFICATES_DIR}" "${image_root}"
-#cp -r "${CERTIFICATES_DIR}" "${image_root}" \
-#    ||  fail 132 "Failed copying Certificates subfolder ${CERTIFICATES_DIR}"
-#certificates="${image_root}/${CERTIFICATES_DIR}"
+# Certificates from the same directory as this script
+CERTIFICATES_DIR="$(cd "${build_sh_dir}/Certificates" ; pwd)"
+spew "CERTIFICATES_DIR=${CERTIFICATES_DIR}"
+[ -d "${CERTIFICATES_DIR}" ] || fail 131 "Couldn't find Certificates directory"
+
+
+# Copy in the certificates, creating the Certificates subfolder
+spew cp -r "${CERTIFICATES_DIR}" "${image_root}"
+cp -r "${CERTIFICATES_DIR}" "${image_root}" \
+    ||  fail 132 "Failed copying Certificates subfolder ${CERTIFICATES_DIR}"
+certificates="${image_root}/${CERTIFICATES_DIR}"
 
 # Create the macOS subfolder
 spew mac_dir="${image_root}/macOS"
@@ -64,26 +65,6 @@ spew "${resources_dir}/fileicon" set "${mac_dir}/Uninstall" "${resources_dir}/im
 
 
 
-# iSED builds for Debugging
-[ -n "${BUILD_ROOT}" ] || ( echo "BUILD_ROOT not defined" ; exit 1 )
-ised="${BUILD_ROOT}/Release-iphoneos/iSED"
-spew "ised=${ised}"
-if [ -d "${ised}" ]
-then
-    if [ $ISED_AD_HOC_DISTRIBUTION -eq 1 ]  ## TODO -- WRONG! Need the .ipa
-    then
-        spew cp -r "${ised}" "${mac_dir}"
-        cp -r "${ised}" "${mac_dir}"   \
-            ||  fail 161 "Failed copying ${ised} to ${mac_dir}"
-    else
-        spew rm -rf "${HOME}/Desktop/iSED"
-        rm -rf "${HOME}/Desktop/iSED"   \
-            ||  fail 162 "Failed removing old ${HOME}/Desktop/iSED"
-        spew mv "${ised}" "${HOME}/Desktop/"
-        mv "${ised}" "${HOME}/Desktop/"   \
-            ||  fail 163 "Failed copying ${ised} to ${HOME}/Desktop/iSED"
-    fi
-fi
 
 # ###################
 # spew stop for debugging
@@ -173,12 +154,10 @@ DTASEDDev="${static}/DTA/SED Developer"
 spew hdiutil makehybrid                               \
           -default-volume-name 'SED ToolBox'  \
           -joliet-volume-name  'SED_Box'              \
-          -hide-hfs '{Windows,*.exe}'                 \
           -o "${SEB_iso}" "${SEB_dmg}"
 hdiutil makehybrid                               \
      -default-volume-name 'SED ToolBox'  \
      -joliet-volume-name  'SED_Box'              \
-     -hide-hfs '{Windows,*.exe}'                 \
      -o "${SEB_iso}" "${SEB_dmg}"
 # DTA custom icon for the .iso file
 # TODO: use hdiutil udifrez instead

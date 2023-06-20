@@ -1,6 +1,18 @@
 #!/bin/bash
 echo "UNINSTALL: $0 $@"
  
+set -xv
+
+# Source Utility_functions.sh from the same directory as this script
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+. "${dir}/Utility_functions.sh"
+
+
+beroot
+
+set -xv
+
+
 DEBUG=${DEBUG:-1}
 if [ $DEBUG -eq 1 ]
 then
@@ -39,20 +51,17 @@ else
         return 0
     }
 fi
+export DEBUGGING_OUTPUT
+export -f DEBUG_PRINT
+export -f DEBUG_FAIL
+export -f DEBUG_FAILURE_RETURN
+export -f PAUSE
 
-
-# set -xv
-
-# Source Utility_functions.sh from the same directory as this script
-dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-. "${dir}/Utility_functions.sh"
-
-beroot
 
 for f in "${dir}"/*_Uninstall_*.sh "${dir}"/*_unload_*.sh
 do
     DEBUG_PRINT "$f"
     "$f"
     result=$?
-    [ $result == 0 ] || DEBUG_FAIL "Executing ${f}" "with return code ${result}"
+    [ $result == 0 ] || DEBUG_FAIL "${f}" "returned exit code ${result}"
 done

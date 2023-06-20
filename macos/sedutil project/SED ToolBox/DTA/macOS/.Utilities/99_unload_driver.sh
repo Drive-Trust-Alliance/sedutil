@@ -6,15 +6,14 @@ dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 beroot
 
-
-if ! ( >/dev/null 2>&1 kextunload -c com.brightplaza.BrightPlazaTPer )
+if ! ( >/dev/null 2>&1  kmutil unload -b com.brightplaza.BrightPlazaTPer )
 then
     must_reboot="yes"
 else
     must_reboot="no"
 fi
 
->/dev/null 2>&1 kextcache invalidate /
+>/dev/null 2>&1 kmutil check
 
 if [ "$must_reboot"=="yes" ]
 then
