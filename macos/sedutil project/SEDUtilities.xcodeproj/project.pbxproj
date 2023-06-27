@@ -47,7 +47,6 @@
 		D20A961929A706C800B2FCF2 /* sedutil-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28CFD6028E2C1AF00A33B00 /* sedutil-cli */; };
 		D20A961A29A706CE00B2FCF2 /* reenumerate in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28CFD6128E2C1AF00A33B00 /* reenumerate */; };
 		D21670EE29FC3FEB0080D08B /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D21670ED29FC3FEB0080D08B /* cifra.framework */; };
-		D21670EF29FC3FEB0080D08B /* cifra.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D21670ED29FC3FEB0080D08B /* cifra.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D21670F129FC41B10080D08B /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2034CBD29F9DB1F006DACA1 /* DtaHashPassword.cpp */; };
 		D216711C29FC903F0080D08B /* DtaAudit.h in Headers */ = {isa = PBXBuildFile; fileRef = D21670FF29FC903E0080D08B /* DtaAudit.h */; };
 		D216711E29FC903F0080D08B /* DtaHashPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = D216710129FC903E0080D08B /* DtaHashPassword.h */; };
@@ -122,17 +121,6 @@
 				D20A961A29A706CE00B2FCF2 /* reenumerate in CopyFiles */,
 				D20A961929A706C800B2FCF2 /* sedutil-cli in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D21670F029FC3FEB0080D08B /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				D21670EF29FC3FEB0080D08B /* cifra.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		D2336D7C28E2845900F199EA /* CopyFiles */ = {
@@ -407,9 +395,7 @@
 		D216710729FC903E0080D08B /* ob.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ob.vcxproj; sourceTree = "<group>"; };
 		D216710929FC903E0080D08B /* buildhash.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildhash.sh; sourceTree = "<group>"; };
 		D216710A29FC903E0080D08B /* hash.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hash.vcxproj; sourceTree = "<group>"; };
-		D216710B29FC903E0080D08B /* PyExtTestHash.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = PyExtTestHash.py; sourceTree = "<group>"; };
 		D216710C29FC903E0080D08B /* setup.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
-		D216710D29FC903E0080D08B /* PyExtTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = PyExtTest.py; sourceTree = "<group>"; };
 		D216710E29FC903E0080D08B /* hash.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hash.vcxproj.filters; sourceTree = "<group>"; };
 		D216711029FC903E0080D08B /* includePython.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = includePython.h; sourceTree = "<group>"; };
 		D216711129FC903E0080D08B /* setup.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
@@ -419,7 +405,6 @@
 		D216711529FC903F0080D08B /* PyExtTestHash.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = PyExtTestHash.py; sourceTree = "<group>"; };
 		D216711629FC903F0080D08B /* PyExtTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = PyExtTest.py; sourceTree = "<group>"; };
 		D216711729FC903F0080D08B /* hash.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hash.vcxproj.filters; sourceTree = "<group>"; };
-		D216711829FC903F0080D08B /* setup.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
 		D216711929FC903F0080D08B /* hash.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hash.vcxproj; sourceTree = "<group>"; };
 		D216711A29FC903F0080D08B /* buildhash.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildhash.sh; sourceTree = "<group>"; };
 		D2233E3428D79504006B6974 /* DtaOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
@@ -1032,11 +1017,8 @@
 				D216711A29FC903F0080D08B /* buildhash.sh */,
 				D216710A29FC903E0080D08B /* hash.vcxproj */,
 				D216711929FC903F0080D08B /* hash.vcxproj */,
-				D216710B29FC903E0080D08B /* PyExtTestHash.py */,
 				D216711529FC903F0080D08B /* PyExtTestHash.py */,
 				D216710C29FC903E0080D08B /* setup.py */,
-				D216711829FC903F0080D08B /* setup.py */,
-				D216710D29FC903E0080D08B /* PyExtTest.py */,
 				D216711629FC903F0080D08B /* PyExtTest.py */,
 				D216710E29FC903E0080D08B /* hash.vcxproj.filters */,
 				D216711B29FC903F0080D08B /* build */,
@@ -1249,7 +1231,6 @@
 				D21670DD29FC3FAA0080D08B /* Headers */,
 				D21670DE29FC3FAA0080D08B /* Sources */,
 				D21670DF29FC3FAA0080D08B /* Frameworks */,
-				D21670F029FC3FEB0080D08B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

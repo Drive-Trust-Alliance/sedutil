@@ -1,16 +1,16 @@
-from distutils.core import setup, Extension
+from os.path import realpath
+frameworkArgs = [ "-F" + realpath("/Applications/Xcode.app/Contents/Developer/Library/Frameworks"), # Xcode.app may be symbolic link
+                  "-framework","Python3",
+                  "-F/Library/Frameworks", # assume SED tools have been installed: sedutil, cifra, log
+                  "-framework","sedutil", "-framework","cifra", "-framework","log" ]
 
+from distutils.core import Extension, setup
 module = Extension('PyExtHash',
-                    sources = ['DtaHashPwd.cpp'],
-                    include_dirs = ['../Common','../Common/pbkdf2', '../linux' , '../License' ],
-                    extra_compile_args=["-Wno-narrowing", "-std=c++11",'-fpermissive','-fPIC', '-w', 
-                                        "-F/opt/local/library/Frameworks",
-                                        "-framework","Python", "-framework","sedutil", "-framework","cifra", "-framework","log" ],
-                    extra_link_args=["-fno-exceptions",
-                                     "-F/opt/local/library/Frameworks",
-                                        "-framework","Python", "-framework","sedutil" , "-framework","cifra", "-framework","log" ]
+                    sources = ['PyDtaHashPassword.cpp', 'DtaHashPwd.cpp'],
+                    include_dirs = ['../Common','../Common/pbkdf2', '../linux' , '../License', '../../sedutil/macos/sedutil project' ],
+                    extra_compile_args = ["-Wno-narrowing", "-std=c++11",'-fpermissive','-fPIC', '-w'] + frameworkArgs,
+                    extra_link_args = ["-fno-exceptions"] + frameworkArgs
                   )
-
 setup (name = 'PyExtHash',
        version = '1.0',
        description = 'This is the package for PyExtHash',
