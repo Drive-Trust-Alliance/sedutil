@@ -34,8 +34,8 @@ beroot
 
 cp -pv ../Common/{DtaHashPassword,DtaOptions,PyDtaHashPassword,includePython}.* ./
 
-2>/dev/null pip install .
+2>/dev/null pip wheel .
 
 rm -rf {DtaHashPassword,DtaOptions,PyDtaHashPassword,includePython}.* build
 
-# build x86_64^H^H^H^H^H^Huniversal PyExtHash.so
+# build PyExtHash-1.0-cp39-cp39-macosx_10_9_universal2.whl
