@@ -1,31 +1,41 @@
-set -xv
 # build hash.so for python GUI
 
-cp -pv ../Common/{DtaHashPwd,DtaOptions,PyDtaHashPassword,includePython}.* ./
+isroot () { [[ $EUID -eq 0 ]] ; }
 
-echo "#ifndef PYEXTHASH" > pyexthash.h
-echo "#define PYEXTHASH"  >> pyexthash.h
-echo "#endif" >>  pyexthash.h
+notroot () { ! isroot ; }
 
-#echo "void * __gxx_personality_v0;" >> pyexthash.h
+can_sudo () { (sudo -n true 2>/dev/null) ; }
 
-CC=g++ python3 setup.py build
+enable_sudo ()
+{
+    if ( notroot ) && ( ! ( can_sudo ) )
+    then
+        echo You are about to be prompted for your password so that this script can execute some commands as \'root\'.
+        echo You can type control+c to bail out of this script with nothing changed.
+    fi
+    sudo true
+}
 
-os="$(/usr/bin/uname -s)"
-case "${os}" in
-    linux*)
-	cp -pv ./build/lib.linux*/PyExtHash.so ../PyExtHash.so
-	cp -pv ./build/lib.linux*/PyExtHash.so ./PyExtHash.so
-	;;
+beroot ()
+{
+    if notroot # not executing as root
+    then
+        if ! can_sudo
+        then
+	    echo You are about to be prompted for your password so that this script can execute some commands as \'root\'.
+            echo You can type control+c to bail out of this script with nothing changed.
+        fi
+#         exec sudo "$0" "$@" # restart this script as root
+        exec sudo "$0" "$@" 1>>/tmp/beroot.out 2>>/tmp/beroot.err # TODO: debugging
+    fi
+}
 
-    Darwin)
-	cp -pv ./build/lib.macos*/PyExtHash*.so ../py/PyExtHash.so
-	cp -pv ./build/lib.macos*/PyExtHash*.so ./PyExtHash.so
-	;;
+beroot
 
-    *)
-	1>&2 echo "Don't know how to handle OS '${os}'"
-	;;
-esac
+cp -pv ../Common/{DtaHashPassword,DtaOptions,PyDtaHashPassword,includePython}.* ./
+
+2>/dev/null pip install .
+
+rm -rf {DtaHashPassword,DtaOptions,PyDtaHashPassword,includePython}.* build
 
 # build x86_64^H^H^H^H^H^Huniversal PyExtHash.so

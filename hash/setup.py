@@ -6,7 +6,7 @@ frameworkArgs = [ "-F" + realpath("/Applications/Xcode.app/Contents/Developer/Li
 
 from distutils.core import Extension, setup
 module = Extension('PyExtHash',
-                    sources = ['PyDtaHashPassword.cpp', 'DtaHashPwd.cpp'],
+                    sources = ['PyDtaHashPassword.cpp', 'DtaHashPassword.cpp'],
                     include_dirs = ['../Common','../Common/pbkdf2', '../linux' , '../License', '../../sedutil/macos/sedutil project' ],
                     extra_compile_args = ["-Wno-narrowing", "-std=c++11",'-fpermissive','-fPIC', '-w'] + frameworkArgs,
                     extra_link_args = ["-fno-exceptions"] + frameworkArgs

@@ -47,9 +47,7 @@
 		D20A961929A706C800B2FCF2 /* sedutil-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28CFD6028E2C1AF00A33B00 /* sedutil-cli */; };
 		D20A961A29A706CE00B2FCF2 /* reenumerate in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28CFD6128E2C1AF00A33B00 /* reenumerate */; };
 		D21670EE29FC3FEB0080D08B /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D21670ED29FC3FEB0080D08B /* cifra.framework */; };
-		D21670F129FC41B10080D08B /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2034CBD29F9DB1F006DACA1 /* DtaHashPassword.cpp */; };
 		D216711C29FC903F0080D08B /* DtaAudit.h in Headers */ = {isa = PBXBuildFile; fileRef = D21670FF29FC903E0080D08B /* DtaAudit.h */; };
-		D216711E29FC903F0080D08B /* DtaHashPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = D216710129FC903E0080D08B /* DtaHashPassword.h */; };
 		D216711F29FC903F0080D08B /* PyDtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D216710229FC903E0080D08B /* PyDtaHashPassword.cpp */; };
 		D26904CE28D7A17B0095769E /* reenumerate.c in Sources */ = {isa = PBXBuildFile; fileRef = D26904CD28D7A17B0095769E /* reenumerate.c */; };
 		D26F2F10296A8180007905F7 /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26F2F0F296A8180007905F7 /* cifra.framework */; };
@@ -60,6 +58,7 @@
 		D28B7E542A41244D00582735 /* Bright Plaza CA.pem in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28B7E4D2A41237600582735 /* Bright Plaza CA.pem */; };
 		D28B7E552A41245000582735 /* Bright Plaza SED Server.p12 in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28B7E4C2A41237600582735 /* Bright Plaza SED Server.p12 */; };
 		D2C5E6732A2807F1009CDAF5 /* Python3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2034CBA29F9D6C9006DACA1 /* Python3.framework */; };
+		D2D66F6C2A4CE07F00241095 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2D66F6A2A4CE04300241095 /* DtaHashPassword.cpp */; };
 		D2FE6D922A15BC49002CC6AC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2FE6D912A15BC49002CC6AC /* Cocoa.framework */; platformFilters = (macos, ); };
 /* End PBXBuildFile section */
 
@@ -156,9 +155,8 @@
 
 /* Begin PBXFileReference section */
 		D2034CBA29F9D6C9006DACA1 /* Python3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python3.framework; path = Library/Frameworks/Python3.framework; sourceTree = DEVELOPER_DIR; };
-		D2034CBD29F9DB1F006DACA1 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
 		D2034CC129F9DB75006DACA1 /* includePython.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = includePython.h; sourceTree = "<group>"; };
-		D20A40DD2A15ADF500DE42A2 /* Python3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python3.framework; path = "../../../../../../../../../Applications/Xcode 14.3.app/Contents/Developer/Library/Frameworks/Python3.framework"; sourceTree = "<group>"; };
+		D20A40DD2A15ADF500DE42A2 /* Python3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python3.framework; path = /Applications/Xcode_14.3.app/Contents/Developer/Library/Frameworks/Python3.framework; sourceTree = "<absolute>"; };
 		D20A960729A6EC3800B2FCF2 /* BrightPlazaTPer.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; path = BrightPlazaTPer.kext; sourceTree = BUILT_PRODUCTS_DIR; };
 		D20A961329A6EF8E00B2FCF2 /* SEDKernelInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SEDKernelInterface.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D20A962029A8025600B2FCF2 /* image00.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image00.png; sourceTree = "<group>"; };
@@ -382,31 +380,23 @@
 		D20A972329A8025600B2FCF2 /* DTABundles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DTABundles.plist; sourceTree = "<group>"; };
 		D213260729B3F77B00EE2613 /* extract_configuration_from_Xcode_build_environment */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = extract_configuration_from_Xcode_build_environment; path = ../../../../../DTA/sedutilgui/mac/extract_configuration_from_Xcode_build_environment; sourceTree = "<group>"; };
 		D213260829B3F77B00EE2613 /* extract_configuration_type_from_Xcode_build_environment */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = extract_configuration_type_from_Xcode_build_environment; path = ../../../../../DTA/sedutilgui/mac/extract_configuration_type_from_Xcode_build_environment; sourceTree = "<group>"; };
-		D21670DC29FC360B0080D08B /* DtaHashPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaHashPassword.h; path = ../../Common/DtaHashPassword.h; sourceTree = "<group>"; };
 		D21670E129FC3FAA0080D08B /* PyExtHash.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = PyExtHash.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		D21670ED29FC3FEB0080D08B /* cifra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = cifra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D21670FF29FC903E0080D08B /* DtaAudit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DtaAudit.h; path = ../../Common/DtaAudit.h; sourceTree = "<group>"; };
-		D216710029FC903E0080D08B /* DtaHashPassword.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
-		D216710129FC903E0080D08B /* DtaHashPassword.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DtaHashPassword.h; path = ../../Common/DtaHashPassword.h; sourceTree = "<group>"; };
-		D216710229FC903E0080D08B /* PyDtaHashPassword.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PyDtaHashPassword.cpp; path = ../../Common/PyDtaHashPassword.cpp; sourceTree = "<group>"; };
+		D216710229FC903E0080D08B /* PyDtaHashPassword.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PyDtaHashPassword.cpp; sourceTree = "<group>"; };
 		D216710429FC903E0080D08B /* buildob.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildob.sh; sourceTree = "<group>"; };
 		D216710529FC903E0080D08B /* setup.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
 		D216710629FC903E0080D08B /* ob.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ob.vcxproj.filters; sourceTree = "<group>"; };
 		D216710729FC903E0080D08B /* ob.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ob.vcxproj; sourceTree = "<group>"; };
 		D216710929FC903E0080D08B /* buildhash.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildhash.sh; sourceTree = "<group>"; };
-		D216710A29FC903E0080D08B /* hash.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hash.vcxproj; sourceTree = "<group>"; };
 		D216710C29FC903E0080D08B /* setup.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
-		D216710E29FC903E0080D08B /* hash.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hash.vcxproj.filters; sourceTree = "<group>"; };
-		D216711029FC903E0080D08B /* includePython.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = includePython.h; sourceTree = "<group>"; };
 		D216711129FC903E0080D08B /* setup.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
 		D216711229FC903E0080D08B /* ob.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ob.vcxproj.filters; sourceTree = "<group>"; };
 		D216711329FC903E0080D08B /* buildob.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildob.sh; sourceTree = "<group>"; };
 		D216711429FC903E0080D08B /* ob.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ob.vcxproj; sourceTree = "<group>"; };
 		D216711529FC903F0080D08B /* PyExtTestHash.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = PyExtTestHash.py; sourceTree = "<group>"; };
 		D216711629FC903F0080D08B /* PyExtTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = PyExtTest.py; sourceTree = "<group>"; };
-		D216711729FC903F0080D08B /* hash.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hash.vcxproj.filters; sourceTree = "<group>"; };
 		D216711929FC903F0080D08B /* hash.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hash.vcxproj; sourceTree = "<group>"; };
-		D216711A29FC903F0080D08B /* buildhash.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildhash.sh; sourceTree = "<group>"; };
 		D2233E3428D79504006B6974 /* DtaOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
 		D26496E62A36849E00F09A67 /* extract_configuration_type_from_Xcode_build_environment */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = extract_configuration_type_from_Xcode_build_environment; sourceTree = "<group>"; };
 		D26496E72A36849F00F09A67 /* extract_configuration_from_Xcode_build_environment */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = extract_configuration_from_Xcode_build_environment; sourceTree = "<group>"; };
@@ -506,6 +496,8 @@
 		D29B38042A3A696800A5B51A /* Utility_functions.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = Utility_functions.sh; path = "SED ToolBox/DTA/macOS/.Utilities/Utility_functions.sh"; sourceTree = SOURCE_ROOT; };
 		D29F7FB02940E7AE00206C29 /* oui.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = oui.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2A367032A15A7200051129D /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = Library/Frameworks/Python.framework; sourceTree = DEVELOPER_DIR; };
+		D2D66F6A2A4CE04300241095 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaHashPassword.cpp; sourceTree = "<group>"; };
+		D2D66F6B2A4CE04300241095 /* DtaHashPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaHashPassword.h; sourceTree = "<group>"; };
 		D2ECBD7E28CACC1400D9F997 /* log.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2FE6D912A15BC49002CC6AC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -1014,26 +1006,14 @@
 			isa = PBXGroup;
 			children = (
 				D216710929FC903E0080D08B /* buildhash.sh */,
-				D216711A29FC903F0080D08B /* buildhash.sh */,
-				D216710A29FC903E0080D08B /* hash.vcxproj */,
+				D216710C29FC903E0080D08B /* setup.py */,
 				D216711929FC903F0080D08B /* hash.vcxproj */,
 				D216711529FC903F0080D08B /* PyExtTestHash.py */,
-				D216710C29FC903E0080D08B /* setup.py */,
 				D216711629FC903F0080D08B /* PyExtTest.py */,
-				D216710E29FC903E0080D08B /* hash.vcxproj.filters */,
 				D216711B29FC903F0080D08B /* build */,
-				D216711729FC903F0080D08B /* hash.vcxproj.filters */,
-				D216710F29FC903E0080D08B /* build */,
 			);
 			name = hash;
 			path = ../../hash;
-			sourceTree = "<group>";
-		};
-		D216710F29FC903E0080D08B /* build */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = build;
 			sourceTree = "<group>";
 		};
 		D216711B29FC903F0080D08B /* build */ = {
@@ -1170,6 +1150,10 @@
 		D2B2025F28BBFD8F004C88FF /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D216710229FC903E0080D08B /* PyDtaHashPassword.cpp */,
+				D2D66F6A2A4CE04300241095 /* DtaHashPassword.cpp */,
+				D2D66F6B2A4CE04300241095 /* DtaHashPassword.h */,
+				D2034CC129F9DB75006DACA1 /* includePython.h */,
 				D2233E3428D79504006B6974 /* DtaOptions.h */,
 				D2772B4F28BC354B0005E001 /* DtaStructures.h */,
 				D2772B5A28BC354B0005E001 /* DtaConstants.h */,
@@ -1185,13 +1169,6 @@
 				D26496E72A36849F00F09A67 /* extract_configuration_from_Xcode_build_environment */,
 				D26496E62A36849E00F09A67 /* extract_configuration_type_from_Xcode_build_environment */,
 				D20A40DD2A15ADF500DE42A2 /* Python3.framework */,
-				D2034CBD29F9DB1F006DACA1 /* DtaHashPassword.cpp */,
-				D2034CC129F9DB75006DACA1 /* includePython.h */,
-				D21670DC29FC360B0080D08B /* DtaHashPassword.h */,
-				D216711029FC903E0080D08B /* includePython.h */,
-				D216710029FC903E0080D08B /* DtaHashPassword.cpp */,
-				D216710129FC903E0080D08B /* DtaHashPassword.h */,
-				D216710229FC903E0080D08B /* PyDtaHashPassword.cpp */,
 				D216710829FC903E0080D08B /* hash */,
 				D216710329FC903E0080D08B /* ob */,
 				D21670FF29FC903E0080D08B /* DtaAudit.h */,
@@ -1217,7 +1194,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D216711C29FC903F0080D08B /* DtaAudit.h in Headers */,
-				D216711E29FC903F0080D08B /* DtaHashPassword.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1393,8 +1369,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D21670F129FC41B10080D08B /* DtaHashPassword.cpp in Sources */,
 				D216711F29FC903F0080D08B /* PyDtaHashPassword.cpp in Sources */,
+				D2D66F6C2A4CE07F00241095 /* DtaHashPassword.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

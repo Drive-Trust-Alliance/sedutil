@@ -1,0 +1,2 @@
+#!/bin/bash
+2>/dev/null asroot pip uninstall -y PyExtHash
