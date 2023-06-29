@@ -15,6 +15,7 @@
 				D20A960929A6ED7600B2FCF2 /* CopyFiles */,
 				D20A961829A7065700B2FCF2 /* CopyFiles */,
 				D28B7E212A411BF400582735 /* CopyFiles */,
+				D2D66F6D2A4D070400241095 /* CopyFiles */,
 				D20A960A29A6EDA000B2FCF2 /* ShellScript */,
 			);
 			dependencies = (
@@ -59,6 +60,7 @@
 		D28B7E552A41245000582735 /* Bright Plaza SED Server.p12 in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28B7E4C2A41237600582735 /* Bright Plaza SED Server.p12 */; };
 		D2C5E6732A2807F1009CDAF5 /* Python3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2034CBA29F9D6C9006DACA1 /* Python3.framework */; };
 		D2D66F6C2A4CE07F00241095 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2D66F6A2A4CE04300241095 /* DtaHashPassword.cpp */; };
+		D2D66F702A4D07E100241095 /* PyExtHash.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = D21670E129FC3FAA0080D08B /* PyExtHash.so */; };
 		D2FE6D922A15BC49002CC6AC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2FE6D912A15BC49002CC6AC /* Cocoa.framework */; platformFilters = (macos, ); };
 /* End PBXBuildFile section */
 
@@ -148,6 +150,16 @@
 			files = (
 				D28B7E542A41244D00582735 /* Bright Plaza CA.pem in CopyFiles */,
 				D28B7E552A41245000582735 /* Bright Plaza SED Server.p12 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2D66F6D2A4D070400241095 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "/Library/Python/3.9/site-packages";
+			dstSubfolderSpec = 0;
+			files = (
+				D2D66F702A4D07E100241095 /* PyExtHash.so in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,7 +408,6 @@
 		D216711429FC903E0080D08B /* ob.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ob.vcxproj; sourceTree = "<group>"; };
 		D216711529FC903F0080D08B /* PyExtTestHash.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = PyExtTestHash.py; sourceTree = "<group>"; };
 		D216711629FC903F0080D08B /* PyExtTest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = PyExtTest.py; sourceTree = "<group>"; };
-		D216711929FC903F0080D08B /* hash.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = hash.vcxproj; sourceTree = "<group>"; };
 		D2233E3428D79504006B6974 /* DtaOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
 		D26496E62A36849E00F09A67 /* extract_configuration_type_from_Xcode_build_environment */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = extract_configuration_type_from_Xcode_build_environment; sourceTree = "<group>"; };
 		D26496E72A36849F00F09A67 /* extract_configuration_from_Xcode_build_environment */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = extract_configuration_from_Xcode_build_environment; sourceTree = "<group>"; };
@@ -498,6 +509,7 @@
 		D2A367032A15A7200051129D /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = Library/Frameworks/Python.framework; sourceTree = DEVELOPER_DIR; };
 		D2D66F6A2A4CE04300241095 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaHashPassword.cpp; sourceTree = "<group>"; };
 		D2D66F6B2A4CE04300241095 /* DtaHashPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaHashPassword.h; sourceTree = "<group>"; };
+		D2D66F6E2A4D078000241095 /* PyExtHash-1.0-cp39-cp39-macosx_10_9_universal2.whl */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PyExtHash-1.0-cp39-cp39-macosx_10_9_universal2.whl"; sourceTree = "<group>"; };
 		D2ECBD7E28CACC1400D9F997 /* log.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2FE6D912A15BC49002CC6AC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -1005,9 +1017,9 @@
 		D216710829FC903E0080D08B /* hash */ = {
 			isa = PBXGroup;
 			children = (
+				D2D66F6E2A4D078000241095 /* PyExtHash-1.0-cp39-cp39-macosx_10_9_universal2.whl */,
 				D216710929FC903E0080D08B /* buildhash.sh */,
 				D216710C29FC903E0080D08B /* setup.py */,
-				D216711929FC903F0080D08B /* hash.vcxproj */,
 				D216711529FC903F0080D08B /* PyExtTestHash.py */,
 				D216711629FC903F0080D08B /* PyExtTest.py */,
 				D216711B29FC903F0080D08B /* build */,
