@@ -156,8 +156,8 @@
 		D2D66F6D2A4D070400241095 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "/Library/Python/3.9/site-packages";
-			dstSubfolderSpec = 0;
+			dstPath = "files/Library/Python/3.9/site-packages";
+			dstSubfolderSpec = 16;
 			files = (
 				D2D66F702A4D07E100241095 /* PyExtHash.so in CopyFiles */,
 			);
