@@ -1,5 +1,5 @@
 #!/bin/bash
-set -xv
+#set -xv
 
 function fail {
     code=$1 ; shift
@@ -77,9 +77,9 @@ static="${TARGETROOT}"
 
 dmgbuild="$(which dmgbuild)"
 [ -x "${dmgbuild}" ] || \
-    dmgbuild="$(find /opt/local/Library/Frameworks/Python.framework -path '*/bin/dmgbuild' -maxdepth 4 )"
+    dmgbuild="$(2>/dev/null find /opt/local/Library/Frameworks/Python.framework -path '*/bin/dmgbuild' -maxdepth 4 )"
 [ -x "${dmgbuild}" ] || \
-    dmgbuild="$(find $HOME/Library/Python -path '*/bin/dmgbuild' -maxdepth 3)"
+    dmgbuild="$(2>/dev/null find $HOME/Library/Python -path '*/bin/dmgbuild' -maxdepth 3)"
 [ -x "${dmgbuild}" ] || \
     fail 171 "Can not find dmgbuild"
 # Convert the macos folder to a macOS dmg

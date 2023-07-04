@@ -6,16 +6,16 @@ dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 beroot
 
-# pkill -i "System Preferences"
+pkill -i "System Preferences"
 pkill -i "System Settings"
 
-preference_pane_names="Self-Encrypting Drives"
-preference_pane_dirs="/Library/PreferencePanes /System/Library/PreferencePanes ${HOME}/Library/PreferencePanes"
+preference_pane_names=("Self-Encrypting Drives")
+preference_pane_dirs=("/Library/PreferencePanes /System/Library/PreferencePanes ${HOME}/Library/PreferencePanes")
 
 
-for pane in "${preference_pane_names}"
+for pane in ${preference_pane_names[@]}
 do
-    for dir in ${preference_pane_dirs}
+    for dir in ${preference_pane_dirs[@]}
     do
         rm -rf "${dir}/${pane}.prefPane"
     done

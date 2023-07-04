@@ -131,16 +131,6 @@ function erase_old_installation {
     return 0
 }
 
-function generate_SED_keychain_password {
-    DEBUG_PRINT "generate_SED_keychain_password"
-    KEYCHAIN_PASSWORD="$( generate_password )}" \
-        || DEBUG_FAIL "generating SED keychain password" 57
-}
-
-function save_SED_keychain_password { #DEBUGGING
-    save_SED_keychain_password_in_system_keychain_item  >> "${DEBUGGING_OUTPUT}" 2>&1
-}
-
 function install {
     DEBUG_PRINT "install"
    return

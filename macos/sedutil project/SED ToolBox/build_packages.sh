@@ -10,12 +10,6 @@ cd "${BUILT_PRODUCTS_DIR}"
 
 spew "pwd=>$(pwd)"
 
-verbose=0
-
-(( verbose )) && ( cd .. ; find . )
-
-verbose=1
-
 TARGETROOT="${SRCROOT}/${TARGETNAME}"
 bundles_dir="./bundles"
 spew "bundles_dir=${bundles_dir}"

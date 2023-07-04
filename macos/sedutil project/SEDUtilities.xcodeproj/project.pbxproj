@@ -15,12 +15,13 @@
 				D20A960929A6ED7600B2FCF2 /* CopyFiles */,
 				D20A961829A7065700B2FCF2 /* CopyFiles */,
 				D28B7E212A411BF400582735 /* CopyFiles */,
-				D2D66F6D2A4D070400241095 /* CopyFiles */,
+				D25E64F82A54A3070098C126 /* ShellScript */,
 				D20A960A29A6EDA000B2FCF2 /* ShellScript */,
 			);
 			dependencies = (
 				D213260429B3DCAC00EE2613 /* PBXTargetDependency */,
 				D213260629B3DCAC00EE2613 /* PBXTargetDependency */,
+				D25E64FA2A54B7370098C126 /* PBXTargetDependency */,
 			);
 			name = "SED ToolBox";
 			productName = "SED ToolBox";
@@ -47,7 +48,6 @@
 		D20A961729A6EFD200B2FCF2 /* BrightPlazaTPer.kext in CopyFiles */ = {isa = PBXBuildFile; fileRef = D20A960729A6EC3800B2FCF2 /* BrightPlazaTPer.kext */; };
 		D20A961929A706C800B2FCF2 /* sedutil-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28CFD6028E2C1AF00A33B00 /* sedutil-cli */; };
 		D20A961A29A706CE00B2FCF2 /* reenumerate in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28CFD6128E2C1AF00A33B00 /* reenumerate */; };
-		D21670EE29FC3FEB0080D08B /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D21670ED29FC3FEB0080D08B /* cifra.framework */; };
 		D216711C29FC903F0080D08B /* DtaAudit.h in Headers */ = {isa = PBXBuildFile; fileRef = D21670FF29FC903E0080D08B /* DtaAudit.h */; };
 		D216711F29FC903F0080D08B /* PyDtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D216710229FC903E0080D08B /* PyDtaHashPassword.cpp */; };
 		D26904CE28D7A17B0095769E /* reenumerate.c in Sources */ = {isa = PBXBuildFile; fileRef = D26904CD28D7A17B0095769E /* reenumerate.c */; };
@@ -60,7 +60,6 @@
 		D28B7E552A41245000582735 /* Bright Plaza SED Server.p12 in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28B7E4C2A41237600582735 /* Bright Plaza SED Server.p12 */; };
 		D2C5E6732A2807F1009CDAF5 /* Python3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2034CBA29F9D6C9006DACA1 /* Python3.framework */; };
 		D2D66F6C2A4CE07F00241095 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2D66F6A2A4CE04300241095 /* DtaHashPassword.cpp */; };
-		D2D66F702A4D07E100241095 /* PyExtHash.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = D21670E129FC3FAA0080D08B /* PyExtHash.so */; };
 		D2FE6D922A15BC49002CC6AC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2FE6D912A15BC49002CC6AC /* Cocoa.framework */; platformFilters = (macos, ); };
 /* End PBXBuildFile section */
 
@@ -85,6 +84,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = D26B3B511F6FB6BC004571A8;
 			remoteInfo = "sedutil-cli";
+		};
+		D25E64F92A54B7370098C126 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D21670E029FC3FAA0080D08B;
+			remoteInfo = PyExtHash;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -150,16 +156,6 @@
 			files = (
 				D28B7E542A41244D00582735 /* Bright Plaza CA.pem in CopyFiles */,
 				D28B7E552A41245000582735 /* Bright Plaza SED Server.p12 in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D2D66F6D2A4D070400241095 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "files/Library/Python/3.9/site-packages";
-			dstSubfolderSpec = 16;
-			files = (
-				D2D66F702A4D07E100241095 /* PyExtHash.so in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,17 +389,12 @@
 		D213260729B3F77B00EE2613 /* extract_configuration_from_Xcode_build_environment */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = extract_configuration_from_Xcode_build_environment; path = ../../../../../DTA/sedutilgui/mac/extract_configuration_from_Xcode_build_environment; sourceTree = "<group>"; };
 		D213260829B3F77B00EE2613 /* extract_configuration_type_from_Xcode_build_environment */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = extract_configuration_type_from_Xcode_build_environment; path = ../../../../../DTA/sedutilgui/mac/extract_configuration_type_from_Xcode_build_environment; sourceTree = "<group>"; };
 		D21670E129FC3FAA0080D08B /* PyExtHash.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = PyExtHash.so; sourceTree = BUILT_PRODUCTS_DIR; };
-		D21670ED29FC3FEB0080D08B /* cifra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = cifra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D21670FF29FC903E0080D08B /* DtaAudit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DtaAudit.h; path = ../../Common/DtaAudit.h; sourceTree = "<group>"; };
 		D216710229FC903E0080D08B /* PyDtaHashPassword.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PyDtaHashPassword.cpp; sourceTree = "<group>"; };
-		D216710429FC903E0080D08B /* buildob.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildob.sh; sourceTree = "<group>"; };
-		D216710529FC903E0080D08B /* setup.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
 		D216710629FC903E0080D08B /* ob.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ob.vcxproj.filters; sourceTree = "<group>"; };
-		D216710729FC903E0080D08B /* ob.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ob.vcxproj; sourceTree = "<group>"; };
 		D216710929FC903E0080D08B /* buildhash.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildhash.sh; sourceTree = "<group>"; };
 		D216710C29FC903E0080D08B /* setup.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
 		D216711129FC903E0080D08B /* setup.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
-		D216711229FC903E0080D08B /* ob.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ob.vcxproj.filters; sourceTree = "<group>"; };
 		D216711329FC903E0080D08B /* buildob.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildob.sh; sourceTree = "<group>"; };
 		D216711429FC903E0080D08B /* ob.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ob.vcxproj; sourceTree = "<group>"; };
 		D216711529FC903F0080D08B /* PyExtTestHash.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = PyExtTestHash.py; sourceTree = "<group>"; };
@@ -417,6 +408,22 @@
 		D26F2F11296A8180007905F7 /* log.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D26F2F13296A8180007905F7 /* oui.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = oui.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D26F2F15296A8180007905F7 /* sedutil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = sedutil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D26F8F432A54C5E100399CB7 /* 01_Uninstall_preference_pane.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = 01_Uninstall_preference_pane.sh; sourceTree = "<group>"; };
+		D26F8F442A54C5E100399CB7 /* 51_Uninstall_security_items.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = 51_Uninstall_security_items.sh; sourceTree = "<group>"; };
+		D26F8F452A54C5E100399CB7 /* 02_Uninstall_SEDAccess.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = 02_Uninstall_SEDAccess.sh; sourceTree = "<group>"; };
+		D26F8F462A54C5E100399CB7 /* 22_Uninstall_libraries.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = 22_Uninstall_libraries.sh; sourceTree = "<group>"; };
+		D26F8F472A54C5E100399CB7 /* 99_unload_driver.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = 99_unload_driver.sh; sourceTree = "<group>"; };
+		D26F8F482A54C5E100399CB7 /* 11_Uninstall_daemon.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = 11_Uninstall_daemon.sh; sourceTree = "<group>"; };
+		D26F8F492A54C5E100399CB7 /* Utility_functions.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Utility_functions.sh; sourceTree = "<group>"; };
+		D26F8F4A2A54C5E100399CB7 /* UNINSTALL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = UNINSTALL; sourceTree = "<group>"; };
+		D26F8F4B2A54C5E100399CB7 /* 31_Uninstall_packages.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = 31_Uninstall_packages.sh; sourceTree = "<group>"; };
+		D26F8F4C2A54C5E100399CB7 /* Unload_daemon.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Unload_daemon.sh; sourceTree = "<group>"; };
+		D26F8F4D2A54C5E100399CB7 /* 23_Uninstall_driver.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = 23_Uninstall_driver.sh; sourceTree = "<group>"; };
+		D26F8F4E2A54C5E100399CB7 /* Install_daemon.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Install_daemon.sh; sourceTree = "<group>"; };
+		D26F8F4F2A54C5E100399CB7 /* 21_Uninstall_frameworks.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = 21_Uninstall_frameworks.sh; sourceTree = "<group>"; };
+		D26F8F502A54C5E100399CB7 /* Install_driver.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Install_driver.sh; sourceTree = "<group>"; };
+		D26F8F512A54C5E100399CB7 /* 03_Uninstall_SEDDaemonTest.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = 03_Uninstall_SEDDaemonTest.sh; sourceTree = "<group>"; };
+		D26F8F522A54C5E100399CB7 /* Install_SEDAccess.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Install_SEDAccess.sh; sourceTree = "<group>"; };
 		D2772B4F28BC354B0005E001 /* DtaStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaStructures.h; sourceTree = "<group>"; };
 		D2772B5A28BC354B0005E001 /* DtaConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaConstants.h; sourceTree = "<group>"; };
 		D2772B5E28BC354B0005E001 /* DtaDev.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaDev.h; sourceTree = "<group>"; };
@@ -424,13 +431,8 @@
 		D2772B7328BC354B0005E001 /* os.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = os.h; sourceTree = "<group>"; };
 		D2772BEA28BC36420005E001 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
 		D287224228B835CB0023404B /* sedutil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sedutil.cpp; path = ../../Common/sedutil.cpp; sourceTree = "<group>"; };
-		D287224528B835DF0023404B /* sedutil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = sedutil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28B7E4C2A41237600582735 /* Bright Plaza SED Server.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bright Plaza SED Server.p12"; sourceTree = "<group>"; };
 		D28B7E4D2A41237600582735 /* Bright Plaza CA.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza CA.pem"; sourceTree = "<group>"; };
-		D28B7E572A4125AF00582735 /* 01_Uninstall_preference_pane.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 01_Uninstall_preference_pane.sh; sourceTree = "<group>"; };
-		D28B7E582A4125AF00582735 /* 51_Uninstall_security_items.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 51_Uninstall_security_items.sh; sourceTree = "<group>"; };
-		D28B7E592A4125AF00582735 /* 02_Uninstall_SEDAccess.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 02_Uninstall_SEDAccess.sh; sourceTree = "<group>"; };
-		D28B7E5A2A4125AF00582735 /* 22_Uninstall_libraries.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 22_Uninstall_libraries.sh; sourceTree = "<group>"; };
 		D28B7E5B2A4125AF00582735 /* 99_unload_driver.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 99_unload_driver.sh; sourceTree = "<group>"; };
 		D28B7E5C2A4125AF00582735 /* 11_Uninstall_daemon.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 11_Uninstall_daemon.sh; sourceTree = "<group>"; };
 		D28B7E5D2A4125AF00582735 /* Utility_functions.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = Utility_functions.sh; sourceTree = "<group>"; };
@@ -457,38 +459,7 @@
 		D28B7E732A4125AF00582735 /* 21_Uninstall_frameworks.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 21_Uninstall_frameworks.sh; sourceTree = "<group>"; };
 		D28B7E742A4125AF00582735 /* Install_driver.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = Install_driver.sh; sourceTree = "<group>"; };
 		D28B7E752A4125AF00582735 /* 03_Uninstall_SEDDaemonTest.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 03_Uninstall_SEDDaemonTest.sh; sourceTree = "<group>"; };
-		D28B7E762A4125AF00582735 /* 99_unload_driver.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 99_unload_driver.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/99_unload_driver.sh"; sourceTree = "<group>"; };
-		D28B7E772A4125B000582735 /* UNINSTALL */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = UNINSTALL; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/UNINSTALL"; sourceTree = "<group>"; };
-		D28B7E782A4125B000582735 /* 02_Uninstall_SEDAccess.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 02_Uninstall_SEDAccess.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/02_Uninstall_SEDAccess.sh"; sourceTree = "<group>"; };
-		D28B7E792A4125B000582735 /* 21_Uninstall_frameworks.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 21_Uninstall_frameworks.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/21_Uninstall_frameworks.sh"; sourceTree = "<group>"; };
-		D28B7E7A2A4125B000582735 /* Utility_functions.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = Utility_functions.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/Utility_functions.sh"; sourceTree = "<group>"; };
-		D28B7E7B2A4125B000582735 /* Utility_functions.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = Utility_functions.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/Utility_functions.sh"; sourceTree = "<group>"; };
-		D28B7E7C2A4125B000582735 /* Unload_daemon.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = Unload_daemon.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/Unload_daemon.sh"; sourceTree = "<group>"; };
-		D28B7E7D2A4125B000582735 /* 31_Uninstall_packages.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 31_Uninstall_packages.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/31_Uninstall_packages.sh"; sourceTree = "<group>"; };
 		D28B7E7E2A4125B100582735 /* Install_daemon.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = Install_daemon.sh; sourceTree = "<group>"; };
-		D28B7E7F2A4125B100582735 /* 11_Uninstall_daemon.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 11_Uninstall_daemon.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/11_Uninstall_daemon.sh"; sourceTree = "<group>"; };
-		D28B7E802A4125B100582735 /* 01_Uninstall_preference_pane.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 01_Uninstall_preference_pane.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/01_Uninstall_preference_pane.sh"; sourceTree = "<group>"; };
-		D28B7E812A4125B100582735 /* 03_Uninstall_SEDDaemonTest.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 03_Uninstall_SEDDaemonTest.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/03_Uninstall_SEDDaemonTest.sh"; sourceTree = "<group>"; };
-		D28B7E822A4125B100582735 /* 03_Uninstall_SEDDaemonTest.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 03_Uninstall_SEDDaemonTest.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/03_Uninstall_SEDDaemonTest.sh"; sourceTree = "<group>"; };
-		D28B7E832A4125B100582735 /* 22_Uninstall_libraries.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 22_Uninstall_libraries.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/22_Uninstall_libraries.sh"; sourceTree = "<group>"; };
-		D28B7E842A4125B100582735 /* 23_Uninstall_driver.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 23_Uninstall_driver.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/23_Uninstall_driver.sh"; sourceTree = "<group>"; };
-		D28B7E852A4125B100582735 /* 23_Uninstall_driver.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 23_Uninstall_driver.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/23_Uninstall_driver.sh"; sourceTree = "<group>"; };
-		D28B7E862A4125B100582735 /* UNINSTALL */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = UNINSTALL; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/UNINSTALL"; sourceTree = "<group>"; };
-		D28B7E872A4125B100582735 /* Install_driver.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = Install_driver.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/Install_driver.sh"; sourceTree = "<group>"; };
-		D28B7E882A4125B200582735 /* Uninstall_SEDPreferences.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = Uninstall_SEDPreferences.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/Uninstall_SEDPreferences.sh"; sourceTree = "<group>"; };
-		D28B7E892A4125B200582735 /* 21_Uninstall_frameworks.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 21_Uninstall_frameworks.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/21_Uninstall_frameworks.sh"; sourceTree = "<group>"; };
-		D28B7E8A2A4125B200582735 /* 22_Uninstall_libraries.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 22_Uninstall_libraries.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/22_Uninstall_libraries.sh"; sourceTree = "<group>"; };
-		D28B7E8B2A4125B200582735 /* 02_Uninstall_SEDAccess.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 02_Uninstall_SEDAccess.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/02_Uninstall_SEDAccess.sh"; sourceTree = "<group>"; };
-		D28B7E8C2A4125B200582735 /* 11_Uninstall_daemon.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 11_Uninstall_daemon.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/11_Uninstall_daemon.sh"; sourceTree = "<group>"; };
-		D28B7E8D2A4125B200582735 /* Install_driver.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = Install_driver.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/Install_driver.sh"; sourceTree = "<group>"; };
-		D28B7E8E2A4125B200582735 /* Install_SEDAccess.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = Install_SEDAccess.sh; sourceTree = "<group>"; };
-		D28B7E8F2A4125B200582735 /* 01_Uninstall_preference_pane.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 01_Uninstall_preference_pane.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/01_Uninstall_preference_pane.sh"; sourceTree = "<group>"; };
-		D28B7E902A4125B200582735 /* 51_Uninstall_security_items.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 51_Uninstall_security_items.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/51_Uninstall_security_items.sh"; sourceTree = "<group>"; };
-		D28B7E912A4125B200582735 /* Install_SEDAccess.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = Install_SEDAccess.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/Install_SEDAccess.sh"; sourceTree = "<group>"; };
-		D28B7E922A4125B200582735 /* Install_daemon.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = Install_daemon.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/Install_daemon.sh"; sourceTree = "<group>"; };
-		D28B7E932A4125B200582735 /* 51_Uninstall_security_items.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 51_Uninstall_security_items.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/51_Uninstall_security_items.sh"; sourceTree = "<group>"; };
-		D28B7E942A4125B200582735 /* 31_Uninstall_packages.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 31_Uninstall_packages.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/31_Uninstall_packages.sh"; sourceTree = "<group>"; };
-		D28B7E952A4125B200582735 /* 99_unload_driver.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = 99_unload_driver.sh; path = "../../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/.Utilities/99_unload_driver.sh"; sourceTree = "<group>"; };
 		D28CFD6028E2C1AF00A33B00 /* sedutil-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "sedutil-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28CFD6128E2C1AF00A33B00 /* reenumerate */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = reenumerate; sourceTree = BUILT_PRODUCTS_DIR; };
 		D29B37F72A3A691C00A5B51A /* 22_Uninstall_libraries.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 22_Uninstall_libraries.sh; path = "SED ToolBox/DTA/macOS/.Utilities/22_Uninstall_libraries.sh"; sourceTree = SOURCE_ROOT; };
@@ -505,12 +476,9 @@
 		D29B38022A3A696800A5B51A /* Unload_daemon.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = Unload_daemon.sh; path = "SED ToolBox/DTA/macOS/.Utilities/Unload_daemon.sh"; sourceTree = SOURCE_ROOT; };
 		D29B38032A3A696800A5B51A /* Install_driver.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = Install_driver.sh; path = "SED ToolBox/DTA/macOS/.Utilities/Install_driver.sh"; sourceTree = SOURCE_ROOT; };
 		D29B38042A3A696800A5B51A /* Utility_functions.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = Utility_functions.sh; path = "SED ToolBox/DTA/macOS/.Utilities/Utility_functions.sh"; sourceTree = SOURCE_ROOT; };
-		D29F7FB02940E7AE00206C29 /* oui.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = oui.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D2A367032A15A7200051129D /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = Library/Frameworks/Python.framework; sourceTree = DEVELOPER_DIR; };
 		D2D66F6A2A4CE04300241095 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaHashPassword.cpp; sourceTree = "<group>"; };
 		D2D66F6B2A4CE04300241095 /* DtaHashPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaHashPassword.h; sourceTree = "<group>"; };
 		D2D66F6E2A4D078000241095 /* PyExtHash-1.0-cp39-cp39-macosx_10_9_universal2.whl */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PyExtHash-1.0-cp39-cp39-macosx_10_9_universal2.whl"; sourceTree = "<group>"; };
-		D2ECBD7E28CACC1400D9F997 /* log.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2FE6D912A15BC49002CC6AC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -520,7 +488,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D2FE6D922A15BC49002CC6AC /* Cocoa.framework in Frameworks */,
-				D21670EE29FC3FEB0080D08B /* cifra.framework in Frameworks */,
 				D2C5E6732A2807F1009CDAF5 /* Python3.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -550,6 +517,7 @@
 			isa = PBXGroup;
 			children = (
 				D28B7E562A4125AF00582735 /* .Utilities */,
+				D26F8F422A54C5E100399CB7 /* .Utilities */,
 				D28B7E492A41237600582735 /* Certificates */,
 				D20A961C29A8025600B2FCF2 /* DTA */,
 				D20A964229A8025600B2FCF2 /* product_scripts */,
@@ -1001,14 +969,10 @@
 		D216710329FC903E0080D08B /* ob */ = {
 			isa = PBXGroup;
 			children = (
-				D216710429FC903E0080D08B /* buildob.sh */,
 				D216711329FC903E0080D08B /* buildob.sh */,
-				D216710529FC903E0080D08B /* setup.py */,
 				D216711129FC903E0080D08B /* setup.py */,
 				D216710629FC903E0080D08B /* ob.vcxproj.filters */,
 				D216711429FC903E0080D08B /* ob.vcxproj */,
-				D216711229FC903E0080D08B /* ob.vcxproj.filters */,
-				D216710729FC903E0080D08B /* ob.vcxproj */,
 			);
 			name = ob;
 			path = ../../ob;
@@ -1022,17 +986,9 @@
 				D216710C29FC903E0080D08B /* setup.py */,
 				D216711529FC903F0080D08B /* PyExtTestHash.py */,
 				D216711629FC903F0080D08B /* PyExtTest.py */,
-				D216711B29FC903F0080D08B /* build */,
 			);
 			name = hash;
 			path = ../../hash;
-			sourceTree = "<group>";
-		};
-		D216711B29FC903F0080D08B /* build */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = build;
 			sourceTree = "<group>";
 		};
 		D26904BF28D7A1530095769E /* reenumerate */ = {
@@ -1042,6 +998,30 @@
 				D26904CF28D7A17F0095769E /* IOUSBFamilyInfoPlist.pch */,
 			);
 			path = reenumerate;
+			sourceTree = "<group>";
+		};
+		D26F8F422A54C5E100399CB7 /* .Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				D26F8F432A54C5E100399CB7 /* 01_Uninstall_preference_pane.sh */,
+				D26F8F452A54C5E100399CB7 /* 02_Uninstall_SEDAccess.sh */,
+				D26F8F512A54C5E100399CB7 /* 03_Uninstall_SEDDaemonTest.sh */,
+				D26F8F482A54C5E100399CB7 /* 11_Uninstall_daemon.sh */,
+				D26F8F4F2A54C5E100399CB7 /* 21_Uninstall_frameworks.sh */,
+				D26F8F462A54C5E100399CB7 /* 22_Uninstall_libraries.sh */,
+				D26F8F4D2A54C5E100399CB7 /* 23_Uninstall_driver.sh */,
+				D26F8F4B2A54C5E100399CB7 /* 31_Uninstall_packages.sh */,
+				D26F8F442A54C5E100399CB7 /* 51_Uninstall_security_items.sh */,
+				D26F8F472A54C5E100399CB7 /* 99_unload_driver.sh */,
+				D26F8F492A54C5E100399CB7 /* Utility_functions.sh */,
+				D26F8F4A2A54C5E100399CB7 /* UNINSTALL */,
+				D26F8F4C2A54C5E100399CB7 /* Unload_daemon.sh */,
+				D26F8F4E2A54C5E100399CB7 /* Install_daemon.sh */,
+				D26F8F502A54C5E100399CB7 /* Install_driver.sh */,
+				D26F8F522A54C5E100399CB7 /* Install_SEDAccess.sh */,
+			);
+			name = .Utilities;
+			path = "../../../../../DTA/sedutilgui/mac/Self-Encrypting Box/DTA/macOS/.Utilities";
 			sourceTree = "<group>";
 		};
 		D2772B5F28BC354B0005E001 /* macos */ = {
@@ -1059,16 +1039,11 @@
 			isa = PBXGroup;
 			children = (
 				D2FE6D912A15BC49002CC6AC /* Cocoa.framework */,
-				D2A367032A15A7200051129D /* Python.framework */,
-				D21670ED29FC3FEB0080D08B /* cifra.framework */,
 				D2034CBA29F9D6C9006DACA1 /* Python3.framework */,
 				D26F2F0F296A8180007905F7 /* cifra.framework */,
 				D26F2F11296A8180007905F7 /* log.framework */,
 				D26F2F13296A8180007905F7 /* oui.framework */,
 				D26F2F15296A8180007905F7 /* sedutil.framework */,
-				D29F7FB02940E7AE00206C29 /* oui.framework */,
-				D2ECBD7E28CACC1400D9F997 /* log.framework */,
-				D287224528B835DF0023404B /* sedutil.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1085,53 +1060,18 @@
 		D28B7E562A4125AF00582735 /* .Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				D28B7E942A4125B200582735 /* 31_Uninstall_packages.sh */,
-				D28B7E902A4125B200582735 /* 51_Uninstall_security_items.sh */,
-				D28B7E932A4125B200582735 /* 51_Uninstall_security_items.sh */,
-				D28B7E572A4125AF00582735 /* 01_Uninstall_preference_pane.sh */,
-				D28B7E8F2A4125B200582735 /* 01_Uninstall_preference_pane.sh */,
-				D28B7E842A4125B100582735 /* 23_Uninstall_driver.sh */,
-				D28B7E852A4125B100582735 /* 23_Uninstall_driver.sh */,
-				D28B7E862A4125B100582735 /* UNINSTALL */,
-				D28B7E7D2A4125B000582735 /* 31_Uninstall_packages.sh */,
-				D28B7E8B2A4125B200582735 /* 02_Uninstall_SEDAccess.sh */,
-				D28B7E892A4125B200582735 /* 21_Uninstall_frameworks.sh */,
-				D28B7E832A4125B100582735 /* 22_Uninstall_libraries.sh */,
-				D28B7E8A2A4125B200582735 /* 22_Uninstall_libraries.sh */,
-				D28B7E582A4125AF00582735 /* 51_Uninstall_security_items.sh */,
-				D28B7E592A4125AF00582735 /* 02_Uninstall_SEDAccess.sh */,
-				D28B7E792A4125B000582735 /* 21_Uninstall_frameworks.sh */,
-				D28B7E7C2A4125B000582735 /* Unload_daemon.sh */,
-				D28B7E5A2A4125AF00582735 /* 22_Uninstall_libraries.sh */,
-				D28B7E5B2A4125AF00582735 /* 99_unload_driver.sh */,
-				D28B7E8E2A4125B200582735 /* Install_SEDAccess.sh */,
-				D28B7E912A4125B200582735 /* Install_SEDAccess.sh */,
-				D28B7E7E2A4125B100582735 /* Install_daemon.sh */,
-				D28B7E952A4125B200582735 /* 99_unload_driver.sh */,
-				D28B7E812A4125B100582735 /* 03_Uninstall_SEDDaemonTest.sh */,
-				D28B7E822A4125B100582735 /* 03_Uninstall_SEDDaemonTest.sh */,
-				D28B7E922A4125B200582735 /* Install_daemon.sh */,
+				D28B7E752A4125AF00582735 /* 03_Uninstall_SEDDaemonTest.sh */,
+				D28B7E5F2A4125AF00582735 /* 31_Uninstall_packages.sh */,
 				D28B7E5C2A4125AF00582735 /* 11_Uninstall_daemon.sh */,
-				D28B7E8C2A4125B200582735 /* 11_Uninstall_daemon.sh */,
-				D28B7E872A4125B100582735 /* Install_driver.sh */,
-				D28B7E8D2A4125B200582735 /* Install_driver.sh */,
-				D28B7E882A4125B200582735 /* Uninstall_SEDPreferences.sh */,
-				D28B7E7B2A4125B000582735 /* Utility_functions.sh */,
-				D28B7E7A2A4125B000582735 /* Utility_functions.sh */,
+				D28B7E5B2A4125AF00582735 /* 99_unload_driver.sh */,
+				D28B7E7E2A4125B100582735 /* Install_daemon.sh */,
 				D28B7E5D2A4125AF00582735 /* Utility_functions.sh */,
 				D28B7E5E2A4125AF00582735 /* UNINSTALL */,
-				D28B7E772A4125B000582735 /* UNINSTALL */,
-				D28B7E5F2A4125AF00582735 /* 31_Uninstall_packages.sh */,
 				D28B7E602A4125AF00582735 /* Unload_daemon.sh */,
-				D28B7E802A4125B100582735 /* 01_Uninstall_preference_pane.sh */,
 				D28B7E612A4125AF00582735 /* 23_Uninstall_driver.sh */,
-				D28B7E622A4125AF00582735 /* .Utilities */,
-				D28B7E782A4125B000582735 /* 02_Uninstall_SEDAccess.sh */,
 				D28B7E732A4125AF00582735 /* 21_Uninstall_frameworks.sh */,
-				D28B7E7F2A4125B100582735 /* 11_Uninstall_daemon.sh */,
 				D28B7E742A4125AF00582735 /* Install_driver.sh */,
-				D28B7E762A4125AF00582735 /* 99_unload_driver.sh */,
-				D28B7E752A4125AF00582735 /* 03_Uninstall_SEDDaemonTest.sh */,
+				D28B7E622A4125AF00582735 /* .Utilities */,
 			);
 			path = .Utilities;
 			sourceTree = "<group>";
@@ -1140,20 +1080,20 @@
 			isa = PBXGroup;
 			children = (
 				D28B7E632A4125AF00582735 /* 01_Uninstall_preference_pane.sh */,
-				D28B7E642A4125AF00582735 /* 51_Uninstall_security_items.sh */,
 				D28B7E652A4125AF00582735 /* 02_Uninstall_SEDAccess.sh */,
-				D28B7E662A4125AF00582735 /* 22_Uninstall_libraries.sh */,
-				D28B7E672A4125AF00582735 /* 99_unload_driver.sh */,
+				D28B7E712A4125AF00582735 /* 03_Uninstall_SEDDaemonTest.sh */,
 				D28B7E682A4125AF00582735 /* 11_Uninstall_daemon.sh */,
+				D28B7E6F2A4125AF00582735 /* 21_Uninstall_frameworks.sh */,
+				D28B7E662A4125AF00582735 /* 22_Uninstall_libraries.sh */,
+				D28B7E6D2A4125AF00582735 /* 23_Uninstall_driver.sh */,
+				D28B7E6B2A4125AF00582735 /* 31_Uninstall_packages.sh */,
+				D28B7E642A4125AF00582735 /* 51_Uninstall_security_items.sh */,
+				D28B7E672A4125AF00582735 /* 99_unload_driver.sh */,
 				D28B7E692A4125AF00582735 /* Utility_functions.sh */,
 				D28B7E6A2A4125AF00582735 /* UNINSTALL */,
-				D28B7E6B2A4125AF00582735 /* 31_Uninstall_packages.sh */,
 				D28B7E6C2A4125AF00582735 /* Unload_daemon.sh */,
-				D28B7E6D2A4125AF00582735 /* 23_Uninstall_driver.sh */,
 				D28B7E6E2A4125AF00582735 /* Install_daemon.sh */,
-				D28B7E6F2A4125AF00582735 /* 21_Uninstall_frameworks.sh */,
 				D28B7E702A4125AF00582735 /* Install_driver.sh */,
-				D28B7E712A4125AF00582735 /* 03_Uninstall_SEDDaemonTest.sh */,
 				D28B7E722A4125AF00582735 /* Install_SEDAccess.sh */,
 			);
 			path = .Utilities;
@@ -1372,7 +1312,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/SED ToolBox/build.sh\"\n";
+			shellScript = "# Create SED Toolbox (Debug|Release).iso\n\"${SRCROOT}/SED ToolBox/build.sh\"\n";
+		};
+		D25E64F82A54A3070098C126 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Copy PyExtHash.so to global site-packages, last on sys.path\nmkdir -p  \"${BUILT_PRODUCTS_DIR}/files$(python3 -c \"import sys;print(sys.path[-1])\")\"\ncp \"${BUILT_PRODUCTS_DIR}/PyExtHash.so\" \\\n   \"${BUILT_PRODUCTS_DIR}/files$(python3 -c \"import sys;print(sys.path[-1])\")/PyExtHash.so\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1419,6 +1377,11 @@
 			isa = PBXTargetDependency;
 			target = D26B3B511F6FB6BC004571A8 /* sedutil-cli */;
 			targetProxy = D213260529B3DCAC00EE2613 /* PBXContainerItemProxy */;
+		};
+		D25E64FA2A54B7370098C126 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D21670E029FC3FAA0080D08B /* PyExtHash */;
+			targetProxy = D25E64F92A54B7370098C126 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
