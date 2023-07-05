@@ -58,6 +58,7 @@
 		D287224328B835CB0023404B /* sedutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D287224228B835CB0023404B /* sedutil.cpp */; };
 		D28B7E542A41244D00582735 /* Bright Plaza CA.pem in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28B7E4D2A41237600582735 /* Bright Plaza CA.pem */; };
 		D28B7E552A41245000582735 /* Bright Plaza SED Server.p12 in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28B7E4C2A41237600582735 /* Bright Plaza SED Server.p12 */; };
+		D28DF1802A56010D00B300AD /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26F2F0F296A8180007905F7 /* cifra.framework */; };
 		D2C5E6732A2807F1009CDAF5 /* Python3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2034CBA29F9D6C9006DACA1 /* Python3.framework */; };
 		D2D66F6C2A4CE07F00241095 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2D66F6A2A4CE04300241095 /* DtaHashPassword.cpp */; };
 		D2FE6D922A15BC49002CC6AC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2FE6D912A15BC49002CC6AC /* Cocoa.framework */; platformFilters = (macos, ); };
@@ -487,6 +488,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D28DF1802A56010D00B300AD /* cifra.framework in Frameworks */,
 				D2FE6D922A15BC49002CC6AC /* Cocoa.framework in Frameworks */,
 				D2C5E6732A2807F1009CDAF5 /* Python3.framework in Frameworks */,
 			);
