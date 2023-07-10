@@ -5,7 +5,9 @@ DISK_IMAGE_READONLY=1
 ISED_AD_HOC_DISTRIBUTION=1
 
 spew () { (( verbose )) && echo "spew: $@" ; }
-spew "verbose=${verbose}, spewing"
+
+(( verbose )) && spew "verbose=${verbose}, spewing" || \
+    echo "verbose=${verbose}, not spewing"
 
 # Other scripts from the same directory as this script
 export build_sh_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

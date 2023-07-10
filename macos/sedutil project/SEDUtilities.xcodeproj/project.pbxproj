@@ -463,23 +463,13 @@
 		D28B7E7E2A4125B100582735 /* Install_daemon.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = Install_daemon.sh; sourceTree = "<group>"; };
 		D28CFD6028E2C1AF00A33B00 /* sedutil-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "sedutil-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28CFD6128E2C1AF00A33B00 /* reenumerate */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = reenumerate; sourceTree = BUILT_PRODUCTS_DIR; };
-		D29B37F72A3A691C00A5B51A /* 22_Uninstall_libraries.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 22_Uninstall_libraries.sh; path = "SED ToolBox/DTA/macOS/.Utilities/22_Uninstall_libraries.sh"; sourceTree = SOURCE_ROOT; };
-		D29B37F82A3A691C00A5B51A /* 11_Uninstall_daemon.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 11_Uninstall_daemon.sh; path = "SED ToolBox/DTA/macOS/.Utilities/11_Uninstall_daemon.sh"; sourceTree = SOURCE_ROOT; };
-		D29B37F92A3A691C00A5B51A /* 21_Uninstall_frameworks.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 21_Uninstall_frameworks.sh; path = "SED ToolBox/DTA/macOS/.Utilities/21_Uninstall_frameworks.sh"; sourceTree = SOURCE_ROOT; };
-		D29B37FA2A3A691C00A5B51A /* 23_Uninstall_driver.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 23_Uninstall_driver.sh; path = "SED ToolBox/DTA/macOS/.Utilities/23_Uninstall_driver.sh"; sourceTree = SOURCE_ROOT; };
-		D29B37FB2A3A691C00A5B51A /* 31_Uninstall_packages.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 31_Uninstall_packages.sh; path = "SED ToolBox/DTA/macOS/.Utilities/31_Uninstall_packages.sh"; sourceTree = SOURCE_ROOT; };
-		D29B37FC2A3A691C00A5B51A /* 51_Uninstall_security_items.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 51_Uninstall_security_items.sh; path = "SED ToolBox/DTA/macOS/.Utilities/51_Uninstall_security_items.sh"; sourceTree = SOURCE_ROOT; };
-		D29B37FD2A3A691C00A5B51A /* 99_unload_driver.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 99_unload_driver.sh; path = "SED ToolBox/DTA/macOS/.Utilities/99_unload_driver.sh"; sourceTree = SOURCE_ROOT; };
-		D29B37FE2A3A691C00A5B51A /* 01_Uninstall_preference_pane.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 01_Uninstall_preference_pane.sh; path = "SED ToolBox/DTA/macOS/.Utilities/01_Uninstall_preference_pane.sh"; sourceTree = SOURCE_ROOT; };
-		D29B37FF2A3A691C00A5B51A /* 02_Uninstall_SEDAccess.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 02_Uninstall_SEDAccess.sh; path = "SED ToolBox/DTA/macOS/.Utilities/02_Uninstall_SEDAccess.sh"; sourceTree = SOURCE_ROOT; };
-		D29B38002A3A691C00A5B51A /* 03_Uninstall_SEDDaemonTest.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 03_Uninstall_SEDDaemonTest.sh; path = "SED ToolBox/DTA/macOS/.Utilities/03_Uninstall_SEDDaemonTest.sh"; sourceTree = SOURCE_ROOT; };
-		D29B38012A3A696800A5B51A /* UNINSTALL */ = {isa = PBXFileReference; lastKnownFileType = text; name = UNINSTALL; path = "SED ToolBox/DTA/macOS/.Utilities/UNINSTALL"; sourceTree = SOURCE_ROOT; };
-		D29B38022A3A696800A5B51A /* Unload_daemon.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = Unload_daemon.sh; path = "SED ToolBox/DTA/macOS/.Utilities/Unload_daemon.sh"; sourceTree = SOURCE_ROOT; };
-		D29B38032A3A696800A5B51A /* Install_driver.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = Install_driver.sh; path = "SED ToolBox/DTA/macOS/.Utilities/Install_driver.sh"; sourceTree = SOURCE_ROOT; };
-		D29B38042A3A696800A5B51A /* Utility_functions.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = Utility_functions.sh; path = "SED ToolBox/DTA/macOS/.Utilities/Utility_functions.sh"; sourceTree = SOURCE_ROOT; };
 		D2D66F6A2A4CE04300241095 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaHashPassword.cpp; sourceTree = "<group>"; };
 		D2D66F6B2A4CE04300241095 /* DtaHashPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaHashPassword.h; sourceTree = "<group>"; };
 		D2D66F6E2A4D078000241095 /* PyExtHash-1.0-cp39-cp39-macosx_10_9_universal2.whl */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PyExtHash-1.0-cp39-cp39-macosx_10_9_universal2.whl"; sourceTree = "<group>"; };
+		D2F0B47F2A59F8DE002E54A9 /* 02_Uninstall_SEDAccess.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 02_Uninstall_SEDAccess.sh; path = "SED ToolBox/DTA/macOS/.Utilities/02_Uninstall_SEDAccess.sh"; sourceTree = SOURCE_ROOT; };
+		D2F0B4802A59F926002E54A9 /* 51_Uninstall_security_items.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 51_Uninstall_security_items.sh; path = "SED ToolBox/DTA/macOS/.Utilities/51_Uninstall_security_items.sh"; sourceTree = SOURCE_ROOT; };
+		D2F0B4812A59F926002E54A9 /* 22_Uninstall_libraries.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 22_Uninstall_libraries.sh; path = "SED ToolBox/DTA/macOS/.Utilities/22_Uninstall_libraries.sh"; sourceTree = SOURCE_ROOT; };
+		D2F0B4822A59F926002E54A9 /* 01_Uninstall_preference_pane.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 01_Uninstall_preference_pane.sh; path = "SED ToolBox/DTA/macOS/.Utilities/01_Uninstall_preference_pane.sh"; sourceTree = SOURCE_ROOT; };
 		D2FE6D912A15BC49002CC6AC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -538,7 +528,6 @@
 				D20A970F29A8025600B2FCF2 /* build_packages.sh */,
 				D20A971029A8025600B2FCF2 /* build_disk_image.sh */,
 				D20A971129A8025600B2FCF2 /* distribution.xml */,
-				D20A971229A8025600B2FCF2 /* .Utilities */,
 				D20A972329A8025600B2FCF2 /* DTABundles.plist */,
 			);
 			path = "SED ToolBox";
@@ -947,27 +936,6 @@
 			path = OnTV;
 			sourceTree = "<group>";
 		};
-		D20A971229A8025600B2FCF2 /* .Utilities */ = {
-			isa = PBXGroup;
-			children = (
-				D29B37FE2A3A691C00A5B51A /* 01_Uninstall_preference_pane.sh */,
-				D29B37FF2A3A691C00A5B51A /* 02_Uninstall_SEDAccess.sh */,
-				D29B38002A3A691C00A5B51A /* 03_Uninstall_SEDDaemonTest.sh */,
-				D29B37F82A3A691C00A5B51A /* 11_Uninstall_daemon.sh */,
-				D29B37F92A3A691C00A5B51A /* 21_Uninstall_frameworks.sh */,
-				D29B37F72A3A691C00A5B51A /* 22_Uninstall_libraries.sh */,
-				D29B37FA2A3A691C00A5B51A /* 23_Uninstall_driver.sh */,
-				D29B37FB2A3A691C00A5B51A /* 31_Uninstall_packages.sh */,
-				D29B37FC2A3A691C00A5B51A /* 51_Uninstall_security_items.sh */,
-				D29B37FD2A3A691C00A5B51A /* 99_unload_driver.sh */,
-				D29B38012A3A696800A5B51A /* UNINSTALL */,
-				D29B38032A3A696800A5B51A /* Install_driver.sh */,
-				D29B38022A3A696800A5B51A /* Unload_daemon.sh */,
-				D29B38042A3A696800A5B51A /* Utility_functions.sh */,
-			);
-			path = .Utilities;
-			sourceTree = "<group>";
-		};
 		D216710329FC903E0080D08B /* ob */ = {
 			isa = PBXGroup;
 			children = (
@@ -1062,16 +1030,20 @@
 		D28B7E562A4125AF00582735 /* .Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				D2F0B4822A59F926002E54A9 /* 01_Uninstall_preference_pane.sh */,
+				D2F0B47F2A59F8DE002E54A9 /* 02_Uninstall_SEDAccess.sh */,
 				D28B7E752A4125AF00582735 /* 03_Uninstall_SEDDaemonTest.sh */,
-				D28B7E5F2A4125AF00582735 /* 31_Uninstall_packages.sh */,
 				D28B7E5C2A4125AF00582735 /* 11_Uninstall_daemon.sh */,
+				D28B7E732A4125AF00582735 /* 21_Uninstall_frameworks.sh */,
+				D2F0B4812A59F926002E54A9 /* 22_Uninstall_libraries.sh */,
+				D28B7E612A4125AF00582735 /* 23_Uninstall_driver.sh */,
+				D28B7E5F2A4125AF00582735 /* 31_Uninstall_packages.sh */,
+				D2F0B4802A59F926002E54A9 /* 51_Uninstall_security_items.sh */,
 				D28B7E5B2A4125AF00582735 /* 99_unload_driver.sh */,
 				D28B7E7E2A4125B100582735 /* Install_daemon.sh */,
 				D28B7E5D2A4125AF00582735 /* Utility_functions.sh */,
 				D28B7E5E2A4125AF00582735 /* UNINSTALL */,
 				D28B7E602A4125AF00582735 /* Unload_daemon.sh */,
-				D28B7E612A4125AF00582735 /* 23_Uninstall_driver.sh */,
-				D28B7E732A4125AF00582735 /* 21_Uninstall_frameworks.sh */,
 				D28B7E742A4125AF00582735 /* Install_driver.sh */,
 				D28B7E622A4125AF00582735 /* .Utilities */,
 			);
