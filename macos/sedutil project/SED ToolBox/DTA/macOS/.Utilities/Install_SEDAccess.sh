@@ -8,8 +8,7 @@
 
 beroot
 
-# do something smarter than just expecting SEDAccess.app to be in the current dir
-
+# do something smarter than just expecting SEDAccess.app and com.brightplaza.SEDAccess.plist to be in the current dir
 cp -r SEDAccess.app  /usr/local/libexec/SEDAccess.app
 cp com.brightplaza.SEDAccess.plist /Library/LaunchAgents/
 launchctl load /Library/LaunchAgents/com.brightplaza.SEDAccess.plist

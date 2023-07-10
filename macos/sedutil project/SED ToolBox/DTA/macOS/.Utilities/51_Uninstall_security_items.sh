@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -xv
+# set -xv
 
 # Source Utility_functions.sh from the same directory as this script
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -9,7 +9,7 @@ dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 beroot
 
 
-set -xv
+# set -xv
 
 export CA_NAME="Bright Plaza CA"
 
