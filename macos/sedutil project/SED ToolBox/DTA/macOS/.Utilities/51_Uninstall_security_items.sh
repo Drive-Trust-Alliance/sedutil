@@ -1,15 +1,17 @@
 #!/bin/bash
+set -xv
 
-# set -xv
+
+DEBUG_PRINT "Original source for this script was /Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project/SED ToolBox/DTA/macOS/.Utilities/51_Uninstall_security_items.sh"
 
 # Source Utility_functions.sh from the same directory as this script
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+DEBUG_PRINT "this script dir=${dir}"
+
 . "${dir}/Utility_functions.sh"
 
 beroot
-
-
-# set -xv
 
 export CA_NAME="Bright Plaza CA"
 
@@ -49,20 +51,23 @@ export -f delete_SED_keychain
  
 function remove_SED_keychain {
     DEBUG_PRINT "remove_SED_keychain"
-    SED_keychain_exists  >> "${DEBUGGING_OUTPUT}" 2>&1 || ( DEBUG_PRINT "No SED keychain present." && return ; )
+    SED_keychain_exists  >> "${DEBUGGING_OUTPUT}" 2>&1 \
+        || return $( DEBUG_PRINT "No SED keychain present." )
     KEYCHAIN_PASSWORD="$( read_SED_keychain_password_from_system_keychain )" \
-        || return $(DEBUG_FAILURE_RETURN "finding System keychain item \"${KEYCHAIN_PASSWORD_LABEL}\"")
+        || return $( DEBUG_FAILURE_RETURN "finding System keychain item \"${KEYCHAIN_PASSWORD_LABEL}\"" )
     unlock_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1 \
-        || return $(DEBUG_FAILURE_RETURN "unlocking \"${KEYCHAIN_PATH}\"")
+        || return $( DEBUG_FAILURE_RETURN "unlocking \"${KEYCHAIN_PATH}\"" )
     delete_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1 \
-        || return $(DEBUG_FAILURE_RETURN "deleting \"${KEYCHAIN_PATH}\"")
+        || return $( DEBUG_FAILURE_RETURN "deleting \"${KEYCHAIN_PATH}\"" )
 }
 export -f remove_SED_keychain
 
 function system_keychain_has_SED_keychain_password {
     DEBUG_PRINT "system_keychain_has_SED_keychain_password"
-    export KEYCHAIN_PASSWORD="$( read_SED_keychain_password_from_system_keychain )"
-    local -i result=$?
+    local -i result
+    export KEYCHAIN_PASSWORD
+    KEYCHAIN_PASSWORD="$( read_SED_keychain_password_from_system_keychain )"
+    result=$?
     DEBUG_PRINT "KEYCHAIN_PASSWORD=${KEYCHAIN_PASSWORD}"  ## TODO: naughty
     DEBUG_PRINT "result=$result"
     return ${result} && [ -n "${KEYCHAIN_PASSWORD}" ]
@@ -76,9 +81,10 @@ export -f delete_SED_keychain_password_from_system_keychain
 
 function remove_SED_keychain_password {
     DEBUG_PRINT "remove_SED_keychain_password"
-    system_keychain_has_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1 ||  ( DEBUG_PRINT "No SED keychain password present." && return ; )
-    delete_SED_keychain_password_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1 ||
-        DEBUG_FAIL "deleting System keychain item \"${KEYCHAIN_PASSWORD_LABEL}\""  $?
+    system_keychain_has_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1 \
+        ||  return $( DEBUG_PRINT "No SED keychain password present." )
+    delete_SED_keychain_password_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1 \
+        ||  return $( DEBUG_FAILURE_RETURN  "deleting System keychain item \"${KEYCHAIN_PASSWORD_LABEL}\"" )
 }
 export -f remove_SED_keychain_password
 
@@ -101,4 +107,3 @@ remove_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1       \
         || DEBUG_FAIL "removing SED keychain password from system keychain" 10
 remove_CA_cert_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1       \
         || DEBUG_FAIL "removing CA cert from system keychain" 10
-

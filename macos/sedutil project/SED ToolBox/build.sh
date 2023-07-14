@@ -1,6 +1,6 @@
 #!/bin/bash
-#verbose=1
-verbose=0
+verbose=1
+#verbose=0
 DISK_IMAGE_READONLY=1
 ISED_AD_HOC_DISTRIBUTION=0
 
@@ -8,6 +8,8 @@ spew () { (( verbose )) && echo "spew: $@" ; }
 
 (( verbose )) && spew "verbose=${verbose}, spewing" || \
     echo "verbose=${verbose}, not spewing"
+
+spew "/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project/SED ToolBox/build.sh"
 
 # Other scripts from the same directory as this script
 export build_sh_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

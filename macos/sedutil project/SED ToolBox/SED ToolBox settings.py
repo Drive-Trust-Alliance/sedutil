@@ -14,8 +14,8 @@ macOS = os.path.join(build, 'macOS')
 
 format = 'UDZO'
 
-# certificates = os.path.join(build, 'Certificates')
-# certs_name = os.path.basename(certificates)
+certificates = os.path.join(build, 'Certificates')
+certs_name = os.path.basename(certificates)
 
 macOS = os.path.join(build, 'macOS.dmg')
 macOS_name = os.path.basename(macOS)
@@ -31,7 +31,7 @@ size = defines.get('size', None)
 
 # Files to include
 # files = [ certificates, macOS, windows, vcredist ]
-files = [  macOS ]
+files = [ certificates, macOS ]
 
 images = defines.get('images', os.path.join(static, 'resources/images'))
 icon = os.path.join(images, 'Self-Encrypting-Box.VolumeIcon.icns')
@@ -45,7 +45,7 @@ background = os.path.join(images, 'SED ToolBox Background.png')
 _bg_name = '.background.png'
 
 icon_locations = {
-#     certs_name   : (140, 120),
+    certs_name   : (140, 120),
     macOS_name   : (340, 120),
 #     windows_name : (540, 120),
 
