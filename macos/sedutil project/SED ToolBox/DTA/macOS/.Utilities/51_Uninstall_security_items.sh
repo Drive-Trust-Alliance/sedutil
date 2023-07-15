@@ -1,13 +1,10 @@
 #!/bin/bash
-set -xv
+# set -xv
 
 
-DEBUG_PRINT "Original source for this script was /Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project/SED ToolBox/DTA/macOS/.Utilities/51_Uninstall_security_items.sh"
+#echo "Original source for this script was /Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project/SED ToolBox/DTA/macOS/.Utilities/51_Uninstall_security_items.sh"
 
-# Source Utility_functions.sh from the same directory as this script
-dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-DEBUG_PRINT "this script dir=${dir}"
+#echo "this script dir=${dir}"
 
 . "${dir}/Utility_functions.sh"
 
@@ -48,9 +45,8 @@ function delete_SED_keychain {
     2>/dev/null sudo security delete-keychain  "${KEYCHAIN_PATH}"
 }
 export -f delete_SED_keychain
- 
+
 function remove_SED_keychain {
-    DEBUG_PRINT "remove_SED_keychain"
     SED_keychain_exists  >> "${DEBUGGING_OUTPUT}" 2>&1 \
         || return $( DEBUG_PRINT "No SED keychain present." )
     KEYCHAIN_PASSWORD="$( read_SED_keychain_password_from_system_keychain )" \
@@ -63,13 +59,10 @@ function remove_SED_keychain {
 export -f remove_SED_keychain
 
 function system_keychain_has_SED_keychain_password {
-    DEBUG_PRINT "system_keychain_has_SED_keychain_password"
     local -i result
     export KEYCHAIN_PASSWORD
     KEYCHAIN_PASSWORD="$( read_SED_keychain_password_from_system_keychain )"
     result=$?
-    DEBUG_PRINT "KEYCHAIN_PASSWORD=${KEYCHAIN_PASSWORD}"  ## TODO: naughty
-    DEBUG_PRINT "result=$result"
     return ${result} && [ -n "${KEYCHAIN_PASSWORD}" ]
 }
 export -f system_keychain_has_SED_keychain_password
@@ -88,12 +81,33 @@ function remove_SED_keychain_password {
 }
 export -f remove_SED_keychain_password
 
-function remove_CA_cert_from_system_keychain {
+
+function system_keychain_has_CA_cert {
+    DEBUG_PRINT "system_keychain_has_CA_cert"
+    1>/dev/null 2>&1 security find-certificate -c "${CA_NAME}"  "${SYSTEM_KEYCHAIN_PATH}"
+}
+export -f system_keychain_has_CA_cert
+
+function delete_CA_cert_from_system_keychain {
     CAFILENAME="${CA_NAME/\*\./}"
     CERTIFICATES_DIR_PATH="$(realpath "${dir}/../Certificates")"
     CAFILEPATH="${CERTIFICATES_DIR_PATH}/${CAFILENAME}.pem"
-    sudo security remove-trusted-cert -d \
-         "${CAFILEPATH}"
+    DEBUG_PRINT "CAFILENAME=${CAFILENAME} ---> CERTIFICATES_DIR_PATH=${CERTIFICATES_DIR_PATH}"
+    DEBUG_PRINT "---> CAFILEPATH=${CAFILEPATH}"
+    local -i result
+    security remove-trusted-cert -d "${CAFILEPATH}"
+    result=$?
+    DEBUG_PRINT "result=$?"
+    return ${result}
+}
+export -f delete_CA_cert_from_system_keychain
+
+function remove_CA_cert_from_system_keychain {
+    DEBUG_PRINT "remove_CA_cert_from_system_keychain "
+    system_keychain_has_CA_cert  >> "${DEBUGGING_OUTPUT}" 2>&1 \
+        ||  return $( DEBUG_PRINT "No CA cert present." )
+    delete_CA_cert_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1 \
+        ||  return $( DEBUG_FAILURE_RETURN  "deleting CA cert frin System keychain" )
 }
 export -f remove_CA_cert_from_system_keychain
 

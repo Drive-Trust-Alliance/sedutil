@@ -17,10 +17,13 @@ for pane in ${preference_pane_names[@]}
 do
     for dir in ${preference_pane_dirs[@]}
     do
-        rm -rf "${dir}/${pane}.prefPane"
+        if [ -d "${dir}/${pane}.prefPane" ]
+        then
+            DEBUG_PRINT "Removing ${dir}/${pane}.prefPane"
+            rm -rf "${dir}/${pane}.prefPane"
+        fi
     done
 done
 
 
 exit 0
-

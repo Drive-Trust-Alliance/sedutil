@@ -16,7 +16,7 @@ for ext_name in ${old_ext_names} ${new_ext_names}
 do
     for dir in ${extension_dirs}
     do
-        kextunload -c com.brightplaza.${ext_name}
+        2>/dev/null kmutil unload --class-name com.brightplaza.${ext_name}
         ext=${dir}/${ext_name}.kext
         rm -rf ${ext}
     done

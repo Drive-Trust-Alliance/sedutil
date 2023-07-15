@@ -23,14 +23,8 @@ spew image_root="${image_root}"
 # Certificates from the same directory as this script
 CERTIFICATES_DIR="$(cd "${build_sh_dir}/Certificates" ; pwd)"
 spew "CERTIFICATES_DIR=${CERTIFICATES_DIR}"
-[ -d "${CERTIFICATES_DIR}" ] || fail 131 "Couldn't find Certificates directory"
+[ -d "${CERTIFICATES_DIR}" ] || fail 131 "Could not find Certificates directory"
 
-
-# Copy in the certificates, creating the Certificates subfolder
-spew cp -r "${CERTIFICATES_DIR}" "${image_root}"
-cp -r "${CERTIFICATES_DIR}" "${image_root}" \
-    ||  fail 132 "Failed copying Certificates subfolder ${CERTIFICATES_DIR}"
-certificates="${image_root}/${CERTIFICATES_DIR}"
 
 # Create the macOS subfolder
 spew mac_dir="${image_root}/macOS"
@@ -41,6 +35,11 @@ mkdir "${mac_dir}"
 
 # Fill out the macOS subfolder
 
+# Copy in the certificates, creating the Certificates subfolder
+spew cp -r "${CERTIFICATES_DIR}" "${mac_dir}"
+cp -rv "${CERTIFICATES_DIR}" "${mac_dir}" \
+    ||  fail 132 "Failed copying Certificates subfolder ${CERTIFICATES_DIR} to ${mac_dir}"
+    
 # DTATools.pkg
 spew cp -v DTATools.pkg "${mac_dir}/DTATools.pkg"
 cp -v DTATools.pkg "${mac_dir}/DTATools.pkg"  \
@@ -72,7 +71,7 @@ spew "${resources_dir}/fileicon" set "${mac_dir}/Uninstall" "${resources_dir}/im
 # exit 99
 # ###################
 
-# Windows, Linux, misc. come from static as specified by SEB_settings
+# Windows, Linux, misc. come from static as specified by ST_settings
 static="${TARGETROOT}"
 
 dmgbuild="$(which dmgbuild)"
@@ -111,60 +110,60 @@ SetFile -a C "${macOS_dmg}" || \
 
 # Make the containing SED ToolBox dmg
 
-SEB_settings="${static}/SED ToolBox settings.py"
-[ -f "${SEB_settings}" ] || \
-    fail 195 "Can not find ${SEB_settings}"
+ST_settings="${static}/SED ToolBox settings.py"
+[ -f "${ST_settings}" ] || \
+    fail 195 "Can not find ${ST_settings}"
 
-SEB_dmg="${BUILT_PRODUCTS_DIR}/SED ToolBox.dmg"
-[ -f "${SEB_dmg}" ] && rm -rf "${SEB_dmg}"
-spew SEB_dmg="${SEB_dmg}"
+ST_dmg="${BUILT_PRODUCTS_DIR}/SED ToolBox.dmg"
+[ -f "${ST_dmg}" ] && rm -rf "${ST_dmg}"
+spew ST_dmg="${ST_dmg}"
 
-spew "${dmgbuild}" -s "${SEB_settings}" -D static="${static}" -D build="${image_root}" "SED ToolBox" "${SEB_dmg}"
-"${dmgbuild}" -s "${SEB_settings}" -D static="${static}" -D build="${image_root}" "SED ToolBox" "${SEB_dmg}" || \
+spew "${dmgbuild}" -s "${ST_settings}" -D static="${static}" -D build="${image_root}" "SED ToolBox" "${ST_dmg}"
+"${dmgbuild}" -s "${ST_settings}" -D static="${static}" -D build="${image_root}" "SED ToolBox" "${ST_dmg}" || \
     fail 196 "dmgbuild failed with exit code $?"
 
 # DTA custom icon for the .dmg file
 # TODO: use hdiutil udifrez instead
-spew Rez -append "${resources_dir}/images/DTA.VolumeIcon.icns.rsrc" -o "${SEB_dmg}"
-Rez -append "${resources_dir}/images/DTA.VolumeIcon.icns.rsrc" -o "${SEB_dmg}" \
+spew Rez -append "${resources_dir}/images/DTA.VolumeIcon.icns.rsrc" -o "${ST_dmg}"
+Rez -append "${resources_dir}/images/DTA.VolumeIcon.icns.rsrc" -o "${ST_dmg}" \
     fail 197 "Rez -append failed with exit code $?"
-spew SetFile -a C "${SEB_dmg}"
-SetFile -a C "${SEB_dmg}" || \
+spew SetFile -a C "${ST_dmg}"
+SetFile -a C "${ST_dmg}" || \
     fail 198 "SefFile -a C failed with exit code $?"
 
 # Make the containing SED ToolBox iso
 
 config="$("${mac_root}/extract_configuration_type_from_Xcode_build_environment")"
 [ -n "${config}" ] || fail 199 "Can not extract configuration type from environment"
-SEB_iso="${BUILT_PRODUCTS_DIR}/SED ToolBox (${config}).iso"
-[ -f "${SEB_iso}" ] && rm -rf "${SEB_iso}"
-spew SEB_iso="${SEB_iso}"
+ST_iso="${BUILT_PRODUCTS_DIR}/SED ToolBox (${config}).iso"
+[ -f "${ST_iso}" ] && rm -rf "${ST_iso}"
+spew ST_iso="${ST_iso}"
 
 DTASEDDev="${static}/DTA/SED Developer"
 #spew hdiutil makehybrid                               \
 #          -iso -joliet                                \
 #          -default-volume-name 'SED ToolBox'  \
 #          -hide-hfs '{Windows,*.exe}'                 \
-#          -o "${SEB_iso}" "${SEB_dmg}"
+#          -o "${ST_iso}" "${ST_dmg}"
 #hdiutil makehybrid                               \
 #     -iso -joliet                                \
 #     -default-volume-name 'SED ToolBox'  \
 #     -hide-hfs '{Windows,*.exe}'                 \
-#     -o "${SEB_iso}" "${SEB_dmg}"
+#     -o "${ST_iso}" "${ST_dmg}"
 spew hdiutil makehybrid                               \
           -default-volume-name 'SED ToolBox'  \
           -joliet-volume-name  'SED_Box'              \
-          -o "${SEB_iso}" "${SEB_dmg}"
+          -o "${ST_iso}" "${ST_dmg}"
 hdiutil makehybrid                               \
      -default-volume-name 'SED ToolBox'  \
      -joliet-volume-name  'SED_Box'              \
-     -o "${SEB_iso}" "${SEB_dmg}"
+     -o "${ST_iso}" "${ST_dmg}"
 # DTA custom icon for the .iso file
 # TODO: use hdiutil udifrez instead
-spew Rez -append "${resources_dir}/images/DTA.VolumeIcon.icns.rsrc" -o "${SEB_iso}"
-Rez -append "${resources_dir}/images/DTA.VolumeIcon.icns.rsrc" -o "${SEB_iso}" || \
+spew Rez -append "${resources_dir}/images/DTA.VolumeIcon.icns.rsrc" -o "${ST_iso}"
+Rez -append "${resources_dir}/images/DTA.VolumeIcon.icns.rsrc" -o "${ST_iso}" || \
     fail 200 "Rez -append failed with exit code $?"
-spew SetFile -a C "${SEB_iso}"
-SetFile -a C "${SEB_iso}" || \
+spew SetFile -a C "${ST_iso}"
+SetFile -a C "${ST_iso}" || \
     fail 201 "SetFile -a C failed with exit code $?"
-echo Created ${SEB_iso}
+echo Created ${ST_iso}

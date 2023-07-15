@@ -1,7 +1,3 @@
 #!/bin/bash
-echo "Uninstall: $@" >/tmp/Uninstall.out
-set -xv
-echo "pwd=$(pwd)" >> /tmp/Uninstall.out
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-echo "dir=$dir" >> /tmp/Uninstall.out
 ${dir}/.Utilities/UNINSTALL

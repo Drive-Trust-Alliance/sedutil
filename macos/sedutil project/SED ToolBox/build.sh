@@ -1,6 +1,6 @@
 #!/bin/bash
+# verbose=0
 verbose=1
-#verbose=0
 DISK_IMAGE_READONLY=1
 ISED_AD_HOC_DISTRIBUTION=0
 

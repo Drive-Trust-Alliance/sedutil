@@ -16,8 +16,13 @@ do
     for dir in ${launch_agent_dirs}
     do
         plist=${dir}/com.brightplaza.${app_name}.plist
-        2>/dev/null launchctl unload ${plist}
-        rm -f ${plist}
+        if [ -f "${plist}" ]
+        then
+            DEBUG_PRINT "Unload ${plist}"
+            2>/dev/null launchctl unload ${plist}
+            DEBUG_PRINT "Remove ${plist}"
+            rm -f ${plist}
+        fi
     done
 
     PID="$(ps aux | grep ${app_name}.app | grep -v grep | awk '{print $2}')"
@@ -25,12 +30,16 @@ do
     then
         kill -9 "${PID}"
     fi
-    
+
     for dir in ${agent_app_dirs}
     do
-        rm -rf ${dir}/${app_name}.app
+        if [ -d "${dir}/${app_name}.app" ]
+        then
+            DEBUG_PRINT "Remove ${dir}/${app_name}.app"
+            rm -rf ${dir}/${app_name}.app
+        fi
     done
-done    
+done
 
-    
-exit 0    
+
+exit 0

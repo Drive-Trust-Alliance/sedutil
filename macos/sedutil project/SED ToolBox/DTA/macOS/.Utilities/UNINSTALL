@@ -1,16 +1,20 @@
 #!/bin/bash
 echo "UNINSTALL: $0 $@"
- 
-set -xv
+
+# set -xv
 
 # Source Utility_functions.sh from the same directory as this script
-dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# echo "BASH_SOURCE is ${BASH_SOURCE[@]}"
+# echo "BASH_SOURCE[0] is ${BASH_SOURCE[0]}"
+# echo "dirname BASH_SOURCE[0] is $( dirname "${BASH_SOURCE[0]}" )"
+export dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# echo "dir is ${dir}"
 . "${dir}/Utility_functions.sh"
 
 
 beroot
 
-set -xv
+# set -xv
 
 
 DEBUG=${DEBUG:-1}
@@ -58,7 +62,7 @@ export -f DEBUG_FAILURE_RETURN
 export -f PAUSE
 
 
-for f in "${dir}"/*_Uninstall_*.sh "${dir}"/*_unload_*.sh
+for f in  "${dir}"/[0-9][0-9]_unload_*.sh  "${dir}"/[0-9][0-9]_Uninstall_*.sh
 do
     DEBUG_PRINT "$f"
     "$f"
