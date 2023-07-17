@@ -62,7 +62,7 @@ export -f DEBUG_FAILURE_RETURN
 export -f PAUSE
 
 
-for f in  "${dir}"/[0-9][0-9]_unload_*.sh  "${dir}"/[0-9][0-9]_Uninstall_*.sh
+for f in "${dir}"/[0-9][0-9]_Uninstall_*.sh
 do
     DEBUG_PRINT "$f"
     "$f"

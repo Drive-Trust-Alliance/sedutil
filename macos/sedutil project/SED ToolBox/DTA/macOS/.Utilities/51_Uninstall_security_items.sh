@@ -27,6 +27,13 @@ function file_exists {
 }
 export -f file_exists
 
+
+function remove_securityService_password {
+    2>/dev/null security delete-generic-password -l "com.brightplaza.securityService" -s "com.brightplaza.securityService" 
+}
+export -f remove_securityService_password 
+
+        
 function SED_keychain_exists {
     file_exists "${KEYCHAIN_PATH}"
 }
@@ -35,17 +42,17 @@ function read_SED_keychain_password_from_system_keychain {
    2>/dev/null sudo security find-generic-password -l "${KEYCHAIN_PASSWORD_LABEL}" -w "${SYSTEM_KEYCHAIN_PATH}"
 }
 export -f read_SED_keychain_password_from_system_keychain
-
+    
 function unlock_SED_keychain {
     2>/dev/null sudo security unlock-keychain -p "${KEYCHAIN_PASSWORD}"  "${KEYCHAIN_PATH}"
 }
 export -f unlock_SED_keychain
-
+    
 function delete_SED_keychain {
     2>/dev/null sudo security delete-keychain  "${KEYCHAIN_PATH}"
 }
 export -f delete_SED_keychain
-
+    
 function remove_SED_keychain {
     SED_keychain_exists  >> "${DEBUGGING_OUTPUT}" 2>&1 \
         || return $( DEBUG_PRINT "No SED keychain present." )
@@ -84,7 +91,8 @@ export -f remove_SED_keychain_password
 
 function system_keychain_has_CA_cert {
     DEBUG_PRINT "system_keychain_has_CA_cert"
-    1>/dev/null 2>&1 security find-certificate -c "${CA_NAME}"  "${SYSTEM_KEYCHAIN_PATH}"
+#    1>/dev/null 2>&1 security find-certificate -c "${CA_NAME}"  "${SYSTEM_KEYCHAIN_PATH}"
+     security find-certificate -c "${CA_NAME}"  "${SYSTEM_KEYCHAIN_PATH}"
 }
 export -f system_keychain_has_CA_cert
 
@@ -97,7 +105,7 @@ function delete_CA_cert_from_system_keychain {
     local -i result
     security remove-trusted-cert -d "${CAFILEPATH}"
     result=$?
-    DEBUG_PRINT "result=$?"
+    DEBUG_PRINT "result=${result}"
     return ${result}
 }
 export -f delete_CA_cert_from_system_keychain
@@ -107,7 +115,7 @@ function remove_CA_cert_from_system_keychain {
     system_keychain_has_CA_cert  >> "${DEBUGGING_OUTPUT}" 2>&1 \
         ||  return $( DEBUG_PRINT "No CA cert present." )
     delete_CA_cert_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1 \
-        ||  return $( DEBUG_FAILURE_RETURN  "deleting CA cert frin System keychain" )
+        ||  return $( DEBUG_FAILURE_RETURN  "deleting CA cert from System keychain" )
 }
 export -f remove_CA_cert_from_system_keychain
 
@@ -115,9 +123,14 @@ export -f remove_CA_cert_from_system_keychain
 
 
 DEBUG_PRINT "Removing security items"
+remove_securityService_password  >> "${DEBUGGING_OUTPUT}" 2>&1       \
+        || DEBUG_FAIL "removing securityService password" 10
 remove_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1       \
         || DEBUG_FAIL "removing SED keychain" 10
 remove_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1       \
         || DEBUG_FAIL "removing SED keychain password from system keychain" 10
+set -xv
 remove_CA_cert_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1       \
         || DEBUG_FAIL "removing CA cert from system keychain" 10
+set +xv
+
