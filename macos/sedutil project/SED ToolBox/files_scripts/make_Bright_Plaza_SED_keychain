@@ -9,7 +9,7 @@ function generate_SED_keychain_password_if_necessary {
     KEYCHAIN_PASSWORD="$( read_SED_keychain_password_from_system_keychain )"
     if [ -z "${KEYCHAIN_PASSWORD}" ]
     then
-        KEYCHAIN_PASSWORD="$( generate_password )}"         || fail "generating SED keychain password"                57
+        KEYCHAIN_PASSWORD="$( generate_password )"         || fail "generating SED keychain password"                57
         save_SED_keychain_password_in_system_keychain_item  || fail "saving SED keychain password in system keychain" 58
     fi
 }

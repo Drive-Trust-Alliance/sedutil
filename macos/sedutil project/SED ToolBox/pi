@@ -125,7 +125,7 @@ function erase_old_installation {
 
 function generate_SED_keychain_password {
     DEBUG_PRINT "generate_SED_keychain_password"
-    KEYCHAIN_PASSWORD="$( generate_password )}" \
+    KEYCHAIN_PASSWORD="$( generate_password )" \
         || DEBUG_FAIL "generating SED keychain password" 57
 }
 
