@@ -1,7 +1,6 @@
 #!/bin/bash
 # set -xv
 
-
 #echo "Original source for this script was /Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project/SED ToolBox/DTA/macOS/.Utilities/51_Uninstall_security_items.sh"
 
 #echo "this script dir=${dir}"
@@ -26,17 +25,50 @@ function file_exists {
     [ -f "${1}" ]
 }
 export -f file_exists
-
-
-function remove_securityService_password {
-    2>/dev/null security delete-generic-password -l "com.brightplaza.securityService" -s "com.brightplaza.securityService" 
-}
-export -f remove_securityService_password 
-
         
 function SED_keychain_exists {
     file_exists "${KEYCHAIN_PATH}"
 }
+
+
+function perform_trusted_security_operation {
+    security authorizationdb read com.apple.trust-settings.admin > /tmp/security.plist
+    security authorizationdb write com.apple.trust-settings.admin admin
+    local -i result
+    security "$@"
+    result=$?
+    security authorizationdb write com.apple.trust-settings.admin < /tmp/security.plist
+    rm /tmp/security.plist 
+    return ${result}
+}
+
+
+function find_securityService_password {
+    local -i result
+    security -v find-generic-password -l "com.brightplaza.securityService" -s "com.brightplaza.securityService" 
+    result=$?
+    DEBUG_PRINT "find-generic-password return code is $result"
+    return ${result}
+}
+export -f find_securityService_password 
+
+function delete_securityService_password {
+    local -i result
+    security -v delete-generic-password -l "com.brightplaza.securityService" -s "com.brightplaza.securityService" 
+    result=$?
+    DEBUG_PRINT "delete-generic-password return code is $result"
+    return ${result}
+}
+export -f delete_securityService_password 
+
+function remove_securityService_password {
+    find_securityService_password >> "${DEBUGGING_OUTPUT}" 2>&1 \
+        || return $( DEBUG_PRINT "No securityService password" )
+    delete_securityService_password  >> "${DEBUGGING_OUTPUT}" 2>&1 \
+        || return $( DEBUG_FAILURE_RETURN "deleting securityService password" )
+}
+export -f remove_securityService_password 
+
 
 function read_SED_keychain_password_from_system_keychain {
    2>/dev/null sudo security find-generic-password -l "${KEYCHAIN_PASSWORD_LABEL}" -w "${SYSTEM_KEYCHAIN_PATH}"
@@ -70,7 +102,8 @@ function system_keychain_has_SED_keychain_password {
     export KEYCHAIN_PASSWORD
     KEYCHAIN_PASSWORD="$( read_SED_keychain_password_from_system_keychain )"
     result=$?
-    return ${result} && [ -n "${KEYCHAIN_PASSWORD}" ]
+    (( $result==0 )) && [ -n "${KEYCHAIN_PASSWORD}" ] || result=1
+    return ${result}
 }
 export -f system_keychain_has_SED_keychain_password
 
@@ -103,9 +136,12 @@ function delete_CA_cert_from_system_keychain {
     DEBUG_PRINT "CAFILENAME=${CAFILENAME} ---> CERTIFICATES_DIR_PATH=${CERTIFICATES_DIR_PATH}"
     DEBUG_PRINT "---> CAFILEPATH=${CAFILEPATH}"
     local -i result
-    security remove-trusted-cert -d "${CAFILEPATH}"
+    perform_trusted_security_operation remove-trusted-cert -d "${CAFILEPATH}"
     result=$?
-    DEBUG_PRINT "result=${result}"
+    DEBUG_PRINT "remove-trusted-cert result=${result}"
+    perform_trusted_security_operation delete-certificate -c "${CA_NAME}"
+    result=$?
+    DEBUG_PRINT "delete-certificate result=${result}"
     return ${result}
 }
 export -f delete_CA_cert_from_system_keychain
@@ -122,6 +158,7 @@ export -f remove_CA_cert_from_system_keychain
 
 
 
+set -xv
 DEBUG_PRINT "Removing security items"
 remove_securityService_password  >> "${DEBUGGING_OUTPUT}" 2>&1       \
         || DEBUG_FAIL "removing securityService password" 10
@@ -129,8 +166,6 @@ remove_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1       \
         || DEBUG_FAIL "removing SED keychain" 10
 remove_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1       \
         || DEBUG_FAIL "removing SED keychain password from system keychain" 10
-set -xv
 remove_CA_cert_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1       \
         || DEBUG_FAIL "removing CA cert from system keychain" 10
 set +xv
-

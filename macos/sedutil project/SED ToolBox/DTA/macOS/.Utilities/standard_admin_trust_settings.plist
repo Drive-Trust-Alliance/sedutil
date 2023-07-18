@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>class</key>
+	<string>rule</string>
+	<key>comment</key>
+	<string>For modifying Trust Settings in the Admin domain. Requires entitlement or admin authentication.</string>
+	<key>created</key>
+	<real>666039735.57706702</real>
+	<key>k-of-n</key>
+	<integer>1</integer>
+	<key>modified</key>
+	<real>711395616.56650698</real>
+	<key>rule</key>
+	<array>
+		<string>entitled</string>
+		<string>authenticate-admin</string>
+	</array>
+	<key>version</key>
+	<integer>1</integer>
+</dict>
+</plist>
