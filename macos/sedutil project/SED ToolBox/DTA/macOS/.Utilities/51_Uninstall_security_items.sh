@@ -158,7 +158,7 @@ export -f remove_CA_cert_from_system_keychain
 
 
 
-set -xv
+#set -xv
 DEBUG_PRINT "Removing security items"
 remove_securityService_password  >> "${DEBUGGING_OUTPUT}" 2>&1       \
         || DEBUG_FAIL "removing securityService password" 10
@@ -168,4 +168,4 @@ remove_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1       \
         || DEBUG_FAIL "removing SED keychain password from system keychain" 10
 remove_CA_cert_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1       \
         || DEBUG_FAIL "removing CA cert from system keychain" 10
-set +xv
+#set +xv
