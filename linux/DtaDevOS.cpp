@@ -135,9 +135,12 @@ int  DtaDevOS::diskScan()
     if(dir!=NULL)
     {
         while((dirent=readdir(dir))!=NULL) {
-            if((!fnmatch("sd[a-z]",dirent->d_name,0)) || 
+            if((!fnmatch("sd[a-z]",dirent->d_name,0)) ||
+                    (!fnmatch("sd[a-z][a-z]",dirent->d_name,0)) ||
+                    (!fnmatch("sd[a-z][a-z][a-z]",dirent->d_name,0)) ||
                     (!fnmatch("nvme[0-9]",dirent->d_name,0)) ||
-                    (!fnmatch("nvme[0-9][0-9]",dirent->d_name,0))
+                    (!fnmatch("nvme[0-9][0-9]",dirent->d_name,0)) ||
+                    (!fnmatch("nvme[0-9][0-9][0-9]",dirent->d_name,0))
                     ) {
                 tempstring = dirent->d_name;
                 devices.push_back(tempstring);
