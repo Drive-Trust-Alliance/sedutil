@@ -23,6 +23,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cstring>
 
+constexpr int tcgDefaultTimeoutMS = 20*1000;
+
 static int parse_mi_dev(const char *dev, unsigned int *net, uint8_t *eid,
                         unsigned int *ctrl)
 {
@@ -125,7 +127,10 @@ uint8_t DtaDevLinuxNvmeMi::sendCmd(ATACOMMAND cmd, uint8_t protocol,
         args.data_len = bufferlen;
         args.data = buffer;
 
+        unsigned int timeout = nvme_mi_ep_get_timeout(endpoint);
+        nvme_mi_ep_set_timeout(endpoint, tcgDefaultTimeoutMS);
         rc = nvme_mi_admin_security_recv(controller, &args);
+        nvme_mi_ep_set_timeout(endpoint, timeout);
         if (rc < 0)
         {
             // transport layer error
@@ -144,7 +149,10 @@ uint8_t DtaDevLinuxNvmeMi::sendCmd(ATACOMMAND cmd, uint8_t protocol,
         args.data_len = bufferlen;
         args.data = buffer;
 
+        unsigned int timeout = nvme_mi_ep_get_timeout(endpoint);
+        nvme_mi_ep_set_timeout(endpoint, tcgDefaultTimeoutMS);
         rc = nvme_mi_admin_security_send(controller, &args);
+        nvme_mi_ep_set_timeout(endpoint, timeout);
         if (rc < 0) {
             // transport layer error
             LOG(E) << "security-send failed: " << std::strerror(errno);
