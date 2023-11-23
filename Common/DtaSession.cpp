@@ -140,11 +140,22 @@ DtaSession::start(OPAL_UID SP, char * HostChallenge, vector<uint8_t> SignAuthori
 
     cmd->addToken(OPAL_TOKEN::ENDLIST); // ]  (Close Bracket)
     cmd->complete();
-	if ((lastRC = sendCommand(cmd, response)) != 0) {
-		LOG(E) << "Session start failed rc = " << (int)lastRC;
-		delete cmd;
-		return lastRC;
-	}  
+    for (uint8_t trial=1; trial<=2; trial++) {
+        if ((lastRC = sendCommand(cmd, response)) != 0) {
+            LOG(E) << "Session start failed rc = " << (int)lastRC;
+            if (trial == 1) {
+                LOG(D) << "Try to apply stack reset";
+                if (d->stack_reset(d->comID() << 16) == 0x0000) {
+                    LOG(D) << "Stack Reset Successful";
+                    continue;
+                }
+                LOG(E) << "Stack Reset Failed";
+            }
+            delete cmd;
+            return lastRC;
+        }
+        break;
+    }
     // call user method SL HSN TSN EL EOD SL 00 00 00 EL
     //   0   1     2     3  4   5   6  7   8
     HSN = SWAP32(response.getUint32(4));

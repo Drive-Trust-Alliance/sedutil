@@ -264,6 +264,97 @@ typedef struct _OPALHeader {
     OPALPacket pkt;
     OPALDataSubPacket subpkt;
 } OPALHeader;
+
+/** Comm Layer Commands */
+
+/** Comm Layer Response Header
+ * se Header */
+typedef struct _SSCCommRespHdr {
+    uint32_t extendedComID;
+    uint32_t requestCode;
+    uint16_t  reserved0;
+    uint16_t length;
+} SSCCommRespHdr;
+
+typedef struct _SSCDateVal {
+	uint8_t  year[2];
+	uint8_t  month;
+	uint8_t  day;
+	uint8_t  hour;
+	uint8_t  minute;
+	uint8_t  second;
+	uint8_t  fraction[2];
+	uint8_t  reserved;
+
+	uint16_t get_year() {
+		return (year[1] | (year[0] << 8));
+	}
+	uint16_t get_fraction() {
+		return (fraction[1] | (fraction[0] << 8));
+	}
+} SSCDateVal;
+
+typedef struct _SSCCommResp {
+	union Response {
+		struct {
+			SSCCommRespHdr hdr;
+		} no_resp;
+		struct VerifyComIDValid {
+			SSCCommRespHdr hdr;
+			enum uint32_t {
+				INVALID = 0x00000000,
+				INACTIVE = 0x01000000,
+				ISSUED = 0x02000000,
+				ASSOCIATED = 0x03000000
+			} state;
+			SSCDateVal allocation_time;
+			SSCDateVal expiry_time;
+			SSCDateVal since_last_reset_time;
+		} verify_comid_valid;
+		struct Reset {
+			SSCCommRespHdr hdr;
+			enum uint32_t {
+				SUCCESS = 0x00000000,
+				FAILURE = 0x01000000
+			} status;
+		} reset;
+		struct {
+			SSCCommRespHdr hdr;
+		} reset_pending;
+		struct {
+			uint8_t data[512];
+		} raw;
+	} structure;
+	enum {NO_RESP, VERIFY_COMID_RESP, STACK_RESET_RESP, STACK_RESET_PEND_RESP, UNKNOWN } type;
+	uint16_t length;
+
+	void decode() {
+		length = ((structure.no_resp.hdr.length & 0xFF) << 8) | ((structure.no_resp.hdr.length >> 8) & 0xFF);
+		switch (structure.no_resp.hdr.requestCode) {
+			case 0x01000000 : {
+				if (structure.no_resp.hdr.length == 0)
+					type = NO_RESP;
+				else if (length == 0x22)
+					type = VERIFY_COMID_RESP;
+				else type = UNKNOWN;
+			};
+			break;
+			case 0x02000000 : {
+				if (structure.reset_pending.hdr.length == 0)
+					type = STACK_RESET_PEND_RESP;
+				else if (length == 0x4)
+					type = STACK_RESET_RESP;
+				else type = UNKNOWN;
+			};
+			break;
+			default: {
+				type = UNKNOWN;
+			}
+			break;
+		}
+	}
+} SSCCommResp;
+
 /** ATA commands needed for TCG storage communication */
 typedef enum _ATACOMMAND {
     IF_RECV = 0x5c,

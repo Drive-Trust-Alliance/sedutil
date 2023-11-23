@@ -283,6 +283,12 @@ public:
 	virtual uint8_t exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol = 0x01) = 0;
 	/** return the communications ID to be used for sessions to this device */
 	virtual uint16_t comID() = 0;
+
+	/* Reset the stack, without powering cycle the drive. All ongoing or
+	* in middle sessions are closed. Non committed transactions are lost.
+	*/
+	virtual uint8_t stack_reset(uint32_t ext_com_id);
+
 	bool no_hash_passwords; /** disables hashing of passwords */
 	sedutiloutput output_format; /** standard, readable, JSON */
 protected:
