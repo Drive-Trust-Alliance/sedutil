@@ -23,4 +23,4 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 //
 // Returns true if OK to run, false if process should exit.
 //
-extern "C" bool authorize(int argc, char * argv[]);
+extern "C" bool authorize_exec(int argc, char * argv[]);

@@ -108,7 +108,7 @@ int main(int argc, char * argv[])
 		return DTAERROR_COMMAND_ERROR;
 	}
 
-    if (! authorize(argc, argv)) {
+    if (! authorize_exec(argc, argv)) {
         return DTAERROR_NOT_AUTHORIZED;
     }
         

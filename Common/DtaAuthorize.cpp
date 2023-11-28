@@ -25,4 +25,4 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 //
 // The default is just to say OK.
 //
-bool authorize(int argc, char * argv[]) { return true; }
+bool authorize_exec(int argc, char * argv[]) { return true; }
