@@ -21,6 +21,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _DTAOPTIONS_H
 #define	_DTAOPTIONS_H
 
+#include "DtaOSSpecificOptions.h"
+
 /** Output modes */
 typedef enum _sedutiloutput {
 	sedutilNormal,
@@ -82,7 +84,6 @@ typedef enum _sedutiloption {
 	setAdmin1Pwd,
 	setPassword,
 	setPassword_SUM,
-	pbaValid,
 	activate,
 	auditWrite,
 	auditRead,
@@ -90,9 +91,7 @@ typedef enum _sedutiloption {
 	getmfgstate,
 	DataStoreWrite,
 	DataStoreRead,
-	MBRRead,
 	getMBRsize,
-	createUSB,
 	loadPBAimage,
 	setLockingRange,
 	revertTPer,
@@ -131,7 +130,7 @@ typedef enum _sedutiloption {
 	rawCmd,
 	version,
 	hashvalidation,
-
+#OPERATING_SYSTEM_SPECIFIC_OPTIONS
 } sedutiloption;
 /** verify the number of arguments passed */
 #define CHECKARGS(x) \

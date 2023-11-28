@@ -376,12 +376,6 @@ uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint
 	uint8_t auditlogwr(char * password, uint32_t startpos, uint32_t len, char * buffer, entry_t * ent, char * userid); // audit log write
 	uint8_t auditlogrd(char * password, uint32_t startpos, uint32_t len, char * buffer,char * userid); // audit log read
 	uint8_t createUSB(char * filename);
-	uint8_t loadPBA_O(char * password, char * filename);
-	uint8_t loadPBA_M(char * password, char * filename);
-    /** Loads a disk image file to the shadow MBR table.
-         * @param password the password for the administrative authority with access to the table
-         * @param filename the filename of the disk image
-         */
 	uint8_t loadPBA(char * password, char * filename);
 		 // create an audit user UserN disk_info.OPAL20_numUsers
 	void gethuser(char * buf);
