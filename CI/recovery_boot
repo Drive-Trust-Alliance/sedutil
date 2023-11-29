@@ -1,0 +1,4 @@
+#!/bin/bash
+# No longer seems to work as of Sonoma, possibly earlier
+sudo nvram "recovery-boot-mode=unused"
+sudo reboot

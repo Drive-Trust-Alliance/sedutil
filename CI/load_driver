@@ -1,0 +1,2 @@
+#!/bin/bash
+asroot kmutil load -b com.brightplaza.BrightPlazaTPer

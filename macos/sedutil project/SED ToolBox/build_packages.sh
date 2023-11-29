@@ -11,26 +11,26 @@ cd "${BUILT_PRODUCTS_DIR}"
 spew "pwd=>$(pwd)"
 
 TARGETROOT="${SRCROOT}/${TARGETNAME}"
-bundles_dir="./bundles"
-spew "bundles_dir=${bundles_dir}"
-bundles_scripts_dir="${TARGETROOT}/bundles_scripts"
-spew "bundles_scripts_dir=${bundles_scripts_dir}"
-spew pkgbuild --root "${bundles_dir}"                                           \
-              --scripts "${bundles_scripts_dir}"                                \
-              --component-plist "${TARGETROOT}/DTABundles.plist"                \
-              --identifier com.brightplaza.dtabundles                           \
-              --version "${version}"                                            \
-              --install-location /                                              \
-              --ownership recommended                                           \
-              DTAbundles.pkg
-pkgbuild --root "${bundles_dir}"                                                \
-         --scripts "${bundles_scripts_dir}"                                     \
-         --component-plist "${TARGETROOT}/DTABundles.plist"                     \
-         --identifier com.brightplaza.dtabundles                                \
-         --version "${version}"                                                 \
-         --install-location /                                                   \
-         --ownership recommended                                                \
-         DTAbundles.pkg  ||  exit 1
+#bundles_dir="./bundles"
+#spew "bundles_dir=${bundles_dir}"
+#bundles_scripts_dir="${TARGETROOT}/bundles_scripts"
+#spew "bundles_scripts_dir=${bundles_scripts_dir}"
+#spew pkgbuild --root "${bundles_dir}"                                           \
+#              --scripts "${bundles_scripts_dir}"                                \
+#              --component-plist "${TARGETROOT}/DTABundles.plist"                \
+#              --identifier com.brightplaza.dtabundles                           \
+#              --version "${version}"                                            \
+#              --install-location /                                              \
+#              --ownership recommended                                           \
+#              DTAbundles.pkg
+#pkgbuild --root "${bundles_dir}"                                                \
+#         --scripts "${bundles_scripts_dir}"                                     \
+#         --component-plist "${TARGETROOT}/DTABundles.plist"                     \
+#         --identifier com.brightplaza.dtabundles                                \
+#         --version "${version}"                                                 \
+#         --install-location /                                                   \
+#         --ownership recommended                                                \
+#         DTAbundles.pkg  ||  exit 1
 
 files_dir="./files"
 spew "files_dir=${files_dir}"

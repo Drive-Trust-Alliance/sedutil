@@ -1,0 +1,5 @@
+#!/bin/bash
+arguments="${@:- -W}"
+DTA_project_root="${DTA_ROOT:-${HOME}/preboot/DTA/sedutil}"
+DTA_xcw="${DTA_XCW:-${DTA_project_root}/DTA.xcworkspace}"
+open ${arguments} "${DTA_xcw}"

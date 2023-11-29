@@ -1,0 +1,15 @@
+#!/bin/bash 
+
+#set -xv
+
+version="${1:-Release}"
+project="${2:-SED Driver}"
+pkg="${3:-DTADriver}"
+
+attach_iso "${version}" "${project}" || die "Could not attach ${project} (${version}).iso"
+UNINSTALL="/Volumes/SED software by Drive Trust Alliance/UNINSTALL"
+echo Uninstalling ... will reboot ... && "${UNINSTALL}"
+echo detach_iso "${version}" "${project}"  NOT DONE
+
+exit $?
+

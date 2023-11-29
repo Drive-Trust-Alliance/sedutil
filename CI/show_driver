@@ -1,0 +1,2 @@
+#!/bin/bash
+2>/dev/null kmutil showloaded | fgrep com.brightplaza.BrightPlazaTPer

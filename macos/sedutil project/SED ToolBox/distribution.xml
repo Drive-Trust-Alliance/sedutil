@@ -47,7 +47,9 @@
   <!-- List them again here. They can now be organized
        as a hierarchy if you want. -->
   <choices-outline>
+      <!--
     <line choice="com.brightplaza.dtabundles"/>
+      -->
     <line choice="com.brightplaza.dtafiles"/>
   </choices-outline>
   

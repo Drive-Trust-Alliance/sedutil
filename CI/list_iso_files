@@ -1,0 +1,20 @@
+#!/bin/bash 
+#set -xv
+version="${1:-Release}"
+project="${2:-SED Driver}"
+pkg="${3:-DTADriver}"
+
+attach_iso "${version}" "${project}"
+pkg="/Volumes/SED software by Drive Trust Alliance/${pkg}.pkg"
+[ -f "${pkg}" ] || die "Can't find packge $pkg"
+boms="$(pkgutil --bom "${pkg}")"
+lsbom -s $boms
+result=$?
+rm -rf $boms
+for bom in $boms
+do 
+    bomdir="$(dirname "$(dirname "${bom}")")"
+    [ -d "${bomdir}" ] && rm -rf "${bomdir}"
+done
+detach_iso "${version}" "${project}"
+exit $result

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# set -xv
+
+version="${1:-Release}"
+project="${2:-SED Driver}"
+
+isoVol="/Volumes/${project}"
+dmgVol="/Volumes/SED software by Drive Trust Alliance" 
+
+function possibly_eject {
+    local target="${1}"
+    [ -d "${target}" ] && diskutil quiet eject "${target}"
+}
+
+possibly_eject "${dmgVol}"
+possibly_eject "${isoVol}"
+exit $?
+
