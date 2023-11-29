@@ -48,6 +48,12 @@
 		D2C956E12B179A5100E00FE6 /* DtaOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2C956E02B179A4A00E00FE6 /* DtaOptions.cpp */; };
 		D2C956E42B179B0E00E00FE6 /* sedutil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2C956E32B179B0E00E00FE6 /* sedutil.framework */; };
 		D2C956E92B17AD9F00E00FE6 /* DtaAuthorize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2C956E82B17AD6700E00FE6 /* DtaAuthorize.cpp */; };
+		D2C956EB2B17E8EF00E00FE6 /* BrightPlazaTPer.kext in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956EA2B17E8EF00E00FE6 /* BrightPlazaTPer.kext */; };
+		D2C956F22B17E95700E00FE6 /* SEDKernelInterface.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956ED2B17E95600E00FE6 /* SEDKernelInterface.framework */; };
+		D2C956F32B17E95700E00FE6 /* cifra.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956EE2B17E95700E00FE6 /* cifra.framework */; };
+		D2C956F42B17E95700E00FE6 /* log.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956EF2B17E95700E00FE6 /* log.framework */; };
+		D2C956F52B17E95700E00FE6 /* oui.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956F02B17E95700E00FE6 /* oui.framework */; };
+		D2C956F62B17E95700E00FE6 /* sedutil.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956F12B17E95700E00FE6 /* sedutil.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +87,7 @@
 			dstPath = bundles/Library/Extensions;
 			dstSubfolderSpec = 16;
 			files = (
+				D2C956EB2B17E8EF00E00FE6 /* BrightPlazaTPer.kext in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +97,11 @@
 			dstPath = bundles/Library/Frameworks;
 			dstSubfolderSpec = 16;
 			files = (
+				D2C956F22B17E95700E00FE6 /* SEDKernelInterface.framework in CopyFiles */,
+				D2C956F32B17E95700E00FE6 /* cifra.framework in CopyFiles */,
+				D2C956F42B17E95700E00FE6 /* log.framework in CopyFiles */,
+				D2C956F52B17E95700E00FE6 /* oui.framework in CopyFiles */,
+				D2C956F62B17E95700E00FE6 /* sedutil.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,6 +297,12 @@
 		D2C956E52B17AB2E00E00FE6 /* DtaOperatingSpecificOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaOperatingSpecificOptions.cpp; sourceTree = "<group>"; };
 		D2C956E72B17AD6700E00FE6 /* DtaAuthorize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaAuthorize.h; sourceTree = "<group>"; };
 		D2C956E82B17AD6700E00FE6 /* DtaAuthorize.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAuthorize.cpp; sourceTree = "<group>"; };
+		D2C956EA2B17E8EF00E00FE6 /* BrightPlazaTPer.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; name = BrightPlazaTPer.kext; path = "/Users/scott/preboot/DTA/sedutil/macos/sedutil project/../../../../../../../Library/Extensions/BrightPlazaTPer.kext"; sourceTree = "<absolute>"; };
+		D2C956ED2B17E95600E00FE6 /* SEDKernelInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SEDKernelInterface.framework; path = ../../../../../../../Library/Frameworks/SEDKernelInterface.framework; sourceTree = "<group>"; };
+		D2C956EE2B17E95700E00FE6 /* cifra.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = cifra.framework; path = ../../../../../../../Library/Frameworks/cifra.framework; sourceTree = "<group>"; };
+		D2C956EF2B17E95700E00FE6 /* log.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = log.framework; path = ../../../../../../../Library/Frameworks/log.framework; sourceTree = "<group>"; };
+		D2C956F02B17E95700E00FE6 /* oui.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = oui.framework; path = ../../../../../../../Library/Frameworks/oui.framework; sourceTree = "<group>"; };
+		D2C956F12B17E95700E00FE6 /* sedutil.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sedutil.framework; path = ../../../../../../../Library/Frameworks/sedutil.framework; sourceTree = "<group>"; };
 		D2D66F6A2A4CE04300241095 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaHashPassword.cpp; sourceTree = "<group>"; };
 		D2D66F6B2A4CE04300241095 /* DtaHashPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaHashPassword.h; sourceTree = "<group>"; };
 		D2DC165E2B1794C9002A8DC8 /* MakeVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = MakeVersion.sh; sourceTree = "<group>"; };
@@ -661,6 +679,12 @@
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D2C956EE2B17E95700E00FE6 /* cifra.framework */,
+				D2C956EF2B17E95700E00FE6 /* log.framework */,
+				D2C956F02B17E95700E00FE6 /* oui.framework */,
+				D2C956ED2B17E95600E00FE6 /* SEDKernelInterface.framework */,
+				D2C956F12B17E95700E00FE6 /* sedutil.framework */,
+				D2C956EA2B17E8EF00E00FE6 /* BrightPlazaTPer.kext */,
 				D26496E72A36849F00F09A67 /* extract_configuration_from_Xcode_build_environment */,
 				D26496E62A36849E00F09A67 /* extract_configuration_type_from_Xcode_build_environment */,
 				D20A961B29A8025600B2FCF2 /* SED ToolBox */,
