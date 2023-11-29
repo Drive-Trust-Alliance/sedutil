@@ -1,2 +1,0 @@
-#!/bin/bash
-./remove_trusted_CA_identity_from_system_keychain

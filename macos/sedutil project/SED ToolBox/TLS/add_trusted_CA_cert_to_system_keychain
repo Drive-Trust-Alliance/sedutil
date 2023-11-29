@@ -1,6 +1,0 @@
-#!/bin/bash
-# Source Utility_functions.sh from the same directory as this script
-cur=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-. "${cur}/Utility_functions.sh"
-
-sudo security add-trusted-cert -d -r "trustRoot" -p "basic" -p "ssl" -k ${SYSTEM_KEYCHAIN_PATH} "$1"

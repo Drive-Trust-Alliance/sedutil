@@ -34,6 +34,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevOpal1.h"
 #include "DtaDevOpal2.h"
 #include "DtaDevEnterprise.h"
+#include "DtaAuthorize.h"
 #include "Version.h"
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 #include "regtry.h"
@@ -97,8 +98,6 @@ static int hashvalidate(char * password, char *devname)
     return 0;
 }
 
-#endif  // Windows-only
-
 int main(int argc, char * argv[])
 {
 	string st1;
@@ -109,7 +108,7 @@ int main(int argc, char * argv[])
 	}
 
     if (! authorize_exec(argc, argv)) {
-        return DTAERROR_NOT_AUTHORIZED;
+        return DTAERROR_AUTHORIZE_EXEC_FAILED;
     }
         
     if ((opts.action != sedutiloption::scan) &&
@@ -372,7 +371,7 @@ int main(int argc, char * argv[])
 		break;
             
 
-#OPERATING_SYSTEM_SPECIFIC_OPTIONS
+OPERATING_SYSTEM_SPECIFIC_OPTIONS
             
     default:
         LOG(E) << "Unable to determine what you want to do ";

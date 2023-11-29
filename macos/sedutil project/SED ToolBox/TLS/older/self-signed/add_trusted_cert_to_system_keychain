@@ -1,2 +1,0 @@
-#!/bin/bash -xv
-sudo security -v -v -v add-trusted-cert -d -r trustAsRoot -p ssl  -k /Library/Keychains/System.keychain './Bright Plaza, Inc. SED Server.pem'

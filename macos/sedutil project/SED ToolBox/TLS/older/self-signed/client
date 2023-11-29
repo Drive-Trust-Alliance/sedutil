@@ -1,3 +1,0 @@
-#!/bin/bash
-$HOME/Library/Developer/Xcode/DerivedData/TLSTool-frewowfonukeqzfxixapbcyworom/Build/Products/Debug/TLSTool s_client "$@"
-

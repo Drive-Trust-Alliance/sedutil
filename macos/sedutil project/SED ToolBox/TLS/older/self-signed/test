@@ -1,7 +1,0 @@
-#!/bin/bash
-echo starting server
->./server.out 2>./server.err ./server &
-sleep 5
-echo starting client
->./client.out 2>./client.err ./client
-

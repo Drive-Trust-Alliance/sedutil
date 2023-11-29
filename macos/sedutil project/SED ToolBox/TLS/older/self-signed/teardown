@@ -1,7 +1,0 @@
-#!/bin/bash -xv
-./remove_SED_keychain
-./remove_identity_from_login_keychain
-./remove_trusted_cert_from_system_keychain
-./remove_trusted_CA_cert_from_system_keychain
-./remove_trusted_CA_cert_from_system_roots_keychain
-echo 'Use Keychain Access to verify everything is removed'

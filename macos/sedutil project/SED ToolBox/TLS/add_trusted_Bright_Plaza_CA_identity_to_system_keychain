@@ -1,3 +1,0 @@
-#!/bin/bash
-./add_Bright_Plaza_CA_identity_to_system_keychain
-./add_trusted_Bright_Plaza_CA_cert_to_system_keychain

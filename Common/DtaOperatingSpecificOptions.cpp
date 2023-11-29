@@ -16,14 +16,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 
-// Authorize this sedutil-cli run.
-//   Check licenses, etc., if appropriate.
+// Operating specific or customizing options can be included in the options list
+// by entering them here like this:
 //
-// Returns true if OK to run, false if process should exit.
-//
-// The default is just to say OK.
-//
-#include "DtaAuthorize.h"
-bool authorize_exec(int , char * []) { return true; }
+//  BEGIN_OPTION(catchFireAndBurn, 2)
+//      OPTION_IS(password)
+//      OPTION_IS(device)
+//  END_OPTION

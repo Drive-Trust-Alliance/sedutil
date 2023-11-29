@@ -1,2 +1,0 @@
-#!/bin/bash -xv
-sudo security -v -v -v import './Bright Plaza, Inc. SED Server.key' -k /Library/Keychains/System.keychain -a label 'Bright Plaza, Inc. SED Server'

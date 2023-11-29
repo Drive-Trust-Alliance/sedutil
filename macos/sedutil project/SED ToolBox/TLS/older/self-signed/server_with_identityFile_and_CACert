@@ -1,9 +1,0 @@
-#!/bin/bash -xv
-SED_IDENTITY_PATH='Bright Plaza, Inc. SED Server.p12'
-SED_CACERT_NAME='Bright Plaza, Inc. SED Server CA'
-/Users/scott/Library/Developer/Xcode/DerivedData/TLSTool-frewowfonukeqzfxixapbcyworom/Build/Products/Debug/TLSTool s_server \
-    -identityFile "${SED_IDENTITY_PATH}" \
-    -s_cacert "${SED_CACERT_NAME}" \
-    -authenticate none
-
-                                                                                                            

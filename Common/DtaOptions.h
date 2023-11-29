@@ -130,7 +130,7 @@ typedef enum _sedutiloption {
 	rawCmd,
 	version,
 	hashvalidation,
-#OPERATING_SYSTEM_SPECIFIC_OPTIONS
+    OPERATING_SYSTEM_SPECIFIC_OPTIONS
 } sedutiloption;
 /** verify the number of arguments passed */
 #define CHECKARGS(x) \

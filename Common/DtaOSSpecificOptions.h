@@ -22,7 +22,6 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define    _DTAOSSPECIFICOPTIONS_H
 
 #define OPERATING_SYSTEM_SPECIFIC_OPTIONS
-version,
 
 #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
 #define OSNAME "linux"

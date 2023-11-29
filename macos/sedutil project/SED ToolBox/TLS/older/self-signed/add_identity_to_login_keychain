@@ -1,4 +1,0 @@
-#!/bin/bash -xv
-SED_IDENTITY_PASSWORD='DTA'
-SED_IDENTITY_PATH='Bright Plaza, Inc. SED Server.p12'
-security -v -v -v import "${SED_IDENTITY_PATH}" -P "${SED_IDENTITY_PASSWORD}"

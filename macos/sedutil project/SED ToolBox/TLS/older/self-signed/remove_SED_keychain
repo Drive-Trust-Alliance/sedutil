@@ -1,2 +1,0 @@
-#!/bin/bash -xv
-sudo security delete-keychain "/Library/Keychains/Bright Plaza, Inc. SED Server.keychain"

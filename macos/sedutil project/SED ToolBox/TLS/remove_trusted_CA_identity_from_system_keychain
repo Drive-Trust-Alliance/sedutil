@@ -1,8 +1,0 @@
-#!/bin/bash
-# Source from the same directory as this script
-cur=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-. "${cur}/Bright_Plaza_customizations.sh"
-
-1>/dev/null 2>&1 sudo security delete-identity -c "${CA_NAME}" -t "${SYSTEM_KEYCHAIN_PATH}"
-1>/dev/null 2>&1 sudo security delete-identity -c "${CA_NAME}"    "${SYSTEM_KEYCHAIN_PATH}"
-

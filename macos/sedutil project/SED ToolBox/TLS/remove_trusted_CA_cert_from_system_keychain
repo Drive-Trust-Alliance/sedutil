@@ -1,6 +1,0 @@
-#!/bin/bash
-# Source from the same directory as this script
-cur=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-. "${cur}/Bright_Plaza_customizations.sh"
-
-sudo security delete-certificate -c "${CA_NAME}" "${SYSTEM_KEYCHAIN_PATH}"

@@ -1,2 +1,0 @@
-#!/bin/bash
-security -v delete-identity -t -c "Bright Plaza, Inc. SED Server" '/Library/Keychains/System.keychain'

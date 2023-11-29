@@ -1,8 +1,0 @@
-#!/bin/bash -xv
-./make_self_signed_ca_cert \
-    -c="US"                              \
-    -s="Pennsylvania"                    \
-    -l="Pittsburgh"                      \
-    -o="Bright Plaza, Inc."              \
-    -u="Drive Trust Alliance"            \
-    -n="Bright Plaza SED Server"

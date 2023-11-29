@@ -1,2 +1,0 @@
-#!/bin/bash
-./add_trusted_CA_cert_to_system_keychain 'Bright Plaza CA.pem'

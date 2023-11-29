@@ -1,4 +1,0 @@
-#!/bin/bash
-./make_certs_and_identity
-./add_identity_to_login_keychain
-./add_trusted_CA_cert_to_system_keychain

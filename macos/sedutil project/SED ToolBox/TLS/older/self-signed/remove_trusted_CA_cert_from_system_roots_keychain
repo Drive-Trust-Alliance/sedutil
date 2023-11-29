@@ -1,3 +1,0 @@
-#!/bin/bash -xv
-sudo security -v delete-certificate -t -c "Bright Plaza, Inc. SED Server CA"  /System/Library/Keychains/SystemRootCertificates.keychain
-sudo security -v delete-certificate -c "Bright Plaza, Inc. SED Server CA"  /System/Library/Keychains/SystemRootCertificates.keychain

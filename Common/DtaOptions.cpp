@@ -231,7 +231,6 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
             OPTION_IS(newpassword)
 			OPTION_IS(device)
         END_OPTION
-		BEGIN_OPTION(pbaValid, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(activate, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(auditWrite, 4)
             OPTION_IS(eventid)
@@ -260,15 +259,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
             OPTION_IS(len)
 			OPTION_IS(device)
         END_OPTION
-		BEGIN_OPTION(MBRRead, 5)
-            OPTION_IS(password)
-            OPTION_IS(pbafile)
-			OPTION_IS(startpos)
-            OPTION_IS(len)
-			OPTION_IS(device)
-        END_OPTION
 		BEGIN_OPTION(getMBRsize, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(createUSB, 3) OPTION_IS(pbafile) OPTION_IS(device) OPTION_IS(devusb) END_OPTION
 		BEGIN_OPTION(loadPBAimage, 3) OPTION_IS(password) OPTION_IS(pbafile) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(revertTPer, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(revertNoErase, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
@@ -411,6 +402,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
             OPTION_IS(device)
         END_OPTION
 		BEGIN_OPTION(hashvalidation, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+#include "DtaOperatingSpecificOptions.cpp"
 		else {
             LOG(E) << "Invalid command line argument " << argv[i];
 			return DTAERROR_INVALID_COMMAND;

@@ -2,9 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:../../../../../../../bin/reload">
+      location = "group:SEDUtilities.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project/SEDUtilities.xcodeproj">
+      location = "absolute:../../../../../../../Library/Frameworks">
    </FileRef>
 </Workspace>
