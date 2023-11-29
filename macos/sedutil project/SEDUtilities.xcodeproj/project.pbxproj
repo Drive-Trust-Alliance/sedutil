@@ -283,7 +283,6 @@
 		D2C956E02B179A4A00E00FE6 /* DtaOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaOptions.cpp; sourceTree = "<group>"; };
 		D2C956E32B179B0E00E00FE6 /* sedutil.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sedutil.framework; path = ../../../../../../../Library/Frameworks/sedutil.framework; sourceTree = "<group>"; };
 		D2C956E52B17AB2E00E00FE6 /* DtaOperatingSpecificOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaOperatingSpecificOptions.cpp; sourceTree = "<group>"; };
-		D2C956E62B17ACBB00E00FE6 /* FHDtaOperatingSpecificOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FHDtaOperatingSpecificOptions.cpp; sourceTree = "<group>"; };
 		D2C956E72B17AD6700E00FE6 /* DtaAuthorize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaAuthorize.h; sourceTree = "<group>"; };
 		D2C956E82B17AD6700E00FE6 /* DtaAuthorize.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAuthorize.cpp; sourceTree = "<group>"; };
 		D2D66F6A2A4CE04300241095 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaHashPassword.cpp; sourceTree = "<group>"; };
@@ -647,7 +646,6 @@
 				D2DC171F2B179787002A8DC8 /* DtaHashPwd.cpp */,
 				D2C956E02B179A4A00E00FE6 /* DtaOptions.cpp */,
 				D2C956E52B17AB2E00E00FE6 /* DtaOperatingSpecificOptions.cpp */,
-				D2C956E62B17ACBB00E00FE6 /* FHDtaOperatingSpecificOptions.cpp */,
 				D2DC17202B179787002A8DC8 /* DtaHashPwd.h */,
 				D2D66F6A2A4CE04300241095 /* DtaHashPassword.cpp */,
 				D2D66F6B2A4CE04300241095 /* DtaHashPassword.h */,
@@ -885,7 +883,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n../sedutil/MakeVersion.sh\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport mac_root=\"${SRCROOT}\"\n../sedutil/MakeVersion.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
