@@ -465,8 +465,8 @@
 				D2E6FE812935E08D00DAB209 /* oui.docc */,
 			);
 			name = oui;
-			path = ../../../../DTA/oui;
-			sourceTree = "<group>";
+			path = "../../../../Users/scott/preboot/DTA/sedutil/macos/sedutil project/oui";
+			sourceTree = DEVELOPER_DIR;
 		};
 		D2E6FEB22935E6DE00DAB209 /* oui-test */ = {
 			isa = PBXGroup;
@@ -690,7 +690,8 @@
 		D2BD8F551F02016B00747F4A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1410;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
 				ORGANIZATIONNAME = "Bright Plaza, Inc.";
 				TargetAttributes = {
 					D20A63961F731F3600F154AC = {

@@ -1,0 +1,4 @@
+[submodule "macos/sedutil project/oui"]
+	path = macos/sedutil project/oui
+	url = git@github.com:Drive-Trust-Alliance/oui.git
+	branch = develop
