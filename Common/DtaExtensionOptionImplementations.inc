@@ -16,12 +16,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
-* C:E********************************************************************** */
+ * C:E********************************************************************** */
 
-#ifndef _DTAOSSPECIFICOPTIONS_H
-#define    _DTAOSSPECIFICOPTIONS_H
-
-#define OPERATING_SYSTEM_SPECIFIC_OPTIONS
+// Operating specific or customizing option implementations can be included in the
+// body of the switch statement processing options by entering them here like this:
+//
+//  case sedutiloption::catchFireAndBurn:
+//      LOG(D) << "Run in circles! Scream and shout!";
+//      return 127;
+//      break;
 
 #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
 #define OSNAME "linux"
@@ -32,11 +35,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #else
 #define OSNAME "unknownOS";
 #endif
-#define OPERATING_SYSTEM_SPECIFIC_OPTION_IMPLEMENTATIONS \
-    case sedutiloption::version: \
-        LOG(D) << "print version number "; \
-        printf("sedutil-cli : %s.%s\n", OSNAME, GIT_VERSION); \
-        return 0; \
-        break;  \
 
-#endif /* _DTAOSSPECIFICOPTIONS_H */
+
+case sedutiloption::version:
+    LOG(D) << "print version number ";
+    printf("sedutil-cli : %s.%s\n", OSNAME, GIT_VERSION);
+    return 0;
+    break;

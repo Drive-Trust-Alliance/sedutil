@@ -40,8 +40,8 @@
 /* Begin PBXBuildFile section */
 		D20A961929A706C800B2FCF2 /* sedutil-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28CFD6028E2C1AF00A33B00 /* sedutil-cli */; };
 		D20A961A29A706CE00B2FCF2 /* reenumerate in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28CFD6128E2C1AF00A33B00 /* reenumerate */; };
+		D2486D772B186060002D347E /* sedutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2486D762B18605A002D347E /* sedutil.cpp */; };
 		D26904CE28D7A17B0095769E /* reenumerate.c in Sources */ = {isa = PBXBuildFile; fileRef = D26904CD28D7A17B0095769E /* reenumerate.c */; };
-		D287224328B835CB0023404B /* sedutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D287224228B835CB0023404B /* sedutil.cpp */; };
 		D28B7E542A41244D00582735 /* Bright Plaza CA.pem in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28B7E4D2A41237600582735 /* Bright Plaza CA.pem */; };
 		D28B7E552A41245000582735 /* Bright Plaza SED Server.p12 in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28B7E4C2A41237600582735 /* Bright Plaza SED Server.p12 */; };
 		D2C956DF2B179A3100E00FE6 /* DtaHashPwd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2DC171F2B179787002A8DC8 /* DtaHashPwd.cpp */; };
@@ -250,6 +250,7 @@
 		D20A971129A8025600B2FCF2 /* distribution.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = distribution.xml; sourceTree = "<group>"; };
 		D20A972329A8025600B2FCF2 /* DTABundles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DTABundles.plist; sourceTree = "<group>"; };
 		D2233E3428D79504006B6974 /* DtaOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
+		D2486D762B18605A002D347E /* sedutil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sedutil.cpp; sourceTree = "<group>"; };
 		D26496E62A36849E00F09A67 /* extract_configuration_type_from_Xcode_build_environment */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = extract_configuration_type_from_Xcode_build_environment; sourceTree = "<group>"; };
 		D26496E72A36849F00F09A67 /* extract_configuration_from_Xcode_build_environment */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = extract_configuration_from_Xcode_build_environment; sourceTree = "<group>"; };
 		D26904CD28D7A17B0095769E /* reenumerate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = reenumerate.c; path = "../../sedutil-cli project/reenumerate/reenumerate.c"; sourceTree = "<group>"; };
@@ -260,7 +261,6 @@
 		D2772B6428BC354B0005E001 /* DtaDevOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaDevOS.h; sourceTree = "<group>"; };
 		D2772B7328BC354B0005E001 /* os.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = os.h; sourceTree = "<group>"; };
 		D2772BEA28BC36420005E001 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
-		D287224228B835CB0023404B /* sedutil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sedutil.cpp; path = ../../Common/sedutil.cpp; sourceTree = "<group>"; };
 		D28B7E4C2A41237600582735 /* Bright Plaza SED Server.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bright Plaza SED Server.p12"; sourceTree = "<group>"; };
 		D28B7E4D2A41237600582735 /* Bright Plaza CA.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza CA.pem"; sourceTree = "<group>"; };
 		D28B7E5B2A4125AF00582735 /* 99_unload_driver.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 99_unload_driver.sh; sourceTree = "<group>"; };
@@ -294,7 +294,6 @@
 		D28CFD6128E2C1AF00A33B00 /* reenumerate */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = reenumerate; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2C956E02B179A4A00E00FE6 /* DtaOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaOptions.cpp; sourceTree = "<group>"; };
 		D2C956E32B179B0E00E00FE6 /* sedutil.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sedutil.framework; path = ../../../../../../../Library/Frameworks/sedutil.framework; sourceTree = "<group>"; };
-		D2C956E52B17AB2E00E00FE6 /* DtaOperatingSpecificOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaOperatingSpecificOptions.cpp; sourceTree = "<group>"; };
 		D2C956E72B17AD6700E00FE6 /* DtaAuthorize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaAuthorize.h; sourceTree = "<group>"; };
 		D2C956E82B17AD6700E00FE6 /* DtaAuthorize.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAuthorize.cpp; sourceTree = "<group>"; };
 		D2C956EA2B17E8EF00E00FE6 /* BrightPlazaTPer.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; name = BrightPlazaTPer.kext; path = "/Users/scott/preboot/DTA/sedutil/macos/sedutil project/../../../../../../../Library/Extensions/BrightPlazaTPer.kext"; sourceTree = "<absolute>"; };
@@ -659,11 +658,11 @@
 		D2B2025F28BBFD8F004C88FF /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D2486D762B18605A002D347E /* sedutil.cpp */,
 				D2C956E82B17AD6700E00FE6 /* DtaAuthorize.cpp */,
 				D2C956E72B17AD6700E00FE6 /* DtaAuthorize.h */,
 				D2DC171F2B179787002A8DC8 /* DtaHashPwd.cpp */,
 				D2C956E02B179A4A00E00FE6 /* DtaOptions.cpp */,
-				D2C956E52B17AB2E00E00FE6 /* DtaOperatingSpecificOptions.cpp */,
 				D2DC17202B179787002A8DC8 /* DtaHashPwd.h */,
 				D2D66F6A2A4CE04300241095 /* DtaHashPassword.cpp */,
 				D2D66F6B2A4CE04300241095 /* DtaHashPassword.h */,
@@ -691,7 +690,6 @@
 				D2772B5F28BC354B0005E001 /* macos */,
 				D2B2025F28BBFD8F004C88FF /* Common */,
 				D2DC17232B1798A2002A8DC8 /* pbkdf2 */,
-				D287224228B835CB0023404B /* sedutil.cpp */,
 				D26904BF28D7A1530095769E /* reenumerate */,
 				D28CFD6028E2C1AF00A33B00 /* sedutil-cli */,
 				D28CFD6128E2C1AF00A33B00 /* reenumerate */,
@@ -924,9 +922,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D287224328B835CB0023404B /* sedutil.cpp in Sources */,
 				D2C956E92B17AD9F00E00FE6 /* DtaAuthorize.cpp in Sources */,
 				D2C956DF2B179A3100E00FE6 /* DtaHashPwd.cpp in Sources */,
+				D2486D772B186060002D347E /* sedutil.cpp in Sources */,
 				D2C956E12B179A5100E00FE6 /* DtaOptions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

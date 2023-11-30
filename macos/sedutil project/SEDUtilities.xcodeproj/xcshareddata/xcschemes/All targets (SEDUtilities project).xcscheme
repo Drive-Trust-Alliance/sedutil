@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D2BD8FA01F0207AF00747F4A"
-               BuildableName = "BrightPlazaTPer.kext"
-               BlueprintName = "BrightPlazaTPer"
-               ReferencedContainer = "container:../SEDDriver.xcodeproj">
+               BlueprintIdentifier = "D2EBA3061F0549B7002F8780"
+               BuildableName = "sedutil.framework"
+               BlueprintName = "sedutil"
+               ReferencedContainer = "container:SEDFrameworks.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry

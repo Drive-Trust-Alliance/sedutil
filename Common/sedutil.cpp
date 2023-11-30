@@ -36,29 +36,15 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevEnterprise.h"
 #include "DtaAuthorize.h"
 #include "Version.h"
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-#include "regtry.h"
-#include "uuid.h"
-#define WRITE_RETRIES 3
-#include "sedsize.h"
-#if (!WINDOWS7)
-#include "compressapi-8.1.h"
-#endif
-#include <fstream>
-#include <..\License\Stdafx.h>
-#include <..\License\LicenseValidator.h>
-#include "DtaHexDump.h"
-//#include <msclr\marshal_cppstd.h>
-#endif
 
 
 using namespace std;
 
-static void isValidSEDDisk(char *devname)
+static void isValidSEDDisk(const char * devname)
 {
 	DtaDev * d;
-	d = new DtaDevGeneric(devname);
-	if (d->isPresent()) {
+    uint8_t result = DtaDev::getDtaDev(devname, d, true);
+	if (result == DTAERROR_SUCCESS && d->isPresent()) {
 		printf("%s", devname);
 		if (d->isAnySSC())
 			printf(" SED %s%s%s ", (d->isOpal1() ? "1" : "-"),
@@ -338,29 +324,7 @@ int main(int argc, char * argv[])
 		LOG(D) << "Performing cmdDump ";
 		return d->rawCmd(argv[argc - 7], argv[argc - 6], argv[argc - 5], argv[argc - 4], argv[argc - 3], argv[argc - 2]);
 		break;
-            
-#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__)
-#define OSNAME "linux"
-#elif defined(APPLE) || defined(_APPLE) || defined(__APPLE__)
-#define OSNAME "macOS"
-#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-#define OSNAME "window"    // TODO: why not "windows"?
-#include <..\linux\VersionPBA.h>
-#else
-#define OSNAME "unknownOS";
-#endif
-        case sedutiloption::version:
-		LOG(D) << "print version number ";
-#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
-		printf("Opal Lock Version : 0.9.5.%s.%s 20220218-B001\n", OSNAME, GIT_VERSION);
-#else
-		//printf("Opal Lock Version : 0.9.5.%s.%s 20220211-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(),GIT_VERSION,GIT_VERSION_PBA);
-		//printf("Opal Lock Version : 0.9.6.%s.%s 20220223-A001 PBA.0.9.5.linux.%s 20220218-B001\n", st1.c_str(), GIT_VERSION, GIT_VERSION_PBA);
-		printf("Opal Lock Version : 0.9.8.%s.%s 20220621-A001 PBA.0.9.5.linux.%s 20220218-B001\n", OSNAME, GIT_VERSION, GIT_VERSION_PBA);
-#endif
-		return 0;
-		break;
-            
+                        
 	case sedutiloption::hashvalidation:
 		LOG(D) << "Hash Validation";
 		return hashvalidate(argv[opts.password],argv[opts.device]);
@@ -369,9 +333,8 @@ int main(int argc, char * argv[])
 		LOG(D) << "TCG Reset " <<  " " << argv[opts.device];
 		return (d->TCGreset(opts.resettype));
 		break;
-            
 
-OPERATING_SYSTEM_SPECIFIC_OPTIONS
+#include "DtaExtensionOptionImplementations.inc"
             
     default:
         LOG(E) << "Unable to determine what you want to do ";

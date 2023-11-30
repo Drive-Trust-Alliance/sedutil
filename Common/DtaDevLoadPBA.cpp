@@ -44,15 +44,11 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <iomanip>
 
-#include "DtaDevLoadPBA.h"
 #include <signal.h>
 
-
-#include "ob.h"
-
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-#include "uuid.h"
-#endif
+#include "DtaDevOpal.h"
+#include "DtaCommand.h"
+#include "DtaSession.h"
 
 using namespace std;
 
