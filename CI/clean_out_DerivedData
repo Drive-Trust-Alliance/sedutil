@@ -1,2 +1,3 @@
 #!/bin/bash
-rm -rf "${HOME}/Library/Developer/Xcode/DerivedData/${1}-*/*"
+# set -xv
+rm -rf "${HOME}/Library/Developer/Xcode/DerivedData/${1}-"*/*
