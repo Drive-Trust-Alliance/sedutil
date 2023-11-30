@@ -27,8 +27,8 @@ function require_dir_var {
 export -f require_dir_var
 
 
-require_dir_var DTA_root "${DTA_ROOT:-${HOME}/preboot/DTA}"
-require_dir_var DTA_project_root "${DTA_PROJECT_ROOT:-${DTA_root}/sedutil}"
+require_dir_var DTA_root "${DTA_ROOT:-${HOME}/preboot/DTA/sedutil}"
+require_dir_var DTA_project_root "${DTA_PROJECT_ROOT:-${DTA_root}}"
 
 require_dir_var mac_root "${DTA_project_root}/macos/sedutil project"
 
