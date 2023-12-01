@@ -403,7 +403,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
         END_OPTION
 		BEGIN_OPTION(hashvalidation, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 
-#include "DtaExtensionOptions.inc"
+#include "Customizations/DtaExtensionOptions.inc"
 
         else {
             LOG(E) << "Invalid command line argument " << argv[i];

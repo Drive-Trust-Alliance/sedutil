@@ -7,10 +7,4 @@
    <FileRef
       location = "group:SEDUtilities.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "absolute:../../../../../../../Library/Extensions">
-   </FileRef>
-   <FileRef
-      location = "absolute:../../../../../../../Library/Frameworks">
-   </FileRef>
 </Workspace>

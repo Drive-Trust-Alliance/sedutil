@@ -34,7 +34,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevOpal1.h"
 #include "DtaDevOpal2.h"
 #include "DtaDevEnterprise.h"
-#include "DtaAuthorize.h"
+#include "Customizations/DtaAuthorizeSedutilExecution.h"
 #include "Version.h"
 
 
@@ -86,14 +86,13 @@ static int hashvalidate(char * password, char *devname)
 
 int main(int argc, char * argv[])
 {
-	string st1;
 	DTA_OPTIONS opts;
 	DtaDev *d = NULL;
 	if (DtaOptions(argc, argv, &opts)) {
 		return DTAERROR_COMMAND_ERROR;
 	}
 
-    if (! authorize_exec(argc, argv)) {
+    if (! authorize_sedutil_execution(argc, argv)) {
         return DTAERROR_AUTHORIZE_EXEC_FAILED;
     }
         
