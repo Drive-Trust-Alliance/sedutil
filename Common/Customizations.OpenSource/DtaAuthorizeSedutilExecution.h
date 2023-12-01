@@ -23,7 +23,4 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 //
 // Returns true if OK to run, false if process should exit.
 //
-// The default is just to say OK.
-//
-#include "DtaAuthorize.h"
-bool authorize_exec(int , char * []) { return true; }
+extern "C" bool authorize_sedutil_execution(int argc, char * argv[]);
