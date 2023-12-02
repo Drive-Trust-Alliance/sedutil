@@ -34,7 +34,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevOpal1.h"
 #include "DtaDevOpal2.h"
 #include "DtaDevEnterprise.h"
-#include "Customizations/DtaAuthorizeSedutilExecution.h"
+#include "DtaAuthorizeSedutilExecution.h"
 #include "Version.h"
 
 
@@ -155,7 +155,7 @@ int main(int argc, char * argv[])
 		break;
     case sedutiloption::MBRRead:
         LOG(D) << "Read shadow MBR  to file " << argv[opts.device];;
-        return d->MBRRead(argv[opts.password], argv[opts.pbafile], atol(argv[opts.startpos]), atol(argv[opts.len]));
+        return d->MBRRead(argv[opts.password], argv[opts.pbafile], (uint32_t)atol(argv[opts.startpos]), (uint32_t)atol(argv[opts.len]));
         break;
 	case sedutiloption::DataStoreWrite:
 		LOG(D) << "Write to Data Store " << argv[opts.device];;

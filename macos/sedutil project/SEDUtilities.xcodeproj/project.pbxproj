@@ -44,6 +44,8 @@
 		D26904CE28D7A17B0095769E /* reenumerate.c in Sources */ = {isa = PBXBuildFile; fileRef = D26904CD28D7A17B0095769E /* reenumerate.c */; };
 		D28B7E542A41244D00582735 /* Bright Plaza CA.pem in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28B7E4D2A41237600582735 /* Bright Plaza CA.pem */; };
 		D28B7E552A41245000582735 /* Bright Plaza SED Server.p12 in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28B7E4C2A41237600582735 /* Bright Plaza SED Server.p12 */; };
+		D2A3E6362B1B08CC00F9CCF8 /* DtaDevOpalLoadPBA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2A3E6312B1B08CC00F9CCF8 /* DtaDevOpalLoadPBA.cpp */; };
+		D2A3E63A2B1B08CC00F9CCF8 /* DtaAuthorizeSedutilExecution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2A3E6352B1B08CC00F9CCF8 /* DtaAuthorizeSedutilExecution.cpp */; };
 		D2C956E42B179B0E00E00FE6 /* sedutil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2C956E32B179B0E00E00FE6 /* sedutil.framework */; };
 		D2C956EB2B17E8EF00E00FE6 /* BrightPlazaTPer.kext in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956EA2B17E8EF00E00FE6 /* BrightPlazaTPer.kext */; };
 		D2C956F22B17E95700E00FE6 /* SEDKernelInterface.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956ED2B17E95600E00FE6 /* SEDKernelInterface.framework */; };
@@ -289,6 +291,14 @@
 		D2A3E62B2B1B03AB00F9CCF8 /* DtaConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaConstants.h; sourceTree = "<group>"; };
 		D2A3E62C2B1B04CB00F9CCF8 /* DtaDev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDev.h; sourceTree = "<group>"; };
 		D2A3E62D2B1B04F600F9CCF8 /* DtaStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaStructures.h; sourceTree = "<group>"; };
+		D2A3E6312B1B08CC00F9CCF8 /* DtaDevOpalLoadPBA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpalLoadPBA.cpp; sourceTree = "<group>"; };
+		D2A3E6322B1B08CC00F9CCF8 /* DtaExtensionOptionImplementations.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptionImplementations.inc; sourceTree = "<group>"; };
+		D2A3E6332B1B08CC00F9CCF8 /* DtaExtensionOptionEnumerations.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptionEnumerations.inc; sourceTree = "<group>"; };
+		D2A3E6342B1B08CC00F9CCF8 /* DtaExtensionOptions.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptions.inc; sourceTree = "<group>"; };
+		D2A3E6352B1B08CC00F9CCF8 /* DtaAuthorizeSedutilExecution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAuthorizeSedutilExecution.cpp; sourceTree = "<group>"; };
+		D2A3E63B2B1B0A1900F9CCF8 /* DtaDevOpal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOpal.h; sourceTree = "<group>"; };
+		D2A3E63C2B1B0A3800F9CCF8 /* DtaSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaSession.h; sourceTree = "<group>"; };
+		D2A3E63D2B1B0A3800F9CCF8 /* DtaCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaCommand.h; sourceTree = "<group>"; };
 		D2C956E32B179B0E00E00FE6 /* sedutil.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sedutil.framework; path = ../../../../../../../Library/Frameworks/sedutil.framework; sourceTree = "<group>"; };
 		D2C956EA2B17E8EF00E00FE6 /* BrightPlazaTPer.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; name = BrightPlazaTPer.kext; path = "/Users/scott/preboot/DTA/sedutil/macos/sedutil project/../../../../../../../Library/Extensions/BrightPlazaTPer.kext"; sourceTree = "<absolute>"; };
 		D2C956ED2B17E95600E00FE6 /* SEDKernelInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SEDKernelInterface.framework; path = ../../../../../../../Library/Frameworks/SEDKernelInterface.framework; sourceTree = "<group>"; };
@@ -645,9 +655,25 @@
 			path = .Utilities;
 			sourceTree = "<group>";
 		};
+		D2A3E6302B1B08CC00F9CCF8 /* Customizations.OpenSource */ = {
+			isa = PBXGroup;
+			children = (
+				D2A3E6312B1B08CC00F9CCF8 /* DtaDevOpalLoadPBA.cpp */,
+				D2A3E6322B1B08CC00F9CCF8 /* DtaExtensionOptionImplementations.inc */,
+				D2A3E6332B1B08CC00F9CCF8 /* DtaExtensionOptionEnumerations.inc */,
+				D2A3E6342B1B08CC00F9CCF8 /* DtaExtensionOptions.inc */,
+				D2A3E6352B1B08CC00F9CCF8 /* DtaAuthorizeSedutilExecution.cpp */,
+			);
+			path = Customizations.OpenSource;
+			sourceTree = "<group>";
+		};
 		D2B2025F28BBFD8F004C88FF /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D2A3E63D2B1B0A3800F9CCF8 /* DtaCommand.h */,
+				D2A3E63C2B1B0A3800F9CCF8 /* DtaSession.h */,
+				D2A3E63B2B1B0A1900F9CCF8 /* DtaDevOpal.h */,
+				D2A3E6302B1B08CC00F9CCF8 /* Customizations.OpenSource */,
 				D2A3E62D2B1B04F600F9CCF8 /* DtaStructures.h */,
 				D2A3E62C2B1B04CB00F9CCF8 /* DtaDev.h */,
 				D24E86672B1AD6F10098FE03 /* DtaOptions.h */,
@@ -905,6 +931,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2A3E63A2B1B08CC00F9CCF8 /* DtaAuthorizeSedutilExecution.cpp in Sources */,
+				D2A3E6362B1B08CC00F9CCF8 /* DtaDevOpalLoadPBA.cpp in Sources */,
 				D2486D772B186060002D347E /* sedutil.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
