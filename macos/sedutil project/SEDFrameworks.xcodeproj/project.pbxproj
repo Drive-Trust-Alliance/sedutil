@@ -8,14 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		D20A63AB1F73204000F154AC /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D20A63AA1F73204000F154AC /* log.cpp */; settings = {COMPILER_FLAGS = "-Wno-missing-field-initializers -Wno-missing-prototypes"; }; };
-		D22042022B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h in Headers */ = {isa = PBXBuildFile; fileRef = D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */; };
+		D22042022B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h in Headers */ = {isa = PBXBuildFile; fileRef = D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D22042032B19633E00116D30 /* DtaAuthorizeSedutilExecution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2486D622B184266002D347E /* DtaAuthorizeSedutilExecution.cpp */; };
 		D22369B928D686C400D7D851 /* sedutil.h in Headers */ = {isa = PBXBuildFile; fileRef = D2D1379E28B55C14003FD51F /* sedutil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D22A693D2A096F6F00EF864A /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D22A69392A096F6700EF864A /* DtaHashPassword.cpp */; };
 		D22A69402A096F6F00EF864A /* DtaHashPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = D22A693C2A096F6D00EF864A /* DtaHashPassword.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D22A69432A09788E00EF864A /* DtaAudit.h in Headers */ = {isa = PBXBuildFile; fileRef = D22A69422A09788E00EF864A /* DtaAudit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2466AF328B5876C009F55D9 /* DtaDevOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D2466A4B28B585F8009F55D9 /* DtaDevOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D2486D752B184AC7002D347E /* DtaExtensionOptionEnumerations.h in Headers */ = {isa = PBXBuildFile; fileRef = D2486D732B184883002D347E /* DtaExtensionOptionEnumerations.h */; };
+		D24E866F2B1ADA420098FE03 /* ATAStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D24E866E2B1ADA420098FE03 /* ATAStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D24E86702B1ADAAA0098FE03 /* DtaExtensionOptionEnumerations.inc in Headers */ = {isa = PBXBuildFile; fileRef = D2486D732B184883002D347E /* DtaExtensionOptionEnumerations.inc */; settings = {ATTRIBUTES = (Public, ); }; };
+		D24E86712B1ADAAA0098FE03 /* DtaExtensionOptions.inc in Headers */ = {isa = PBXBuildFile; fileRef = D2486D602B184266002D347E /* DtaExtensionOptions.inc */; settings = {ATTRIBUTES = (Public, ); }; };
+		D24E86722B1ADAAA0098FE03 /* DtaExtensionOptionImplementations.inc in Headers */ = {isa = PBXBuildFile; fileRef = D2486D6F2B18465B002D347E /* DtaExtensionOptionImplementations.inc */; settings = {ATTRIBUTES = (Public, ); }; };
+		D24E86732B1ADACD0098FE03 /* DtaDevOpalLoadPBA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2C1CA1E2B196E8C00F11E86 /* DtaDevOpalLoadPBA.cpp */; };
 		D263209A2937F65500F0927B /* oui_vendor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D26320982937F65500F0927B /* oui_vendor.cpp */; };
 		D263209B2937F65500F0927B /* oui_vendor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D26320992937F65500F0927B /* oui_vendor.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		D26C25742957BC2600E46646 /* log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF828B57BB400741CC0 /* log.framework */; };
@@ -36,14 +40,12 @@
 		D2772ADF28BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h in Headers */ = {isa = PBXBuildFile; fileRef = D2772AD828BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2772AE028BBFFB70005E001 /* DtaDevMacOSTPer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2772AD928BBFFB70005E001 /* DtaDevMacOSTPer.cpp */; };
 		D2772B1C28BC32330005E001 /* os.h in Headers */ = {isa = PBXBuildFile; fileRef = D2466A4528B58518009F55D9 /* os.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D2772B1E28BC345A0005E001 /* ATAStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D2BDDC9128A5B23600001E26 /* ATAStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D29321E128E1086600558642 /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = D29C45F828C186920093AC75 /* Version.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D29321E128E1086600558642 /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = D29C45F828C186920093AC75 /* Version.h */; };
 		D2A06C9628B5D88800C0DDB6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9528B5D88800C0DDB6 /* Foundation.framework */; };
 		D2A06C9C28B5D8FE00C0DDB6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */; };
 		D2A06C9D28B5DC7900C0DDB6 /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
 		D2B2036528BBFF1D004C88FF /* DtaDevMacOSTPer.h in Headers */ = {isa = PBXBuildFile; fileRef = D2B2036428BBFF1D004C88FF /* DtaDevMacOSTPer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2BDDC9D28A6369A00001E26 /* ReadMe.txt in Resources */ = {isa = PBXBuildFile; fileRef = D2BDDC9B28A6369A00001E26 /* ReadMe.txt */; };
-		D2C1CA1F2B196E9000F11E86 /* DtaDevOpalLoadPBA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2C1CA1E2B196E8C00F11E86 /* DtaDevOpalLoadPBA.cpp */; };
 		D2D0F56B293A85F00077966A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9528B5D88800C0DDB6 /* Foundation.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		D2D0F56D293AA5DA0077966A /* oui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2E6FE7E2935696800DAB209 /* oui.framework */; };
 		D2D137A128B56329003FD51F /* log.h in Headers */ = {isa = PBXBuildFile; fileRef = D20A63A81F731FDB00F154AC /* log.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -148,6 +150,18 @@
 /* Begin PBXFileReference section */
 		D20A63A81F731FDB00F154AC /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = log.h; path = ../../../Common/log.h; sourceTree = "<group>"; };
 		D20A63AA1F73204000F154AC /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = log.cpp; path = ../../log.cpp; sourceTree = "<group>"; };
+		D21871CD2B1AC72E0003ED81 /* ob.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ob.h; sourceTree = "<group>"; };
+		D21871CE2B1AC72E0003ED81 /* ob.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ob.cpp; sourceTree = "<group>"; };
+		D21871CF2B1AC72E0003ED81 /* DtaDevOpalLoadPBA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpalLoadPBA.cpp; sourceTree = "<group>"; };
+		D21871D12B1AC72E0003ED81 /* DtaAuthorizeSedutilExecution.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAuthorizeSedutilExecution.cpp; sourceTree = "<group>"; };
+		D21871D32B1AC72E0003ED81 /* DtaExtensionOptionEnumerations.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptionEnumerations.inc; sourceTree = "<group>"; };
+		D21871D42B1AC72E0003ED81 /* DtaDevOpalLoadPBA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpalLoadPBA.cpp; sourceTree = "<group>"; };
+		D21871D52B1AC72E0003ED81 /* DtaExtensionOptionImplementations.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptionImplementations.inc; sourceTree = "<group>"; };
+		D21871D62B1AC72E0003ED81 /* DtaExtensionOptions.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptions.inc; sourceTree = "<group>"; };
+		D21871D72B1AC72E0003ED81 /* DtaAuthorizeSedutilExecution.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAuthorizeSedutilExecution.cpp; sourceTree = "<group>"; };
+		D21871DA2B1AC8280003ED81 /* DtaExtensionOptions.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; name = DtaExtensionOptions.inc; path = ../../../../FH/sedutil/Common/Customizations.FH/DtaExtensionOptions.inc; sourceTree = "<group>"; };
+		D21871DB2B1AC8690003ED81 /* DtaExtensionOptionEnumerations.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; name = DtaExtensionOptionEnumerations.inc; path = ../../../../FH/sedutil/Common/Customizations.FH/DtaExtensionOptionEnumerations.inc; sourceTree = "<group>"; };
+		D21871DC2B1AC9540003ED81 /* DtaExtensionOptionImplementations.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; name = DtaExtensionOptionImplementations.inc; path = ../../../../FH/sedutil/Common/Customizations.FH/DtaExtensionOptionImplementations.inc; sourceTree = "<group>"; };
 		D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaAuthorizeSedutilExecution.h; sourceTree = "<group>"; };
 		D22A69392A096F6700EF864A /* DtaHashPassword.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
 		D22A693C2A096F6D00EF864A /* DtaHashPassword.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DtaHashPassword.h; path = ../../Common/DtaHashPassword.h; sourceTree = "<group>"; };
@@ -161,7 +175,8 @@
 		D2486D602B184266002D347E /* DtaExtensionOptions.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptions.inc; sourceTree = "<group>"; };
 		D2486D622B184266002D347E /* DtaAuthorizeSedutilExecution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAuthorizeSedutilExecution.cpp; sourceTree = "<group>"; };
 		D2486D6F2B18465B002D347E /* DtaExtensionOptionImplementations.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptionImplementations.inc; sourceTree = "<group>"; };
-		D2486D732B184883002D347E /* DtaExtensionOptionEnumerations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaExtensionOptionEnumerations.h; sourceTree = "<group>"; };
+		D2486D732B184883002D347E /* DtaExtensionOptionEnumerations.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptionEnumerations.inc; sourceTree = "<group>"; };
+		D24E866E2B1ADA420098FE03 /* ATAStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATAStructures.h; sourceTree = "<group>"; };
 		D26320982937F65500F0927B /* oui_vendor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = oui_vendor.cpp; sourceTree = "<group>"; };
 		D26320992937F65500F0927B /* oui_vendor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = oui_vendor.hpp; sourceTree = "<group>"; };
 		D271A1F528054AFD00BF043A /* DtaStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaStructures.h; sourceTree = "<group>"; };
@@ -179,8 +194,6 @@
 		D2772AD728BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSTPer_SCSI.cpp; sourceTree = "<group>"; };
 		D2772AD828BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer_SCSI.h; sourceTree = "<group>"; };
 		D2772AD928BBFFB70005E001 /* DtaDevMacOSTPer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSTPer.cpp; sourceTree = "<group>"; };
-		D280CC9E29D7582500BE604D /* PyExtuD.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = PyExtuD.sh; sourceTree = "<group>"; };
-		D280CC9F29D7582500BE604D /* PyExtD.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = PyExtD.sh; sourceTree = "<group>"; };
 		D280CCA229D75AA300BE604D /* Python3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python3.framework; path = Library/Frameworks/Python3.framework; sourceTree = DEVELOPER_DIR; };
 		D280CCA429D75AD300BE604D /* Xcode.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; name = Xcode.app; path = ../../../../../../../../../Applications/Xcode.app; sourceTree = "<group>"; };
 		D280CCA629D75C9500BE604D /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = ../../../../../../../../../opt/local/Library/Frameworks/Python.framework; sourceTree = "<group>"; };
@@ -193,7 +206,6 @@
 		D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		D2B2036428BBFF1D004C88FF /* DtaDevMacOSTPer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer.h; sourceTree = "<group>"; };
 		D2BDCEB329648F6700D07633 /* oui-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "oui-test"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D2BDDC9128A5B23600001E26 /* ATAStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATAStructures.h; path = "/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/Common/ATAStructures.h"; sourceTree = "<absolute>"; };
 		D2BDDC9B28A6369A00001E26 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
 		D2C1CA1E2B196E8C00F11E86 /* DtaDevOpalLoadPBA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaDevOpalLoadPBA.cpp; path = ../Customizations.OpenSource/DtaDevOpalLoadPBA.cpp; sourceTree = "<group>"; };
 		D2D1379E28B55C14003FD51F /* sedutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sedutil.h; path = sedutil/sedutil.h; sourceTree = "<group>"; };
@@ -316,13 +328,38 @@
 			path = log;
 			sourceTree = "<group>";
 		};
+		D21871CC2B1AC72E0003ED81 /* Customizations.FH */ = {
+			isa = PBXGroup;
+			children = (
+				D21871CF2B1AC72E0003ED81 /* DtaDevOpalLoadPBA.cpp */,
+				D21871D12B1AC72E0003ED81 /* DtaAuthorizeSedutilExecution.cpp */,
+				D21871DB2B1AC8690003ED81 /* DtaExtensionOptionEnumerations.inc */,
+				D21871DA2B1AC8280003ED81 /* DtaExtensionOptions.inc */,
+				D21871DC2B1AC9540003ED81 /* DtaExtensionOptionImplementations.inc */,
+				D21871CD2B1AC72E0003ED81 /* ob.h */,
+				D21871CE2B1AC72E0003ED81 /* ob.cpp */,
+			);
+			path = Customizations.FH;
+			sourceTree = "<group>";
+		};
+		D21871D22B1AC72E0003ED81 /* Customizations.OpenSource */ = {
+			isa = PBXGroup;
+			children = (
+				D21871D42B1AC72E0003ED81 /* DtaDevOpalLoadPBA.cpp */,
+				D21871D72B1AC72E0003ED81 /* DtaAuthorizeSedutilExecution.cpp */,
+				D21871D32B1AC72E0003ED81 /* DtaExtensionOptionEnumerations.inc */,
+				D21871D62B1AC72E0003ED81 /* DtaExtensionOptions.inc */,
+				D21871D52B1AC72E0003ED81 /* DtaExtensionOptionImplementations.inc */,
+			);
+			path = Customizations.OpenSource;
+			sourceTree = "<group>";
+		};
 		D22042002B1962FC00116D30 /* Customizations */ = {
 			isa = PBXGroup;
 			children = (
 				D2C1CA1E2B196E8C00F11E86 /* DtaDevOpalLoadPBA.cpp */,
 				D2486D622B184266002D347E /* DtaAuthorizeSedutilExecution.cpp */,
-				D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */,
-				D2486D732B184883002D347E /* DtaExtensionOptionEnumerations.h */,
+				D2486D732B184883002D347E /* DtaExtensionOptionEnumerations.inc */,
 				D2486D602B184266002D347E /* DtaExtensionOptions.inc */,
 				D2486D6F2B18465B002D347E /* DtaExtensionOptionImplementations.inc */,
 			);
@@ -346,8 +383,6 @@
 		D2466A4628B585F8009F55D9 /* macos */ = {
 			isa = PBXGroup;
 			children = (
-				D280CC9F29D7582500BE604D /* PyExtD.sh */,
-				D280CC9E29D7582500BE604D /* PyExtuD.sh */,
 				D2466A4B28B585F8009F55D9 /* DtaDevOS.h */,
 				D2772AD128BBFF8C0005E001 /* DtaDevOS.cpp */,
 				D2D6E348294D081500E3C72C /* DtaDevFactory.cpp */,
@@ -387,6 +422,7 @@
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D271A1F828054AFD00BF043A /* DtaConstants.h */,
 				D22A693C2A096F6D00EF864A /* DtaHashPassword.h */,
 				D22A69392A096F6700EF864A /* DtaHashPassword.cpp */,
 				D2D1379E28B55C14003FD51F /* sedutil.h */,
@@ -410,15 +446,17 @@
 		D2D137A028B55C15003FD51F /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D24E866E2B1ADA420098FE03 /* ATAStructures.h */,
+				D21871CC2B1AC72E0003ED81 /* Customizations.FH */,
+				D21871D22B1AC72E0003ED81 /* Customizations.OpenSource */,
 				D22042002B1962FC00116D30 /* Customizations */,
 				D22A69422A09788E00EF864A /* DtaAudit.h */,
 				D2BDDC9B28A6369A00001E26 /* ReadMe.txt */,
-				D2BDDC9128A5B23600001E26 /* ATAStructures.h */,
+				D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */,
 				D2EA83D828053B3400A0F685 /* DtaAnnotatedDump.cpp */,
 				D2EA843228053B4400A0F685 /* DtaAnnotatedDump.h */,
 				D2EA83EB28053B3400A0F685 /* DtaCommand.cpp */,
 				D2EA840F28053B3A00A0F685 /* DtaCommand.h */,
-				D271A1F828054AFD00BF043A /* DtaConstants.h */,
 				D2EA840928053B3700A0F685 /* DtaDev.cpp */,
 				D271A1F628054AFD00BF043A /* DtaDev.h */,
 				D2EA840A28053B3700A0F685 /* DtaDevEnterprise.cpp */,
@@ -553,12 +591,11 @@
 				D2772ADB28BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.h in Headers */,
 				D2B2036528BBFF1D004C88FF /* DtaDevMacOSTPer.h in Headers */,
 				D2772ADF28BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h in Headers */,
-				D2772B1E28BC345A0005E001 /* ATAStructures.h in Headers */,
+				D24E866F2B1ADA420098FE03 /* ATAStructures.h in Headers */,
 				D271A1FF28054AFE00BF043A /* DtaLexicon.h in Headers */,
 				D271A1FE28054AFE00BF043A /* DtaConstants.h in Headers */,
 				D271A1FB28054AFE00BF043A /* DtaStructures.h in Headers */,
 				D271A1FD28054AFE00BF043A /* DtaOptions.h in Headers */,
-				D22042022B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h in Headers */,
 				D271A1FC28054AFE00BF043A /* DtaDev.h in Headers */,
 				D2EA848428053B4D00A0F685 /* DtaDevGeneric.h in Headers */,
 				D2EA844A28053B4C00A0F685 /* DtaDevEnterprise.h in Headers */,
@@ -575,8 +612,11 @@
 				D2EA84AF28053B4E00A0F685 /* DtaHexDump.h in Headers */,
 				D22A69432A09788E00EF864A /* DtaAudit.h in Headers */,
 				D22A69402A096F6F00EF864A /* DtaHashPassword.h in Headers */,
+				D22042022B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h in Headers */,
+				D24E86702B1ADAAA0098FE03 /* DtaExtensionOptionEnumerations.inc in Headers */,
+				D24E86712B1ADAAA0098FE03 /* DtaExtensionOptions.inc in Headers */,
+				D24E86722B1ADAAA0098FE03 /* DtaExtensionOptionImplementations.inc in Headers */,
 				D29321E128E1086600558642 /* Version.h in Headers */,
-				D2486D752B184AC7002D347E /* DtaExtensionOptionEnumerations.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -825,7 +865,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "pwd\n../sedutil/MakeVersion.sh \n";
+			shellScript = "export mac_root=\"$(pwd)\"\n../sedutil/MakeVersion.sh \n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -863,7 +903,6 @@
 			files = (
 				D2772AD228BBFF8C0005E001 /* DtaDevOS.cpp in Sources */,
 				D2772ADD28BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.cpp in Sources */,
-				D22042032B19633E00116D30 /* DtaAuthorizeSedutilExecution.cpp in Sources */,
 				D2772AE028BBFFB70005E001 /* DtaDevMacOSTPer.cpp in Sources */,
 				D2772ADE28BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.cpp in Sources */,
 				D2772ADC28BBFFB70005E001 /* DtaDevMacOSTPer_SAT.cpp in Sources */,
@@ -874,7 +913,6 @@
 				D2EA844728053B4C00A0F685 /* DtaDevOpal.cpp in Sources */,
 				D2EA848528053B4D00A0F685 /* DtaDevOpal1.cpp in Sources */,
 				D27591BA28B579F1005B9081 /* DtaDevOpal2.cpp in Sources */,
-				D2C1CA1F2B196E9000F11E86 /* DtaDevOpalLoadPBA.cpp in Sources */,
 				D2EA84A328053B4E00A0F685 /* DtaSession.cpp in Sources */,
 				D2D6E349294D081500E3C72C /* DtaDevFactory.cpp in Sources */,
 				D2EA844B28053B4C00A0F685 /* DtaAnnotatedDump.cpp in Sources */,
@@ -884,6 +922,8 @@
 				D2EA849C28053B4D00A0F685 /* DtaHexDump.cpp in Sources */,
 				D2EA847D28053B4D00A0F685 /* DtaCommand.cpp in Sources */,
 				D2EA84A728053B4E00A0F685 /* DtaResponse.cpp in Sources */,
+				D22042032B19633E00116D30 /* DtaAuthorizeSedutilExecution.cpp in Sources */,
+				D24E86732B1ADACD0098FE03 /* DtaDevOpalLoadPBA.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1194,6 +1234,7 @@
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1341,6 +1382,7 @@
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2718,6 +2760,7 @@
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2730,6 +2773,7 @@
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2742,6 +2786,7 @@
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2754,6 +2799,7 @@
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2766,6 +2812,7 @@
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2778,6 +2825,7 @@
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2790,6 +2838,7 @@
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -2802,6 +2851,7 @@
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
 				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;

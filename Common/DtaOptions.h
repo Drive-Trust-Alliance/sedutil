@@ -87,6 +87,7 @@ typedef enum _sedutiloption {
     auditRead,
     auditErase,
     getmfgstate,
+    MBRRead,
     DataStoreWrite,
     DataStoreRead,
     getMBRsize,
@@ -129,7 +130,7 @@ typedef enum _sedutiloption {
     version,
     hashvalidation,
     
-#include "DtaExtensionOptionEnumerations.h"
+#include "Customizations/DtaExtensionOptionEnumerations.inc"
     
 } sedutiloption;
 /** verify the number of arguments passed */

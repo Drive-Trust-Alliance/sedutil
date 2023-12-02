@@ -241,6 +241,13 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 		BEGIN_OPTION(auditRead, 3) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(auditErase, 3) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(getmfgstate, 1) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(MBRRead, 5)
+            OPTION_IS(password)
+            OPTION_IS(pbafile)
+            OPTION_IS(startpos)
+            OPTION_IS(len)
+            OPTION_IS(device)
+        END_OPTION
 		BEGIN_OPTION(DataStoreWrite, 7)
             OPTION_IS(password)
             OPTION_IS(userid)

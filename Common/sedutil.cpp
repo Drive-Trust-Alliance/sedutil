@@ -153,6 +153,10 @@ int main(int argc, char * argv[])
 		LOG(D) << "activate LockingSP with MSID " << argv[opts.device];;
 		return d->activate(argv[opts.password]);
 		break;
+    case sedutiloption::MBRRead:
+        LOG(D) << "Read shadow MBR  to file " << argv[opts.device];;
+        return d->MBRRead(argv[opts.password], argv[opts.pbafile], atol(argv[opts.startpos]), atol(argv[opts.len]));
+        break;
 	case sedutiloption::DataStoreWrite:
 		LOG(D) << "Write to Data Store " << argv[opts.device];;
 		return d->DataStoreWrite(argv[opts.password], argv[opts.userid], argv[opts.pbafile], (uint8_t)atoi(argv[opts.dsnum]), (uint32_t)atol(argv[opts.startpos]), (uint32_t)atol(argv[opts.len]));
@@ -333,7 +337,7 @@ int main(int argc, char * argv[])
 		return (d->TCGreset(opts.resettype));
 		break;
 
-#include "DtaExtensionOptionImplementations.inc"
+#include "Customizations/DtaExtensionOptionImplementations.inc"
             
     default:
         LOG(E) << "Unable to determine what you want to do ";

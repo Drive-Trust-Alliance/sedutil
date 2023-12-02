@@ -18,9 +18,11 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
 
-// Authorize this sedutil-cli run.
-//   Check licenses, etc., if appropriate.
+// Operating specific or customizing option enumerations can be included in the options
+// enumerations body by entering them here like this:
 //
-// Returns true if OK to run, false if process should exit.
-//
-extern "C" bool authorize_exec(int argc, char * argv[]);
+//  catchFireAndBurn,
+
+    MBRRead,
+    createUSB,
+    pbaValid,
