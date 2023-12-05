@@ -111,16 +111,6 @@ void DtaDevOpal::init(const char * devref,
 #endif  // defined(__APPLE__) && defined(__MACH__)
 
 
-// create an audit user UserN disk_info.OPAL20_numUsers
-//char * DtaDevOpal::gethuser(void);
-
-
-void DtaDevOpal::gethuser(char * buf)
-{	string hUser = "User" + to_string(disk_info.OPAL20_numUsers);
-	for (int ii = 0; ii < (int)hUser.size(); ii++)
-		buf[ii] = hUser.at(ii);
-}
-
  uint8_t DtaDevOpal::setTperResetEnable(bool enable,char * password)
 {
 		LOG(D) << "Entering DtaDevOpal::setTPerResetEnable()";
@@ -354,14 +344,6 @@ uint8_t DtaDevOpal::initialSetup(char * password)
         return lastRC;
     }
     LOG(D1) << "Initial setup of TPer complete on " << dev;
-    if (isAnySSC()) {  // ( isOpal1() | isOpal2() || isPyrite() || isOpalite()) { // Opal2 support users, Pyrite support 2 User
-        LOG(D) << "setuphuser() " << dev;
-        if ((lastRC = setuphuser(password)) != 0) {
-            LOG(E) << "setup audit user failed " << dev;
-            return lastRC;
-        }
-    }
-
     
     LOG(D) << "setup normal user" << dev;
     /*
@@ -432,13 +414,6 @@ uint8_t DtaDevOpal::initialSetup(vector<uint8_t> HostChallenge)
         return lastRC;
     }
     LOG(D1) << "Initial setup of TPer complete on " << dev;
-    if (isAnySSC()) {  // ( isOpal1() | isOpal2() || isPyrite() || isOpalite()) { // Opal2 support users, Pyrite support 2 User
-        LOG(D) << "setuphuser() " << dev;
-        if ((lastRC = setuphuser(HostChallenge)) != 0) {
-            LOG(E) << "setup audit user failed " << dev;
-            return lastRC;
-        }
-    }
 
     
     LOG(D) << "setup normal user" << dev;
@@ -468,135 +443,7 @@ uint8_t DtaDevOpal::initialSetup(vector<uint8_t> HostChallenge)
     return 0;
 }
 
-uint8_t DtaDevOpal::setuphuser(char * password)
-{
-    LOG(D) << "Entering setuphuser() " << dev;
-    uint8_t lastRC;
-    char * buf = (char *)malloc(20);
-    memset(buf, 0, 20);
-    if (isPyrite() || isOpalite() || isRuby() ) {
-        //buf = "User2"; // User2 is the last user of Pyrite
-        strncpy(buf, "User2", 5);
-    }
-    else {
-        gethuser(buf);
-    }
-    if (enableUser(true, password, buf)) { LOG(E) << "enable audit User fail"; }; // true : enable user; false: disable user
-    if (enableUserRead(true, password, buf)) { LOG(E) << "enable User access fail"; };
-    //char p1[64] = "F0iD2eli81Ty"; //20->12 "pFa0isDs2ewloir81Tdy";
-    char p1[80]; // = { 'F','0','i','D','2','e','l','i','8','1','T','y',NULL };
-    memset(p1, 0, 80); // zero out pass
-    auditpass((unsigned char *)p1);
 
-    #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
-    strncat((char *)p1, getSerialNum(), sizeof(disk_info.serialNum));
-    #else
-    strncat_s(p1, getSerialNum(), sizeof(disk_info.serialNum));
-    #endif
-    // setpassword has flag -n -t from GUI
-    if (no_hash_passwords) { // do it only when -n is set
-        bool saved_flag = no_hash_passwords;
-        no_hash_passwords = false; // want to hash audit user password
-        bool saved_t_flag = translate_req;
-        translate_req = false; // do not want to do translate user password
-        vector <uint8_t> hash;
-        DtaHashPwd(hash, (char *)p1, this);
-        memset(p1, 0, 80);
-        for (int ii = 0; ii < (int)(hash.size() -2); ii += 1) { // first 2 byte of hash vector is header
-            //p1[ii] = hash.at(ii+2); // p1 is binary data of hashed password
-            //itoa(hash.at(ii + 2) >> 4,  p1 + (ii*2),   16);
-            //itoa(hash.at(ii + 2) & 0xf, p1 + (ii*2) + 1 , 16);
-            snprintf(p1 + (ii * 2), 4, "%02x", hash.at(ii + 2)); // itoa is not standard lib and linux doesn't like it
-        }
-        if (0) { // should never reveal the hashed password
-            LOG(D) << "setuphuser() : after hash p1, User9 new hashed password = ";
-            for (int ii = 0; ii < (int)(hash.size() - 2); ii += 1) { // first 2 byte of hash vector is header
-                printf("%02X", hash[ii+2]);
-            }
-            printf("  %s \n",  dev);
-        }
-        translate_req = saved_t_flag;
-        no_hash_passwords = saved_flag ;
-    }
-    //
-    if ((lastRC = setPassword(password, buf, (char *)p1) != 0))
-    {
-        LOG(E) << "setup h user failed " << dev;
-        return lastRC;
-    }
-    //translate_req = saved_t_flag;
-    //no_hash_passwords = saved_flag;
-    LOG(D) << "Exiting setuphuser() " << dev;
-    return 0;
-
-}
-
-
-
-
-uint8_t DtaDevOpal::setuphuser(vector<uint8_t>HostChallenge)
-{
-    LOG(D) << "Entering setuphuser() " << dev;
-    uint8_t lastRC;
-    char buf[20];
-    memset(buf, 0, 20);
-    if (isPyrite() || isOpalite() || isRuby() ) {
-        //buf = "User2"; // User2 is the last user of Pyrite
-        strncpy(buf, "User2", 5);
-    }
-    else {
-        gethuser(buf);
-    }
-    if (enableUser(true, HostChallenge, buf)) { LOG(E) << "enable audit User fail"; }; // true : enable user; false: disable user
-    if (enableUserRead(true, HostChallenge, buf)) { LOG(E) << "enable User access fail"; };
-    //char p1[64] = "F0iD2eli81Ty"; //20->12 "pFa0isDs2ewloir81Tdy";
-    char p1[80]; // = { 'F','0','i','D','2','e','l','i','8','1','T','y',NULL };
-    memset(p1, 0, 80); // zero out pass
-    auditpass((unsigned char *)p1);
-
-    #if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
-    strncat((char *)p1, getSerialNum(), sizeof(disk_info.serialNum));
-    #else
-    strncat_s(p1, getSerialNum(), sizeof(disk_info.serialNum));
-    #endif
-    // setpassword has flag -n -t from GUI
-    if (no_hash_passwords) { // do it only when -n is set
-        bool saved_flag = no_hash_passwords;
-        no_hash_passwords = false; // want to hash audit user password
-        bool saved_t_flag = translate_req;
-        translate_req = false; // do not want to do translate user password
-        vector <uint8_t> hash;
-        DtaHashPwd(hash, (char *)p1, this);
-        memset(p1, 0, 80);
-        for (int ii = 0; ii < (int)(hash.size() -2); ii += 1) { // first 2 byte of hash vector is header
-            //p1[ii] = hash.at(ii+2); // p1 is binary data of hashed password
-            //itoa(hash.at(ii + 2) >> 4,  p1 + (ii*2),   16);
-            //itoa(hash.at(ii + 2) & 0xf, p1 + (ii*2) + 1 , 16);
-            snprintf(p1 + (ii * 2), 4, "%02x", hash.at(ii + 2)); // itoa is not standard lib and linux doesn't like it
-        }
-        if (0) { // should never reveal the hashed password
-            LOG(D) << "setuphuser() : after hash p1, User9 new hashed password = ";
-            for (int ii = 0; ii < (int)(hash.size() - 2); ii += 1) { // first 2 byte of hash vector is header
-                printf("%02X", hash[ii+2]);
-            }
-            printf("  %s \n",  dev);
-        }
-        translate_req = saved_t_flag;
-        no_hash_passwords = saved_flag ;
-    }
-    //
-    vector<uint8_t> newHostChallenge(p1, p1+strlen(p1));
-    if ((lastRC = setHostChallenge(HostChallenge, buf, newHostChallenge) != 0))
-    {
-        LOG(E) << "setup h user failed " << dev;
-        return lastRC;
-    }
-    //translate_req = saved_t_flag;
-    //no_hash_passwords = saved_flag;
-    LOG(D) << "Exiting setuphuser() " << dev;
-    return 0;
-
-}
 
 
 
@@ -742,7 +589,7 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 		LOG(E) << "Unable to create session object " << dev;
 		return DTAERROR_OBJECT_CREATE_FAILED;
 	}
-	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) { 
+	if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getUSERUID(0))) != 0) {
 	//if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
 		delete session;
 		return lastRC;
@@ -998,7 +845,7 @@ uint8_t DtaDevOpal::configureLockingRange(uint8_t lockingrange, uint8_t enabled,
         LOG(E) << "Unable to create session object " << dev;
         return DTAERROR_OBJECT_CREATE_FAILED;
     }
-    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getUSERUID(0))) != 0) {
         delete session;
         return lastRC;
     }
@@ -1055,9 +902,7 @@ uint8_t DtaDevOpal::configureLockingRange(uint8_t lockingrange, uint8_t enabled,
     
     uint8_t lastRC = WithSimpleSessionCommand(OPAL_UID::OPAL_LOCKINGSP_UID,
                                               HostChallenge,
-                                              (getusermode()
-                                                ? OPAL_UID::OPAL_USER1_UID
-                                                : OPAL_UID::OPAL_ADMIN1_UID),
+                                              getUSERUID(0),
                                               [LR, enabled](DtaCommand * set){
         set->reset(OPAL_UID::OPAL_AUTHORITY_TABLE, OPAL_METHOD::SET);
         set->changeInvokingUid(LR);
@@ -1317,6 +1162,8 @@ uint8_t DtaDevOpal::getAuth4User(char * userid, uint8_t uidorcpin, vector<uint8_
 	LOG(D1) << "Exiting DtaDevOpal::getAuth4User() " << dev;
 	return 0;
 }
+
+
 uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpassword)
 {
     LOG(D1) << "Entering DtaDevOpal::setPassword " << dev;
@@ -1327,15 +1174,8 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
         LOG(E) << "Unable to create session object " << dev;
         return DTAERROR_OBJECT_CREATE_FAILED;
     }
-    char * buf = (char *)malloc(20);
-    int idx=0;
-
-    memset(buf, 0, 20);
-    gethuser(buf);
-    if (!memcmp(userid , buf, (disk_info.OPAL20_numUsers < 10) ? 5 : 6 ) ) idx = disk_info.OPAL20_numUsers -1 ;
-    free(buf);
     // if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
-    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode() ? (OPAL_UID)(OPAL_USER1_UID + idx) : OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getUSERUID(0))) != 0) {
         delete session;
         return lastRC;
     }
@@ -1353,7 +1193,6 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
     delete session;
     LOG(D1) << userid << " password changed " << dev;
 
-    //auditRec(newpassword, memcmp(userid, "Admin", 5) ? (uint8_t)evt_PasswordChangedUser: (uint8_t)evt_PasswordChangedAdmin);
     if (!memcmp(userid, "Admin", 5)) { // if admin
         LOG(D1) << "Admin try set password ";
         if ((lastRC = setLockonReset(0, TRUE, newpassword)) != 0) { // enable LOCKING RANGE 0 LOCKonRESET
@@ -1361,11 +1200,7 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
             //delete session;
             return lastRC;
         }
-        //setuphuser(newpassword); // do not setup audit user when set admin password
     }
-    //else {
-    //    LOG(D) << "User try set password ";
-    //}
     
     LOG(D1) << "Exiting DtaDevOpal::setPassword() " << dev;
     return 0;
@@ -1376,18 +1211,10 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 uint8_t DtaDevOpal::setHostChallenge(vector<uint8_t> currentHostChallenge, char * userid, vector<uint8_t> newHostChallenge)
 {
     LOG(D1) << "Entering DtaDevOpal::setHostChallenge " << dev;
-    char buf[20];
-    bzero(buf, sizeof(buf));
-    gethuser(buf);
-    int idx=0;
-    if (!memcmp(userid , buf, (disk_info.OPAL20_numUsers < 10) ? 5 : 6 ) ) {
-        idx = disk_info.OPAL20_numUsers -1 ;
-    }
-    
-    uint8_t lastRC = WithSession([this, currentHostChallenge, idx](){
+    uint8_t lastRC = WithSession([this, currentHostChallenge](){
         return session->start(OPAL_UID::OPAL_LOCKINGSP_UID,
                               currentHostChallenge,
-                              getusermode() ? (OPAL_UID)(OPAL_USER1_UID + idx) : OPAL_UID::OPAL_ADMIN1_UID);
+                              getUSERUID(0));
     },
                                  [this, userid, newHostChallenge](){
         uint8_t rc;
@@ -1757,7 +1584,7 @@ uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
                              [this, Admin1Password](){
         return session->start(OPAL_UID::OPAL_LOCKINGSP_UID,
                               Admin1Password,
-                              getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID);
+                              getUSERUID(0));
         
     });
 
@@ -1771,7 +1598,7 @@ uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
                              [this, Admin1HostChallenge](){
         return session->start(OPAL_UID::OPAL_LOCKINGSP_UID,
                               Admin1HostChallenge,
-                              getusermode() ? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID);
+                              getUSERUID(0));
         
     });
 }
@@ -1893,7 +1720,7 @@ uint8_t DtaDevOpal::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
         return DTAERROR_OBJECT_CREATE_FAILED;
     }
     
-    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getusermode()? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, getUSERUID(0))) != 0) {
         delete session;
         return lastRC;
     }
@@ -1929,7 +1756,7 @@ uint8_t DtaDevOpal::setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name,
         return DTAERROR_OBJECT_CREATE_FAILED;
     }
     
-    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, HostChallenge, getusermode()? OPAL_UID::OPAL_USER1_UID : OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+    if ((lastRC = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, HostChallenge, getUSERUID(0))) != 0) {
         delete session;
         return lastRC;
     }

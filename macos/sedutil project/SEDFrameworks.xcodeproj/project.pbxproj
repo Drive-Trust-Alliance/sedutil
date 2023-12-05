@@ -137,22 +137,14 @@
 /* Begin PBXFileReference section */
 		D20A63A81F731FDB00F154AC /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = log.h; path = ../../../Common/log.h; sourceTree = "<group>"; };
 		D20A63AA1F73204000F154AC /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = log.cpp; path = ../../log.cpp; sourceTree = "<group>"; };
-		D21871CD2B1AC72E0003ED81 /* ob.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ob.h; sourceTree = "<group>"; };
-		D21871CE2B1AC72E0003ED81 /* ob.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ob.cpp; sourceTree = "<group>"; };
-		D21871CF2B1AC72E0003ED81 /* DtaDevOpalLoadPBA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpalLoadPBA.cpp; sourceTree = "<group>"; };
-		D21871D12B1AC72E0003ED81 /* DtaAuthorizeSedutilExecution.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAuthorizeSedutilExecution.cpp; sourceTree = "<group>"; };
 		D21871D32B1AC72E0003ED81 /* DtaExtensionOptionEnumerations.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptionEnumerations.inc; sourceTree = "<group>"; };
 		D21871D42B1AC72E0003ED81 /* DtaDevOpalLoadPBA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpalLoadPBA.cpp; sourceTree = "<group>"; };
 		D21871D52B1AC72E0003ED81 /* DtaExtensionOptionImplementations.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptionImplementations.inc; sourceTree = "<group>"; };
 		D21871D62B1AC72E0003ED81 /* DtaExtensionOptions.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptions.inc; sourceTree = "<group>"; };
 		D21871D72B1AC72E0003ED81 /* DtaAuthorizeSedutilExecution.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAuthorizeSedutilExecution.cpp; sourceTree = "<group>"; };
-		D21871DA2B1AC8280003ED81 /* DtaExtensionOptions.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; name = DtaExtensionOptions.inc; path = ../../../../FH/sedutil/Common/Customizations.FH/DtaExtensionOptions.inc; sourceTree = "<group>"; };
-		D21871DB2B1AC8690003ED81 /* DtaExtensionOptionEnumerations.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; name = DtaExtensionOptionEnumerations.inc; path = ../../../../FH/sedutil/Common/Customizations.FH/DtaExtensionOptionEnumerations.inc; sourceTree = "<group>"; };
-		D21871DC2B1AC9540003ED81 /* DtaExtensionOptionImplementations.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; name = DtaExtensionOptionImplementations.inc; path = ../../../../FH/sedutil/Common/Customizations.FH/DtaExtensionOptionImplementations.inc; sourceTree = "<group>"; };
 		D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaAuthorizeSedutilExecution.h; sourceTree = "<group>"; };
 		D22A69392A096F6700EF864A /* DtaHashPassword.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
 		D22A693C2A096F6D00EF864A /* DtaHashPassword.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DtaHashPassword.h; path = ../../Common/DtaHashPassword.h; sourceTree = "<group>"; };
-		D22A69422A09788E00EF864A /* DtaAudit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaAudit.h; sourceTree = "<group>"; };
 		D23F3DF728B57BB400741CC0 /* sedutil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sedutil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D23F3DF828B57BB400741CC0 /* log.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D23F3DF928B57BB400741CC0 /* cifra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = cifra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -315,20 +307,6 @@
 			path = log;
 			sourceTree = "<group>";
 		};
-		D21871CC2B1AC72E0003ED81 /* Customizations.FH */ = {
-			isa = PBXGroup;
-			children = (
-				D21871CF2B1AC72E0003ED81 /* DtaDevOpalLoadPBA.cpp */,
-				D21871D12B1AC72E0003ED81 /* DtaAuthorizeSedutilExecution.cpp */,
-				D21871DB2B1AC8690003ED81 /* DtaExtensionOptionEnumerations.inc */,
-				D21871DA2B1AC8280003ED81 /* DtaExtensionOptions.inc */,
-				D21871DC2B1AC9540003ED81 /* DtaExtensionOptionImplementations.inc */,
-				D21871CD2B1AC72E0003ED81 /* ob.h */,
-				D21871CE2B1AC72E0003ED81 /* ob.cpp */,
-			);
-			path = Customizations.FH;
-			sourceTree = "<group>";
-		};
 		D21871D22B1AC72E0003ED81 /* Customizations.OpenSource */ = {
 			isa = PBXGroup;
 			children = (
@@ -434,10 +412,8 @@
 			isa = PBXGroup;
 			children = (
 				D24E866E2B1ADA420098FE03 /* ATAStructures.h */,
-				D21871CC2B1AC72E0003ED81 /* Customizations.FH */,
 				D21871D22B1AC72E0003ED81 /* Customizations.OpenSource */,
 				D22042002B1962FC00116D30 /* Customizations */,
-				D22A69422A09788E00EF864A /* DtaAudit.h */,
 				D2BDDC9B28A6369A00001E26 /* ReadMe.txt */,
 				D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */,
 				D2EA83D828053B3400A0F685 /* DtaAnnotatedDump.cpp */,

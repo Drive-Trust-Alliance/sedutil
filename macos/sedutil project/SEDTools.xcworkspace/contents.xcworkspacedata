@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../../../../../Customizations.FH">
+   </FileRef>
+   <FileRef
       location = "group:../../../../../Desktop/sedutil.out">
    </FileRef>
    <FileRef

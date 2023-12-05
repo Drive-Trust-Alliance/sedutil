@@ -360,13 +360,9 @@ uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint
     uint8_t activate(char * password);
 	uint8_t getmfgstate(void);
 	uint8_t loadPBA(char * password, char * filename);
-		 // create an audit user UserN disk_info.OPAL20_numUsers
-	void gethuser(char * buf);
 	uint8_t setTperResetEnable(bool enable, char * password);
     uint8_t setLockonReset(uint8_t lockingrange, bool enable, char * password);
     uint8_t setLockonReset(uint8_t lockingrange, bool enable, vector<uint8_t>HostChallenge);
-    uint8_t setuphuser(char * password);
-    uint8_t setuphuser(vector<uint8_t>HostChallenge);
     /** User command to prepare the device for management by sedutil.
      * Specific to the SSC that the device supports
      * @param password the password that is to be assigned to the SSC master entities
@@ -410,35 +406,7 @@ uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint
          */
 	uint8_t rawCmd(char *sp, char * auth, char *pass,
 		char *invoker, char *method, char *plist);
-/*
-	typedef struct _entry_t {
-		uint8_t yy;
-		uint8_t mm;
-		uint8_t dd;
-		uint8_t hh;
-		uint8_t min;
-		uint8_t event;
-		uint16_t reserved;
-	} entry_t;
 
-
-	typedef struct _audit_header {
-		char * hdr = "Fidelity Lock Audit Log";
-		uint8_t ver_major = 1;
-		uint8_t ver_minor = 0;
-		uint16_t head = 0; // 0 to 1000
-		uint16_t tail = 0; // 0 to 1000
-		uint16_t num_entry = 0; 
-	}audit_header;
-	typedef struct _audit_t
-	{
-		audit_header header;
-		uint8_t buffer[1000 * 8];
-	}audit_t;
-	*/
-	
-	//audit_t auditL;
-	//vector <entry_t> entryA;
 
     /** Primitive to extract the MSID into a std::string
      * @param MSID the string to receive the MSID
@@ -484,7 +452,9 @@ uint8_t setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, OPAL_TOKEN value,
 	 *  @param password Admin1 Password for TPer
 	 */
 	lrStatus_t getLockingRange_status(uint8_t lockingrange, char * password);
-	bool getusermode() { return usermodeON; };
+    OPAL_UID getUSERUID(uint8_t idx) {
+        return usermodeON ? (OPAL_UID)(OPAL_USER1_UID + idx) : OPAL_ADMIN1_UID;
+    };
 	bool gettranslate() { return translate_req; };
 	bool getactivateskip() { return skip_activate; }
 	uint8_t adminEnabledTab[16];
