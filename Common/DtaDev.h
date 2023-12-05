@@ -175,17 +175,8 @@ public:
          * @param newpassword  value password is to be changed to
          */
 	virtual uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword) = 0;
-	virtual uint8_t pbaValid(char * password) = 0;
-	virtual uint8_t activate(char * password) = 0;
-	virtual uint8_t auditWrite(char * password, char * idstr, char * userid) = 0;
-	virtual uint8_t auditRead(char * password, char * userid) = 0;
-	virtual uint8_t auditErase(char * password, char * userid) = 0;
+    virtual uint8_t activate(char * password) = 0;
 	virtual uint8_t getmfgstate(void) = 0;
-	virtual uint8_t DataStoreWrite(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len) = 0;
-	virtual uint8_t DataStoreRead(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len) = 0;
-	virtual uint8_t MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len) = 0;
-	virtual uint8_t getMBRsize(char * password) = 0;
-	virtual uint8_t createUSB(char * filename) = 0;
     /** Loads a disk image file to the shadow MBR table.
      * @param password the password for the administrative authority with access to the table
      * @param filename the filename of the disk image

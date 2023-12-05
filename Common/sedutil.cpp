@@ -132,19 +132,6 @@ int main(int argc, char * argv[])
         return d->setPassword(argv[opts.password], (char *) "Admin1",
                             argv[opts.newpassword]);
 		break;
-	case sedutiloption::auditWrite:
-		LOG(D) << "audit log write " << argv[opts.device];;
-		//printf("argv[opts.eventid]=%s\n", argv[opts.eventid]);
-		return d->auditWrite(argv[opts.password], argv[opts.eventid], argv[opts.userid]);
-		break;
-	case sedutiloption::auditRead:
-		LOG(D) << "audit log read " << argv[opts.device];;
-		return d->auditRead(argv[opts.password], argv[opts.userid]);
-		break;
-	case sedutiloption::auditErase:
-		LOG(D) << "audit log erase " << argv[opts.device];;
-		return d->auditErase(argv[opts.password], argv[opts.userid]);
-		break;
 	case sedutiloption::getmfgstate:
 		LOG(D) << "get manufacture life cycle state " << argv[opts.device];;
 		return d->getmfgstate();
@@ -152,22 +139,6 @@ int main(int argc, char * argv[])
 	case sedutiloption::activate:
 		LOG(D) << "activate LockingSP with MSID " << argv[opts.device];;
 		return d->activate(argv[opts.password]);
-		break;
-    case sedutiloption::MBRRead:
-        LOG(D) << "Read shadow MBR  to file " << argv[opts.device];;
-        return d->MBRRead(argv[opts.password], argv[opts.pbafile], (uint32_t)atol(argv[opts.startpos]), (uint32_t)atol(argv[opts.len]));
-        break;
-	case sedutiloption::DataStoreWrite:
-		LOG(D) << "Write to Data Store " << argv[opts.device];;
-		return d->DataStoreWrite(argv[opts.password], argv[opts.userid], argv[opts.pbafile], (uint8_t)atoi(argv[opts.dsnum]), (uint32_t)atol(argv[opts.startpos]), (uint32_t)atol(argv[opts.len]));
-		break;
-	case sedutiloption::DataStoreRead:
-		LOG(D) << "Read Data Store to file " << argv[opts.device];;
-		return d->DataStoreRead(argv[opts.password], argv[opts.userid], argv[opts.pbafile], (uint8_t)atoi(argv[opts.dsnum]), (uint32_t)atol(argv[opts.startpos]), (uint32_t)atol(argv[opts.len]));
-		break;
-	case sedutiloption::getMBRsize:
-		LOG(D) << "get shadow MBR table size " << argv[opts.device];
-		return d->getMBRsize(argv[opts.password]);
 		break;
 	case sedutiloption::loadPBAimage:
         LOG(D) << "Loading PBA image " << argv[opts.pbafile] << " to " << argv[opts.device];

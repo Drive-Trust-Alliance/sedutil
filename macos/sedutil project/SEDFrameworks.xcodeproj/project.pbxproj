@@ -13,12 +13,8 @@
 		D22369B928D686C400D7D851 /* sedutil.h in Headers */ = {isa = PBXBuildFile; fileRef = D2D1379E28B55C14003FD51F /* sedutil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D22A693D2A096F6F00EF864A /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D22A69392A096F6700EF864A /* DtaHashPassword.cpp */; };
 		D22A69402A096F6F00EF864A /* DtaHashPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = D22A693C2A096F6D00EF864A /* DtaHashPassword.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D22A69432A09788E00EF864A /* DtaAudit.h in Headers */ = {isa = PBXBuildFile; fileRef = D22A69422A09788E00EF864A /* DtaAudit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2466AF328B5876C009F55D9 /* DtaDevOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D2466A4B28B585F8009F55D9 /* DtaDevOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D24E866F2B1ADA420098FE03 /* ATAStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D24E866E2B1ADA420098FE03 /* ATAStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D24E86702B1ADAAA0098FE03 /* DtaExtensionOptionEnumerations.inc in Headers */ = {isa = PBXBuildFile; fileRef = D2486D732B184883002D347E /* DtaExtensionOptionEnumerations.inc */; settings = {ATTRIBUTES = (Public, ); }; };
-		D24E86712B1ADAAA0098FE03 /* DtaExtensionOptions.inc in Headers */ = {isa = PBXBuildFile; fileRef = D2486D602B184266002D347E /* DtaExtensionOptions.inc */; settings = {ATTRIBUTES = (Public, ); }; };
-		D24E86722B1ADAAA0098FE03 /* DtaExtensionOptionImplementations.inc in Headers */ = {isa = PBXBuildFile; fileRef = D2486D6F2B18465B002D347E /* DtaExtensionOptionImplementations.inc */; settings = {ATTRIBUTES = (Public, ); }; };
 		D24E86732B1ADACD0098FE03 /* DtaDevOpalLoadPBA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2C1CA1E2B196E8C00F11E86 /* DtaDevOpalLoadPBA.cpp */; };
 		D263209A2937F65500F0927B /* oui_vendor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D26320982937F65500F0927B /* oui_vendor.cpp */; };
 		D263209B2937F65500F0927B /* oui_vendor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D26320992937F65500F0927B /* oui_vendor.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -127,15 +123,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		D24249A328E2BF9B0066B5DA /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = bundles/Library/Frameworks;
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D2E6FEA12935E67800DAB209 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -433,12 +420,12 @@
 				D2EBA4901F055579002F8780 /* cifra (open source crypto) */,
 				D20A63981F731F3600F154AC /* log */,
 				D2E6FE7F2935E08D00DAB209 /* oui */,
+				D23F3E0B28B57E6800741CC0 /* Frameworks */,
 				D2E6FEB22935E6DE00DAB209 /* oui-test */,
 				D23F3DF728B57BB400741CC0 /* sedutil.framework */,
 				D23F3DF828B57BB400741CC0 /* log.framework */,
-				D23F3DF928B57BB400741CC0 /* cifra.framework */,
-				D23F3E0B28B57E6800741CC0 /* Frameworks */,
 				D2E6FE7E2935696800DAB209 /* oui.framework */,
+				D23F3DF928B57BB400741CC0 /* cifra.framework */,
 				D2BDCEB329648F6700D07633 /* oui-test */,
 			);
 			sourceTree = "<group>";
@@ -610,12 +597,8 @@
 				D271A20028054AFE00BF043A /* DtaResponse.h in Headers */,
 				D2EA84AB28053B4E00A0F685 /* DtaEndianFixup.h in Headers */,
 				D2EA84AF28053B4E00A0F685 /* DtaHexDump.h in Headers */,
-				D22A69432A09788E00EF864A /* DtaAudit.h in Headers */,
 				D22A69402A096F6F00EF864A /* DtaHashPassword.h in Headers */,
 				D22042022B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h in Headers */,
-				D24E86702B1ADAAA0098FE03 /* DtaExtensionOptionEnumerations.inc in Headers */,
-				D24E86712B1ADAAA0098FE03 /* DtaExtensionOptions.inc in Headers */,
-				D24E86722B1ADAAA0098FE03 /* DtaExtensionOptionImplementations.inc in Headers */,
 				D29321E128E1086600558642 /* Version.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -700,7 +683,6 @@
 				D2EBA3031F0549B7002F8780 /* Frameworks */,
 				D2EBA3041F0549B7002F8780 /* Headers */,
 				D2EBA3051F0549B7002F8780 /* Resources */,
-				D24249A328E2BF9B0066B5DA /* CopyFiles */,
 			);
 			buildRules = (
 			);

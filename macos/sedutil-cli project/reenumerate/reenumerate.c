@@ -232,6 +232,27 @@ void ProcessDevice(io_service_t aDevice)
     (*deviceInterface)->Release(deviceInterface);
 }
 
+
+static inline
+mach_port_t default_port()
+{
+#if defined (MAC_OS_VERSION_12_0) && MAC_OS_VERSION_12_0 <= MAC_OS_X_VERSION_MAX_ALLOWED
+    if (@available (macOS 12.0, *))
+    {
+        return kIOMainPortDefault;
+    }
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+    return kIOMasterPortDefault;
+#if defined (MAC_OS_VERSION_12_0) && MAC_OS_VERSION_12_0 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#pragma clang diagnostic pop
+#endif
+}
+
+
+
+
 //================================================================================================
 //    main
 //================================================================================================
@@ -278,7 +299,7 @@ int main( int argc, const char *argv[] )
         CFRelease(numberRef);
      
 //        kr = IOServiceGetMatchingServices(kIOMasterPortDefault, matchingDict, &foundDevices);    //consumes matchingDIct reference
-        kr = IOServiceGetMatchingServices(kIOMainPortDefault, matchingDict, &foundDevices);    //consumes matchingDIct reference
+        kr = IOServiceGetMatchingServices(default_port(), matchingDict, &foundDevices);    //consumes matchingDIct reference
         if ( 0 != kr)
         {
             elog("Error 0x%x trying to find matching services\n", kr);

@@ -40,6 +40,11 @@
 /* Begin PBXBuildFile section */
 		D20A961929A706C800B2FCF2 /* sedutil-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28CFD6028E2C1AF00A33B00 /* sedutil-cli */; };
 		D20A961A29A706CE00B2FCF2 /* reenumerate in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28CFD6128E2C1AF00A33B00 /* reenumerate */; };
+		D2166F4B2B1F1035007AE659 /* cifra.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2166F4A2B1F1035007AE659 /* cifra.framework */; };
+		D2166F4D2B1F1045007AE659 /* log.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2166F4C2B1F1044007AE659 /* log.framework */; };
+		D2166F512B1F106B007AE659 /* oui.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2166F502B1F106B007AE659 /* oui.framework */; };
+		D2166F532B1F1073007AE659 /* sedutil.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2166F522B1F1072007AE659 /* sedutil.framework */; };
+		D2166F552B1F1079007AE659 /* sedutil.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2166F542B1F1079007AE659 /* sedutil.framework */; };
 		D2486D772B186060002D347E /* sedutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2486D762B18605A002D347E /* sedutil.cpp */; };
 		D26904CE28D7A17B0095769E /* reenumerate.c in Sources */ = {isa = PBXBuildFile; fileRef = D26904CD28D7A17B0095769E /* reenumerate.c */; };
 		D28B7E542A41244D00582735 /* Bright Plaza CA.pem in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28B7E4D2A41237600582735 /* Bright Plaza CA.pem */; };
@@ -49,10 +54,6 @@
 		D2C956E42B179B0E00E00FE6 /* sedutil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2C956E32B179B0E00E00FE6 /* sedutil.framework */; };
 		D2C956EB2B17E8EF00E00FE6 /* BrightPlazaTPer.kext in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956EA2B17E8EF00E00FE6 /* BrightPlazaTPer.kext */; };
 		D2C956F22B17E95700E00FE6 /* SEDKernelInterface.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956ED2B17E95600E00FE6 /* SEDKernelInterface.framework */; };
-		D2C956F32B17E95700E00FE6 /* cifra.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956EE2B17E95700E00FE6 /* cifra.framework */; };
-		D2C956F42B17E95700E00FE6 /* log.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956EF2B17E95700E00FE6 /* log.framework */; };
-		D2C956F52B17E95700E00FE6 /* oui.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956F02B17E95700E00FE6 /* oui.framework */; };
-		D2C956F62B17E95700E00FE6 /* sedutil.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956F12B17E95700E00FE6 /* sedutil.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,11 +97,11 @@
 			dstPath = bundles/Library/Frameworks;
 			dstSubfolderSpec = 16;
 			files = (
+				D2166F512B1F106B007AE659 /* oui.framework in CopyFiles */,
 				D2C956F22B17E95700E00FE6 /* SEDKernelInterface.framework in CopyFiles */,
-				D2C956F32B17E95700E00FE6 /* cifra.framework in CopyFiles */,
-				D2C956F42B17E95700E00FE6 /* log.framework in CopyFiles */,
-				D2C956F52B17E95700E00FE6 /* oui.framework in CopyFiles */,
-				D2C956F62B17E95700E00FE6 /* sedutil.framework in CopyFiles */,
+				D2166F4B2B1F1035007AE659 /* cifra.framework in CopyFiles */,
+				D2166F552B1F1079007AE659 /* sedutil.framework in CopyFiles */,
+				D2166F4D2B1F1045007AE659 /* log.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,6 +111,7 @@
 			dstPath = files/opt/local/bin;
 			dstSubfolderSpec = 16;
 			files = (
+				D2166F532B1F1073007AE659 /* sedutil.framework in CopyFiles */,
 				D20A961A29A706CE00B2FCF2 /* reenumerate in CopyFiles */,
 				D20A961929A706C800B2FCF2 /* sedutil-cli in CopyFiles */,
 			);
@@ -248,6 +250,12 @@
 		D20A971029A8025600B2FCF2 /* build_disk_image.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build_disk_image.sh; sourceTree = "<group>"; };
 		D20A971129A8025600B2FCF2 /* distribution.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = distribution.xml; sourceTree = "<group>"; };
 		D20A972329A8025600B2FCF2 /* DTABundles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DTABundles.plist; sourceTree = "<group>"; };
+		D2166F4A2B1F1035007AE659 /* cifra.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = cifra.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/SEDTools-ecglufwhuzubxcaqcyikrgzmfvdf/Build/Products/Debug Bonjour Multistart/cifra.framework"; sourceTree = "<group>"; };
+		D2166F4C2B1F1044007AE659 /* log.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = log.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/SEDTools-ecglufwhuzubxcaqcyikrgzmfvdf/Build/Products/Debug Bonjour Multistart/log.framework"; sourceTree = "<group>"; };
+		D2166F4E2B1F1049007AE659 /* oui.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = oui.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/SEDTools-ecglufwhuzubxcaqcyikrgzmfvdf/Build/Products/Debug Bonjour Multistart/oui.framework"; sourceTree = "<group>"; };
+		D2166F502B1F106B007AE659 /* oui.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = oui.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/SEDTools-ecglufwhuzubxcaqcyikrgzmfvdf/Build/Products/Debug Bonjour Multistart/oui.framework"; sourceTree = "<group>"; };
+		D2166F522B1F1072007AE659 /* sedutil.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sedutil.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/SEDTools-ecglufwhuzubxcaqcyikrgzmfvdf/Build/Products/Debug Bonjour Multistart/sedutil.framework"; sourceTree = "<group>"; };
+		D2166F542B1F1079007AE659 /* sedutil.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = sedutil.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/SEDTools-ecglufwhuzubxcaqcyikrgzmfvdf/Build/Products/Debug Bonjour Multistart/sedutil.framework"; sourceTree = "<group>"; };
 		D2486D762B18605A002D347E /* sedutil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sedutil.cpp; sourceTree = "<group>"; };
 		D24E86672B1AD6F10098FE03 /* DtaOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
 		D26496E62A36849E00F09A67 /* extract_configuration_type_from_Xcode_build_environment */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = extract_configuration_type_from_Xcode_build_environment; sourceTree = "<group>"; };
@@ -686,6 +694,12 @@
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D2166F522B1F1072007AE659 /* sedutil.framework */,
+				D2166F542B1F1079007AE659 /* sedutil.framework */,
+				D2166F4E2B1F1049007AE659 /* oui.framework */,
+				D2166F502B1F106B007AE659 /* oui.framework */,
+				D2166F4C2B1F1044007AE659 /* log.framework */,
+				D2166F4A2B1F1035007AE659 /* cifra.framework */,
 				D2A3E62B2B1B03AB00F9CCF8 /* DtaConstants.h */,
 				D2C956EE2B17E95700E00FE6 /* cifra.framework */,
 				D2C956EF2B17E95700E00FE6 /* log.framework */,

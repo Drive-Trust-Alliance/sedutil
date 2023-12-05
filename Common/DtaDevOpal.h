@@ -29,7 +29,6 @@ class DtaSession;
 #include "DtaStructures.h"
 #include "DtaLexicon.h"
 #include "DtaResponse.h"   // wouldn't take class
-#include "DtaAudit.h"
 
 using namespace std;
 /** Common code for OPAL SSCs.
@@ -357,25 +356,9 @@ uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint
 	    * @param password Password of administrative authority for locking range
 	    */
 	uint8_t eraseLockingRange(uint8_t lockingrange, char * password);
-	uint8_t pbaValid(char * password);
-	uint8_t activate(char * password);
-	uint8_t auditRec(char * password, entry_t * pent, char * userid);
-	uint8_t auditErase(char * password,char * userid);
-	uint8_t auditRead(char * password, char * userid);
-	uint8_t auditWrite(char * password,char * idstr, char * userid);
 
+    uint8_t activate(char * password);
 	uint8_t getmfgstate(void);
-	uint8_t DataStoreWrite(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
-	uint8_t DataStoreRead(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
-	uint8_t MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len);
-	uint8_t getMBRsize(char * password, uint32_t * msize);
-	uint8_t getMBRsize(char * password);
-	uint8_t MBRRead(char * password, uint32_t startpos, uint32_t len, char * buffer);
-	uint8_t DataRead(char * password, uint32_t startpos, uint32_t len, char * buffer,char * userid);
-	uint8_t DataWrite(char * password, uint32_t startpos, uint32_t len, char * buffer, char * userid);
-	uint8_t auditlogwr(char * password, uint32_t startpos, uint32_t len, char * buffer, entry_t * ent, char * userid); // audit log write
-	uint8_t auditlogrd(char * password, uint32_t startpos, uint32_t len, char * buffer,char * userid); // audit log read
-	uint8_t createUSB(char * filename);
 	uint8_t loadPBA(char * password, char * filename);
 		 // create an audit user UserN disk_info.OPAL20_numUsers
 	void gethuser(char * buf);

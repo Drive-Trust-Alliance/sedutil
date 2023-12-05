@@ -1,0 +1,22 @@
+#!/bin/bash
+#set -xv
+
+function require_dir_var {
+#     echo First parameter is $1
+#     echo First parameter value is "${!1}"
+#     echo Second parameter is $2
+    [ -n "${!1}" ] && [ -d "${!1}" ] || export $1="${2}"
+    [ -d "${!1}" ] || die "Can not find folder ${!1}"
+#     echo On exit, $1 value is "${!1}"
+}
+export -f require_dir_var
+
+
+require_dir_var DTA_root "${DTA_ROOT:-${HOME}/preboot/DTA/sedutil}"
+require_dir_var DTA_project_root "${DTA_PROJECT_ROOT:-${DTA_root}}"
+
+require_dir_var mac_root "${DTA_project_root}/macos/sedutil project"
+
+require_dir_var xcw_path "${mac_root}/SEDTools.xcworkspace"
+
+open -F "${xcw_path}" --args "${@}"
