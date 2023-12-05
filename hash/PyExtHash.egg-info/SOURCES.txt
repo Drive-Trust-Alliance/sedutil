@@ -1,7 +1,0 @@
-DtaHashPassword.cpp
-PyDtaHashPassword.cpp
-setup.py
-PyExtHash.egg-info/PKG-INFO
-PyExtHash.egg-info/SOURCES.txt
-PyExtHash.egg-info/dependency_links.txt
-PyExtHash.egg-info/top_level.txt

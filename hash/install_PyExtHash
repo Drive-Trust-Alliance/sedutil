@@ -1,4 +1,0 @@
-#!/bin/bash
-# 2>/dev/null asroot pip -y uninstall PyExtHash
-# 2>/dev/null asroot pip install .
-./buildhash.sh && pip install PyExtHash-1.0-cp39-cp39-macosx_10_9_universal2.whl

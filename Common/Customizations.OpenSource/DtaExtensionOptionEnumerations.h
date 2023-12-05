@@ -9,7 +9,7 @@ the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 sedutil is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
+but WITHOUT ANY WARRANTY; without even the implied warranty ofOpOp
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
@@ -21,8 +21,4 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 // Operating specific or customizing option enumerations can be included in the options
 // enumerations body by entering them here like this:
 //
-//  catchFireAndBurn,
-
-    MBRRead,
-    createUSB,
-    pbaValid,
+//#define catchFireAndBurn extensionOption01

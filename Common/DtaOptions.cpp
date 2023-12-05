@@ -17,11 +17,16 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
+
+// This routine should be compiled with the main routine sedutil-cli and the
+// appropriate Common/Customizations folder, and not with the sedutil library.
+
 #include "os.h"
 #include "log.h"
 #include "DtaOptions.h"
 #include "DtaLexicon.h"
 #include "Version.h"
+
 void usage()
 {
     printf("sedutil v%s Copyright 2014-2023 Bright Plaza Inc. <drivetrust@drivetrust.com>\n", GIT_VERSION);
@@ -33,7 +38,6 @@ void usage()
     printf("-n (optional)                       no password hashing. Passwords will be sent in clear text!\n");
     printf("-l (optional)                       log style output to stderr only\n");
     printf("actions \n");
-//    printf("--scan <skipdevice>\n");
     printf("--scan\n");
     printf("                                Scans the devices on the system \n");
     printf("                                identifying Opal compliant devices \n");
@@ -42,59 +46,59 @@ void usage()
     printf("--isValidSED <device>\n");
     printf("                                Verify whether the given device is SED or not\n");
     printf("--listLockingRanges <password> <device>\n");
-	printf("                                List all Locking Ranges\n");
+    printf("                                List all Locking Ranges\n");
     printf("--listLockingRange <0...n> <password> <device>\n");
-	printf("                                List all Locking Ranges\n");
-	printf("                                0 = GLobal 1..n  = LRn \n");
+    printf("                                List all Locking Ranges\n");
+    printf("                                0 = GLobal 1..n  = LRn \n");
     printf("--rekeyLockingRange <0...n> <password> <device>\n");
-	printf("                                0 = GLobal 1..n  = LRn \n");
-	printf("                                Rekey Locking Range\n");
+    printf("                                0 = GLobal 1..n  = LRn \n");
+    printf("                                Rekey Locking Range\n");
     printf("--setBandsEnabled <password> <device>\n");
-	printf("                                Set Enabled for all Locking Ranges\n");
-	printf("                                (passwort = \"\" for MSID) \n");
+    printf("                                Set Enabled for all Locking Ranges\n");
+    printf("                                (passwort = \"\" for MSID) \n");
     printf("--setBandEnabled <0...n> <password> <device>\n");
-	printf("                                Set Enabled for Locking Range[n]\n");
-	printf("                                (passwort = \"\" for MSID) \n");
+    printf("                                Set Enabled for Locking Range[n]\n");
+    printf("                                (passwort = \"\" for MSID) \n");
     printf("--eraseLockingRange <0...n> <password> <device>\n");
-	printf("                                Erase a Locking Range\n");
-	printf("                                0 = GLobal 1..n  = LRn \n");
+    printf("                                Erase a Locking Range\n");
+    printf("                                0 = GLobal 1..n  = LRn \n");
     printf("--setupLockingRange <0...n> <RangeStart> <RangeLength> <password> <device>\n");
-	printf("                                Setup a new Locking Range\n");
-	printf("                                0 = GLobal 1..n  = LRn \n");
-	printf("--initialSetup <SIDpassword> <device>\n");
-	printf("                                Setup the device for use with sedutil\n");
-	printf("                                <SIDpassword> is new SID and Admin1 password\n");
-	printf("--setSIDPassword <SIDpassword> <newSIDpassword> <device> \n");
-	printf("                                Change the SID password\n");
-	printf("--setAdmin1Pwd <Admin1password> <newAdmin1password> <device> \n");
-	printf("                                Change the Admin1 password\n");
-	printf("--setPassword <oldpassword, \"\" for MSID> <userid> <newpassword> <device> \n");
-	printf("                                Change the Enterprise password for userid\n");
-	printf("                                \"EraseMaster\" or \"BandMaster<n>\", 0 <= n <= 1023\n");
-	printf("--setLockingRange <0...n> <RW|RO|LK> <Admin1password> <device> \n");
-	printf("                                Set the status of a Locking Range\n");
-	printf("                                0 = GLobal 1..n  = LRn \n");
-	printf("--enableLockingRange <0...n> <Admin1password> <device> \n");
-	printf("                                Enable a Locking Range\n");
-	printf("                                0 = GLobal 1..n  = LRn \n");
-	printf("--disableLockingRange <0...n> <Admin1password> <device> \n");
-	printf("                                Disable a Locking Range\n");
-	printf("                                0 = GLobal 1..n  = LRn \n");
-	printf("--setMBREnable <on|off> <Admin1password> <device> \n");
-	printf("                                Enable|Disable MBR shadowing \n");
-	printf("--setMBRDone <on|off> <Admin1password> <device> \n");
-	printf("                                set|unset MBRDone\n");
-	printf("--createUSB <file> <device1> <device2\n");
-	printf("                                Write image file to USB\n");
-	printf("--loadPBAimage <Admin1password> <file> <device> \n");
-	printf("                                Write <file> to MBR Shadow area\n");
+    printf("                                Setup a new Locking Range\n");
+    printf("                                0 = GLobal 1..n  = LRn \n");
+    printf("--initialSetup <SIDpassword> <device>\n");
+    printf("                                Setup the device for use with sedutil\n");
+    printf("                                <SIDpassword> is new SID and Admin1 password\n");
+    printf("--setSIDPassword <SIDpassword> <newSIDpassword> <device> \n");
+    printf("                                Change the SID password\n");
+    printf("--setAdmin1Pwd <Admin1password> <newAdmin1password> <device> \n");
+    printf("                                Change the Admin1 password\n");
+    printf("--setPassword <oldpassword, \"\" for MSID> <userid> <newpassword> <device> \n");
+    printf("                                Change the Enterprise password for userid\n");
+    printf("                                \"EraseMaster\" or \"BandMaster<n>\", 0 <= n <= 1023\n");
+    printf("--setLockingRange <0...n> <RW|RO|LK> <Admin1password> <device> \n");
+    printf("                                Set the status of a Locking Range\n");
+    printf("                                0 = GLobal 1..n  = LRn \n");
+    printf("--enableLockingRange <0...n> <Admin1password> <device> \n");
+    printf("                                Enable a Locking Range\n");
+    printf("                                0 = GLobal 1..n  = LRn \n");
+    printf("--disableLockingRange <0...n> <Admin1password> <device> \n");
+    printf("                                Disable a Locking Range\n");
+    printf("                                0 = GLobal 1..n  = LRn \n");
+    printf("--setMBREnable <on|off> <Admin1password> <device> \n");
+    printf("                                Enable|Disable MBR shadowing \n");
+    printf("--setMBRDone <on|off> <Admin1password> <device> \n");
+    printf("                                set|unset MBRDone\n");
+    printf("--createUSB <file> <device1> <device2\n");
+    printf("                                Write image file to USB\n");
+    printf("--loadPBAimage <Admin1password> <file> <device> \n");
+    printf("                                Write <file> to MBR Shadow area\n");
     printf("--revertTPer <SIDpassword> <device>\n");
     printf("                                set the device back to factory defaults \n");
-	printf("                                This **ERASES ALL DATA** \n");
-	printf("--revertNoErase <Admin1password> <device>\n");
-	printf("                                deactivate the Locking SP \n");
-	printf("                                without erasing the data \n");
-	printf("                                on GLOBAL RANGE *ONLY* \n");
+    printf("                                This **ERASES ALL DATA** \n");
+    printf("--revertNoErase <Admin1password> <device>\n");
+    printf("                                deactivate the Locking SP \n");
+    printf("                                without erasing the data \n");
+    printf("                                on GLOBAL RANGE *ONLY* \n");
     printf("--yesIreallywanttoERASEALLmydatausingthePSID <PSID> <device>\n");
     printf("                                revert the device using the PSID *ERASING* *ALL* the data \n");
     printf("--printDefaultPassword <device>\n");
@@ -102,10 +106,10 @@ void usage()
     printf("\n");
     printf("Examples \n");
     printf("sedutil-cli --scan <skipdevice>\n");
-	printf("sedutil-cli --query %s \n", DEVICEEXAMPLE);
-	printf("sedutil-cli --yesIreallywanttoERASEALLmydatausingthePSID <PSIDALLCAPSNODASHED> %s \n", DEVICEEXAMPLE);
-	printf("sedutil-cli --initialSetup <newSIDpassword> %s \n", DEVICEEXAMPLE);
-	printf("sedutil-cli --version \n");
+    printf("sedutil-cli --query %s \n", DEVICEEXAMPLE);
+    printf("sedutil-cli --yesIreallywanttoERASEALLmydatausingthePSID <PSIDALLCAPSNODASHED> %s \n", DEVICEEXAMPLE);
+    printf("sedutil-cli --initialSetup <newSIDpassword> %s \n", DEVICEEXAMPLE);
+    printf("sedutil-cli --version \n");
     return;
 }
 
@@ -162,253 +166,219 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 {
     memset(opts, 0, sizeof (DTA_OPTIONS));
     uint16_t loggingLevel = DEFAULT_LOGGING_LEVEL;
-	uint8_t baseOptions = 2; // program and option
+    uint8_t baseOptions = 2; // program and option
     CLog::Level() = CLog::FromInt(loggingLevel);
     RCLog::Level() = RCLog::FromInt(loggingLevel);
     if (2 > argc) {
         usage();
-		return DTAERROR_INVALID_COMMAND;
+        return DTAERROR_INVALID_COMMAND;
     }
-	for (uint8_t i = 1; i < argc; i++) {
-		if (!(strcmp("-h", argv[i])) || !(strcmp("--help", argv[i]))) {
-			usage();
-			return DTAERROR_INVALID_COMMAND;
-		}
-		else if ('v' == argv[i][1])
-		{
-			baseOptions += 1;
-			loggingLevel += (uint16_t)(strlen(argv[i]) - 1);
-			if (loggingLevel > MAX_LOGGING_LEVEL) loggingLevel = MAX_LOGGING_LEVEL;
-			CLog::Level() = CLog::FromInt(loggingLevel);
-			RCLog::Level() = RCLog::FromInt(loggingLevel);
-			LOG(D) << "Log level set to " << CLog::ToString(CLog::FromInt(loggingLevel));
-			LOG(D) << "sedutil version : " << GIT_VERSION;
-		}
-		else if (!(strcmp("-a", argv[i]))) {
-			baseOptions += 1;
-			opts->skip_activate = true;
-			LOG(D) << "Do not activate LockingSP";
-		}
-		else if (!(strcmp("-u", argv[i]))) {
-			baseOptions += 1;
-			opts->usermode = true;
-			LOG(D) << "user mode ON";
-		}
-		else if (!(strcmp("-t", argv[i]))) {
-			baseOptions += 1;
-			opts->translate_req = true;
-			LOG(D) << "translate hashed string to data";
-		}
-		else if (!(strcmp("-n", argv[i]))) {
-                        baseOptions += 1;
-			opts->no_hash_passwords = true;
-			LOG(D) << "Password hashing is disabled";
-                }
-		else if (!strcmp("-l", argv[i])) {
-			baseOptions += 1;
-			opts->output_format = sedutilNormal;
-			outputFormat = sedutilNormal;
-		}
-		else if (!(('-' == argv[i][0]) && ('-' == argv[i][1])) &&
-			(0 == opts->action))
-		{
-			LOG(E) << "Argument " << (uint16_t) i << " (" << argv[i] << ") should be a command";
-			return DTAERROR_INVALID_COMMAND;
-		}
-		BEGIN_OPTION(initialSetup, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(setSIDPassword, 3) OPTION_IS(password) OPTION_IS(newpassword)
-		         OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(setup_SUM, 6)
-			LOCKINGRANGEARG(lockingrange)
-			OPTION_IS(lrstart)
-			OPTION_IS(lrlength)
-			OPTION_IS(password)
-			OPTION_IS(newpassword)
-			OPTION_IS(device)
-        END_OPTION
-		BEGIN_OPTION(setAdmin1Pwd, 3)
+    for (uint8_t i = 1; i < argc; i++) {
+        if (!(strcmp("-h", argv[i])) || !(strcmp("--help", argv[i]))) {
+            usage();
+            return DTAERROR_INVALID_COMMAND;
+        } else if ('v' == argv[i][1]) {
+          baseOptions += 1;
+          loggingLevel += (uint16_t)(strlen(argv[i]) - 1);
+          if (loggingLevel > MAX_LOGGING_LEVEL) loggingLevel = MAX_LOGGING_LEVEL;
+          CLog::Level() = CLog::FromInt(loggingLevel);
+          RCLog::Level() = RCLog::FromInt(loggingLevel);
+          LOG(D) << "Log level set to " << CLog::ToString(CLog::FromInt(loggingLevel));
+          LOG(D) << "sedutil version : " << GIT_VERSION;
+        } else if (!(strcmp("-a", argv[i]))) {
+          baseOptions += 1;
+          opts->skip_activate = true;
+          LOG(D) << "Do not activate LockingSP";
+        } else if (!(strcmp("-u", argv[i]))) {
+          baseOptions += 1;
+          opts->usermode = true;
+          LOG(D) << "user mode ON";
+        } else if (!(strcmp("-t", argv[i]))) {
+          baseOptions += 1;
+          opts->translate_req = true;
+          LOG(D) << "translate hashed string to data";
+        } else if (!(strcmp("-n", argv[i]))) {
+          baseOptions += 1;
+          opts->no_hash_passwords = true;
+          LOG(D) << "Password hashing is disabled";
+        } else if (!strcmp("-l", argv[i])) {
+          baseOptions += 1;
+          opts->output_format = sedutilNormal;
+          outputFormat = sedutilNormal;
+        } else if (!(('-' == argv[i][0]) && ('-' == argv[i][1])) &&
+                                            (0 == opts->action)) {
+          LOG(E) << "Argument " << (uint16_t) i << " (" << argv[i] << ") should be a command";
+          return DTAERROR_INVALID_COMMAND;
+        }
+
+        BEGIN_OPTION(initialSetup, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(setSIDPassword, 3) OPTION_IS(password) OPTION_IS(newpassword)
+            OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(setup_SUM, 6)
+	    LOCKINGRANGEARG(lockingrange)
+            OPTION_IS(lrstart)
+            OPTION_IS(lrlength)
             OPTION_IS(password)
             OPTION_IS(newpassword)
-			OPTION_IS(device)
-        END_OPTION
-		BEGIN_OPTION(activate, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(auditWrite, 4)
-            OPTION_IS(eventid)
-            OPTION_IS(password)
-            OPTION_IS(userid)
             OPTION_IS(device)
         END_OPTION
-		BEGIN_OPTION(auditRead, 3) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(auditErase, 3) OPTION_IS(password) OPTION_IS(userid) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(getmfgstate, 1) OPTION_IS(device) END_OPTION
-        BEGIN_OPTION(MBRRead, 5)
+        BEGIN_OPTION(setAdmin1Pwd, 3)
             OPTION_IS(password)
-            OPTION_IS(pbafile)
-            OPTION_IS(startpos)
-            OPTION_IS(len)
+            OPTION_IS(newpassword)
             OPTION_IS(device)
         END_OPTION
-		BEGIN_OPTION(DataStoreWrite, 7)
+        BEGIN_OPTION(activate, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(getmfgstate, 1) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(getMBRsize, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(loadPBAimage, 3)
             OPTION_IS(password)
-            OPTION_IS(userid)
             OPTION_IS(pbafile)
-			OPTION_IS(dsnum)
-            OPTION_IS(startpos)
-            OPTION_IS(len)
-			OPTION_IS(device)
+            OPTION_IS(device)
         END_OPTION
-		BEGIN_OPTION(DataStoreRead, 7)
+        BEGIN_OPTION(revertTPer, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(revertNoErase, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(PSIDrevert, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(PSIDrevertAdminSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2)
             OPTION_IS(password)
-            OPTION_IS(userid)
-            OPTION_IS(pbafile)
-			OPTION_IS(dsnum)
-            OPTION_IS(startpos)
-            OPTION_IS(len)
-			OPTION_IS(device)
+            OPTION_IS(device)
         END_OPTION
-		BEGIN_OPTION(getMBRsize, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(loadPBAimage, 3) OPTION_IS(password) OPTION_IS(pbafile) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(revertTPer, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(revertNoErase, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(PSIDrevert, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(PSIDrevertAdminSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(yesIreallywanttoERASEALLmydatausingthePSID, 2) OPTION_IS(password)	OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(enableuser, 4)
+        BEGIN_OPTION(enableuser, 4)
             MBRSTATEARG(enableuser,mbrstate)
-			OPTION_IS(password)
+            OPTION_IS(password)
             OPTION_IS(userid)
-			OPTION_IS(device)
+            OPTION_IS(device)
         END_OPTION
-		BEGIN_OPTION(enableuserread, 4)
+        BEGIN_OPTION(enableuserread, 4)
             MBRSTATEARG(enableuser,mbrstate)
-			OPTION_IS(password)
+            OPTION_IS(password)
             OPTION_IS(userid)
-			OPTION_IS(device)
-        END_OPTION
-		BEGIN_OPTION(activateLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(activateLockingSP_SUM, 3)
-            LOCKINGRANGEARG(lockingrange)
-			OPTION_IS(password)
             OPTION_IS(device)
         END_OPTION
-		BEGIN_OPTION(eraseLockingRange_SUM, 3)
+        BEGIN_OPTION(activateLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(activateLockingSP_SUM, 3)
             LOCKINGRANGEARG(lockingrange)
-			OPTION_IS(password)
+            OPTION_IS(password)
             OPTION_IS(device)
         END_OPTION
-		BEGIN_OPTION(query, 1) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(eraseLockingRange_SUM, 3)
+            LOCKINGRANGEARG(lockingrange)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(query, 1) OPTION_IS(device) END_OPTION
 //        BEGIN_OPTION(scan, 1) OPTION_IS(device) END_OPTION
         BEGIN_OPTION(scan, 0) END_OPTION
-		BEGIN_OPTION(version, 0)  END_OPTION
-		BEGIN_OPTION(isValidSED, 1) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(eraseLockingRange, 3)
+        BEGIN_OPTION(version, 0)  END_OPTION
+        BEGIN_OPTION(isValidSED, 1) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(eraseLockingRange, 3)
             LOCKINGRANGEARG(lockingrange)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(takeOwnership, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(revertLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(setPassword, 4)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(takeOwnership, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(revertLockingSP, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(setPassword, 4)
             OPTION_IS(password)
             OPTION_IS(userid)
             OPTION_IS(newpassword)
             OPTION_IS(device)
         END_OPTION
-		BEGIN_OPTION(setPassword_SUM, 4)
+        BEGIN_OPTION(setPassword_SUM, 4)
             OPTION_IS(password)
             OPTION_IS(userid)
             OPTION_IS(newpassword)
             OPTION_IS(device)
         END_OPTION
-		BEGIN_OPTION(validatePBKDF2, 0) END_OPTION
-		BEGIN_OPTION(setMBREnable, 3)
+        BEGIN_OPTION(validatePBKDF2, 0) END_OPTION
+        BEGIN_OPTION(setMBREnable, 3)
             MBRSTATEARG(MBREnable,mbrstate)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(setMBRDone, 3)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(setMBRDone, 3)
             MBRSTATEARG(MBRDone,mbrstate)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(TCGreset, 2)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(TCGreset, 2)
             TCGRESETTYPEARG(resettype)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(setLockingRange, 4)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(setLockingRange, 4)
             LOCKINGRANGEARG(lockingrange)
             LOCKINGSTATEARG(lockingstate)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(setLockingRange_SUM, 4)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(setLockingRange_SUM, 4)
             LOCKINGRANGEARG(lockingrange)
             LOCKINGSTATEARG(lockingstate)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(enableLockingRange, 3)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(enableLockingRange, 3)
             LOCKINGRANGEARG(lockingrange)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(disableLockingRange, 3)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(disableLockingRange, 3)
             LOCKINGRANGEARG(lockingrange)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(setupLockingRange, 5)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(setupLockingRange, 5)
             LOCKINGRANGEARG(lockingrange)
-			OPTION_IS(lrstart)
-			OPTION_IS(lrlength)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(setupLockingRange_SUM, 5)
+            OPTION_IS(lrstart)
+            OPTION_IS(lrlength)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(setupLockingRange_SUM, 5)
             LOCKINGRANGEARG(lockingrange)
-			OPTION_IS(lrstart)
-			OPTION_IS(lrlength)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(readonlyLockingRange, 3)
+            OPTION_IS(lrstart)
+            OPTION_IS(lrlength)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(readonlyLockingRange, 3)
             LOCKINGRANGEARG(lockingrange)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(listLockingRanges, 2)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(listLockingRange, 3)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(listLockingRanges, 2)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(listLockingRange, 3)
             LOCKINGRANGEARG(lockingrange)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(rekeyLockingRange, 3)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(rekeyLockingRange, 3)
             LOCKINGRANGEARG(lockingrange)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(setBandsEnabled, 2)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(setBandEnabled, 3)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(setBandsEnabled, 2)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(setBandEnabled, 3)
             LOCKINGRANGEARG(lockingrange)
-			OPTION_IS(password)
-			OPTION_IS(device)
-			END_OPTION
-		BEGIN_OPTION(objDump, 5)
+            OPTION_IS(password)
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION(objDump, 5)
             i += 4;
             OPTION_IS(device)
         END_OPTION
         BEGIN_OPTION(printDefaultPassword, 1) OPTION_IS(device) END_OPTION
-		BEGIN_OPTION(rawCmd, 7)
+        BEGIN_OPTION(rawCmd, 7)
             i += 6;
             OPTION_IS(device)
         END_OPTION
-		BEGIN_OPTION(hashvalidation, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
+        BEGIN_OPTION(hashvalidation, 2) OPTION_IS(password) OPTION_IS(device) END_OPTION
 
 #include "Customizations/DtaExtensionOptions.inc"
 
