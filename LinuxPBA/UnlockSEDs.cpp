@@ -33,7 +33,6 @@ uint8_t UnlockSEDs(char * password) {
 /* Loop through drives */
     char devref[25];
     int failed = 0;
-    DtaDev *tempDev;
     DtaDev *d;
     DIR *dir;
     struct dirent *dirent;
@@ -44,7 +43,7 @@ uint8_t UnlockSEDs(char * password) {
     if(dir!=NULL)
     {
         while((dirent=readdir(dir))!=NULL) {
-            if((!fnmatch("sd[a-z]",dirent->d_name,0)) || 
+            if((!fnmatch("sd[a-z]",dirent->d_name,0)) ||
                     (!fnmatch("nvme[0-9]",dirent->d_name,0)) ||
                     (!fnmatch("nvme[0-9][0-9]",dirent->d_name,0))
                     ) {
@@ -57,22 +56,15 @@ uint8_t UnlockSEDs(char * password) {
     std::sort(devices.begin(),devices.end());
     printf("\nScanning....\n");
     for(uint16_t i = 0; i < devices.size(); i++) {
-                snprintf(devref,23,"/dev/%s",devices[i].c_str());
-        tempDev = new DtaDevGeneric(devref);
-        if (!tempDev->isPresent()) {
+        snprintf(devref,23,"/dev/%s",devices[i].c_str());
+        if (DTAERROR_SUCCESS != getDtaDevOS(devref, d)) {
             break;
         }
-        if ((!tempDev->isOpal1()) && (!tempDev->isOpal2())) {
-            printf("Drive %-10s %-40s not OPAL  \n", devref, tempDev->getModelNum());
-
-            delete tempDev;
+        if ((!d->isOpal1()) && (!d->isOpal2())) {
+            printf("Drive %-10s %-40s not OPAL  \n", devref, d->getModelNum());
+            delete d;
             continue;
         }
-        if (tempDev->isOpal2())
-            d = new DtaDevOpal2(devref);
-        else
-            d = new DtaDevOpal1(devref);
-        delete tempDev;
         d->no_hash_passwords = false;
         failed = 0;
         if (d->Locked()) {

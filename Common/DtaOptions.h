@@ -52,10 +52,6 @@ typedef struct _DTA_OPTIONS {
     uint8_t lockingstate;         /**< locking state to set a lockingrange to */
     uint8_t lrstart;	          /**< the starting block of a lockingrange */
     uint8_t lrlength;	          /**< the length in blocks of a lockingrange */
-    uint8_t eventid;	          /**< audit log event ID */
-    uint8_t dsnum;	          /**< which data store to read write*/
-    uint32_t startpos;	          /**< data store start position  */
-    uint32_t len;	          /**< data store length */
     uint8_t resettype;            /**< type of TCG reset */
     bool no_hash_passwords;       /**< global parameter, disables hashing of passwords */
     bool usermode;                /**< true : start session with UserN UID, otherwise with AdminN UID */
@@ -63,6 +59,11 @@ typedef struct _DTA_OPTIONS {
     bool    translate_req;        /**< global parameter, require to translate the hashed password string into hex data */
     bool    skip_activate;        /**< skip activation LockingSP during initial setup */
     sedutiloutput output_format;  /**< global parameter, outpug format */
+
+    uint8_t eventid;	          /**< audit log event ID */
+    uint8_t dsnum;	          /**< which data store to read write*/
+    uint32_t startpos;	          /**< data store start position  */
+    uint32_t len;	          /**< data store length */
 } DTA_OPTIONS;
 
 /** Print a usage message */

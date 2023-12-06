@@ -123,22 +123,20 @@ void DtaDevOS::osmsSleep(uint32_t ms)
 }
 int  DtaDevOS::diskScan()
 {
-    DIR *dir;
-    struct dirent *dirent;
-    DtaDev * d;
     char devname[25];
     vector<string> devices;
     string tempstring;
 
     LOG(D1) << "Entering DtaDevOS:diskScan ";
-    dir = opendir("/dev");
-    if(dir!=NULL)
+    DIR *dir = opendir("/dev");
+    if (dir!=NULL)
     {
+        struct dirent *dirent;
         while((dirent=readdir(dir))!=NULL) {
             if((!fnmatch("sd[a-z]",dirent->d_name,0)) ||
-                    (!fnmatch("nvme[0-9]",dirent->d_name,0)) ||
-                    (!fnmatch("nvme[0-9][0-9]",dirent->d_name,0))
-                    ) {
+               (!fnmatch("nvme[0-9]",dirent->d_name,0)) ||
+               (!fnmatch("nvme[0-9][0-9]",dirent->d_name,0))
+              ) {
                 tempstring = dirent->d_name;
                 devices.push_back(tempstring);
             }
@@ -147,22 +145,27 @@ int  DtaDevOS::diskScan()
     }
     std::sort(devices.begin(),devices.end());
     printf("Scanning for Opal compliant disks\n");
-    for(uint16_t i = 0; i < devices.size(); i++) {
-                snprintf(devname,23,"/dev/%s",devices[i].c_str());
-                printf("%-10s", devname);
-                d = new DtaDevGeneric(devname);
-		if (d->isAnySSC())
-                    printf(" %s%s%s ", (d->isOpal1() ? "1" : " "),
-			(d->isOpal2() ? "2" : " "), (d->isEprise() ? "E" : " "));
-		else
-                    printf("%s", " No  ");
+    for (uint16_t i = 0; i < devices.size(); i++) {
+        snprintf(devname,23,"/dev/%s",devices[i].c_str());
+        printf("%-10s", devname);
+        DtaDevOS * d;
+        if (DTAERROR_SUCCESS == getDtaDevOS(devname,d,true))
+        {
+            if (d->isAnySSC())
+                printf(" %s%s%s ",
+                    (d->isOpal1()  ? "1" : " "),
+                    (d->isOpal2()  ? "2" : " "),
+                    (d->isEprise() ? "E" : " "));
+            else
+                 printf("%s", " No  ");
 
-                printf("%s %s\n",d->getModelNum(),d->getFirmwareRev());
-                delete d;
-          }
-	printf("No more disks present ending scan\n");
+            printf("%s %s\n",d->getModelNum(),d->getFirmwareRev());
+            delete d;
+        }
+    }
+    printf("No more disks present ending scan\n");
     LOG(D1) << "Exiting DtaDevOS::scanDisk ";
-	return 0;
+    return 0;
 }
 
 /** Close the device reference so this object can be delete. */
@@ -171,4 +174,50 @@ DtaDevOS::~DtaDevOS()
     LOG(D1) << "Destroying DtaDevOS";
 	if (NULL != drive)
 		delete drive;
+}
+
+
+/** Factory method to produce instance of appropriate subclass
+ *   Note that all of DtaDevGeneric, DtaDevEnterprise, DtaDevOpal, ... derive from DtaDevOS
+ * @param devref             name of the device in the OS lexicon
+ * @param dev                reference into which to store the address of the new instance
+ * @param genericIfNotTPer   if true, store an instance of DtaDevGeneric for non-TPers;
+ *                          if false, store NULL for non-TPers
+ */
+static
+uint8_t DtaDevOS::getDtaDevOS(const char * devref, DtaDevOS * & dev,
+                              bool genericIfNotTPer)
+{
+    //  TODO: Do this without creating the DtaDevGeneric instance,
+    //  using just the "drive" created (or not!) in *init*
+    DtaDevOS * d = DtaDevGeneric(devref);
+
+
+
+#define TestClass(test,class)\
+    if (d->test())\
+    {\
+        delete d;\
+        dev = class(devref);\
+        return DTAERROR_SUCCESS;\
+    }
+
+    TestClass(isOpal2 , DtaDevOpal2     );
+    TestClass(isOpal1 , DtaDevOpal1     );
+    TestClass(isEprise, DtaDevEnterprise);
+
+#undef TestClass
+
+
+
+    if (genericIfNotTper)
+    {
+        dev = d;
+        return DTAERROR_SUCCESS;
+    }
+
+
+    dev = NULL;
+    LOG(E) << "Invalid or unsupported device " << devref;
+    return DTAERROR_COMMAND_ERROR;;
 }

@@ -26,11 +26,6 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaOptions.h"
 class DtaCommand;
 class DtaSession;
-
-// TODO: do these (and related things) belong in an implementation-specific DtaDevOS?
-void auditpass(unsigned char * apass);
-void setlic(unsigned char * lic_level, const char * LicenseLevel);
-
 #define  __unimplemented__ {throw __PRETTY_FUNCTION__;}
 
 using namespace std;

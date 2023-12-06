@@ -36,40 +36,6 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaCommand.h"
 
 
-#if OB // ob for License
-#include "ob.h"
-#endif // ob for License
-
-void setlic(unsigned char * lic_level, const char * LicenseLevel)
-{
-#if OB // ob for License
-    unsigned char sbnk[16] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', };
-    obfs ob;
-
-    if (!memcmp("0:", LicenseLevel, 2)) { // correct feature set
-        ob.lic(atoi(&LicenseLevel[2]), lic_level);
-    }
-    else {
-        memcpy(lic_level, sbnk, 16);
-        printf("no license = %s\n", lic_level);
-    }
-#else // OB // ob for License
-#pragma unused(lic_level,LicenseLevel)
-#endif // ob for License
-}
-
-
-
-void auditpass(unsigned char * apass)
-{
-#if OB // ob for License
-    obfs ob;
-    ob.setaudpass(apass);
-#else // OB // ob for License
-#pragma unused(apass)
-#endif // ob for License
-}
-
 using namespace std;
 
 /** Device Class (Base) represents a single disk device.

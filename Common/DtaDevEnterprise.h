@@ -298,17 +298,9 @@ public:
 	    * @param password Password of administrative authority for locking range
 	    */
 	uint8_t eraseLockingRange(uint8_t lockingrange, char * password);
-	uint8_t pbaValid(char * password);
 	uint8_t activate(char * password);
-	uint8_t auditWrite(char * password, char * idstr, char * userid);
-	uint8_t auditRead(char * password, char * userid);
-	uint8_t auditErase(char * password, char * userid);
 	uint8_t getmfgstate(void);
-	uint8_t DataStoreWrite(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
-	uint8_t DataStoreRead(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
-	uint8_t MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len);
 	uint8_t getMBRsize(char * password);
-	uint8_t createUSB(char * filename);
     /** Loads a disk image file to the shadow MBR table.
       * @param password the password for the administrative authority with access to the table
       * @param filename the filename of the disk image

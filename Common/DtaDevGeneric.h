@@ -35,15 +35,17 @@ using namespace std;
  *
 */
 class DtaDevGeneric : public DtaDevOS {
-public:
+protected:
     /** Constructor using an OS specific device descriptor.
      * @param devref reference to device is OS specific lexicon
      *  */
     DtaDevGeneric(const char * devref);
 
-    /** Default constructor */
+private:
+    /** Default destructor */
 	~DtaDevGeneric();
 
+public:
     /** OS specific initialization.
          * This function should perform the necessary authority and environment checking
          * to allow proper functioning of the program, open the device, perform an ATA
@@ -115,17 +117,9 @@ public:
          * @param newpassword  value password is to be changed to
          */
 	uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword) ;
-    uint8_t pbaValid(char * password);
     uint8_t activate(char * password);
-    uint8_t auditWrite(char * password,char * idstr, char * userid);
-    uint8_t auditRead(char * password, char * userid);
-    uint8_t auditErase(char * password, char * userid);
     uint8_t getmfgstate(void);
-    uint8_t DataStoreWrite(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
-    uint8_t DataStoreRead(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len);
-    uint8_t MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len);
     uint8_t getMBRsize(char * password);
-    uint8_t createUSB(char * password);
 
     /** Loads a disk image file to the shadow MBR table.
          * @param password the password for the administrative authority with access to the table
@@ -213,19 +207,19 @@ uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint
          * @param Admin1Password password of the locking sp administrative authority
          */
     uint8_t setMBRDone(uint8_t state, char * Admin1Password) ;
-    
+
     /** Primitive to set the MBRDone flag.
          * @param state 0 or 1
          * @param Admin1HostChallenge host challenge of the locking sp administrative authority
          */
     uint8_t setMBRDone(uint8_t state, vector<uint8_t> Admin1HostChallenge) ;
-    
 
-    
+
+
     uint8_t TCGreset(uint8_t state);
 
-    
-    
+
+
     /** Primitive to set the MBREnable flag.
          * @param state 0 or 1
          * @param Admin1Password Locking SP authority with access to flag
@@ -246,7 +240,7 @@ uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint
 //    uint8_t enableUser(char * password, char * userid, OPAL_TOKEN status = OPAL_TOKEN::OPAL_TRUE) ;
     uint8_t enableUser(uint8_t state, char * password, char * userid) ;
     uint8_t enableUserRead(uint8_t state, char * password, char * userid);
-    
+
     /** enable a locking sp user.
      * @param state 0 or 1
      * @param HostChallenge HostChallenge of locking sp administrative authority
@@ -313,7 +307,7 @@ uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint
          * @param PSID true or false is the authority the PSID
          *   */
 	uint8_t revertTPer(char * password, uint8_t PSID, uint8_t AdminSP ) ;
-    
+
     /** Reset the TPER to its factory condition
      * @param HostChallenge HostChallenge of authority (SID or PSID)
      * @param PSID true or false is the authority the PSID

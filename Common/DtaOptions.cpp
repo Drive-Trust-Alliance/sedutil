@@ -88,8 +88,8 @@ void usage()
     printf("                                Enable|Disable MBR shadowing \n");
     printf("--setMBRDone <on|off> <Admin1password> <device> \n");
     printf("                                set|unset MBRDone\n");
-    printf("--createUSB <file> <device1> <device2\n");
-    printf("                                Write image file to USB\n");
+#    printf("--createUSB <file> <device1> <device2\n");
+#    printf("                                Write image file to USB\n");
     printf("--loadPBAimage <Admin1password> <file> <device> \n");
     printf("                                Write <file> to MBR Shadow area\n");
     printf("--revertTPer <SIDpassword> <device>\n");

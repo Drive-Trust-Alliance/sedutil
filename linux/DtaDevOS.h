@@ -29,6 +29,18 @@ public:
     DtaDevOS();
     /** Destructor */
     ~DtaDevOS();
+
+    /** Factory method to produce instance of appropriate subclass
+     *   Note that all of DtaDevGeneric, DtaDevEnterprise, DtaDevOpal, ... derive from DtaDevOS
+     * @param devref             name of the device in the OS lexicon
+     * @param dev                reference into which to store the address of the new instance
+     * @param genericIfNotTPer   if true, store an instance of DtaDevGeneric for non-TPers;
+     *                          if false, store NULL for non-TPers
+     */
+    static uint8_t getDtaDevOS(const char * devref, DtaDevOS * & dev,
+                               bool genericIfNotTPer=false);
+
+
     /** OS specific initialization.
      * This function should perform the necessary authority and environment checking
      * to allow proper functioning of the program, open the device, perform an ATA
@@ -50,7 +62,7 @@ public:
     /** A static class to scan for supported drives */
     static int diskScan();
 protected:
-    /** OS specific command to Wait for specified number of milliseconds 
+    /** OS specific command to Wait for specified number of milliseconds
      * @param ms  number of milliseconds to wait
      */
     void osmsSleep(uint32_t ms);

@@ -42,12 +42,12 @@ public:
     DtaDevOS();
     /** Destructor */
     ~DtaDevOS();
-    
+
     /** Factory method to produce instance of appropriate subclass
      *   Note that all of DtaDevGeneric, DtaDevEnterprise, DtaDevOpal, ... derive from DtaDevOS
-     * @param devref                         name of the device in the OS lexicon
-     * @param dev                                reference into which to store the address of the new instance
-     * @param genericIfNotTPer   if true, store an instance of DtaDevGeneric for non-TPers;
+     * @param devref            name of the device in the OS lexicon
+     * @param dev               reference into which to store the address of the new instance
+     * @param genericIfNotTPer  if true, store an instance of DtaDevGeneric for non-TPers;
      *                          if false, store NULL for non-TPers
      */
     static uint8_t getDtaDevOS(const char * devref, DtaDevOS * & dev,
@@ -63,7 +63,7 @@ public:
      * @param devref character representation of the device is standard OS lexicon
      */
     void init(const char * devref);
-    
+
 #if defined(__APPLE__) && defined(__MACH__)
     /* Apple OSX and iOS (Darwin). ------------------------------ */
 #include <TargetConditionals.h>
@@ -87,19 +87,19 @@ public:
 
 #endif
 #endif  // defined(__APPLE__) && defined(__MACH__)
-    
+
     /** OS specific method to initialize an object to a pre-existing connection
      *  @param di  reference to already-initialized DTA_DEVICE_INFO
      */
     void init(const char * devref,
               DTA_DEVICE_INFO &di);
 
-    
+
 
     /** OS specific routine to identify the device and fill out the device information struct
      */
     void identify();
-    
+
 
         /** OS specific method to send an ATA command to the device
          * @param cmd ATA command to be sent to the device
@@ -112,12 +112,12 @@ public:
                     void * buffer, size_t bufferlen);
     /** A static class to scan for supported drives */
     static int diskScan();
-    
+
     virtual void puke() {
         identify();
         DtaDev::puke();
     }
-    
+
 
 #if defined(__APPLE__) && defined(__MACH__)
     /* Apple OSX and iOS (Darwin). ------------------------------ */
@@ -170,6 +170,10 @@ protected:
      * @param ms  number of milliseconds to wait
      */
     void osmsSleep(uint32_t ms);
+
+    static virtual getDtaDevOSSubclassInstance(DtaDevMacOSTPer * t,
+                                               const char * devref,
+                                               bool genericIfNotTPer=false);
 
 private:
     bool __init(const char *devref);

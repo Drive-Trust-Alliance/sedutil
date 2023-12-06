@@ -1356,41 +1356,12 @@ uint8_t DtaDevEnterprise::eraseLockingRange(uint8_t lockingrange, char * passwor
 	LOG(D1) << "Exiting DtaDevEnterprise::eraseLockingRange";
 	return 0;
 }
-uint8_t DtaDevEnterprise::pbaValid(char * password) {
-	LOG(D1) << "Entering DtaDevEnterprise::pbaValid() not implemented in Enterprize";
-	return 0;
-}
 uint8_t DtaDevEnterprise::activate(char * password) {
 	LOG(D1) << "Entering DtaDevEnterprise::activate() not implemented in Enterprize";
 	return 0;
 }
-uint8_t DtaDevEnterprise::auditWrite(char * password, char * idstr, char * userid) {
-	LOG(D1) << "Entering DtaDevEnterprise::auditWrite() not implemented in Enterprize";
-	return 0;
-}
-uint8_t DtaDevEnterprise::auditRead(char * password, char * userid) {
-	LOG(D1) << "Entering DtaDevEnterprise::auditRead() not implemented in Enterprize";
-	return 0;
-}
-uint8_t DtaDevEnterprise::auditErase(char * password, char * userid) {
-	LOG(D1) << "Entering DtaDevEnterprise::auditErase() not implemented in Enterprize";
-	return 0;
-}
 uint8_t DtaDevEnterprise::getmfgstate() {
 	LOG(D1) << "Entering DtaDevEnterprise::getmfgstate() not implemented in Enterprize";
-	return 0;
-}
-uint8_t DtaDevEnterprise::DataStoreWrite(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len) {
-	LOG(D1) << "Entering DtaDevEnterprise::DataStoreWrite() not implemented in Enterprize";
-	return 0;
-}
-uint8_t DtaDevEnterprise::DataStoreRead(char * password, char * userid, char * filename, uint8_t dsnum, uint32_t startpos, uint32_t len) {
-	LOG(D1) << "Entering DtaDevEnterprise::DataStoreRead() not implemented in Enterprize";
-	return 0;
-}
-uint8_t DtaDevEnterprise::MBRRead(char * password, char * filename, uint32_t startpos, uint32_t len)
-{
-	LOG(D1) << "Entering DtaDevEnterprise::MBRRead() not implemented in Enterprize";
 	return 0;
 }
 uint8_t DtaDevEnterprise::getMBRsize(char * password) {
@@ -1398,14 +1369,6 @@ uint8_t DtaDevEnterprise::getMBRsize(char * password) {
 	return 0;
 }
 
-
-uint8_t DtaDevEnterprise::createUSB(char * filename) {
-	LOG(D1) << "Entering DtaDevEnterprise::createUSB()" << filename << " " << dev;
-	LOG(D) << " createUSB is not implemented.  It is not a mandatory part of  ";
-	LOG(D) << "the enterprise SSC ";
-	LOG(D1) << "Exiting DtaDevEnterprise::createUSB()";
-	return 0;
-}
 
 uint8_t DtaDevEnterprise::loadPBA(char * password, char * filename) {
 	LOG(D1) << "Entering DtaDevEnterprise::loadPBAimage()" << filename << " " << dev;

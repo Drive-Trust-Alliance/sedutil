@@ -367,7 +367,9 @@ int DtaDevOS::diskScan()
 	printf("\nScanning for Opal compliant disks\n");
 	while (TRUE) {
 		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i);
-		d = new DtaDevGeneric(devname);
+                if (DTAERROR_SUCCESS != getDtaDevOS(devname, d, true) {
+                    break;
+                }
 		if (d->isPresent()) {
 			printf("%s", devname);
 			if (d->isAnySSC())
