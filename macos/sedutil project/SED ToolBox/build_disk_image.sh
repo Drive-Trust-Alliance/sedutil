@@ -15,15 +15,17 @@ spew "TARGETROOT=${TARGETROOT}"
 [ -d "${TEMP_FILES_DIR}" ] || fail 130 "TEMP_FILES_DIR not available"
 spew "TEMP_FILES_DIR=${TEMP_FILES_DIR}"
 
-image_root="${TEMP_FILES_DIR}/DTA"
-[ -f "${image_root}" ] && rm -rf "${image_root}"
-mkdir "${image_root}"
-spew image_root="${image_root}"
-
 # Certificates from the same directory as this script
 CERTIFICATES_DIR="$(cd "${build_sh_dir}/Certificates" ; pwd)"
 spew "CERTIFICATES_DIR=${CERTIFICATES_DIR}"
 [ -d "${CERTIFICATES_DIR}" ] || fail 131 "Could not find Certificates directory"
+
+
+# Main folder is rooted inside TEMP_FILES_DIR
+image_root="${TEMP_FILES_DIR}/DTA"
+[ -f "${image_root}" ] && rm -rf "${image_root}"
+mkdir "${image_root}"
+spew image_root="${image_root}"
 
 
 # Create the macOS subfolder
@@ -81,8 +83,8 @@ dmgbuild="$(which dmgbuild)"
     dmgbuild="$(2>/dev/null find $HOME/Library/Python -path '*/bin/dmgbuild' -maxdepth 3)"
 [ -x "${dmgbuild}" ] || \
     fail 171 "Can not find dmgbuild"
+    
 # Convert the macos folder to a macOS dmg
-
 macOS_settings="${static}/macOS settings.py"
 [ -f "${macOS_settings}" ] || \
     fail 172 "Can not find ${macOS_settings}"
@@ -142,20 +144,20 @@ spew ST_iso="${ST_iso}"
 DTASEDDev="${static}/DTA/SED Developer"
 #spew hdiutil makehybrid                               \
 #          -iso -joliet                                \
-#          -default-volume-name 'SED ToolBox'  \
+#          -default-volume-name 'SED ToolBox'          \
 #          -hide-hfs '{Windows,*.exe}'                 \
 #          -o "${ST_iso}" "${ST_dmg}"
 #hdiutil makehybrid                               \
 #     -iso -joliet                                \
-#     -default-volume-name 'SED ToolBox'  \
+#     -default-volume-name 'SED ToolBox'          \
 #     -hide-hfs '{Windows,*.exe}'                 \
 #     -o "${ST_iso}" "${ST_dmg}"
 spew hdiutil makehybrid                               \
-          -default-volume-name 'SED ToolBox'  \
+          -default-volume-name 'SED ToolBox'          \
           -joliet-volume-name  'SED_Box'              \
           -o "${ST_iso}" "${ST_dmg}"
 hdiutil makehybrid                               \
-     -default-volume-name 'SED ToolBox'  \
+     -default-volume-name 'SED ToolBox'          \
      -joliet-volume-name  'SED_Box'              \
      -o "${ST_iso}" "${ST_dmg}"
 # DTA custom icon for the .iso file
