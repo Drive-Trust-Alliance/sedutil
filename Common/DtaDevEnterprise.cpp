@@ -251,7 +251,7 @@ uint8_t DtaDevEnterprise::setup_SUM(uint8_t lockingrange, uint64_t start, uint64
 }
 
 
-uint8_t DtaDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t enabled, char * password)
+uint8_t DtaDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t enabled, char * password, uint8_t)
 {
 	uint8_t lastRC;
 	LOG(D1) << "Entering DtaDevEnterprise::configureLockingRange()";
@@ -329,7 +329,7 @@ uint8_t DtaDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t en
 
 
 
-uint8_t DtaDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint8_t> HostChallenge)
+uint8_t DtaDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint8_t> HostChallenge, uint8_t)
 {
     LOG(D1) << "Entering DtaDevEnterprise::configureLockingRange()";
 
@@ -507,7 +507,7 @@ uint8_t DtaDevEnterprise::revertLockingSP(vector<uint8_t> HostChallenge, uint8_t
     return 0;
 }
 
-uint8_t DtaDevEnterprise::setPassword(char * password, char * userid, char * newpassword)
+uint8_t DtaDevEnterprise::setPassword(char * password, char * userid, char * newpassword, uint8_t)
 {
     LOG(D1) << "Entering DtaDevEnterprise::setPassword" ;
     uint8_t lastRC;
@@ -596,7 +596,7 @@ uint8_t DtaDevEnterprise::setPassword(char * password, char * userid, char * new
 
 
 
-uint8_t DtaDevEnterprise::setHostChallenge(vector<uint8_t> currentHostChallenge, char * userid, vector<uint8_t> newHostChallenge)
+uint8_t DtaDevEnterprise::setHostChallenge(vector<uint8_t> currentHostChallenge, char * userid, vector<uint8_t> newHostChallenge, uint8_t)
 {
     LOG(D1) << "Entering DtaDevEnterprise::setPassword" ;
 
@@ -814,7 +814,7 @@ uint8_t DtaDevEnterprise::setupLockingRange_SUM(uint8_t lockingrange, uint64_t s
 	return 0;
 }
 ////////////////////////////////////////////////////////////////////////////////
-uint8_t DtaDevEnterprise::listLockingRanges(char * password, int16_t rangeid)
+uint8_t DtaDevEnterprise::listLockingRanges(char * password, int16_t rangeid, uint8_t)
 ////////////////////////////////////////////////////////////////////////////////
 {
 	LOG(D1) << "Entering DtaDevEnterprise::listLockingRanges";
@@ -979,7 +979,7 @@ uint8_t DtaDevEnterprise::listLockingRanges(char * password, int16_t rangeid)
 }
 
 uint8_t DtaDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
-	char * password)
+	char * password, uint8_t)
 {
 	LOG(D1) << "Entering DtaDevEnterprise::setLockingRange";
 	uint8_t lastRC;
@@ -1074,7 +1074,7 @@ uint8_t DtaDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t lockings
 
 
 uint8_t DtaDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
-                                          vector<uint8_t>HostChallenge){
+                                          vector<uint8_t>HostChallenge, uint8_t){
     LOG(D1) << "Entering DtaDevEnterprise::setLockingRange";
     uint8_t lastRC;
 

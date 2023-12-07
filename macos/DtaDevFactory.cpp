@@ -37,6 +37,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevMacOSTPer.h"
 #include "DtaConstants.h"
 
+#include "DtaDevOS.h"
 #include "DtaDevGeneric.h"
 #include "DtaDevEnterprise.h"
 #include "DtaDevOpal1.h"
@@ -45,7 +46,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 using namespace std;
 
 
-static DtaDevOS* DtaDevOS::getDtaDevOSSubclassInstance(DtaDevMacOSTPer * t,
+
+static DtaDevOS* getDtaDevOSSubclassInstance(DtaDevMacOSTPer * t,
                                              const char * devref,
                                              bool genericIfNotTPer) {
     if (t->isOpal2())     return new DtaDevOpal2(devref);
@@ -59,20 +61,19 @@ static DtaDevOS* DtaDevOS::getDtaDevOSSubclassInstance(DtaDevMacOSTPer * t,
     return NULL;
 }
 
-
 uint8_t DtaDevOS::getDtaDevOS(const char * devref, DtaDevOS * & device, bool genericIfNotTPer)
 {
     DTA_DEVICE_INFO di;
     bzero(&di,sizeof(di));
 
-    DtaDevMacOSBlockStorageDevice * bsdblockStorageDevice =
+    DtaDevMacOSBlockStorageDevice * bsdBlockStorageDevice =
         DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(devref, &di);
-    if (bsdblockStorageDevice==NULL) {
+    if (bsdBlockStorageDevice==NULL) {
         LOG(E) << "Unrecognized device '" << devref << "'";
         return DTAERROR_OBJECT_CREATE_FAILED;
     }
 
-    if (!blockStorageDevice->isAnySSC()) {
+    if (!bsdBlockStorageDevice->isAnySSC()) {
         if (genericIfNotTPer) {
             device = new DtaDevGeneric(devref);
             return DTAERROR_SUCCESS;
@@ -81,7 +82,7 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref, DtaDevOS * & device, bool gen
         return DTAERROR_COMMAND_ERROR;
     }
 
-    DtaDevMacOSTPer * t = dynamic_cast<DtaDevMacOSTPer *>(blockStorageDevice);
+    DtaDevMacOSTPer * t = dynamic_cast<DtaDevMacOSTPer *>(bsdBlockStorageDevice);
     if (NULL == t) {
         if (genericIfNotTPer) {
             device = new DtaDevGeneric(devref);

@@ -1211,7 +1211,7 @@ uint8_t DtaDevOpal::setPassword(char * password, char * userid, char * newpasswo
 uint8_t DtaDevOpal::setHostChallenge(vector<uint8_t> currentHostChallenge, char * userid, vector<uint8_t> newHostChallenge, uint8_t idx)
 {
     LOG(D1) << "Entering DtaDevOpal::setHostChallenge " << dev;
-    uint8_t lastRC = WithSession([this, currentHostChallenge](){
+    uint8_t lastRC = WithSession([this, currentHostChallenge, idx](){
         return session->start(OPAL_UID::OPAL_LOCKINGSP_UID,
                               currentHostChallenge,
                               getUSERUID(idx));
@@ -1581,7 +1581,7 @@ uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
     char * Admin1Password, uint8_t idx)
 {
     return __setLockingRange(lockingrange, lockingstate,
-                             [this, Admin1Password](){
+                             [this, Admin1Password, idx](){
         return session->start(OPAL_UID::OPAL_LOCKINGSP_UID,
                               Admin1Password,
                               getUSERUID(idx));
@@ -1595,7 +1595,7 @@ uint8_t DtaDevOpal::setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
                                     vector<uint8_t> Admin1HostChallenge, uint8_t idx)
 {
     return __setLockingRange(lockingrange, lockingstate,
-                             [this, Admin1HostChallenge](){
+                             [this, Admin1HostChallenge, idx](){
         return session->start(OPAL_UID::OPAL_LOCKINGSP_UID,
                               Admin1HostChallenge,
                               getUSERUID(idx));

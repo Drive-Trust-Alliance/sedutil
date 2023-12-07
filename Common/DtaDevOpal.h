@@ -421,8 +421,8 @@ protected:
      * @param password password for the administrative authority
      * @param msg message to be displayed upon successful update;
      */
-uint8_t setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, OPAL_TOKEN value,
-                          char * password, char * msg = (char *) "New Value Set", uint8_t idx=0);
+    uint8_t setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, OPAL_TOKEN value,
+                              char * password, char * msg = (char *) "New Value Set", uint8_t idx=0);
 
     /** Primitive to handle the setting of a value in the locking sp.
      * @param table_uid UID of the table
@@ -431,8 +431,8 @@ uint8_t setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, OPAL_TOKEN value,
      * @param HostChallenge host challenge for the administrative authority
      * @param msg message to be displayed upon successful update;
      */
-uint8_t setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, OPAL_TOKEN value,
-                          vector<uint8_t>HostChallenge, char * msg = (char *) "New Value Set", uint8_t idx=0)
+    uint8_t setLockingSPvalue(OPAL_UID table_uid, OPAL_TOKEN name, OPAL_TOKEN value,
+                              vector<uint8_t>HostChallenge, char * msg = (char *) "New Value Set", uint8_t idx=0);
 
 	uint8_t getDefaultPassword();
 	uint8_t getTryLimit(uint16_t col1, uint16_t col2, char * pass);

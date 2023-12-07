@@ -171,10 +171,6 @@ protected:
      */
     void osmsSleep(uint32_t ms);
 
-    static virtual getDtaDevOSSubclassInstance(DtaDevMacOSTPer * t,
-                                               const char * devref,
-                                               bool genericIfNotTPer=false);
-
 private:
     bool __init(const char *devref);
     bool __init(const char *devref, DTA_DEVICE_INFO &di);

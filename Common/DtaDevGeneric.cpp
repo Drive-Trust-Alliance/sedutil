@@ -67,14 +67,14 @@ void DtaDevGeneric::init(const char * devref)
 uint8NOCODE(initialSetup, char *password)
 uint8NOCODE(initialSetup, vector<uint8_t>HostChallenge)
 uint8NOCODE(configureLockingRange,uint8_t lockingrange,
-    uint8_t enabled, char * password)
+    uint8_t enabled, char * password, uint8_t idx)
 uint8NOCODE(configureLockingRange,uint8_t lockingrange,
-    uint8_t enabled, vector<uint8_t> HostChallenge)
+    uint8_t enabled, vector<uint8_t> HostChallenge, uint8_t idx)
 uint8NOCODE(revertLockingSP,char * password, uint8_t keep)
 uint8NOCODE(revertLockingSP,vector<uint8_t> HostChallenge, uint8_t keep)
 uint8NOCODE(setup_SUM, uint8_t lockingrange, uint64_t start, uint64_t length, char *Admin1Password, char * password)
-uint8NOCODE(setPassword,char * password, char * userid, char * newpassword)
-uint8NOCODE(setHostChallenge,vector<uint8_t> oldHostChallenge, char * userid, vector<uint8_t> newHostChallenge)
+uint8NOCODE(setPassword,char * password, char * userid, char * newpassword, uint8_t idx)
+uint8NOCODE(setHostChallenge,vector<uint8_t> oldHostChallenge, char * userid, vector<uint8_t> newHostChallenge, uint8_t idx)
 uint8NOCODE(setNewPassword_SUM,char * password, char * userid, char * newpassword)
 uint8NOCODE(setMBREnable,uint8_t mbrstate, char * Admin1Password)
 uint8NOCODE(setMBREnable,uint8_t mbrstate, vector<uint8_t> Admin1HostChallenge)
@@ -82,14 +82,14 @@ uint8NOCODE(setMBRDone,uint8_t mbrstate, char * Admin1Password)
 uint8NOCODE(setMBRDone,uint8_t mbrstate, vector<uint8_t> Admin1HostChallenge)
 uint8NOCODE(TCGreset, uint8_t mbrstate)
 uint8NOCODE(setLockingRange,uint8_t lockingrange, uint8_t lockingstate,
-	char * Admin1Password)
+	char * Admin1Password, uint8_t idx)
 uint8NOCODE(setLockingRange,uint8_t lockingrange, uint8_t lockingstate,
-                        vector<uint8_t> Admin1HostChallenge)
+                        vector<uint8_t> Admin1HostChallenge, uint8_t idx)
 uint8NOCODE(setLockingRange_SUM, uint8_t lockingrange, uint8_t lockingstate,
 	char * password)
 uint8NOCODE(setupLockingRange,uint8_t lockingrange, uint64_t start,
 	uint64_t length, char * password)
-uint8NOCODE(listLockingRanges, char * password, int16_t rangeid)
+uint8NOCODE(listLockingRanges, char * password, int16_t rangeid, uint8_t idx)
 uint8NOCODE(setupLockingRange_SUM, uint8_t lockingrange, uint64_t start,
 	uint64_t length, char * password)
 uint8NOCODE(rekeyLockingRange, uint8_t lockingrange, char * password)

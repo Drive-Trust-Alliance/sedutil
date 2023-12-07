@@ -35,7 +35,7 @@ using namespace std;
  *
 */
 class DtaDevGeneric : public DtaDevOS {
-protected:
+public:
     /** Constructor using an OS specific device descriptor.
      * @param devref reference to device is OS specific lexicon
      *  */
@@ -101,7 +101,7 @@ public:
          * @param userid the userid whose password is to be changed
          * @param newpassword  value password is to be changed to
          */
-    uint8_t setPassword(char * password, char * userid, char * newpassword) ;
+    uint8_t setPassword(char * password, char * userid, char * newpassword, uint8_t idx=0) ;
 
     /** Set the host challenge of a locking SP user.
          * @param oldHostChallenge  current host challenge
@@ -109,7 +109,7 @@ public:
          * @param newHostChallenge  value host challenge  is to be changed to
          */
     uint8_t setHostChallenge(vector<uint8_t> oldHostChallenge, char * userid,
-                             vector<uint8_t> newHostChallenge);
+                             vector<uint8_t> newHostChallenge, uint8_t idx=0);
 
     /** Set the password of a locking SP user in Single User Mode.
          * @param password  current user password
@@ -132,14 +132,15 @@ public:
          * @param lockingstate  the locking state to set
          * @param Admin1Password password of administrative authority for locking range
          */
-	uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate, char * Admin1Password) ;
+	uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate, char * Admin1Password, uint8_t idx=0) ;
     /** User command to manipulate the state of a locking range.
      * RW|RO|LK are the supported states @see OPAL_LOCKINGSTATE
      * @param lockingrange locking range number
      * @param lockingstate desired locking state (see above)
      * @param Admin1HostChallenge  host challenge -- unsalted password of the locking administrative authority
      */
-    uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate, vector<uint8_t> Admin1HostChallenge);
+    uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
+                            vector<uint8_t> Admin1HostChallenge, uint8_t idx=0);
 
     /** Change the locking state of a locking range in Single User Mode
          * @param lockingrange The number of the locking range (0 = global)
@@ -155,7 +156,7 @@ public:
          * @param password password of administrative authority for locking range
          */
 	uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled,
-                                  char * password) ;
+                                  char * password, uint8_t idx=0) ;
 
     /** User command to enable/disable a locking range.
      * RW|RO|LK are the supported states @see OPAL_LOCKINGSTATE
@@ -163,7 +164,8 @@ public:
      * @param enabled boolean true = enabled, false = disabled
      * @param HostChallenge HostChallenge of the locking administrative authority
      */
-uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint8_t> HostChallenge);
+uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled,
+                              vector<uint8_t> HostChallenge, uint8_t idx=0);
 
     /** Setup a locking range.  Initialize a locking range, set its start
          *  LBA and length, initialize it as unlocked with locking disabled.
@@ -188,7 +190,7 @@ uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled, vector<uint
     /** List status of locking ranges.
 	     *  @param password Password of administrator
 	     */
-	 uint8_t listLockingRanges(char * password, int16_t rangeid);
+	 uint8_t listLockingRanges(char * password, int16_t rangeid, uint8_t idx=0);
 
     /** Generate a new encryption key for a locking range.
          * @param lockingrange locking range number

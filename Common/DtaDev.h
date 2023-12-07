@@ -162,7 +162,7 @@ public:
      * @param userid the userid whose password is to be changed
      * @param newpassword  value password is to be changed to
      */
-    virtual uint8_t setPassword(char * password, char * userid, char * newpassword) = 0;
+    virtual uint8_t setPassword(char * password, char * userid, char * newpassword, uint8_t idx=0) = 0;
 
 	/** Set the password of a locking SP user in Single User Mode.
          * @param password  current user password
@@ -182,7 +182,7 @@ public:
 	 * @param lockingstate  the locking state to set
 	 * @param Admin1Password password of administrative authority for locking range
 	 */
-	virtual uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate, char * Admin1Password) = 0;
+	virtual uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate, char * Admin1Password, uint8_t idx=0) = 0;
 	/** Change the locking state of a locking range in Single User Mode
          * @param lockingrange The number of the locking range (0 = global)
          * @param lockingstate  the locking state to set
@@ -196,7 +196,7 @@ public:
 	 * @param password Password of administrative authority for locking range
 	 */
 	virtual uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled,
-		char * password) = 0;
+		char * password, uint8_t idx=0) = 0;
 	/** Setup a locking range.  Initialize a locking range, set it's start
 	 *  LBA and length, initialize it as unlocked with locking disabled.
 	 *  @paran lockingrange The Locking Range to be setup
@@ -218,7 +218,7 @@ public:
 	/** List status of locking ranges.  
 	*  @param password Password of administrator
 	*/
-	virtual uint8_t listLockingRanges(char * password, int16_t rangeid) = 0;
+	virtual uint8_t listLockingRanges(char * password, int16_t rangeid, uint8_t idx=0) = 0;
 	/** Generate a new encryption key for a locking range.
 	* @param lockingrange locking range number
 	* @param password password of the locking sp administrative authority
@@ -339,7 +339,8 @@ public:
      * @param lockingstate desired locking state (see above)
      * @param Admin1HostChallenge  host challenge -- unsalted password of the locking administrative authority
      */
-    virtual uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate, vector<uint8_t> Admin1HostChallenge)=0;
+    virtual uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
+                                    vector<uint8_t> Admin1HostChallenge, uint8_t idx=0)=0;
     
     /** Primitive to set the MBRDone flag.
      * @param state 0 or 1
@@ -370,7 +371,7 @@ public:
      * @param HostChallenge  HostChallenge of administrative authority for locking range
      */
     virtual uint8_t configureLockingRange(uint8_t lockingrange, uint8_t enabled,
-                                          vector<uint8_t> HostChallenge) = 0;
+                                          vector<uint8_t> HostChallenge, uint8_t idx=0) = 0;
 
     /** Set the SID password.
      * @param oldHostChallenge  current SID host challenge
@@ -392,7 +393,8 @@ public:
      * @param userid the userid whose host challenge is to be changed
      * @param newHostChallenge  value  host challenge is to be changed to
      */
-    virtual uint8_t setHostChallenge(vector<uint8_t> currentHostChallenge, char * userid, vector<uint8_t> newHostChallenge) = 0;
+    virtual uint8_t setHostChallenge(vector<uint8_t> currentHostChallenge, char * userid,
+                                     vector<uint8_t> newHostChallenge, uint8_t idx=0) = 0;
     
     
     /** enable a locking sp user.
