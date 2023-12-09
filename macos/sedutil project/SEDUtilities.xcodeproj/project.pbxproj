@@ -260,8 +260,8 @@
 		D24E86672B1AD6F10098FE03 /* DtaOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
 		D26496E62A36849E00F09A67 /* extract_configuration_type_from_Xcode_build_environment */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = extract_configuration_type_from_Xcode_build_environment; sourceTree = "<group>"; };
 		D26496E72A36849F00F09A67 /* extract_configuration_from_Xcode_build_environment */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = extract_configuration_from_Xcode_build_environment; sourceTree = "<group>"; };
-		D26904CD28D7A17B0095769E /* reenumerate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = reenumerate.c; path = "../../sedutil-cli project/reenumerate/reenumerate.c"; sourceTree = "<group>"; };
-		D26904CF28D7A17F0095769E /* IOUSBFamilyInfoPlist.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOUSBFamilyInfoPlist.pch; path = "../../sedutil-cli project/reenumerate/IOUSBFamilyInfoPlist.pch"; sourceTree = "<group>"; };
+		D26904CD28D7A17B0095769E /* reenumerate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = reenumerate.c; sourceTree = "<group>"; };
+		D26904CF28D7A17F0095769E /* IOUSBFamilyInfoPlist.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOUSBFamilyInfoPlist.pch; sourceTree = "<group>"; };
 		D2772B6428BC354B0005E001 /* DtaDevOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaDevOS.h; sourceTree = "<group>"; };
 		D2772B7328BC354B0005E001 /* os.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = os.h; sourceTree = "<group>"; };
 		D2772BEA28BC36420005E001 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };

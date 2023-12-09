@@ -121,7 +121,7 @@ ParseArguments ( int argc, const char * argv[] )
                 
             case 'c':
                 gDoSetConfiguration = TRUE;
-                gConfiguration = (uint32_t)strtoul(optarg, NULL, 0);    // is this safe?
+                gConfiguration = (UInt8)strtoul(optarg, NULL, 0);    // is this safe?
                 break;
                 
                 
@@ -148,6 +148,7 @@ ParseArguments ( int argc, const char * argv[] )
     }
 }
 
+static
 void ProcessDevice(io_service_t aDevice)
 {
     IOCFPlugInInterface     **plugInInterface;
