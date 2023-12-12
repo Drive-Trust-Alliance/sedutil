@@ -30,7 +30,7 @@ export -f require_dir_var
 require_dir_var DTA_root "${DTA_ROOT:-${HOME}/preboot/DTA/sedutil}"
 require_dir_var DTA_project_root "${DTA_PROJECT_ROOT:-${DTA_root}}"
 
-require_dir_var mac_root "${DTA_project_root}/macos/sedutil project"
+require_dir_var mac_root "${DTA_project_root}/macos"
 
 require_dir_var xcw_path "${mac_root}/SEDTools.xcworkspace"
 
@@ -95,7 +95,7 @@ export -f fail
 #
 #  export DTA_project_root="${HOME}/preboot/sedutil"
 #  export xcw_path="${DTA_project_root}/sedutil.xcworkspace"
-#  export mac_root="${DTA_project_root}/macos/sedutil project"
+#  export mac_root="${DTA_project_root}/macos"
 #  export out_root="${HOME}/Desktop"
 #  export iso_name="$1"
 #  export config="$2"

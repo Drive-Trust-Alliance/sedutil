@@ -1,7 +1,7 @@
 #!/bin/bash
 # set -xv
 
-#echo "Original source for this script was /Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project/SED ToolBox/DTA/macOS/.Utilities/51_Uninstall_security_items.sh"
+#echo "Original source for this script was /Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/SED ToolBox/DTA/macOS/.Utilities/51_Uninstall_security_items.sh"
 
 #echo "this script dir=${dir}"
 

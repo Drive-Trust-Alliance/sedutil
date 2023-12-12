@@ -41,7 +41,7 @@ fi
 
 
 DEBUG_PRINT "Source for this file is "\
-"/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project/SED ToolBox/pi"
+"/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/SED ToolBox/pi"
 
 # Certificates should be in a folder that is a peer of the pkg being installed
 DEBUG_PRINT "pkg being installed is ${1}"

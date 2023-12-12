@@ -40,7 +40,7 @@ else
 fi
 
 DEBUG_PRINT "Source for this file is "\
-"/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/sedutil project/SED ToolBox/files_scripts/postinstall"
+"/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/SED ToolBox/files_scripts/postinstall"
 
 # Certificates should be in a folder that is a peer of the pkg being installed
 DEBUG_PRINT "pkg being installed is ${1}"
