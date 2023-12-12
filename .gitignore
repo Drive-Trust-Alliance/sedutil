@@ -199,3 +199,4 @@ windows/installer/Output/
 windows/installer/exe
 # Xcode
 *xcworkspace/xcuserdata/*
+Version.h
