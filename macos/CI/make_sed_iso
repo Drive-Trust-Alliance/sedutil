@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -xv
+# set -xv
 
 cleanup=0
 
@@ -79,7 +79,7 @@ utils="SED ToolBox/DTA/macOS/.Utilities/Utility_functions.sh"
 export derived_root=${HOME}/Library/Developer/Xcode/DerivedData
 if  maybe_sudo_for_cleanup
 then
-    sudo rm -rf ${derived_root}/{DTA,SED,iSED}-*
+    sudo rm -rf ${derived_root}/{DTA,SED,iSED,SEDTools,macos-driver}-*
     sudo rm -rf "${out_path}"
     sudo rm -rf build
 fi
