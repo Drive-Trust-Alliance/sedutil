@@ -107,13 +107,13 @@ DtaDevMacOSTPer * DtaDevMacOSTPer::getTPer(std::string entryName,
     return nil;
 }
 
-bool DtaDevMacOSTPer::findBrightPlazaDriverService(const char * dev)
+bool DtaDevMacOSTPer::findDriverService(const char * dev)
 {
     io_registry_entry_t mediaService = findBSDName(dev);
     if (!mediaService)
         return false;
     
-    driverService = findBrightPlazaDriverInParents(mediaService);
+    driverService = findDriverInParents(mediaService);
     IOObjectRelease(mediaService);
     if (driverService == IO_OBJECT_NULL) {
         return false;
@@ -140,7 +140,7 @@ uint8_t DtaDevMacOSTPer::connectToUserClient()
 bool DtaDevMacOSTPer::init(const char * dev, bool doConnect)
 {
     ClearOwnedIOObjects();
-    return findBrightPlazaDriverService(dev) && (!doConnect || KERN_SUCCESS==connectToUserClient());
+    return findDriverService(dev) && (!doConnect || KERN_SUCCESS==connectToUserClient());
 }
 
 void DtaDevMacOSTPer::init(io_registry_entry_t ds, io_connect_t c)

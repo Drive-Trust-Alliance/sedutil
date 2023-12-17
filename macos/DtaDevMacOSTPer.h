@@ -91,7 +91,7 @@ public:
     void ReleaseOwnedIOObjects();
 
 protected:
-    bool findBrightPlazaDriverService(const char * dev);
+    bool findDriverService(const char * dev);
     io_registry_entry_t driverService;
     bool ownDriverService;
 
