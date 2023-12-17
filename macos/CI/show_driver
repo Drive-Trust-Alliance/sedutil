@@ -1,2 +1,5 @@
-#!/bin/bash
-2>/dev/null kmutil showloaded | fgrep com.brightplaza.BrightPlazaTPer
+#!/bin/bash 
+# set -xv
+. driver_info
+2>/dev/null kmutil showloaded | fgrep "${DRIVER_BUNDLE_IDENTIFIER}"
+

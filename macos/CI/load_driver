@@ -1,2 +1,3 @@
 #!/bin/bash
-asroot kmutil load -b com.brightplaza.BrightPlazaTPer
+. driver_info
+asroot kmutil load -p "${DRIVER_BUNDLE_PATH}"

@@ -807,8 +807,6 @@
 					};
 					D26B3B511F6FB6BC004571A8 = {
 						CreatedOnToolsVersion = 8.1;
-						DevelopmentTeam = UES63D9K7E;
-						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -1094,8 +1092,6 @@
 		D26904C328D7A1530095769E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1108,8 +1104,6 @@
 		D26904C428D7A1530095769E /* Debug Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1122,8 +1116,6 @@
 		D26904C528D7A1530095769E /* Debug Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1136,8 +1128,6 @@
 		D26904C628D7A1530095769E /* Debug Bonjour */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1150,8 +1140,6 @@
 		D26904C728D7A1530095769E /* Debug Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1164,8 +1152,6 @@
 		D26904C828D7A1530095769E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1178,8 +1164,6 @@
 		D26904C928D7A1530095769E /* Release Bonjour */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1192,8 +1176,6 @@
 		D26904CA28D7A1530095769E /* Release Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1206,8 +1188,6 @@
 		D26904CB28D7A1530095769E /* Release Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1220,8 +1200,6 @@
 		D26904CC28D7A1530095769E /* Release Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1234,14 +1212,12 @@
 		D26B3B561F6FB6BC004571A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = Debug;
@@ -1249,14 +1225,12 @@
 		D26B3B571F6FB6BC004571A8 /* Debug Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Debug Bonjour and Bluetooth";
@@ -1264,14 +1238,12 @@
 		D26B3B581F6FB6BC004571A8 /* Debug Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Debug Bluetooth";
@@ -1279,14 +1251,12 @@
 		D26B3B591F6FB6BC004571A8 /* Debug Bonjour */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Debug Bonjour";
@@ -1294,14 +1264,12 @@
 		D26B3B5A1F6FB6BC004571A8 /* Debug Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Debug Bonjour Multistart";
@@ -1309,14 +1277,12 @@
 		D26B3B5B1F6FB6BC004571A8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = Release;
@@ -1324,14 +1290,12 @@
 		D26B3B5C1F6FB6BC004571A8 /* Release Bonjour */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Release Bonjour";
@@ -1339,14 +1303,12 @@
 		D26B3B5D1F6FB6BC004571A8 /* Release Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Release Bonjour Multistart";
@@ -1354,14 +1316,12 @@
 		D26B3B5E1F6FB6BC004571A8 /* Release Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Release Bluetooth";
@@ -1369,14 +1329,12 @@
 		D26B3B5F1F6FB6BC004571A8 /* Release Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Bright Plaza, Inc. (UES63D9K7E)";
-				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Release Bonjour and Bluetooth";
@@ -1435,13 +1393,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 625;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = UES63D9K7E;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1543,13 +1498,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 626;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = UES63D9K7E;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1646,13 +1598,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 625;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = UES63D9K7E;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1753,13 +1702,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 625;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = UES63D9K7E;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1860,13 +1806,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 625;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = UES63D9K7E;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1968,13 +1911,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 626;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = UES63D9K7E;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2068,13 +2008,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 626;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = UES63D9K7E;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2168,13 +2105,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 626;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = UES63D9K7E;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2271,13 +2205,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 625;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = UES63D9K7E;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -2375,13 +2306,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 626;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = UES63D9K7E;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;

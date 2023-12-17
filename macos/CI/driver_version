@@ -1,5 +1,5 @@
 #!/bin/bash
-driver=/Library/Extensions/BrightPlazaTPer.kext
-[[ -d "${driver}" ]] || exit 1
-plutil -extract CFBundleVersion raw "${driver}/Contents/Info.plist"
+. driver_info
+[[ -d "${DRIVER_BUNDLE_PATH}" ]] || exit 1
+plutil -extract "CFBundleVersion" raw "${DRIVER_BUNDLE_PATH}/Contents/Info.plist"
 
