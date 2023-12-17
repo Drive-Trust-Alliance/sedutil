@@ -4,5 +4,6 @@
 # I.e. if Xcode provides python3, it should be installed first
 
 export PATH="$(python3 -m site --user-base)/bin:${PATH}"
+python3 -m ensurepip --upgrade
 python3 -m pip install --upgrade pip
 pip3 install dmgbuild
