@@ -1217,7 +1217,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = Debug;
@@ -1230,7 +1230,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Debug Bonjour and Bluetooth";
@@ -1243,7 +1243,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Debug Bluetooth";
@@ -1256,7 +1256,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Debug Bonjour";
@@ -1269,7 +1269,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Debug Bonjour Multistart";
@@ -1282,7 +1282,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = Release;
@@ -1295,7 +1295,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Release Bonjour";
@@ -1308,7 +1308,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Release Bonjour Multistart";
@@ -1321,7 +1321,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Release Bluetooth";
@@ -1334,7 +1334,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.drivetrust.sedutil-cli";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
 			name = "Release Bonjour and Bluetooth";
