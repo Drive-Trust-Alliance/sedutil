@@ -1,38 +1,22 @@
 #!/bin/bash 
 
-#set -xv
+# set -xv
+
+. img_utils.sh
 
 version="${1:-Release}"
-project="${2:-SED Driver}"
+project="${2:-SED ToolBox}"
 
 iso="${HOME}/Desktop/${project} (${version}).iso"
 isoVol="/Volumes/${project}"
 dmg="${isoVol}/macOS.dmg"
 dmgVol="/Volumes/SED software by Drive Trust Alliance" 
 
-function possibly_eject {
-    local target="${1}"
-    [ -d "${target}" ] && diskutil eject "${target}"
-}
+detach_dmg "${dmgVol}"
 
-function maybe_attach {
-    [ -f "${1}" ]  &&  hdiutil attach -quiet "${@}"
-}
-
-function persistently_require {
-    local target="${1}"
-    shift
- 
-   [ -d "${target}" ] && fail 1 "${target} already exists, could not move aside."
-
-    maybe_attach "$@" || fail 2 "Could not find ${target} and could not attach ${@}"
-
-   [ -d "${target}" ] || fail 3 "Attached $@ but still could not find ${target}"
-}
-
-possibly_eject "${dmgVol}"
 possibly_eject "${isoVol}"
 persistently_require "${isoVol}" "${iso}"
-persistently_require "${dmgVol}" "${dmg}"
-exit $?
 
+attach_dmg "${dmgVol}" "${dmg}"
+
+exit $?

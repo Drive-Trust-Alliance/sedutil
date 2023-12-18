@@ -1,0 +1,13 @@
+#!/bin/bash 
+
+#set -xv
+
+. img_utils.sh
+
+dmgVol="${1:-/Volumes/SED software by Drive Trust Alliance}"
+dmg="${2:-/Volumes/SED Driver/macOS.dmg}"
+
+possibly_eject "${dmgVol}"
+persistently_require "${dmgVol}" "${dmg}"
+exit $?
+
