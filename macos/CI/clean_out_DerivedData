@@ -1,2 +1,2 @@
 #!/bin/bash
-rm -rf "${HOME}/Library/Developer/Xcode/DerivedData/${1}-*/*"
+rm -rf "${HOME}/Library/Developer/Xcode/DerivedData/${1}-"*/*
