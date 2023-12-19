@@ -4,7 +4,7 @@
 
 function possibly_eject {
     local target="${1}"
-    [ -d "${target}" ] && diskutil eject "${target}"
+    [ -d "${target}" ] && diskutil quiet eject "${target}"
 }
 export -f possibly_eject
 
