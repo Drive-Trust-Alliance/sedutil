@@ -172,10 +172,6 @@
 		D2772AD728BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DtaDevMacOSTPer_SCSI.cpp; path = macos/DtaDevMacOSTPer_SCSI.cpp; sourceTree = "<group>"; };
 		D2772AD828BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DtaDevMacOSTPer_SCSI.h; path = macos/DtaDevMacOSTPer_SCSI.h; sourceTree = "<group>"; };
 		D2772AD928BBFFB70005E001 /* DtaDevMacOSTPer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DtaDevMacOSTPer.cpp; path = macos/DtaDevMacOSTPer.cpp; sourceTree = "<group>"; };
-		D280CCA229D75AA300BE604D /* Python3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python3.framework; path = Library/Frameworks/Python3.framework; sourceTree = DEVELOPER_DIR; };
-		D280CCA429D75AD300BE604D /* Xcode.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; name = Xcode.app; path = ../../../../../../../../../Applications/Xcode.app; sourceTree = "<group>"; };
-		D280CCA629D75C9500BE604D /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = ../../../../../../../../../opt/local/Library/Frameworks/Python.framework; sourceTree = "<group>"; };
-		D280CCB329DA51A400BE604D /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/System/Library/Frameworks/Python.framework; sourceTree = DEVELOPER_DIR; };
 		D29C45F328C185150093AC75 /* GitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = GitVersion.sh; sourceTree = "<group>"; };
 		D29C45F528C185590093AC75 /* MakeVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = MakeVersion.sh; sourceTree = "<group>"; };
 		D29C45F628C185590093AC75 /* CleanVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CleanVersion.sh; sourceTree = "<group>"; };
@@ -333,10 +329,6 @@
 		D23F3E0B28B57E6800741CC0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D280CCA629D75C9500BE604D /* Python.framework */,
-				D280CCB329DA51A400BE604D /* Python.framework */,
-				D280CCA429D75AD300BE604D /* Xcode.app */,
-				D280CCA229D75AA300BE604D /* Python3.framework */,
 				D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */,
 				D2A06C9528B5D88800C0DDB6 /* Foundation.framework */,
 				D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */,

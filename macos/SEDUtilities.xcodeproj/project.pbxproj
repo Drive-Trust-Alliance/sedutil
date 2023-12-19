@@ -107,7 +107,7 @@
 		D20A961829A7065700B2FCF2 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = files/opt/local/bin;
+			dstPath = files/usr/local/bin;
 			dstSubfolderSpec = 16;
 			files = (
 				D20A961A29A706CE00B2FCF2 /* reenumerate in CopyFiles */,

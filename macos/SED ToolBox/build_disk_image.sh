@@ -78,8 +78,6 @@ static="${TARGETROOT}"
 
 dmgbuild="$(which dmgbuild)"
 [ -x "${dmgbuild}" ] || \
-    dmgbuild="$(2>/dev/null find /opt/local/Library/Frameworks/Python.framework -path '*/bin/dmgbuild' -maxdepth 4 )"
-[ -x "${dmgbuild}" ] || \
     dmgbuild="$(2>/dev/null find $HOME/Library/Python -path '*/bin/dmgbuild' -maxdepth 3)"
 [ -x "${dmgbuild}" ] || \
     fail 171 "Can not find dmgbuild"
