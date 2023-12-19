@@ -7,7 +7,7 @@ export PATH="$(pwd):${PATH}"
 clean_out_DerivedData SEDTools
 
 # Become sudo-ready if necessary
-sudo -p 'Enter admin password now for sudo invocations during build ... ' true
+authenticate 'Enter admin password now for sudo invocations during build ...->'
 
 # Continue on with the make_tools script
 exec make_tools "${@}"
