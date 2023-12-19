@@ -1,0 +1,4 @@
+#!/bin/bash
+#set -xv
+prompt="${1:-Enter admin password for sudo invocations:}"
+sudo -S --prompt "${prompt}" true
