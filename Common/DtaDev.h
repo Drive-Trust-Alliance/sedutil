@@ -50,6 +50,8 @@ public:
 	uint8_t MBREnabled();
 	/** Is the MBRDone flag set */
 	uint8_t MBRDone();
+	/** Is the MBRAbsent flag set */
+	uint8_t MBRAbsent();
 	/** Is the Locked flag set */
 	uint8_t Locked();
 	/** Is the Locking SP enabled */
