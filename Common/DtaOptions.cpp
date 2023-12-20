@@ -95,6 +95,9 @@ void usage()
     printf("                                revert the device using the PSID *ERASING* *ALL* the data \n");
     printf("--printDefaultPassword <device>\n");
     printf("                                print MSID \n");
+    printf("--printRandomBytes <count> <device>\n");
+    printf("                                Print random generated <count> bytes from <device> \n");
+    printf("                                <count> should be between 1 to 32 (both inclusive) \n");
     printf("\n");
     printf("Examples \n");
     printf("sedutil-cli --scan \n");
@@ -511,6 +514,7 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			END_OPTION
 		BEGIN_OPTION(objDump, 5) i += 4; OPTION_IS(device) END_OPTION
         BEGIN_OPTION(printDefaultPassword, 1) OPTION_IS(device) END_OPTION
+		BEGIN_OPTION(printRandomBytes, 2, 2) OPTION_IS(byte_count) OPTION_IS(device) END_OPTION
 		BEGIN_OPTION(rawCmd, 7) i += 6; OPTION_IS(device) END_OPTION
 		else {
             LOG(E) << "Invalid command line argument " << argv[i];

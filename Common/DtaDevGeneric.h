@@ -224,4 +224,6 @@ public:
 	 uint8_t exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol = 1) ;
          /** return the communications ID to be used for sessions to this device */
 	 uint16_t comID() ;
+
+	 uint8_t printRandomBytes(uint8_t num_of_bytes);
 };

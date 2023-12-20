@@ -259,6 +259,15 @@ int main(int argc, char * argv[])
 		LOG(D) << "print default password";
         return d->printDefaultPassword();
         break;
+	case sedutiloption::printRandomBytes:
+	{
+		uint8_t num_of_bytes = atol(argv[opts.byte_count]);
+		LOG(D) << "print random " << num_of_bytes << " byte(s)";
+		if ((num_of_bytes > 0) && (num_of_bytes <= 32))
+			return d->printRandomBytes(num_of_bytes);
+		LOG(E) << "Random byte count between 1 to 32 are supported";
+		break;
+	}
 	case sedutiloption::rawCmd:
 		LOG(D) << "Performing cmdDump ";
 		return d->rawCmd(argv[argc - 7], argv[argc - 6], argv[argc - 5], argv[argc - 4], argv[argc - 3], argv[argc - 2]);

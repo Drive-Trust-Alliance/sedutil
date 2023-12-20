@@ -260,6 +260,11 @@ public:
          */
 	uint8_t rawCmd(char *sp, char * auth, char *pass,
 		char *invoker, char *method, char *plist);
+
+	/** Print random number of bytes
+	 * @param num_of_bytes Number of bytes to print
+	 */
+	uint8_t printRandomBytes(uint8_t num_of_bytes);
 protected:
         /** Primitive to handle the setting of a value in the locking sp.
          * @param table_uid UID of the table 

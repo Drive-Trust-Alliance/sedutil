@@ -1834,3 +1834,47 @@ uint8_t DtaDevOpal::rawCmd(char *sp, char * hexauth, char *pass,
 	LOG(D1) << "Exiting DtaDevEnterprise::rawCmd";
 	return 0;
 }
+
+uint8_t DtaDevOpal::printRandomBytes(uint8_t num_of_bytes) {
+	LOG(D1) << "Entering DtaDevOpal::printRandomBytes";
+	DtaCommand *cmd = new DtaCommand();
+	if (NULL == cmd) {
+		LOG(E) << "Create session object failed";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	cmd->reset(OPAL_UID::OPAL_THISSP_UID, OPAL_METHOD::RANDOM);
+	cmd->addToken(OPAL_TOKEN::STARTLIST);
+	cmd->addToken(num_of_bytes);
+	cmd->addToken(OPAL_TOKEN::ENDLIST);
+	cmd->complete();
+
+	session = new DtaSession(this);
+	uint8_t lastRC;
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+	if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID)) != 0) {
+		LOG(E) << "Unable to start Unauthenticated session " << dev;
+		delete session;
+		return lastRC;
+	}
+	if ((lastRC = session->sendCommand(cmd, response)) != 0) {
+		LOG(E) << "setupLockingRange Failed ";
+		delete cmd;
+		delete session;
+		return lastRC;
+	}
+
+
+	uint8_t data[32];
+	response.getBytes(1, data);
+	cout << HEXON(2);
+	for (uint8_t i=1; i<=num_of_bytes; ++i)
+		cout << ((uint32_t)data[num_of_bytes-i] & 0xFF);
+	cout << HEXOFF << std::endl;
+	delete cmd;
+	delete session;
+	LOG(D1) << "Exiting DtaDevOpal::printRandomBytes";
+	return 0;
+}

@@ -44,6 +44,7 @@ typedef struct _DTA_OPTIONS {
 
 	bool no_hash_passwords; /** global parameter, disables hashing of passwords */
 	sedutiloutput output_format;
+	uint8_t byte_count;
 } DTA_OPTIONS;
 /** Print a usage message */
 void usage();
@@ -95,6 +96,7 @@ typedef enum _sedutiloption {
 	validatePBKDF2,
 	objDump,
     printDefaultPassword,
+	printRandomBytes,
 	rawCmd,
 
 } sedutiloption;

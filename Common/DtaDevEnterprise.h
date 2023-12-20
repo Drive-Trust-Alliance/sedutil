@@ -205,6 +205,10 @@ public:
 	uint8_t rawCmd(char *sp, char *hexauth, char *pass,
 		char *hexinvokingUID, char *hexmethod, char *hexparms);
 
+	/** Print random number of bytes
+	 * @param num_of_bytes Number of bytes to print
+	 */
+	uint8_t printRandomBytes(uint8_t num_of_bytes);
 protected:
 	uint8_t getDefaultPassword();
 private:
