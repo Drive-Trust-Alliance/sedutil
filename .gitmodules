@@ -1,4 +1,4 @@
 [submodule "macos/oui"]
-	path = macos/oui
+	path = macos/CLI/oui
 	url = git@github.com:Drive-Trust-Alliance/oui.git
 	branch = develop
