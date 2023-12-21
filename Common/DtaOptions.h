@@ -58,7 +58,7 @@ typedef struct _DTA_OPTIONS {
     uint8_t devusb;               /**< usb devname */
     bool    translate_req;        /**< global parameter, require to translate the hashed password string into hex data */
     bool    skip_activate;        /**< skip activation LockingSP during initial setup */
-    sedutiloutput output_format;  /**< global parameter, outpug format */
+    sedutiloutput output_format;  /**< global parameter, output format */
 
     uint8_t eventid;	          /**< audit log event ID */
     uint8_t dsnum;	          /**< which data store to read write*/

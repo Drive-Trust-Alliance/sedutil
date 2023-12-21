@@ -42,7 +42,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 using namespace std;
 
 /** Class representing a disk device, this class is intended to be used when
- * it is not yet known if the device is OPAL compliant
+ * it is not yet known if the device is a TPer
  */
 
 #define voidNOCODE(name, ...) void DtaDevGeneric::name(##__VA_ARGS__) { \

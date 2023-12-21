@@ -31,7 +31,8 @@ void usage()
 {
     printf("sedutil v%s Copyright 2014-2023 Bright Plaza Inc. <drivetrust@drivetrust.com>\n", GIT_VERSION);
     printf("a utility to manage self encrypting drives that conform\n");
-    printf("to the Trusted Computing Group OPAL 2.0 SSC specification\n");
+    printf("to the Trusted Computing Group Storage Architecture Core Specification\n");
+    printf("and to one of the Security Subsystem Class specifications such as OPAL 2.0\n");
     printf("General Usage:                     (see readme for extended commandset)\n");
     printf("sedutil-cli <-v> <-n> <action> <options> <device>\n");
     printf("-v (optional)                       increase verbosity, one to five v's\n");
@@ -40,7 +41,7 @@ void usage()
     printf("actions \n");
     printf("--scan\n");
     printf("                                Scans the devices on the system \n");
-    printf("                                identifying Opal compliant devices \n");
+    printf("                                identifying the TPers \n");
     printf("--query <device>\n");
     printf("                                Display the Discovery 0 response of a device\n");
     printf("--isValidSED <device>\n");
@@ -55,10 +56,10 @@ void usage()
     printf("                                Rekey Locking Range\n");
     printf("--setBandsEnabled <password> <device>\n");
     printf("                                Set Enabled for all Locking Ranges\n");
-    printf("                                (passwort = \"\" for MSID) \n");
+    printf("                                (password = \"\" for MSID) \n");
     printf("--setBandEnabled <0...n> <password> <device>\n");
     printf("                                Set Enabled for Locking Range[n]\n");
-    printf("                                (passwort = \"\" for MSID) \n");
+    printf("                                (password = \"\" for MSID) \n");
     printf("--eraseLockingRange <0...n> <password> <device>\n");
     printf("                                Erase a Locking Range\n");
     printf("                                0 = GLobal 1..n  = LRn \n");
@@ -88,8 +89,6 @@ void usage()
     printf("                                Enable|Disable MBR shadowing \n");
     printf("--setMBRDone <on|off> <Admin1password> <device> \n");
     printf("                                set|unset MBRDone\n");
-//    printf("--createUSB <file> <device1> <device2\n");
-//    printf("                                Write image file to USB\n");
     printf("--loadPBAimage <Admin1password> <file> <device> \n");
     printf("                                Write <file> to MBR Shadow area\n");
     printf("--revertTPer <SIDpassword> <device>\n");
@@ -103,13 +102,23 @@ void usage()
     printf("                                revert the device using the PSID *ERASING* *ALL* the data \n");
     printf("--printDefaultPassword <device>\n");
     printf("                                print MSID \n");
+    
+    // Customization commands
+    printf("--version \n");
+    printf("                                print sedutil-cli version, including build tag\n");
+
     printf("\n");
     printf("Examples \n");
     printf("sedutil-cli --scan <skipdevice>\n");
     printf("sedutil-cli --query %s \n", DEVICEEXAMPLE);
     printf("sedutil-cli --yesIreallywanttoERASEALLmydatausingthePSID <PSIDALLCAPSNODASHED> %s \n", DEVICEEXAMPLE);
     printf("sedutil-cli --initialSetup <newSIDpassword> %s \n", DEVICEEXAMPLE);
+    
+    // Customization examples
     printf("sedutil-cli --version \n");
+    //    printf("--createUSB <file> <device1> <device2\n");
+    //    printf("                                Write image file to USB\n");
+
     return;
 }
 
@@ -167,8 +176,8 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
     memset(opts, 0, sizeof (DTA_OPTIONS));
     uint16_t loggingLevel = DEFAULT_LOGGING_LEVEL;
     uint8_t baseOptions = 2; // program and option
-    CLog::Level() = CLog::FromInt(loggingLevel);
-    RCLog::Level() = RCLog::FromInt(loggingLevel);
+    CLogLevel = CLog::FromInt(loggingLevel);
+    RCLogLevel = RCLog::FromInt(loggingLevel);
     if (2 > argc) {
         usage();
         return DTAERROR_INVALID_COMMAND;
@@ -181,8 +190,8 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
           baseOptions += 1;
           loggingLevel += (uint16_t)(strlen(argv[i]) - 1);
           if (loggingLevel > MAX_LOGGING_LEVEL) loggingLevel = MAX_LOGGING_LEVEL;
-          CLog::Level() = CLog::FromInt(loggingLevel);
-          RCLog::Level() = RCLog::FromInt(loggingLevel);
+          CLogLevel = CLog::FromInt(loggingLevel);
+          RCLogLevel = RCLog::FromInt(loggingLevel);
           LOG(D) << "Log level set to " << CLog::ToString(CLog::FromInt(loggingLevel));
           LOG(D) << "sedutil version : " << GIT_VERSION;
         } else if (!(strcmp("-a", argv[i]))) {
@@ -381,5 +390,5 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			return DTAERROR_INVALID_COMMAND;
         }
     }
-    return 0;
+    return DTAERROR_SUCCESS;
 }

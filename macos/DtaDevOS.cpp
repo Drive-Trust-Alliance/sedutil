@@ -306,7 +306,7 @@ int  DtaDevOS::diskScan()
     LOG(D1) << "Entering DtaDevOS:diskScan ";
 
     IFLOG(D) {
-        fprintf(Output2FILE::Stream(), "Scanning for TCG SWG compliant disks (debug version, loglevel=%d)\n", CLog::Level());
+        fprintf(Output2FILE::Stream(), "Scanning for TCG SWG compliant disks (loglevel=%d)\n", CLog::Level());
     } else {
         fprintf(Output2FILE::Stream(), "Scanning for Opal compliant disks\n");
     }

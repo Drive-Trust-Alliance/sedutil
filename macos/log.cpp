@@ -9,15 +9,10 @@
 #include "../Common/log.h"
 
 #define DEBUG_LOGGING_LEVEL 0
-//#define DEBUG_LOGGING_LEVEL 4
-//#define DEBUG_LOGGING_LEVEL 0
 #define RELEASE_LOGGING_LEVEL 0
 
-
-template<> TLogLevel& Log<Output2FILE>::Level() {
-    static TLogLevel Level = D4;
-    return Level;
-}
+TLogLevel& CLogLevel = CLog::Level();
+TLogLevel& RCLogLevel = RCLog::Level();
 
 void SetLoggingLevel(const int loggingLevel)
 {

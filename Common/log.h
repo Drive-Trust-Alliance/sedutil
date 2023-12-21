@@ -315,16 +315,19 @@ class FILELOG_DECLSPEC RCLog : public RLog<Output2FILE> {
 //    else if (level > CLog::Level() || !Output2FILE::Stream()) ; \
 //    else
 
+
+extern "C" sedutiloutput outputFormat;
+extern TLogLevel& CLogLevel;
+extern TLogLevel& RCLogLevel;
+
 // This version allows an else part
 #define IFLOG(level) \
     if (level > CLOG_MAX_LEVEL) ;\
-    else if (!(level > CLog::Level() || !Output2FILE::Stream()))
-
-extern "C" sedutiloutput outputFormat;
+    else if (!(level > CLogLevel || !Output2FILE::Stream()))
 
 #define	LOGX(level) \
 	if (level > CLOG_MAX_LEVEL) ;\
-	else if (level > RCLog::Level() || !Output2FILE::Stream()) ; \
+	else if (level > RCLogLevel || !Output2FILE::Stream()) ; \
 	else RCLog().Get(level, outputFormat)
 #define	LOG LOGX
 
@@ -364,6 +367,7 @@ inline std::string NowTime() {
 }
 
 #endif //WIN32
+
 
 extern void turnOffLogging(void);
 extern void SetLoggingLevel(int loggingLevel);

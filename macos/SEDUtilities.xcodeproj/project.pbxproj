@@ -53,6 +53,8 @@
 		D2EBEF0A2B2835FA009B4FF6 /* log.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2EBEF072B2835D8009B4FF6 /* log.framework */; };
 		D2EBEF0B2B2835FA009B4FF6 /* oui.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2EBEF052B2835D6009B4FF6 /* oui.framework */; };
 		D2EBEF0C2B2835FA009B4FF6 /* cifra.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2EBEF062B2835D7009B4FF6 /* cifra.framework */; };
+		D2F14B8B2B340B7A0070A95B /* log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2EBEF072B2835D8009B4FF6 /* log.framework */; };
+		D2F14B8C2B340B7A0070A95B /* log.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D2EBEF072B2835D8009B4FF6 /* log.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -142,6 +144,17 @@
 				D28B7E542A41244D00582735 /* Bright Plaza CA.pem in CopyFiles */,
 				D28B7E552A41245000582735 /* Bright Plaza SED Server.p12 in CopyFiles */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2F14B8D2B340B7A0070A95B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D2F14B8C2B340B7A0070A95B /* log.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -327,6 +340,7 @@
 		D2F0B4802A59F926002E54A9 /* 51_Uninstall_security_items.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 51_Uninstall_security_items.sh; path = "SED ToolBox/DTA/macOS/.Utilities/51_Uninstall_security_items.sh"; sourceTree = SOURCE_ROOT; };
 		D2F0B4812A59F926002E54A9 /* 22_Uninstall_libraries.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 22_Uninstall_libraries.sh; path = "SED ToolBox/DTA/macOS/.Utilities/22_Uninstall_libraries.sh"; sourceTree = SOURCE_ROOT; };
 		D2F0B4822A59F926002E54A9 /* 01_Uninstall_preference_pane.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 01_Uninstall_preference_pane.sh; path = "SED ToolBox/DTA/macOS/.Utilities/01_Uninstall_preference_pane.sh"; sourceTree = SOURCE_ROOT; };
+		D2F14B892B33A1080070A95B /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = log.cpp; path = macos/log.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -342,6 +356,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D2C956E42B179B0E00E00FE6 /* sedutil.framework in Frameworks */,
+				D2F14B8B2B340B7A0070A95B /* log.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -590,6 +605,7 @@
 		D2772B5F28BC354B0005E001 /* macos */ = {
 			isa = PBXGroup;
 			children = (
+				D2F14B892B33A1080070A95B /* log.cpp */,
 				D2DC16632B17955B002A8DC8 /* GitVersion.sh */,
 				D2DC165D2B1794C9002A8DC8 /* sedutil */,
 				D2772BEA28BC36420005E001 /* Version.h */,
@@ -774,6 +790,7 @@
 				D26B3B4E1F6FB6BC004571A8 /* Sources */,
 				D26B3B4F1F6FB6BC004571A8 /* Frameworks */,
 				D2336D7C28E2845900F199EA /* CopyFiles */,
+				D2F14B8D2B340B7A0070A95B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -794,7 +811,7 @@
 				KnownAssetTags = (
 					New,
 				);
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1510;
 				ORGANIZATIONNAME = "Bright Plaza, Inc.";
 				TargetAttributes = {
 					D20A95F629A6E9E600B2FCF2 = {

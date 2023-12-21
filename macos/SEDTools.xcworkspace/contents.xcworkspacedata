@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Documentation">
+   </FileRef>
+   <FileRef
       location = "group:../../../../Customizations.FH">
    </FileRef>
    <FileRef

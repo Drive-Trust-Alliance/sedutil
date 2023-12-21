@@ -44,7 +44,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define HEXOFF std::dec << std::setw(0) << std::setfill(' ')
 /** Return Codes */
 #define DTAERROR_SUCCESS                    0x00
-#define DTAERROR_UNSUPORTED_LOCKING_RANGE    0x81
+#define DTAERROR_AUTHORIZE_EXEC_FAILED      0x80
+#define DTAERROR_UNSUPORTED_LOCKING_RANGE   0x81
 #define DTAERROR_OBJECT_CREATE_FAILED		0x82
 #define DTAERROR_INVALID_PARAMETER			0x83
 #define DTAERROR_OPEN_ERR					0x84
@@ -54,10 +55,11 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define DTAERROR_COMMAND_ERROR				0x88
 #define DTAERROR_NO_METHOD_STATUS			0x89
 #define DTAERROR_NO_LOCKING_INFO			0x8a
-#define DTAERROR_CREATE_USB				0x8b
-#define DTAERROR_AUTHORIZE_EXEC_FAILED		0x90
+
+#define DTAERROR_CREATE_USB			    	0x8b
 #define NOT_SUPPORT_LARGE_PBA_WRITE_TO_ENCLOSURE_DRIVE 0x91
+
 /** Locking Range Configurations */
-#define DTA_DISABLELOCKING		0x00
+#define DTA_DISABLELOCKING	    	0x00
 #define DTA_READLOCKINGENABLED		0x01
-#define DTA_WRITELOCKINGENABLED	0x02
+#define DTA_WRITELOCKINGENABLED	    0x02
