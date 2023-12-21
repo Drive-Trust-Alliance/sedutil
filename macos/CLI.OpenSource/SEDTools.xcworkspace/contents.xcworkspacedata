@@ -2,19 +2,16 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Documentation">
+      location = "group:">
    </FileRef>
    <FileRef
-      location = "group:../../../../Customizations.FH">
+      location = "group:../Documentation">
    </FileRef>
    <FileRef
-      location = "group:../../../../Desktop/sedutil.out">
+      location = "group:../CI">
    </FileRef>
    <FileRef
-      location = "group:CI">
-   </FileRef>
-   <FileRef
-      location = "group:../Common">
+      location = "group:../../Common">
    </FileRef>
    <FileRef
       location = "group:SEDFrameworks.xcodeproj">

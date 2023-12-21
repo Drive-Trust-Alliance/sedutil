@@ -28,12 +28,12 @@ export -f require_dir_var
 
 
 require_dir_var DTA_root "${DTA_ROOT:-${HOME}/preboot/DTA/sedutil}"
-require_dir_var DTA_project_root "${DTA_PROJECT_ROOT:-${DTA_root}}"
 
-require_dir_var mac_root "${DTA_project_root}/macos"
+require_dir_var mac_root "${DTA_root}/macos"
 
-require_dir_var xcw_path "${mac_root}/SEDTools.xcworkspace"
+require_dir_var DTA_project_root "${DTA_PROJECT_ROOT:-${mac_root}/CLI}"
 
+require_dir_var xcw_path "${DTA_project_root}/SEDTools.xcworkspace"
 
 require_dir_var out_root "${HOME}/Desktop"
 
@@ -68,7 +68,7 @@ export out_path="${out_root}/sedutil.out"
 
 echo "Building ${iso_path} using \"${config}\""
 
-cd "${mac_root}"
+cd "${DTA_project_root}"
 
 utils="SED ToolBox/DTA/macOS/.Utilities/Utility_functions.sh"
 [ -f "${utils}" ] || fail "Can not find utility functions library file ${utils}"

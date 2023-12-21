@@ -1,0 +1,5 @@
+#!/bin/bash 
+# set -xv
+. driver_info
+2>/dev/null kmutil print-diagnostics -pv "${DRIVER_BUNDLE_PATH}"
+

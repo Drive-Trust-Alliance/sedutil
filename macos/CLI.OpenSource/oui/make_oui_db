@@ -1,0 +1,13 @@
+#!/bin/bash
+
+###
+### Create oui.inc as an #include file from the IEEE standard OUI data
+###
+
+STANDARDS_OUI_URL='https://standards-oui.ieee.org/oui/oui.txt'
+
+
+curl "${STANDARDS_OUI_URL}" | \
+perl -lane 'print "{__hex__($1),\"$2\"}," if /([0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F])\s+\(base 16\)\s+(.+)\r/' \
+>oui.inc
+

@@ -267,9 +267,9 @@
 		D26496E72A36849F00F09A67 /* extract_configuration_from_Xcode_build_environment */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = extract_configuration_from_Xcode_build_environment; sourceTree = "<group>"; };
 		D26904CD28D7A17B0095769E /* reenumerate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = reenumerate.c; sourceTree = "<group>"; };
 		D26904CF28D7A17F0095769E /* IOUSBFamilyInfoPlist.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOUSBFamilyInfoPlist.pch; sourceTree = "<group>"; };
-		D2772B6428BC354B0005E001 /* DtaDevOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaDevOS.h; path = macos/DtaDevOS.h; sourceTree = "<group>"; };
-		D2772B7328BC354B0005E001 /* os.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = os.h; path = macos/os.h; sourceTree = "<group>"; };
-		D2772BEA28BC36420005E001 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
+		D2772B6428BC354B0005E001 /* DtaDevOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaDevOS.h; sourceTree = "<group>"; };
+		D2772B7328BC354B0005E001 /* os.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = os.h; sourceTree = "<group>"; };
+		D2772BEA28BC36420005E001 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Version.h; path = CLI.OpenSource/Version.h; sourceTree = "<group>"; };
 		D28B7E4C2A41237600582735 /* Bright Plaza SED Server.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bright Plaza SED Server.p12"; sourceTree = "<group>"; };
 		D28B7E4D2A41237600582735 /* Bright Plaza CA.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza CA.pem"; sourceTree = "<group>"; };
 		D28B7E5B2A4125AF00582735 /* 99_unload_driver.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 99_unload_driver.sh; sourceTree = "<group>"; };
@@ -301,7 +301,7 @@
 		D28B7E7E2A4125B100582735 /* Install_daemon.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = Install_daemon.sh; sourceTree = "<group>"; };
 		D28CFD6028E2C1AF00A33B00 /* sedutil-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "sedutil-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28CFD6128E2C1AF00A33B00 /* reenumerate */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = reenumerate; sourceTree = BUILT_PRODUCTS_DIR; };
-		D2A3E62B2B1B03AB00F9CCF8 /* DtaConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaConstants.h; sourceTree = "<group>"; };
+		D2A3E62B2B1B03AB00F9CCF8 /* DtaConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DtaConstants.h; path = ../DtaConstants.h; sourceTree = "<group>"; };
 		D2A3E62C2B1B04CB00F9CCF8 /* DtaDev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDev.h; sourceTree = "<group>"; };
 		D2A3E62D2B1B04F600F9CCF8 /* DtaStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaStructures.h; sourceTree = "<group>"; };
 		D2A3E6312B1B08CC00F9CCF8 /* DtaDevOpalLoadPBA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpalLoadPBA.cpp; sourceTree = "<group>"; };
@@ -316,7 +316,7 @@
 		D2C956ED2B17E95600E00FE6 /* SEDKernelInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SEDKernelInterface.framework; path = ../../../../../../../Library/Frameworks/SEDKernelInterface.framework; sourceTree = "<group>"; };
 		D2DC165E2B1794C9002A8DC8 /* MakeVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = MakeVersion.sh; sourceTree = "<group>"; };
 		D2DC165F2B1794C9002A8DC8 /* CleanVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CleanVersion.sh; sourceTree = "<group>"; };
-		D2DC16632B17955B002A8DC8 /* GitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = GitVersion.sh; path = macos/GitVersion.sh; sourceTree = "<group>"; };
+		D2DC16632B17955B002A8DC8 /* GitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = GitVersion.sh; path = CLI.OpenSource/GitVersion.sh; sourceTree = "<group>"; };
 		D2DC17242B1798A2002A8DC8 /* tassert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tassert.h; sourceTree = "<group>"; };
 		D2DC17252B1798A2002A8DC8 /* blockwise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blockwise.h; sourceTree = "<group>"; };
 		D2DC17262B1798A2002A8DC8 /* hmac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hmac.c; sourceTree = "<group>"; };
@@ -340,7 +340,8 @@
 		D2F0B4802A59F926002E54A9 /* 51_Uninstall_security_items.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 51_Uninstall_security_items.sh; path = "SED ToolBox/DTA/macOS/.Utilities/51_Uninstall_security_items.sh"; sourceTree = SOURCE_ROOT; };
 		D2F0B4812A59F926002E54A9 /* 22_Uninstall_libraries.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 22_Uninstall_libraries.sh; path = "SED ToolBox/DTA/macOS/.Utilities/22_Uninstall_libraries.sh"; sourceTree = SOURCE_ROOT; };
 		D2F0B4822A59F926002E54A9 /* 01_Uninstall_preference_pane.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 01_Uninstall_preference_pane.sh; path = "SED ToolBox/DTA/macOS/.Utilities/01_Uninstall_preference_pane.sh"; sourceTree = SOURCE_ROOT; };
-		D2F14B892B33A1080070A95B /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = log.cpp; path = macos/log.cpp; sourceTree = "<group>"; };
+		D2F14B892B33A1080070A95B /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = log.cpp; sourceTree = "<group>"; };
+		D2F223392B34F8A9006EDA4A /* Version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Version.h; path = ../Version.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -607,7 +608,8 @@
 			children = (
 				D2F14B892B33A1080070A95B /* log.cpp */,
 				D2DC16632B17955B002A8DC8 /* GitVersion.sh */,
-				D2DC165D2B1794C9002A8DC8 /* sedutil */,
+				D2DC165E2B1794C9002A8DC8 /* MakeVersion.sh */,
+				D2DC165F2B1794C9002A8DC8 /* CleanVersion.sh */,
 				D2772BEA28BC36420005E001 /* Version.h */,
 				D2772B6428BC354B0005E001 /* DtaDevOS.h */,
 				D2772B7328BC354B0005E001 /* os.h */,
@@ -696,12 +698,13 @@
 				D2486D762B18605A002D347E /* sedutil.cpp */,
 			);
 			name = Common;
-			path = ../Common;
+			path = ../../Common;
 			sourceTree = "<group>";
 		};
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D2F223392B34F8A9006EDA4A /* Version.h */,
 				D2A3E62B2B1B03AB00F9CCF8 /* DtaConstants.h */,
 				D2C956ED2B17E95600E00FE6 /* SEDKernelInterface.framework */,
 				D2EBEF082B2835D9009B4FF6 /* sedutil.framework */,
@@ -730,16 +733,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		D2DC165D2B1794C9002A8DC8 /* sedutil */ = {
-			isa = PBXGroup;
-			children = (
-				D2DC165E2B1794C9002A8DC8 /* MakeVersion.sh */,
-				D2DC165F2B1794C9002A8DC8 /* CleanVersion.sh */,
-			);
-			name = sedutil;
-			path = macos/sedutil;
-			sourceTree = "<group>";
-		};
 		D2DC17232B1798A2002A8DC8 /* pbkdf2 */ = {
 			isa = PBXGroup;
 			children = (
@@ -759,7 +752,7 @@
 				D2DC17312B1798A2002A8DC8 /* pbkdf2.c */,
 			);
 			name = pbkdf2;
-			path = ../Common/pbkdf2;
+			path = ../../Common/pbkdf2;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -922,7 +915,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport mac_root=\"${SRCROOT}\"\nsedutil/MakeVersion.sh\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport mac_root=\"${SRCROOT}\"\n./MakeVersion.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
