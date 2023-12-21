@@ -1,2 +1,0 @@
-#!/bin/bash
-sed 's/ \([^ ]*\) *\([^ ].*[^ ]\) *$/{"\1","\2"},/' t10_vendorid.new  > t10_vendorid.inc
