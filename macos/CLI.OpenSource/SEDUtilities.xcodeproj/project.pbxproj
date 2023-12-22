@@ -269,7 +269,7 @@
 		D26904CF28D7A17F0095769E /* IOUSBFamilyInfoPlist.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOUSBFamilyInfoPlist.pch; sourceTree = "<group>"; };
 		D2772B6428BC354B0005E001 /* DtaDevOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaDevOS.h; sourceTree = "<group>"; };
 		D2772B7328BC354B0005E001 /* os.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = os.h; sourceTree = "<group>"; };
-		D2772BEA28BC36420005E001 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Version.h; path = CLI.OpenSource/Version.h; sourceTree = "<group>"; };
+		D2772BEA28BC36420005E001 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Version.h; path = CLI/Version.h; sourceTree = "<group>"; };
 		D28B7E4C2A41237600582735 /* Bright Plaza SED Server.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bright Plaza SED Server.p12"; sourceTree = "<group>"; };
 		D28B7E4D2A41237600582735 /* Bright Plaza CA.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Bright Plaza CA.pem"; sourceTree = "<group>"; };
 		D28B7E5B2A4125AF00582735 /* 99_unload_driver.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = 99_unload_driver.sh; sourceTree = "<group>"; };
@@ -316,7 +316,7 @@
 		D2C956ED2B17E95600E00FE6 /* SEDKernelInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SEDKernelInterface.framework; path = ../../../../../../../Library/Frameworks/SEDKernelInterface.framework; sourceTree = "<group>"; };
 		D2DC165E2B1794C9002A8DC8 /* MakeVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = MakeVersion.sh; sourceTree = "<group>"; };
 		D2DC165F2B1794C9002A8DC8 /* CleanVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = CleanVersion.sh; sourceTree = "<group>"; };
-		D2DC16632B17955B002A8DC8 /* GitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = GitVersion.sh; path = CLI.OpenSource/GitVersion.sh; sourceTree = "<group>"; };
+		D2DC16632B17955B002A8DC8 /* GitVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = GitVersion.sh; path = CLI/GitVersion.sh; sourceTree = "<group>"; };
 		D2DC17242B1798A2002A8DC8 /* tassert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tassert.h; sourceTree = "<group>"; };
 		D2DC17252B1798A2002A8DC8 /* blockwise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blockwise.h; sourceTree = "<group>"; };
 		D2DC17262B1798A2002A8DC8 /* hmac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hmac.c; sourceTree = "<group>"; };
@@ -673,7 +673,7 @@
 			path = .Utilities;
 			sourceTree = "<group>";
 		};
-		D2A3E6302B1B08CC00F9CCF8 /* Customizations.OpenSource */ = {
+		D2A3E6302B1B08CC00F9CCF8 /* Customizations */ = {
 			isa = PBXGroup;
 			children = (
 				D2EBEF012B28311C009B4FF6 /* DtaExtensionOptionEnumerations.h */,
@@ -682,7 +682,7 @@
 				D2A3E6342B1B08CC00F9CCF8 /* DtaExtensionOptions.inc */,
 				D2A3E6352B1B08CC00F9CCF8 /* DtaAuthorizeSedutilExecution.cpp */,
 			);
-			path = Customizations.OpenSource;
+			path = Customizations;
 			sourceTree = "<group>";
 		};
 		D2B2025F28BBFD8F004C88FF /* Common */ = {
@@ -691,7 +691,7 @@
 				D2A3E63D2B1B0A3800F9CCF8 /* DtaCommand.h */,
 				D2A3E63C2B1B0A3800F9CCF8 /* DtaSession.h */,
 				D2A3E63B2B1B0A1900F9CCF8 /* DtaDevOpal.h */,
-				D2A3E6302B1B08CC00F9CCF8 /* Customizations.OpenSource */,
+				D2A3E6302B1B08CC00F9CCF8 /* Customizations */,
 				D2A3E62D2B1B04F600F9CCF8 /* DtaStructures.h */,
 				D2A3E62C2B1B04CB00F9CCF8 /* DtaDev.h */,
 				D24E86672B1AD6F10098FE03 /* DtaOptions.h */,

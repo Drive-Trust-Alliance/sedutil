@@ -179,7 +179,7 @@
 		D2B2036428BBFF1D004C88FF /* DtaDevMacOSTPer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer.h; sourceTree = "<group>"; };
 		D2BDCEB329648F6700D07633 /* oui-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "oui-test"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2BDDC9B28A6369A00001E26 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
-		D2C1CA1E2B196E8C00F11E86 /* DtaDevOpalLoadPBA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaDevOpalLoadPBA.cpp; path = ../Customizations.OpenSource/DtaDevOpalLoadPBA.cpp; sourceTree = "<group>"; };
+		D2C1CA1E2B196E8C00F11E86 /* DtaDevOpalLoadPBA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaDevOpalLoadPBA.cpp; path = ../Customizations/DtaDevOpalLoadPBA.cpp; sourceTree = "<group>"; };
 		D2D1379E28B55C14003FD51F /* sedutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sedutil.h; path = sedutil/sedutil.h; sourceTree = "<group>"; };
 		D2D6E348294D081500E3C72C /* DtaDevFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevFactory.cpp; sourceTree = "<group>"; };
 		D2E6FE7E2935696800DAB209 /* oui.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = oui.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -301,7 +301,7 @@
 			path = ../log;
 			sourceTree = "<group>";
 		};
-		D21871D22B1AC72E0003ED81 /* Customizations.OpenSource */ = {
+		D21871D22B1AC72E0003ED81 /* Customizations */ = {
 			isa = PBXGroup;
 			children = (
 				D21871D42B1AC72E0003ED81 /* DtaDevOpalLoadPBA.cpp */,
@@ -310,7 +310,7 @@
 				D21871D62B1AC72E0003ED81 /* DtaExtensionOptions.inc */,
 				D21871D52B1AC72E0003ED81 /* DtaExtensionOptionImplementations.inc */,
 			);
-			path = Customizations.OpenSource;
+			path = Customizations;
 			sourceTree = "<group>";
 		};
 		D22042002B1962FC00116D30 /* Customizations */ = {
@@ -383,7 +383,7 @@
 			isa = PBXGroup;
 			children = (
 				D24E866E2B1ADA420098FE03 /* ATAStructures.h */,
-				D21871D22B1AC72E0003ED81 /* Customizations.OpenSource */,
+				D21871D22B1AC72E0003ED81 /* Customizations */,
 				D22042002B1962FC00116D30 /* Customizations */,
 				D2BDDC9B28A6369A00001E26 /* ReadMe.txt */,
 				D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */,
@@ -447,7 +447,7 @@
 				D2E6FE812935E08D00DAB209 /* oui.docc */,
 			);
 			name = oui;
-			path = ../../../../Users/scott/preboot/DTA/sedutil/macos/CLI.OpenSource/oui;
+			path = ../../../../Users/scott/preboot/DTA/sedutil/macos/CLI/oui;
 			sourceTree = DEVELOPER_DIR;
 		};
 		D2E6FEB22935E6DE00DAB209 /* oui-test */ = {
