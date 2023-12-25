@@ -10,8 +10,7 @@
 		D20A63AB1F73204000F154AC /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D20A63AA1F73204000F154AC /* log.cpp */; settings = {COMPILER_FLAGS = "-Wno-missing-field-initializers -Wno-missing-prototypes"; }; };
 		D22042022B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h in Headers */ = {isa = PBXBuildFile; fileRef = D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D22369B928D686C400D7D851 /* sedutil.h in Headers */ = {isa = PBXBuildFile; fileRef = D2D1379E28B55C14003FD51F /* sedutil.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D22A693D2A096F6F00EF864A /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D22A69392A096F6700EF864A /* DtaHashPassword.cpp */; };
-		D22A69402A096F6F00EF864A /* DtaHashPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = D22A693C2A096F6D00EF864A /* DtaHashPassword.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D22C11BB2B38CBA3003825C7 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D22C11BA2B38CBA3003825C7 /* DtaHashPassword.cpp */; };
 		D2466AF328B5876C009F55D9 /* DtaDevOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D2466A4B28B585F8009F55D9 /* DtaDevOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D24E866F2B1ADA420098FE03 /* ATAStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D24E866E2B1ADA420098FE03 /* ATAStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D263209A2937F65500F0927B /* oui_vendor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D26320982937F65500F0927B /* oui_vendor.cpp */; };
@@ -32,8 +31,6 @@
 		D2772ADE28BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2772AD728BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.cpp */; };
 		D2772ADF28BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h in Headers */ = {isa = PBXBuildFile; fileRef = D2772AD828BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2772AE028BBFFB70005E001 /* DtaDevMacOSTPer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2772AD928BBFFB70005E001 /* DtaDevMacOSTPer.cpp */; };
-		D2772B1C28BC32330005E001 /* os.h in Headers */ = {isa = PBXBuildFile; fileRef = D2466A4528B58518009F55D9 /* os.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D29321E128E1086600558642 /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = D29C45F828C186920093AC75 /* Version.h */; };
 		D2A06C9628B5D88800C0DDB6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9528B5D88800C0DDB6 /* Foundation.framework */; };
 		D2A06C9C28B5D8FE00C0DDB6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */; };
 		D2A06C9D28B5DC7900C0DDB6 /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
@@ -134,33 +131,28 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		D20A63A81F731FDB00F154AC /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = log.h; path = ../../Common/log.h; sourceTree = "<group>"; };
-		D20A63AA1F73204000F154AC /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = log.cpp; path = ../log.cpp; sourceTree = "<group>"; };
-		D21871D32B1AC72E0003ED81 /* DtaExtensionOptionEnumerations.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptionEnumerations.inc; sourceTree = "<group>"; };
-		D21871D42B1AC72E0003ED81 /* DtaDevOpalLoadPBA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpalLoadPBA.cpp; sourceTree = "<group>"; };
-		D21871D52B1AC72E0003ED81 /* DtaExtensionOptionImplementations.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptionImplementations.inc; sourceTree = "<group>"; };
-		D21871D62B1AC72E0003ED81 /* DtaExtensionOptions.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptions.inc; sourceTree = "<group>"; };
-		D21871D72B1AC72E0003ED81 /* DtaAuthorizeSedutilExecution.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAuthorizeSedutilExecution.cpp; sourceTree = "<group>"; };
+		D20A63A81F731FDB00F154AC /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = log.h; path = ../../../../Common/log.h; sourceTree = "<group>"; };
+		D20A63AA1F73204000F154AC /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = log.cpp; path = ../../../../macos/log.cpp; sourceTree = "<group>"; };
 		D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaAuthorizeSedutilExecution.h; sourceTree = "<group>"; };
-		D22A69392A096F6700EF864A /* DtaHashPassword.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
-		D22A693C2A096F6D00EF864A /* DtaHashPassword.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DtaHashPassword.h; path = ../../Common/DtaHashPassword.h; sourceTree = "<group>"; };
+		D22C11B72B38CA74003825C7 /* os.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = os.h; path = ../../../macos/os.h; sourceTree = "<group>"; };
+		D22C11B82B38CA9E003825C7 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Version.h; path = ../Version.h; sourceTree = "<group>"; };
+		D22C11B92B38CAD8003825C7 /* DtaHashPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaHashPassword.h; path = ../../../Common/DtaHashPassword.h; sourceTree = "<group>"; };
+		D22C11BA2B38CBA3003825C7 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
 		D23F3DF728B57BB400741CC0 /* sedutil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sedutil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D23F3DF828B57BB400741CC0 /* log.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D23F3DF928B57BB400741CC0 /* cifra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = cifra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = SEDKernelInterface.framework; path = /Library/Frameworks/SEDKernelInterface.framework; sourceTree = "<absolute>"; };
-		D2466A4528B58518009F55D9 /* os.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = os.h; path = ../os.h; sourceTree = "<group>"; };
 		D2466A4B28B585F8009F55D9 /* DtaDevOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaDevOS.h; sourceTree = "<group>"; };
 		D2486D602B184266002D347E /* DtaExtensionOptions.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptions.inc; sourceTree = "<group>"; };
 		D2486D622B184266002D347E /* DtaAuthorizeSedutilExecution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAuthorizeSedutilExecution.cpp; sourceTree = "<group>"; };
 		D2486D6F2B18465B002D347E /* DtaExtensionOptionImplementations.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptionImplementations.inc; sourceTree = "<group>"; };
-		D2486D732B184883002D347E /* DtaExtensionOptionEnumerations.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptionEnumerations.inc; sourceTree = "<group>"; };
 		D24E866E2B1ADA420098FE03 /* ATAStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATAStructures.h; sourceTree = "<group>"; };
 		D26320982937F65500F0927B /* oui_vendor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = oui_vendor.cpp; sourceTree = "<group>"; };
 		D26320992937F65500F0927B /* oui_vendor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = oui_vendor.hpp; sourceTree = "<group>"; };
 		D271A1F528054AFD00BF043A /* DtaStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaStructures.h; sourceTree = "<group>"; };
 		D271A1F628054AFD00BF043A /* DtaDev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDev.h; sourceTree = "<group>"; };
 		D271A1F728054AFD00BF043A /* DtaOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
-		D271A1F828054AFD00BF043A /* DtaConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DtaConstants.h; path = ../DtaConstants.h; sourceTree = "<group>"; };
+		D271A1F828054AFD00BF043A /* DtaConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DtaConstants.h; path = ../../../macos/DtaConstants.h; sourceTree = "<group>"; };
 		D271A1F928054AFE00BF043A /* DtaLexicon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaLexicon.h; sourceTree = "<group>"; };
 		D271A1FA28054AFE00BF043A /* DtaResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaResponse.h; sourceTree = "<group>"; };
 		D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal2.cpp; sourceTree = "<group>"; };
@@ -173,7 +165,6 @@
 		D2772AD828BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer_SCSI.h; sourceTree = "<group>"; };
 		D2772AD928BBFFB70005E001 /* DtaDevMacOSTPer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSTPer.cpp; sourceTree = "<group>"; };
 		D29C45F628C185590093AC75 /* CleanVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = CleanVersion.sh; path = sedutil/CleanVersion.sh; sourceTree = "<group>"; };
-		D29C45F828C186920093AC75 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Version.h; path = ../Version.h; sourceTree = "<group>"; };
 		D2A06C9528B5D88800C0DDB6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		D2B2036428BBFF1D004C88FF /* DtaDevMacOSTPer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer.h; sourceTree = "<group>"; };
@@ -297,20 +288,7 @@
 				D20A63A81F731FDB00F154AC /* log.h */,
 				D20A63AA1F73204000F154AC /* log.cpp */,
 			);
-			name = log;
-			path = ../log;
-			sourceTree = "<group>";
-		};
-		D21871D22B1AC72E0003ED81 /* Customizations */ = {
-			isa = PBXGroup;
-			children = (
-				D21871D42B1AC72E0003ED81 /* DtaDevOpalLoadPBA.cpp */,
-				D21871D72B1AC72E0003ED81 /* DtaAuthorizeSedutilExecution.cpp */,
-				D21871D32B1AC72E0003ED81 /* DtaExtensionOptionEnumerations.inc */,
-				D21871D62B1AC72E0003ED81 /* DtaExtensionOptions.inc */,
-				D21871D52B1AC72E0003ED81 /* DtaExtensionOptionImplementations.inc */,
-			);
-			path = Customizations;
+			path = log;
 			sourceTree = "<group>";
 		};
 		D22042002B1962FC00116D30 /* Customizations */ = {
@@ -318,7 +296,6 @@
 			children = (
 				D2C1CA1E2B196E8C00F11E86 /* DtaDevOpalLoadPBA.cpp */,
 				D2486D622B184266002D347E /* DtaAuthorizeSedutilExecution.cpp */,
-				D2486D732B184883002D347E /* DtaExtensionOptionEnumerations.inc */,
 				D2486D602B184266002D347E /* DtaExtensionOptions.inc */,
 				D2486D6F2B18465B002D347E /* DtaExtensionOptionImplementations.inc */,
 			);
@@ -351,19 +328,19 @@
 				D2772AD728BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.cpp */,
 			);
 			name = macos;
-			path = ..;
+			path = ../../../macos;
 			sourceTree = "<group>";
 		};
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D22C11BA2B38CBA3003825C7 /* DtaHashPassword.cpp */,
+				D22C11B92B38CAD8003825C7 /* DtaHashPassword.h */,
+				D22C11B82B38CA9E003825C7 /* Version.h */,
+				D22C11B72B38CA74003825C7 /* os.h */,
 				D271A1F828054AFD00BF043A /* DtaConstants.h */,
-				D22A693C2A096F6D00EF864A /* DtaHashPassword.h */,
-				D22A69392A096F6700EF864A /* DtaHashPassword.cpp */,
 				D2D1379E28B55C14003FD51F /* sedutil.h */,
-				D2466A4528B58518009F55D9 /* os.h */,
 				D29C45F628C185590093AC75 /* CleanVersion.sh */,
-				D29C45F828C186920093AC75 /* Version.h */,
 				D2D137A028B55C15003FD51F /* Common */,
 				D2466A4628B585F8009F55D9 /* macos */,
 				D2EBA4901F055579002F8780 /* cifra (open source crypto) */,
@@ -382,10 +359,11 @@
 		D2D137A028B55C15003FD51F /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				D24E866E2B1ADA420098FE03 /* ATAStructures.h */,
-				D21871D22B1AC72E0003ED81 /* Customizations */,
 				D22042002B1962FC00116D30 /* Customizations */,
+				D2EA83DA28053B3400A0F685 /* Copyright.txt */,
 				D2BDDC9B28A6369A00001E26 /* ReadMe.txt */,
+				D2EA843328053B4400A0F685 /* log.h */,
+				D24E866E2B1ADA420098FE03 /* ATAStructures.h */,
 				D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */,
 				D2EA83D828053B3400A0F685 /* DtaAnnotatedDump.cpp */,
 				D2EA843228053B4400A0F685 /* DtaAnnotatedDump.h */,
@@ -415,14 +393,12 @@
 				D2EA83FC28053B3400A0F685 /* DtaSession.cpp */,
 				D2EA83F828053B3400A0F685 /* DtaSession.h */,
 				D271A1F528054AFD00BF043A /* DtaStructures.h */,
-				D2EA83DA28053B3400A0F685 /* Copyright.txt */,
 				D2EA841528053B3D00A0F685 /* DtaOptions.cpp */,
 				D2EA83F228053B3400A0F685 /* DtaDevGeneric.cpp */,
 				D2EA83F628053B3400A0F685 /* DtaDiskType.cpp */,
-				D2EA843328053B4400A0F685 /* log.h */,
 			);
 			name = Common;
-			path = ../../Common;
+			path = ../../../Common;
 			sourceTree = "<group>";
 		};
 		D2E6FE7F2935E08D00DAB209 /* oui */ = {
@@ -447,7 +423,7 @@
 				D2E6FE812935E08D00DAB209 /* oui.docc */,
 			);
 			name = oui;
-			path = ../../../../Users/scott/preboot/DTA/sedutil/macos/CLI/oui;
+			path = ../../../../Users/scott/preboot/DTA/sedutil/oui;
 			sourceTree = DEVELOPER_DIR;
 		};
 		D2E6FEB22935E6DE00DAB209 /* oui-test */ = {
@@ -488,7 +464,7 @@
 				D2EBA4AB1F055590002F8780 /* tassert.h */,
 			);
 			name = pbkdf2;
-			path = ../../../Common/pbkdf2;
+			path = ../../../../Common/pbkdf2;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -519,7 +495,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D22369B928D686C400D7D851 /* sedutil.h in Headers */,
-				D2772B1C28BC32330005E001 /* os.h in Headers */,
 				D2466AF328B5876C009F55D9 /* DtaDevOS.h in Headers */,
 				D2772ADA28BBFFB70005E001 /* DtaDevMacOSTPer_SAT.h in Headers */,
 				D2772ADB28BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.h in Headers */,
@@ -544,9 +519,7 @@
 				D271A20028054AFE00BF043A /* DtaResponse.h in Headers */,
 				D2EA84AB28053B4E00A0F685 /* DtaEndianFixup.h in Headers */,
 				D2EA84AF28053B4E00A0F685 /* DtaHexDump.h in Headers */,
-				D22A69402A096F6F00EF864A /* DtaHashPassword.h in Headers */,
 				D22042022B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h in Headers */,
-				D29321E128E1086600558642 /* Version.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -838,6 +811,7 @@
 				D2772ADC28BBFFB70005E001 /* DtaDevMacOSTPer_SAT.cpp in Sources */,
 				D2EA848028053B4D00A0F685 /* DtaOptions.cpp in Sources */,
 				D2EA84A628053B4E00A0F685 /* DtaDev.cpp in Sources */,
+				D22C11BB2B38CBA3003825C7 /* DtaHashPassword.cpp in Sources */,
 				D2EA848D28053B4D00A0F685 /* DtaDevGeneric.cpp in Sources */,
 				D2EA848C28053B4D00A0F685 /* DtaDevEnterprise.cpp in Sources */,
 				D2EA844728053B4C00A0F685 /* DtaDevOpal.cpp in Sources */,
@@ -848,7 +822,6 @@
 				D2EA844B28053B4C00A0F685 /* DtaAnnotatedDump.cpp in Sources */,
 				D2EA849428053B4D00A0F685 /* DtaHashPwd.cpp in Sources */,
 				D2EA849528053B4D00A0F685 /* DtaDiskType.cpp in Sources */,
-				D22A693D2A096F6F00EF864A /* DtaHashPassword.cpp in Sources */,
 				D2EA849C28053B4D00A0F685 /* DtaHexDump.cpp in Sources */,
 				D2EA847D28053B4D00A0F685 /* DtaCommand.cpp in Sources */,
 				D2EA84A728053B4E00A0F685 /* DtaResponse.cpp in Sources */,

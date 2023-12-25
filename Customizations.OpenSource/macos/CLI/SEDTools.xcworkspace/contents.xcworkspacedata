@@ -5,18 +5,15 @@
       location = "group:">
    </FileRef>
    <FileRef
-      location = "group:../Documentation">
-   </FileRef>
-   <FileRef
-      location = "group:../CI">
-   </FileRef>
-   <FileRef
       location = "group:../../Common">
    </FileRef>
    <FileRef
       location = "group:SEDFrameworks.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:SEDUtilities.xcodeproj">
+      location = "absolute:SEDUtilities.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:../../../macos/CI">
    </FileRef>
 </Workspace>
