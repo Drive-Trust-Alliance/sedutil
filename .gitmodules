@@ -6,3 +6,7 @@
 	path = Customizations/macos/CLI.OpenSource/oui
 	url = git@github.com:Drive-Trust-Alliance/oui.git
 	branch = develop
+[submodule "oui"]
+	path = oui
+	url = git@github.com:Drive-Trust-Alliance/oui.git
+	branch = develop
