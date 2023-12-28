@@ -1,5 +1,6 @@
 /* C:B**************************************************************************
 This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2023 Nutanix, Inc. <opensource@nutanix.com>
 
 This file is part of sedutil.
 
