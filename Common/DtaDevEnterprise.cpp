@@ -1,6 +1,7 @@
 /* C:B**************************************************************************
 This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 This software is Copyright 2017 Spectra Logic Corporation
+This software is Copyright 2023 Nutanix, Inc. <opensource@nutanix.com>
 
 This file is part of sedutil.
 
@@ -1492,9 +1493,21 @@ uint8_t DtaDevEnterprise::properties()
 	props->addToken(OPAL_TOKEN::ENDNAME);
 	props->addToken(OPAL_TOKEN::ENDLIST);
 	props->complete();
-	if ((lastRC = session->sendCommand(props, propertiesResponse)) != 0) {
-		delete props;
-		return lastRC;
+	for (uint8_t trial=1; trial<=2; trial++) {
+		if ((lastRC = session->sendCommand(props, propertiesResponse)) != 0) {
+			LOG(E) << "Property Exchange Command Failed rc = " << (int)lastRC;
+			if (trial == 1) {
+				LOG(D) << "Try to apply stack reset";
+				if (this->stack_reset(this->comID() << 16) == 0x0000) {
+					LOG(D) << "Stack Reset Successful";
+					continue;
+				}
+				LOG(E) << "Stack Reset Failed";
+				delete props;
+				return lastRC;
+			}
+		}
+		break;
 	}
 	disk_info.Properties = 1;
 	delete props;

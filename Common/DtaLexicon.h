@@ -1,5 +1,6 @@
 /* C:B**************************************************************************
 This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2023 Nutanix, Inc. <opensource@nutanix.com>
 
 This file is part of sedutil.
 
@@ -264,3 +265,8 @@ typedef enum _OPALSTATUSCODE {
     AUTHORITY_LOCKED_OUT = 0x12,
     FAIL = 0x3f,
 } OPALSTATUSCODE;
+
+typedef enum _SA_CORE_COMM_LAYER_CMD {
+	VERIFY_COMID_VALID,
+	STACK_RESET
+} SA_CORE_COMM_LAYER_CMD;
