@@ -1,5 +1,6 @@
 /* C:B**************************************************************************
 This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2023 Nutanix, Inc. <opensource@nutanix.com>
 
 This file is part of sedutil.
 
@@ -83,8 +84,8 @@ typedef struct _Discovery0LockingFeatures {
     uint8_t version : 4;
     uint8_t length;
     /* Big endian
-    uint8_t reserved01 : 1;
     uint8_t reserved02 : 1;
+    uint8_t MBRAbsent : 1;
     uint8_t MBRDone : 1;
     uint8_t MBREnabled : 1;
     uint8_t mediaEncryption : 1;
@@ -98,7 +99,7 @@ typedef struct _Discovery0LockingFeatures {
     uint8_t mediaEncryption : 1;
     uint8_t MBREnabled : 1;
     uint8_t MBRDone : 1;
-    uint8_t reserved01 : 1;
+    uint8_t MBRAbsent : 1;
     uint8_t reserved02 : 1;
 
     uint32_t reserved03;
@@ -306,6 +307,7 @@ typedef struct _OPAL_DiskInfo {
     uint8_t Locking_lockingSupported : 1;
     uint8_t Locking_MBRDone : 1;
     uint8_t Locking_MBREnabled : 1;
+    uint8_t Locking_MBRAbsent : 1;
     uint8_t Locking_mediaEncrypt : 1;
     uint8_t Geometry_align : 1;
     uint64_t Geometry_alignmentGranularity;

@@ -1,5 +1,6 @@
 /* C:B**************************************************************************
 This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2023 Nutanix, Inc. <opensource@nutanix.com>
 
 This file is part of sedutil.
 
@@ -50,6 +51,8 @@ public:
 	uint8_t MBREnabled();
 	/** Is the MBRDone flag set */
 	uint8_t MBRDone();
+	/** Is the MBRAbsent flag set */
+	uint8_t MBRAbsent();
 	/** Is the Locked flag set */
 	uint8_t Locked();
 	/** Is the Locking SP enabled */

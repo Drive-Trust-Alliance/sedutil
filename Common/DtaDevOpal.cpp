@@ -1,5 +1,6 @@
 /* C:B**************************************************************************
 This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2023 Nutanix, Inc. <opensource@nutanix.com>
 
 This file is part of sedutil.
 
@@ -70,13 +71,8 @@ uint8_t DtaDevOpal::initialSetup(char * password)
 		LOG(E) << "Initial setup failed - unable to set global locking range RW";
 		return lastRC;
 	}
-	if ((lastRC = setMBRDone(1, password)) != 0){
-		LOG(E) << "Initial setup failed - unable to Enable MBR shadow";
-		return lastRC;
-	}
-	if ((lastRC = setMBREnable(1, password)) != 0){
-		LOG(E) << "Initial setup failed - unable to Enable MBR shadow";
-		return lastRC;
+	if (!MBRAbsent()) {
+		setMBREnable(1, password);
 	}
 	
 	LOG(I) << "Initial setup of TPer complete on " << dev;

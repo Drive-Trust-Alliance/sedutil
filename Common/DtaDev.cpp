@@ -1,5 +1,6 @@
 /* C:B**************************************************************************
 This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2023 Nutanix, Inc. <opensource@nutanix.com>
 
 This file is part of sedutil.
 
@@ -80,6 +81,11 @@ uint8_t DtaDev::MBRDone()
 	LOG(D1) << "Entering DtaDev::MBRDone" << (uint16_t)disk_info.Locking_MBRDone;
 	return disk_info.Locking_MBRDone;
 }
+uint8_t DtaDev::MBRAbsent()
+{
+	LOG(D1) << "Entering DtaDev::MBRAbsent" << (uint16_t)disk_info.Locking_MBRAbsent;
+	return disk_info.Locking_MBRAbsent;
+}
 uint8_t DtaDev::Locked()
 {
 	LOG(D1) << "Entering DtaDev::Locked" << (uint16_t)disk_info.Locking_locked;
@@ -148,6 +154,7 @@ void DtaDev::discovery0()
             disk_info.Locking_lockingSupported = body->locking.lockingSupported;
             disk_info.Locking_MBRDone = body->locking.MBRDone;
             disk_info.Locking_MBREnabled = body->locking.MBREnabled;
+            disk_info.Locking_MBRAbsent = body->locking.MBRAbsent;
             disk_info.Locking_mediaEncrypt = body->locking.mediaEncryption;
             break;
         case FC_GEOMETRY: /* Geometry Features */
@@ -240,6 +247,7 @@ void DtaDev::puke()
 			<< "LockingSupported = " << (disk_info.Locking_lockingSupported ? "Y, " : "N, ");
 		cout << "MBRDone = " << (disk_info.Locking_MBRDone ? "Y, " : "N, ")
 			<< "MBREnabled = " << (disk_info.Locking_MBREnabled ? "Y, " : "N, ")
+			<< "MBRAbsent = " << (disk_info.Locking_MBRAbsent ? "Y, " : "N, ")
 			<< "MediaEncrypt = " << (disk_info.Locking_mediaEncrypt ? "Y" : "N")
 			<< std::endl;
 	}
