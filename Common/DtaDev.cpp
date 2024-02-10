@@ -112,8 +112,10 @@ void DtaDev::discovery0()
 	uint8_t lastRC;
     void * d0Response = NULL;
     uint8_t * epos, *cpos;
+    size_t length;
     Discovery0Header * hdr;
     Discovery0Features * body;
+
 	d0Response = discovery0buffer + IO_BUFFER_ALIGNMENT;
 	d0Response = (void *)((uintptr_t)d0Response & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
 	memset(d0Response, 0, MIN_BUFFER_LENGTH);
@@ -124,13 +126,28 @@ void DtaDev::discovery0()
 
     epos = cpos = (uint8_t *) d0Response;
     hdr = (Discovery0Header *) d0Response;
+    length = SWAP32(hdr->length);
+
+    // HACK: Some non-standard IBM-Rebranded HGST drives
+    //       incorrectly return hdr->length as the length
+    //       of the features descriptors, not including
+    //       discovery header length itself.
+    //       We detect this case when length is reported as
+    //       less bytes than those needed by discovery0 header
+    //       on it's own.. (pruiz)
+    if (length <= 44)
+    {
+        length = 48 + length;
+    }
+
     LOG(D3) << "Dumping D0Response";
-    IFLOG(D3) DtaHexDump(hdr, SWAP32(hdr->length));
-    epos = epos + SWAP32(hdr->length);
+    IFLOG(D3) DtaHexDump(hdr, length);
+    epos = epos + length;
     cpos = cpos + 48; // TODO: check header version
 
     do {
         body = (Discovery0Features *) cpos;
+        LOG(D1) << "Parsing features of kind: " << std::hex << SWAP16(body->TPer.featureCode) << std::dec;
         switch (SWAP16(body->TPer.featureCode)) { /* could use of the structures here is a common field */
         case FC_TPER: /* TPer */
             disk_info.TPer = 1;
@@ -140,6 +157,7 @@ void DtaDev::discovery0()
             disk_info.TPer_comIDMgt = body->TPer.comIDManagement;
             disk_info.TPer_streaming = body->TPer.streaming;
             disk_info.TPer_sync = body->TPer.sync;
+            disk_info.ANY_OPAL_SSC = 1; // Having TPer feature already means this is an TCG/SSC drive.
             break;
         case FC_LOCKING: /* Locking*/
             disk_info.Locking = 1;
@@ -196,6 +214,7 @@ void DtaDev::discovery0()
             break;
         default:
 			if (0xbfff < (SWAP16(body->TPer.featureCode))) {
+				LOG(D1) << "Vendor specific: " << std::hex << SWAP16(body->TPer.featureCode) << std::dec;
 				// silently ignore vendor specific segments as there is no public doc on them
 				disk_info.VendorSpecific += 1;
 			}
