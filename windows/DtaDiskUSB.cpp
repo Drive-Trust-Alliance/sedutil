@@ -134,7 +134,7 @@ typedef struct _UASP_INQUIRY_RESPONSE {
     char ProductID[40];
 } UASP_INQUIRY_RESPONSE;
 
-void DtaDiskUSB::identify(OPAL_DiskInfo& disk_info)
+void DtaDiskUSB::identify(DTA_DEVICE_INFO& disk_info)
 {
     LOG(D1) << "Entering DtaDiskUSB::identify()";
 	vector<uint8_t> nullz(512, 0x00);

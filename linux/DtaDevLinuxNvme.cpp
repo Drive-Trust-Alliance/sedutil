@@ -110,7 +110,7 @@ uint8_t DtaDevLinuxNvme::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
 	return err;
 }
 
-void DtaDevLinuxNvme::identify(OPAL_DiskInfo& disk_info)
+void DtaDevLinuxNvme::identify(DTA_DEVICE_INFO& disk_info)
 {
 	LOG(D4) << "Entering DtaDevLinuxNvme::identify()";
 

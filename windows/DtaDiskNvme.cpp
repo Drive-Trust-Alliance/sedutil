@@ -131,7 +131,7 @@ uint8_t DtaDiskNVMe::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 
 /** adds the IDENTIFY information to the disk_info structure */
 
-void DtaDiskNVMe::identify(OPAL_DiskInfo& disk_info)
+void DtaDiskNVMe::identify(DTA_DEVICE_INFO& disk_info)
 {
 	LOG(D1) << "Entering DtaDiskNVMe::identify()";
 	vector<uint8_t> nullz(512, 0x00);

@@ -58,7 +58,7 @@ public:
 	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 		void * buffer, uint32_t bufferlen);
 	/** OS specific routine to send an ATA identify to the device */
-	void identify(OPAL_DiskInfo& disk_info);
+	void identify(DTA_DEVICE_INFO& disk_info);
 private:
 	HANDLE hDev; /**< Windows device handle */
 	uint8_t isOpen = FALSE;

@@ -42,7 +42,7 @@ void DtaDevOS::init(const char * devref)
 
 	LOG(D1) << "Creating DtaDevOS::DtaDevOS() " << devref;
 	dev = devref;
-	memset(&disk_info, 0, sizeof(OPAL_DiskInfo));
+	memset(&disk_info, 0, sizeof(DTA_DEVICE_INFO));
 	/*  Open the drive to see if we have access */
 	ATA_PASS_THROUGH_DIRECT * ata =
 		(ATA_PASS_THROUGH_DIRECT *)_aligned_malloc(sizeof(ATA_PASS_THROUGH_DIRECT), 8);
@@ -337,7 +337,7 @@ void DtaDevOS::osmsSleep(uint32_t milliseconds)
 {
     Sleep(milliseconds);
 }
-unsigned long long DtaDevOS::getSize() {
+const unsigned long long DtaDevOS::getSize() {
 	if (DeviceIoControl(
 		(HANDLE)hDev,              // handle to device
 		IOCTL_DISK_GET_LENGTH_INFO,    // dwIoControlCode
@@ -353,7 +353,7 @@ unsigned long long DtaDevOS::getSize() {
 
 /** adds the IDENTIFY information to the disk_info structure */
 
-void DtaDevOS::identify(OPAL_DiskInfo& di)
+void DtaDevOS::identify(DTA_DEVICE_INFO& di)
 {
 	return(disk->identify(di));
 }

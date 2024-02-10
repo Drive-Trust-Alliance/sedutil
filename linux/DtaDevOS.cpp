@@ -38,13 +38,16 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevLinuxSata.h"
 #include "DtaDevLinuxNvme.h"
 #include "DtaDevGeneric.h"
+#include "DtaDevEnterprise.h"
+#include "DtaDevOpal1.h"
+#include "DtaDevOpal2.h"
 
 using namespace std;
 
 /** The Device class represents a Linux generic storage device.
   * At initialization we determine if we map to the NVMe or SATA derived class
  */
-unsigned long long DtaDevOS::getSize()
+const unsigned long long DtaDevOS::getSize()
 { return 0;
 }
 DtaDevOS::DtaDevOS()
@@ -57,7 +60,7 @@ void DtaDevOS::init(const char * devref)
 {
 	LOG(D1) << "DtaDevOS::init " << devref;
 
-	memset(&disk_info, 0, sizeof(OPAL_DiskInfo));
+	memset(&disk_info, 0, sizeof(DTA_DEVICE_INFO));
 	dev = devref;
 
 	if (!strncmp(devref, "/dev/nvme", 9))
@@ -81,8 +84,8 @@ void DtaDevOS::init(const char * devref)
 	{
 		isOpen = TRUE;
 		drive->identify(disk_info);
-		if (disk_info.devType != DEVICE_TYPE_OTHER)
-			discovery0(&disc0Sts);
+		// if (disk_info.devType != DEVICE_TYPE_OTHER)
+		// 	discovery0(&disc0Sts);
 	}
 	else
 		isOpen = FALSE;
@@ -104,7 +107,7 @@ uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 	return drive->sendCmd(cmd, protocol, comID, buffer, bufferlen);
 }
 
-void DtaDevOS::identify(OPAL_DiskInfo& disk_info)
+void DtaDevOS::identify(DTA_DEVICE_INFO& disk_info)
 {
 	if (!isOpen) return; //disk open failed so this will too
 	if (NULL == drive)
@@ -184,7 +187,7 @@ DtaDevOS::~DtaDevOS()
  * @param genericIfNotTPer   if true, store an instance of DtaDevGeneric for non-TPers;
  *                          if false, store NULL for non-TPers
  */
-static
+// static
 uint8_t DtaDevOS::getDtaDevOS(const char * devref, DtaDevOS * & dev,
                               bool genericIfNotTPer)
 {
@@ -210,7 +213,7 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref, DtaDevOS * & dev,
 
 
 
-    if (genericIfNotTper)
+    if (genericIfNotTPer)
     {
         dev = d;
         return DTAERROR_SUCCESS;

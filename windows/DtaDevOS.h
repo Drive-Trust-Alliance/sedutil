@@ -53,7 +53,7 @@ public:
 	* @param buffer input/output buffer
 	* @param bufferlen length of the input/output buffer
 	*/
-	unsigned long long	getSize();
+	const unsigned long long	getSize();
 	/** A static class to scan for supported drives */
 	static int diskScan();
 protected:
@@ -62,10 +62,10 @@ protected:
      */
 	void osmsSleep(uint32_t milliseconds);
         /** OS specific routine to send an ATA identify to the device */
-	void identify(OPAL_DiskInfo& disk_info);
-	void identifyPd(OPAL_DiskInfo& disk_info);
-	void identifyNVMeASMedia(OPAL_DiskInfo& disk_info);
-	void identifyNVMeRealtek(OPAL_DiskInfo& disk_info);
+	void identify(DTA_DEVICE_INFO& disk_info);
+	void identifyPd(DTA_DEVICE_INFO& disk_info);
+	void identifyNVMeASMedia(DTA_DEVICE_INFO& disk_info);
+	void identifyNVMeRealtek(DTA_DEVICE_INFO& disk_info);
 
 private:
 	GET_LENGTH_INFORMATION lengthInfo;

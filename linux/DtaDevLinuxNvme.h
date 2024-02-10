@@ -58,6 +58,6 @@ public:
     uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
             void * buffer, uint32_t bufferlen);
     /** NVMe specific routine to send an identify to the device */
-    void identify(OPAL_DiskInfo& disk_info);
+    void identify(DTA_DEVICE_INFO& disk_info);
     int fd; /**< Linux handle for the device  */
 };

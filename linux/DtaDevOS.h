@@ -67,14 +67,14 @@ protected:
      */
     void osmsSleep(uint32_t ms);
     /** OS specific routine to send an ATA identify to the device */
-    void identify(OPAL_DiskInfo& disk_info);
+    void identify(DTA_DEVICE_INFO& disk_info);
     /** return drive size in bytes */
-    unsigned long long getSize();
+    const unsigned long long getSize();
     int fd; /**< Linux handle for the device  */
 private:
     /** OS specific routine to send a SCSI INQUIRY to the device */
     void identify_SAS();
     DtaDevLinuxDrive *drive;
 public:
-	BYTE disc0Sts = 1;// any error
+	uint8_t disc0Sts = 1;// any error
 };
