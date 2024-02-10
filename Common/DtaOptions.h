@@ -20,6 +20,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef _DTAOPTIONS_H
 #define	_DTAOPTIONS_H
+#include <cstdint>
 
 /** Output modes */
 typedef enum _sedutiloutput {
@@ -48,7 +49,7 @@ typedef struct _DTA_OPTIONS {
 /** Print a usage message */
 void usage();
 /** Parse the command line and return a structure that describes the action desired
- * @param argc program argc parameter 
+ * @param argc program argc parameter
  * @param argv program argv paramater
  * @param opts pointer to options structure to be filled out
  */
@@ -126,6 +127,6 @@ i++;
 
 /** set the argc value for this parameter in the options structure */
 #define OPTION_IS(option_field) \
-				opts->option_field = ++i; 
+				opts->option_field = ++i;
 
 #endif /* _DTAOPTIONS_H */
