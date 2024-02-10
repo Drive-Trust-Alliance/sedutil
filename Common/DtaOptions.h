@@ -1,5 +1,6 @@
 /* C:B**************************************************************************
 This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2023 Nutanix, Inc. <opensource@nutanix.com>
 
 This file is part of sedutil.
 
@@ -45,6 +46,7 @@ typedef struct _DTA_OPTIONS {
 
 	bool no_hash_passwords; /** global parameter, disables hashing of passwords */
 	sedutiloutput output_format;
+	uint8_t byte_count;
 } DTA_OPTIONS;
 /** Print a usage message */
 void usage();
@@ -96,6 +98,7 @@ typedef enum _sedutiloption {
 	validatePBKDF2,
 	objDump,
     printDefaultPassword,
+	printRandomBytes,
 	rawCmd,
 
 } sedutiloption;

@@ -1,5 +1,6 @@
 /* C:B**************************************************************************
 This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2023 Nutanix, Inc. <opensource@nutanix.com>
 
 This file is part of sedutil.
 
@@ -224,4 +225,6 @@ public:
 	 uint8_t exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol = 1) ;
          /** return the communications ID to be used for sessions to this device */
 	 uint16_t comID() ;
+
+	 uint8_t printRandomBytes(uint8_t num_of_bytes);
 };

@@ -1,5 +1,6 @@
 /* C:B**************************************************************************
 This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2023 Nutanix, Inc. <opensource@nutanix.com>
 
 This file is part of sedutil.
 
@@ -102,6 +103,7 @@ uint16_t DtaDevGeneric::comID()
 uint8NOCODE(exec,DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
 uint8NOCODE(objDump,char *sp, char * auth, char *pass,char * objID)
 uint8NOCODE(rawCmd,char *sp, char * auth, char *pass,char *invoker, char *method, char *plist)
+uint8NOCODE(printRandomBytes,uint8_t num_of_bytes)
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif

@@ -1,6 +1,7 @@
 /* C:B**************************************************************************
 This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 This software is Copyright 2017 Spectra Logic Corporation
+This software is Copyright 2023 Nutanix, Inc. <opensource@nutanix.com>
 
 This file is part of sedutil.
 
@@ -205,6 +206,10 @@ public:
 	uint8_t rawCmd(char *sp, char *hexauth, char *pass,
 		char *hexinvokingUID, char *hexmethod, char *hexparms);
 
+	/** Print random number of bytes
+	 * @param num_of_bytes Number of bytes to print
+	 */
+	uint8_t printRandomBytes(uint8_t num_of_bytes);
 protected:
 	uint8_t getDefaultPassword();
 private:

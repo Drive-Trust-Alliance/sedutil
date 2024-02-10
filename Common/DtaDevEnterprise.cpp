@@ -1,6 +1,7 @@
 /* C:B**************************************************************************
 This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 This software is Copyright 2017 Spectra Logic Corporation
+This software is Copyright 2023 Nutanix, Inc. <opensource@nutanix.com>
 
 This file is part of sedutil.
 
@@ -1676,6 +1677,11 @@ uint8_t DtaDevEnterprise::objDump(char *sp, char * auth, char *pass,
 	delete session;
 	LOG(D1) << "Exiting DtaDevEnterprise::objDump";
 	return 0;
+}
+
+uint8_t DtaDevEnterprise::printRandomBytes(uint8_t num_of_bytes) {
+	LOG(E) << "printRandomBytes() is not implemented for Enterprise";
+	return -1;
 }
 #ifdef _MSC_VER
 #pragma warning(pop)
