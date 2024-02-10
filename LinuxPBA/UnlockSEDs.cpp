@@ -22,6 +22,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevGeneric.h"
 #include "DtaDevOpal1.h"
 #include "DtaDevOpal2.h"
+#include "DtaDevEnterprise.h"
 
 #include <dirent.h>
 #include <fnmatch.h>
@@ -62,7 +63,7 @@ uint8_t UnlockSEDs(char * password) {
         if (!tempDev->isPresent()) {
             break;
         }
-        if ((!tempDev->isOpal1()) && (!tempDev->isOpal2())) {
+        if (!tempDev->isAnySSC()) {
             printf("Drive %-10s %-40s not OPAL  \n", devref, tempDev->getModelNum());
 
             delete tempDev;
@@ -70,13 +71,15 @@ uint8_t UnlockSEDs(char * password) {
         }
         if (tempDev->isOpal2())
             d = new DtaDevOpal2(devref);
-        else
+        else if (tempDev->isOpal1())
             d = new DtaDevOpal1(devref);
+        else
+            d = new DtaDevEnterprise(devref);
         delete tempDev;
         d->no_hash_passwords = false;
         failed = 0;
         if (d->Locked()) {
-            if (d->MBREnabled()) {
+            if (!d->isEprise() && d->MBREnabled()) {
                 if (d->setMBRDone(1, password)) {
                     failed = 1;
                 }
