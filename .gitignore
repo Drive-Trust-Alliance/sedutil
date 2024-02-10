@@ -170,9 +170,6 @@ config.h
 config.h.in
 config.status
 Makefile
-sedutil-*.tar.*
-linuxpba
-sedutil-cli
 
 # GCC
 .deps/
@@ -180,6 +177,9 @@ sedutil-cli
 .dirstamp
 
 # project specific files
+sedutil-*.tar.*
+linuxpba
+sedutil-cli
 *.VC.opendb
 *.lnk
 /dist/
@@ -190,6 +190,8 @@ Doxygen/
 /images/*/*
 !/images/buildroot/
 !/images/buildroot/*
+!/images/isoFiles/
+!/images/isoFiles/*
 /LinuxPBA/dist/
 /linux/CLI/dist/
 # inno installer output
