@@ -18,8 +18,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
+#include "config.h"
 #include <linux/version.h>
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 4, 0)
+#ifdef HAVE_LINUX_NVME_IOCTL_H
 #include <linux/nvme_ioctl.h>
 #else
 #include <linux/nvme.h>
