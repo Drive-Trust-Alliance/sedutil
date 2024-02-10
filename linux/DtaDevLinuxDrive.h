@@ -18,8 +18,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
+#include <vector>
 #include "DtaStructures.h"
 
+using namespace std;
 /** virtual implementation for a disk interface-generic disk drive
  */
 class DtaDevLinuxDrive {
@@ -45,4 +47,7 @@ public:
             void * buffer, uint32_t bufferlen) = 0;
     /** Routine to send an identify to the device */
     virtual void identify(OPAL_DiskInfo& disk_info) = 0;
+    /** Save the password hash to the kernel for S3 sleep wakeup */
+    uint8_t prepareForS3Sleep(uint8_t lockingrange, const vector<uint8_t> &password_hash);
+    int fd; /**< Linux handle for the device  */
 };

@@ -38,6 +38,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevLinuxSata.h"
 #include "DtaDevLinuxNvme.h"
 #include "DtaDevGeneric.h"
+#include "DtaHashPwd.h"
+#include "DtaSession.h"
+#include "DtaDevOpal.h"
 
 using namespace std;
 
@@ -163,6 +166,36 @@ int  DtaDevOS::diskScan()
 	printf("No more disks present ending scan\n");
         LOG(D1) << "Exiting DtaDevOS::scanDisk ";
 	return 0;
+}
+
+uint8_t DtaDevOS::prepareForS3Sleep(uint8_t lockingrange, char* password)
+{
+    LOG(D1) << "Entering DtaDevOS::prepareForS3Sleep ";
+    LOG(D2) << "Starting testing of password ";
+	session = new DtaSession(this);
+	if (NULL == session) {
+		LOG(E) << "Unable to create session object ";
+		return DTAERROR_OBJECT_CREATE_FAILED;
+	}
+    int err;
+	if ((err = session->start(OPAL_UID::OPAL_LOCKINGSP_UID, password, OPAL_UID::OPAL_ADMIN1_UID)) != 0) {
+		delete session;
+		LOG(E) << "Unable to authenticate with the given password";
+		return err;
+	}
+    delete session;
+    LOG(D2) << "Test successful, saving it to kernel ";
+    vector<uint8_t> hash;
+    DtaHashPwd(hash, password, this);
+    hash.erase(hash.begin(), hash.begin()+2);
+
+    err = drive->prepareForS3Sleep(lockingrange, hash);
+    if (err)
+    {
+        LOG(E) << "Error saving the password to  the kernel errno = " << errno;
+        return errno;
+    }
+    return 0;
 }
 
 /** Close the device reference so this object can be delete. */

@@ -49,6 +49,8 @@ public:
             void * buffer, uint32_t bufferlen);
     /** A static class to scan for supported drives */
     static int diskScan();
+    /** Save device key to kernel for S3 sleep resume */
+    uint8_t prepareForS3Sleep(uint8_t lockingrange, char* password);
 protected:
     /** OS specific command to Wait for specified number of milliseconds 
      * @param ms  number of milliseconds to wait

@@ -74,6 +74,9 @@ public:
 	 */
 	void discovery0();
 
+	/** Print password hash, computed with this device's serial number
+	 */
+	uint8_t printPasswordHash(char * password);
 	/*
 	 * virtual methods required in the OS specific
 	 * device class
@@ -249,6 +252,11 @@ public:
 	 * @param password Password of administrative authority for locking range
 	 */
 	virtual uint8_t eraseLockingRange(uint8_t lockingrange, char * password) = 0;
+    /** Optionally implemented s3 sleep support.
+     * On Linux, it saves the password to the kernel to use on resume.
+     * @param password the password to save to the kernel
+     */
+    virtual uint8_t prepareForS3Sleep(uint8_t lockingrange, char* password);
 	/** Dumps an object for diagnostic purposes
 	 * @param sp index into the OPALUID table for the SP the object is in
 	 * @param auth the authority ti use for the dump
@@ -284,6 +292,7 @@ public:
 	/** return the communications ID to be used for sessions to this device */
 	virtual uint16_t comID() = 0;
 	bool no_hash_passwords; /** disables hashing of passwords */
+	bool hex_passwords; /** converts passwords from hex before using them */
 	sedutiloutput output_format; /** standard, readable, JSON */
 protected:
 	const char * dev;   /**< character string representing the device in the OS lexicon */

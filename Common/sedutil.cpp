@@ -93,6 +93,8 @@ int main(int argc, char * argv[])
 		// make sure DtaDev::no_hash_passwords is initialized
 		d->no_hash_passwords = opts.no_hash_passwords;
 
+		d->hex_passwords = opts.hex_passwords;
+
 		d->output_format = opts.output_format;
 	}
 
@@ -259,6 +261,14 @@ int main(int argc, char * argv[])
 		LOG(D) << "print default password";
         return d->printDefaultPassword();
         break;
+    case sedutiloption::printPasswordHash:
+		LOG(D) << "print password hash";
+        return d->printPasswordHash(argv[opts.password]);
+        break;
+	case sedutiloption::prepareForS3Sleep:
+        LOG(D) << "Preparing for S3 sleep " << (uint16_t) opts.lockingrange;
+        return d->prepareForS3Sleep(opts.lockingrange, argv[opts.password]);
+		break;
 	case sedutiloption::rawCmd:
 		LOG(D) << "Performing cmdDump ";
 		return d->rawCmd(argv[argc - 7], argv[argc - 6], argv[argc - 5], argv[argc - 4], argv[argc - 3], argv[argc - 2]);

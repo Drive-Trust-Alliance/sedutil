@@ -32,6 +32,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaConstants.h"
 #include "DtaEndianFixup.h"
 #include "DtaHexDump.h"
+#include "DtaHashPwd.h"
 
 using namespace std;
 
@@ -211,6 +212,24 @@ void DtaDev::discovery0()
     while (cpos < epos);
 
 }
+
+uint8_t DtaDev::printPasswordHash(char * password)
+{
+    LOG(D1) << "Entering DtaDev::printPasswordHash()";
+    vector<uint8_t> hash;
+    DtaHashPwd(hash, password, this);
+
+    /* std::hex overwrites flags; save them, so we do not alter other output later */
+    ios_base::fmtflags saved_flags = cout.flags();
+
+    /* First two bytes are actually the opal header */
+    for (size_t i = 2; i < hash.size(); ++i)
+        cout << hex << setfill('0') << setw(2) << (int)hash[i];
+    cout << endl;
+    cout.flags(saved_flags);
+    return 0;
+}
+
 void DtaDev::puke()
 {
 	LOG(D1) << "Entering DtaDev::puke()";
@@ -299,4 +318,10 @@ void DtaDev::puke()
 	}
 	if (disk_info.Unknown)
 		cout << "**** " << (uint16_t)disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
+}
+
+uint8_t DtaDev::prepareForS3Sleep(uint8_t lockingrange, char* password)
+{
+    LOG(E) << "S3 sleep not supported on this platform";
+    return 1;
 }
