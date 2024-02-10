@@ -348,6 +348,10 @@ void DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
   }
   if (nonp) memset(disk_info.modelNum,0,sizeof(disk_info.modelNum));
   free(buffer);
+
+
+  // TODO: Also do discover0 here.
+
   return;
 }
 

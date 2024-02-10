@@ -47,6 +47,10 @@ public:
      * identify, add the fields from the identify response to the disk info structure
      * and if the device is an ATA device perform a call to Discovery0() to complete
      * the disk_info structure
+     *
+     * This function is obsolete.  Use `DtaDevOS::getDtaDevOS(devref, ...)' to obtain
+     * an initialized instance of the appropriate subclass of DtaDevOS.
+     *
      * @param devref character representation of the device is standard OS lexicon
      */
     void init(const char * devref);
@@ -58,7 +62,7 @@ public:
      * @param bufferlen length of the input/output buffer
      */
     uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-            void * buffer, uint32_t bufferlen);
+            void * buffer, size_t bufferlen);
     /** A static class to scan for supported drives */
     static int diskScan();
 protected:

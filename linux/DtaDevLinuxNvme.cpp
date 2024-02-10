@@ -143,6 +143,8 @@ void DtaDevLinuxNvme::identify(DTA_DEVICE_INFO& disk_info)
 	results += sizeof(disk_info.modelNum);
 	memcpy(disk_info.firmwareRev, results, sizeof(disk_info.firmwareRev));
 
+        // TODO: also do discovery0 here
+
 
     return;
 }

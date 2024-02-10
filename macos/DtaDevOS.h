@@ -98,7 +98,7 @@ public:
 
     /** OS specific routine to identify the device and fill out the device information struct
      */
-    void identify();
+    void identify(DTA_DEVICE_INFO& disk_info);
 
 
         /** OS specific method to send an ATA command to the device
@@ -114,7 +114,7 @@ public:
     static int diskScan();
 
     virtual void puke() {
-        identify();
+        identify(disk_info);
         DtaDev::puke();
     }
 
