@@ -36,6 +36,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevOS.h"
 #include "DtaHexDump.h"
 #include "DtaDevLinuxSata.h"
+#include "DtaDevLinuxNvmeMi.h"
 #include "DtaDevLinuxNvme.h"
 #include "DtaDevGeneric.h"
 
@@ -69,6 +70,10 @@ void DtaDevOS::init(const char * devref)
 	{
 //		DtaDevLinuxSata *SataDrive = new DtaDevLinuxSata();
 		drive = new DtaDevLinuxSata();
+	}
+    else if (!strncmp(devref, "mctp:", 5))
+	{
+		drive = new DtaDevLinuxNvmeMi();
 	}
 	else 
         {
