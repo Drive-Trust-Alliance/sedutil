@@ -763,17 +763,18 @@ uint8_t DtaDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t lockings
 	uint8_t lastRC;
 
     // convert Opal lockingstate to boolean	
-    OPAL_TOKEN locked;
+    OPAL_TOKEN rlocked, wlocked;
     switch (lockingstate) {
 	case OPAL_LOCKINGSTATE::READWRITE:
-    	locked = OPAL_TOKEN::OPAL_FALSE;
+	rlocked = wlocked = OPAL_TOKEN::OPAL_FALSE;
     	break;
 	case OPAL_LOCKINGSTATE::READONLY:
-    	LOG(E) << "Read Only locking state is unsupported in Enterprise SSC";
-    	return DTAERROR_INVALID_PARAMETER;
+	rlocked = OPAL_TOKEN::OPAL_FALSE;
+	wlocked = OPAL_TOKEN::OPAL_TRUE;
+	break;
 	case OPAL_LOCKINGSTATE::LOCKED:
-    	locked = OPAL_TOKEN::OPAL_TRUE;
-    	break;
+	rlocked = wlocked = OPAL_TOKEN::OPAL_TRUE;
+	break;
 	default:
     	LOG(E) << "Invalid locking state for setLockingRange (RW=1, LOCKED=3)";
     	return DTAERROR_INVALID_PARAMETER;
@@ -817,11 +818,11 @@ uint8_t DtaDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t lockings
 	set->addToken(OPAL_TOKEN::STARTLIST);
 	set->addToken(OPAL_TOKEN::STARTNAME);
 	set->addToken("WriteLocked");
-	set->addToken(locked);
+	set->addToken(wlocked);
 	set->addToken(OPAL_TOKEN::ENDNAME);
 	set->addToken(OPAL_TOKEN::STARTNAME);
 	set->addToken("ReadLocked");
-	set->addToken(locked);
+	set->addToken(rlocked);
 	set->addToken(OPAL_TOKEN::ENDNAME);
 	set->addToken(OPAL_TOKEN::ENDLIST);
 	set->addToken(OPAL_TOKEN::ENDLIST);
@@ -845,7 +846,7 @@ uint8_t DtaDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t lockings
 	}
 	delete set;
 	delete session;
-	LOG(I) << "Locking range Read/Write set " << (uint16_t)locked;
+	LOG(I) << "Locking range Read/Write set " << (uint16_t)rlocked << "/" << (uint16_t)wlocked;
 	LOG(D1) << "Exiting DtaDevEnterprise::setLockingRange";
 	return 0;
 }
