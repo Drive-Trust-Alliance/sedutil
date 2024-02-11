@@ -175,22 +175,3 @@ private:
     bool __init(const char *devref);
     bool __init(const char *devref, DTA_DEVICE_INFO &di);
 };
-
-
-////////////////////////////////////////////////////////////////////////////////
-static inline void set8(vector<uint8_t> & v, const uint8_t value[8])
-////////////////////////////////////////////////////////////////////////////////
-{
-    v.clear();
-    v.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
-    for (int i = 0; i < 8; i++)
-    {
-        v.push_back(value[i]);
-    }
-}
-
-static inline vector<uint8_t> vUID(OPAL_UID uid) {
-    vector<uint8_t> v(9);
-    set8(v,OPALUID[uid]);
-    return v;
-}

@@ -614,7 +614,7 @@ protected:
 };
 
 
-static __inline bool __is_all_NULs(const uint8_t * b, const size_t n) {
+static inline bool __is_all_NULs(const uint8_t * b, const size_t n) {
   for (const uint8_t * e = b + n; b<e; b++) {
     if ( 0  == *b) continue;
     return false;
@@ -623,7 +623,7 @@ static __inline bool __is_all_NULs(const uint8_t * b, const size_t n) {
 }
 
 
-static __inline bool __is_all_zeroes(const uint8_t * b, const size_t n) {
+static inline bool __is_all_zeroes(const uint8_t * b, const size_t n) {
   for (const uint8_t * e = b + n; b<e; b++) {
     if ( 0  == *b) continue;
     if ('0' == *b) continue;
@@ -634,3 +634,23 @@ static __inline bool __is_all_zeroes(const uint8_t * b, const size_t n) {
 
 #define __is_not_all_NULs(b,n) (!__is_all_NULs(b,n))
 #define __is_not_all_zeroes(b,n) (!__is_all_zeroes(b,n))
+
+
+static inline void set8(vector<uint8_t> & v, const uint8_t value[8])
+{
+  v.clear();
+  v.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+  for (int i = 0; i < 8; i++)
+    {
+      v.push_back(value[i]);
+    }
+}
+
+
+
+static inline vector<uint8_t> vUID(OPAL_UID uid)
+{
+  vector<uint8_t> v(9);
+  set8(v,OPALUID[uid]);
+  return v;
+}

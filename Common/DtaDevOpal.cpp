@@ -363,7 +363,7 @@ uint8_t DtaDevOpal::initialSetup(char * password)
     }
     char strname[20];
     memset(strname, 0, 20);
-    strncpy(strname, "USER1", 5);
+    strncpy(strname, "USER1", 6);
     if ((lastRC = setPassword(password, buf, strname)) != 0) { // set User1 password as USER1 default
         LOG(E) << "set user password failed " << dev;
         return lastRC;

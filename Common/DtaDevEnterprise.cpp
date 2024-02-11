@@ -83,42 +83,41 @@ static void user2cpin(vector<uint8_t> & dst, const vector<uint8_t> & src)
 uint8_t DtaDevEnterprise::getMaxRanges(uint16_t *maxRanges)
 ////////////////////////////////////////////////////////////////////////////////
 {
-	uint8_t lastRC;
+  uint8_t lastRC;
 
-    // 5.7.2.1.5 MaxRanges
-    // This value defines the maximum number of supportable LBA ranges in addition
-    // to the Global Range.  If this value is 0, then the only range available is
-    // the entire Global Range of the Storage Device.
-    //
-    // Therefore: 0 <= supported range <= MaxRanges
+  // 5.7.2.1.5 MaxRanges
+  // This value defines the maximum number of supportable LBA ranges in addition
+  // to the Global Range.  If this value is 0, then the only range available is
+  // the entire Global Range of the Storage Device.
+  //
+  // Therefore: 0 <= supported range <= MaxRanges
 
-    // create session
-	session = new DtaSession(this);
-	if (session == NULL) {
-		LOG(E) << "Unable to create session object ";
-		return DTAERROR_OBJECT_CREATE_FAILED;
-	}
-	if ((lastRC = session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID)) != 0) {
-		delete session;
-		return lastRC;
-	}
+  // create session
+  session = new DtaSession(this);
+  if (session == NULL) {
+    LOG(E) << "Unable to create session object ";
+    return DTAERROR_OBJECT_CREATE_FAILED;
+  }
+  if ((lastRC = session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID)) != 0) {
+    delete session;
+    return lastRC;
+  }
 
-    //** Table 36 "LockingInfo table", p. 72 of Enterprise SSC rev 3.00
-	vector<uint8_t> table;
-    set8(table, OPALUID[ENTERPRISE_LOCKING_INFO_TABLE]);
+  //** Table 36 "LockingInfo table", p. 72 of Enterprise SSC rev 3.00
+  vector<uint8_t> table;
+  set8(table, OPALUID[ENTERPRISE_LOCKING_INFO_TABLE]);
 
-    // query row 1 of LockingInfo table
-#pragma unused(lastRC)
-	if ((lastRC = getTable(table, "MaxRanges", "MaxRanges")) != 0) {
-		delete session;
-        // Unable to get values from Enterprise LockingInfo table -- bail out to Opal
-		return getMaxRangesOpal(maxRanges);
-	}
-	delete session;
+  // query row 1 of LockingInfo table
+  if ((lastRC = getTable(table, "MaxRanges", "MaxRanges")) != 0) {
+    delete session;
+    // Unable to get values from Enterprise LockingInfo table -- bail out to Opal
+    return getMaxRangesOpal(maxRanges);
+  }
+  delete session;
 
-    // "MaxRanges" is token 5 of response
-	*maxRanges = response.getUint16(5);
-    return 0;
+  // "MaxRanges" is token 5 of response
+  *maxRanges = response.getUint16(5);
+  return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -346,7 +345,7 @@ uint8_t DtaDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t en
         vector<uint8_t> method;
         set8(method, OPALMETHOD[OPAL_METHOD::ESET]);
         set->reset(object, method);
-        
+
         set->addToken(OPAL_TOKEN::STARTLIST);
         set->addToken(OPAL_TOKEN::STARTLIST);
         set->addToken(OPAL_TOKEN::ENDLIST);
@@ -369,7 +368,7 @@ uint8_t DtaDevEnterprise::configureLockingRange(uint8_t lockingrange, uint8_t en
         set->addToken(OPAL_TOKEN::ENDLIST);
         set->addToken(OPAL_TOKEN::ENDLIST);
         set->addToken(OPAL_TOKEN::ENDLIST);
-        
+
         set->complete();
     });
 
@@ -642,7 +641,7 @@ uint8_t DtaDevEnterprise::setHostChallenge(vector<uint8_t> currentHostChallenge,
 
     std::vector<uint8_t> usercpin;
     user2cpin(usercpin, user);
-    
+
     lastRC = WithSession([this, currentHostChallenge, user](){
         return session->start(OPAL_UID::ENTERPRISE_LOCKINGSP_UID, currentHostChallenge, user);
     },
@@ -1111,7 +1110,7 @@ uint8_t DtaDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t lockings
         return DTAERROR_UNSUPORTED_LOCKING_RANGE;
     }
 
-    
+
     //** BandMaster0 UID of Table 28 Locking SP Authority table, p. 70 of Enterprise SSC rev 3.00
     vector<uint8_t> user = vUID(OPAL_UID::ENTERPRISE_BANDMASTER0_UID);
     setband(user, lockingrange);
@@ -1143,14 +1142,14 @@ uint8_t DtaDevEnterprise::setLockingRange(uint8_t lockingrange, uint8_t lockings
         set->addToken(OPAL_TOKEN::ENDLIST);
         set->complete();
     });
-    
+
     if (lastRC != 0) {
         LOG(E) << "DtaDevEnterprise::setLockingRange:: SET Failed ";
     } else {
         LOG(D) << "Locking range Read/Write set " << (uint16_t)locked;
         LOG(D1) << "Exiting DtaDevEnterprise::setLockingRange";
     }
-    
+
     return lastRC;
 }
 
@@ -1659,14 +1658,14 @@ uint8_t DtaDevEnterprise::initLSPUsers(char * defaultPassword, vector<uint8_t> H
                          [this, usercpin, HostChallenge](){
         return setTable(usercpin, "PIN", HostChallenge);
     });
-    
+
     if (lastRC != 0) {
         LOG(E) << "Unable to set new EraseMaster host challenge ";
         return lastRC;
     }
     LOG(D) << "EraseMaster  host challenge set";
-    
-    
+
+
     // look up MaxRanges
     uint16_t MaxRanges = 0;
     if ((lastRC = getMaxRanges(&MaxRanges)) != 0) {
@@ -1691,7 +1690,7 @@ uint8_t DtaDevEnterprise::initLSPUsers(char * defaultPassword, vector<uint8_t> H
                              [this, usercpin, HostChallenge](){
             return setTable(usercpin, "PIN", HostChallenge);
         });
-        
+
         if (lastRC != 0) {
             LOG(E) << "Unable to set BandMaster" << (uint16_t) i << " host challenge ";
             // We only return failure if we fail to set BandMaster0.
@@ -2209,4 +2208,3 @@ uint8_t DtaDevEnterprise::getMSID(string& MSID) {
     LOG(D1) << "MSID=" << MSID;
     return 0;
 }
-

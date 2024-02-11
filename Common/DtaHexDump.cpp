@@ -23,10 +23,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define NOHEXDUMP 1
 
 #if NOHEXDUMP
-void DtaHexDump(void * address, int length) {
-#pragma unused(address)
-#pragma unused(length)
-}
+void DtaHexDump(void *, int) {}
 #else
 void DtaHexDump(void * address, int length) {
 	uint8_t display[17];
