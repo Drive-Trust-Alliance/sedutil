@@ -268,8 +268,14 @@ void DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
   uint8_t result;
   result = sendCmd(IDENTIFY, 0, 0, buffer, 512 );
   if (result) {
+  // TODO: Also do discovery0 here.
     return;
   }
+
+
+
+
+
   //    LOG(D4) << "cdb after ";
   //    IFLOG(D4) hexDump(cdb, sizeof (cdb));
   //    LOG(D4) << "sg after ";
@@ -295,8 +301,12 @@ void DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
     // XXX: ioctl call was aborted or returned no data, most probably
     //      due to driver not being libata based, let's try SAS instead.
     identify_SAS(&disk_info);
+  // TODO: Also do discovery0 here.
     return;
   }
+
+
+
 
   IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) buffer;
   if (!bus_sas) {
@@ -350,7 +360,7 @@ void DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
   free(buffer);
 
 
-  // TODO: Also do discover0 here.
+  // TODO: Also do discovery0 here.
 
   return;
 }

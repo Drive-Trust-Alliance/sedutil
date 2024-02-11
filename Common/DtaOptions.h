@@ -68,7 +68,7 @@ typedef struct _DTA_OPTIONS {
 } DTA_OPTIONS;
 
 /** Print a usage message */
-void usage();
+extern void usage();
 /** Parse the command line and return a structure that describes the action desired
  * @param argc program argc parameter
  * @param argv program argv paramater
