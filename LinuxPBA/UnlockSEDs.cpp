@@ -33,7 +33,7 @@ uint8_t UnlockSEDs(char * password) {
 /* Loop through drives */
     char devref[25];
     int failed = 0;
-    DtaDev *d;
+    DtaDevOS *d;
     DIR *dir;
     struct dirent *dirent;
     vector<string> devices;
@@ -57,7 +57,7 @@ uint8_t UnlockSEDs(char * password) {
     printf("\nScanning....\n");
     for(uint16_t i = 0; i < devices.size(); i++) {
         snprintf(devref,23,"/dev/%s",devices[i].c_str());
-        if (DTAERROR_SUCCESS != getDtaDevOS(devref, d)) {
+        if (DTAERROR_SUCCESS != DtaDevOS::getDtaDevOS(devref, d)) {
             break;
         }
         if ((!d->isOpal1()) && (!d->isOpal2())) {

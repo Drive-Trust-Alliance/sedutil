@@ -198,21 +198,6 @@ uint8_t DtaDev::STACK_Reset()
 
 */
 
-//TODO: triage
-//void DtaDev::discovery0() {
-//    uint8_t * d0Response = (uint8_t *)((uintptr_t)(discovery0buffer + IO_BUFFER_ALIGNMENT) &
-//                                 (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
-//    memset(d0Response, 0, MIN_BUFFER_LENGTH);
-//
-//    uint8_t lastRC = acquireDiscovery0Response(d0Response);
-//    if ((lastRC ) != 0) {
-//        LOG(D) << "Acquiring D0 response failed " << (uint16_t)lastRC;
-//        return;
-//    }
-//    parseDiscovery0Features(d0Response, disk_info);
-//}
-
-
 void DtaDev::puke()
 {
 	LOG(D1) << "Entering DtaDev::puke()";
@@ -237,7 +222,7 @@ void DtaDev::puke()
              << "   " << disk_info.manufacturerName;
     }
     cout << endl;
-    
+
 	/* TPer */
 	if (disk_info.TPer) {
 		cout << "TPer function (" << HEXON(4) << FC_TPER << HEXOFF << ")" << std::endl;
@@ -386,17 +371,17 @@ uint8_t DtaDev::WithSession(std::function<uint8_t(void)>startSessionFn,
         LOG(E) << "Unable to create session object " << dev;
         return DTAERROR_OBJECT_CREATE_FAILED;
     }
-    
-    
+
+
     uint8_t lastRC = startSessionFn();
 
     if (lastRC == 0) {
         lastRC = sessionBodyFn();
     }
-            
+
     delete session;
     return lastRC;
-    
+
 }
 
 uint8_t DtaDev::WithSessionCommand(std::function<uint8_t(void)>startSessionFn,
@@ -473,4 +458,3 @@ uint8_t DtaDev::start(OPAL_UID SP, vector<uint8_t>  HostChallenge, vector<uint8_
         return DTAERROR_OBJECT_CREATE_FAILED;
     return session->start(SP, HostChallenge, SignAuthority);
 }
-
