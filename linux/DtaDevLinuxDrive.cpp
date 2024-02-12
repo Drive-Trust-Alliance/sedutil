@@ -18,7 +18,13 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 
-#include "DtaDevLinuxDrive.h"
+#include <cstdint>
+#include <cstring>
+#include "os.h"
+#include "DtaEndianFixup.h"
+#include "DtaHexDump.h"
+#include "DtaDevLinuxNvme.h"
+#include "DtaDevLinuxSata.h"
 
 
 static
@@ -40,7 +46,7 @@ void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
   LOG(D3) << "Dumping D0Response";
   if ( (length > 8192) || (length < 48) )
     {
-      LOG(D) << "Level 0 Discovery header length abnormal " << hex << length;
+      LOG(D) << "Level 0 Discovery header length abnormal " << std::hex << length;
       return;
     }
   IFLOG(D3) DtaHexDump(hdr, length);
@@ -51,7 +57,7 @@ void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
   do {
     Discovery0Features * body = (Discovery0Features *) cpos;
     uint16_t featureCode = SWAP16(body->TPer.featureCode);
-    LOG(D2) << "Discovery0 FeatureCode: " << hex << featureCode;
+    LOG(D2) << "Discovery0 FeatureCode: " << std::hex << featureCode;
     switch (featureCode) { /* could use of the structures here is a common field */
     case FC_TPER: /* TPer */
       LOG(D2) << "TPer Feature";
@@ -256,27 +262,24 @@ uint8_t DtaDevLinuxDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
   uint8_t d0Response[MIN_BUFFER_LENGTH]; // TODO: ALIGNMENT?
   memset(d0Response, 0, MIN_BUFFER_LENGTH);
 
-  uint8_t lastRC = acquireDiscovery0Response(self,d0Response);
+  uint8_t lastRC = acquireDiscovery0Response(this,d0Response);
   if ((lastRC ) != 0) {
     LOG(D) << "Acquiring D0 response failed " << (uint16_t)lastRC;
     return DTAERROR_COMMAND_ERROR;
   }
   parseDiscovery0Features(d0Response, disk_info);
-  return DTA_ERROR_SUCCESS;
+  return DTAERROR_SUCCESS;
 }
 
-
-DtaDevLinuxDrive * getDtaDevLinuxDriveSubclassInstance(const char * devref) {
+DtaDevLinuxDrive * DtaDevLinuxDrive::getDtaDevLinuxDriveSubclassInstance(const char * devref) {
  if (!strncmp(devref, "/dev/nvme", 9))
     {
-      return new DtaDevLinuxNvme();
+      return new DtaDevLinuxNvme;
     }
-  else if (!strncmp(devref, "/dev/s", 6))
+ if (!strncmp(devref, "/dev/s", 6))
     {
-      return new DtaDevLinuxSata();
+      return new DtaDevLinuxSata;
     }
-  else
-    {
-      return NULL;
-    }
+ return NULL;
+
 }

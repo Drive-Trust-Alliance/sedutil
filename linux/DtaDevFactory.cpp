@@ -18,17 +18,13 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 
-#include <cstdint>
-#include <cstring>
-#include "os.h"
+
 #include "DtaDevOpal1.h"
 #include "DtaDevOpal2.h"
 #include "DtaDevEnterprise.h"
 #include "DtaDevLinuxNvme.h"
 #include "DtaDevLinuxSata.h"
 #include "DtaDevGeneric.h"
-#include "DtaEndianFixup.h"
-#include "DtaHexDump.h"
 
 
 static DtaDevOS* getDtaDevOSSubclassInstance(DTA_DEVICE_INFO & di,
@@ -59,7 +55,7 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref,
 {
   DtaDevLinuxDrive * drive;
 
-  drive = getDtaDevLinuxDriveSubclassInstance(devref);
+  drive = DtaDevLinuxDrive::getDtaDevLinuxDriveSubclassInstance(devref);
   if (!drive) {
     dev = NULL;
     LOG(E) << "Invalid or unsupported device " << devref;
@@ -96,8 +92,11 @@ uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * & device, bool genericIf
 {
     DtaDevOS * d;
     uint8_t result = DtaDevOS::getDtaDevOS(devref, d, genericIfNotTPer);
+    LOG(I) << "DtaDev::getDtaDev: DtaDevOS::getDtaDevOS returns " << result ;
+    LOG(I) << "DtaDev::getDtaDev: d is" << (d ? " not" : "" )  << " NULL" << result ;
     if (result == DTAERROR_SUCCESS) {
         device = static_cast<DtaDev *>(d);
+        LOG(I) << "DtaDev::getDtaDev: device is" << (device ? " not" : "" )  << " NULL" << result ;
     }
     return result;
 }

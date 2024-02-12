@@ -42,19 +42,19 @@ using namespace std;
 
 static void isValidSEDDisk(const char * devname)
 {
-	DtaDev * d;
-    uint8_t result = DtaDev::getDtaDev(devname, d, true);
-	if (result == DTAERROR_SUCCESS && d->isPresent()) {
-		printf("%s", devname);
-		if (d->isAnySSC())
-			printf(" SED %s%s%s ", (d->isOpal1() ? "1" : "-"),
-			(d->isOpal2() ? "2" : "-"), (d->isEprise() ? "E" : "-"));
-		else
-			printf("%s", " NO --- ");
-		cout << d->getModelNum() << ":" << d->getFirmwareRev();
-		cout << std::endl;
-	}
-	delete d;
+  DtaDev * d;
+  uint8_t result = DtaDev::getDtaDev(devname, d, true);
+  if (result == DTAERROR_SUCCESS && d->isPresent()) {
+    printf("%s", devname);
+    if (d->isAnySSC())
+      printf(" SED %s%s%s ", (d->isOpal1() ? "1" : "-"),
+             (d->isOpal2() ? "2" : "-"), (d->isEprise() ? "E" : "-"));
+    else
+      printf("%s", " NO --- ");
+    cout << d->getModelNum() << ":" << d->getFirmwareRev();
+    cout << std::endl;
+  }
+  delete d;
 }
 
 
@@ -70,17 +70,17 @@ static int hashvalidate(char * password, char *devname)
     hash.clear();
     LOG(D1) << "start hashing random password";
     DtaHashPwd(hash, password, d);
-    
+
     printf("password: %s", password);
-    
+
     printf("unhashed in hex: ");
     for (size_t i = 0; i < strlen(password); i++) printf("%02X",password[i]);
     printf("\n");
-    
+
     printf("hashed password: ");
     for (size_t i = 2; i < hash.size(); i++) printf("%02X",hash.at(i));
     printf("\n");
-    
+
     return 0;
 }
 
@@ -96,7 +96,7 @@ int main(int argc, char * argv[])
     if (! authorize_sedutil_execution(argc, argv)) {
         return DTAERROR_AUTHORIZE_EXEC_FAILED;
     }
-        
+
     DtaDev *d = NULL;
     if ((opts.action != sedutiloption::scan) &&
 		(opts.action != sedutiloption::validatePBKDF2) &&
@@ -119,9 +119,9 @@ int main(int argc, char * argv[])
         return (d->initialSetup(argv[opts.password]));
 	case sedutiloption::setup_SUM:
 		LOG(D) << "Performing SUM setup on drive " << argv[opts.device];
-		return (d->setup_SUM(opts.lockingrange, 
+		return (d->setup_SUM(opts.lockingrange,
                              (unsigned long long)atoll(argv[opts.lrstart]),
-                             (unsigned long long)atoll(argv[opts.lrlength]), 
+                             (unsigned long long)atoll(argv[opts.lrlength]),
                              argv[opts.password], argv[opts.newpassword]));
 		break;
 	case sedutiloption::setSIDPassword:
@@ -146,7 +146,7 @@ int main(int argc, char * argv[])
         return d->loadPBA(argv[opts.password], argv[opts.pbafile]);
 		break;
 	case sedutiloption::setLockingRange:
-        LOG(D) << "Setting Locking Range " << 
+        LOG(D) << "Setting Locking Range " <<
                   (uint16_t) opts.lockingrange << " " <<
                   (uint16_t) opts.lockingstate << " " <<
                   argv[opts.device];;
@@ -179,7 +179,7 @@ int main(int argc, char * argv[])
                                      argv[opts.password]));
 		break;
 	case sedutiloption::setupLockingRange_SUM:
-		LOG(D) << "Setup Locking Range " << (uint16_t)opts.lockingrange << 
+		LOG(D) << "Setup Locking Range " << (uint16_t)opts.lockingrange <<
                   " in Single User Mode " << argv[opts.device];
 		return (d->setupLockingRange_SUM(opts.lockingrange,
                                          (unsigned long long)atoll(argv[opts.lrstart]),
@@ -231,7 +231,7 @@ int main(int argc, char * argv[])
 		return d->activateLockingSP_SUM(opts.lockingrange, argv[opts.password]);
 		break;
 	case sedutiloption::eraseLockingRange_SUM:
-		LOG(D) << "Erasing LockingRange " << opts.lockingrange << 
+		LOG(D) << "Erasing LockingRange " << opts.lockingrange <<
                   " on" << argv[opts.device] << " " << argv[opts.device];
 		return d->eraseLockingRange_SUM(opts.lockingrange, argv[opts.password]);
 		break;
@@ -281,12 +281,12 @@ int main(int argc, char * argv[])
         break;
 	case sedutiloption::yesIreallywanttoERASEALLmydatausingthePSID:
 	case sedutiloption::PSIDrevert:
-		LOG(D) << "Performing a PSID Revert on " << argv[opts.device] << 
+		LOG(D) << "Performing a PSID Revert on " << argv[opts.device] <<
                   " with password " << argv[opts.password] << " " << argv[opts.device];
         return d->revertTPer(argv[opts.password], 1, 0);
         break;
 	case sedutiloption::PSIDrevertAdminSP:
-		LOG(D) << "Performing a PSID RevertAdminSP on " << argv[opts.device] << 
+		LOG(D) << "Performing a PSID RevertAdminSP on " << argv[opts.device] <<
                   " with password " << argv[opts.password] << " " << argv[opts.device];
         return d->revertTPer(argv[opts.password], 1, 1);
         break;
@@ -316,7 +316,7 @@ int main(int argc, char * argv[])
 		break;
 
 #include "Customizations/DtaExtensionOptionImplementations.inc"
-            
+
     default:
         LOG(E) << "Unable to determine what you want to do ";
         usage();
