@@ -1,1 +1,1 @@
-/Users/scott/sedutil/Common/log.h
+../Common/log.h

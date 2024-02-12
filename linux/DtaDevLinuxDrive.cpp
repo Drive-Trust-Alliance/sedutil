@@ -17,60 +17,18 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
-#pragma once
-#include "DtaStructures.h"
 
-/** virtual implementation for a disk interface-generic disk drive
- */
-class DtaDevLinuxDrive {
-public:
-  virtual ~DtaDevLinuxDrive( void ) {};
-
-  /**Initialization.
-   * This function should perform the necessary authority and environment checking
-   * to allow proper functioning of the program, open the device,
-   * @param devref character representation of the device is standard OS lexicon
-   */
-  virtual bool init(const char * devref) = 0;
-
-  /** Method to send a command to the device
-   * @param cmd command to be sent to the device
-   * @param protocol security protocol to be used in the command
-   * @param comID communications ID to be used
-   * @param buffer input/output buffer
-   * @param bufferlen length of the input/output buffer
-   */
-  virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                          void * buffer, uint32_t bufferlen) = 0;
-
-  /** Routine to identify the device and fill out the device info structure.
-   *
-   * If it is an ATA device, perform an ATA Identify,
-   * or if SCSI (SAS) , perform a SCSI Inquiry,
-   * or if NVME, perform an NVMe *** TODO FIXME WHAT IS THE NVME COMMAND CALLED,
-   * and perform a call to discovery0() to complete the disk_info structure
-   * @param disk_info reference to the device info structure to fill out
-   */
-  virtual void identify(DTA_DEVICE_INFO& disk_info) = 0;
-
-  /** Factory function to look at the devref and create an instance of the appropriate subclass of
-   *  DtaDevLinuxDrive
-   *
-   * @param devref OS device reference e.g. "/dev/sda"
-   */
-  static DtaDevLinuxDrive * getDtaDevLinuxDriveSubclassInstance(const char * devref);
-
-protected:
-  uint8_t discovery0(DTA_DEVICE_INFO & di);
-};
+#include "DtaDevLinuxDrive.h"
 
 
-uint8_t acquireDiscovery0Response(DtaDevLinuxDrive * d, uint8_t * d0Response)
+static
+uint8_t acquireDiscovery0Response(DtaDevLinuxDrive * drive, uint8_t * d0Response)
 {
-  return d->sendCmd(IF_RECV, 0x01, 0x0001, d0Response, MIN_BUFFER_LENGTH);
+  return drive->sendCmd(IF_RECV, 0x01, 0x0001, d0Response, MIN_BUFFER_LENGTH);
 }
 
-static void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
+static
+void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
 {
   Discovery0Header * hdr = (Discovery0Header *) d0Response;
   uint32_t length = SWAP32(hdr->length);
@@ -287,8 +245,38 @@ static void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO 
     cpos = cpos + (body->TPer.length + 4);
   }
   while (cpos < epos);
+
   // do adjustment for No Additional data store case
   if (!di.DataStore  || !di.DataStore_maxTables || !di.DataStore_maxTableSize) {
     di.DataStore_maxTableSize = 10 * 1024 * 1024;
   }
+}
+
+uint8_t DtaDevLinuxDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
+  uint8_t d0Response[MIN_BUFFER_LENGTH]; // TODO: ALIGNMENT?
+  memset(d0Response, 0, MIN_BUFFER_LENGTH);
+
+  uint8_t lastRC = acquireDiscovery0Response(self,d0Response);
+  if ((lastRC ) != 0) {
+    LOG(D) << "Acquiring D0 response failed " << (uint16_t)lastRC;
+    return DTAERROR_COMMAND_ERROR;
+  }
+  parseDiscovery0Features(d0Response, disk_info);
+  return DTA_ERROR_SUCCESS;
+}
+
+
+DtaDevLinuxDrive * getDtaDevLinuxDriveSubclassInstance(const char * devref) {
+ if (!strncmp(devref, "/dev/nvme", 9))
+    {
+      return new DtaDevLinuxNvme();
+    }
+  else if (!strncmp(devref, "/dev/s", 6))
+    {
+      return new DtaDevLinuxSata();
+    }
+  else
+    {
+      return NULL;
+    }
 }
