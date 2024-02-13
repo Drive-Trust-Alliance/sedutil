@@ -25,6 +25,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevLinuxNvme.h"
 #include "DtaDevLinuxSata.h"
 #include "DtaDevGeneric.h"
+// TODO: Below Just for Debugging
+#include "DtaHexDump.h"
+
 
 
 DtaDevOS* DtaDevOS::getDtaDevOSSubclassInstance(const char * devref,
@@ -82,9 +85,14 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref,
 
   if (!dev) {
     LOG(E) << "Invalid or unsupported device " << devref;
-    return DTAERROR_COMMAND_ERROR;;
+    LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
+    return DTAERROR_COMMAND_ERROR;
   }
 
+
+  LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") disk_info:";
+  DtaHexDump(&disk_info, (int)sizeof(disk_info));
+  LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_SUCCESS";
   return DTAERROR_SUCCESS;
 }
 
@@ -93,11 +101,8 @@ uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * & device, bool genericIf
 {
     DtaDevOS * d;
     uint8_t result = DtaDevOS::getDtaDevOS(devref, d, genericIfNotTPer);
-    LOG(I) << "DtaDev::getDtaDev: DtaDevOS::getDtaDevOS returns " << result ;
-    LOG(I) << "DtaDev::getDtaDev: d is" << (d ? " not" : "" )  << " NULL" << result ;
     if (result == DTAERROR_SUCCESS) {
         device = static_cast<DtaDev *>(d);
-        LOG(I) << "DtaDev::getDtaDev: device is" << (device ? " not" : "" )  << " NULL" << result ;
     }
     return result;
 }

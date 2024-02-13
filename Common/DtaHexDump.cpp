@@ -20,8 +20,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include <stdio.h>
 #include <ctype.h>
-#define NOHEXDUMP 1
-
+#define NOHEXDUMP 0
+// TODO: NOHEXDUMP 1
 #if NOHEXDUMP
 void DtaHexDump(void *, int) {}
 #else

@@ -196,6 +196,7 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
 
 void DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
 {
+  LOG(D1) << "Entering DtaDevLinuxSata::identify";
   sg_io_hdr_t sg;
   uint8_t sense[32]; // how big should this be??
   uint8_t cdb[12];
@@ -268,7 +269,7 @@ void DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
   uint8_t result;
   result = sendCmd(IDENTIFY, 0, 0, buffer, 512 );
   if (result) {
-  // TODO: Also do discovery0 here.
+    LOG(D1) << "Exiting DtaDevLinuxSata::identify (1)";
     return;
   }
 
@@ -301,22 +302,21 @@ void DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
     // XXX: ioctl call was aborted or returned no data, most probably
     //      due to driver not being libata based, let's try SAS instead.
     identify_SAS(&disk_info);
-  // TODO: Also do discovery0 here.
+    LOG(D1) << "Exiting DtaDevLinuxSata::identify (2)";
     return;
   }
 
 
-
-
   IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) buffer;
-  if (!bus_sas) {
-    disk_info.devType = DEVICE_TYPE_ATA;
-    memcpy(disk_info.serialNum, id->serialNumber, sizeof (disk_info.serialNum));
-    memcpy(disk_info.firmwareRev, id->firmwareRevision, sizeof (disk_info.firmwareRev));
-    memcpy(disk_info.modelNum, id->modelNum, sizeof (disk_info.modelNum));
+  disk_info.devType = DEVICE_TYPE_ATA;
+  // if (!bus_sas) {
+  //   LOG(D1) << "DtaDevLinuxSata::identify (3) -- bus_sas==0, not flipping";
+  //   memcpy(disk_info.serialNum, id->serialNumber, sizeof (disk_info.serialNum));
+  //   memcpy(disk_info.firmwareRev, id->firmwareRevision, sizeof (disk_info.firmwareRev));
+  //   memcpy(disk_info.modelNum, id->modelNum, sizeof (disk_info.modelNum));
 
-  } else {
-    disk_info.devType = DEVICE_TYPE_ATA;
+  // } else {
+    // LOG(D1) << "DtaDevLinuxSata::identify (3) -- bus_sas!=0, flipping";
     // looks like linux does the byte flipping for you, but not for device on SAS
     for (unsigned int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
       disk_info.serialNum[i] = id->serialNumber[i + 1];
@@ -330,7 +330,7 @@ void DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
       disk_info.modelNum[i] = id->modelNum[i + 1];
       disk_info.modelNum[i + 1] = id->modelNum[i];
     }
-  }
+  // }
 
   int nonp ;
   nonp=0;
@@ -362,8 +362,10 @@ void DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
 
   // TODO: Also do discovery0 here.
 
+  LOG(D1) << "Exiting DtaDevLinuxSata::identify (3)";
   return;
 }
+
 
 /** Send an ioctl to the device using pass through. */
 uint8_t DtaDevLinuxSata::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
