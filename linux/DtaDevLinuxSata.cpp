@@ -204,7 +204,7 @@ void DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
   memset(&sense, 0, sizeof (sense));
   memset(&sg, 0, sizeof (sg));
   LOG(D4) << "Entering DtaDevLinuxSata::identify()";
-  uint8_t bus_sas = 0;
+  // uint8_t bus_sas = 0;
   vector<uint8_t> nullz(512, 0x00);
   uint8_t * buffer = (uint8_t *) memalign(IO_BUFFER_ALIGNMENT, MIN_BUFFER_LENGTH);
   memset(buffer, 0, MIN_BUFFER_LENGTH);
