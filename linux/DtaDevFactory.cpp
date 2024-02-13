@@ -27,18 +27,19 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevGeneric.h"
 
 
-static DtaDevOS* getDtaDevOSSubclassInstance(DTA_DEVICE_INFO & di,
-                                             const char * devref,
+DtaDevOS* DtaDevOS::getDtaDevOSSubclassInstance(const char * devref,
+                                             DtaDevLinuxDrive * drive,
+                                             DTA_DEVICE_INFO & di,
                                              bool genericIfNotTPer) {
-    if (di.OPAL20)     return new DtaDevOpal2(devref);
-    if (di.OPAL10)     return new DtaDevOpal1(devref);
-    if (di.Enterprise) return new DtaDevEnterprise(devref);
+  if (di.OPAL20)     return new DtaDevOpal2(devref, drive, di);
+  if (di.OPAL10)     return new DtaDevOpal1(devref, drive, di);
+  if (di.Enterprise) return new DtaDevEnterprise(devref, drive, di);
 //  if (di.RUBY) ...  etc.
 
-    if (genericIfNotTPer) return new DtaDevGeneric(devref);
+  if (genericIfNotTPer) return new DtaDevGeneric(devref, drive, di);
 
-    LOG(E) << "Unknown OPAL SSC ";
-    return NULL;
+  LOG(E) << "Unknown OPAL SSC ";
+  return NULL;
 }
 
 
@@ -53,20 +54,23 @@ static DtaDevOS* getDtaDevOSSubclassInstance(DTA_DEVICE_INFO & di,
 uint8_t DtaDevOS::getDtaDevOS(const char * devref,
                               DtaDevOS * & dev, bool genericIfNotTPer)
 {
+  LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\")";
   DtaDevLinuxDrive * drive;
 
   drive = DtaDevLinuxDrive::getDtaDevLinuxDriveSubclassInstance(devref);
   if (!drive) {
     dev = NULL;
     LOG(E) << "Invalid or unsupported device " << devref;
-    return DTAERROR_COMMAND_ERROR;;
+    LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
+    return DTAERROR_COMMAND_ERROR;
   }
 
   if (!(drive->init(devref))) {
     delete drive;
     dev = NULL;
     LOG(E) << "Invalid or unsupported device " << devref;
-    return DTAERROR_COMMAND_ERROR;;
+    LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
+    return DTAERROR_COMMAND_ERROR;
   }
 
   DTA_DEVICE_INFO disk_info;
@@ -74,10 +78,7 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref,
 
   drive->identify(disk_info);
 
-
-  dev =  getDtaDevOSSubclassInstance(disk_info, devref, genericIfNotTPer) ;
-
-  delete drive ;
+  dev =  getDtaDevOSSubclassInstance(devref, drive, disk_info, genericIfNotTPer) ;
 
   if (!dev) {
     LOG(E) << "Invalid or unsupported device " << devref;

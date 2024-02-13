@@ -55,6 +55,13 @@ DtaDevOS::DtaDevOS()
   drive = NULL;
 }
 
+DtaDevOS::DtaDevOS(const char * devref, DtaDevLinuxDrive * d, DTA_DEVICE_INFO& di) {
+  dev = devref ;
+  drive = d ;
+  memcpy(&disk_info, &di, sizeof(DTA_DEVICE_INFO));
+  isOpen = TRUE;
+}
+
 /* Determine which type of drive we're using and instantiate a derived class of that type */
 /* This function is obsolete.  Use `DtaDevOS::getDtaDevOS' to obtain an initialized       */
 /* instance of the appropriate subclass of DtaDevOS.                                      */
@@ -66,34 +73,15 @@ void DtaDevOS::init(const char * devref)
 
   dev = devref;
 
-  if (!strncmp(devref, "/dev/nvme", 9))
-    {
-      //		DtaDevLinuxNvme *NvmeDrive = new DtaDevLinuxNvme();
-      drive = new DtaDevLinuxNvme();
-    }
-  else if (!strncmp(devref, "/dev/s", 6))
-    {
-      //		DtaDevLinuxSata *SataDrive = new DtaDevLinuxSata();
-      drive = new DtaDevLinuxSata();
-    }
-  else
-    {
-      LOG(E) << "DtaDevOS::init ERROR - unknown drive type";
-      isOpen = FALSE;
-      return;
-    }
+  drive = DtaDevLinuxDrive::getDtaDevLinuxDriveSubclassInstance(devref) ;
 
   if (drive->init(devref))
     {
       isOpen = TRUE;
       drive->identify(disk_info);
-      // if (disk_info.devType != DEVICE_TYPE_OTHER)
-      // 	discovery0(&disc0Sts);
     }
   else
     isOpen = FALSE;
-
-  return;
 }
 
 uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,

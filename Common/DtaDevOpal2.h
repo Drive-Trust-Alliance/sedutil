@@ -53,5 +53,10 @@ public:
 	~DtaDevOpal2();
         /** return the communication ID to be used with this device */
 	uint16_t comID();
-	
+
+  // /** Short-circuit routine re-uses initialized drive and disk_info */
+  DtaDevOpal2(const char * devref, DtaDevLinuxDrive * drive, DTA_DEVICE_INFO& di)
+    : DtaDevOpal(devref, drive, di)
+  {} ;
+
 };

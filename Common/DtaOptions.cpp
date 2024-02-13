@@ -102,7 +102,7 @@ void usage()
     printf("                                revert the device using the PSID *ERASING* *ALL* the data \n");
     printf("--printDefaultPassword <device>\n");
     printf("                                print MSID \n");
-    
+
     // Customization commands
     printf("--version \n");
     printf("                                print sedutil-cli version, including build tag\n");
@@ -113,7 +113,7 @@ void usage()
     printf("sedutil-cli --query %s \n", DEVICEEXAMPLE);
     printf("sedutil-cli --yesIreallywanttoERASEALLmydatausingthePSID <PSIDALLCAPSNODASHED> %s \n", DEVICEEXAMPLE);
     printf("sedutil-cli --initialSetup <newSIDpassword> %s \n", DEVICEEXAMPLE);
-    
+
     // Customization examples
     printf("sedutil-cli --version \n");
     //    printf("--createUSB <file> <device1> <device2\n");

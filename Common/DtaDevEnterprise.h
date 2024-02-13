@@ -41,7 +41,7 @@ public:
          * @param devref reference to device is OS specific lexicon
          *  */
 	DtaDevEnterprise(const char * devref);
-    
+
 #if defined(__APPLE__) && defined(__MACH__)
     /* Apple OSX and iOS (Darwin). ------------------------------ */
 #include <TargetConditionals.h>
@@ -65,7 +65,7 @@ public:
 
 #endif
 #endif  // defined(__APPLE__) && defined(__MACH__)
-    
+
          /** Default destructor, does nothing*/
 	~DtaDevEnterprise();
         /** Inform TPer of the communication propertied I wiah to use and
@@ -176,7 +176,7 @@ public:
 //	uint8_t enableUser(char * password, char * userid, OPAL_TOKEN status = OPAL_TOKEN::OPAL_TRUE);
 	uint8_t enableUser(uint8_t mbrstate, char * password, char * userid);
 	uint8_t enableUserRead(uint8_t mbrstate, char * password, char * userid);
-    
+
     /** enable a locking sp user.
      * @param state 0 or 1
      * @param HostChallenge HostChallenge of locking sp administrative authority
@@ -200,10 +200,10 @@ public:
      * @param Admin1HostChallenge  host challenge -- unsalted password of the locking administrative authority
      */
     uint8_t setMBRDone(uint8_t state, vector<uint8_t> Admin1HostChallenge);
-    
+
 	uint8_t TCGreset(uint8_t mbrstate);
-    
-    
+
+
         /** Primitive to set the MBREnable flag.
          * @param state 0 or 1
          * @param Admin1Password Locking SP authority with access to flag
@@ -232,8 +232,8 @@ public:
     uint8_t setHostChallenge(vector<uint8_t> currentHostChallenge, char * userid,
                              vector<uint8_t> newHostChallenge, uint8_t idx=0);
 
-    
-    
+
+
 	/** dummy code not implemented in the enterprise SSC*/
 	uint8_t setNewPassword_SUM(char * password, char * userid, char * newpassword);
     uint8_t setLockingRange(uint8_t lockingrange, uint8_t lockingstate,
@@ -286,7 +286,7 @@ public:
          * @param PSID true or false is the authority the PSID
          *   */
 	uint8_t revertTPer(char * password, uint8_t PSID = 0, uint8_t AdminSP = 0);
-    
+
     /** Reset the TPER to its factory condition
      * @param HostChallenge HostChallenge of authority (SID or PSID)
      * @param PSID true or false is the authority the PSID
@@ -346,6 +346,11 @@ public:
      * @param MSID the string to receive the MSID
      */
     uint8_t getMSID(string& MSID);
+
+  // /** Short-circuit routine re-uses initialized drive and disk_info */
+  DtaDevEnterprise(const char * devref, DtaDevLinuxDrive * drive, DTA_DEVICE_INFO& di)
+    : DtaDevOS(devref, drive, di)
+  {} ;
 
 
 protected:

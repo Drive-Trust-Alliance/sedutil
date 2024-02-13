@@ -33,9 +33,9 @@ typedef enum _sedutiloutput {
 #define DEFAULT_OUTPUT_FORMAT sedutilReadable
 
 #if DEBUG
-#define DEFAULT_LOGGING_LEVEL 1
+#define DEFAULT_LOGGING_LEVEL 3
 #else // !DEBUG
-#define DEFAULT_LOGGING_LEVEL 0
+#define DEFAULT_LOGGING_LEVEL 2
 #endif // DEBUG
 #define MAX_LOGGING_LEVEL 7
 
