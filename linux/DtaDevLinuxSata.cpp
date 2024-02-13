@@ -263,7 +263,7 @@ void DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
     IFLOG(D4) DtaHexDump(sense, sizeof (sense));
     disk_info.devType = DEVICE_TYPE_OTHER;
     sendCmd(IDENTIFY, 0, 0, buffer, IO_BUFFER_LENGTH);
-    bus_sas =1;
+    // bus_sas =1;
   }
 
   uint8_t result;
