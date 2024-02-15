@@ -134,7 +134,7 @@ typedef struct _UASP_INQUIRY_RESPONSE {
     char ProductID[40];
 } UASP_INQUIRY_RESPONSE;
 
-void DtaDiskUSB::identify(DTA_DEVICE_INFO& disk_info)
+bool  DtaDiskUSB::identify(DTA_DEVICE_INFO& disk_info)
 {
     LOG(D1) << "Entering DtaDiskUSB::identify()";
 	vector<uint8_t> nullz(512, 0x00);
@@ -152,7 +152,7 @@ void DtaDiskUSB::identify(DTA_DEVICE_INFO& disk_info)
 		disk_info.devType = DEVICE_TYPE_OTHER;
 		/////////////////////////////////////////
 		_aligned_free(identifyResp);
-		return;
+		return false;
 	}
 	UASP_INQUIRY_RESPONSE * id = (UASP_INQUIRY_RESPONSE *) identifyResp;
     disk_info.devType = DEVICE_TYPE_USB;
@@ -202,7 +202,7 @@ void DtaDiskUSB::identify(DTA_DEVICE_INFO& disk_info)
 	//DtaHexDump(disk_info.modelNum, sizeof(disk_info.modelNum));
 	//memcpy(disk_info.modelNum, id->ProductID, sizeof(disk_info.modelNum));
 	_aligned_free(identifyResp);
-    return;
+    return true;
 }
 
 /** Close the filehandle so this object can be delete. */

@@ -73,7 +73,7 @@ void DtaDevOS::init(const char * devref)
 
   dev = devref;
 
-  drive = DtaDevLinuxDrive::getDtaDevLinuxDriveSubclassInstance(devref) ;
+  drive = DtaDevLinuxDrive::getDtaDevLinuxDrive(devref) ;
 
   if (drive->init(devref))
     {
@@ -98,16 +98,16 @@ uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
   return drive->sendCmd(cmd, protocol, comID, buffer, bufferlen);
 }
 
-void DtaDevOS::identify(DTA_DEVICE_INFO& disk_info)
+bool DtaDevOS::identify(DTA_DEVICE_INFO& disk_info)
 {
-  if (!isOpen) return; //disk open failed so this will too
+  if (!isOpen) return false; //disk open failed so this will too
   if (NULL == drive)
     {
       LOG(E) << "DtaDevOS::identify ERROR - unknown disk type";
-      return;
+      return false;
     }
 
-  drive->identify(disk_info);
+  return drive->identify(disk_info);
 }
 
 void DtaDevOS::osmsSleep(uint32_t ms)

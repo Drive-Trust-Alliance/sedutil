@@ -116,7 +116,7 @@ public:
 	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 		void * buffer, uint32_t bufferlen);
 	/** OS specific routine to send an ATA identify to the device */
-	void identify(DTA_DEVICE_INFO& disk_info);
+	bool identify(DTA_DEVICE_INFO& disk_info);
 	void identifyPd(DTA_DEVICE_INFO& disk_info);
 	void identifyNVMeASMedia(DTA_DEVICE_INFO& disk_info);
 	void identifyNVMeRealtek(DTA_DEVICE_INFO& disk_info);

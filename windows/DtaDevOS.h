@@ -62,7 +62,7 @@ protected:
      */
 	void osmsSleep(uint32_t milliseconds);
         /** OS specific routine to send an ATA identify to the device */
-	void identify(DTA_DEVICE_INFO& disk_info);
+	bool identify(DTA_DEVICE_INFO& disk_info);
 	void identifyPd(DTA_DEVICE_INFO& disk_info);
 	void identifyNVMeASMedia(DTA_DEVICE_INFO& disk_info);
 	void identifyNVMeRealtek(DTA_DEVICE_INFO& disk_info);

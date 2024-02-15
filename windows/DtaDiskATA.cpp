@@ -79,7 +79,7 @@ uint8_t DtaDiskATA::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 	ata->CurrentTaskFile[1] = uint8_t(bufferlen / 512); // Payload in number of 512 blocks
 	ata->CurrentTaskFile[3] = (comID & 0x00ff); // Commid LSB
 	ata->CurrentTaskFile[4] = ((comID & 0xff00) >> 8); // Commid MSB
-	
+
     ata->DataBuffer = buffer;
     ata->DataTransferLength = bufferlen;
     ata->TimeOutValue = 1;
@@ -100,12 +100,12 @@ uint8_t DtaDiskATA::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 	LOG(D1) << "iorc = " << iorc << " GetLastError = " << lasterror << " taskfile[0] = " << ata->CurrentTaskFile[0];
 	if (0 != lasterror) return 1;
 	return 0;
-    
+
 }
 
 /** adds the IDENTIFY information to the disk_info structure */
 
-void DtaDiskATA::identify(DTA_DEVICE_INFO& disk_info)
+bool DtaDiskATA::identify(DTA_DEVICE_INFO& disk_info)
 {
     LOG(D1) << "Entering DtaDiskATA::identify()";
 	vector<uint8_t> nullz(512, 0x00);
@@ -122,7 +122,7 @@ void DtaDiskATA::identify(DTA_DEVICE_INFO& disk_info)
     }
 	if (!(memcmp(identifyResp, nullz.data(), 512))) {
 		disk_info.devType = DEVICE_TYPE_OTHER;
-		return;
+		return false;
 	}
     IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) identifyResp;
     disk_info.devType = DEVICE_TYPE_ATA;
@@ -140,7 +140,7 @@ void DtaDiskATA::identify(DTA_DEVICE_INFO& disk_info)
     }
 	disk_info.fips = * (((uint8_t *) identifyResp) + 506) & 0x02 ;
 	_aligned_free(identifyResp);
-    return;
+    return true;
 }
 
 /** Close the filehandle so this object can be delete. */

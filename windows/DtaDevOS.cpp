@@ -353,7 +353,7 @@ const unsigned long long DtaDevOS::getSize() {
 
 /** adds the IDENTIFY information to the disk_info structure */
 
-void DtaDevOS::identify(DTA_DEVICE_INFO& di)
+bool DtaDevOS::identify(DTA_DEVICE_INFO& di)
 {
 	return(disk->identify(di));
 }

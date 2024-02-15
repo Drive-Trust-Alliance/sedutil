@@ -32,7 +32,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <errno.h>
 #include <vector>
 #include <fstream>
-#include "DtaDevLinuxSerialAttachmentDrive.h"
+#include "DtaDevLinuxSA.h"
 #include "DtaHexDump.h"
 //
 // taken from <scsi/scsi.h> to avoid SCSI/ATA name collision
@@ -60,7 +60,7 @@ bool identifyUsingSCSIInquiry(int fd, InterfaceDeviceID interfaceDeviceIdentific
     uint8_t sense[18];
     uint8_t cdb[sizeof(CScsiCmdInquiry)];
 
-    LOG(D4) << "Entering DtaDevLinuxSerialAttachmentDrive::identify_SAS()";
+    LOG(D4) << "Entering DtaDevLinuxSA::identify_SAS()";
     uint8_t * buffer = (uint8_t *) aligned_alloc(IO_BUFFER_ALIGNMENT, MIN_BUFFER_LENGTH);
 
     memset(&cdb, 0, sizeof (cdb));
@@ -153,8 +153,8 @@ static
 bool deviceIsTPer_SAT(int fd, InterfaceDeviceID interfaceDeviceIdentification, std::unordered_map * identifyCharacteristics, DTA_DEVICE_INFO & di);
 
 
-DtaDevLinuxSerialAttachmentDrive *
-DtaDevLinuxSerialAttachmentDrive::getDtaDevLinuxSerialAttachmentDriveSubclassInstance(const char * devref, DTA_DEVICE_INFO * pdisk_info) {
+DtaDevLinuxSA *
+DtaDevLinuxSA::getDtaDevLinuxSA(const char * devref, DTA_DEVICE_INFO * pdisk_info) {
 
 
   if (access(devref, R_OK | W_OK)) {
@@ -211,13 +211,13 @@ using namespace std;
  *  Linux specific implementation using the SCSI generic interface and
  *  SCSI ATA Pass Through (12) command
  */
-DtaDevLinuxSerialAttachmentDrive::DtaDevLinuxSerialAttachmentDrive() {
+DtaDevLinuxSA::DtaDevLinuxSA() {
 isSAS = 0;
 }
 
-bool DtaDevLinuxSerialAttachmentDrive::init(const char * devref)
+bool DtaDevLinuxSA::init(const char * devref)
 {
-    LOG(D1) << "Creating DtaDevLinuxSerialAttachmentDrive::DtaDev() " << devref;
+    LOG(D1) << "Creating DtaDevLinuxSA::DtaDev() " << devref;
 	bool isOpen = FALSE;
 
     if (access(devref, R_OK | W_OK)) {
@@ -241,7 +241,7 @@ bool DtaDevLinuxSerialAttachmentDrive::init(const char * devref)
 }
 
 /** Send an ioctl to the device using pass through. */
-uint8_t DtaDevLinuxSerialAttachmentDrive::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+uint8_t DtaDevLinuxSA::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                          void * buffer, uint32_t bufferlen)
 {
     if(isSAS) {
@@ -251,7 +251,7 @@ uint8_t DtaDevLinuxSerialAttachmentDrive::sendCmd(ATACOMMAND cmd, uint8_t protoc
     uint8_t sense[32]; // how big should this be??
     uint8_t cdb[12];
 
-    LOG(D1) << "Entering DtaDevLinuxSerialAttachmentDrive::sendCmd";
+    LOG(D1) << "Entering DtaDevLinuxSA::sendCmd";
     memset(&cdb, 0, sizeof (cdb));
     memset(&sense, 0, sizeof (sense));
     memset(&sg, 0, sizeof (sg));
@@ -347,16 +347,16 @@ uint8_t DtaDevLinuxSerialAttachmentDrive::sendCmd(ATACOMMAND cmd, uint8_t protoc
     return (sense[11]);
 }
 
-void DtaDevLinuxSerialAttachmentDrive::identify(DTA_DEVICE_INFO& disk_info)
+bool DtaDevLinuxSA::identify(DTA_DEVICE_INFO& disk_info)
 {
-  LOG(D1) << "Entering DtaDevLinuxSerialAttachmentDrive::identify";
+  LOG(D1) << "Entering DtaDevLinuxSA::identify";
   sg_io_hdr_t sg;
   uint8_t sense[32]; // how big should this be??
   uint8_t cdb[12];
   memset(&cdb, 0, sizeof (cdb));
   memset(&sense, 0, sizeof (sense));
   memset(&sg, 0, sizeof (sg));
-  LOG(D4) << "Entering DtaDevLinuxSerialAttachmentDrive::identify()";
+  LOG(D4) << "Entering DtaDevLinuxSA::identify()";
   // uint8_t bus_sas = 0;
   vector<uint8_t> nullz(512, 0x00);
   uint8_t * buffer = (uint8_t *) memalign(IO_BUFFER_ALIGNMENT, MIN_BUFFER_LENGTH);
@@ -422,8 +422,8 @@ void DtaDevLinuxSerialAttachmentDrive::identify(DTA_DEVICE_INFO& disk_info)
   uint8_t result;
   result = sendCmd(IDENTIFY, 0, 0, buffer, 512 );
   if (result) {
-    LOG(D1) << "Exiting DtaDevLinuxSerialAttachmentDrive::identify (1)";
-    return;
+    LOG(D1) << "Exiting DtaDevLinuxSA::identify (1)";
+    return false;
   }
 
 
@@ -454,22 +454,21 @@ void DtaDevLinuxSerialAttachmentDrive::identify(DTA_DEVICE_INFO& disk_info)
     disk_info.devType = DEVICE_TYPE_OTHER;
     // XXX: ioctl call was aborted or returned no data, most probably
     //      due to driver not being libata based, let's try SAS instead.
-    identify_SAS(&disk_info);
-    LOG(D1) << "Exiting DtaDevLinuxSerialAttachmentDrive::identify (2)";
-    return;
+    LOG(D1) << "Exiting DtaDevLinuxSA::identify (2)";
+    return identify_SAS(&disk_info);
   }
 
 
   IDENTIFY_RESPONSE * id = (IDENTIFY_RESPONSE *) buffer;
   disk_info.devType = DEVICE_TYPE_ATA;
   // if (!bus_sas) {
-  //   LOG(D1) << "DtaDevLinuxSerialAttachmentDrive::identify (3) -- bus_sas==0, not flipping";
+  //   LOG(D1) << "DtaDevLinuxSA::identify (3) -- bus_sas==0, not flipping";
   //   memcpy(disk_info.serialNum, id->serialNumber, sizeof (disk_info.serialNum));
   //   memcpy(disk_info.firmwareRev, id->firmwareRevision, sizeof (disk_info.firmwareRev));
   //   memcpy(disk_info.modelNum, id->modelNum, sizeof (disk_info.modelNum));
 
   // } else {
-    // LOG(D1) << "DtaDevLinuxSerialAttachmentDrive::identify (3) -- bus_sas!=0, flipping";
+    // LOG(D1) << "DtaDevLinuxSA::identify (3) -- bus_sas!=0, flipping";
     // looks like linux does the byte flipping for you, but not for device on SAS
     for (unsigned int i = 0; i < sizeof (disk_info.serialNum); i += 2) {
       disk_info.serialNum[i] = id->serialNumber[i + 1];
@@ -515,13 +514,13 @@ void DtaDevLinuxSerialAttachmentDrive::identify(DTA_DEVICE_INFO& disk_info)
 
   // TODO: Also do discovery0 here.
 
-  LOG(D1) << "Exiting DtaDevLinuxSerialAttachmentDrive::identify (3)";
-  return;
+  LOG(D1) << "Exiting DtaDevLinuxSA::identify (3)";
+  return true;
 }
 
 
 /** Send an ioctl to the device using pass through. */
-uint8_t DtaDevLinuxSerialAttachmentDrive::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+uint8_t DtaDevLinuxSA::sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                          void * buffer, uint32_t bufferlen)
 {
     sg_io_hdr_t sg;
@@ -623,13 +622,13 @@ static void safecopy(uint8_t * dst, size_t dstsize, uint8_t * src, size_t srcsiz
     if (size < dstsize) memset(dst+size, '\0', dstsize-size);
 }
 
-void DtaDevLinuxSerialAttachmentDrive::identify_SAS(DTA_DEVICE_INFO *disk_info)
+void DtaDevLinuxSA::identify_SAS(DTA_DEVICE_INFO *disk_info)
 {
     sg_io_hdr_t sg;
     uint8_t sense[18];
     uint8_t cdb[sizeof(CScsiCmdInquiry)];
 
-    LOG(D4) << "Entering DtaDevLinuxSerialAttachmentDrive::identify_SAS()";
+    LOG(D4) << "Entering DtaDevLinuxSA::identify_SAS()";
     uint8_t * buffer = (uint8_t *) aligned_alloc(IO_BUFFER_ALIGNMENT, MIN_BUFFER_LENGTH);
 
     memset(&cdb, 0, sizeof (cdb));
@@ -712,8 +711,8 @@ void DtaDevLinuxSerialAttachmentDrive::identify_SAS(DTA_DEVICE_INFO *disk_info)
     return;
 }
 /** Close the device reference so this object can be delete. */
-DtaDevLinuxSerialAttachmentDrive::~DtaDevLinuxSerialAttachmentDrive()
+DtaDevLinuxSA::~DtaDevLinuxSA()
 {
-    LOG(D1) << "Destroying DtaDevLinuxSerialAttachmentDrive";
+    LOG(D1) << "Destroying DtaDevLinuxSA";
     close(fd);
 }

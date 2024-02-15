@@ -30,7 +30,7 @@
 
 
 
-DtaDevOS* DtaDevOS::getDtaDevOSSubclassInstance(const char * devref,
+DtaDevOS* DtaDevOS::getDtaDevOS(const char * devref,
                                                 DtaDevLinuxDrive * drive,
                                                 DTA_DEVICE_INFO & di,
                                                 bool genericIfNotTPer) {
@@ -63,7 +63,7 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref,
 
   DtaDevLinuxDrive * drive;
 
-  drive = DtaDevLinuxDrive::getDtaDevLinuxDriveSubclassInstance(devref, &disk_info);
+  drive = DtaDevLinuxDrive::getDtaDevLinuxDrive(devref, &disk_info);
   if (drive == NULL) {
     dev = NULL;
     LOG(E) << "Invalid or unsupported device " << devref;
@@ -71,7 +71,7 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref,
     return DTAERROR_COMMAND_ERROR;
   }
 
-  dev =  getDtaDevOSSubclassInstance(devref, drive, disk_info, genericIfNotTPer) ;
+  dev =  getDtaDevOS(devref, drive, disk_info, genericIfNotTPer) ;
   if (dev == NULL) {
     delete drive;
     LOG(E) << "Invalid or unsupported device " << devref;

@@ -44,7 +44,7 @@ public:
 	uint8_t	sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 		void * buffer, uint32_t bufferlen);
 	/** OS specific routine to send an ATA identify to the device */
-	void identify(DTA_DEVICE_INFO& disk_info);
+	bool identify(DTA_DEVICE_INFO& disk_info);
 private:
 
 	void *ataPointer; /**< pointer ro ATA_PASSTHROUGH_DIRECT structure */

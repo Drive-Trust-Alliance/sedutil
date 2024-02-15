@@ -194,7 +194,7 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
     return (sense[11]);
 }
 
-void DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
+bool DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
 {
   LOG(D1) << "Entering DtaDevLinuxSata::identify";
   sg_io_hdr_t sg;
@@ -270,7 +270,7 @@ void DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
   result = sendCmd(IDENTIFY, 0, 0, buffer, 512 );
   if (result) {
     LOG(D1) << "Exiting DtaDevLinuxSata::identify (1)";
-    return;
+    return false;
   }
 
 
@@ -301,9 +301,8 @@ void DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
     disk_info.devType = DEVICE_TYPE_OTHER;
     // XXX: ioctl call was aborted or returned no data, most probably
     //      due to driver not being libata based, let's try SAS instead.
-    identify_SAS(&disk_info);
     LOG(D1) << "Exiting DtaDevLinuxSata::identify (2)";
-    return;
+    return identify_SAS(&disk_info);
   }
 
 
@@ -363,7 +362,7 @@ void DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
   // TODO: Also do discovery0 here.
 
   LOG(D1) << "Exiting DtaDevLinuxSata::identify (3)";
-  return;
+  return true;
 }
 
 

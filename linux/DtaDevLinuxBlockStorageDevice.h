@@ -62,7 +62,7 @@ public:
   typedef <std::pair<DtaDevLinuxBlockStorageDevice *, DTA_DEVICE_INFO *> bsdPair;
   static std::vector<bsdPair> enumerateBlockStorageDevices();
 
-  static DtaDevLinuxBlockStorageDevice * getBlockStorageDevice(const char * devref, DTA_DEVICE_INFO * pdi);  // Factory for this class or subclass instances
+  static DtaDevLinuxBlockStorageDevice * getBlockStorageDevice(const char * devref, DTA_DEVICE_INFO &di);  // Factory for this class or subclass instances
 
 
   const DTA_DEVICE_INFO & device_info(void);  /**< Weak reference to Structure containing info from properties, including identify and discovery 0 if available
@@ -86,7 +86,7 @@ protected:
       pdevice_info(NULL)
   {};
 
-  DtaDevLinuxBlockStorageDevice(std::string deviceName, DTA_DEVICE_INFO * pdi)
+  DtaDevLinuxBlockStorageDevice(std::string deviceName, DTA_DEVICE_INFO & di)
     : deviceName(deviceName),
       pdevice_info(pdi)
   {init(deviceName.c_str());};

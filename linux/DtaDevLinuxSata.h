@@ -25,21 +25,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * Uses the SCSI generic ioctls to send commands to the
  * device
  */
-class DtaDevLinuxSata: public DtaDevLinuxDrive {
+class DtaDevLinuxSata: public DtaDevLinuxScsi {
 public:
-    /** Default constructor */
-    DtaDevLinuxSata();
-    /** Destructor */
-    ~DtaDevLinuxSata();
-    /** Sata Linux specific initialization.
-     * This function should perform the necessary authority and environment checking
-     * to allow proper functioning of the program, open the device, perform an ATA
-     * identify, add the fields from the identify response to the disk info structure
-     * and if the device is an ATA device perform a call to Discovery0() to complete
-     * the disk_info structure
-     * @param devref character representation of the device is standard OS lexicon
-     */
-    bool init(const char * devref);
+
     /** Sata Linux specific method to send an ATA command to the device
      * @param cmd ATA command to be sent to the device
      * @param protocol security protocol to be used in the command
@@ -49,12 +37,8 @@ public:
      */
     uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
             void * buffer, uint32_t bufferlen);
-    /** Linux specific routine to send an ATA identify to the device */
-    void identify(DTA_DEVICE_INFO& disk_info);
-    uint8_t sendCmd_SAS(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-            void * buffer, uint32_t bufferlen);
-    /** Linux specific routine to send an ATA identify to the device */
-    void identify_SAS(DTA_DEVICE_INFO *disk_info);
-    int fd; /**< Linux handle for the device  */
-    int isSAS; /* The device is sas */
+
+  /** Linux specific routine to send an ATA identify to the device */
+    bool identify(DTA_DEVICE_INFO& disk_info);
+
 };

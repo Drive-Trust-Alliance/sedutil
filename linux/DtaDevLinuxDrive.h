@@ -24,9 +24,16 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  */
 class DtaDevLinuxDrive {
 public:
-  DtaDevLinuxDrive(const char * devref);
+  DtaDevLinuxDrive(){};
 
-  virtual ~DtaDevLinuxDrive( void ) {};
+  /** Factory function to look at the devref and create an instance of the appropriate subclass of
+   *  DtaDevLinuxDrive
+   *
+   * @param devref OS device reference e.g. "/dev/sda"
+   * @param pdisk_info weak reference to DTA_DEVICE_INFO structure filled out during device identification
+   */
+  static DtaDevLinuxDrive * getDtaDevLinuxDrive(const char * devref,
+                                                DTA_DEVICE_INFO & disk_info);
 
 
 
@@ -44,22 +51,22 @@ public:
    *
    * If it is an ATA device, perform an ATA Identify,
    * or if SCSI (SAS) , perform a SCSI Inquiry,
-   * or if NVME, perform an NVMe *** TODO FIXME WHAT IS THE NVME COMMAND CALLED,
+   * or if NVME, perform an NVMe Identify,
    * and perform a call to discovery0() to complete the disk_info structure
    * @param disk_info reference to the device info structure to fill out
    */
-  virtual void identify(DTA_DEVICE_INFO& disk_info) = 0;
+  virtual bool identify(DTA_DEVICE_INFO& disk_info) = 0;
 
-  /** Factory function to look at the devref and create an instance of the appropriate subclass of
-   *  DtaDevLinuxDrive
-   *
-   * @param devref OS device reference e.g. "/dev/sda"
-   * @param pdisk_info weak reference to DTA_DEVICE_INFO structure filled out during device identification
-   */
-  static DtaDevLinuxDrive * getDtaDevLinuxDriveSubclassInstance(const char * devref, DTA_DEVICE_INFO * pdisk_info);
+  virtual ~DtaDevLinuxDrive( void ) {fdclose();}
 
 protected:
+
+  DtaDevLinuxDrive(int _fd) :fd(_fd) {}
+
   uint8_t discovery0(DTA_DEVICE_INFO & di);
   static int fdopen(const char * devref);
-  int fd; /**< Linux handle for the device  */
+  static void fdclose();
+
+  int fd=0; /**< Linux handle for the device  */
+
 };

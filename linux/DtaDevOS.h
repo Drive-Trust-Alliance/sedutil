@@ -68,17 +68,17 @@ protected:
   /** Short-circuit routine re-uses initialized drive and disk_info */
   DtaDevOS(const char * devref, DtaDevLinuxDrive * drive, DTA_DEVICE_INFO& disk_info);
 
-  static DtaDevOS* getDtaDevOSSubclassInstance(const char * devref,
-                                               DtaDevLinuxDrive * drive,
-                                               DTA_DEVICE_INFO & di,
-                                               bool genericIfNotTPer=false);
+  static DtaDevOS* getDtaDevOS(const char * devref,
+                               DtaDevLinuxDrive * drive,
+                               DTA_DEVICE_INFO & di,
+                               bool genericIfNotTPer=false);
 
   /** OS specific command to Wait for specified number of milliseconds
    * @param ms  number of milliseconds to wait
    */
   void osmsSleep(uint32_t ms);
   /** OS specific routine to send an ATA identify to the device */
-  void identify(DTA_DEVICE_INFO& disk_info);
+  bool identify(DTA_DEVICE_INFO& disk_info);
   /** return drive size in bytes */
   const unsigned long long getSize();
   int fd; /**< Linux handle for the device  */

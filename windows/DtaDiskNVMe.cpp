@@ -36,7 +36,7 @@ DtaDiskNVMe::DtaDiskNVMe() {};
 void DtaDiskNVMe::init(const char * devref)
 {
     LOG(D1) << "Creating DtaDiskNVMe::DtaDiskNVMe() " << devref;
-    
+
      hDev = CreateFile(devref,
                       GENERIC_WRITE | GENERIC_READ | GENERIC_EXECUTE,
                       FILE_SHARE_WRITE | FILE_SHARE_READ | FILE_SHARE_DELETE,
@@ -48,7 +48,7 @@ void DtaDiskNVMe::init(const char * devref)
 		 LOG(E) << "Unable to open the device " << devref;
 		 return;
 	 }
-    else 
+    else
         isOpen = TRUE;
 }
 uint8_t DtaDiskNVMe::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
@@ -68,7 +68,7 @@ uint8_t DtaDiskNVMe::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 	sptdwb.sptd.TargetId = 1;
 	sptdwb.sptd.Lun = 0;
 	sptdwb.sptd.SenseInfoLength = 32;
-	
+
 	sptdwb.sptd.DataTransferLength = bufferlen;
 	sptdwb.sptd.TimeOutValue = 2;
 	sptdwb.sptd.DataBuffer = buffer;
@@ -111,7 +111,7 @@ uint8_t DtaDiskNVMe::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 		LOG(E) << "Invalid IO Command";
 		return 1;
 	}
-	
+
 	BOOL iorc = DeviceIoControl(hDev,
 		IOCTL_SCSI_PASS_THROUGH_DIRECT,
 		&sptdwb,
@@ -131,7 +131,7 @@ uint8_t DtaDiskNVMe::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 
 /** adds the IDENTIFY information to the disk_info structure */
 
-void DtaDiskNVMe::identify(DTA_DEVICE_INFO& disk_info)
+bool DtaDiskNVMe::identify(DTA_DEVICE_INFO& disk_info)
 {
 	LOG(D1) << "Entering DtaDiskNVMe::identify()";
 	vector<uint8_t> nullz(512, 0x00);
@@ -144,18 +144,18 @@ void DtaDiskNVMe::identify(DTA_DEVICE_INFO& disk_info)
     if ((0x00 != iorc) && (0x04 != iorc)) {
 		printf("%s %d \n", "IDENTIFY Failed ", (uint16_t) iorc);
        _aligned_free(identifyResp);
-        return;
+        return false;
     }
 	if (!(memcmp(identifyResp, nullz.data(), 512))) {
 		disk_info.devType = DEVICE_TYPE_OTHER;
-		return;
+		return false;
 	}
 	SCSI_INQUIRY_RESPONSE * id = (SCSI_INQUIRY_RESPONSE *)identifyResp;
 	//memcpy(disk_info.serialNum, id->ProductSerial, sizeof(disk_info.serialNum));
 	memcpy(disk_info.firmwareRev, id->ProductRev, sizeof(id->ProductRev));
 	memcpy(disk_info.modelNum, id->ProductID, sizeof(id->ProductID));
 	_aligned_free(identifyResp);
-	return;
+	return true;
 }
 
 /** Close the filehandle so this object can be delete. */

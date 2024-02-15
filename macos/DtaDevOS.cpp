@@ -83,12 +83,12 @@ bool DtaDevOS::__init(const char *devref) {
     /* Apple OSX and iOS (Darwin). ------------------------------ */
 #if TARGET_IPHONE_SIMULATOR == 1
     /* iOS in Xcode simulator */
-    
+
     return true;
 
 #elif TARGET_OS_IPHONE == 1
     /* iOS on iPhone, iPad, etc. */
-    
+
     return true;
 
 #elif TARGET_OS_MAC == 1
@@ -123,12 +123,12 @@ void DtaDevOS::init(const char * devref)
     /* Apple OSX and iOS (Darwin). ------------------------------ */
 #if TARGET_IPHONE_SIMULATOR == 1
     /* iOS in Xcode simulator */
-    
+
         isOpen = true;
 
 #elif TARGET_OS_IPHONE == 1
     /* iOS on iPhone, iPad, etc. */
-    
+
         isOpen = true;
 
 #elif TARGET_OS_MAC == 1
@@ -185,12 +185,12 @@ void DtaDevOS::init(const char * devref, DTA_DEVICE_INFO &di) {
     /* Apple OSX and iOS (Darwin). ------------------------------ */
 #if TARGET_IPHONE_SIMULATOR == 1
     /* iOS in Xcode simulator */
-    
+
         isOpen = true;
 
 #elif TARGET_OS_IPHONE == 1
     /* iOS on iPhone, iPad, etc. */
-    
+
         isOpen = true;
 
 #elif TARGET_OS_MAC == 1
@@ -220,12 +220,12 @@ uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     /* Apple OSX and iOS (Darwin). ------------------------------ */
 #if TARGET_IPHONE_SIMULATOR == 1
     /* iOS in Xcode simulator */
-    
+
     return 0xfe;
 
 #elif TARGET_OS_IPHONE == 1
     /* iOS on iPhone, iPad, etc. */
-    
+
     return 0xfe;
 
 #elif TARGET_OS_MAC == 1
@@ -254,32 +254,32 @@ uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 }
 
 
-void DtaDevOS::identify()
+bool DtaDevOS::identify()
 {
 #if defined(__APPLE__) && defined(__MACH__)
     /* Apple OSX and iOS (Darwin). ------------------------------ */
 #if TARGET_IPHONE_SIMULATOR == 1
     /* iOS in Xcode simulator */
-    
+
 #elif TARGET_OS_IPHONE == 1
     /* iOS on iPhone, iPad, etc. */
 
 #elif TARGET_OS_MAC == 1
     /* OSX */
 
-    if (!isOpen) return; //disk open failed so this will too
+    if (!isOpen) return false; //disk open failed so this will too
 
     if (NULL == tPer)
     {
         LOG(E) << "DtaDevOS::identify ERROR - unknown drive type";
-        return;
+        return false;
     }
     kern_return_t ret = tPer -> identify(disk_info);
     if (kIOReturnSuccess != ret) {
         LOG(E) << "DtaDevOS::identify ERROR - " << HEXON(8) << ret;
-        return;
+        return false;
     }
-    
+    return true;
 #endif
 #endif  // defined(__APPLE__) && defined(__MACH__)
 }
@@ -296,7 +296,7 @@ int  DtaDevOS::diskScan()
     /* Apple OSX and iOS (Darwin). ------------------------------ */
 #if TARGET_IPHONE_SIMULATOR == 1
     /* iOS in Xcode simulator */
-    
+
 #elif TARGET_OS_IPHONE == 1
     /* iOS on iPhone, iPad, etc. */
 
@@ -369,7 +369,7 @@ int  DtaDevOS::diskScan()
                    blockStorageDevice->getSerialNum(),
                    blockStorageDevice->getVendorID(),
                    blockStorageDevice->getManufacturerName());
-            
+
         } else {
             fprintf(Output2FILE::Stream(), "%-25s %-8s  %-7s\n",
                    blockStorageDevice->getModelNum(),
@@ -399,7 +399,7 @@ DtaDevOS::~DtaDevOS()
     /* Apple OSX and iOS (Darwin). ------------------------------ */
 #if TARGET_IPHONE_SIMULATOR == 1
     /* iOS in Xcode simulator */
-    
+
 #elif TARGET_OS_IPHONE == 1
     /* iOS on iPhone, iPad, etc. */
 

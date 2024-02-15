@@ -27,15 +27,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 class DtaDevLinuxScsi: public DtaDevLinuxDrive {
 public:
 
-  virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                          void * buffer, uint32_t bufferlen);
-
-  virtual void identify(DTA_DEVICE_INFO& disk_info);
-
   /** Factory function to look at the devref and create an instance of
    *  (possibly the appropriate subclass of) DtaDevLinuxScsi, which will either be
    *  DtaDevLinuxScsi itself (for SAS drives) or
-   *  DtaDevLinuxSAT (SCSI/ATA translation for SATA drives)
+   *  DtaDevLinuxSata (SCSI/ATA translation for SATA drives)
    *    (if the device seems to know the SCSI ATA pass-through protocol)
    *
    *  Identification will be completed by attempting discovery0 and
@@ -47,6 +42,11 @@ public:
   static DtaDevLinuxScsi * getDtaDevLinuxScsi(const char * devref,
                                               DTA_DEVICE_INFO & disk_info);
 
+
+  virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+                          void * buffer, uint32_t bufferlen);
+
+  virtual bool identify(DTA_DEVICE_INFO& disk_info);
 
 protected:
   /** Perform a SCSI command using the SCSI generic interface.

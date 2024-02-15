@@ -126,7 +126,7 @@ public:
    */
   virtual void osmsSleep(uint32_t milliseconds) = 0;
   /** OS specific routine to identify the device and fill out the device information struct*/
-  virtual void identify(DTA_DEVICE_INFO& disk_info) = 0;
+  virtual bool identify(DTA_DEVICE_INFO& disk_info) = 0;
   /** OS specific routine to get size of the device */
   virtual const unsigned long long getSize() = 0;
   /*
