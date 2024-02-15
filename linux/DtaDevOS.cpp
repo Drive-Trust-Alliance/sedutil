@@ -117,7 +117,7 @@ void DtaDevOS::osmsSleep(uint32_t ms)
 }
 int  DtaDevOS::diskScan()
 {
-  char devname[25];
+  char devname[256];
   vector<string> devices;
   string tempstring;
 
@@ -127,13 +127,8 @@ int  DtaDevOS::diskScan()
     {
       struct dirent *dirent;
       while((dirent=readdir(dir))!=NULL) {
-        if((!fnmatch("sd[a-z]",dirent->d_name,0)) ||
-           (!fnmatch("nvme[0-9]",dirent->d_name,0)) ||
-           (!fnmatch("nvme[0-9][0-9]",dirent->d_name,0))
-           ) {
-          tempstring = dirent->d_name;
-          devices.push_back(tempstring);
-        }
+        tempstring = dirent->d_name;
+        devices.push_back(tempstring);
       }
       closedir(dir);
     }

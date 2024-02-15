@@ -62,7 +62,7 @@ public:
    */
   uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                   void * buffer, size_t bufferlen);
-  /** A static class to scan for supported drives */
+  /** A static function to scan for supported drives */
   static int diskScan();
 protected:
   /** Short-circuit routine re-uses initialized drive and disk_info */

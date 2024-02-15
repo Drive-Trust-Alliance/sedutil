@@ -1,22 +1,22 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
-This file is part of sedutil.
+   This file is part of sedutil.
 
-sedutil is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+   sedutil is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-sedutil is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   sedutil is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
+   You should have received a copy of the GNU General Public License
+   along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
- * C:E********************************************************************** */
+   * C:E********************************************************************** */
 
 #include <cstdint>
 #include <cstring>
@@ -25,6 +25,34 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaHexDump.h"
 #include "DtaDevLinuxNvme.h"
 #include "DtaDevLinuxSata.h"
+
+DtaDevLinuxDrive::DtaDevLinuxDrive(const char * devref)
+{
+  LOG(D1) << "Creating DtaDevLinuxDrive::DtaDev() " << devref;
+
+  if (access(devref, R_OK | W_OK)) {
+    LOG(E) << "You do not have permission to access the raw device in write mode";
+    LOG(E) << "Perhaps you might try sudo to run as root";
+  }
+
+  fd = open(devref, O_RDWR);
+
+  if (fd < 0) {
+    // This is a D1 because diskscan looks for open fail to end scan
+    LOG(D1) << "Error opening device " << devref << " " << (int32_t) fd;
+    //        if (-EPERM == fd) {
+    //            LOG(E) << "You do not have permission to access the raw disk in write mode";
+    //            LOG(E) << "Perhaps you might try sudo to run as root";
+    //        }
+  }
+}
+
+DtaDevLinuxDrive::~DtaDevLinuxDrive()
+{
+  if (0 <= fd) {
+    close(fd);
+  }
+}
 
 
 static
@@ -271,15 +299,42 @@ uint8_t DtaDevLinuxDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
   return DTAERROR_SUCCESS;
 }
 
-DtaDevLinuxDrive * DtaDevLinuxDrive::getDtaDevLinuxDriveSubclassInstance(const char * devref) {
- if (!strncmp(devref, "/dev/nvme", 9))
-    {
-      return new DtaDevLinuxNvme;
-    }
- if (!strncmp(devref, "/dev/s", 6))
-    {
-      return new DtaDevLinuxSata;
-    }
- return NULL;
 
+DtaDevLinuxDrive * DtaDevLinuxDrive::getDtaDevLinuxDriveSubclassInstance(const char * devref, DTA_DEVICE_INFO * pdisk_info) {
+  if( (0==fnmatch("nvme[0-9]",devref,0)) ||
+      (0==fnmatch("nvme[0-9][0-9]",devref,0))
+      ) {
+    return new DtaDevLinuxNvme(devref, pdisk_info);
+  }
+
+  if( (0==fnmatch("sd[a-z]",devref,0))
+      ) {
+    return DtaDevLinuxSerialAttachmentDrive::getDtaDevLinuxSerialAttachmentDriveSubclassInstance(devref, pdisk_info);
+  }
+
+  return NULL;
+}
+
+
+
+int DtaDevLinuxDrive::fdopen(const char * devref)
+{
+  LOG(D1) << "Creating DtaDevLinuxDrive::DtaDev() " << devref;
+
+  if (access(devref, R_OK | W_OK)) {
+    LOG(E) << "You do not have permission to access the raw device in write mode";
+    LOG(E) << "Perhaps you might try sudo to run as root";
+  }
+
+  int fd = open(devref, O_RDWR);
+
+  if (fd < 0) {
+    // This is a D1 because diskscan looks for open fail to end scan
+    LOG(D1) << "Error opening device " << devref << " " << (int32_t) fd;
+    //        if (-EPERM == fd) {
+    //            LOG(E) << "You do not have permission to access the raw disk in write mode";
+    //            LOG(E) << "Perhaps you might try sudo to run as root";
+    //        }
+  }
+  return fd;
 }

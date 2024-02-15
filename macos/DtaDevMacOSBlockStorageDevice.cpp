@@ -179,10 +179,10 @@ void DtaDevMacOSBlockStorageDevice::parse_properties_into_device_info() {
     
     
 // Sorting order
-bool DtaDevMacOSBlockStorageDevice::bsdNameLessThan(DtaDevMacOSBlockStorageDevice * a,
+bool DtaDevMacOSBlockStorageDevice::deviceNameLessThan(DtaDevMacOSBlockStorageDevice * a,
                                                     DtaDevMacOSBlockStorageDevice * b) {
-    const string & aName = a->bsdName;
-    const string & bName = b->bsdName;
+    const string & aName = a->deviceName;
+    const string & bName = b->deviceName;
     const auto aNameLength = aName.length();
     const auto bNameLength = bName.length();
     if (aNameLength < bNameLength ) {
@@ -225,7 +225,7 @@ std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enum
     bzero(nameBuffer,kCStringSize);
     
     string entryNameStr;
-    string bsdNameStr;
+    string deviceNameStr;
     
     // Iterate over nodes of class IOBlockStorageDevice or subclass thereof
     while ( (IO_OBJECT_NULL != (aBlockStorageDevice = IOIteratorNext( iterator )))) {
@@ -280,7 +280,7 @@ std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enum
         bzero(nameBuffer,kCStringSize);
         CFStringGetCString(GetString(mediaProperties, "BSD Name"),
                            nameBuffer, kCStringSize, kCFStringEncodingUTF8);
-        bsdNameStr = string(nameBuffer);
+        deviceNameStr = string(nameBuffer);
         
         bzero(nameBuffer,kCStringSize);
         GetName(media,nameBuffer);
@@ -289,7 +289,7 @@ std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enum
         pdi = static_cast <DTA_DEVICE_INFO *> (malloc(sizeof(DTA_DEVICE_INFO)));
         bzero(pdi, sizeof(DTA_DEVICE_INFO));
         
-        devices.push_back( getBlockStorageDevice(entryNameStr, bsdNameStr, allProperties, pdi) );
+        devices.push_back( getBlockStorageDevice(entryNameStr, deviceNameStr, allProperties, pdi) );
         
         IOObjectRelease(tPer);
         
@@ -300,7 +300,7 @@ std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enum
         IOObjectRelease(aBlockStorageDevice);
     }
     
-    sort(devices.begin(), devices.end(), DtaDevMacOSBlockStorageDevice::bsdNameLessThan);
+    sort(devices.begin(), devices.end(), DtaDevMacOSBlockStorageDevice::deviceNameLessThan);
     return devices;
 }
 
@@ -459,14 +459,14 @@ void DtaDevMacOSBlockStorageDevice::polishDeviceInfo(DTA_DEVICE_INFO & device_in
     // Factory for this class or subclass instances
 DtaDevMacOSBlockStorageDevice *
 DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(std::string entryName,
-                                                     std::string bsdName,
+                                                     std::string deviceName,
                                                      CFDictionaryRef properties,
                                                      DTA_DEVICE_INFO * pdi) {
 
     CFDictionaryRef tPerProperties = GetPropertiesDict("TPer");
     DtaDevMacOSBlockStorageDevice * d = (NULL != tPerProperties)
-        ? DtaDevMacOSTPer::getTPer(entryName, bsdName, tPerProperties, properties, pdi)
-        : new DtaDevMacOSBlockStorageDevice(entryName, bsdName, properties, pdi);
+        ? DtaDevMacOSTPer::getTPer(entryName, deviceName, tPerProperties, properties, pdi)
+        : new DtaDevMacOSBlockStorageDevice(entryName, deviceName, properties, pdi);
 
     // Polishing up the DTA_DEVICE_INFO
     DtaDevMacOSBlockStorageDevice::polishDeviceInfo(*pdi);
@@ -492,7 +492,7 @@ DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageD
     bzero(nameBuffer,kCStringSize);
     
     string entryName;
-    string bsdName;
+    string deviceName;
     
     
     std::vector<const void *>keys;
@@ -530,7 +530,7 @@ DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageD
     CFStringGetCString(GetString(mediaProperties, "BSD Name"),
                        nameBuffer, (CFIndex)kCStringSize, kCFStringEncodingUTF8);
     if (strncmp(nameBuffer, devref, kCStringSize) == 0) {
-        bsdName = string(nameBuffer);
+        deviceName = string(nameBuffer);
         
         bzero(nameBuffer,kCStringSize);
         GetName(media,nameBuffer);
@@ -541,7 +541,7 @@ DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(io_service_t aBlockStorageD
                                            NULL, NULL);
         
         foundDevice = DtaDevMacOSBlockStorageDevice::getBlockStorageDevice(entryName,
-                                                                           bsdName,
+                                                                           deviceName,
                                                                            allProperties,
                                                                            pdi);
     }
@@ -637,7 +637,7 @@ const char * DtaDevMacOSBlockStorageDevice::getPhysicalInterconnectLocation()
 }
 const char * DtaDevMacOSBlockStorageDevice::getBSDName()
 {
-    return (const char *)bsdName.c_str();
+    return (const char *)deviceName.c_str();
 }
 
 DTA_DEVICE_TYPE DtaDevMacOSBlockStorageDevice::getDevType()
@@ -646,7 +646,7 @@ DTA_DEVICE_TYPE DtaDevMacOSBlockStorageDevice::getDevType()
 }
 
 const std::string DtaDevMacOSBlockStorageDevice::getDevPath () {
-    return ("/dev/"+bsdName).substr(0,25);
+    return ("/dev/"+deviceName).substr(0,25);
 }
 
 const unsigned long long DtaDevMacOSBlockStorageDevice::getSize() {

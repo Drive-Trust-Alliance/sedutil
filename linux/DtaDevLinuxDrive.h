@@ -24,14 +24,11 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  */
 class DtaDevLinuxDrive {
 public:
+  DtaDevLinuxDrive(const char * devref);
+
   virtual ~DtaDevLinuxDrive( void ) {};
 
-  /**Initialization.
-   * This function should perform the necessary authority and environment checking
-   * to allow proper functioning of the program, open the device,
-   * @param devref character representation of the device is standard OS lexicon
-   */
-  virtual bool init(const char * devref) = 0;
+
 
   /** Method to send a command to the device
    * @param cmd command to be sent to the device
@@ -57,9 +54,12 @@ public:
    *  DtaDevLinuxDrive
    *
    * @param devref OS device reference e.g. "/dev/sda"
+   * @param pdisk_info weak reference to DTA_DEVICE_INFO structure filled out during device identification
    */
-  static DtaDevLinuxDrive * getDtaDevLinuxDriveSubclassInstance(const char * devref);
+  static DtaDevLinuxDrive * getDtaDevLinuxDriveSubclassInstance(const char * devref, DTA_DEVICE_INFO * pdisk_info);
 
 protected:
   uint8_t discovery0(DTA_DEVICE_INFO & di);
+  static int fdopen(const char * devref);
+  int fd; /**< Linux handle for the device  */
 };

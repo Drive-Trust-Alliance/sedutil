@@ -1,22 +1,22 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2022 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is Copyright 2014-2022 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
-This file is part of sedutil.
+   This file is part of sedutil.
 
-sedutil is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+   sedutil is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-sedutil is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   sedutil is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
+   You should have received a copy of the GNU General Public License
+   along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
- * C:E********************************************************************** */
+   * C:E********************************************************************** */
 
 
 #include "DtaDevOpal1.h"
@@ -31,13 +31,13 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 
 DtaDevOS* DtaDevOS::getDtaDevOSSubclassInstance(const char * devref,
-                                             DtaDevLinuxDrive * drive,
-                                             DTA_DEVICE_INFO & di,
-                                             bool genericIfNotTPer) {
+                                                DtaDevLinuxDrive * drive,
+                                                DTA_DEVICE_INFO & di,
+                                                bool genericIfNotTPer) {
   if (di.OPAL20)     return new DtaDevOpal2(devref, drive, di);
   if (di.OPAL10)     return new DtaDevOpal1(devref, drive, di);
   if (di.Enterprise) return new DtaDevEnterprise(devref, drive, di);
-//  if (di.RUBY) ...  etc.
+  //  if (di.RUBY) ...  etc.
 
   if (genericIfNotTPer) return new DtaDevGeneric(devref, drive, di);
 
@@ -58,32 +58,22 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref,
                               DtaDevOS * & dev, bool genericIfNotTPer)
 {
   LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\")";
+  DTA_DEVICE_INFO disk_info;
+  bzero(&disk_info, sizeof(disk_info));
+
   DtaDevLinuxDrive * drive;
 
-  drive = DtaDevLinuxDrive::getDtaDevLinuxDriveSubclassInstance(devref);
-  if (!drive) {
+  drive = DtaDevLinuxDrive::getDtaDevLinuxDriveSubclassInstance(devref, &disk_info);
+  if (drive == NULL) {
     dev = NULL;
     LOG(E) << "Invalid or unsupported device " << devref;
     LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
     return DTAERROR_COMMAND_ERROR;
   }
-
-  if (!(drive->init(devref))) {
-    delete drive;
-    dev = NULL;
-    LOG(E) << "Invalid or unsupported device " << devref;
-    LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
-    return DTAERROR_COMMAND_ERROR;
-  }
-
-  DTA_DEVICE_INFO disk_info;
-  memset(&disk_info, 0, sizeof(disk_info));
-
-  drive->identify(disk_info);
 
   dev =  getDtaDevOSSubclassInstance(devref, drive, disk_info, genericIfNotTPer) ;
-
-  if (!dev) {
+  if (dev == NULL) {
+    delete drive;
     LOG(E) << "Invalid or unsupported device " << devref;
     LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
     return DTAERROR_COMMAND_ERROR;
@@ -99,10 +89,12 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref,
 
 uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * & device, bool genericIfNotTPer)
 {
-    DtaDevOS * d;
-    uint8_t result = DtaDevOS::getDtaDevOS(devref, d, genericIfNotTPer);
-    if (result == DTAERROR_SUCCESS) {
-        device = static_cast<DtaDev *>(d);
-    }
-    return result;
+  DtaDevOS * d;
+  uint8_t result = DtaDevOS::getDtaDevOS(devref, d, genericIfNotTPer);
+  if (result == DTAERROR_SUCCESS) {
+    device = static_cast<DtaDev *>(d);
+  } else {
+    device = NULL ;
+  }
+  return result;
 }

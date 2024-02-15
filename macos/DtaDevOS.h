@@ -133,7 +133,7 @@ public:
 
     const char * vendorID() { return blockStorageDevice->getVendorID();}
     const char * serialNumber() { return blockStorageDevice->getSerialNum();}
-    const char * bsdName() { return blockStorageDevice->getBSDName();}
+    const char * deviceName() { return blockStorageDevice->getBSDName();}
     const char * modelNumber() { return blockStorageDevice->getModelNum();}
     const char * firmwareRevision() { return blockStorageDevice->getFirmwareRev();}
     const vector <uint8_t> worldWideName() { return blockStorageDevice->getWorldWideName();}

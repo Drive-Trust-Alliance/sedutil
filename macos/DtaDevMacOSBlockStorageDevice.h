@@ -32,10 +32,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 class DtaDevMacOSBlockStorageDevice {
 public:
     DtaDevMacOSBlockStorageDevice(std::string entryName,
-                                  std::string bsdName,
+                                  std::string deviceName,
                                   CFDictionaryRef properties,
                                   DTA_DEVICE_INFO * pdi)
-        : bsdName(bsdName),
+        : deviceName(deviceName),
           entryName(entryName),
           properties(properties),
           pdevice_info(pdi)
@@ -81,7 +81,7 @@ public:
     static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(const char * devref, DTA_DEVICE_INFO * pdi);  // Factory for this class or subclass instances
 
     static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(std::string entryName,
-                                                                 std::string bsdName,
+                                                                 std::string deviceName,
                                                                  CFDictionaryRef properties,
                                                                  DTA_DEVICE_INFO * pdi);  // Factory for this class or subclass instances
     
@@ -93,13 +93,13 @@ public:
 
 private:
 
-    std::string bsdName;
+    std::string deviceName;
     std::string entryName;
     CFDictionaryRef properties;
 
     // derived
     void parse_properties_into_device_info(void);
-    static bool bsdNameLessThan(DtaDevMacOSBlockStorageDevice * a,
+    static bool deviceNameLessThan(DtaDevMacOSBlockStorageDevice * a,
                                 DtaDevMacOSBlockStorageDevice * b);  // for sorting
 protected:
     DTA_DEVICE_INFO * pdevice_info;  /**< Weak reference to Structure containing info from properties, including identify and discovery 0 if available*/

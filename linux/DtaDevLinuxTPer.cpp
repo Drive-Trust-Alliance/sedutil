@@ -37,10 +37,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <SEDKernelInterface/SEDKernelInterface.h>
 
-#include "DtaMacOSConstants.h"
-#include "DtaDevMacOSTPer.h"
-#include "DtaDevMacOSTPer_SAT.h"
-#include "DtaDevMacOSTPer_SCSI.h"
+#include "DtaLinuxConstants.h"
+#include "DtaDevLinuxTPer.h"
+#include "DtaDevLinuxTPer_SAT.h"
+#include "DtaDevLinuxTPer_SCSI.h"
 
 using namespace std;
 
@@ -87,7 +87,7 @@ std::string cfStringToStdString(CFStringRef input)
 }
 
 
-DtaDevMacOSTPer * DtaDevMacOSTPer::getTPer(std::string entryName,
+DtaDevLinuxTPer * DtaDevLinuxTPer::getTPer(std::string entryName,
                                            std::string deviceName,
                                            CFDictionaryRef tPerProperties,
                                            CFDictionaryRef properties,
@@ -97,17 +97,17 @@ DtaDevMacOSTPer * DtaDevMacOSTPer::getTPer(std::string entryName,
         (CFStringRef)CFDictionaryGetValue(tPerProperties, CFSTR(IOInterfaceTypeKey));
     
     if (CFEqual(interfaceType, CFSTR(IOInterfaceTypeSAT))) {
-        return new DtaDevMacOSTPer_SAT(entryName, deviceName, properties, pdi);
+        return new DtaDevLinuxTPer_SAT(entryName, deviceName, properties, pdi);
     }
     
     if (CFEqual(interfaceType, CFSTR(IOInterfaceTypeSCSI))) {
-        return new DtaDevMacOSTPer_SCSI(entryName, deviceName, properties, pdi);
+        return new DtaDevLinuxTPer_SCSI(entryName, deviceName, properties, pdi);
     }
     
     return nil;
 }
 
-bool DtaDevMacOSTPer::findDriverService(const char * dev)
+bool DtaDevLinuxTPer::findDriverService(const char * dev)
 {
     io_registry_entry_t mediaService = findBSDName(dev);
     if (!mediaService)
@@ -123,7 +123,7 @@ bool DtaDevMacOSTPer::findDriverService(const char * dev)
 }
 
 
-uint8_t DtaDevMacOSTPer::connectToUserClient()
+uint8_t DtaDevLinuxTPer::connectToUserClient()
 {
     if (driverService == IO_OBJECT_NULL) {
         return DTAERROR_DRIVER_NOT_INSTALLED;
@@ -137,22 +137,22 @@ uint8_t DtaDevMacOSTPer::connectToUserClient()
     return KERN_SUCCESS;
 }
 
-bool DtaDevMacOSTPer::init(const char * dev, bool doConnect)
+bool DtaDevLinuxTPer::init(const char * dev, bool doConnect)
 {
     ClearOwnedIOObjects();
     return findDriverService(dev) && (!doConnect || KERN_SUCCESS==connectToUserClient());
 }
 
-void DtaDevMacOSTPer::init(io_registry_entry_t ds, io_connect_t c)
+void DtaDevLinuxTPer::init(io_registry_entry_t ds, io_connect_t c)
 {
     ClearOwnedIOObjects();
     driverService=ds;
     connect=c;
 }
 
-kern_return_t DtaDevMacOSTPer::identify(DTA_DEVICE_INFO& disk_info )
+kern_return_t DtaDevLinuxTPer::identify(DTA_DEVICE_INFO& disk_info )
 {
-    LOG(D4) << "Entering DtaDevMacOSTPer::identify()";
+    LOG(D4) << "Entering DtaDevLinuxTPer::identify()";
     kern_return_t result = TPerUpdate(connect, driverService, &disk_info);
     if (result == KERN_SUCCESS) {
         polishDeviceInfo(disk_info);
@@ -160,7 +160,7 @@ kern_return_t DtaDevMacOSTPer::identify(DTA_DEVICE_INFO& disk_info )
     return result;
 }
 
-uint8_t DtaDevMacOSTPer::isOpal2()
+uint8_t DtaDevLinuxTPer::isOpal2()
 {
     if (NULL == pdevice_info)
         return (uint8_t)NULL;
@@ -168,7 +168,7 @@ uint8_t DtaDevMacOSTPer::isOpal2()
         return pdevice_info->OPAL20;
 }
 
-uint8_t DtaDevMacOSTPer::isOpal1()
+uint8_t DtaDevLinuxTPer::isOpal1()
 {
     if (NULL == pdevice_info)
         return (uint8_t)NULL;
@@ -176,7 +176,7 @@ uint8_t DtaDevMacOSTPer::isOpal1()
         return pdevice_info->OPAL10;
 }
 
-uint8_t DtaDevMacOSTPer::isEprise()
+uint8_t DtaDevLinuxTPer::isEprise()
 {
     if (NULL == pdevice_info)
         return (uint8_t)NULL;
@@ -184,7 +184,7 @@ uint8_t DtaDevMacOSTPer::isEprise()
         return pdevice_info->Enterprise;
 }
 
-uint8_t DtaDevMacOSTPer::MBREnabled()
+uint8_t DtaDevLinuxTPer::MBREnabled()
 {
     if (NULL == pdevice_info)
         return (uint8_t)NULL;
@@ -192,7 +192,7 @@ uint8_t DtaDevMacOSTPer::MBREnabled()
         return pdevice_info->Locking_MBREnabled;
 }
 
-uint8_t DtaDevMacOSTPer::MBRDone()
+uint8_t DtaDevLinuxTPer::MBRDone()
 {
     if (NULL == pdevice_info)
         return (uint8_t)NULL;
@@ -200,7 +200,7 @@ uint8_t DtaDevMacOSTPer::MBRDone()
         return pdevice_info->Locking_MBRDone;
 }
 
-uint8_t DtaDevMacOSTPer::Locked()
+uint8_t DtaDevLinuxTPer::Locked()
 {
     if (NULL == pdevice_info)
         return (uint8_t)NULL;
@@ -208,7 +208,7 @@ uint8_t DtaDevMacOSTPer::Locked()
         return pdevice_info->Locking_locked;
 }
 
-uint8_t DtaDevMacOSTPer::LockingEnabled()
+uint8_t DtaDevLinuxTPer::LockingEnabled()
 {
     if (NULL == pdevice_info)
         return (uint8_t)NULL;
@@ -218,7 +218,7 @@ uint8_t DtaDevMacOSTPer::LockingEnabled()
 
 
 /** Close the device reference so this object can be delete. */
-void DtaDevMacOSTPer::ClearOwnedIOObjects()
+void DtaDevLinuxTPer::ClearOwnedIOObjects()
 {
     connect = IO_OBJECT_NULL;
     ownConnect = false;
@@ -228,7 +228,7 @@ void DtaDevMacOSTPer::ClearOwnedIOObjects()
 
 
 /** Close the device reference so this object can be delete. */
-void DtaDevMacOSTPer::ReleaseOwnedIOObjects()
+void DtaDevLinuxTPer::ReleaseOwnedIOObjects()
 {
     if ( connect && ownConnect ) {
         LOG(D1) << "Releasing owned connection";
@@ -246,9 +246,9 @@ void DtaDevMacOSTPer::ReleaseOwnedIOObjects()
 
 
 /** Close the device reference so this object can be delete. */
-DtaDevMacOSTPer::~DtaDevMacOSTPer()
+DtaDevLinuxTPer::~DtaDevLinuxTPer()
 {
-    LOG(D1) << "Destroying DtaDevMacOSTPer";
+    LOG(D1) << "Destroying DtaDevLinuxTPer";
     ReleaseOwnedIOObjects();
 }
 

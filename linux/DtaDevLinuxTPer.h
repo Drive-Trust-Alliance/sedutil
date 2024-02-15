@@ -21,16 +21,16 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 #if defined(__APPLE__) && defined(__MACH__)
 
-#include "DtaDevMacOSBlockStorageDevice.h"
+#include "DtaDevLinuxBlockStorageDevice.h"
 
 
 /** virtual implementation for a disk interface-generic TPer
  */
-class DtaDevMacOSTPer : public DtaDevMacOSBlockStorageDevice {
+class DtaDevLinuxTPer : public DtaDevLinuxBlockStorageDevice {
 public:
-    using DtaDevMacOSBlockStorageDevice::DtaDevMacOSBlockStorageDevice;
+    using DtaDevLinuxBlockStorageDevice::DtaDevLinuxBlockStorageDevice;
 
-    virtual ~DtaDevMacOSTPer();
+    virtual ~DtaDevLinuxTPer();
 
     /** Method to send a command to the device
      * @param cmd command to be sent to the device
@@ -77,7 +77,7 @@ public:
     /** Is the Locking SP enabled */
     uint8_t LockingEnabled();
 
-    static DtaDevMacOSTPer * getTPer(std::string entryName,
+    static DtaDevLinuxTPer * getTPer(std::string entryName,
                                      std::string deviceName,
                                      CFDictionaryRef tPerProperties,
                                      CFDictionaryRef properties,
