@@ -19,6 +19,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 #pragma once
 #include "DtaStructures.h"
+#include "InterfaceDeviceID.h"
 #include "DtaDevLinuxDrive.h"
 
 /** Linux specific implementation SCSI generic ioctls to send commands to the
@@ -48,8 +49,15 @@ public:
 
   virtual bool identify(DTA_DEVICE_INFO& disk_info);
 
+
 protected:
-  /** Perform a SCSI command using the SCSI generic interface.
+
+  DtaDevLinuxScsi(int _fd)
+    : DtaDevLinuxDrive(_fd)
+  {}
+
+
+  /** Perform a SCSI command using the SCSI generic interface. (static class function)
    *
    * @param fd              file descriptor of already-opened raw device file
    * @param dxfer_direction direction of transfer SG_DXFER_FROM/TO_DEV
@@ -66,8 +74,65 @@ protected:
   static int PerformSCSICommand(int fd,
                                 int dxfer_direction,
                                 uint8_t * cdb,   unsigned char cdb_len,
-                                void * buffer,   unsigned_int bufferlen,
+                                void * buffer,   unsigned int bufferlen,
                                 uint8_t * sense, unsigned char senselen,
                                 unsigned char * pmasked_status);
+
+
+  /** Perform a SCSI command using the SCSI generic interface. (member function)
+   *
+   * @param dxfer_direction direction of transfer SG_DXFER_FROM/TO_DEV
+   * @param cdb             SCSI command data buffer
+   * @param cdb_len         length of SCSI command data buffer (often 12)
+   * @param buffer          SCSI data buffer
+   * @param bufferlen       SCSI data buffer len, also output transfer length
+   * @param sense           SCSI sense data buffer
+   * @param senselen        SCSI sense data buffer len (usually 32?)
+   * @param pmasked_status  pointer to storage for masked_status, or NULL if not desired
+   *
+   * Returns the result of the ioctl call, as well as possibly setting *pmasked_status
+   */
+  int PerformSCSICommand(int dxfer_direction,
+                         uint8_t * cdb,   unsigned char cdb_len,
+                         void * buffer,   unsigned int bufferlen,
+                         uint8_t * sense, unsigned char senselen,
+                         unsigned char * pmasked_status)
+  {
+    return PerformSCSICommand(fd,
+                              dxfer_direction,
+                              cdb, cdb_len,
+                              buffer, bufferlen,
+                              sense, senselen,
+                              pmasked_status);
+  }
+
+
+private:
+  static
+  bool identifyUsingSCSIInquiry(int fd,
+                                InterfaceDeviceID interfaceDeviceIdentification,
+                                DTA_DEVICE_INFO & disk_info);
+  static
+  bool deviceIsStandardSCSI(int fd,
+                            InterfaceDeviceID & interfaceDeviceIdentification,
+                            DTA_DEVICE_INFO & disk_info);
+
+  static
+  int inquiryStandardDataAll_SCSI( fd, void * inquiryResponse, size_t dataSize );
+
+  static
+  int __inquiry(int fd, uint8_t evpd, uint8_t page_code, void * buffer, size_t & dataSize);
+
+
+  static
+  std::map<std::string,std::string> *
+  parseInquiryStandardDataAllResponse(const unsigned char * response,
+                                      InterfaceDeviceID & interfaceDeviceIdentification,
+                                      DTA_DEVICE_INFO & di);
+
+
+  bool deviceIsSata(const InterfaceDeviceID & interfaceDeviceIdentification,
+                    DTA_DEVICE_INFO &di,
+                    std::map<std::string,std::string> ** pIdentifyCharacteristics);
 
 };

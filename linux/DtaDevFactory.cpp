@@ -59,21 +59,28 @@ DtaDevOS* DtaDevOS::getDtaDevOS(const char * devref,
 
 uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * & device, bool genericIfNotTPer)
 {
-  // DtaDevOS * d;
-  // uint8_t result = DtaDevOS::getDtaDevOS(devref, d, genericIfNotTPer);
-  // if (result == DTAERROR_SUCCESS) {
-  //   device = static_cast<DtaDev *>(d);
-  // } else {
-  //   device = NULL ;
-  // }
-  // return result;
-  return DtaDevOS::getDtaDevOS(devref, static_cast<DtaDevOS * &>(device), genericIfNotTPer);
+  DtaDevOS * d;
+  uint8_t result = DtaDevOS::getDtaDevOS(devref, d, genericIfNotTPer);
+  if (result == DTAERROR_SUCCESS) {
+    device = static_cast<DtaDev *>(d);
+  } else {
+    device = NULL ;
+  }
+  return result;
 }
 
 
 
 DtaDevLinuxDrive * DtaDevLinuxDrive::getDtaDevLinuxDrive(const char * devref,
                                                          DTA_DEVICE_INFO &disk_info) {
-  return DtaDevLinuxNvme::getDtaDevLinuxNvme(devref, disk_info, fd)
-    ||   DtaDevLinuxScsi::getDtaDevLinuxScsi(devref, disk_info, fd);
+
+  DtaDevLinuxDrive * drive ;
+
+  if ( (drive = DtaDevLinuxNvme::getDtaDevLinuxNvme(devref, disk_info)) != NULL )
+    return drive ;
+
+  if ( (drive = DtaDevLinuxScsi::getDtaDevLinuxScsi(devref, disk_info)) != NULL )
+    return drive ;
+
+  return NULL ;
 }

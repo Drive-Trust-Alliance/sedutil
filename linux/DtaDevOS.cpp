@@ -62,7 +62,7 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref,
   DTA_DEVICE_INFO disk_info;
   bzero(&disk_info, sizeof(disk_info));
 
-  DtaDevLinuxDrive * drive = DtaDevLinuxDrive::getDtaDevLinuxDrive(devref, &disk_info);
+  DtaDevLinuxDrive * drive = DtaDevLinuxDrive::getDtaDevLinuxDrive(devref, disk_info);
   if (drive == NULL) {
     dev = NULL;
     LOG(E) << "Invalid or unsupported device " << devref;
@@ -127,14 +127,14 @@ int  DtaDevOS::diskScan()
 
   DIR *dir = opendir("/dev");
   if (dir==NULL) {
-    LOG(E) < "Can't read /dev ?!";
+    LOG(E) << "Can't read /dev ?!";
     return 0xff;
   }
 
   vector<string> devices;
 
   struct dirent *dirent;
-  while (dirent=readdir(dir))
+  while (NULL != (dirent=readdir(dir)))
     devices.push_back(string(dirent->d_name));
   closedir(dir);
 

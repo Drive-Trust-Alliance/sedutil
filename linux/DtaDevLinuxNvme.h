@@ -51,4 +51,8 @@ public:
     /** NVMe specific routine to send an identify to the device */
     bool identify(DTA_DEVICE_INFO& disk_info);
 
+  DtaDevLinuxNvme(int _fd)
+    : DtaDevLinuxDrive(_fd)
+  {}
+
 };

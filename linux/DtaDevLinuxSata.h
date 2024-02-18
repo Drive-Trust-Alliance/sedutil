@@ -19,7 +19,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 #pragma once
 #include "DtaStructures.h"
-#include "DtaDevLinuxDrive.h"
+#include "DtaDevLinuxScsi.h"
 
 /** Linux specific implementation of DtaDevOS.
  * Uses the SCSI generic ioctls to send commands to the
@@ -40,5 +40,10 @@ public:
 
   /** Linux specific routine to send an ATA identify to the device */
     bool identify(DTA_DEVICE_INFO& disk_info);
+
+
+  DtaDevLinuxSata(int _fd)
+    : DtaDevLinuxScsi(_fd)
+  {}
 
 };

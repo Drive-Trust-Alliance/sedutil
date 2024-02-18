@@ -23,7 +23,7 @@
 #include "os.h"
 #include "DtaEndianFixup.h"
 #include "DtaHexDump.h"
-
+#include "DtaDevLinuxDrive.h"
 
 static
 uint8_t acquireDiscovery0Response(DtaDevLinuxDrive * drive, uint8_t * d0Response)
@@ -289,7 +289,7 @@ int DtaDevLinuxDrive::fdopen(const char * devref)
   return fd;
 }
 
-DtaDevLinuxDrive::fdclose()
+void DtaDevLinuxDrive::fdclose()
 {
   if (0 <= fd) {
     close(fd);

@@ -32,6 +32,7 @@
 #include <fstream>
 #include "DtaDevLinuxNvme.h"
 #include "DtaHexDump.h"
+#include <fnmatch.h>
 
 #define  NVME_SECURITY_SEND 0x81
 #define  NVME_SECURITY_RECV 0x82
@@ -45,14 +46,14 @@ using namespace std;
 
 DtaDevLinuxNvme * DtaDevLinuxNvme::getDtaDevLinuxNvme(const char * devref,
                                                       DTA_DEVICE_INFO & disk_info) {
-  if (!(0 == fnmatch("nvme[0-9]", devref) ||
-        0 == fnmatch("nvme[1-9][0-9]", devref)))
+  if (!(0 == fnmatch("nvme[0-9]",      devref, 0) ||
+        0 == fnmatch("nvme[1-9][0-9]", devref, 0) ))
     return NULL;
 
-  int fd=fdopen(devref);
-  if (fd < 0) {
+  int fd_=fdopen(devref);
+  if (fd_ < 0) {
     // This is a D1 because diskscan looks for open fail to end scan
-    LOG(D1) << "Error opening device " << devref << " " << (int32_t) fd;
+    LOG(D1) << "Error opening device " << devref << " " << (int32_t) fd_;
     //        if (-EPERM == fd) {
     //            LOG(E) << "You do not have permission to access the raw disk in write mode";
     //            LOG(E) << "Perhaps you might try sudo to run as root";
@@ -61,22 +62,17 @@ DtaDevLinuxNvme * DtaDevLinuxNvme::getDtaDevLinuxNvme(const char * devref,
   }
 
 
-  LOG(D1) << "Success opening device " << devref << " as file handle " << (int32_t) fd;
+  LOG(D1) << "Success opening device " << devref << " as file handle " << (int32_t) fd_;
 
 
-  DtaDevLinuxNvme * drive = new DtaDevLinuxNvme(fd);
+  DtaDevLinuxNvme * drive = new DtaDevLinuxNvme((int)fd_);
 
   if (!drive->identify(disk_info)) {
-    LOG(E) << " Device "<< devref <<" is NOT Nvme?! -- file handle " << (int32_t) fd;
+    LOG(E) << " Device "<< devref <<" is NOT Nvme?! -- file handle " << (int32_t) fd_;
     delete drive; // => close(fd)
     drive = NULL ;
   } else {
-    if ( drive -> discovery0(disk_info) ) {
-      LOG(D4) << " Device "<< devref <<" is an Nvme TPer" ;
-    } else {
-      LOG(D4) << " Device "<< devref <<" is an Nvme but not a TPer -- assuming plain Nvme" ;
-    }
-
+    LOG(D4) << " Device "<< devref <<" is Nvme" ;
   }
   return drive;
 }

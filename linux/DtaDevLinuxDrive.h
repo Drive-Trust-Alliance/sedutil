@@ -18,6 +18,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
+#include <fcntl.h>
 #include "DtaStructures.h"
 
 /** virtual implementation for a disk interface-generic disk drive
@@ -60,18 +61,18 @@ public:
 
   uint8_t discovery0(DTA_DEVICE_INFO & di);
 
-  bool isOpen() {return 0<fd && (fcntl(fd, F_GETFL) != -1 || errno != EBADF);}
-
-protected:
+  bool isOpen(void) {return 0<fd && (fcntl(fd, F_GETFL) != -1 || errno != EBADF);}
 
   DtaDevLinuxDrive(int _fd) :fd(_fd) {}
 
+protected:
+
   static int fdopen(const char * devref);
-  static void fdclose();
+  void fdclose(void);
 
   int fd=0; /**< Linux handle for the device  */
 
-private:
-  DtaDevLinuxDrive(){};
+// private:
+//   DtaDevLinuxDrive(){};
 
 };

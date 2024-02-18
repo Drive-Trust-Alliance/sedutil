@@ -34,6 +34,12 @@ Common/DtaResponse.cpp \
 Common/DtaResponse.h \
 Common/DtaSession.cpp \
 Common/DtaSession.h \
+Common/ParseATIdentify.h \
+Common/ParseATIdentify.cpp \
+Common/ParseATIdentify.h \
+Common/ParseATIdentify.cpp \
+Common/InterfaceDeviceID.h \
+Common/InterfaceDeviceID.cpp \
 Common/DtaStructures.h
 
 SEDUTIL_LINUX_CODE = \
@@ -44,10 +50,12 @@ linux/DtaDevOS.cpp \
 linux/DtaDevFactory.cpp \
 linux/DtaDevLinuxDrive.h \
 linux/DtaDevLinuxDrive.cpp \
+linux/DtaDevLinuxNvme.h \
+linux/DtaDevLinuxNvme.cpp \
+linux/DtaDevLinuxScsi.h \
+linux/DtaDevLinuxScsi.cpp \
 linux/DtaDevLinuxSata.h \
-linux/DtaDevLinuxSata.cpp \
-linux/DtaDevLinuxNvme.h  \
-linux/DtaDevLinuxNvme.cpp
+linux/DtaDevLinuxSata.cpp
 
 SEDUTIL_CUSTOMIZATIONS_COMMON_CODE = \
 Customizations/Common/DtaAuthorizeSedutilExecution.cpp \

@@ -28,6 +28,8 @@ public:
   /** Destructor */
   ~DtaDevOS();
 
+  void init(const char * devref){};  // legacy  ** TODO **
+
   /** Factory method to produce instance of appropriate subclass
    *   Note that all of DtaDevGeneric, DtaDevEnterprise, DtaDevOpal, ... derive from DtaDevOS
    * @param devref             name of the device in the OS lexicon
@@ -54,12 +56,12 @@ public:
   /** A static function to scan for supported drives */
   static int diskScan();
 
-protected:
   /** Short-circuit routine re-uses initialized drive and disk_info */
   DtaDevOS(const char * devref, DtaDevLinuxDrive * drv, DTA_DEVICE_INFO & di)
-    : dev(devref), disk_info(di), drive(drv), isOpen(drv!=NULL && drv->isOpen())
-  {};
+    : drive(drv)
+  {dev=devref; disk_info=di; isOpen=(drv!=NULL && drv->isOpen());};
 
+protected:
   /** Minimal internal type-switching routine
    *
    *  Checks that the drive responds to discovery0.
@@ -89,13 +91,14 @@ private:
   /* Protocol-specific subclass instance -- Nvme, Scsi, Sata, ... */
   DtaDevLinuxDrive *drive;
 
-  /** Default constructor */
-  DtaDevOS()
-    : dev(""), drive(NULL), isOpen(FALSE)
-  {
-    bzero(di, sizeof(di));
-    assert(FALSE);  // ***TODO*** this is never used
-  };
+  // /** Default constructor */
+  // DtaDevOS()
+  //   : drive(NULL)
+  // { dev=NULL;
+  //   isOpen=FALSE;
+  //   bzero(&disk_info, sizeof(disk_info));
+  //   assert(FALSE);  // ***TODO*** this is never used
+  // };
 
 
 
