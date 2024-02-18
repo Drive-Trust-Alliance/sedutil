@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -23,17 +23,6 @@
 #include "os.h"
 #include "DtaEndianFixup.h"
 #include "DtaHexDump.h"
-#include "DtaDevLinuxNvme.h"
-#include "DtaDevLinuxScsi.h"
-
-
-
-
-DtaDevLinuxDrive * DtaDevLinuxDrive::getDtaDevLinuxDrive(const char * devref,
-                                                         DTA_DEVICE_INFO &disk_info) {
-  return DtaDevLinuxNvme::getDtaDevLinuxNvme(devref, disk_info, fd)
-      || DtaDevLinuxScsi::getDtaDevLinuxScsi(devref, disk_info, fd);
-}
 
 
 static
@@ -283,20 +272,15 @@ uint8_t DtaDevLinuxDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
 
 int DtaDevLinuxDrive::fdopen(const char * devref)
 {
-  LOG(D1) << "Creating DtaDevLinuxDrive::DtaDev() " << devref;
-
   if (access(devref, R_OK | W_OK)) {
     LOG(E) << "You do not have permission to access the raw device in write mode";
     LOG(E) << "Perhaps you might try sudo to run as root";
   }
 
-  char devpath[MAXPATH];
-  snprintf(devpath, MAXPATH, "/dev/%s", devref);
-  int fd = open(devpath, O_RDWR);
+  int fd = open(devref, O_RDWR);
 
   if (fd < 0) {
-    // This is a D1 because diskscan looks for open fail to end scan
-    LOG(D1) << "Error opening device " << devpath << " " << (int32_t) fd;
+    LOG(E) << "Error opening device " << devref << " " << (int32_t) fd;
     //        if (-EPERM == fd) {
     //            LOG(E) << "You do not have permission to access the raw disk in write mode";
     //            LOG(E) << "Perhaps you might try sudo to run as root";

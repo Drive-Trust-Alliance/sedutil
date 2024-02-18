@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright 2014-2022 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -22,23 +22,34 @@
 #include "DtaDevOpal1.h"
 #include "DtaDevOpal2.h"
 #include "DtaDevEnterprise.h"
-#include "DtaDevLinuxNvme.h"
-#include "DtaDevLinuxSata.h"
 #include "DtaDevGeneric.h"
+
+#include "DtaDevLinuxNvme.h"
+#include "DtaDevLinuxScsi.h"
+
 // TODO: Below Just for Debugging
 #include "DtaHexDump.h"
 
 
+/** Factory functions
+ *
+ * Static class members that support instantiation of subclass members
+ * with the subclass switching logic localized here for easier maintenance.
+ *
+ */
+
+
 
 DtaDevOS* DtaDevOS::getDtaDevOS(const char * devref,
-                                                DtaDevLinuxDrive * drive,
-                                                DTA_DEVICE_INFO & di,
-                                                bool genericIfNotTPer) {
-  if (di.OPAL20)     return new DtaDevOpal2(devref, drive, di);
-  if (di.OPAL10)     return new DtaDevOpal1(devref, drive, di);
-  if (di.Enterprise) return new DtaDevEnterprise(devref, drive, di);
-  //  if (di.RUBY) ...  etc.
-
+                                DtaDevLinuxDrive * drive,
+                                DTA_DEVICE_INFO & di,
+                                bool genericIfNotTPer) {
+  if (DTAERROR_SUCCESS == drive->discovery0(di)) {  // drive responds to most basic IF_RECV
+    if (di.OPAL20)        return new DtaDevOpal2(devref, drive, di);
+    if (di.OPAL10)        return new DtaDevOpal1(devref, drive, di);
+    if (di.Enterprise)    return new DtaDevEnterprise(devref, drive, di);
+    //  if (di.RUBY) ...  etc.
+  }
   if (genericIfNotTPer) return new DtaDevGeneric(devref, drive, di);
 
   LOG(E) << "Unknown OPAL SSC ";
@@ -46,55 +57,23 @@ DtaDevOS* DtaDevOS::getDtaDevOS(const char * devref,
 }
 
 
-/** Factory method to produce instance of appropriate subclass
- *   Note that all of DtaDevGeneric, DtaDevEnterprise, DtaDevOpal, ... derive from DtaDevOS
- * @param devref             name of the device in the OS lexicon
- * @param dev                reference into which to store the address of the new instance
- * @param genericIfNotTPer   if true, store an instance of DtaDevGeneric for non-TPers;
- *                           if false, store NULL for non-TPers
- */
-// static
-uint8_t DtaDevOS::getDtaDevOS(const char * devref,
-                              DtaDevOS * & dev, bool genericIfNotTPer)
+uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * & device, bool genericIfNotTPer)
 {
-  LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\")";
-  DTA_DEVICE_INFO disk_info;
-  bzero(&disk_info, sizeof(disk_info));
-
-  DtaDevLinuxDrive * drive;
-
-  drive = DtaDevLinuxDrive::getDtaDevLinuxDrive(devref, &disk_info);
-  if (drive == NULL) {
-    dev = NULL;
-    LOG(E) << "Invalid or unsupported device " << devref;
-    LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
-    return DTAERROR_COMMAND_ERROR;
-  }
-
-  dev =  getDtaDevOS(devref, drive, disk_info, genericIfNotTPer) ;
-  if (dev == NULL) {
-    delete drive;
-    LOG(E) << "Invalid or unsupported device " << devref;
-    LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
-    return DTAERROR_COMMAND_ERROR;
-  }
-
-
-  LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") disk_info:";
-  DtaHexDump(&disk_info, (int)sizeof(disk_info));
-  LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_SUCCESS";
-  return DTAERROR_SUCCESS;
+  // DtaDevOS * d;
+  // uint8_t result = DtaDevOS::getDtaDevOS(devref, d, genericIfNotTPer);
+  // if (result == DTAERROR_SUCCESS) {
+  //   device = static_cast<DtaDev *>(d);
+  // } else {
+  //   device = NULL ;
+  // }
+  // return result;
+  return DtaDevOS::getDtaDevOS(devref, static_cast<DtaDevOS * &>(device), genericIfNotTPer);
 }
 
 
-uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * & device, bool genericIfNotTPer)
-{
-  DtaDevOS * d;
-  uint8_t result = DtaDevOS::getDtaDevOS(devref, d, genericIfNotTPer);
-  if (result == DTAERROR_SUCCESS) {
-    device = static_cast<DtaDev *>(d);
-  } else {
-    device = NULL ;
-  }
-  return result;
+
+DtaDevLinuxDrive * DtaDevLinuxDrive::getDtaDevLinuxDrive(const char * devref,
+                                                         DTA_DEVICE_INFO &disk_info) {
+  return DtaDevLinuxNvme::getDtaDevLinuxNvme(devref, disk_info, fd)
+    ||   DtaDevLinuxScsi::getDtaDevLinuxScsi(devref, disk_info, fd);
 }

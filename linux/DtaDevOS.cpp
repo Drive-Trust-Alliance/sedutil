@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -44,44 +44,60 @@
 
 using namespace std;
 
-/** The Device class represents a Linux generic storage device.
- * At initialization we determine if we map to the NVMe or SATA derived class
+
+
+
+/** Factory method to produce instance of appropriate subclass
+ *   Note that all of DtaDevGeneric, DtaDevEnterprise, DtaDevOpal, ... derive from DtaDevOS
+ * @param devref             name of the device in the OS lexicon
+ * @param dev                reference into which to store the address of the new instance
+ * @param genericIfNotTPer   if true, store an instance of DtaDevGeneric for non-TPers;
+ *                           if false, store NULL for non-TPers
  */
+// static
+uint8_t DtaDevOS::getDtaDevOS(const char * devref,
+                              DtaDevOS * & dev, bool genericIfNotTPer)
+{
+  LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\")";
+  DTA_DEVICE_INFO disk_info;
+  bzero(&disk_info, sizeof(disk_info));
+
+  DtaDevLinuxDrive * drive = DtaDevLinuxDrive::getDtaDevLinuxDrive(devref, &disk_info);
+  if (drive == NULL) {
+    dev = NULL;
+    LOG(E) << "Invalid or unsupported device " << devref;
+    LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
+    return DTAERROR_COMMAND_ERROR;
+  }
+
+  dev =  getDtaDevOS(devref, drive, disk_info, genericIfNotTPer) ;
+  if (dev == NULL) {
+    delete drive;
+    LOG(E) << "Invalid or unsupported device " << devref;
+    LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
+    return DTAERROR_COMMAND_ERROR;
+  }
+
+
+  LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") disk_info:";
+  DtaHexDump(&disk_info, (int)sizeof(disk_info));
+  LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_SUCCESS";
+  return DTAERROR_SUCCESS;
+}
+
+
+/** The Device class represents a Linux generic storage device.
+ * At instantiation we determine if we create an instance of the NVMe or SATA or Scsi (SAS) derived class
+ */
+
 const unsigned long long DtaDevOS::getSize()
 { return 0;
 }
+
+
 DtaDevOS::DtaDevOS()
 {
   drive = NULL;
-}
-
-DtaDevOS::DtaDevOS(const char * devref, DtaDevLinuxDrive * d, DTA_DEVICE_INFO& di) {
-  dev = devref ;
-  drive = d ;
-  memcpy(&disk_info, &di, sizeof(DTA_DEVICE_INFO));
-  isOpen = TRUE;
-}
-
-/* Determine which type of drive we're using and instantiate a derived class of that type */
-/* This function is obsolete.  Use `DtaDevOS::getDtaDevOS' to obtain an initialized       */
-/* instance of the appropriate subclass of DtaDevOS.                                      */
-void DtaDevOS::init(const char * devref)
-{
-  LOG(D1) << "DtaDevOS::init " << devref;
-
-  memset(&disk_info, 0, sizeof(DTA_DEVICE_INFO));
-
-  dev = devref;
-
-  drive = DtaDevLinuxDrive::getDtaDevLinuxDrive(devref) ;
-
-  if (drive->init(devref))
-    {
-      isOpen = TRUE;
-      drive->identify(disk_info);
-    }
-  else
-    isOpen = FALSE;
 }
 
 uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
@@ -100,14 +116,8 @@ uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
 
 bool DtaDevOS::identify(DTA_DEVICE_INFO& disk_info)
 {
-  if (!isOpen) return false; //disk open failed so this will too
-  if (NULL == drive)
-    {
-      LOG(E) << "DtaDevOS::identify ERROR - unknown disk type";
-      return false;
-    }
-
-  return drive->identify(disk_info);
+  return drive->identify(disk_info)
+    &&   DTAERROR_SUCCESS == drive->discovery0(disk_info);
 }
 
 void DtaDevOS::osmsSleep(uint32_t ms)
@@ -115,44 +125,55 @@ void DtaDevOS::osmsSleep(uint32_t ms)
   usleep(ms * 1000); //convert to microseconds
   return;
 }
+
+
 int  DtaDevOS::diskScan()
 {
-  char devname[256];
-  vector<string> devices;
-  string tempstring;
-
   LOG(D1) << "Entering DtaDevOS:diskScan ";
-  DIR *dir = opendir("/dev");
-  if (dir!=NULL)
-    {
-      struct dirent *dirent;
-      while((dirent=readdir(dir))!=NULL) {
-        tempstring = dirent->d_name;
-        devices.push_back(tempstring);
-      }
-      closedir(dir);
-    }
-  std::sort(devices.begin(),devices.end());
-  printf("Scanning for Opal compliant disks\n");
-  for (uint16_t i = 0; i < devices.size(); i++) {
-    snprintf(devname,23,"/dev/%s",devices[i].c_str());
-    printf("%-10s", devname);
-    DtaDevOS * d;
-    if (DTAERROR_SUCCESS == getDtaDevOS(devname,d,true))
-      {
-        if (d->isAnySSC())
-          printf(" %s%s%s ",
-                 (d->isOpal1()  ? "1" : " "),
-                 (d->isOpal2()  ? "2" : " "),
-                 (d->isEprise() ? "E" : " "));
-        else
-          printf("%s", " No  ");
 
-        printf("%s %s\n",d->getModelNum(),d->getFirmwareRev());
-        delete d;
-      }
+  DIR *dir = opendir("/dev");
+  if (dir==NULL) {
+    LOG(E) < "Can't read /dev ?!";
+    return 0xff;
   }
-  printf("No more disks present ending scan\n");
+
+  vector<string> devices;
+
+  struct dirent *dirent;
+  while (dirent=readdir(dir))
+    devices.push_back(string(dirent->d_name));
+  closedir(dir);
+
+
+  std::sort(devices.begin(),devices.end());
+
+
+  printf("Scanning for Opal compliant disks\n");
+  for (string & device:devices) {
+
+    char devname[256];
+    snprintf(devname,sizeof(devname),"/dev/%s",device.c_str());
+
+    DtaDevOS * d;
+    if (DTAERROR_SUCCESS == getDtaDevOS(devname,d,true)) {
+
+      printf("%-10s", devname);
+      if (d->isAnySSC()) {
+        printf(" %s%s%s ",
+               (d->isOpal1()  ? "1" : " "),
+               (d->isOpal2()  ? "2" : " "),
+               (d->isEprise() ? "E" : " "));
+      } else {
+        printf("%s", " No  ");
+      }
+      printf("%s %s\n",d->getModelNum(),d->getFirmwareRev());
+
+      delete d;
+    }
+
+  }
+
+  printf("No more disks present -- ending scan\n");
   LOG(D1) << "Exiting DtaDevOS::scanDisk ";
   return 0;
 }

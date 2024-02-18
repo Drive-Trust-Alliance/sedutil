@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -25,8 +25,6 @@
  */
 class DtaDevOS : public DtaDev {
 public:
-  /** Default constructor */
-  DtaDevOS();
   /** Destructor */
   ~DtaDevOS();
 
@@ -40,19 +38,9 @@ public:
   static uint8_t getDtaDevOS(const char * devref, DtaDevOS * & dev,
                              bool genericIfNotTPer=false);
 
-  /** OS specific initialization.
-   * This function should perform the necessary authority and environment checking
-   * to allow proper functioning of the program, open the device, perform an ATA
-   * identify, add the fields from the identify response to the disk info structure
-   * and if the device is an ATA device perform a call to Discovery0() to complete
-   * the disk_info structure
-   *
-   * This function is obsolete.  Use `DtaDevOS::getDtaDevOS(devref, ...)' to obtain
-   * an initialized instance of the appropriate subclass of DtaDevOS.
-   *
-   * @param devref character representation of the device is standard OS lexicon
-   */
-  void init(const char * devref);
+
+
+
   /** OS specific method to send an ATA command to the device
    * @param cmd ATA command to be sent to the device
    * @param protocol security protocol to be used in the command
@@ -62,12 +50,28 @@ public:
    */
   uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                   void * buffer, size_t bufferlen);
+
   /** A static function to scan for supported drives */
   static int diskScan();
-protected:
-  /** Short-circuit routine re-uses initialized drive and disk_info */
-  DtaDevOS(const char * devref, DtaDevLinuxDrive * drive, DTA_DEVICE_INFO& disk_info);
 
+protected:
+  /** Default constructor */
+  DtaDevOS();
+
+  /** Short-circuit routine re-uses initialized drive and disk_info */
+  DtaDevOS(const char * devref, DtaDevLinuxDrive * drv, DTA_DEVICE_INFO & di)
+    : dev(devref), disk_info(di), drive(drv), isOpen(drv!=NULL && drv->isOpen())
+  {};
+
+  /** Minimal internal type-switching routine
+   *
+   *  Checks that the drive responds to discovery0.
+   *  Assumes all the identify/discovery0 information is thus in di,
+   *  and that drive has a file descriptor open on devref.
+   *  Just tests di SSC bits and picks DtaDevOS subclass accordingly.
+   *  Otherwise return NULL, or
+   *  a DtaDevGeneric instance if genericIfNotTper is true.
+   */
   static DtaDevOS* getDtaDevOS(const char * devref,
                                DtaDevLinuxDrive * drive,
                                DTA_DEVICE_INFO & di,
@@ -81,10 +85,10 @@ protected:
   bool identify(DTA_DEVICE_INFO& disk_info);
   /** return drive size in bytes */
   const unsigned long long getSize();
-  int fd; /**< Linux handle for the device  */
+
 private:
   /** OS specific routine to send a SCSI INQUIRY to the device */
-  void identify_SAS();
+
   DtaDevLinuxDrive *drive;
 public:
   uint8_t disc0Sts = 1;// any error

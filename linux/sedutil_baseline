@@ -2,7 +2,7 @@ testing ./CLI/dist/Release_x86_64/GNU-Linux/sedutil-cli Mon Aug 21 17:23:46 PDT 
 Begin TestSuite
 Linux r0m30-Z170A 4.10.0-32-generic #36~16.04.1-Ubuntu SMP Wed Aug 9 09:19:02 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
 testing sedutil Mon Aug 21 17:23:46 PDT 2017
-sedutil v1.15-24-gb6f51bf-dirty Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+sedutil v1.15-24-gb6f51bf-dirty Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 You do not have permission to access the raw disk in write mode
 Perhaps you might try sudo to run as root
 Scanning for Opal compliant disks

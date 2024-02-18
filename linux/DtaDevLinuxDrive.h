@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -59,11 +59,14 @@ public:
 
   virtual ~DtaDevLinuxDrive( void ) {fdclose();}
 
+  uint8_t discovery0(DTA_DEVICE_INFO & di);
+
+  bool isOpen() {return 0<fd && (fcntl(fd, F_GETFL) != -1 || errno != EBADF);}
+
 protected:
 
   DtaDevLinuxDrive(int _fd) :fd(_fd) {}
 
-  uint8_t discovery0(DTA_DEVICE_INFO & di);
   static int fdopen(const char * devref);
   static void fdclose();
 
