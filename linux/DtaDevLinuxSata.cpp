@@ -107,7 +107,7 @@ bool DtaDevLinuxSata::identifyUsingATAIdentifyDevice(int fd,
 
 
 
-int DtaDevLinuxSata::identifyDevice_SAT( int fd, void * buffer , uint64_t & dataLength)
+int DtaDevLinuxSata::identifyDevice_SAT( int fd, void * buffer , int & dataLength)
 {
 
     static SCSICommandDescriptorBlock identifyCDB_SAT =

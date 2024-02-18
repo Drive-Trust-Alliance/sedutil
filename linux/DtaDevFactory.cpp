@@ -76,6 +76,8 @@ DtaDevLinuxDrive * DtaDevLinuxDrive::getDtaDevLinuxDrive(const char * devref,
 
   DtaDevLinuxDrive * drive ;
 
+  disk_info.devType = DEVICE_TYPE_OTHER;
+
   if ( (drive = DtaDevLinuxNvme::getDtaDevLinuxNvme(devref, disk_info)) != NULL )
     return drive ;
 

@@ -78,6 +78,7 @@ DtaDevLinuxScsi::getDtaDevLinuxScsi(const char * devref, DTA_DEVICE_INFO & di) {
   InterfaceDeviceID interfaceDeviceIdentification;
 
   if (!identifyUsingSCSIInquiry(fd, interfaceDeviceIdentification, di)) {
+    di.devType = DEVICE_TYPE_OTHER;
     LOG(E) << " Device " << devref << " is NOT SCSI?! -- file handle " << (int32_t) fd;
     close(fd);
     return NULL;
@@ -86,18 +87,25 @@ DtaDevLinuxScsi::getDtaDevLinuxScsi(const char * devref, DTA_DEVICE_INFO & di) {
 
   dictionary * identifyCharacteristics = NULL;
   if (DtaDevLinuxSata::identifyUsingATAIdentifyDevice(fd, interfaceDeviceIdentification, di, &identifyCharacteristics)) {
-    // The completed identifyCharacteristics map could be useful to customizing code
+    // The completed identifyCharacteristics map could be useful to customizing code here
     if ( NULL != identifyCharacteristics ) {
       delete identifyCharacteristics;
       identifyCharacteristics = NULL ;
     }
     LOG(D4) << " Device " << devref << " is Sata";
+    di.devType = DEVICE_TYPE_SATA;
     return new DtaDevLinuxSata(fd);
   }
 
+  // Even though the device is SAS,
+  // the (possibly partially completed) identifyCharacteristics map could be useful to customizing code here
+  if ( NULL != identifyCharacteristics ) {
+    delete identifyCharacteristics;
+    identifyCharacteristics = NULL ;
+  }
   LOG(D4) << " Device " << devref << " is not Sata, assuming plain Scsi (SAS)" ;
+  di.devType = DEVICE_TYPE_SAS;
   return new DtaDevLinuxScsi(fd);
-
 }
 
 
@@ -129,17 +137,15 @@ bool DtaDevLinuxScsi::deviceIsStandardSCSI(int fd, InterfaceDeviceID & interface
   return isStandardSCSI;
 }
 
-int DtaDevLinuxScsi::inquiryStandardDataAll_SCSI(int fd, void * inquiryResponse, size_t dataSize )
+int DtaDevLinuxScsi::inquiryStandardDataAll_SCSI(int fd, void * inquiryResponse, int & dataSize )
 {
   return __inquiry( fd, 0x00, 0x00, inquiryResponse, dataSize);
 }
 
 
 
-int DtaDevLinuxScsi::__inquiry(int fd, uint8_t evpd, uint8_t page_code, void * inquiryResponse, size_t & dataSize)
+int DtaDevLinuxScsi::__inquiry(int fd, uint8_t evpd, uint8_t page_code, void * inquiryResponse, int & dataSize)
 {
-  uint64_t transferSize = dataSize ;
-
   static CScsiCmdInquiry cdb =
     { CScsiCmdInquiry::OPCODE          , // m_Opcode
       evpd            , // m_EVPD
@@ -148,11 +154,7 @@ int DtaDevLinuxScsi::__inquiry(int fd, uint8_t evpd, uint8_t page_code, void * i
       0x00            , // m_Control
     };
 
-  int ret = PerformSCSICommand(fd, cdb, inquiryResponse, &transferSize);
-  if (ret == 0) {
-    dataSize = static_cast<size_t>(transferSize) ;
-  }
-  return ret;
+  return PerformSCSICommand(qfd, cdb, inquiryResponse, dataSize, NULL, 0, NULL);
 }
 
 
@@ -171,9 +173,9 @@ DtaDevLinuxScsi::parseInquiryStandardDataAllResponse(const unsigned char * respo
                                                      InterfaceDeviceID & interfaceDeviceIdentification,
                                                      DTA_DEVICE_INFO & di)
 {
-  CScsiCmdInquiry_StandardData *resp = static_cast <CScsiCmdInquiry_StandardData *>(response);
+  const CScsiCmdInquiry_StandardData *resp = static_cast <const CScsiCmdInquiry_StandardData *>(response);
 
-  memcpy(interfaceDeviceIdentification, resp->VENDOR_IDENTIFICATION, sizeof(InterfaceDeviceID));
+  memcpy(interfaceDeviceIdentification, resp->m_T10VendorID, sizeof(InterfaceDeviceID));
 
   // GetDeviceInfo(di); // Get as much info as possible from OS
 
@@ -184,8 +186,6 @@ DtaDevLinuxScsi::parseInquiryStandardDataAllResponse(const unsigned char * respo
   safecopy(di.modelNum, sizeof(di.modelNum), resp->m_ProductId, sizeof(resp->m_ProductId));
 
   // device is apparently a SCSI disk
-  di.devType = DEVICE_TYPE_SAS;
-
   return new dictionary
     {
       {"Device Type"       , "SCSI"                       },
@@ -199,51 +199,16 @@ DtaDevLinuxScsi::parseInquiryStandardDataAllResponse(const unsigned char * respo
 
 
 
-bool DtaDevLinuxScsi::deviceIsSata(int fd,
-                                   const InterfaceDeviceID & interfaceDeviceIdentification,
-                                   DTA_DEVICE_INFO &di,
-                                   dictionary ** pIdentifyCharacteristics)
-{
-  // Test whether device is a SAT drive by attempting
-  // SCSI passthrough of ATA Identify Device command
-  // If it works, as a side effect, parse the Identify response
-
-  bool isSAT = false;
-  void * identifyDeviceResponse = aligned_alloc(IO_BUFFER_ALIGNMENT, MIN_BUFFER_LENGTH);
-  if ( identifyDeviceResponse == NULL ) {
-    LOG(E) << " *** memory buffer allocation failed *** !!!";
-    return false;
-  }
-
-  bzero ( identifyDeviceResponse, IDENTIFY_RESPONSE_SIZE );
-
-  isSAT = (kIOReturnSuccess == identifyDevice_SAT( fd, identifyDeviceResponse, IDENTIFY_RESPONSE_SIZE ));
-
-  if (isSAT) {
-
-    if (0xA5==((UInt8 *)identifyDeviceResponse)[510]) {  // checksum is present
-      UInt8 checksum=0;
-      for (UInt8 * p = ((UInt8 *)identifyDeviceResponse),
-             * end = ((UInt8 *)identifyDeviceResponse) + 512;
-           p<end ;
-           p++)
-        checksum=(UInt8)(checksum+(*p));
-      if (checksum != 0) {
-        IOLOG_DEBUG_METHOD(" *** IDENTIFY DEVICE response checksum failed *** !!!");
-      }
-    }
 
 
-    *pIdentifyCharacteristics =
-      parseIdentifyDeviceResponse(interfaceDeviceIdentification,
-                                  ((UInt8 *)identifyDeviceResponse),
-                                  di);
-  }
-  free(identifyDeviceResponse);
 
-  IOLOG_DEBUG_METHOD(" *** end of function, isSAT is %d", isSAT);
-  return isSAT;
-}
+
+
+
+
+
+
+
 
 
 
@@ -534,16 +499,27 @@ bool DtaDevLinuxScsi::identify(DTA_DEVICE_INFO& disk_info)
   return true;
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /** Send a SCSI command using an ioctl to the device. */
 
 int DtaDevLinuxScsi::PerformSCSICommand(int fd,
                                         int dxfer_direction,
-                                        uint8_t * cdb,
-                                        unsigned char cdb_len,
-                                        void * buffer,
-                                        unsigned int bufferlen,
-                                        uint8_t * sense,
-                                        unsigned char senselen
+                                        uint8_t * cdb,   unsigned char cdb_len,
+                                        void * buffer,   unsigned int & bufferlen,
+                                        uint8_t * sense, unsigned char senselen
                                         unsigned char * pmasked_status)
 {
   if (fd<0) {
@@ -585,6 +561,10 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
       }
     }
   }
+
+  // Without any real justification we set bufferlen to the value of dxfer_len - resid
+  bufferlen = sg.dxfer_len - sg.resid;
+
   if (pmasked_status != NULL) {
     *pmasked_status = sg.masked_status;
 #define STRINGIFY_(x) #x
@@ -620,7 +600,9 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
 }
 
 
-bool DtaDevLinuxScsi::identifyUsingSCSIInquiry_OG(int fd, InterfaceDeviceID & interfaceDeviceIdentification, DTA_DEVICE_INFO & disk_info)
+bool DtaDevLinuxScsi::identifyUsingSCSIInquiry_OG(int fd,
+                                                  InterfaceDeviceID & interfaceDeviceIdentification,
+                                                  DTA_DEVICE_INFO & disk_info)
 {
 
   uint8_t sense[18];
@@ -641,10 +623,11 @@ bool DtaDevLinuxScsi::identifyUsingSCSIInquiry_OG(int fd, InterfaceDeviceID & in
   // fill out SCSI Generic structure
   // execute I/O
   unsigned char masked_status;
+  int bufferlen = MIN_BUFFER_LENGTH;
   int result=PerformSCSICommand(fd,
                                 SG_DXFER_FROM_DEV,
                                 cdb, sizeof(cdb),
-                                buffer, MIN_BUFFER_LENGTH,
+                                buffer, bufferlen,
                                 sense, sizeof(sense),
                                 &masked_status);
 
@@ -658,6 +641,8 @@ bool DtaDevLinuxScsi::identifyUsingSCSIInquiry_OG(int fd, InterfaceDeviceID & in
   auto resp = (CScsiCmdInquiry_StandardData *) buffer;
 
   // make sure SCSI target is disk
+
+
 
   // I decided to drop the resid test after reviewing this text from
   // https://tldp.org/HOWTO/SCSI-Generic-HOWTO/x356.html
@@ -683,14 +668,14 @@ bool DtaDevLinuxScsi::identifyUsingSCSIInquiry_OG(int fd, InterfaceDeviceID & in
   // this feature. Hopefully this will be cleared up in the near future.
 
 
+// if (((sg.dxfer_len - sg.resid) < sizeof(CScsiCmdInquiry_StandardData)) // some drive return more than sizeof(CScsiCmdInquiry_StandardData)
+//     || (resp->m_PeripheralDeviceType != 0x0))
+//   {
+//     LOG(D4) << "cdb after sg.dxfer_len - sg.resid != sizeof(CScsiCmdInquiry_StandardData || resp->m_PeripheralDeviceType != 0x0";
 
-
-  // if (((sg.dxfer_len - sg.resid) < sizeof(CScsiCmdInquiry_StandardData)) // some drive return more than sizeof(CScsiCmdInquiry_StandardData)
-  //     || (resp->m_PeripheralDeviceType != 0x0))
-  if (resp->m_PeripheralDeviceType != 0x0)
+  if ((bufferlen < sizeof(CScsiCmdInquiry_StandardData) || resp->m_PeripheralDeviceType != 0x0)
     {
-      // LOG(D4) << "cdb after sg.dxfer_len - sg.resid != sizeof(CScsiCmdInquiry_StandardData || resp->m_PeripheralDeviceType != 0x0";
-      LOG(D4) << "cdb after resp->m_PeripheralDeviceType != 0x0";
+      LOG(D4) << "cdb after bufferlen < sizeof(CScsiCmdInquiry_StandardData) || resp->m_PeripheralDeviceType != 0x0";
       IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
       LOG(D4) << "sense after ";
       IFLOG(D4) DtaHexDump(sense, sizeof (sense));
@@ -698,7 +683,7 @@ bool DtaDevLinuxScsi::identifyUsingSCSIInquiry_OG(int fd, InterfaceDeviceID & in
       // LOG(D4) << "sg.dxfer_len=" << sg.dxfer_len << " sg.resid=" << sg.resid <<
       // 		 " sizeof(CScsiCmdInquiry_StandardData)=" << sizeof(CScsiCmdInquiry_StandardData) <<
       // 		" resp->m_PeripheralDeviceType=" << resp->m_PeripheralDeviceType;
-      LOG(D4) << "resp->m_PeripheralDeviceType=" << std::hex << resp->m_PeripheralDeviceType;
+      LOG(D4) << "bufferlen=" << bufferlen << " resp->m_PeripheralDeviceType=" << std::hex << resp->m_PeripheralDeviceType;
       free(buffer);
       return false;
     }

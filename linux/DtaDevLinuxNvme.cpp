@@ -68,10 +68,12 @@ DtaDevLinuxNvme * DtaDevLinuxNvme::getDtaDevLinuxNvme(const char * devref,
   DtaDevLinuxNvme * drive = new DtaDevLinuxNvme((int)fd_);
 
   if (!drive->identify(disk_info)) {
+    disk_info.devType = DEVICE_TYPE_OTHER;
     LOG(E) << " Device "<< devref <<" is NOT Nvme?! -- file handle " << (int32_t) fd_;
     delete drive; // => close(fd)
     drive = NULL ;
   } else {
+    disk_info.devType = DEVICE_TYPE_NVME;
     LOG(D4) << " Device "<< devref <<" is Nvme" ;
   }
   return drive;
@@ -89,19 +91,16 @@ uint8_t DtaDevLinuxNvme::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
   if (IF_RECV == cmd) {
     LOG(D3) << "Nvme Security Receive Command";
     nvme_cmd.opcode = NVME_SECURITY_RECV;
-    nvme_cmd.cdw10 = protocol << 24 | comID << 8;
-    nvme_cmd.cdw11 = bufferlen;
-    nvme_cmd.data_len = bufferlen;
-    nvme_cmd.addr = (__u64)buffer;
   }
   else {
     LOG(D3) << "Nvme Security Send Command";
     nvme_cmd.opcode = NVME_SECURITY_SEND;
-    nvme_cmd.cdw10 = protocol << 24 | comID << 8;  // **TODO** Move after, DRY
-    nvme_cmd.cdw11 = bufferlen;
-    nvme_cmd.data_len = bufferlen;
-    nvme_cmd.addr = (__u64)buffer;
   }
+
+  nvme_cmd.cdw10 = protocol << 24 | comID << 8;
+  nvme_cmd.cdw11 = bufferlen;
+  nvme_cmd.data_len = bufferlen;
+  nvme_cmd.addr = (__u64)buffer;
 
   int err = ioctl(fd, NVME_IOCTL_ADMIN_CMD, &nvme_cmd);
 

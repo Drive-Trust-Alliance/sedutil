@@ -77,7 +77,7 @@ protected:
   static int PerformSCSICommand(int fd,
                                 int dxfer_direction,
                                 uint8_t * cdb,   unsigned char cdb_len,
-                                void * buffer,   unsigned int bufferlen,
+                                void * buffer,   unsigned int& bufferlen,
                                 uint8_t * sense, unsigned char senselen,
                                 unsigned char * pmasked_status);
 
@@ -97,7 +97,7 @@ protected:
    */
   int PerformSCSICommand(int dxfer_direction,
                          uint8_t * cdb,   unsigned char cdb_len,
-                         void * buffer,   unsigned int bufferlen,
+                         void * buffer,   unsigned int& bufferlen,
                          uint8_t * sense, unsigned char senselen,
                          unsigned char * pmasked_status)
   {
