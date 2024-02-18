@@ -24,7 +24,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  */
 class DtaDevLinuxDrive {
 public:
-  DtaDevLinuxDrive(){};
+  virtual ~DtaDevLinuxDrive( void ) {fdclose();}
+
 
   /** Factory function to look at the devref and create an instance of the appropriate subclass of
    *  DtaDevLinuxDrive
@@ -57,8 +58,6 @@ public:
    */
   virtual bool identify(DTA_DEVICE_INFO& disk_info) = 0;
 
-  virtual ~DtaDevLinuxDrive( void ) {fdclose();}
-
   uint8_t discovery0(DTA_DEVICE_INFO & di);
 
   bool isOpen() {return 0<fd && (fcntl(fd, F_GETFL) != -1 || errno != EBADF);}
@@ -71,5 +70,8 @@ protected:
   static void fdclose();
 
   int fd=0; /**< Linux handle for the device  */
+
+private:
+  DtaDevLinuxDrive(){};
 
 };

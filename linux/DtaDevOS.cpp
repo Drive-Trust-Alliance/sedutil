@@ -94,12 +94,6 @@ const unsigned long long DtaDevOS::getSize()
 { return 0;
 }
 
-
-DtaDevOS::DtaDevOS()
-{
-  drive = NULL;
-}
-
 uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                           void * buffer, size_t bufferlen)
 {

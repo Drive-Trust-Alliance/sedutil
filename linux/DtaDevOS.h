@@ -55,9 +55,6 @@ public:
   static int diskScan();
 
 protected:
-  /** Default constructor */
-  DtaDevOS();
-
   /** Short-circuit routine re-uses initialized drive and disk_info */
   DtaDevOS(const char * devref, DtaDevLinuxDrive * drv, DTA_DEVICE_INFO & di)
     : dev(devref), disk_info(di), drive(drv), isOpen(drv!=NULL && drv->isOpen())
@@ -81,15 +78,25 @@ protected:
    * @param ms  number of milliseconds to wait
    */
   void osmsSleep(uint32_t ms);
+
   /** OS specific routine to send an ATA identify to the device */
   bool identify(DTA_DEVICE_INFO& disk_info);
+
   /** return drive size in bytes */
   const unsigned long long getSize();
 
 private:
-  /** OS specific routine to send a SCSI INQUIRY to the device */
-
+  /* Protocol-specific subclass instance -- Nvme, Scsi, Sata, ... */
   DtaDevLinuxDrive *drive;
-public:
-  uint8_t disc0Sts = 1;// any error
+
+  /** Default constructor */
+  DtaDevOS()
+    : dev(""), drive(NULL), isOpen(FALSE)
+  {
+    bzero(di, sizeof(di));
+    assert(FALSE);  // ***TODO*** this is never used
+  };
+
+
+
 };
