@@ -41,9 +41,16 @@ public:
   /** Linux specific routine to send an ATA identify to the device */
     bool identify(DTA_DEVICE_INFO& disk_info);
 
+  static
+  bool identifyUsingATAIdentifyDevice(int fd,
+                                      InterfaceDeviceID interfaceDeviceIdentification,
+                                      DTA_DEVICE_INFO & disk_info,
+                                      dictionary ** pIdentifyCharacteristics);
 
   DtaDevLinuxSata(int _fd)
     : DtaDevLinuxScsi(_fd)
   {}
+
+private:
 
 };

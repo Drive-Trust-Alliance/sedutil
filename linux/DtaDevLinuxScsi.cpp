@@ -32,9 +32,11 @@
 #include <errno.h>
 #include <vector>
 #include <fstream>
-#include <unordered_map>
+#include <map>
 #include <fnmatch.h>
 
+#include "DtaStructures.h"
+#include "DtaDevLinuxSata.h"
 #include "DtaDevLinuxScsi.h"
 #include "DtaHexDump.h"
 #include "ParseATIdentify.h"
@@ -82,8 +84,8 @@ DtaDevLinuxScsi::getDtaDevLinuxScsi(const char * devref, DTA_DEVICE_INFO & di) {
   }
 
 
-  std::unordered_map * identifyCharacteristics = NULL;
-  if (deviceIsSata(fd, interfaceDeviceIdentification, di, &identifyCharacteristics)) {
+  dictionary * identifyCharacteristics = NULL;
+  if (DtaDevLinuxSata::identifyUsingATAIdentifyDevice(fd, interfaceDeviceIdentification, di, &identifyCharacteristics)) {
     // The completed identifyCharacteristics map could be useful to customizing code
     if ( NULL != identifyCharacteristics ) {
       delete identifyCharacteristics;
@@ -100,21 +102,6 @@ DtaDevLinuxScsi::getDtaDevLinuxScsi(const char * devref, DTA_DEVICE_INFO & di) {
 
 
 
-bool DtaDevLinuxScsi::identifyUsingSCSIInquiry(int fd,
-                                               InterfaceDeviceID & interfaceDeviceIdentification,
-                                               DTA_DEVICE_INFO &di) {
-  if (!deviceIsStandardSCSI(fd, interfaceDeviceIdentification, di)) {
-    return false;
-  }
-
-  // Extract information from Inquiry VPD pages
-  //
-  // ... or not.  Maybe someday.
-  return true;
-}
-
-
-
 bool DtaDevLinuxScsi::deviceIsStandardSCSI(int fd, InterfaceDeviceID & interfaceDeviceIdentification, DTA_DEVICE_INFO &di)
 {
   // Test whether device is a SCSI drive by attempting
@@ -122,13 +109,13 @@ bool DtaDevLinuxScsi::deviceIsStandardSCSI(int fd, InterfaceDeviceID & interface
   // If it works, as a side effect, parse the Inquiry response
   // and save it in the IO Registry
   bool isStandardSCSI = false;
-  size_t transferSize = sizeof(SCSICmd_INQUIRY_StandardDataAll); // CScsiCmdInquiry_StandardData?
+  size_t transferSize = sizeof(CScsiCmdInquiry_StandardData); // SCSICmd_INQUIRY_StandardDataAll);
   void * inquiryResponse =  aligned_alloc(IO_BUFFER_ALIGNMENT, MIN_BUFFER_LENGTH);
   if ( inquiryResponse != NULL ) {
     bzero ( inquiryResponse, transferSize );
-    isStandardSCSI = ( kIOReturnSuccess == inquiryStandardDataAll_SCSI( fd,  inquiryResponse, transferSize ) );
+    isStandardSCSI = ( 0 == inquiryStandardDataAll_SCSI( fd,  inquiryResponse, transferSize ) );
     if (isStandardSCSI) {
-      std::map<std::string,std::string> * characteristics =
+      dictionary * characteristics =
         parseInquiryStandardDataAllResponse(static_cast <const unsigned char * >(inquiryResponse),
                                             interfaceDeviceIdentification,
                                             di);
@@ -139,42 +126,33 @@ bool DtaDevLinuxScsi::deviceIsStandardSCSI(int fd, InterfaceDeviceID & interface
     free(inquiryResponse);
     inquiryResponse = NULL;
   }
-  IOLOG_DEBUG_METHOD(" *** end of function, isStandardSCSI is %d", isStandardSCSI);
   return isStandardSCSI;
 }
 
-int DtaDevLinuxScsi::inquiryStandardDataAll_SCSI( fd, void * inquiryResponse, size_t dataSize )
+int DtaDevLinuxScsi::inquiryStandardDataAll_SCSI(int fd, void * inquiryResponse, size_t dataSize )
 {
   return __inquiry( fd, 0x00, 0x00, inquiryResponse, dataSize);
 }
 
 
 
-int DtaDevLinuxScsi::__inquiry(int fd, uint8_t evpd, uint8_t page_code, void * md, size_t & dataSize)
+int DtaDevLinuxScsi::__inquiry(int fd, uint8_t evpd, uint8_t page_code, void * inquiryResponse, size_t & dataSize)
 {
+  uint64_t transferSize = dataSize ;
 
-
-  static SCSICommandDescriptorBlock inquiryCDB_SCSI = // CScsiCmdInquiry ?
-    { kSCSICmd_INQUIRY,           // Byte  0  INQUIRY 12h
-      0x00,                       // Byte  1  Logical Unit Number| Reserved | EVPD
-      0x00,                       // Byte  2  Page Code
-      0x00,                       // Byte  3  Allocation length (MSB)
-      0x00,                       // Byte  4  Allocation length (LSB)
-      0x00,                       // Byte  5  Control
+  static CScsiCmdInquiry cdb =
+    { CScsiCmdInquiry::OPCODE          , // m_Opcode
+      evpd            , // m_EVPD
+      0x00            , // m_Reserved_1
+      htons(dataSize) , // m_AllocationLength
+      0x00            , // m_Control
     };
-  unsigned long long len = dataSize;
-  inquiryCDB_SCSI[1] = evpd;
-  inquiryCDB_SCSI[2] = page_code;
-  inquiryCDB_SCSI[3] = (uint8_t)(len >> 8);
-  inquiryCDB_SCSI[4] = (uint8_t)(len     );
-  Uint64_t transferSize = dataSize ;
-  kern_return_t ret = PerformSCSICommand(fd, inquiryCDB_SCSI, md, &transferSize);
-  if (ret == kIOReturnSuccess) {
+
+  int ret = PerformSCSICommand(fd, cdb, inquiryResponse, &transferSize);
+  if (ret == 0) {
     dataSize = static_cast<size_t>(transferSize) ;
   }
   return ret;
-
-
 }
 
 
@@ -188,12 +166,12 @@ static void safecopy(uint8_t * dst, size_t dstsize, uint8_t * src, size_t srcsiz
   }
 }
 
-std::map<std::string,std::string> *
+dictionary *
 DtaDevLinuxScsi::parseInquiryStandardDataAllResponse(const unsigned char * response,
                                                      InterfaceDeviceID & interfaceDeviceIdentification,
                                                      DTA_DEVICE_INFO & di)
 {
-  SCSICmd_INQUIRY_StandardDataAll *resp = (SCSICmd_INQUIRY_StandardDataAll *)response;
+  CScsiCmdInquiry_StandardData *resp = static_cast <CScsiCmdInquiry_StandardData *>(response);
 
   memcpy(interfaceDeviceIdentification, resp->VENDOR_IDENTIFICATION, sizeof(InterfaceDeviceID));
 
@@ -208,7 +186,7 @@ DtaDevLinuxScsi::parseInquiryStandardDataAllResponse(const unsigned char * respo
   // device is apparently a SCSI disk
   di.devType = DEVICE_TYPE_SAS;
 
-  return new std::map<std::string,std::string>
+  return new dictionary
     {
       {"Device Type"       , "SCSI"                       },
       {"Model Number"      , (const char *)di.modelNum    },
@@ -224,7 +202,7 @@ DtaDevLinuxScsi::parseInquiryStandardDataAllResponse(const unsigned char * respo
 bool DtaDevLinuxScsi::deviceIsSata(int fd,
                                    const InterfaceDeviceID & interfaceDeviceIdentification,
                                    DTA_DEVICE_INFO &di,
-                                   std::map<std::string,std::string> ** pIdentifyCharacteristics)
+                                   dictionary ** pIdentifyCharacteristics)
 {
   // Test whether device is a SAT drive by attempting
   // SCSI passthrough of ATA Identify Device command
@@ -265,47 +243,6 @@ bool DtaDevLinuxScsi::deviceIsSata(int fd,
 
   IOLOG_DEBUG_METHOD(" *** end of function, isSAT is %d", isSAT);
   return isSAT;
-}
-
-
-
-std::map<std::string,std::string> *
-DriverClass::parseIdentifyDeviceResponse(const InterfaceDeviceID & interfaceDeviceIdentification,
-                                         const unsigned char * response,
-                                         DTA_DEVICE_INFO & di)
-{
-  const IDENTIFY_RESPONSE & resp = *(IDENTIFY_RESPONSE *)response;
-
-  parseATIdentifyResponse(&resp, &di);
-
-  if (deviceNeedsSpecialAction(interfaceDeviceIdentification,
-                               splitVendorNameFromModelNumber)) {
-    LOG(D4) << " *** splitting VendorName from ModelNumber";
-    LOG(D4) << " *** was vendorID=\"%s\" modelNum=\"%s\"", di.vendorID, di.modelNum;
-    memcpy(di.vendorID, di.modelNum, sizeof(di.vendorID));
-    memmove(di.modelNum,
-            di.modelNum+sizeof(di.vendorID),
-            sizeof(di.modelNum)-sizeof(di.vendorID));
-    memset(di.modelNum+sizeof(di.modelNum)-sizeof(di.vendorID),
-           0,
-           sizeof(di.vendorID));
-    LOG(D4) << " *** now vendorID=\"%s\" modelNum=\"%s\"", di.vendorID, di.modelNum;
-  }
-
-  std::string options = std::to_string(resp.TCGOptions[1]<<8 | resp.TCGOptions[0]);
-  std::ostringstream ss;
-  ss << std::hex << std::setw(2) << std::setfill('0');
-  for (uint8_t &b: di.worldWideName) ss << (int)b;
-  std::string wwn = ss.str();
-  return new std::map<std::string,std::string>
-    {
-      {"TCG Options"       , options                        },
-      {"Device Type"       , resp.devType ? "OTHER" : "ATA" },
-      {"Serial Number"     , (const char *)di.serialNum     },
-      {"Model Number"      , (const char *)di.modelNum      },
-      {"Firmware Revision" , (const char *)di.firmwareRev   },
-      {"World Wide Name"   , wwn                            },
-    };
 }
 
 

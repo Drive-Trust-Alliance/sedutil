@@ -21,6 +21,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaStructures.h"
 #include "InterfaceDeviceID.h"
 #include "DtaDevLinuxDrive.h"
+#include <map>
+
+typedef std::map<std::string,std::string>dictionary;
 
 /** Linux specific implementation SCSI generic ioctls to send commands to the
  * device
@@ -118,21 +121,16 @@ private:
                             DTA_DEVICE_INFO & disk_info);
 
   static
-  int inquiryStandardDataAll_SCSI( fd, void * inquiryResponse, size_t dataSize );
+  int inquiryStandardDataAll_SCSI(int fd, void * inquiryResponse, size_t dataSize );
 
   static
   int __inquiry(int fd, uint8_t evpd, uint8_t page_code, void * buffer, size_t & dataSize);
 
 
   static
-  std::map<std::string,std::string> *
+  dictionary *
   parseInquiryStandardDataAllResponse(const unsigned char * response,
                                       InterfaceDeviceID & interfaceDeviceIdentification,
                                       DTA_DEVICE_INFO & di);
-
-
-  bool deviceIsSata(const InterfaceDeviceID & interfaceDeviceIdentification,
-                    DTA_DEVICE_INFO &di,
-                    std::map<std::string,std::string> ** pIdentifyCharacteristics);
 
 };

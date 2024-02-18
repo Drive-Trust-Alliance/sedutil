@@ -52,6 +52,176 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define COMMAND_TERMINATED   0x11
 #define QUEUE_FULL
 
+
+
+
+bool DtaDevLinuxSata::identifyUsingATAIdentifyDevice(int fd,
+                                                     InterfaceDeviceID interfaceDeviceIdentification,
+                                                     DTA_DEVICE_INFO & disk_info,
+                                                     dictionary ** ppIdentifyCharacteristics) {
+
+  // Test whether device is a SAT drive by attempting
+  // SCSI passthrough of ATA Identify Device command
+  // If it works, as a side effect, parse the Identify response
+
+  bool isSAT = false;
+  void * identifyDeviceResponse = aligned_alloc(IO_BUFFER_ALIGNMENT, MIN_BUFFER_LENGTH);
+  if ( identifyDeviceResponse == NULL ) {
+    LOG(E) << " *** memory buffer allocation failed *** !!!";
+    return false;
+  }
+#define IDENTIFY_RESPONSE_SIZE 512
+  bzero ( identifyDeviceResponse, IDENTIFY_RESPONSE_SIZE );
+
+  uint64_t dataLen = IDENTIFY_RESPONSE_SIZE;
+  isSAT = (0 == identifyDevice_SAT( fd, identifyDeviceResponse, dataLen ));
+
+  if (isSAT) {
+
+    if (0xA5==((UInt8 *)identifyDeviceResponse)[510]) {  // checksum is present
+      UInt8 checksum=0;
+      for (UInt8 * p = ((UInt8 *)identifyDeviceResponse),
+             * end = ((UInt8 *)identifyDeviceResponse) + 512;
+           p<end ;
+           p++)
+        checksum=(UInt8)(checksum+(*p));
+      if (checksum != 0) {
+        LOG(D1) << " *** IDENTIFY DEVICE response checksum failed *** !!!"
+      }
+    }
+
+
+    dictionary *pIdentifyCharacteristics =
+      parseIdentifyDeviceResponse(interfaceDeviceIdentification,
+                                  ((UInt8 *)identifyDeviceResponse),
+                                  di);
+    if (ppIdentifyCharacteristics != NULL)
+      (*ppIdentifyCharacteristics) = pIdentifyCharacteristics;
+    else if (pIdentifyCharacteristics !=NULL)
+      free pIdentifyCharacteristics;
+  }
+  free(identifyDeviceResponse);
+
+  return isSAT;
+}
+
+
+
+int DtaDevLinuxSata::identifyDevice_SAT( int fd, void * buffer , uint64_t & dataLength)
+{
+
+    static SCSICommandDescriptorBlock identifyCDB_SAT =
+      { kSCSICmd_ATA_PASS_THROUGH,    // Byte  0  ATA PASS-THROUGH (12)
+        //    /*
+        //     * Byte 1 is the protocol 4 = PIO IN and 5 = PIO OUT, in bits 4-1 (i.e., not bit zero)
+        //     */
+        PIO_DataIn<<1, // Byte  1  ATA Protocol = PIO Data-In
+        //    /*
+        //     * Byte 2 is:
+        //     * bits 7-6 OFFLINE - Amount of time the command can take the bus offline
+        //     * bit 5    CK_COND - If set the command will always return a condition check
+        //     * bit 4    RESERVED
+        //     * bit 3    T_DIR   - transfer direction 1 in, 0 out
+        //     * bit 2    BYTE_BLock  1 = transfer in blocks, 0 transfer in bytes
+        //     * bits 1-0 T_LENGTH -  2 = the length is in the sector count field
+        //     */
+        0x0E,    // Byte  2  OFF_LINE=0, CK_CON=0, T_DIR=1, BYT_BLOK=1=blocks, T_LENGTH=2 (in sector_count)
+        0x00,    // Byte  3  FEATURES SECURITY PROTOCOL = 0 (TCG)  -- not a security command
+        0x01,    // Byte  4  SECTOR_COUNT = 1
+        0x00,    // Byte  5  LBA_LOW  -- unused
+        0x00,    // Byte  6  LBA_MID  -- unused
+        0x00,    // Byte  7  LBA_HIGH -- unused
+        0x00,    // Byte  8  DEVICE -- so far always zero
+        kATACmd_IDENTIFY_DEVICE,    // Byte  9  COMMAND=ATA IDENTIFY DEVICE
+        0x00,    // Byte 10  Reserved -- zero
+        0x00,    // Byte 11  CONTROL -- so far always zero
+      };
+    return PerformSCSICommand(fd, identifyCDB_SAT, sizeof(identifyCDB_SAT), buffer, dataLength, NULL, 0, NULL);
+}
+
+
+
+
+
+dictionary *
+DtaDevLinuxSata::parseIdentifyDeviceResponse(const InterfaceDeviceID & interfaceDeviceIdentification,
+                                             const unsigned char * response,
+                                             DTA_DEVICE_INFO & di)
+{
+  const IDENTIFY_RESPONSE & resp = *(IDENTIFY_RESPONSE *)response;
+
+  parseATIdentifyResponse(&resp, &di);
+
+  if (deviceNeedsSpecialAction(interfaceDeviceIdentification,
+                               splitVendorNameFromModelNumber)) {
+    LOG(D4) << " *** splitting VendorName from ModelNumber";
+    LOG(D4) << " *** was vendorID=\"%s\" modelNum=\"%s\"", di.vendorID, di.modelNum;
+    memcpy(di.vendorID, di.modelNum, sizeof(di.vendorID));
+    memmove(di.modelNum,
+            di.modelNum+sizeof(di.vendorID),
+            sizeof(di.modelNum)-sizeof(di.vendorID));
+    memset(di.modelNum+sizeof(di.modelNum)-sizeof(di.vendorID),
+           0,
+           sizeof(di.vendorID));
+    LOG(D4) << " *** now vendorID=\"%s\" modelNum=\"%s\"", di.vendorID, di.modelNum;
+  }
+
+  std::string options = std::to_string(resp.TCGOptions[1]<<8 | resp.TCGOptions[0]);
+  std::ostringstream ss;
+  ss << std::hex << std::setw(2) << std::setfill('0');
+  for (uint8_t &b: di.worldWideName) ss << (int)b;
+  std::string wwn = ss.str();
+  return new dictionary
+    {
+      {"TCG Options"       , options                        },
+      {"Device Type"       , resp.devType ? "OTHER" : "ATA" },
+      {"Serial Number"     , (const char *)di.serialNum     },
+      {"Model Number"      , (const char *)di.modelNum      },
+      {"Firmware Revision" , (const char *)di.firmwareRev   },
+      {"World Wide Name"   , wwn                            },
+    };
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 using namespace std;
 
 /** The Device class represents a single disk device.
