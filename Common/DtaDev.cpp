@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright 2014, 2022 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -100,7 +100,6 @@ uint8_t DtaDev::isEprise()
   LOG(D1) << "Entering DtaDev::isEprise " << (uint16_t) disk_info.Enterprise;
   return disk_info.Enterprise;
 }
-
 uint8_t DtaDev::isAnySSC()
 {
   LOG(D1) << "Entering DtaDev::isAnySSC " << (uint16_t)disk_info.ANY_OPAL_SSC;

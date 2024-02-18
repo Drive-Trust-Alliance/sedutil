@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014, 2022 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -29,7 +29,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 void usage()
 {
-    printf("sedutil v%s Copyright 2014-2023 Bright Plaza Inc. <drivetrust@drivetrust.com>\n", GIT_VERSION);
+    printf("sedutil v%s Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>\n", GIT_VERSION);
     printf("a utility to manage self encrypting drives that conform\n");
     printf("to the Trusted Computing Group Storage Architecture Core Specification\n");
     printf("and to one of the Security Subsystem Class specifications such as OPAL 2.0\n");

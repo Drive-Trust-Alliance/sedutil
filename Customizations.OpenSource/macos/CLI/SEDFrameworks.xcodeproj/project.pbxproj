@@ -1137,7 +1137,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1288,7 +1288,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1589,7 +1589,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1713,7 +1713,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1838,7 +1838,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1957,7 +1957,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2074,7 +2074,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2194,7 +2194,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2313,7 +2313,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2431,7 +2431,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
