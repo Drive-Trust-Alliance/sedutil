@@ -47,9 +47,17 @@ public:
                                               DTA_DEVICE_INFO & disk_info);
 
 
+  /** Attempt an ATA security command IF_SEND/IF_RECV to a Scsi device
+   *  (Note that Sata devices are a separate subclass.)
+   */
   virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                           void * buffer, uint32_t bufferlen);
 
+
+  /** Identify this device using SCSI Inquiry Standard Data All command
+   *  to obtain data to fill out disk_info.
+   *  (Note that Sata devices are a separate subclass.)
+   */
   virtual bool identify(DTA_DEVICE_INFO& disk_info);
 
 
@@ -101,12 +109,12 @@ protected:
                          uint8_t * sense, unsigned char senselen,
                          unsigned char * pmasked_status)
   {
-    return PerformSCSICommand(fd,
-                              dxfer_direction,
-                              cdb, cdb_len,
-                              buffer, bufferlen,
-                              sense, senselen,
-                              pmasked_status);
+    return DtaDevLinuxScsi::PerformSCSICommand(this->fd,
+                                               dxfer_direction,
+                                               cdb, cdb_len,
+                                               buffer, bufferlen,
+                                               sense, senselen,
+                                               pmasked_status);
   }
 
 
@@ -121,10 +129,11 @@ private:
                             DTA_DEVICE_INFO & disk_info);
 
   static
-  int inquiryStandardDataAll_SCSI(int fd, void * inquiryResponse, size_t dataSize );
+  int inquiryStandardDataAll_SCSI(int fd, void * inquiryResponse, unsigned int & dataSize );
+
 
   static
-  int __inquiry(int fd, uint8_t evpd, uint8_t page_code, void * buffer, size_t & dataSize);
+  int __inquiry(int fd, uint8_t evpd, uint8_t page_code, void * buffer, unsigned int & dataSize);
 
 
   static

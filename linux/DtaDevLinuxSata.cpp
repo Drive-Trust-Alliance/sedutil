@@ -50,7 +50,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define INTERMEDIATE_C_GOOD  0x0a
 #define RESERVATION_CONFLICT 0x0c
 #define COMMAND_TERMINATED   0x11
-#define QUEUE_FULL
+#define QUEUE_FULL           0x14
+
+#define STATUS_MASK          0x3e
 
 
 
@@ -73,7 +75,7 @@ bool DtaDevLinuxSata::identifyUsingATAIdentifyDevice(int fd,
 #define IDENTIFY_RESPONSE_SIZE 512
   bzero ( identifyDeviceResponse, IDENTIFY_RESPONSE_SIZE );
 
-  uint64_t dataLen = IDENTIFY_RESPONSE_SIZE;
+  unsigned int dataLen = IDENTIFY_RESPONSE_SIZE;
   isSAT = (0 == identifyDevice_SAT( fd, identifyDeviceResponse, dataLen ));
 
   if (isSAT) {
@@ -107,7 +109,7 @@ bool DtaDevLinuxSata::identifyUsingATAIdentifyDevice(int fd,
 
 
 
-int DtaDevLinuxSata::identifyDevice_SAT( int fd, void * buffer , int & dataLength)
+int DtaDevLinuxSata::identifyDevice_SAT( int fd, void * buffer , unsigned int & dataLength)
 {
 
     static SCSICommandDescriptorBlock identifyCDB_SAT =
@@ -182,6 +184,119 @@ DtaDevLinuxSata::parseIdentifyDeviceResponse(const InterfaceDeviceID & interface
     };
 }
 
+
+
+
+
+
+
+
+
+
+// This version I just rescued from /tmp at Sun Feb 18 11:07:38 PM EST 2024
+/** Send an ioctl to the device using pass through. */
+uint8_t DtaDevLinuxSata::sendCmd_Sata(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+                                 void * buffer, uint32_t bufferlen)
+{
+  sg_io_hdr_t sg;
+  uint8_t sense[32]; // how big should this be??
+  uint8_t cdb[12];
+
+  LOG(D1) << "Entering DtaDevLinuxScsi::sendCmd";
+  memset(&cdb, 0, sizeof (cdb));
+  memset(&sense, 0, sizeof (sense));
+  memset(&sg, 0, sizeof (sg));
+  /*
+   * Initialize the CDB as described in ScsiT-2 and the
+   * ATA Command set reference (protocol and commID placement)
+   * We need a few more standards bodies --NOT--
+   */
+
+  cdb[0] = 0xa1; // ata pass through(12)
+  /*
+   * Byte 1 is the protocol 4 = PIO IN and 5 = PIO OUT
+   * Byte 2 is:
+   * bits 7-6 OFFLINE - Amount of time the command can take the bus offline
+   * bit 5    CK_COND - If set the command will always return a condition check
+   * bit 4    RESERVED
+   * bit 3    T_DIR   - transfer direction 1 in, 0 out
+   * bit 2    BYTE_BLock  1 = transfer in blocks, 0 transfer in bytes
+   * bits 1-0 T_LENGTH -  10 = the length id in sector count
+   */
+  sg.timeout = 60000;
+  if (IF_RECV == cmd) {
+    // how do I know it is discovery 0 ?
+    cdb[1] = 4 << 1; // PIO DATA IN
+    cdb[2] = 0x0E; // T_DIR = 1, BYTE_BLOCK = 1, Length in Sector Count
+    cdb[4] = bufferlen / 512; // Sector count / transfer length (512b blocks)
+    sg.dxfer_direction = SG_DXFER_FROM_DEV;
+    sg.dxfer_len = bufferlen;
+  }
+  else if (IDENTIFY == cmd) {
+    sg.timeout = 600; // Sabrent USB-ScsiTA adapter 1ms,6ms,20ms,60 NG, 600ms OK
+    cdb[1] = 4 << 1; // PIO DATA IN
+    cdb[2] = 0x0E; // T_DIR = 1, BYTE_BLOCK = 1, Length in Sector Count
+    cdb[4] = 1; // Sector count / transfer length (512b blocks)
+    sg.dxfer_direction = SG_DXFER_FROM_DEV;
+    sg.dxfer_len = 512; // if not exactly 512-byte, exteremly long timeout, 2 - 3 minutes
+  }
+  else {
+    cdb[1] = 5 << 1; // PIO DATA OUT
+    cdb[2] = 0x06; // T_DIR = 0, BYTE_BLOCK = 1, Length in Sector Count
+    cdb[4] = bufferlen / 512; // Sector count / transfer length (512b blocks)
+    sg.dxfer_direction = SG_DXFER_TO_DEV;
+    sg.dxfer_len = bufferlen;
+  }
+  cdb[3] = protocol; // ATA features / TRUSTED S/R security protocol
+  cdb[4] = bufferlen / 512; // Sector count / transfer length (512b blocks)
+  //      cdb[5] = reserved;
+  cdb[7] = ((comID & 0xff00) >> 8);
+  cdb[6] = (comID & 0x00ff);
+  //      cdb[8] = 0x00;              // device
+  cdb[9] = cmd; // IF_SEND/IF_RECV
+  //      cdb[10] = 0x00;              // reserved
+  //      cdb[11] = 0x00;              // control
+  /*
+   * Set up the SCSI Generic structure
+   * see the SG HOWTO for the best info I could find
+   */
+  sg.interface_id = 'S';
+  //      sg.dxfer_direction = Set in if above
+  sg.cmd_len = sizeof (cdb);
+  sg.mx_sb_len = sizeof (sense);
+  sg.iovec_count = 0;
+  sg.dxfer_len = bufferlen;
+  sg.dxferp = buffer;
+  sg.cmdp = cdb;
+  sg.sbp = sense;
+  //sg.timeout = 60000;
+  sg.flags = 0;
+  sg.pack_id = 0;
+  sg.usr_ptr = NULL;
+  //    LOG(D4) << "cdb before ";
+  //    IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
+  //    LOG(D4) << "sg before ";
+  //    IFLOG(D4) DtaHexDump(&sg, sizeof (sg));
+  /*
+   * Do the IO
+   */
+  if (ioctl(fd, SG_IO, &sg) < 0) {
+    //    LOG(D4) << "cdb after ";
+    //    IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
+    //    LOG(D4) << "sense after ";
+    //    IFLOG(D4) DtaHexDump(sense, sizeof (sense));
+    return 0xff;
+  }
+  //    LOG(D4) << "cdb after ";
+  //    IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
+  //    LOG(D4) << "sg after ";
+  //    IFLOG(D4) DtaHexDump(&sg, sizeof (sg));
+  //    LOG(D4) << "sense after ";
+  //    IFLOG(D4) DtaHexDump(sense, sizeof (sense));
+  if (!((0x00 == sense[0]) && (0x00 == sense[1])))
+    if (!((0x72 == sense[0]) && (0x0b == sense[1]))) return 0xff; // not ATA response
+  return (sense[11]);
+}
 
 
 

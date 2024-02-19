@@ -469,11 +469,12 @@ typedef enum _NVMECOMMAND {
 // The mnemonics below are a little misleading, but the comments
 // explain what kind of connection is used to deliver the trusted commands
 typedef enum _DTA_DEVICE_TYPE {
-  DEVICE_TYPE_ATA,    // SATA / PATA
+  DEVICE_TYPE_ATA,    // SATA / PATA
   DEVICE_TYPE_SCSI,   // SCSI
   DEVICE_TYPE_NVME,   // NVMe
   DEVICE_TYPE_SAS,    // UAS     -- USB -> SCSI
   DEVICE_TYPE_USB,    // UAS SAT -- USB -> SCSI -> AT pass-through
+  DEVICE_TYPE_SATA = DEVICE_TYPE_USB,  // Just couldn't take it any longer
   DEVICE_TYPE_OTHER,
 } DTA_DEVICE_TYPE;
 
