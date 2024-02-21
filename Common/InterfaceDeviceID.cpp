@@ -12,39 +12,10 @@
 //#include <libkern/libkern.h>
 //#pragma clang diagnostic pop
 
-#if defined(__APPLE__) && defined(__MACH__)
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdocumentation"
-#pragma clang diagnostic ignored "-Wdocumentation-html"
-#include <IOKit/scsi/SCSITask.h>
-#include <IOKit/scsi/SCSICmds_INQUIRY_Definitions.h>
-#include <IOKit/scsi/SCSICommandOperationCodes.h>
-#pragma clang diagnostic ignored "-Woverloaded-virtual"
-#include <IOKit/IOUserClient.h>
-#include <IOKit/IOBufferMemoryDescriptor.h>
-#pragma clang diagnostic pop
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Woverloaded-virtual"
-#include <IOKit/storage/IOBlockStorageDriver.h>
-#pragma clang diagnostic pop
-
-#endif // defined(__APPLE__) && defined(__MACH__)
-
 
 #include <stdarg.h>
 
-#include <SEDKernelInterface/SEDKernelInterface.h>
-#include "TPerDriver.h"
-#include "CDBAccess.hpp"
-
-#include "kernel_debug.h"
-#include "kernel_PrintBuffer.h"
 #include "DtaStructures.h"
-#include "DtaEndianFixup.h"
-
-#include "InterfaceDeviceID.h"
 
 static __inline
 int

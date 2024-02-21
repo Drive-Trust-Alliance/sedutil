@@ -19,7 +19,6 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 #pragma once
 #include "DtaStructures.h"
-#include "InterfaceDeviceID.h"
 #include "DtaDevLinuxDrive.h"
 #include <map>
 
@@ -60,13 +59,16 @@ public:
    */
   virtual bool identify(DTA_DEVICE_INFO& disk_info);
 
-
-protected:
-
   DtaDevLinuxScsi(int _fd)
     : DtaDevLinuxDrive(_fd)
   {}
 
+  ~DtaDevLinuxScsi(){}
+
+  static
+  bool identifyUsingSCSIInquiry(int fd,
+                                InterfaceDeviceID & interfaceDeviceIdentification,
+                                DTA_DEVICE_INFO & disk_info);
 
   /** Perform a SCSI command using the SCSI generic interface. (static class function)
    *
@@ -82,12 +84,9 @@ protected:
    *
    * Returns the result of the ioctl call, as well as possibly setting *pmasked_status
    */
-  static int PerformSCSICommand(int fd,
-                                int dxfer_direction,
-                                uint8_t * cdb,   unsigned char cdb_len,
-                                void * buffer,   unsigned int& bufferlen,
-                                uint8_t * sense, unsigned char senselen,
-                                unsigned char * pmasked_status);
+
+
+protected:
 
 
   /** Perform a SCSI command using the SCSI generic interface. (member function)
@@ -118,11 +117,15 @@ protected:
   }
 
 
+protected:
+  static int PerformSCSICommand(int fd,
+                                int dxfer_direction,
+                                uint8_t * cdb,   unsigned char cdb_len,
+                                void * buffer,   unsigned int& bufferlen,
+                                uint8_t * sense, unsigned char senselen,
+                                unsigned char * pmasked_status);
+
 private:
-  static
-  bool identifyUsingSCSIInquiry(int fd,
-                                InterfaceDeviceID interfaceDeviceIdentification,
-                                DTA_DEVICE_INFO & disk_info);
   static
   bool deviceIsStandardSCSI(int fd,
                             InterfaceDeviceID & interfaceDeviceIdentification,

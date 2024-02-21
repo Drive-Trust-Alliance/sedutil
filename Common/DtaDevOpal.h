@@ -37,43 +37,7 @@ using namespace std;
  */
 class DtaDevOpal : public DtaDevOS {
 public:
-  /** Default Constructor */
-  DtaDevOpal();
-  /** default Destructor */
   ~DtaDevOpal();
-  /** OS specific initialization.
-   * This function should perform the necessary authority and environment checking
-   * to allow proper functioning of the program, open the device, perform an ATA
-   * identify, add the fields from the identify response to the disk info structure
-   * and if the device is an ATA device perform a call to Discovery0() to complete
-   * the disk_info structure
-   * @param devref character representation of the device is standard OS lexicon
-   */
-  void init(const char * devref);
-
-#if defined(__APPLE__) && defined(__MACH__)
-  /* Apple OSX and iOS (Darwin). ------------------------------ */
-#include <TargetConditionals.h>
-#if TARGET_IPHONE_SIMULATOR == 1
-  /* iOS in Xcode simulator */
-
-#elif TARGET_OS_IPHONE == 1
-  /* iOS on iPhone, iPad, etc. */
-
-#elif TARGET_OS_MAC == 1
-  /* OSX */
-  /** OS specific method to initialize an object to a pre-existing connection
-   *  @param devref the name of the device in the OS lexicon
-   *  @param driverService  the I/O Registry entry of the device
-   *  @param connect the connection returned by Open
-   */
-  void init(const char * devref,
-            io_registry_entry_t driverService,
-            io_connect_t connect);
-  /** Notify the device of the host properties and receive the
-   * properties of the device as a reply */
-#endif
-#endif  // defined(__APPLE__) && defined(__MACH__)
 
   void set_prop(DtaCommand * props, uint16_t sz_MaxComPacketSize, uint16_t sz_MaxResponseComPacketSize, uint16_t sz_MaxPacketSize, uint16_t sz_MaxIndTokenSize);
   void fill_prop(uint8_t show); // show = TRUE, print property  ; show = 0; fill property variable but no print

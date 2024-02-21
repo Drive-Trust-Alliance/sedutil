@@ -103,15 +103,6 @@ public:
    * virtual methods required in the OS specific
    * device class
    */
-  /** OS specific initialization.
-   * This function should perform the necessary authority and environment checking
-   * to allow proper functioning of the program, open the device, perform an ATA
-   * identify, add the fields from the identify response to the disk info structure
-   * and if the device is an ATA device perform a call to Discovery0() to complete
-   * the disk_info structure
-   * @param devref character representation of the device is standard OS lexicon
-   */
-  virtual void init(const char * devref) = 0;
   /** OS specific method to send an ATA command to the device
    * @param cmd ATA command to be sent to the device
    * @param protocol security protocol to be used in the command

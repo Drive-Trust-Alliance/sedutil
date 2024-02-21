@@ -32,6 +32,7 @@
 #endif // !defined(sizeof_field)
 
 #include "ATAStructures.h"
+#include "InterfaceDeviceID.h"
 
 /** Response returned by ATA Identify */
 typedef struct _IDENTIFY_RESPONSE {
@@ -744,6 +745,66 @@ public:
   uint8_t        m_Reserved_3[1];            // 10
   uint8_t        m_Control;                  // 11
 };                      // 12
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+class CScsiCmdATAPassThrough_12 // (per "Working Draft SCSI / ATA Translation - 5 (SAT-5))"
+////////////////////////////////////////////////////////////////////////////////////////
+{
+public:
+  enum
+    {
+      OPCODE  = 0XA1,  // ATA PASS-THROUGH (12)
+    };
+  uint8_t        m_Opcode=OPCODE;            //  0
+  uint8_t        m_Obsolete         : 3 ;    //  1
+  uint8_t        m_Protocol         : 4 ;
+  uint8_t        m_Reserved_1       : 1 ;
+  uint8_t        m_Offline          : 2 ;    //  2
+  uint8_t        m_CkCond           : 1 ;
+  uint8_t        m_TType            : 1 ;
+  uint8_t        m_TDir             : 1 ;
+  uint8_t        m_ByteBlock        : 1 ;
+  uint8_t        m_TLength          : 2 ;
+  uint8_t        m_Features;                 //  3
+  uint8_t        m_Count;                    //  4
+  uint8_t        m_LBA_Low;                  //  5
+  uint8_t        m_LBA_Mid;                  //  6
+  uint8_t        m_LBA_High;                 //  7
+  uint8_t        m_Device;                   //  8
+  uint8_t        m_Command;                  //  9
+  uint8_t        m_Reserved_2;               // 10
+  uint8_t        m_Control;                  // 11
+
+  CScsiCmdATAPassThrough_12(uint8_t protocol, uint8_t command,
+                            uint8_t features=0,
+                            uint8_t count=1,
+                            uint8_t lbaLow=0,
+                            uint8_t lbaMid=0,
+                            uint8_t lbaHigh=0
+                            ) :
+    m_Opcode           ( OPCODE   ) , //       //  0
+    m_Obsolete         ( 0        ) , // : 3   //  1
+    m_Protocol         ( protocol ) , // : 4
+    m_Reserved_1       ( 0        ) , // : 1
+    m_Offline          ( 0        ) , // : 2   //  2
+    m_CkCond           ( 0        ) , // : 1
+    m_TType            ( 0        ) , // : 1
+    m_TDir             ( protocol==PIO_DATA_IN ? 1 : 0) , // : 1
+    m_ByteBlock        ( 1        ) , // : 1
+    m_TLength          ( 2        ) , // : 2
+    m_Features         ( features ) , //       //  3
+    m_Count            ( count    ) , //       //  4
+    m_LBA_Low          ( lbaLow   ) , //       //  5
+    m_LBA_Mid          ( lbaMid   ) , //       //  6
+    m_LBA_High         ( lbaHigh  ) , //       //  7
+    m_Device           ( 0        ) , //       //  8
+    m_Command          ( command  ) , //       //  9
+    m_Reserved_2       ( 0        ) , //       // 10
+    m_Control          ( 0        )   //       // 11
+  {};
+};                      // 12
+
 #endif  // defined(__cplusplus)
 
 #pragma pack(pop)

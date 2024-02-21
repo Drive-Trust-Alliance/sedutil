@@ -3,26 +3,12 @@
 //  BrightPlazaTPer
 //
 //  Created by Scott Marks on 9/7/22
-//  Copyright © 2022 Bright Plaza Inc. All rights reserved.
+//  Copyright © 2022-2024 Bright Plaza Inc. All rights reserved.
 //
 
 
-#if defined(__APPLE__) && defined(__MACH__)
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdocumentation"
-#pragma clang diagnostic ignored "-Wdocumentation-html"
-#pragma clang diagnostic ignored "-Woverloaded-virtual"
-#include <IOKit/scsi/IOSCSIPeripheralDeviceNub.h>  // TODO: tell Apple about the documentation bugs in these files
-#include <IOKit/scsi/IOSCSIPeripheralDeviceType00.h>
-#include <IOKit/scsi/IOSCSIBlockCommandsDevice.h>
-#include <IOKit/scsi/IOBlockStorageServices.h>
-#pragma clang diagnostic pop
-#include "UserKernelShared.h"
-
-#endif // defined(__APPLE__) && defined(__MACH__)
-
-#include "DtaStructures.h"
+#include <cstdint>
 
 #pragma once
 // Copied from SCSICmds_INQUIRY_Definitions.h:71

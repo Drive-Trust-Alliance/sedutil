@@ -48,11 +48,25 @@ public:
      */
     uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
             void * buffer, uint32_t bufferlen);
+
     /** NVMe specific routine to send an identify to the device */
-    bool identify(DTA_DEVICE_INFO& disk_info);
+    virtual bool identify(DTA_DEVICE_INFO& disk_info)
+  {
+    InterfaceDeviceID interfaceDeviceIdentification;
+    return  identifyUsingNvmeIdentify(fd, interfaceDeviceIdentification, disk_info);
+  }
+
 
   DtaDevLinuxNvme(int _fd)
     : DtaDevLinuxDrive(_fd)
   {}
+
+  ~DtaDevLinuxNvme(){}
+
+
+  static
+  bool identifyUsingNvmeIdentify(int fd,
+                                 InterfaceDeviceID & interfaceDeviceIdentification,
+                                 DTA_DEVICE_INFO & disk_info);
 
 };

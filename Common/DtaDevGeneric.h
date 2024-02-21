@@ -50,17 +50,6 @@ private:
 	~DtaDevGeneric();
 
 public:
-    /** OS specific initialization.
-         * This function should perform the necessary authority and environment checking
-         * to allow proper functioning of the program, open the device, perform an ATA
-         * identify, add the fields from the identify response to the disk info structure
-         * and if the device is an ATA device perform a call to Discovery0() to complete
-         * the disk_info structure
-         * @param devref character representation of the device is standard OS lexicon
-         */
-	void init(const char * devref) ;
-
-
    /** User command to prepare the device for management by sedutil.
          * Specific to the SSC that the device supports
          * @param password the password that is to be assigned to the SSC master entities

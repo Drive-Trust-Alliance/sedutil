@@ -41,9 +41,14 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace std;
 
-/** Class representing a disk device, this class is intended to be used when
- * it is not yet known if the device is a TPer
+
+/** Class representing a disk device, this class was previously intended to be used when
+ * it was not yet known if the device was a TPer.  Now it is used as a default instead of
+ * returning NULL from functions which otherwise would.
  */
+
+DtaDevGeneric::~DtaDevGeneric(){};
+
 
 #define voidNOCODE(name, ...) void DtaDevGeneric::name(##__VA_ARGS__) { \
 LOG(E) << "Generic Device class does not support function " << #name << std::endl; \
@@ -53,17 +58,7 @@ LOG(E) << "Generic Device class does not support function " << #name << std::end
 return 0xff; \
 }
 
-DtaDevGeneric::DtaDevGeneric(const char * devref)
-{
-	DtaDevOS::init(devref);
-}
 
-DtaDevGeneric::~DtaDevGeneric()
-{
-}
-void DtaDevGeneric::init(const char * devref)
-{
-}
 uint8NOCODE(initialSetup, char *password)
 uint8NOCODE(initialSetup, vector<uint8_t>HostChallenge)
 uint8NOCODE(configureLockingRange,uint8_t lockingrange,

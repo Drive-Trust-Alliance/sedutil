@@ -9,7 +9,7 @@
 
 #include "ParseATIdentify.h"
 
-// Steal P16_COPY, a very useful internal macro from db.h
+// Steal P_16_COPY, a very useful internal macro from db.h
 #define __DBINTERFACE_PRIVATE
 #include <db.h>
 #undef __DBINTERFACE_PRIVATE
@@ -21,7 +21,7 @@ void parseATIdentifyResponse( const IDENTIFY_RESPONSE * presp, DTA_DEVICE_INFO *
     DTA_DEVICE_INFO & di = *pdi;
 
 #define P_16_COPY_RESP_TO_DI(respFieldName,diFieldName) \
-    for (size_t i = 0; i < sizeof(resp.respFieldName); i += 2) {\
+    for (size_t i = 0; i < sizeof(resp.respFieldName); i += sizeof(uint16_t)) { \
         P_16_COPY(resp.respFieldName[i], di.diFieldName[i]); \
     }
 

@@ -25,9 +25,6 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  */
 class DtaDevLinuxDrive {
 public:
-  virtual ~DtaDevLinuxDrive( void ) {fdclose();}
-
-
   /** Factory function to look at the devref and create an instance of the appropriate subclass of
    *  DtaDevLinuxDrive
    *
@@ -65,11 +62,15 @@ public:
 
   DtaDevLinuxDrive(int _fd) :fd(_fd) {}
 
+  virtual ~DtaDevLinuxDrive() {fdclose();}
+
+
 protected:
 
   static int fdopen(const char * devref);
   void fdclose(void);
 
+public:  // *** TODO *** DEBUGGING *** this should just be protected
   int fd=0; /**< Linux handle for the device  */
 
 // private:

@@ -20,16 +20,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DtaDevOpal1.h"
 
-using namespace std;
 
+DtaDevOpal1::~DtaDevOpal1(){}
 
-DtaDevOpal1::DtaDevOpal1 (const char * devref)
-{
-	DtaDevOpal::init(devref);
-	assert(isOpal1());
-}
-
-DtaDevOpal1::~DtaDevOpal1()
-{
-}
 uint16_t DtaDevOpal1::comID() { return disk_info.OPAL10_basecomID; }

@@ -20,8 +20,6 @@ Common/DtaDevOpal2.cpp \
 Common/DtaDevOpal2.h \
 Common/DtaDevOpal.cpp \
 Common/DtaDevOpal.h \
-Common/DtaDiskType.cpp \
-Common/DtaDiskType.h \
 Common/DtaEndianFixup.h \
 Common/DtaHashPassword.cpp \
 Common/DtaHashPassword.h \
@@ -34,8 +32,6 @@ Common/DtaResponse.cpp \
 Common/DtaResponse.h \
 Common/DtaSession.cpp \
 Common/DtaSession.h \
-Common/ParseATIdentify.h \
-Common/ParseATIdentify.cpp \
 Common/ParseATIdentify.h \
 Common/ParseATIdentify.cpp \
 Common/InterfaceDeviceID.h \

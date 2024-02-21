@@ -72,8 +72,8 @@ uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * & device, bool genericIf
 
 
 DtaDevLinuxDrive * DtaDevLinuxDrive::getDtaDevLinuxDrive(const char * devref,
-                                                         DTA_DEVICE_INFO &disk_info) {
-
+                                                         DTA_DEVICE_INFO &disk_info)
+{
   DtaDevLinuxDrive * drive ;
 
   disk_info.devType = DEVICE_TYPE_OTHER;
@@ -85,4 +85,30 @@ DtaDevLinuxDrive * DtaDevLinuxDrive::getDtaDevLinuxDrive(const char * devref,
     return drive ;
 
   return NULL ;
+}
+
+
+extern void test(void);
+void test ()
+{
+  DTA_DEVICE_INFO disk_info;
+  bzero(&disk_info, sizeof(disk_info));
+
+  DtaDevLinuxDrive * drive=DtaDevLinuxDrive::getDtaDevLinuxDrive("/dev/disk2", disk_info);
+
+  LOG(I) << "drive is " << std::hex << reinterpret_cast<std::uintptr_t>(drive) ;
+
+  if (drive != NULL) {
+
+    int dfd = drive->fd;
+
+    DtaDevLinuxScsi * s = new DtaDevLinuxScsi(dfd);
+
+    LOG(I) << "s is " << std::hex << reinterpret_cast<std::uintptr_t>(s) ;
+
+    if (s != NULL)
+      delete s;
+
+    delete drive;
+  }
 }

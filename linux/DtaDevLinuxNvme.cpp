@@ -120,9 +120,11 @@ uint8_t DtaDevLinuxNvme::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
   return err;
 }
 
-bool DtaDevLinuxNvme::identify(DTA_DEVICE_INFO& disk_info)
+bool DtaDevLinuxNvme::identifyUsingNvmeIdentify(int fd,
+                                                InterfaceDeviceID &,  // Currently unused
+                                                DTA_DEVICE_INFO & disk_info)
 {
-  LOG(D4) << "Entering DtaDevLinuxNvme::identify()";
+  LOG(D4) << "Entering DtaDevLinuxNvme::identifyUsingNvmeIdentify";
 
   uint8_t ctrl[4096];
 

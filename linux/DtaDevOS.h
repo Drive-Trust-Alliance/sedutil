@@ -28,7 +28,6 @@ public:
   /** Destructor */
   ~DtaDevOS();
 
-  void init(const char * devref){};  // legacy  ** TODO **
 
   /** Factory method to produce instance of appropriate subclass
    *   Note that all of DtaDevGeneric, DtaDevEnterprise, DtaDevOpal, ... derive from DtaDevOS
