@@ -638,6 +638,19 @@ typedef struct _DTA_DEVICE_INFO {
 
 } DTA_DEVICE_INFO;
 
+
+/**  ***WARNING***
+ *
+ *   Although the bitfields below look nice and do an excellent job of documenting
+ *   what the Scsi standards specify, the C/C++ standards sadly do not specify the
+ *   order of bitfields within compilation units, that is, the bytes in which they
+ *   lie.  (The author of this comment has been bitten by assuming that this would
+ *   "just work" and even tried the reversed order.  For instance, the longer
+ *   constructor for CScsiCmdATAPassThrough_12 is completely unreliable.
+ *   Never mind x86 vs arm.)
+ *
+ */
+
 #if defined(__cplusplus)
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -776,6 +789,9 @@ public:
   uint8_t        m_Reserved_2;               // 10
   uint8_t        m_Control;                  // 11
 
+  CScsiCmdATAPassThrough_12() :
+    m_Opcode           ( OPCODE   ) //       //  0
+  {};
   CScsiCmdATAPassThrough_12(uint8_t protocol, uint8_t command,
                             uint8_t features=0,
                             uint8_t count=1,
@@ -792,7 +808,7 @@ public:
     m_TType            ( 0        ) , // : 1
     m_TDir             ( protocol==PIO_DATA_IN ? 1 : 0) , // : 1
     m_ByteBlock        ( 1        ) , // : 1
-    m_TLength          ( 2        ) , // : 2
+    m_TLength          ( 2        ) , // : 2    10b=>transfer length in Count
     m_Features         ( features ) , //       //  3
     m_Count            ( count    ) , //       //  4
     m_LBA_Low          ( lbaLow   ) , //       //  5

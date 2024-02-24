@@ -58,30 +58,37 @@ using namespace std;
 uint8_t DtaDevOS::getDtaDevOS(const char * devref,
                               DtaDevOS * & dev, bool genericIfNotTPer)
 {
-  LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\")";
+  LOG(D4) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\")";
   DTA_DEVICE_INFO disk_info;
   bzero(&disk_info, sizeof(disk_info));
 
   DtaDevLinuxDrive * drive = DtaDevLinuxDrive::getDtaDevLinuxDrive(devref, disk_info);
   if (drive == NULL) {
     dev = NULL;
-    LOG(E) << "Invalid or unsupported device " << devref;
-    LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
+    LOG(D4) << "DtaDevLinuxDrive::getDtaDevLinuxDrive(\"" << devref <<  "\", disk_info) returned NULL";
+    if (!genericIfNotTPer) {  LOG(E) << "Invalid or unsupported device " << devref; }
+    LOG(D4) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
     return DTAERROR_COMMAND_ERROR;
   }
 
   dev =  getDtaDevOS(devref, drive, disk_info, genericIfNotTPer) ;
   if (dev == NULL) {
     delete drive;
-    LOG(E) << "Invalid or unsupported device " << devref;
-    LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
+    LOG(D4) << "getDtaDevOS(" << "\"" << devref <<  "\"" << ", "
+                              << "drive"                 << ", "
+                              << "disk_info"             << ", "
+                              << ( genericIfNotTPer ? "true" : "false" )
+                      <<  ")"
+            << " returned NULL";
+    if (!genericIfNotTPer) { LOG(E) << "Invalid or unsupported device " << devref; }
+    LOG(D4) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
     return DTAERROR_COMMAND_ERROR;
   }
 
 
-  LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") disk_info:";
-  DtaHexDump(&disk_info, (int)sizeof(disk_info));
-  LOG(D1) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_SUCCESS";
+  LOG(D4) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") disk_info:";
+  IFLOG(D4) DtaHexDump(&disk_info, (int)sizeof(disk_info));
+  LOG(D4) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_SUCCESS";
   return DTAERROR_SUCCESS;
 }
 

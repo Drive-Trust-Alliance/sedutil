@@ -46,8 +46,8 @@ using namespace std;
 
 DtaDevLinuxNvme * DtaDevLinuxNvme::getDtaDevLinuxNvme(const char * devref,
                                                       DTA_DEVICE_INFO & disk_info) {
-  if (!(0 == fnmatch("nvme[0-9]",      devref, 0) ||
-        0 == fnmatch("nvme[1-9][0-9]", devref, 0) ))
+  if (!(0 == fnmatch("/dev/nvme[0-9]",      devref, 0) ||
+        0 == fnmatch("/dev/nvme[1-9][0-9]", devref, 0) ))
     return NULL;
 
   int fd_=fdopen(devref);
@@ -62,7 +62,7 @@ DtaDevLinuxNvme * DtaDevLinuxNvme::getDtaDevLinuxNvme(const char * devref,
   }
 
 
-  LOG(D1) << "Success opening device " << devref << " as file handle " << (int32_t) fd_;
+  LOG(D4) << "Success opening device " << devref << " as file handle " << (int32_t) fd_;
 
 
   DtaDevLinuxNvme * drive = new DtaDevLinuxNvme((int)fd_);

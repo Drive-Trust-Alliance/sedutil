@@ -60,6 +60,13 @@ public:
 
 private:
   static
+  int PerformATAPassThroughCommand(int fd,
+                                   int cmd, int securityProtocol, int comID,
+                                   void * buffer, unsigned int & bufferlen,
+                                   unsigned char * sense, unsigned char & senselen,
+                                   unsigned char * pmasked_status);
+
+  static
   int identifyDevice_SAT( int fd, void * buffer , unsigned int & dataLength);
 
   static

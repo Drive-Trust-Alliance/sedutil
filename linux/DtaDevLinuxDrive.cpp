@@ -292,6 +292,7 @@ int DtaDevLinuxDrive::fdopen(const char * devref)
 void DtaDevLinuxDrive::fdclose()
 {
   if (0 <= fd) {
+    LOG(D4) << "Closing device file handle " << (int32_t) fd;
     close(fd);
   }
 }

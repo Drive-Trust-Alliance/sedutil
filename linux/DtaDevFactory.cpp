@@ -80,35 +80,11 @@ DtaDevLinuxDrive * DtaDevLinuxDrive::getDtaDevLinuxDrive(const char * devref,
 
   if ( (drive = DtaDevLinuxNvme::getDtaDevLinuxNvme(devref, disk_info)) != NULL )
     return drive ;
+  LOG(D4) << "DtaDevLinuxNvme::getDtaDevLinuxNvme(\"" << devref <<  "\", disk_info) returned NULL";
 
   if ( (drive = DtaDevLinuxScsi::getDtaDevLinuxScsi(devref, disk_info)) != NULL )
     return drive ;
+  LOG(D4) << "DtaDevLinuxScsi::getDtaDevLinuxScsi(\"" << devref <<  "\", disk_info) returned NULL";
 
   return NULL ;
-}
-
-
-extern void test(void);
-void test ()
-{
-  DTA_DEVICE_INFO disk_info;
-  bzero(&disk_info, sizeof(disk_info));
-
-  DtaDevLinuxDrive * drive=DtaDevLinuxDrive::getDtaDevLinuxDrive("/dev/disk2", disk_info);
-
-  LOG(I) << "drive is " << std::hex << reinterpret_cast<std::uintptr_t>(drive) ;
-
-  if (drive != NULL) {
-
-    int dfd = drive->fd;
-
-    DtaDevLinuxScsi * s = new DtaDevLinuxScsi(dfd);
-
-    LOG(I) << "s is " << std::hex << reinterpret_cast<std::uintptr_t>(s) ;
-
-    if (s != NULL)
-      delete s;
-
-    delete drive;
-  }
 }

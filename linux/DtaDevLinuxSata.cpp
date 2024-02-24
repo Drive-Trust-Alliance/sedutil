@@ -40,24 +40,6 @@
 // taken from <scsi/scsi.h> to avoid SCSI/ATA name collision
 //
 
-/*
- *  Status codes
- */
-
-#define GOOD                 0x00
-#define CHECK_CONDITION      0x01
-#define CONDITION_GOOD       0x02
-#define BUSY                 0x04
-#define INTERMEDIATE_GOOD    0x08
-#define INTERMEDIATE_C_GOOD  0x0a
-#define RESERVATION_CONFLICT 0x0c
-#define COMMAND_TERMINATED   0x11
-#define QUEUE_FULL           0x14
-
-#define STATUS_MASK          0x3e
-
-
-
 
 bool DtaDevLinuxSata::identifyUsingATAIdentifyDevice(int fd,
                                                      InterfaceDeviceID & interfaceDeviceIdentification,
@@ -78,9 +60,11 @@ bool DtaDevLinuxSata::identifyUsingATAIdentifyDevice(int fd,
   bzero ( identifyDeviceResponse, IDENTIFY_RESPONSE_SIZE );
 
   unsigned int dataLen = IDENTIFY_RESPONSE_SIZE;
+  LOG(D4) << "Invoking identifyDevice_SAT --  dataLen=" << std::hex << "0x" << dataLen ;
   isSAT = (0 == identifyDevice_SAT( fd, identifyDeviceResponse, dataLen ));
 
   if (isSAT) {
+    LOG(D4) << " identifyDevice_SAT returned zero -- is SAT" ;
 
     if (0xA5==((uint8_t *)identifyDeviceResponse)[510]) {  // checksum is present
       uint8_t checksum=0;
@@ -92,8 +76,13 @@ bool DtaDevLinuxSata::identifyUsingATAIdentifyDevice(int fd,
       if (checksum != 0) {
         LOG(D1) << " *** IDENTIFY DEVICE response checksum failed *** !!!" ;
       }
+    } else {
+      LOG(D4) << " *** IDENTIFY DEVICE response checksum not present" ;
     }
-
+    IFLOG(D4) {
+      LOG(D4) << "ATA IDENTIFY DEVICE response: dataLen=" << std::hex << "0x" << dataLen ;
+      DtaHexDump(identifyDeviceResponse, dataLen);
+    }
 
     dictionary *pIdentifyCharacteristics =
       parseATAIdentifyDeviceResponse(interfaceDeviceIdentification,
@@ -103,6 +92,8 @@ bool DtaDevLinuxSata::identifyUsingATAIdentifyDevice(int fd,
       (*ppIdentifyCharacteristics) = pIdentifyCharacteristics;
     else if (pIdentifyCharacteristics !=NULL)
       delete pIdentifyCharacteristics;
+  } else {
+    LOG(D4) << " identifyDevice_SAT returned non-zero -- is not SAT" ;
   }
   free(identifyDeviceResponse);
 
@@ -113,15 +104,78 @@ bool DtaDevLinuxSata::identifyUsingATAIdentifyDevice(int fd,
 
 int DtaDevLinuxSata::identifyDevice_SAT( int fd, void * buffer , unsigned int & dataLength)
 {
+
   //  *** TODO ***   sg.timeout = 600; // Sabrent USB-SATA adapter 1ms,6ms,20ms,60 NG, 600ms OK
-  CScsiCmdATAPassThrough_12 identifyCDB_SAT(PIO_DATA_IN,IDENTIFY);
-  return DtaDevLinuxScsi::PerformSCSICommand(fd,
-                                             SG_DXFER_FROM_DEV,
-                                             (uint8_t *)&identifyCDB_SAT, (unsigned char)sizeof(identifyCDB_SAT),
-                                             buffer, dataLength,
-                                             NULL, 0, NULL);
+  LOG(D4) << " identifyDevice_SAT about to PerformATAPassThroughCommand" ;
+  unsigned char sense[32];
+  unsigned char senselen=sizeof(sense);
+  unsigned char masked_status;
+  int result=PerformATAPassThroughCommand(fd,
+                                          IDENTIFY, 0, 0,
+                                          buffer, dataLength,
+                                          sense, senselen,
+                                          &masked_status);
+  IFLOG(D4) {
+    LOG(D4) << "identifyDevice_SAT: result=" << result << " dataLength=" << std::hex << "0x" << dataLength ;
+    LOG(D4) << "sense after" ;
+    DtaHexDump(sense, senselen);
+    LOG(D4) << "masked_status " << statusName( masked_status );
+    if (0==result)
+      DtaHexDump(buffer, dataLength);
+  }
+  return result;
 }
 
+
+int DtaDevLinuxSata::PerformATAPassThroughCommand(int fd,
+                                                  int cmd, int securityProtocol, int comID,
+                                                  void * buffer,  unsigned int & bufferlen,
+                                                  unsigned char * sense, unsigned char & senselen,
+                                                  unsigned char * pmasked_status)
+{
+  uint8_t protocol;
+  int dxfer_direction;
+
+  switch (cmd)
+    {
+    case IDENTIFY:
+    case IF_RECV:
+      protocol = PIO_DATA_IN;
+      dxfer_direction = SG_DXFER_FROM_DEV;
+      break;
+
+    case IF_SEND:
+      protocol = PIO_DATA_OUT;
+      dxfer_direction = SG_DXFER_TO_DEV;
+      break;
+
+    default:
+      LOG(E) << "Exiting DtaDevLinuxSata::PerformATAPassThroughCommand because of unrecognized cmd=" << cmd << "?!" ;
+      return 0xff;
+    }
+
+
+  CScsiCmdATAPassThrough_12 cdb;
+  uint8_t * cdbBytes=(uint8_t *)&cdb;  // We use direct byte pointer because bitfields are unreliable
+  cdbBytes[1] = protocol << 1;
+  cdbBytes[2] = (protocol==PIO_DATA_IN ? 1 : 0) << 3 |  // TDir
+                1                               << 2 |  // ByteBlock
+                2                                       // TLength  10b => transfer length in Count
+                ;
+  cdb.m_Features = securityProtocol;
+  cdb.m_Count = bufferlen/512;
+  cdb.m_LBA_Mid = comID & 0xFF;          // ATA lbaMid   / TRUSTED COMID low
+  cdb.m_LBA_High = (comID >> 8) & 0xFF; // ATA lbaHihg  / TRUSTED COMID high
+  cdb.m_Command = cmd;
+
+  int result=DtaDevLinuxScsi::PerformSCSICommand(fd,
+                                                 dxfer_direction,
+                                                 cdbBytes, (unsigned char)sizeof(cdb),
+                                                 buffer, bufferlen,
+                                                 sense, senselen,
+                                                 pmasked_status);
+  return result;
+}
 
 
 
@@ -152,7 +206,12 @@ DtaDevLinuxSata::parseATAIdentifyDeviceResponse(const InterfaceDeviceID & interf
     LOG(D4) << " *** now vendorID=\"" << di.vendorID << "\" modelNum=\"" <<  di.modelNum << "\"";
   }
 
-  std::string options = std::to_string(resp.TCGOptions[1]<<8 | resp.TCGOptions[0]);
+
+  std::ostringstream ss1;
+  ss1 << "0x" << std::hex << std::setw(4) << std::setfill('0');
+  ss1 << (int)(resp.TCGOptions[1]<<8 | resp.TCGOptions[0]);;
+  std::string options = ss1.str();
+
   std::ostringstream ss;
   ss << std::hex << std::setw(2) << std::setfill('0');
   for (uint8_t &b: di.worldWideName) ss << (int)b;
@@ -175,65 +234,56 @@ uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t securityProtocol, uint1
                                  void * buffer, uint32_t bufferlen)
 {
   LOG(D1) << "Entering DtaDevLinuxSata::sendCmd";
-  uint8_t protocol;
-  int dxfer_direction;
-  switch (cmd)
-    {
-    case IDENTIFY:
-    case IF_RECV:
-      protocol = PIO_DATA_IN;
-      dxfer_direction = SG_DXFER_FROM_DEV;
-    break;
 
-    case IF_SEND:
-      protocol = PIO_DATA_OUT;
-      dxfer_direction = SG_DXFER_TO_DEV;
-    break;
-
-    default:
-      return 0xff;
-  }
-
-
-  CScsiCmdATAPassThrough_12 cmdCDB_SAT(protocol, cmd,
-                                       securityProtocol,    // ATA features / TRUSTED S/R security protocol
-                                       bufferlen/512,       // count
-                                       0,                   // ATA lbaLow   / reserved
-                                       comID & 0xFF,        // ATA lbaMid   / TRUSTED COMID low
-                                       (comID >> 8) & 0xFF);// ATA lbaHihg  / TRUSTED COMID high
-
-  uint8_t sense[32]; // how big should this be??
-  memset(&sense, 0, sizeof (sense));
+  unsigned char sense[32];
+  unsigned char senselen=sizeof(sense);
+  bzero(&sense, senselen);
 
   unsigned int dataLength = bufferlen;
-
+  unsigned char masked_status=GOOD;
   /*
    * Do the IO
    */
-  int result= DtaDevLinuxScsi::PerformSCSICommand(fd,
-                                                  dxfer_direction,
-                                                  (uint8_t *)&cmdCDB_SAT, (unsigned char)sizeof(cmdCDB_SAT),
-                                                  buffer, dataLength,
-                                                  sense, sizeof(sense),
-                                                  NULL);
+  int result= PerformATAPassThroughCommand(fd, cmd, securityProtocol, comID,
+                                           buffer, dataLength,
+                                           sense, senselen,
+                                           &masked_status);
 
   if (result < 0) {
-    //    LOG(D4) << "cdb after ";
-    //    IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
-    //    LOG(D4) << "sense after ";
-    //    IFLOG(D4) DtaHexDump(sense, sizeof (sense));
+    LOG(D4) << "PerformATAPassThroughCommand returned " << result;
+    LOG(D4) << "sense after ";
+    IFLOG(D4) DtaHexDump(&sense, senselen);
     return 0xff;
   }
-  //    LOG(D4) << "cdb after ";
-  //    IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
-  //    LOG(D4) << "sg after ";
-  //    IFLOG(D4) DtaHexDump(&sg, sizeof (sg));
-  //    LOG(D4) << "sense after ";
-  //    IFLOG(D4) DtaHexDump(sense, sizeof (sense));
-  if (!((0x00 == sense[0]) && (0x00 == sense[1])))
-    if (!((0x72 == sense[0]) && (0x0b == sense[1])))
-      return 0xff; // not ATA response
 
+  LOG(D4) << "PerformATAPassThroughCommand returned " << result;
+  LOG(D4) << "sense after ";
+  IFLOG(D4) DtaHexDump(&sense, senselen);
+
+  // check for successful target completion
+  if (masked_status != GOOD)
+    {
+      LOG(D4) << "masked_status=" << masked_status << "=" << statusName(masked_status) << " != GOOD  cmd=" <<
+        (cmd == IF_SEND ? std::string("IF_SEND") :
+         cmd == IF_RECV ? std::string("IF_RECV") :
+         cmd == IDENTIFY ? std::string("IDENTIFY") :
+         std::to_string(cmd));
+      LOG(D4) << "sense after ";
+      IFLOG(D4) DtaHexDump(&sense, senselen);
+      return 0xff;
+    }
+
+  if (! ((0x00 == sense[0]) && (0x00 == sense[1])) ||
+      ((0x72 == sense[0]) && (0x0b == sense[1])) ) {
+    LOG(D4) << "PerformATAPassThroughCommand disqualifying ATA response --"
+            << " sense[0]=0x" << std::hex << sense[0]
+            << " sense[1]=0x" << std::hex << sense[1];
+    return 0xff; // not ATA response
+  }
+
+  LOG(D4) << "buffer after ";
+  IFLOG(D4) DtaHexDump(buffer, dataLength);
+  LOG(D4) << "PerformATAPassThroughCommand returning sense[11]=0x" << std::hex << sense[11];
   return (sense[11]);
 }
 
@@ -633,17 +683,17 @@ bool DtaDevLinuxSata::identify(DTA_DEVICE_INFO& disk_info)
   kopts.open("/sys/module/libata/parameters/allow_tpm", ios::in);
   if (!kopts) {
     LOG(W) << "Unable to verify Kernel flag libata.allow_tpm ";
-      break;
-    }
+    break;
   }
-  if (nonp) memset(disk_info.modelNum,0,sizeof(disk_info.modelNum));
-  free(buffer);
+}
+if (nonp) memset(disk_info.modelNum,0,sizeof(disk_info.modelNum));
+free(buffer);
 
 
-  // TODO: Also do discovery0 here.
+// TODO: Also do discovery0 here.
 
-  LOG(D1) << "Exiting DtaDevLinuxSata::identify (3)";
-  return true;
+LOG(D1) << "Exiting DtaDevLinuxSata::identify (3)";
+return true;
 }
 
 

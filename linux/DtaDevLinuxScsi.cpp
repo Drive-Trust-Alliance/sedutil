@@ -43,54 +43,47 @@
 // taken from <scsi/scsi.h> to avoid SCSI/ATA name collision
 //
 
-/*
- *  Status codes
- */
-
-#define GOOD                 0x00
-#define CHECK_CONDITION      0x01
-#define CONDITION_GOOD       0x02
-#define BUSY                 0x04
-#define INTERMEDIATE_GOOD    0x08
-#define INTERMEDIATE_C_GOOD  0x0a
-#define RESERVATION_CONFLICT 0x0c
-#define COMMAND_TERMINATED   0x11
-#define QUEUE_FULL           0x14
-
-#define STATUS_MASK          0x3e
-
 
 
 DtaDevLinuxScsi *
 DtaDevLinuxScsi::getDtaDevLinuxScsi(const char * devref, DTA_DEVICE_INFO & di) {
 
-  if (! (0 == fnmatch("sd[a-z]", devref, 0)))
+  if (! (0 == fnmatch("/dev/sd[a-z]", devref, 0)))
     return NULL;
 
   int fd = fdopen(devref);
   if (fd < 0)
     return NULL;
 
-  LOG(D1) << "Success opening device " << devref << " as file handle " << (int32_t) fd;
+  LOG(D4) << "Success opening device " << devref << " as file handle " << (int32_t) fd;
 
 
   InterfaceDeviceID interfaceDeviceIdentification;
 
-  if (!identifyUsingSCSIInquiry(fd, interfaceDeviceIdentification, di)) {
+  if (! identifyUsingSCSIInquiry(fd, interfaceDeviceIdentification, di)) {
     di.devType = DEVICE_TYPE_OTHER;
     LOG(E) << " Device " << devref << " is NOT SCSI?! -- file handle " << (int32_t) fd;
+    LOG(D4) << "Closing device " << devref << " as file handle " << (int32_t) fd;
     close(fd);
     return NULL;
   }
 
 
   dictionary * identifyCharacteristics = NULL;
-  if (DtaDevLinuxSata::identifyUsingATAIdentifyDevice(fd, interfaceDeviceIdentification, di, &identifyCharacteristics)) {
+  if (DtaDevLinuxSata::identifyUsingATAIdentifyDevice(fd,
+                                                      interfaceDeviceIdentification,
+                                                      di,
+                                                      &identifyCharacteristics)) {
+
     // The completed identifyCharacteristics map could be useful to customizing code here
     if ( NULL != identifyCharacteristics ) {
+      LOG(D3) << "identifyCharacteristics for ATA Device: ";
+      for (dictionary::iterator it=identifyCharacteristics->begin(); it!=identifyCharacteristics->end(); it++)
+        LOG(D3) << "  " << it->first << ":" << it->second << std::endl;
       delete identifyCharacteristics;
       identifyCharacteristics = NULL ;
     }
+
     LOG(D4) << " Device " << devref << " is Sata";
     di.devType = DEVICE_TYPE_SATA;
     return new DtaDevLinuxSata(fd);
@@ -98,10 +91,15 @@ DtaDevLinuxScsi::getDtaDevLinuxScsi(const char * devref, DTA_DEVICE_INFO & di) {
 
   // Even though the device is SAS,
   // the (possibly partially completed) identifyCharacteristics map could be useful to customizing code here
+  // The completed identifyCharacteristics map could be useful to customizing code here
   if ( NULL != identifyCharacteristics ) {
+    LOG(D3) << "identifyCharacteristics for SAS Device: ";
+    for (dictionary::iterator it=identifyCharacteristics->begin(); it!=identifyCharacteristics->end(); it++)
+      LOG(D3) << "  " << it->first << ":" << it->second << std::endl;
     delete identifyCharacteristics;
     identifyCharacteristics = NULL ;
   }
+
   LOG(D4) << " Device " << devref << " is not Sata, assuming plain Scsi (SAS)" ;
   di.devType = DEVICE_TYPE_SAS;
   return new DtaDevLinuxScsi(fd);
@@ -111,7 +109,6 @@ DtaDevLinuxScsi::getDtaDevLinuxScsi(const char * devref, DTA_DEVICE_INFO & di) {
 bool DtaDevLinuxScsi::identifyUsingSCSIInquiry(int fd,
                                                InterfaceDeviceID & interfaceDeviceIdentification,
                                                DTA_DEVICE_INFO & disk_info) {
-
   if (!deviceIsStandardSCSI(fd, interfaceDeviceIdentification, disk_info)) {
     LOG(E) << " Device is not Standard SCSI -- not for this driver";
     return false;
@@ -219,13 +216,18 @@ bool DtaDevLinuxScsi::deviceIsStandardSCSI(int fd, InterfaceDeviceID & interface
     bzero ( inquiryResponse, transferSize );
     isStandardSCSI = ( 0 == inquiryStandardDataAll_SCSI( fd,  inquiryResponse, transferSize ) );
     if (isStandardSCSI) {
-      dictionary * characteristics =
+      dictionary * inquiryCharacteristics =
         parseInquiryStandardDataAllResponse(static_cast <const unsigned char * >(inquiryResponse),
                                             interfaceDeviceIdentification,
                                             di);
       // Customization could use Inquiry characteristics
-      delete characteristics ;
-      characteristics = NULL ;
+      if ( NULL != inquiryCharacteristics ) {
+        LOG(D3) << "inquiryCharacteristics for Scsi Device: ";
+        for (dictionary::iterator it=inquiryCharacteristics->begin(); it!=inquiryCharacteristics->end(); it++)
+          LOG(D3) << "  " << it->first << ":" << it->second << std::endl;
+        delete inquiryCharacteristics;
+        inquiryCharacteristics = NULL ;
+      }
     }
     free(inquiryResponse);
     inquiryResponse = NULL;
@@ -254,17 +256,23 @@ int DtaDevLinuxScsi::__inquiry(int fd, uint8_t evpd, uint8_t page_code, void * i
   cdb.m_EVPD             = evpd;
   cdb.m_PageCode         = page_code;
   cdb.m_AllocationLength = htons(dataSize);
-
+  unsigned char sense[32];
+  unsigned char senselen=sizeof(sense);
+  unsigned char masked_status;
   return PerformSCSICommand(fd,
                             SG_DXFER_FROM_DEV,
                             (uint8_t *)&cdb, sizeof(cdb),
                             inquiryResponse, dataSize,
-                            NULL, 0,  NULL);
+                            sense, senselen,
+                            &masked_status);
 }
 
 
 static void safecopy(uint8_t * dst, size_t dstsize, const uint8_t * src, size_t srcsize)
 {
+  const uint8_t *p=src, *p_end=p+srcsize;
+  while (0==*p) if (p_end==++p) return;
+
   if (dstsize<=srcsize)
     memcpy(dst,src,dstsize);
   else {
@@ -295,7 +303,7 @@ DtaDevLinuxScsi::parseInquiryStandardDataAllResponse(const unsigned char * respo
       {"Model Number"      , (const char *)di.modelNum    },
       {"Firmware Revision" , (const char *)di.firmwareRev },
       {"Serial Number"     , (const char *)di.serialNum   },
-      {"Vendor ID"         , (const char *)di.vendorID    },
+      // {"Vendor ID"         , (const char *)di.vendorID    },
     };
 }
 
@@ -305,7 +313,7 @@ DtaDevLinuxScsi::parseInquiryStandardDataAllResponse(const unsigned char * respo
 
 /** Send an ioctl to the device using pass through. */
 uint8_t DtaDevLinuxScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                                  void * buffer, uint32_t bufferlen)
+                                 void * buffer, uint32_t bufferlen)
 {
   LOG(D1) << "Entering DtaDevLinuxSara::sendCmd_SAS";
 
@@ -348,19 +356,20 @@ uint8_t DtaDevLinuxScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
 
   // execute I/O
   unsigned int transferlen = bufferlen;
-  uint8_t sense[32]; // how big should this be??
-  memset(&sense, 0, sizeof (sense));
-  uint8_t masked_status=GOOD;
+  unsigned char sense[32]; // how big should this be??
+  unsigned char senselen=sizeof(sense);
+  memset(&sense, 0, senselen);
+  unsigned char masked_status=GOOD;
   int result=PerformSCSICommand(dxfer_direction,
                                 cdb, sizeof(cdb),
                                 buffer, transferlen,
-                                sense, sizeof(sense),
+                                sense, senselen,
                                 &masked_status);
   if (result < 0) {
     LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "cdb after ";
     IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(cdb, sizeof (cdb));
     LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "sense after ";
-    IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(sense, sizeof (sense));
+    IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(sense, senselen);
     return 0xff;
   }
 
@@ -370,7 +379,7 @@ uint8_t DtaDevLinuxScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
       LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "cdb after ";
       IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(cdb, sizeof (cdb));
       LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "sense after ";
-      IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(sense, sizeof (sense));
+      IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(sense, senselen);
       return 0xff;
     }
 
@@ -391,7 +400,7 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
                                         int dxfer_direction,
                                         uint8_t * cdb,   unsigned char cdb_len,
                                         void * buffer,   unsigned int & bufferlen,
-                                        uint8_t * sense, unsigned char senselen,
+                                        unsigned char * sense, unsigned char & senselen,
                                         unsigned char * pmasked_status)
 {
   if (fd<=0) {
@@ -412,6 +421,11 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
   sg.sbp = sense;
   sg.timeout = 60000;
 
+  IFLOG(D4)
+    if (dxfer_direction ==  SG_DXFER_TO_DEV) {
+      LOG(D4) << "PerformSCSICommand buffer before";
+      DtaHexDump(buffer,bufferlen);
+    }
 
   //    LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "cdb before ";
   //    IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) hexDump(cdb, sizeof (cdb));
@@ -421,15 +435,23 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
   /*
    * Do the IO
    */
+
+  IFLOG(D4) {
+    LOG(D4) << "PerformSCSICommand sg:" ;
+    DtaHexDump(&sg, sizeof(sg));
+    LOG(D4) << "cdb before:" ;
+    DtaHexDump(cdb, cdb_len);
+  }
   int result = ioctl(fd, SG_IO, &sg);
+  LOG(D4) << "PerformSCSICommand ioctl result=" << result ;
   IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) {
     if (result < 0) {
       LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/)
         << "cdb after ioctl returned " << result << " (" << strerror(result) << ")" ;
-      DtaHexDump(cdb, sizeof (cdb));
+      DtaHexDump(cdb, cdb_len);
       if (sense != NULL) {
         LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "sense after ";
-        DtaHexDump(sense, sizeof (sense));
+        DtaHexDump(sense, senselen);
       }
     }
   }
@@ -437,37 +459,29 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
   // Without any real justification we set bufferlen to the value of dxfer_len - resid
   bufferlen = sg.dxfer_len - sg.resid;
 
+  senselen = sg.sb_len_wr;
+
   if (pmasked_status != NULL) {
     *pmasked_status = sg.masked_status;
-#define STRINGIFY_(x) #x
-#define STRINGIFY(x) STRINGIFY_(x)
-#define maybe(status) (((*pmasked_status) & STATUS_MASK ) == status) ? STRINGIFY(status) :
     IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) {
       if (*pmasked_status != GOOD) {
         LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/)
-          << "cdb after sg.masked_status  == "
-          << ( maybe(GOOD) // NO, we just checked this
-               maybe(CHECK_CONDITION)
-               maybe(CONDITION_GOOD)
-               maybe(BUSY)
-               maybe(INTERMEDIATE_GOOD)
-               maybe(INTERMEDIATE_C_GOOD)
-               maybe(RESERVATION_CONFLICT)
-               maybe(COMMAND_TERMINATED)
-               maybe(QUEUE_FULL)
-               "????" )
+          << "cdb after with masked_status == " << statusName(*pmasked_status)
           << " == " << std::hex << (int)sg.masked_status;
-#undef maybe
-#undef STRINGIFY
-#undef STRINGIFY_
-        DtaHexDump(cdb, sizeof (cdb));
+        DtaHexDump(cdb, cdb_len);
         if (sense != NULL) {
           LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "sense after ";
-          DtaHexDump(sense, sizeof (sense));
+          DtaHexDump(sense, senselen);
         }
       }
     }
   }
+
+  IFLOG(D4)
+    if (dxfer_direction ==  SG_DXFER_FROM_DEV && 0==result && sg.masked_status == GOOD) {
+      LOG(D4) << "PerformSCSICommand buffer after 0==result && sg.masked_status == GOOD:";
+      DtaHexDump(buffer, bufferlen);
+    }
   return result;
 }
 
@@ -486,94 +500,94 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
 
 void DtaDevLinuxSata::identify_SAS(OPAL_DiskInfo *disk_info)
 {
-    sg_io_hdr_t sg;
-    uint8_t sense[18];
-    uint8_t cdb[sizeof(CScsiCmdInquiry)];
+  sg_io_hdr_t sg;
+  uint8_t sense[18];
+  uint8_t cdb[sizeof(CScsiCmdInquiry)];
 
-    LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "Entering DtaDevLinuxSata::identify_SAS()";
-    uint8_t * buffer = (uint8_t *) aligned_alloc(IO_BUFFER_ALIGNMENT, MIN_BUFFER_LENGTH);
+  LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "Entering DtaDevLinuxSata::identify_SAS()";
+  uint8_t * buffer = (uint8_t *) aligned_alloc(IO_BUFFER_ALIGNMENT, MIN_BUFFER_LENGTH);
 
-    memset(&cdb, 0, sizeof (cdb));
-    memset(&sense, 0, sizeof (sense));
-    memset(&sg, 0, sizeof (sg));
+  memset(&cdb, 0, sizeof (cdb));
+  memset(&sense, 0, sizeof (sense));
+  memset(&sg, 0, sizeof (sg));
 
-    // fill out SCSI command
-    auto p = (CScsiCmdInquiry *) cdb;
-    p->m_Opcode = p->OPCODE;
-    p->m_AllocationLength = htons(sizeof(CScsiCmdInquiry_StandardData));
+  // fill out SCSI command
+  auto p = (CScsiCmdInquiry *) cdb;
+  p->m_Opcode = p->OPCODE;
+  p->m_AllocationLength = htons(sizeof(CScsiCmdInquiry_StandardData));
 
-    // fill out SCSI Generic structure
-    sg.interface_id = 'S';
-    sg.dxfer_direction = SG_DXFER_FROM_DEV;
-    sg.cmd_len = sizeof (cdb);
-    sg.mx_sb_len = sizeof (sense);
-    sg.iovec_count = 0;
-    sg.dxfer_len = MIN_BUFFER_LENGTH;
-    sg.dxferp = buffer;
-    sg.cmdp = cdb;
-    sg.sbp = sense;
-    sg.timeout = 60000;
-    sg.flags = 0;
-    sg.pack_id = 0;
-    sg.usr_ptr = NULL;
+  // fill out SCSI Generic structure
+  sg.interface_id = 'S';
+  sg.dxfer_direction = SG_DXFER_FROM_DEV;
+  sg.cmd_len = sizeof (cdb);
+  sg.mx_sb_len = sizeof (sense);
+  sg.iovec_count = 0;
+  sg.dxfer_len = MIN_BUFFER_LENGTH;
+  sg.dxferp = buffer;
+  sg.cmdp = cdb;
+  sg.sbp = sense;
+  sg.timeout = 60000;
+  sg.flags = 0;
+  sg.pack_id = 0;
+  sg.usr_ptr = NULL;
 
-    // execute I/O
-    if (ioctl(fd, SG_IO, &sg) < 0) {
-        LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "cdb after ";
-        IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(cdb, sizeof (cdb));
-        LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "sense after ";
-        IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(sense, sizeof (sense));
-        disk_info->devType = DEVICE_TYPE_OTHER;
-        free(buffer);
-        return;
-    }
-
-    // check for successful target completion
-    if (sg.masked_status != GOOD)
-    {
-        LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "cdb after ";
-        IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(cdb, sizeof (cdb));
-        LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "sense after ";
-        IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(sense, sizeof (sense));
-        disk_info->devType = DEVICE_TYPE_OTHER;
-        free(buffer);
-        return;
-    }
-
-    // response is a standard INQUIRY (at least 36 bytes)
-    auto resp = (CScsiCmdInquiry_StandardData *) buffer;
-
-    // make sure SCSI target is disk
-    if (sg.dxfer_len - sg.resid != sizeof(CScsiCmdInquiry_StandardData)
-        || resp->m_PeripheralDeviceType != 0x0)
-    {
-        LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "cdb after ";
-        IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(cdb, sizeof (cdb));
-        LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "sense after ";
-        IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(sense, sizeof (sense));
-        disk_info->devType = DEVICE_TYPE_OTHER;
-        free(buffer);
-        return;
-    }
-
-    //***DEBUG***
-    printf("DtaDevLinuxSata::identify_SAS -- Inquiry successful, resp:\n");
-    DtaHexDump(resp, sizeof(CScsiCmdInquiry_StandardData));
-    //***DEBUG***
-
-
-    // fill out disk info fields
-    safecopy(disk_info->serialNum, sizeof(disk_info->serialNum), resp->m_T10VendorId, sizeof(resp->m_T10VendorId));
-    safecopy(disk_info->firmwareRev, sizeof(disk_info->firmwareRev), resp->m_ProductRevisionLevel, sizeof(resp->m_ProductRevisionLevel));
-    safecopy(disk_info->modelNum, sizeof(disk_info->modelNum), resp->m_ProductId, sizeof(resp->m_ProductId));
-
-    // device is apparently a SCSI disk
-    disk_info->devType = DEVICE_TYPE_SAS;
-    isSAS = 1;
-
-    // free buffer and return
+  // execute I/O
+  if (ioctl(fd, SG_IO, &sg) < 0) {
+    LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "cdb after ";
+    IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(cdb, sizeof (cdb));
+    LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "sense after ";
+    IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(sense, sizeof (sense));
+    disk_info->devType = DEVICE_TYPE_OTHER;
     free(buffer);
     return;
+  }
+
+  // check for successful target completion
+  if (sg.masked_status != GOOD)
+    {
+      LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "cdb after ";
+      IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(cdb, sizeof (cdb));
+      LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "sense after ";
+      IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(sense, sizeof (sense));
+      disk_info->devType = DEVICE_TYPE_OTHER;
+      free(buffer);
+      return;
+    }
+
+  // response is a standard INQUIRY (at least 36 bytes)
+  auto resp = (CScsiCmdInquiry_StandardData *) buffer;
+
+  // make sure SCSI target is disk
+  if (sg.dxfer_len - sg.resid != sizeof(CScsiCmdInquiry_StandardData)
+      || resp->m_PeripheralDeviceType != 0x0)
+    {
+      LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "cdb after ";
+      IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(cdb, sizeof (cdb));
+      LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "sense after ";
+      IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(sense, sizeof (sense));
+      disk_info->devType = DEVICE_TYPE_OTHER;
+      free(buffer);
+      return;
+    }
+
+  //***DEBUG***
+  printf("DtaDevLinuxSata::identify_SAS -- Inquiry successful, resp:\n");
+  DtaHexDump(resp, sizeof(CScsiCmdInquiry_StandardData));
+  //***DEBUG***
+
+
+  // fill out disk info fields
+  safecopy(disk_info->serialNum, sizeof(disk_info->serialNum), resp->m_T10VendorId, sizeof(resp->m_T10VendorId));
+  safecopy(disk_info->firmwareRev, sizeof(disk_info->firmwareRev), resp->m_ProductRevisionLevel, sizeof(resp->m_ProductRevisionLevel));
+  safecopy(disk_info->modelNum, sizeof(disk_info->modelNum), resp->m_ProductId, sizeof(resp->m_ProductId));
+
+  // device is apparently a SCSI disk
+  disk_info->devType = DEVICE_TYPE_SAS;
+  isSAS = 1;
+
+  // free buffer and return
+  free(buffer);
+  return;
 }
 
 

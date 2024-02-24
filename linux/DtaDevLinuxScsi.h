@@ -23,6 +23,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 
 typedef std::map<std::string,std::string>dictionary;
+typedef std::map<std::string,std::string>::iterator dictionary_iterator;
 
 /** Linux specific implementation SCSI generic ioctls to send commands to the
  * device
@@ -105,7 +106,7 @@ protected:
   int PerformSCSICommand(int dxfer_direction,
                          uint8_t * cdb,   unsigned char cdb_len,
                          void * buffer,   unsigned int& bufferlen,
-                         uint8_t * sense, unsigned char senselen,
+                         unsigned char * sense, unsigned char& senselen,
                          unsigned char * pmasked_status)
   {
     return DtaDevLinuxScsi::PerformSCSICommand(this->fd,
@@ -122,7 +123,7 @@ protected:
                                 int dxfer_direction,
                                 uint8_t * cdb,   unsigned char cdb_len,
                                 void * buffer,   unsigned int& bufferlen,
-                                uint8_t * sense, unsigned char senselen,
+                                unsigned char * sense, unsigned char & senselen,
                                 unsigned char * pmasked_status);
 
 private:
@@ -146,3 +147,39 @@ private:
                                       DTA_DEVICE_INFO & di);
 
 };
+
+
+/*
+ *  Status codes
+ */
+
+#define GOOD                 0x00
+#define CHECK_CONDITION      0x01
+#define CONDITION_GOOD       0x02
+#define BUSY                 0x04
+#define INTERMEDIATE_GOOD    0x08
+#define INTERMEDIATE_C_GOOD  0x0a
+#define RESERVATION_CONFLICT 0x0c
+#define COMMAND_TERMINATED   0x11
+#define QUEUE_FULL           0x14
+
+#define STATUS_MASK          0x3e
+
+#define CaseForStatus(status) case status: return std::string( #status )
+static inline std::string statusName(unsigned char statusValue)
+{
+  switch (statusValue)
+  {
+    CaseForStatus( GOOD                 );
+    CaseForStatus( CHECK_CONDITION      );
+    CaseForStatus( CONDITION_GOOD       );
+    CaseForStatus( BUSY                 );
+    CaseForStatus( INTERMEDIATE_GOOD    );
+    CaseForStatus( INTERMEDIATE_C_GOOD  );
+    CaseForStatus( RESERVATION_CONFLICT );
+    CaseForStatus( COMMAND_TERMINATED   );
+    CaseForStatus( QUEUE_FULL           );
+  default: return std::string("????");
+  }
+}
+#undef CaseForStatus
