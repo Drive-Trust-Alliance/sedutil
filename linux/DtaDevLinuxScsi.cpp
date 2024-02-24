@@ -267,20 +267,6 @@ int DtaDevLinuxScsi::__inquiry(int fd, uint8_t evpd, uint8_t page_code, void * i
                             &masked_status);
 }
 
-
-static void safecopy(uint8_t * dst, size_t dstsize, const uint8_t * src, size_t srcsize)
-{
-  const uint8_t *p=src, *p_end=p+srcsize;
-  while (0==*p) if (p_end==++p) return;
-
-  if (dstsize<=srcsize)
-    memcpy(dst,src,dstsize);
-  else {
-    memcpy(dst,src,srcsize);
-    memset(dst+srcsize, '\0', dstsize-srcsize);
-  }
-}
-
 dictionary *
 DtaDevLinuxScsi::parseInquiryStandardDataAllResponse(const unsigned char * response,
                                                      InterfaceDeviceID & interfaceDeviceIdentification,
@@ -315,7 +301,7 @@ DtaDevLinuxScsi::parseInquiryStandardDataAllResponse(const unsigned char * respo
 uint8_t DtaDevLinuxScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                                  void * buffer, uint32_t bufferlen)
 {
-  LOG(D1) << "Entering DtaDevLinuxSara::sendCmd_SAS";
+  LOG(D4) << "Entering DtaDevLinuxScsi::sendCmd";
 
 
   int dxfer_direction;
@@ -349,6 +335,8 @@ uint8_t DtaDevLinuxScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
       }
     default:
       {
+        LOG(D4) << "Unknown cmd=0x" << std::hex << cmd
+                << " -- returning 0xff from DtaDevLinuxScsi::sendCmd";
         return 0xff;
       }
     }
@@ -366,24 +354,29 @@ uint8_t DtaDevLinuxScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
                                 sense, senselen,
                                 &masked_status);
   if (result < 0) {
-    LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "cdb after ";
-    IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(cdb, sizeof (cdb));
-    LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "sense after ";
-    IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(sense, senselen);
+    LOG(D4) << "cdb after ";
+    IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
+    LOG(D4) << "sense after ";
+    IFLOG(D4) DtaHexDump(sense, senselen);
+    LOG(D4) << "Error result=" << result << " from PerformSCSICommand "
+            << " -- returning 0xff from DtaDevLinuxScsi::sendCmd";
     return 0xff;
   }
 
   // check for successful target completion
   if (masked_status != GOOD)
     {
-      LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "cdb after ";
-      IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(cdb, sizeof (cdb));
-      LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "sense after ";
-      IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) DtaHexDump(sense, senselen);
+      LOG(D4) << "cdb after ";
+      IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
+      LOG(D4) << "sense after ";
+      IFLOG(D4) DtaHexDump(sense, senselen);
+      LOG(D4) << "Masked_status = " << statusName(masked_status) << "!=GOOD "
+              << "-- returning 0xff from DtaDevLinuxScsi::sendCmd";
       return 0xff;
     }
 
   // success
+  LOG(D4) << "Returning 0x00 from DtaDevLinuxScsi::sendCmd";
   return 0x00;
 }
 
@@ -427,10 +420,10 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
       DtaHexDump(buffer,bufferlen);
     }
 
-  //    LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "cdb before ";
-  //    IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) hexDump(cdb, sizeof (cdb));
-  //    LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "sg before ";
-  //    IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) hexDump(&sg, sizeof (sg));
+  //    LOG(D4) << "cdb before ";
+  //    IFLOG(D4) hexDump(cdb, sizeof (cdb));
+  //    LOG(D4) << "sg before ";
+  //    IFLOG(D4) hexDump(&sg, sizeof (sg));
 
   /*
    * Do the IO
@@ -444,13 +437,13 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
   }
   int result = ioctl(fd, SG_IO, &sg);
   LOG(D4) << "PerformSCSICommand ioctl result=" << result ;
-  IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) {
+  IFLOG(D4) {
     if (result < 0) {
-      LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/)
+      LOG(D4)
         << "cdb after ioctl returned " << result << " (" << strerror(result) << ")" ;
       DtaHexDump(cdb, cdb_len);
       if (sense != NULL) {
-        LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "sense after ";
+        LOG(D4) << "sense after ";
         DtaHexDump(sense, senselen);
       }
     }
@@ -463,14 +456,14 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
 
   if (pmasked_status != NULL) {
     *pmasked_status = sg.masked_status;
-    IFLOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) {
+    IFLOG(D4) {
       if (*pmasked_status != GOOD) {
-        LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/)
+        LOG(D4)
           << "cdb after with masked_status == " << statusName(*pmasked_status)
           << " == " << std::hex << (int)sg.masked_status;
         DtaHexDump(cdb, cdb_len);
         if (sense != NULL) {
-          LOG(D1 /*** DEBUG ***TODO FIX BACK TO D4 *** DEBUG ***/) << "sense after ";
+          LOG(D4) << "sense after ";
           DtaHexDump(sense, senselen);
         }
       }

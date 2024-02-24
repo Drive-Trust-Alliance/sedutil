@@ -77,3 +77,20 @@ public:  // *** TODO *** DEBUGGING *** this should just be protected
 //   DtaDevLinuxDrive(){};
 
 };
+
+
+
+
+template <typename T>
+static inline void safecopy(T * dst, size_t dstsize, const T * src, size_t srcsize)
+{
+  const T *p=src, *p_end=p+srcsize;
+  while ((T)(0)==(*p)) if (p_end==++p) return;  // Do not erase dst if src is all zeros
+
+  if (dstsize<=srcsize)
+    memcpy(dst,src,dstsize);
+  else {
+    memcpy(dst,src,srcsize);
+    memset(dst+srcsize, (T)(0), dstsize-srcsize);
+  }
+}

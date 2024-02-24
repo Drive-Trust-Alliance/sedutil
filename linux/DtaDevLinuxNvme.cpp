@@ -141,8 +141,8 @@ bool DtaDevLinuxNvme::identifyUsingNvmeIdentify(int fd,
   int err = ioctl(fd, NVME_IOCTL_ADMIN_CMD, &cmd);
 
   if (err) {
-    LOG(E) << "Nvme Identify error. NVMe status " << err;
     disk_info.devType = DEVICE_TYPE_OTHER;
+    LOG(D4) << "Nvme Identify error. NVMe status " << err;
     IFLOG(D4) DtaHexDump(&cmd, sizeof(cmd));
     IFLOG(D4) DtaHexDump(&ctrl, sizeof(ctrl));
     return false;
@@ -151,11 +151,11 @@ bool DtaDevLinuxNvme::identifyUsingNvmeIdentify(int fd,
   disk_info.devType = DEVICE_TYPE_NVME;
   uint8_t *results = ctrl;
   results += 4;
-  memcpy(disk_info.serialNum, results, sizeof(disk_info.serialNum));
+  safecopy(disk_info.serialNum, sizeof(disk_info.serialNum), results, sizeof(disk_info.serialNum));
   results += sizeof(disk_info.serialNum);
-  memcpy(disk_info.modelNum, results, sizeof(disk_info.modelNum));
+  safecopy(disk_info.modelNum, sizeof(disk_info.modelNum), results, sizeof(disk_info.modelNum));
   results += sizeof(disk_info.modelNum);
-  memcpy(disk_info.firmwareRev, results, sizeof(disk_info.firmwareRev));
+  safecopy(disk_info.firmwareRev, sizeof(disk_info.firmwareRev), results, sizeof(disk_info.firmwareRev));
 
   return true;
 }
