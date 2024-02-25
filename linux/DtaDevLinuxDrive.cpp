@@ -26,12 +26,6 @@
 #include "DtaDevLinuxDrive.h"
 
 static
-uint8_t acquireDiscovery0Response(DtaDevLinuxDrive * drive, uint8_t * d0Response)
-{
-  return drive->sendCmd(IF_RECV, 0x01, 0x0001, d0Response, MIN_BUFFER_LENGTH);
-}
-
-static
 void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
 {
   Discovery0Header * hdr = (Discovery0Header *) d0Response;
@@ -260,9 +254,9 @@ uint8_t DtaDevLinuxDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
   uint8_t d0Response[MIN_BUFFER_LENGTH]; // TODO: ALIGNMENT?
   memset(d0Response, 0, MIN_BUFFER_LENGTH);
 
-  uint8_t lastRC = acquireDiscovery0Response(this, d0Response);
+  uint8_t lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, MIN_BUFFER_LENGTH);
   if ((lastRC ) != 0) {
-    LOG(D) << "Acquiring D0 response failed " << (uint16_t)lastRC;
+    LOG(D) << "Acquiring Discovery 0 response failed " << (uint16_t)lastRC;
     return DTAERROR_COMMAND_ERROR;
   }
   parseDiscovery0Features(d0Response, disk_info);

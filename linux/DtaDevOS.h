@@ -98,7 +98,4 @@ private:
   //   bzero(&disk_info, sizeof(disk_info));
   //   assert(FALSE);  // ***TODO*** this is never used
   // };
-
-
-
 };

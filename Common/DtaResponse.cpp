@@ -25,21 +25,21 @@ using namespace std;
 
 DtaResponse::DtaResponse()
 {
-    LOG(D1) << "Creating  DtaResponse()";
+    LOG(D2) << "Creating  DtaResponse()";
 }
 
 DtaResponse::DtaResponse(void * buffer)
 {
-    LOG(D1) << "Creating  DtaResponse(buffer)";
-    LOG(D2) << "buffer is " << buffer;
+    LOG(D2) << "Creating  DtaResponse(buffer)";
+    LOG(D3) << "buffer is " << buffer;
     init(buffer);
 }
 
 void
 DtaResponse::init(void * buffer)
 {
-    LOG(D1) << "Entering  DtaResponse::init(buffer)";
-    LOG(D2) << "buffer is " << buffer;
+    LOG(D2) << "Entering  DtaResponse::init(buffer)";
+    LOG(D3) << "buffer is " << buffer;
     std::vector<uint8_t> bytestring, empty_atom(1, 0xff);
     uint8_t * reply = (uint8_t *) buffer;
     uint32_t cpos = 0;
@@ -70,8 +70,8 @@ DtaResponse::init(void * buffer)
 
 OPAL_TOKEN DtaResponse::tokenIs(uint32_t tokenNum)
 {
-    LOG(D1) << "Entering  DtaResponse::tokenIs(tokenNum)";
-    LOG(D2) << "tokenNum is " << tokenNum;
+    LOG(D2) << "Entering  DtaResponse::tokenIs(tokenNum)";
+    LOG(D3) << "tokenNum is " << tokenNum;
     if (!(response[tokenNum][0] & 0x80)) { //tiny atom
         if ((response[tokenNum][0] & 0x40))
             return OPAL_TOKEN::DTA_TOKENID_SINT;
@@ -113,8 +113,8 @@ uint32_t DtaResponse::getLength(uint32_t tokenNum)
 
 uint64_t DtaResponse::getUint64(uint32_t tokenNum)
 {
-    LOG(D1) << "Entering  DtaResponse::getUint64(tokenNum)";
-    LOG(D2) << "tokenNum is " << tokenNum;
+    LOG(D2) << "Entering  DtaResponse::getUint64(tokenNum)";
+    LOG(D3) << "tokenNum is " << tokenNum;
     if (!(response[tokenNum][0] & 0x80)) { //tiny atom
         if ((response[tokenNum][0] & 0x40)) {
             LOG(E) << "unsigned int requested for signed tiny atom";
@@ -158,8 +158,8 @@ uint64_t DtaResponse::getUint64(uint32_t tokenNum)
 
 uint32_t DtaResponse::getUint32(uint32_t tokenNum)
 {
-    LOG(D1) << "Entering  DtaResponse::getUint32(tokenNum)";
-    LOG(D2) << "tokenNum is " << tokenNum;
+    LOG(D2) << "Entering  DtaResponse::getUint32(tokenNum)";
+    LOG(D3) << "tokenNum is " << tokenNum;
     uint64_t i = getUint64(tokenNum);
     if (i > 0xffffffff) { LOG(E) << "UINT32 truncated "; }
     return (uint32_t) i;
@@ -168,8 +168,8 @@ uint32_t DtaResponse::getUint32(uint32_t tokenNum)
 
 uint16_t DtaResponse::getUint16(uint32_t tokenNum)
 {
-    LOG(D1) << "Entering  DtaResponse::getUint16(tokenNum)";
-    LOG(D2) << "tokenNum is " << tokenNum;
+    LOG(D2) << "Entering  DtaResponse::getUint16(tokenNum)";
+    LOG(D3) << "tokenNum is " << tokenNum;
     uint64_t i = getUint64(tokenNum);
     if (i > 0xffff) { LOG(E) << "UINT16 truncated "; }
     return (uint16_t) i;
@@ -177,8 +177,8 @@ uint16_t DtaResponse::getUint16(uint32_t tokenNum)
 
 uint8_t DtaResponse::getUint8(uint32_t tokenNum)
 {
-	LOG(D1) << "Entering  DtaResponse::getUint8(tokenNum)";
-    LOG(D2) << "tokenNum is " << tokenNum;
+	LOG(D2) << "Entering  DtaResponse::getUint8(tokenNum)";
+    LOG(D3) << "tokenNum is " << tokenNum;
     uint64_t i = getUint64(tokenNum);
     if (i > 0xff) { LOG(E) << "UINT8 truncated "; }
     return (uint8_t) i;
@@ -194,8 +194,8 @@ std::vector<uint8_t> DtaResponse::getRawToken(uint32_t tokenNum)
 
 std::string DtaResponse::getString(uint32_t tokenNum)
 {
-    LOG(D1) << "Entering  DtaResponse::getString(tokenNum)";
-    LOG(D2) << "tokenNum is " << tokenNum;
+    LOG(D2) << "Entering  DtaResponse::getString(tokenNum)";
+    LOG(D3) << "tokenNum is " << tokenNum;
     std::string s;
     s.erase();
     int overhead = 0;
@@ -224,8 +224,8 @@ std::string DtaResponse::getString(uint32_t tokenNum)
 
 void DtaResponse::getBytes(uint32_t tokenNum, uint8_t bytearray[])
 {
-    LOG(D1) << "Entering  DtaResponse::getBytes(tokenNum, bytearray)";
-    LOG(D2) << "tokenNum is " << tokenNum << " bytearray is " << bytearray;
+    LOG(D2) << "Entering  DtaResponse::getBytes(tokenNum, bytearray)";
+    LOG(D3) << "tokenNum is " << tokenNum << " bytearray is " << bytearray;
     int overhead = 0;
     if (!(response[tokenNum][0] & 0x80)) { //tiny atom
         LOG(E) << "Cannot get a bytestring from a tiny atom";
@@ -252,11 +252,11 @@ void DtaResponse::getBytes(uint32_t tokenNum, uint8_t bytearray[])
 
 uint32_t DtaResponse::getTokenCount()
 {
-    LOG(D1) << "Entering  DtaResponse::getTokenCount()";
+    LOG(D2) << "Entering  DtaResponse::getTokenCount()";
     return (uint32_t) response.size();
 }
 
 DtaResponse::~DtaResponse()
 {
-    LOG(D1) << "Destroying DtaResponse";
+    LOG(D2) << "Destroying DtaResponse";
 }

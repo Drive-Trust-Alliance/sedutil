@@ -62,7 +62,7 @@ DtaDevLinuxScsi::getDtaDevLinuxScsi(const char * devref, DTA_DEVICE_INFO & di) {
 
   if (! identifyUsingSCSIInquiry(fd, interfaceDeviceIdentification, di)) {
     di.devType = DEVICE_TYPE_OTHER;
-    LOG(E) << " Device " << devref << " is NOT SCSI?! -- file handle " << (int32_t) fd;
+    LOG(E) << " Device " << devref << " is NOT Scsi?! -- file handle " << (int32_t) fd;
     LOG(D4) << "Closing device " << devref << " as file handle " << (int32_t) fd;
     close(fd);
     return NULL;
@@ -100,7 +100,7 @@ DtaDevLinuxScsi::getDtaDevLinuxScsi(const char * devref, DTA_DEVICE_INFO & di) {
     identifyCharacteristics = NULL ;
   }
 
-  LOG(D4) << " Device " << devref << " is not Sata, assuming plain Scsi (SAS)" ;
+  LOG(D3) << "Device " << devref << " is Scsi (not Sata, assuming plain SAS)" ;
   di.devType = DEVICE_TYPE_SAS;
   return new DtaDevLinuxScsi(fd);
 }

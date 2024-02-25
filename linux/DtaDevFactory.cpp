@@ -80,11 +80,11 @@ DtaDevLinuxDrive * DtaDevLinuxDrive::getDtaDevLinuxDrive(const char * devref,
 
   if ( (drive = DtaDevLinuxNvme::getDtaDevLinuxNvme(devref, disk_info)) != NULL )
     return drive ;
-  LOG(D4) << "DtaDevLinuxNvme::getDtaDevLinuxNvme(\"" << devref <<  "\", disk_info) returned NULL";
+  //  LOG(D4) << "DtaDevLinuxNvme::getDtaDevLinuxNvme(\"" << devref <<  "\", disk_info) returned NULL";
 
   if ( (drive = DtaDevLinuxScsi::getDtaDevLinuxScsi(devref, disk_info)) != NULL )
     return drive ;
-  LOG(D4) << "DtaDevLinuxScsi::getDtaDevLinuxScsi(\"" << devref <<  "\", disk_info) returned NULL";
+  // LOG(D4) << "DtaDevLinuxScsi::getDtaDevLinuxScsi(\"" << devref <<  "\", disk_info) returned NULL";
 
   return NULL ;
 }

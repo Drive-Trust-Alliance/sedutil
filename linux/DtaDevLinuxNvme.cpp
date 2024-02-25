@@ -69,12 +69,12 @@ DtaDevLinuxNvme * DtaDevLinuxNvme::getDtaDevLinuxNvme(const char * devref,
 
   if (!drive->identify(disk_info)) {
     disk_info.devType = DEVICE_TYPE_OTHER;
-    LOG(E) << " Device "<< devref <<" is NOT Nvme?! -- file handle " << (int32_t) fd_;
+    LOG(E) << "Device "<< devref <<" is NOT Nvme?! -- file handle " << (int32_t) fd_;
     delete drive; // => close(fd)
     drive = NULL ;
   } else {
     disk_info.devType = DEVICE_TYPE_NVME;
-    LOG(D4) << " Device "<< devref <<" is Nvme" ;
+    LOG(D3) << "Device "<< devref <<" is Nvme" ;
   }
   return drive;
 }
