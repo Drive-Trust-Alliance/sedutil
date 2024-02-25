@@ -308,29 +308,29 @@ uint8_t DtaDevLinuxScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
 
   // initialize SCSI CDB and dxfer_direction
   uint8_t cdb[12];
-  memset(&cdb, 0, sizeof (cdb));
+  bzero(&cdb, sizeof (cdb));
   switch(cmd)
     {
     case IF_RECV:
       {
         dxfer_direction = SG_DXFER_FROM_DEV;
-        auto * p = (CScsiCmdSecurityProtocolIn *) cdb;
-        p->m_Opcode = p->OPCODE;
-        p->m_SecurityProtocol = protocol;
-        p->m_SecurityProtocolSpecific = htons(comID);
-        p->m_INC_512 = 1;
-        p->m_AllocationLength = htonl(bufferlen/512);
+        CScsiCmdSecurityProtocolIn & p = * (CScsiCmdSecurityProtocolIn *) cdb;
+        p.m_Opcode = CScsiCmdSecurityProtocolIn::OPCODE;
+        p.m_SecurityProtocol = protocol;
+        p.m_SecurityProtocolSpecific = htons(comID);
+        p.m_INC_512 = 1;
+        p.m_AllocationLength = htonl(bufferlen/512);
         break;
       }
     case IF_SEND:
       {
         dxfer_direction = SG_DXFER_TO_DEV;
-        auto * p = (CScsiCmdSecurityProtocolOut *) cdb;
-        p->m_Opcode = p->OPCODE;
-        p->m_SecurityProtocol = protocol;
-        p->m_SecurityProtocolSpecific = htons(comID);
-        p->m_INC_512 = 1;
-        p->m_TransferLength = htonl(bufferlen/512);
+        CScsiCmdSecurityProtocolOut & p = * (CScsiCmdSecurityProtocolOut *) cdb;
+        p.m_Opcode = CScsiCmdSecurityProtocolIn::OPCODE;
+        p.m_SecurityProtocol = protocol;
+        p.m_SecurityProtocolSpecific = htons(comID);
+        p.m_INC_512 = 1;
+        p.m_TransferLength = htonl(bufferlen/512);
         break;
       }
     default:
@@ -344,10 +344,13 @@ uint8_t DtaDevLinuxScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
 
   // execute I/O
   unsigned int transferlen = bufferlen;
+
   unsigned char sense[32]; // how big should this be??
   unsigned char senselen=sizeof(sense);
-  memset(&sense, 0, senselen);
+  bzero(&sense, senselen);
+
   unsigned char masked_status=GOOD;
+
   int result=PerformSCSICommand(dxfer_direction,
                                 cdb, sizeof(cdb),
                                 buffer, transferlen,
@@ -394,7 +397,8 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
                                         uint8_t * cdb,   unsigned char cdb_len,
                                         void * buffer,   unsigned int & bufferlen,
                                         unsigned char * sense, unsigned char & senselen,
-                                        unsigned char * pmasked_status)
+                                        unsigned char * pmasked_status,
+                                        unsigned int timeout)
 {
   if (fd<=0) {
     LOG(E) << "Scsi device not open";
@@ -412,7 +416,7 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
   sg.dxferp = buffer;
   sg.cmdp = cdb;
   sg.sbp = sense;
-  sg.timeout = 60000;
+  sg.timeout = timeout;
 
   IFLOG(D4)
     if (dxfer_direction ==  SG_DXFER_TO_DEV) {
@@ -420,10 +424,6 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
       DtaHexDump(buffer,bufferlen);
     }
 
-  //    LOG(D4) << "cdb before ";
-  //    IFLOG(D4) hexDump(cdb, sizeof (cdb));
-  //    LOG(D4) << "sg before ";
-  //    IFLOG(D4) hexDump(&sg, sizeof (sg));
 
   /*
    * Do the IO

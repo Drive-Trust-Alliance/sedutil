@@ -107,7 +107,7 @@ protected:
                          uint8_t * cdb,   unsigned char cdb_len,
                          void * buffer,   unsigned int& bufferlen,
                          unsigned char * sense, unsigned char& senselen,
-                         unsigned char * pmasked_status)
+                         unsigned char * pmasked_status=NULL)
   {
     return DtaDevLinuxScsi::PerformSCSICommand(this->fd,
                                                dxfer_direction,
@@ -124,7 +124,8 @@ protected:
                                 uint8_t * cdb,   unsigned char cdb_len,
                                 void * buffer,   unsigned int& bufferlen,
                                 unsigned char * sense, unsigned char & senselen,
-                                unsigned char * pmasked_status);
+                                unsigned char * pmasked_status,
+                                unsigned int timeout=60000);
 
 private:
   static

@@ -105,8 +105,7 @@ bool DtaDevLinuxSata::identifyUsingATAIdentifyDevice(int fd,
 int DtaDevLinuxSata::identifyDevice_SAT( int fd, void * buffer , unsigned int & dataLength)
 {
 
-  //  *** TODO ***   sg.timeout = 600; // Sabrent USB-SATA adapter 1ms,6ms,20ms,60 NG, 600ms OK
-  LOG(D4) << " identifyDevice_SAT about to PerformATAPassThroughCommand" ;
+  // LOG(D4) << " identifyDevice_SAT about to PerformATAPassThroughCommand" ;
   int result=PerformATAPassThroughCommand(fd,
                                           IDENTIFY, 0, 0,
                                           buffer, dataLength);
@@ -125,16 +124,24 @@ int DtaDevLinuxSata::PerformATAPassThroughCommand(int fd,
 {
   uint8_t protocol;
   int dxfer_direction;
+  int timeout;
 
   switch (cmd)
     {
     case IDENTIFY:
+      timeout=600;  //  IDENTIFY sg.timeout = 600; // Sabrent USB-SATA adapter 1ms,6ms,20ms,60 NG, 600ms OK
+      protocol = PIO_DATA_IN;
+      dxfer_direction = SG_DXFER_FROM_DEV;
+      break;
+
     case IF_RECV:
+      timeout=60000;
       protocol = PIO_DATA_IN;
       dxfer_direction = SG_DXFER_FROM_DEV;
       break;
 
     case IF_SEND:
+      timeout=60000;
       protocol = PIO_DATA_OUT;
       dxfer_direction = SG_DXFER_TO_DEV;
       break;
@@ -170,7 +177,8 @@ int DtaDevLinuxSata::PerformATAPassThroughCommand(int fd,
                                                  cdbBytes, (unsigned char)sizeof(cdb),
                                                  buffer, dataLength,
                                                  sense, senselen,
-                                                 &masked_status);
+                                                 &masked_status,
+                                                 timeout);
   if (result < 0) {
     LOG(D4) << "PerformSCSICommand returned " << result;
     LOG(D4) << "sense after ";
