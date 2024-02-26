@@ -317,7 +317,7 @@ public:
   uint8_t getMSID(string& MSID);
 
   // /** Short-circuit routine re-uses initialized drive and disk_info */
-  DtaDevEnterprise(const char * devref, DtaDevLinuxDrive * drive, DTA_DEVICE_INFO& di)
+  DtaDevEnterprise(const char * devref, DtaDevOSDrive * drive, DTA_DEVICE_INFO& di)
     : DtaDevOS(devref, drive, di)
   {} ;
 

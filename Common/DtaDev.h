@@ -131,7 +131,7 @@ public:
   virtual uint8_t initialSetup(char * password) = 0;
   /** User command to prepare the device for management by sedutil.
    * Specific to the SSC that the device supports
-   * @param password the password that is to be assigned to the SSC master entities
+   * ****   @param password the password that is to be assigned to the SSC master entities
    */
   virtual uint8_t multiUserSetup(char *) __unimplemented__;
   /** User command to prepare the drive for Single User Mode and rekey a SUM locking range.
@@ -351,7 +351,7 @@ public:
 
   /** User command to prepare the device for management by sedutil.
    * Specific to the SSC that the device supports
-   * @param hostChallenge the password that is to be assigned to the SSC master entities
+   * *** @param hostChallenge the password that is to be assigned to the SSC master entities
    */
   virtual uint8_t multiUserSetup(vector<uint8_t>) __unimplemented__;
 

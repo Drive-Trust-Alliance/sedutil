@@ -3,7 +3,7 @@
 //  SedUserClient
 //
 //  Created by Jackie Marks on 9/21/15.
-//  Copyright © 2015 Bright Plaza Inc. All rights reserved.
+//  Copyright © 2015-2024 Bright Plaza Inc. All rights reserved.
 //
 
 
@@ -16,6 +16,7 @@
 #include <stdarg.h>
 
 #include "DtaStructures.h"
+#include <algorithm>
 
 static __inline
 int
@@ -72,6 +73,7 @@ bool idMatches(const InterfaceDeviceID & id,
         if (0 != (((*pid)^(*pvalue)) & (*pmask)))
             return false;
     return true;
+    return std::all_of(id,^[*pid](0==((*pid)^(value[pid-id])) & (mask[pid-id])));
 }
 
 

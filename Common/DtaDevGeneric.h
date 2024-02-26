@@ -41,7 +41,7 @@ public:
    *  */
   DtaDevGeneric(const char * devref);
 
-  DtaDevGeneric(const char * devref, DtaDevLinuxDrive * drive, DTA_DEVICE_INFO& di)
+  DtaDevGeneric(const char * devref, DtaDevOSDrive * drive, DTA_DEVICE_INFO& di)
     : DtaDevOS(devref, NULL, di)
   {if (drive != NULL) delete drive; } ;
 

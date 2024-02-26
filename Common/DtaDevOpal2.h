@@ -38,7 +38,7 @@ public:
   uint16_t comID();
 
   // /** Short-circuit routine re-uses initialized drive and disk_info */
-  DtaDevOpal2(const char * devref, DtaDevLinuxDrive * drive, DTA_DEVICE_INFO& di)
+  DtaDevOpal2(const char * devref, DtaDevOSDrive * drive, DTA_DEVICE_INFO& di)
     : DtaDevOpal(devref, drive, di)
   {} ;
 
