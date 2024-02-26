@@ -62,10 +62,10 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref,
   DTA_DEVICE_INFO disk_info;
   bzero(&disk_info, sizeof(disk_info));
 
-  DtaDevLinuxDrive * drive = DtaDevLinuxDrive::getDtaDevLinuxDrive(devref, disk_info);
+  DtaDevOSDrive * drive = DtaDevOSDrive::getDtaDevOSDrive(devref, disk_info);
   if (drive == NULL) {
     dev = NULL;
-    // LOG(D4) << "DtaDevLinuxDrive::getDtaDevLinuxDrive(\"" << devref <<  "\", disk_info) returned NULL";
+    // LOG(D4) << "DtaDevOSDrive::getDtaDevOSDrive(\"" << devref <<  "\", disk_info) returned NULL";
     if (!genericIfNotTPer) {  LOG(E) << "Invalid or unsupported device " << devref; }
     // LOG(D4) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
     return DTAERROR_COMMAND_ERROR;

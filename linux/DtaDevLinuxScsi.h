@@ -19,7 +19,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 #pragma once
 #include "DtaStructures.h"
-#include "DtaDevLinuxDrive.h"
+#include "DtaDevOSDrive.h"
 #include <map>
 
 typedef std::map<std::string,std::string>dictionary;
@@ -28,7 +28,7 @@ typedef std::map<std::string,std::string>::iterator dictionary_iterator;
 /** Linux specific implementation SCSI generic ioctls to send commands to the
  * device
  */
-class DtaDevLinuxScsi: public DtaDevLinuxDrive {
+class DtaDevLinuxScsi: public DtaDevOSDrive {
 public:
 
   /** Factory function to look at the devref and create an instance of
@@ -61,7 +61,7 @@ public:
   virtual bool identify(DTA_DEVICE_INFO& disk_info);
 
   DtaDevLinuxScsi(int _fd)
-    : DtaDevLinuxDrive(_fd)
+    : DtaDevOSDrive(_fd)
   {}
 
   ~DtaDevLinuxScsi(){}

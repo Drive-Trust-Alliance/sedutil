@@ -23,15 +23,15 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 /** virtual implementation for a disk interface-generic disk drive
  */
-class DtaDevLinuxDrive {
+class DtaDevOSDrive {
 public:
   /** Factory function to look at the devref and create an instance of the appropriate subclass of
-   *  DtaDevLinuxDrive
+   *  DtaDevOSDrive
    *
    * @param devref OS device reference e.g. "/dev/sda"
    * @param pdisk_info weak reference to DTA_DEVICE_INFO structure filled out during device identification
    */
-  static DtaDevLinuxDrive * getDtaDevLinuxDrive(const char * devref,
+  static DtaDevOSDrive * getDtaDevOSDrive(const char * devref,
                                                 DTA_DEVICE_INFO & disk_info);
 
 
@@ -60,9 +60,9 @@ public:
 
   bool isOpen(void) {return 0<fd && (fcntl(fd, F_GETFL) != -1 || errno != EBADF);}
 
-  DtaDevLinuxDrive(int _fd) :fd(_fd) {}
+  DtaDevOSDrive(int _fd) :fd(_fd) {}
 
-  virtual ~DtaDevLinuxDrive() {fdclose();}
+  virtual ~DtaDevOSDrive() {fdclose();}
 
 
 protected:
@@ -74,7 +74,7 @@ public:  // *** TODO *** DEBUGGING *** this should just be protected
   int fd=0; /**< Linux handle for the device  */
 
 // private:
-//   DtaDevLinuxDrive(){};
+//   DtaDevOSDrive(){};
 
 };
 
