@@ -19,11 +19,8 @@
    * C:E********************************************************************** */
 
 
-#include "DtaDevOpal1.h"
-#include "DtaDevOpal2.h"
-#include "DtaDevEnterprise.h"
-#include "DtaDevGeneric.h"
-
+#include "DtaDevLinuxNvme.h"
+#include "DtaDevLinuxScsi.h"
 
 
 /** Factory functions
@@ -35,31 +32,22 @@
 
 
 
-DtaDevOS* DtaDevOS::getDtaDevOS(const char * devref,
-                                DtaDevOSDrive * drive,
-                                DTA_DEVICE_INFO & di,
-                                bool genericIfNotTPer) {
-  if (DTAERROR_SUCCESS == drive->discovery0(di)) {  // drive responds to most basic IF_RECV
-    if (di.OPAL20)        return new DtaDevOpal2(devref, drive, di);
-    if (di.OPAL10)        return new DtaDevOpal1(devref, drive, di);
-    if (di.Enterprise)    return new DtaDevEnterprise(devref, drive, di);
-    //  if (di.RUBY) ...  etc.
-  }
-  if (genericIfNotTPer) return new DtaDevGeneric(devref, drive, di);
-
-  LOG(E) << "Unknown OPAL SSC ";
-  return NULL;
-}
 
 
-uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * & device, bool genericIfNotTPer)
+DtaDevOSDrive * DtaDevOSDrive::getDtaDevOSDrive(const char * devref,
+                                                         DTA_DEVICE_INFO &disk_info)
 {
-  DtaDevOS * d;
-  uint8_t result = DtaDevOS::getDtaDevOS(devref, d, genericIfNotTPer);
-  if (result == DTAERROR_SUCCESS) {
-    device = static_cast<DtaDev *>(d);
-  } else {
-    device = NULL ;
-  }
-  return result;
+  DtaDevOSDrive * drive ;
+
+  disk_info.devType = DEVICE_TYPE_OTHER;
+
+  if ( (drive = DtaDevLinuxNvme::getDtaDevLinuxNvme(devref, disk_info)) != NULL )
+    return drive ;
+  //  LOG(D4) << "DtaDevLinuxNvme::getDtaDevLinuxNvme(\"" << devref <<  "\", disk_info) returned NULL";
+
+  if ( (drive = DtaDevLinuxScsi::getDtaDevLinuxScsi(devref, disk_info)) != NULL )
+    return drive ;
+  // LOG(D4) << "DtaDevLinuxScsi::getDtaDevLinuxScsi(\"" << devref <<  "\", disk_info) returned NULL";
+
+  return NULL ;
 }

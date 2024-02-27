@@ -198,5 +198,7 @@ windows/installer/Output/
 # hacked exe files for different flavors
 windows/installer/exe
 # Xcode
-*xcworkspace/xcuserdata/*
+## User settings
+xcuserdata/
+
 Version.h

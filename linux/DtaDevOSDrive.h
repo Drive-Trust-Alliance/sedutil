@@ -19,6 +19,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 #pragma once
 #include <fcntl.h>
+#include <errno.h>
 #include "DtaStructures.h"
 
 /** virtual implementation for a disk interface-generic disk drive

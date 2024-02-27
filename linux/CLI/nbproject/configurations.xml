@@ -20,7 +20,7 @@
       <itemPath>../../Common/DtaDev.h</itemPath>
       <itemPath>../../Common/DtaDevEnterprise.h</itemPath>
       <itemPath>../../Common/DtaDevGeneric.h</itemPath>
-      <itemPath>../DtaDevLinuxDrive.h</itemPath>
+      <itemPath>../DtaDevOSDrive.h</itemPath>
       <itemPath>../DtaDevLinuxNvme.h</itemPath>
       <itemPath>../DtaDevLinuxSata.h</itemPath>
       <itemPath>../DtaDevOS.h</itemPath>
@@ -226,7 +226,7 @@
       </item>
       <item path="../../Common/sedutil.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../DtaDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevOSDrive.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../DtaDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -375,7 +375,7 @@
       </item>
       <item path="../../Common/sedutil.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../DtaDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevOSDrive.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../DtaDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -518,7 +518,7 @@
       </item>
       <item path="../../Common/sedutil.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../DtaDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevOSDrive.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../DtaDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -667,7 +667,7 @@
       </item>
       <item path="../../Common/sedutil.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="../DtaDevLinuxDrive.h" ex="false" tool="3" flavor2="0">
+      <item path="../DtaDevOSDrive.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../DtaDevLinuxNvme.cpp" ex="false" tool="1" flavor2="0">
       </item>

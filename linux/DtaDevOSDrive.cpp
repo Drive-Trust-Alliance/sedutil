@@ -23,7 +23,7 @@
 #include "os.h"
 #include "DtaEndianFixup.h"
 #include "DtaHexDump.h"
-#include "DtaDevLinuxDrive.h"
+#include "DtaDevOSDrive.h"
 
 static
 void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
@@ -250,7 +250,7 @@ void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
   }
 }
 
-uint8_t DtaDevLinuxDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
+uint8_t DtaDevOSDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
   uint8_t d0Response[MIN_BUFFER_LENGTH]; // TODO: ALIGNMENT?
   memset(d0Response, 0, MIN_BUFFER_LENGTH);
 
@@ -264,7 +264,7 @@ uint8_t DtaDevLinuxDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
 }
 
 
-int DtaDevLinuxDrive::fdopen(const char * devref)
+int DtaDevOSDrive::fdopen(const char * devref)
 {
   if (access(devref, R_OK | W_OK)) {
     LOG(E) << "You do not have permission to access the raw device in write mode";
@@ -283,7 +283,7 @@ int DtaDevLinuxDrive::fdopen(const char * devref)
   return fd;
 }
 
-void DtaDevLinuxDrive::fdclose()
+void DtaDevOSDrive::fdclose()
 {
   if (0 <= fd) {
     LOG(D4) << "Closing device file handle " << (int32_t) fd;

@@ -44,8 +44,9 @@ linux/os.h \
 linux/DtaDevOS.h \
 linux/DtaDevOS.cpp \
 linux/DtaDevFactory.cpp \
-linux/DtaDevLinuxDrive.h \
-linux/DtaDevLinuxDrive.cpp \
+linux/DtaDevOSDrive.h \
+linux/DtaDevOSDrive.cpp \
+linux/DtaDevOSFactory.cpp \
 linux/DtaDevLinuxNvme.h \
 linux/DtaDevLinuxNvme.cpp \
 linux/DtaDevLinuxScsi.h \

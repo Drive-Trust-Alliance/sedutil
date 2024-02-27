@@ -20,6 +20,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 #include "DtaStructures.h"
 #include "DtaDevOSDrive.h"
+#include <string>
 #include <map>
 
 typedef std::map<std::string,std::string>dictionary;
@@ -36,9 +37,6 @@ public:
    *  DtaDevLinuxScsi itself (for SAS drives) or
    *  DtaDevLinuxSata (SCSI/ATA translation for SATA drives)
    *    (if the device seems to know the SCSI ATA pass-through protocol)
-   *
-   *  Identification will be completed by attempting discovery0 and
-   *  when successful parsing the results into `disk_info`
    *
    * @param devref OS device reference e.g. "/dev/sda"
    * @param disk_info weak reference to DTA_DEVICE_INFO structure filled out during device identification
@@ -70,22 +68,6 @@ public:
   bool identifyUsingSCSIInquiry(int fd,
                                 InterfaceDeviceID & interfaceDeviceIdentification,
                                 DTA_DEVICE_INFO & disk_info);
-
-  /** Perform a SCSI command using the SCSI generic interface. (static class function)
-   *
-   * @param fd              file descriptor of already-opened raw device file
-   * @param dxfer_direction direction of transfer SG_DXFER_FROM/TO_DEV
-   * @param cdb             SCSI command data buffer
-   * @param cdb_len         length of SCSI command data buffer (often 12)
-   * @param buffer          SCSI data buffer
-   * @param bufferlen       SCSI data buffer len, also output transfer length
-   * @param sense           SCSI sense data buffer
-   * @param senselen        SCSI sense data buffer len (usually 32?)
-   * @param pmasked_status  pointer to storage for masked_status, or NULL if not desired
-   *
-   * Returns the result of the ioctl call, as well as possibly setting *pmasked_status
-   */
-
 
 protected:
 
@@ -119,6 +101,21 @@ protected:
 
 
 protected:
+  /** Perform a SCSI command using the SCSI generic interface. (static class function)
+   *
+   * @param fd              file descriptor of already-opened raw device file
+   * @param dxfer_direction direction of transfer SG_DXFER_FROM/TO_DEV
+   * @param cdb             SCSI command data buffer
+   * @param cdb_len         length of SCSI command data buffer (often 12)
+   * @param buffer          SCSI data buffer
+   * @param bufferlen       SCSI data buffer len, also output transfer length
+   * @param sense           SCSI sense data buffer
+   * @param senselen        SCSI sense data buffer len (usually 32?)
+   * @param pmasked_status  pointer to storage for masked_status, or NULL if not desired
+   * @param timeout         optional timeout (in msecs)
+   *
+   * Returns the result of the ioctl call, as well as possibly setting *pmasked_status
+   */
   static int PerformSCSICommand(int fd,
                                 int dxfer_direction,
                                 uint8_t * cdb,   unsigned char cdb_len,
