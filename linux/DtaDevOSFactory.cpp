@@ -47,7 +47,7 @@ bool DtaDevLinuxDrive::isDtaDevLinuxDriveDevRef(const char * devref)
 DtaDevOSDrive * DtaDevOSDrive::getDtaDevOSDrive(const char * devref,
                                                 DTA_DEVICE_INFO &disk_info)
 {
-  return static_cast<DtaDevOSDrive *)>(DtaDevLinuxDrive::getDtaDevLinuxDrive(devref, disk_info));
+  return static_cast<DtaDevOSDrive *>(DtaDevLinuxDrive::getDtaDevLinuxDrive(devref, disk_info));
 }
 
 

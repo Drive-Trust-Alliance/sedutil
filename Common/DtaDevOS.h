@@ -19,9 +19,9 @@
    * C:E********************************************************************** */
 #pragma once
 #include "DtaDev.h"
-#include "DtaDevLinuxDrive.h"
+#include "DtaDevOSDrive.h"
 
-/** Linux specific implementation of DtaDevOS.
+/** OS specific implementation of DtaDevOS.
  */
 class DtaDevOS : public DtaDev {
 public:
@@ -56,7 +56,7 @@ public:
   static int diskScan();
 
   /** Short-circuit routine re-uses initialized drive and disk_info */
-  DtaDevOS(const char * devref, DtaDevLinuxDrive * drv, DTA_DEVICE_INFO & di)
+  DtaDevOS(const char * devref, DtaDevOSDrive * drv, DTA_DEVICE_INFO & di)
     : drive(drv)
   {dev=devref; disk_info=di; drive=drv; isOpen=(drv!=NULL && drv->isOpen());};
 
@@ -71,7 +71,7 @@ protected:
    *  a DtaDevGeneric instance if genericIfNotTper is true.
    */
   static DtaDevOS* getDtaDevOS(const char * devref,
-                               DtaDevLinuxDrive * drive,
+                               DtaDevOSDrive * drive,
                                DTA_DEVICE_INFO & di,
                                bool genericIfNotTPer=false);
 
@@ -88,7 +88,7 @@ protected:
 
 private:
   /* Protocol-specific subclass instance -- Nvme, Scsi, Sata, ... */
-  DtaDevLinuxDrive *drive;
+  DtaDevOSDrive *drive;
 
   // /** Default constructor */
   // DtaDevOS()

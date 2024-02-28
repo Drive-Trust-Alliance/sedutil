@@ -51,7 +51,7 @@ bool DtaDevLinuxNvme::isDtaDevLinuxNvmeDevRef(const char * devref) {
 
 DtaDevLinuxNvme * DtaDevLinuxNvme::getDtaDevLinuxNvme(const char * devref,
                                                       DTA_DEVICE_INFO & disk_info) {
-  if (!DtaDevLinuxNvmeDevRef(devref))
+  if (!isDtaDevLinuxNvmeDevRef(devref))
     return NULL;
 
   int fd_=fdopen(devref);

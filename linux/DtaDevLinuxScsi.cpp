@@ -45,7 +45,7 @@
 
 
 
-bool DtaDevLinuxScsi::isDtaDevLinuxScsiDefRef(const char * devref) {
+bool DtaDevLinuxScsi::isDtaDevLinuxScsiDevRef(const char * devref) {
 
   return 0 == fnmatch("/dev/sd[a-z]", devref, 0);
 }

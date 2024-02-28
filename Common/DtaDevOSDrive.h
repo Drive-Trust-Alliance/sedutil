@@ -72,7 +72,7 @@ public:
 
   uint8_t discovery0(DTA_DEVICE_INFO & di);
 
-  bool isOpen(void) = 0 ;
+  virtual bool isOpen(void) = 0 ;
 
   virtual ~DtaDevOSDrive() {};
 

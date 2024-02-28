@@ -36,7 +36,7 @@
 
 
 DtaDevOS* DtaDevOS::getDtaDevOS(const char * devref,
-                                DtaDevLinuxDrive * drive,
+                                DtaDevOSDrive * drive,
                                 DTA_DEVICE_INFO & di,
                                 bool genericIfNotTPer) {
   if (DTAERROR_SUCCESS == drive->discovery0(di)) {  // drive responds to most basic IF_RECV
