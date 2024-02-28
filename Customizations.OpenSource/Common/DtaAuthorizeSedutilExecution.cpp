@@ -25,5 +25,5 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 //
 // The default is just to say OK.
 //
-#include "../DtaAuthorizeSedutilExecution.h"
+#include "../../Common/DtaAuthorizeSedutilExecution.h"
 bool authorize_sedutil_execution(int , char * []) { return true; }

@@ -57,7 +57,6 @@
 		D2EA845228053B4C00A0F685 /* DtaDevOpal.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA842828053B3F00A0F685 /* DtaDevOpal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2EA847D28053B4D00A0F685 /* DtaCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83EB28053B3400A0F685 /* DtaCommand.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
 		D2EA848028053B4D00A0F685 /* DtaOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA841528053B3D00A0F685 /* DtaOptions.cpp */; };
-		D2EA848128053B4D00A0F685 /* DtaDiskType.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA83ED28053B3400A0F685 /* DtaDiskType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2EA848428053B4D00A0F685 /* DtaDevGeneric.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA843728053B4600A0F685 /* DtaDevGeneric.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2EA848528053B4D00A0F685 /* DtaDevOpal1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83EF28053B3400A0F685 /* DtaDevOpal1.cpp */; };
 		D2EA848C28053B4D00A0F685 /* DtaDevEnterprise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA840A28053B3700A0F685 /* DtaDevEnterprise.cpp */; settings = {COMPILER_FLAGS = "-Wno-unused-parameter -Wno-sign-conversion"; }; };
@@ -65,7 +64,6 @@
 		D2EA849028053B4D00A0F685 /* DtaDevOpal2.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA840C28053B3800A0F685 /* DtaDevOpal2.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2EA849128053B4D00A0F685 /* DtaHashPwd.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA83F428053B3400A0F685 /* DtaHashPwd.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2EA849428053B4D00A0F685 /* DtaHashPwd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA842728053B3F00A0F685 /* DtaHashPwd.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
-		D2EA849528053B4D00A0F685 /* DtaDiskType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83F628053B3400A0F685 /* DtaDiskType.cpp */; settings = {COMPILER_FLAGS = "-Wno-unused-parameter "; }; };
 		D2EA849928053B4D00A0F685 /* DtaSession.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA83F828053B3400A0F685 /* DtaSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2EA849C28053B4D00A0F685 /* DtaHexDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83F928053B3400A0F685 /* DtaHexDump.cpp */; };
 		D2EA84A328053B4E00A0F685 /* DtaSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83FC28053B3400A0F685 /* DtaSession.cpp */; };
@@ -132,7 +130,7 @@
 
 /* Begin PBXFileReference section */
 		D20A63A81F731FDB00F154AC /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = log.h; path = ../../../../Common/log.h; sourceTree = "<group>"; };
-		D20A63AA1F73204000F154AC /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = log.cpp; path = ../../../../macos/log.cpp; sourceTree = "<group>"; };
+		D20A63AA1F73204000F154AC /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = log.cpp; path = ../../../../log/log.cpp; sourceTree = "<group>"; };
 		D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaAuthorizeSedutilExecution.h; sourceTree = "<group>"; };
 		D22C11B72B38CA74003825C7 /* os.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = os.h; path = ../../../macos/os.h; sourceTree = "<group>"; };
 		D22C11B82B38CA9E003825C7 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Version.h; path = ../Version.h; sourceTree = "<group>"; };
@@ -194,11 +192,9 @@
 		D2EA83D828053B3400A0F685 /* DtaAnnotatedDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAnnotatedDump.cpp; sourceTree = "<group>"; };
 		D2EA83DA28053B3400A0F685 /* Copyright.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Copyright.txt; sourceTree = "<group>"; };
 		D2EA83EB28053B3400A0F685 /* DtaCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaCommand.cpp; sourceTree = "<group>"; };
-		D2EA83ED28053B3400A0F685 /* DtaDiskType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDiskType.h; sourceTree = "<group>"; };
 		D2EA83EF28053B3400A0F685 /* DtaDevOpal1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal1.cpp; sourceTree = "<group>"; };
 		D2EA83F228053B3400A0F685 /* DtaDevGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevGeneric.cpp; sourceTree = "<group>"; };
 		D2EA83F428053B3400A0F685 /* DtaHashPwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaHashPwd.h; sourceTree = "<group>"; };
-		D2EA83F628053B3400A0F685 /* DtaDiskType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDiskType.cpp; sourceTree = "<group>"; };
 		D2EA83F828053B3400A0F685 /* DtaSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaSession.h; sourceTree = "<group>"; };
 		D2EA83F928053B3400A0F685 /* DtaHexDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaHexDump.cpp; sourceTree = "<group>"; };
 		D2EA83FC28053B3400A0F685 /* DtaSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaSession.cpp; sourceTree = "<group>"; };
@@ -380,7 +376,6 @@
 				D2EA83EF28053B3400A0F685 /* DtaDevOpal1.cpp */,
 				D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */,
 				D2EA840C28053B3800A0F685 /* DtaDevOpal2.h */,
-				D2EA83ED28053B3400A0F685 /* DtaDiskType.h */,
 				D2EA840028053B3400A0F685 /* DtaEndianFixup.h */,
 				D2EA842728053B3F00A0F685 /* DtaHashPwd.cpp */,
 				D2EA83F428053B3400A0F685 /* DtaHashPwd.h */,
@@ -395,7 +390,6 @@
 				D271A1F528054AFD00BF043A /* DtaStructures.h */,
 				D2EA841528053B3D00A0F685 /* DtaOptions.cpp */,
 				D2EA83F228053B3400A0F685 /* DtaDevGeneric.cpp */,
-				D2EA83F628053B3400A0F685 /* DtaDiskType.cpp */,
 			);
 			name = Common;
 			path = ../../../Common;
@@ -514,7 +508,6 @@
 				D2EA849928053B4D00A0F685 /* DtaSession.h in Headers */,
 				D2EA84AA28053B4E00A0F685 /* DtaAnnotatedDump.h in Headers */,
 				D2EA849128053B4D00A0F685 /* DtaHashPwd.h in Headers */,
-				D2EA848128053B4D00A0F685 /* DtaDiskType.h in Headers */,
 				D2EA84B228053B4E00A0F685 /* DtaCommand.h in Headers */,
 				D271A20028054AFE00BF043A /* DtaResponse.h in Headers */,
 				D2EA84AB28053B4E00A0F685 /* DtaEndianFixup.h in Headers */,
@@ -821,7 +814,6 @@
 				D2D6E349294D081500E3C72C /* DtaDevFactory.cpp in Sources */,
 				D2EA844B28053B4C00A0F685 /* DtaAnnotatedDump.cpp in Sources */,
 				D2EA849428053B4D00A0F685 /* DtaHashPwd.cpp in Sources */,
-				D2EA849528053B4D00A0F685 /* DtaDiskType.cpp in Sources */,
 				D2EA849C28053B4D00A0F685 /* DtaHexDump.cpp in Sources */,
 				D2EA847D28053B4D00A0F685 /* DtaCommand.cpp in Sources */,
 				D2EA84A728053B4E00A0F685 /* DtaResponse.cpp in Sources */,
@@ -1137,7 +1129,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1288,7 +1280,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1589,7 +1581,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1713,7 +1705,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1838,7 +1830,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1957,7 +1949,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2074,7 +2066,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2194,7 +2186,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2313,7 +2305,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2431,7 +2423,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright (c) 2014-2024 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -30,7 +30,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 #elif TARGET_OS_MAC == 1
     /* OSX */
-#include "DtaDevMacOSTPer.h"
+#include "DtaDevOSDrive.h"
 #endif
 #endif  // defined(__APPLE__) && defined(__MACH__)
 
@@ -52,47 +52,6 @@ public:
      */
     static uint8_t getDtaDevOS(const char * devref, DtaDevOS * & dev,
                                bool genericIfNotTPer=false);
-
-
-    /** OS specific initialization.
-     * This function should perform the necessary authority and environment checking
-     * to allow proper functioning of the program, open the device, perform an ATA
-     * identify, add the fields from the identify response to the disk info structure
-     * and if the device is an ATA device perform a call to Discovery0() to complete
-     * the disk_info structure
-     * @param devref character representation of the device is standard OS lexicon
-     */
-    void init(const char * devref);
-
-#if defined(__APPLE__) && defined(__MACH__)
-    /* Apple OSX and iOS (Darwin). ------------------------------ */
-#include <TargetConditionals.h>
-#if TARGET_IPHONE_SIMULATOR == 1
-    /* iOS in Xcode simulator */
-
-#elif TARGET_OS_IPHONE == 1
-    /* iOS on iPhone, iPad, etc. */
-
-#elif TARGET_OS_MAC == 1
-    /* OSX */
-
-    /** OS specific method to initialize an object to a pre-existing connection
-     *  @param devref the name of the device in the OS lexicon
-     *  @param driverService  the I/O Registry entry of the device
-     *  @param connect the connection returned by Open
-     */
-    void init(const char * devref,
-              io_registry_entry_t driverService,
-              io_connect_t connect);
-
-#endif
-#endif  // defined(__APPLE__) && defined(__MACH__)
-
-    /** OS specific method to initialize an object to a pre-existing connection
-     *  @param di  reference to already-initialized DTA_DEVICE_INFO
-     */
-    void init(const char * devref,
-              DTA_DEVICE_INFO &di);
 
 
 
@@ -131,35 +90,34 @@ public:
 #elif TARGET_OS_MAC == 1
     /* OSX */
 
-    const char * vendorID() { return blockStorageDevice->getVendorID();}
-    const char * serialNumber() { return blockStorageDevice->getSerialNum();}
-    const char * deviceName() { return blockStorageDevice->getBSDName();}
-    const char * modelNumber() { return blockStorageDevice->getModelNum();}
-    const char * firmwareRevision() { return blockStorageDevice->getFirmwareRev();}
-    const vector <uint8_t> worldWideName() { return blockStorageDevice->getWorldWideName();}
-    uint8_t getWorldWideNameIsSynthetic () {
-        return blockStorageDevice->getWorldWideNameIsSynthetic();
+//    const char * vendorID() { return blockStorageDevice->getVendorID();}
+//    const char * serialNumber() { return blockStorageDevice->getSerialNum();}
+//    const char * deviceName() { return blockStorageDevice->getBSDName();}
+//    const char * modelNumber() { return blockStorageDevice->getModelNum();}
+//    const char * firmwareRevision() { return blockStorageDevice->getFirmwareRev();}
+//    const vector <uint8_t> worldWideName() { return blockStorageDevice->getWorldWideName();}
+//    uint8_t getWorldWideNameIsSynthetic () {
+//        return blockStorageDevice->getWorldWideNameIsSynthetic();
+//
+//    }
 
-    }
-
-    vector<uint8_t> passwordSalt() { return tPer->getPasswordSalt();}
-    /** return drive size in bytes */
-    const unsigned long long getSize () {
-        return blockStorageDevice->getSize();
-    }
-
-    const char * getPhysicalInterconnect()
-    {
-        return blockStorageDevice->getPhysicalInterconnect();
-    }
-    const char * getPhysicalInterconnectLocation()
-    {
-        return blockStorageDevice->getPhysicalInterconnectLocation();
-    }
+//    vector<uint8_t> passwordSalt() { return tPer->getPasswordSalt();}
+//    /** return drive size in bytes */
+//    const unsigned long long getSize () {
+//        return blockStorageDevice->getSize();
+//    }
+//
+//    const char * getPhysicalInterconnect()
+//    {
+//        return blockStorageDevice->getPhysicalInterconnect();
+//    }
+//    const char * getPhysicalInterconnectLocation()
+//    {
+//        return blockStorageDevice->getPhysicalInterconnectLocation();
+//    }
 
     // TODO: private with accessors?
-    DtaDevMacOSBlockStorageDevice * blockStorageDevice;
-    DtaDevMacOSTPer *tPer;
+    DtaDevOSDrive drive;
 
 #endif
 #endif  // defined(__APPLE__) && defined(__MACH__)
@@ -171,7 +129,7 @@ protected:
      */
     void osmsSleep(uint32_t ms);
 
-private:
-    bool __init(const char *devref);
-    bool __init(const char *devref, DTA_DEVICE_INFO &di);
+//private:
+//    bool __init(const char *devref);
+//    bool __init(const char *devref, DTA_DEVICE_INFO &di);
 };

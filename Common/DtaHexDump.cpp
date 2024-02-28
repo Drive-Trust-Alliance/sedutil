@@ -20,6 +20,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "os.h"
 #include <stdio.h>
 #include <ctype.h>
+#include "log.h"
 #define NOHEXDUMP 0
 // TODO: NOHEXDUMP 1
 #if NOHEXDUMP
