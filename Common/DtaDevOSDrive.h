@@ -26,16 +26,29 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  */
 class DtaDevOSDrive {
 public:
+  /** Factory function to look at the devref to filter out whether it could be a DtaDevOSDrive
+   *
+   * @param devref OS device reference e.g. "/dev/sda" on a POSIX-style system
+   */
+
+  static bool isDtaDevOSDriveDevRef(const char * devref);
+
   /** Factory function to look at the devref and create an instance of the appropriate subclass of
    *  DtaDevOSDrive
    *
-   * @param devref OS device reference e.g. "/dev/sda"
+   * @param devref OS device reference e.g. "/dev/sda" on a POSIX-style system
    * @param pdisk_info weak reference to DTA_DEVICE_INFO structure filled out during device identification
    */
   static DtaDevOSDrive * getDtaDevOSDrive(const char * devref,
-                                                DTA_DEVICE_INFO & disk_info);
+                                          DTA_DEVICE_INFO & disk_info);
 
-
+  /** Method to send a command to the device
+   * @param cmd command to be sent to the device
+   * @param protocol security protocol to be used in the command
+   * @param comID communications ID to be used
+   * @param buffer input/output buffer
+   * @param bufferlen length of the input/output buffer
+   */
 
   /** Method to send a command to the device
    * @param cmd command to be sent to the device
@@ -52,30 +65,16 @@ public:
    * If it is an ATA device, perform an ATA Identify,
    * or if SCSI (SAS) , perform a SCSI Inquiry,
    * or if NVME, perform an NVMe Identify,
-   * and perform a call to discovery0() to complete the disk_info structure
+   * to fill out the disk_info structure
    * @param disk_info reference to the device info structure to fill out
    */
   virtual bool identify(DTA_DEVICE_INFO& disk_info) = 0;
 
   uint8_t discovery0(DTA_DEVICE_INFO & di);
 
-  bool isOpen(void) {return 0<fd && (fcntl(fd, F_GETFL) != -1 || errno != EBADF);}
+  bool isOpen(void) = 0 ;
 
-  DtaDevOSDrive(int _fd) :fd(_fd) {}
-
-  virtual ~DtaDevOSDrive() {fdclose();}
-
-
-protected:
-
-  static int fdopen(const char * devref);
-  void fdclose(void);
-
-public:  // *** TODO *** DEBUGGING *** this should just be protected
-  int fd=0; /**< Linux handle for the device  */
-
-// private:
-//   DtaDevOSDrive(){};
+  virtual ~DtaDevOSDrive() {};
 
 };
 

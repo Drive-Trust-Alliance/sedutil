@@ -31,13 +31,30 @@
  */
 
 
+bool DtaDevOSDrive::isDtaDevOSDriveDevRef(const char * devref) {
+  return DtaDevLinuxDrive::isDtaDevLinuxDriveDevRef(devref);
+}
+
+bool DtaDevLinuxDrive::isDtaDevLinuxDriveDevRef(const char * devref)
+{
+  return DtaDevLinuxNvme::isDtaDevLinuxNvmeDevRef(devref)
+    ||   DtaDevLinuxScsi::isDtaDevLinuxScsiDevRef(devref) ;
+}
+
 
 
 
 DtaDevOSDrive * DtaDevOSDrive::getDtaDevOSDrive(const char * devref,
+                                                DTA_DEVICE_INFO &disk_info)
+{
+  return static_cast<DtaDevOSDrive *)>(DtaDevLinuxDrive::getDtaDevLinuxDrive(devref, disk_info));
+}
+
+
+DtaDevLinuxDrive * DtaDevLinuxDrive::getDtaDevLinuxDrive(const char * devref,
                                                          DTA_DEVICE_INFO &disk_info)
 {
-  DtaDevOSDrive * drive ;
+  DtaDevLinuxDrive * drive ;
 
   disk_info.devType = DEVICE_TYPE_OTHER;
 

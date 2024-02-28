@@ -36,7 +36,7 @@
 
 
 DtaDevOS* DtaDevOS::getDtaDevOS(const char * devref,
-                                DtaDevOSDrive * drive,
+                                DtaDevLinuxDrive * drive,
                                 DTA_DEVICE_INFO & di,
                                 bool genericIfNotTPer) {
   if (DTAERROR_SUCCESS == drive->discovery0(di)) {  // drive responds to most basic IF_RECV
@@ -58,8 +58,6 @@ uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * & device, bool genericIf
   uint8_t result = DtaDevOS::getDtaDevOS(devref, d, genericIfNotTPer);
   if (result == DTAERROR_SUCCESS) {
     device = static_cast<DtaDev *>(d);
-  } else {
-    device = NULL ;
   }
   return result;
 }

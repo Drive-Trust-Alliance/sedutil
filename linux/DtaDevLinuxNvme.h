@@ -25,7 +25,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <linux/nvme.h>
 #endif
 #include "DtaStructures.h"
-#include "DtaDevOSDrive.h"
+#include "DtaDevLinuxDrive.h"
 
 /** Linux specific implementation of DtaDevOS.
  * Uses the NVMe to send commands to the
@@ -33,8 +33,10 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  */
 #define is_aligned(POINTER, BYTE_COUNT) \
     (((uintptr_t)(const void *)(POINTER)) % (BYTE_COUNT) == 0)
-class DtaDevLinuxNvme: public DtaDevOSDrive{
+class DtaDevLinuxNvme: public DtaDevLinuxDrive{
 public:
+
+  static bool isDtaDevLinuxNvmeDevRef(const char * devref);
 
   static DtaDevLinuxNvme * getDtaDevLinuxNvme(const char * devref,
                                               DTA_DEVICE_INFO & disk_info);
@@ -58,7 +60,7 @@ public:
 
 
   DtaDevLinuxNvme(int _fd)
-    : DtaDevOSDrive(_fd)
+    : DtaDevLinuxDrive(_fd)
   {}
 
   ~DtaDevLinuxNvme(){}

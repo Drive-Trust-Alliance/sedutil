@@ -45,10 +45,15 @@
 
 
 
+bool DtaDevLinuxScsi::isDtaDevLinuxScsiDefRef(const char * devref) {
+
+  return 0 == fnmatch("/dev/sd[a-z]", devref, 0);
+}
+
 DtaDevLinuxScsi *
 DtaDevLinuxScsi::getDtaDevLinuxScsi(const char * devref, DTA_DEVICE_INFO & di) {
 
-  if (! (0 == fnmatch("/dev/sd[a-z]", devref, 0)))
+  if (! isDtaDevLinuxScsiDevRef(devref))
     return NULL;
 
   int fd = fdopen(devref);

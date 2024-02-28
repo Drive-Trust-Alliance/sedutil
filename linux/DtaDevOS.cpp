@@ -17,33 +17,12 @@
    along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
    * C:E********************************************************************** */
-#include "os.h"
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <dirent.h>
-#include <fnmatch.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <scsi/sg.h>
-#include <stdio.h>
-#include <string.h>
 #include <algorithm>
-#include <unistd.h>
-#include <linux/hdreg.h>
-#include <errno.h>
-#include <vector>
-#include <fstream>
+#include "os.h"
+#include <dirent.h>
+
 #include "DtaDevOS.h"
 #include "DtaHexDump.h"
-#include "DtaDevLinuxSata.h"
-#include "DtaDevLinuxNvme.h"
-#include "DtaDevGeneric.h"
-#include "DtaDevEnterprise.h"
-#include "DtaDevOpal1.h"
-#include "DtaDevOpal2.h"
-
-using namespace std;
-
 
 
 
@@ -62,10 +41,10 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref,
   DTA_DEVICE_INFO disk_info;
   bzero(&disk_info, sizeof(disk_info));
 
-  DtaDevOSDrive * drive = DtaDevOSDrive::getDtaDevOSDrive(devref, disk_info);
+  DtaDevLinuxDrive * drive = DtaDevLinuxDrive::getDtaDevLinuxDrive(devref, disk_info);
   if (drive == NULL) {
     dev = NULL;
-    // LOG(D4) << "DtaDevOSDrive::getDtaDevOSDrive(\"" << devref <<  "\", disk_info) returned NULL";
+    // LOG(D4) << "DtaDevLinuxDrive::getDtaDevLinuxDrive(\"" << devref <<  "\", disk_info) returned NULL";
     if (!genericIfNotTPer) {  LOG(E) << "Invalid or unsupported device " << devref; }
     // LOG(D4) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
     return DTAERROR_COMMAND_ERROR;
@@ -75,10 +54,10 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref,
   if (dev == NULL) {
     delete drive;
     LOG(D4) << "getDtaDevOS(" << "\"" << devref <<  "\"" << ", "
-                              << "drive"                 << ", "
-                              << "disk_info"             << ", "
-                              << ( genericIfNotTPer ? "true" : "false" )
-                      <<  ")"
+            << "drive"                 << ", "
+            << "disk_info"             << ", "
+            << ( genericIfNotTPer ? "true" : "false" )
+            <<  ")"
             << " returned NULL";
     if (!genericIfNotTPer) { LOG(E) << "Invalid or unsupported device " << devref; }
     LOG(D4) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
@@ -97,9 +76,7 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref,
  * At instantiation we determine if we create an instance of the NVMe or SATA or Scsi (SAS) derived class
  */
 
-const unsigned long long DtaDevOS::getSize()
-{ return 0;
-}
+const unsigned long long DtaDevOS::getSize() { return drive->getSize(); }
 
 uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                           void * buffer, size_t bufferlen)

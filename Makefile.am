@@ -32,8 +32,14 @@ Common/DtaResponse.cpp \
 Common/DtaResponse.h \
 Common/DtaSession.cpp \
 Common/DtaSession.h \
+Common/DtaDevOS.h \
+Common/DtaDevOS.cpp \
+Common/DtaDevOSDrive.h \
+Common/DtaDevOSDrive.cpp \
 Common/ParseATIdentify.h \
 Common/ParseATIdentify.cpp \
+Common/ParseDiscovery0Features.h \
+Common/ParseDiscovery0Features.cpp \
 Common/InterfaceDeviceID.h \
 Common/InterfaceDeviceID.cpp \
 Common/DtaStructures.h
@@ -41,12 +47,10 @@ Common/DtaStructures.h
 SEDUTIL_LINUX_CODE = \
 linux/DtaConstants.h \
 linux/os.h \
-linux/DtaDevOS.h \
-linux/DtaDevOS.cpp \
 linux/DtaDevFactory.cpp \
-linux/DtaDevOSDrive.h \
-linux/DtaDevOSDrive.cpp \
 linux/DtaDevOSFactory.cpp \
+linux/DtaDevLinuxDrive.h \
+linux/DtaDevLinuxDrive.cpp \
 linux/DtaDevLinuxNvme.h \
 linux/DtaDevLinuxNvme.cpp \
 linux/DtaDevLinuxScsi.h \

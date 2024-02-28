@@ -44,10 +44,14 @@ using namespace std;
  *  Linux specific implementation using the NVMe interface
  */
 
+bool DtaDevLinuxNvme::isDtaDevLinuxNvmeDevRef(const char * devref) {
+  return (0 == fnmatch("/dev/nvme[0-9]",      devref, 0) ||
+          0 == fnmatch("/dev/nvme[1-9][0-9]", devref, 0) ) ;
+}
+
 DtaDevLinuxNvme * DtaDevLinuxNvme::getDtaDevLinuxNvme(const char * devref,
                                                       DTA_DEVICE_INFO & disk_info) {
-  if (!(0 == fnmatch("/dev/nvme[0-9]",      devref, 0) ||
-        0 == fnmatch("/dev/nvme[1-9][0-9]", devref, 0) ))
+  if (!DtaDevLinuxNvmeDevRef(devref))
     return NULL;
 
   int fd_=fdopen(devref);
