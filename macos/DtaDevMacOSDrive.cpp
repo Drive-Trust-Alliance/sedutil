@@ -21,10 +21,35 @@
 #include <cstdint>
 #include <cstring>
 #include "os.h"
+#include "log.h"
 #include "DtaEndianFixup.h"
 #include "DtaHexDump.h"
-#include "DtaDevOSDrive.h"
-#include "DtaStructures.h"
+#include "DtaDevMacOSDrive.h"
 
-extern
-void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di);
+
+int DtaDevMacOSDrive::fdopen(const char * devref)
+{
+  if (access(devref, R_OK | W_OK)) {
+    LOG(E) << "You do not have permission to access the raw device in write mode";
+    LOG(E) << "Perhaps you might try sudo to run as root";
+  }
+
+  int fd = open(devref, O_RDWR);
+
+  if (fd < 0) {
+    LOG(E) << "Error opening device " << devref << " " << (int32_t) fd;
+    //        if (-EPERM == fd) {
+    //            LOG(E) << "You do not have permission to access the raw disk in write mode";
+    //            LOG(E) << "Perhaps you might try sudo to run as root";
+    //        }
+  }
+  return fd;
+}
+
+void DtaDevMacOSDrive::fdclose()
+{
+  if (0 <= fd) {
+    LOG(D4) << "Closing device file handle " << (int32_t) fd;
+    close(fd);
+  }
+}

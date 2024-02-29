@@ -18,14 +18,21 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
-#include <fcntl.h>
-#include <errno.h>
 #include "DtaStructures.h"
 
 /** virtual implementation for a disk interface-generic disk drive
  */
 class DtaDevOSDrive {
 public:
+    
+    DtaDevOSDrive() {};
+
+    // The next two functions must be implemented in an OS-specific build
+    // as pass-throughs since C++ does not have virtual static class functions.
+    // For instance, isDtaDevOSDriveDefRef could just pass through to
+    // isDtaDevLinuxDriveDefRef, which could then return true iff devref looked
+    // like something the linux implementation would support.
+    
   /** Factory function to look at the devref to filter out whether it could be a DtaDevOSDrive
    *
    * @param devref OS device reference e.g. "/dev/sda" on a POSIX-style system
@@ -37,7 +44,7 @@ public:
    *  DtaDevOSDrive
    *
    * @param devref OS device reference e.g. "/dev/sda" on a POSIX-style system
-   * @param pdisk_info weak reference to DTA_DEVICE_INFO structure filled out during device identification
+   * @param disk_info reference to DTA_DEVICE_INFO structure filled out during device identification
    */
   static DtaDevOSDrive * getDtaDevOSDrive(const char * devref,
                                           DTA_DEVICE_INFO & disk_info);
@@ -58,7 +65,7 @@ public:
    * @param bufferlen length of the input/output buffer
    */
   virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                          void * buffer, uint32_t bufferlen) = 0;
+                          void * buffer, unsigned int bufferlen) = 0;
 
   /** Routine to identify the device and fill out the device info structure.
    *
@@ -75,7 +82,6 @@ public:
   virtual bool isOpen(void) = 0 ;
 
   virtual ~DtaDevOSDrive() {};
-
 };
 
 

@@ -21,6 +21,7 @@
 #include <cstdint>
 #include <cstring>
 #include "os.h"
+#include "log.h"
 #include "DtaEndianFixup.h"
 #include "DtaHexDump.h"
 #include "DtaDevOSDrive.h"

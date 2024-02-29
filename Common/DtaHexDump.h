@@ -23,4 +23,4 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * @param address Starting address for the dump
  * @param length  Length of the area to be dumped
  */
-void DtaHexDump(void * address, int length);
+void DtaHexDump(void * address, unsigned int length);

@@ -19,30 +19,53 @@
    * C:E********************************************************************** */
 
 
-/** Factory function
+
+#include "DtaDevOSDrive.h"
+#if defined(NVME)
+#include "DtaDevMacOSNvme.h"
+#endif  // defined(NVME)
+#include "DtaDevMacOSScsi.h"
+
+
+/** Factory functions
  *
  * Static class members that support instantiation of subclass members
  * with the subclass switching logic localized here for easier maintenance.
  *
  */
 
-#if NVME
-#include "DtaDevMacOSNvme.h"
-#endif // NVME
-#include "DtaDevMacOSScsi.h"
+bool DtaDevMacOSDrive::isDtaDevMacOSDriveDevRef(const char * devref)
+{
+  return
+#if defined(NVME)
+          DtaDevMacOSNvme::isDtaDevMacOSNvmeDevRef(devref) ||
+#endif  // defined(NVME)
+          DtaDevMacOSScsi::isDtaDevMacOSScsiDevRef(devref) ;
+}
 
-DtaDevOSDrive * getDtaDevOSDrive(const char * devref,
+
+
+
+DtaDevOSDrive * DtaDevOSDrive::getDtaDevOSDrive(const char * devref,
+                                                DTA_DEVICE_INFO &disk_info)
+{
+  return static_cast<DtaDevOSDrive *>(DtaDevMacOSDrive::getDtaDevMacOSDrive(devref, disk_info));
+}
+
+
+DtaDevMacOSDrive * DtaDevMacOSDrive::getDtaDevMacOSDrive(const char * devref,
                                                          DTA_DEVICE_INFO &disk_info)
 {
-  DtaDevOSDrive * drive ;
+  DtaDevMacOSDrive * drive ;
 
   disk_info.devType = DEVICE_TYPE_OTHER;
 
-#if NVME
+#if defined(NVME)
   if ( (drive = DtaDevMacOSNvme::getDtaDevMacOSNvme(devref, disk_info)) != NULL )
     return drive ;
   //  LOG(D4) << "DtaDevMacOSNvme::getDtaDevMacOSNvme(\"" << devref <<  "\", disk_info) returned NULL";
-#endif // NVME
+#endif  // defined(NVME)
+
   if ( (drive = DtaDevMacOSScsi::getDtaDevMacOSScsi(devref, disk_info)) != NULL )
     return drive ;
   // LOG(D4) << "DtaDevMacOSScsi::getDtaDevMacOSScsi(\"" << devref <<  "\", disk_info) returned NULL";

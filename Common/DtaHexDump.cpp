@@ -24,9 +24,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define NOHEXDUMP 0
 // TODO: NOHEXDUMP 1
 #if NOHEXDUMP
-void DtaHexDump(void *, int) {}
+void DtaHexDump(void *, unsigned int) {}
 #else
-void DtaHexDump(void * address, int length) {
+void DtaHexDump(void * address, unsigned int length) {
 	uint8_t display[17];
 	uint8_t * cpos = (uint8_t *)address;
 	uint8_t * epos = cpos + length;

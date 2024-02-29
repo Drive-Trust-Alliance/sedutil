@@ -19,6 +19,7 @@
    * C:E********************************************************************** */
 #include <algorithm>
 #include "os.h"
+#include "log.h"
 #include <dirent.h>
 
 #include "DtaDevOS.h"
