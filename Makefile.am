@@ -3,6 +3,7 @@ AM_CFLAGS = -Wall -Werror -std=c11
 AM_CXXFLAGS = -Wall -Werror -std=c++11 -I./linux -I$(srcdir)/Common -I$(srcdir)/Common/pbkdf2 -I$(srcdir)/linux -I$(srcdir)/LinuxPBA
 SEDUTIL_COMMON_CODE = \
 Common/ATAStructures.h \
+Common/DtaStructures.h \
 Common/DtaAnnotatedDump.cpp \
 Common/DtaAnnotatedDump.h \
 Common/DtaAuthorizeSedutilExecution.h \
@@ -32,22 +33,21 @@ Common/DtaResponse.cpp \
 Common/DtaResponse.h \
 Common/DtaSession.cpp \
 Common/DtaSession.h \
+Common/DtaDevFactory.cpp \
 Common/DtaDevOS.h \
 Common/DtaDevOS.cpp \
 Common/DtaDevOSDrive.h \
 Common/DtaDevOSDrive.cpp \
+Common/InterfaceDeviceID.h \
+Common/InterfaceDeviceID.cpp \
 Common/ParseATIdentify.h \
 Common/ParseATIdentify.cpp \
 Common/ParseDiscovery0Features.h \
-Common/ParseDiscovery0Features.cpp \
-Common/InterfaceDeviceID.h \
-Common/InterfaceDeviceID.cpp \
-Common/DtaStructures.h
+Common/ParseDiscovery0Features.cpp
 
 SEDUTIL_LINUX_CODE = \
 linux/DtaConstants.h \
 linux/os.h \
-linux/DtaDevFactory.cpp \
 linux/DtaDevOSFactory.cpp \
 linux/DtaDevLinuxDrive.h \
 linux/DtaDevLinuxDrive.cpp \
