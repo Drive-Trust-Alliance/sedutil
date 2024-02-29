@@ -213,7 +213,7 @@ int DtaDevLinuxSata::PerformATAPassThroughCommand(int fd,
 
   LOG(D4) << "buffer after ";
   IFLOG(D4) DtaHexDump(buffer, dataLength);
-  LOG(D4) << "PerformATAPassThroughCommand returning sense[11]=0x" << std::hex << sense[11];
+  LOG(D4) << "PerformATAPassThroughCommand returning sense[11]=0x" << std::hex << (unsigned int)sense[11];
   return (sense[11]);
 
 }
