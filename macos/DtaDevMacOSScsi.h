@@ -54,8 +54,8 @@ public:
   /** Attempt an ATA security command IF_SEND/IF_RECV to a Scsi device
    *  (Note that Sata devices are a separate subclass.)
    */
-  virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                          void * buffer, unsigned int bufferlen);
+  virtual int sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+                      void * buffer, unsigned int bufferlen);
 
 
   /** Identify this device using SCSI Inquiry Standard Data All command
@@ -77,10 +77,20 @@ public:
 
 protected:
 
+    // Stolen from sg.h in case we are not Linux ...
+#if !defined(SG_DXFER_TO_DEV)
+#define SG_DXFER_TO_DEV -2      /* e.g. a SCSI WRITE command */
+#endif  // !defined(SG_DXFER_TO_DEV)
+#if !defined(SG_DXFER_FROM_DEV)
+#define SG_DXFER_FROM_DEV -3    /* e.g. a SCSI READ command */
+#endif  // !defined(SG_DXFER_FROM_DEV)
+
+#define PSC_TO_DEV   SG_DXFER_TO_DEV
+#define PSC_FROM_DEV SG_DXFER_FROM_DEV
 
   /** Perform a SCSI command using the SCSI generic interface. (member function)
    *
-   * @param dxfer_direction direction of transfer SG_DXFER_FROM/TO_DEV
+   * @param dxfer_direction direction of transfer PSC_FROM/TO_DEV
    * @param cdb             SCSI command data buffer
    * @param cdb_len         length of SCSI command data buffer (often 12)
    * @param buffer          SCSI data buffer
@@ -110,7 +120,7 @@ protected:
   /** Perform a SCSI command using the SCSI generic interface. (static class function)
    *
    * @param fd              file descriptor of already-opened raw device file
-   * @param dxfer_direction direction of transfer SG_DXFER_FROM/TO_DEV
+   * @param dxfer_direction direction of transfer PSC_FROM/TO_DEV
    * @param cdb             SCSI command data buffer
    * @param cdb_len         length of SCSI command data buffer (often 12)
    * @param buffer          SCSI data buffer
