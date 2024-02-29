@@ -19,26 +19,19 @@
    * C:E********************************************************************** */
 
 
-#include "DtaDevLinuxNvme.h"
-#include "DtaDevLinuxScsi.h"
-
+#include "DtaDevOSDrive.h"
+#include "DtaDevLinuxDrive.h"
 
 /** Factory functions
  *
- * Static class members that support instantiation of subclass members
- * with the subclass switching logic localized here for easier maintenance.
+ * Static class members of DtaDevOSDrive that are passed through
+ * to DtaDevLinuxDrive
  *
  */
 
 
 bool DtaDevOSDrive::isDtaDevOSDriveDevRef(const char * devref) {
   return DtaDevLinuxDrive::isDtaDevLinuxDriveDevRef(devref);
-}
-
-bool DtaDevLinuxDrive::isDtaDevLinuxDriveDevRef(const char * devref)
-{
-  return DtaDevLinuxNvme::isDtaDevLinuxNvmeDevRef(devref)
-    ||   DtaDevLinuxScsi::isDtaDevLinuxScsiDevRef(devref) ;
 }
 
 std::vector<std::string> DtaDevOSDrive::enumerateDtaDevOSDriveDevRefs() {
@@ -51,6 +44,25 @@ DtaDevOSDrive * DtaDevOSDrive::getDtaDevOSDrive(const char * devref,
   return static_cast<DtaDevOSDrive *>(DtaDevLinuxDrive::getDtaDevLinuxDrive(devref, disk_info));
 }
 
+
+
+#include "DtaDevLinuxNvme.h"
+#include "DtaDevLinuxScsi.h"
+
+
+/** Factory functions
+ *
+ * Static class members that support instantiation of subclass members
+ * with the subclass switching logic localized here for easier maintenance.
+ *
+ */
+
+
+bool DtaDevLinuxDrive::isDtaDevLinuxDriveDevRef(const char * devref)
+{
+  return DtaDevLinuxNvme::isDtaDevLinuxNvmeDevRef(devref)
+    ||   DtaDevLinuxScsi::isDtaDevLinuxScsiDevRef(devref) ;
+}
 
 DtaDevLinuxDrive * DtaDevLinuxDrive::getDtaDevLinuxDrive(const char * devref,
                                                          DTA_DEVICE_INFO &disk_info)

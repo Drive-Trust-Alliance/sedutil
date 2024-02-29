@@ -19,6 +19,30 @@
    * C:E********************************************************************** */
 
 
+#include "DtaDev.h"
+#include "DtaDevOS.h"
+
+
+/** Factory functions
+ *
+ * Static class member that passes through DtaDev instantiaion to DtaDevOS.
+ *
+ */
+
+
+uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * & device, bool genericIfNotTPer)
+{
+  DtaDevOS * d;
+  uint8_t result = DtaDevOS::getDtaDevOS(devref, d, genericIfNotTPer);
+  if (result == DTAERROR_SUCCESS) {
+    device = static_cast<DtaDev *>(d);
+  }
+  return result;
+}
+
+
+
+
 #include "DtaDevOpal1.h"
 #include "DtaDevOpal2.h"
 #include "DtaDevEnterprise.h"
@@ -31,8 +55,9 @@
  * Static class members that support instantiation of subclass members
  * with the subclass switching logic localized here for easier maintenance.
  *
+ * This method is invoked after the instantiation process for `drive`
+ * has initialized it and filled out the device information in `di`.
  */
-
 
 
 DtaDevOS* DtaDevOS::getDtaDevOS(const char * devref,
@@ -49,15 +74,4 @@ DtaDevOS* DtaDevOS::getDtaDevOS(const char * devref,
 
   LOG(E) << "Unknown OPAL SSC ";
   return NULL;
-}
-
-
-uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * & device, bool genericIfNotTPer)
-{
-  DtaDevOS * d;
-  uint8_t result = DtaDevOS::getDtaDevOS(devref, d, genericIfNotTPer);
-  if (result == DTAERROR_SUCCESS) {
-    device = static_cast<DtaDev *>(d);
-  }
-  return result;
 }
