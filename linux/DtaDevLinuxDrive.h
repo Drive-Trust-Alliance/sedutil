@@ -20,6 +20,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include "DtaDevOSDrive.h"
+#include <errno.h>
+#include <fcntl.h>
 
 /** virtual implementation for a disk interface-generic disk drive
  */
