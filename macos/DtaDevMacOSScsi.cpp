@@ -268,7 +268,7 @@ int DtaDevMacOSScsi::__inquiry(int fd, uint8_t evpd, uint8_t page_code, void * i
   unsigned char senselen=sizeof(sense);
   unsigned char masked_status;
   return PerformSCSICommand(fd,
-                            SG_DXFER_FROM_DEV,
+                            PSC_FROM_DEV,
                             (uint8_t *)&cdb, sizeof(cdb),
                             inquiryResponse, dataSize,
                             sense, senselen,
@@ -306,7 +306,7 @@ DtaDevMacOSScsi::parseInquiryStandardDataAllResponse(const unsigned char * respo
 
 
 /** Send an ioctl to the device using pass through. */
-uint8_t DtaDevMacOSScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+int DtaDevMacOSScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                                  void * buffer, unsigned int bufferlen)
 {
   LOG(D4) << "Entering DtaDevMacOSScsi::sendCmd";
@@ -321,7 +321,7 @@ uint8_t DtaDevMacOSScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
     {
     case IF_RECV:
       {
-        dxfer_direction = SG_DXFER_FROM_DEV;
+        dxfer_direction = PSC_FROM_DEV;
         CScsiCmdSecurityProtocolIn & p = * (CScsiCmdSecurityProtocolIn *) cdb;
         p.m_Opcode = CScsiCmdSecurityProtocolIn::OPCODE;
         p.m_SecurityProtocol = protocol;
@@ -332,7 +332,7 @@ uint8_t DtaDevMacOSScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
       }
     case IF_SEND:
       {
-        dxfer_direction = SG_DXFER_TO_DEV;
+        dxfer_direction = PSC_TO_DEV;
         CScsiCmdSecurityProtocolOut & p = * (CScsiCmdSecurityProtocolOut *) cdb;
         p.m_Opcode = CScsiCmdSecurityProtocolIn::OPCODE;
         p.m_SecurityProtocol = protocol;
@@ -371,7 +371,7 @@ uint8_t DtaDevMacOSScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
     IFLOG(D4) DtaHexDump(sense, senselen);
     LOG(D4) << "Error result=" << result << " from PerformSCSICommand "
             << " -- returning 0xff from DtaDevMacOSScsi::sendCmd";
-    return 0xff;
+    return result;
   }
 
   // check for successful target completion
@@ -391,7 +391,7 @@ uint8_t DtaDevMacOSScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
   return 0x00;
 }
 
-bool  DtaDevMacOSScsi::identify(DTA_DEVICE_INFO& disk_info)
+bool DtaDevMacOSScsi::identify(DTA_DEVICE_INFO& disk_info)
 {
   InterfaceDeviceID interfaceDeviceIdentification;
   return identifyUsingSCSIInquiry(fd, interfaceDeviceIdentification, disk_info);
@@ -413,75 +413,82 @@ int DtaDevMacOSScsi::PerformSCSICommand(int fd,
     return EBADF;
   }
 
-  sg_io_hdr_t sg;
-  bzero(&sg, sizeof(sg));
-
-  sg.interface_id = 'S';
-  sg.dxfer_direction = dxfer_direction;
-  sg.cmd_len = cdb_len;
-  sg.mx_sb_len = senselen;
-  sg.dxfer_len = bufferlen;
-  sg.dxferp = buffer;
-  sg.cmdp = cdb;
-  sg.sbp = sense;
-  sg.timeout = timeout;
+//  sg_io_hdr_t sg;
+//  bzero(&sg, sizeof(sg));
+//
+//  sg.interface_id = 'S';
+//  sg.dxfer_direction = dxfer_direction;
+//  sg.cmd_len = cdb_len;
+//  sg.mx_sb_len = senselen;
+//  sg.dxfer_len = bufferlen;
+//  sg.dxferp = buffer;
+//  sg.cmdp = cdb;
+//  sg.sbp = sense;
+//  sg.timeout = timeout;
 
   IFLOG(D4)
-    if (dxfer_direction ==  SG_DXFER_TO_DEV) {
+    if (dxfer_direction ==  PSC_TO_DEV) {
       LOG(D4) << "PerformSCSICommand buffer before";
       DtaHexDump(buffer,bufferlen);
     }
 
-
+  int result=0;
   /*
    * Do the IO
    */
+    (void)cdb;
+    (void)cdb_len;
+    (void)buffer;
+    (void)sense;
+    (void)senselen;
+    (void)pmasked_status;
+    (void)timeout;
 
-  IFLOG(D4) {
-    LOG(D4) << "PerformSCSICommand sg:" ;
-    DtaHexDump(&sg, sizeof(sg));
-    LOG(D4) << "cdb before:" ;
-    DtaHexDump(cdb, cdb_len);
-  }
-  int result = ioctl(fd, SG_IO, &sg);
-  LOG(D4) << "PerformSCSICommand ioctl result=" << result ;
-  IFLOG(D4) {
-    if (result < 0) {
-      LOG(D4)
-        << "cdb after ioctl returned " << result << " (" << strerror(result) << ")" ;
-      DtaHexDump(cdb, cdb_len);
-      if (sense != NULL) {
-        LOG(D4) << "sense after ";
-        DtaHexDump(sense, senselen);
-      }
-    }
-  }
-
-  // Without any real justification we set bufferlen to the value of dxfer_len - resid
-  bufferlen = sg.dxfer_len - sg.resid;
-
-  senselen = sg.sb_len_wr;
-
-  if (pmasked_status != NULL) {
-    *pmasked_status = sg.masked_status;
-    IFLOG(D4) {
-      if (*pmasked_status != GOOD) {
-        LOG(D4)
-          << "cdb after with masked_status == " << statusName(*pmasked_status)
-          << " == " << std::hex << (int)sg.masked_status;
-        DtaHexDump(cdb, cdb_len);
-        if (sense != NULL) {
-          LOG(D4) << "sense after ";
-          DtaHexDump(sense, senselen);
-        }
-      }
-    }
-  }
-
-  IFLOG(D4)
-    if (dxfer_direction ==  SG_DXFER_FROM_DEV && 0==result && sg.masked_status == GOOD) {
-      LOG(D4) << "PerformSCSICommand buffer after 0==result && sg.masked_status == GOOD:";
-      DtaHexDump(buffer, bufferlen);
-    }
+//  IFLOG(D4) {
+//    LOG(D4) << "PerformSCSICommand sg:" ;
+//    DtaHexDump(&sg, sizeof(sg));
+//    LOG(D4) << "cdb before:" ;
+//    DtaHexDump(cdb, cdb_len);
+//  }
+//  result = ioctl(fd, SG_IO, &sg);
+//  LOG(D4) << "PerformSCSICommand ioctl result=" << result ;
+//  IFLOG(D4) {
+//    if (result < 0) {
+//      LOG(D4)
+//        << "cdb after ioctl returned " << result << " (" << strerror(result) << ")" ;
+//      DtaHexDump(cdb, cdb_len);
+//      if (sense != NULL) {
+//        LOG(D4) << "sense after ";
+//        DtaHexDump(sense, senselen);
+//      }
+//    }
+//  }
+//
+//  // Without any real justification we set bufferlen to the value of dxfer_len - resid
+//  bufferlen = sg.dxfer_len - sg.resid;
+//
+//  senselen = sg.sb_len_wr;
+//
+//  if (pmasked_status != NULL) {
+//    *pmasked_status = sg.masked_status;
+//    IFLOG(D4) {
+//      if (*pmasked_status != GOOD) {
+//        LOG(D4)
+//          << "cdb after with masked_status == " << statusName(*pmasked_status)
+//          << " == " << std::hex << (int)sg.masked_status;
+//        DtaHexDump(cdb, cdb_len);
+//        if (sense != NULL) {
+//          LOG(D4) << "sense after ";
+//          DtaHexDump(sense, senselen);
+//        }
+//      }
+//    }
+//  }
+//
+//  IFLOG(D4)
+//    if (dxfer_direction ==  PSC_FROM_DEV && 0==result && sg.masked_status == GOOD) {
+//      LOG(D4) << "PerformSCSICommand buffer after 0==result && sg.masked_status == GOOD:";
+//      DtaHexDump(buffer, bufferlen);
+//    }
   return result;
 }

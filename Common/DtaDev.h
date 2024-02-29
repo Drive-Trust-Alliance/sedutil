@@ -110,7 +110,7 @@ public:
    * @param buffer input/output buffer
    * @param bufferlen length of the input/output buffer
    */
-  virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+  virtual int sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                           void * buffer, unsigned int bufferlen) = 0;
   /** OS specific command to Wait for specified number of milliseconds
    * @param milliseconds  number of milliseconds to wait

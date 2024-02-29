@@ -18,17 +18,15 @@
 
    * C:E********************************************************************** */
 #include "os.h"
-#include <malloc.h>
+#include "log.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <arpa/inet.h>
-#include <scsi/sg.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <linux/hdreg.h>
 #include <errno.h>
 #include <vector>
 #include <fstream>
@@ -124,26 +122,26 @@ int DtaDevMacOSSata::PerformATAPassThroughCommand(int fd,
 {
   uint8_t protocol;
   int dxfer_direction;
-  int timeout;
+  unsigned int timeout;
 
   switch (cmd)
     {
     case IDENTIFY:
       timeout=600;  //  IDENTIFY sg.timeout = 600; // Sabrent USB-SATA adapter 1ms,6ms,20ms,60 NG, 600ms OK
       protocol = PIO_DATA_IN;
-      dxfer_direction = SG_DXFER_FROM_DEV;
+      dxfer_direction = PSC_FROM_DEV;
       break;
 
     case IF_RECV:
       timeout=60000;
       protocol = PIO_DATA_IN;
-      dxfer_direction = SG_DXFER_FROM_DEV;
+      dxfer_direction = PSC_FROM_DEV;
       break;
 
     case IF_SEND:
       timeout=60000;
       protocol = PIO_DATA_OUT;
-      dxfer_direction = SG_DXFER_TO_DEV;
+      dxfer_direction = PSC_TO_DEV;
       break;
 
     default:
@@ -154,16 +152,16 @@ int DtaDevMacOSSata::PerformATAPassThroughCommand(int fd,
 
   CScsiCmdATAPassThrough_12 cdb;
   uint8_t * cdbBytes=(uint8_t *)&cdb;  // We use direct byte pointer because bitfields are unreliable
-  cdbBytes[1] = protocol << 1;
-  cdbBytes[2] = (protocol==PIO_DATA_IN ? 1 : 0) << 3 |  // TDir
-                1                               << 2 |  // ByteBlock
-                2                                       // TLength  10b => transfer length in Count
-                ;
-  cdb.m_Features = securityProtocol;
-  cdb.m_Count = bufferlen/512;
+  cdbBytes[1] = (uint8_t)(protocol << 1);
+  cdbBytes[2] = (uint8_t)((protocol==PIO_DATA_IN ? 1 : 0) << 3 |  // TDir
+                          1                               << 2 |  // ByteBlock
+                          2                                       // TLength  10b => transfer length in Count
+                         );
+  cdb.m_Features = (uint8_t)securityProtocol;
+  cdb.m_Count = (uint8_t)(bufferlen/512);
   cdb.m_LBA_Mid = comID & 0xFF;          // ATA lbaMid   / TRUSTED COMID low
   cdb.m_LBA_High = (comID >> 8) & 0xFF; // ATA lbaHihg  / TRUSTED COMID high
-  cdb.m_Command = cmd;
+  cdb.m_Command = (uint8_t)cmd;
 
   unsigned char sense[32];
   unsigned char senselen=sizeof(sense);
@@ -183,7 +181,7 @@ int DtaDevMacOSSata::PerformATAPassThroughCommand(int fd,
     LOG(D4) << "PerformSCSICommand returned " << result;
     LOG(D4) << "sense after ";
     IFLOG(D4) DtaHexDump(&sense, senselen);
-    return 0xff;
+    return result;
   }
 
   LOG(D4) << "PerformSCSICommand returned " << result;
@@ -271,7 +269,7 @@ DtaDevMacOSSata::parseATAIdentifyDeviceResponse(const InterfaceDeviceID & interf
 
 
 /** Send an ioctl to the device using pass through. */
-uint8_t DtaDevMacOSSata::sendCmd(ATACOMMAND cmd, uint8_t securityProtocol, uint16_t comID,
+int DtaDevMacOSSata::sendCmd(ATACOMMAND cmd, uint8_t securityProtocol, uint16_t comID,
                                  void * buffer, uint32_t bufferlen)
 {
   LOG(D1) << "Entering DtaDevMacOSSata::sendCmd";
