@@ -20,6 +20,8 @@
 
 #include <cstdint>
 #include <cstring>
+#include <algorithm>
+#include "dirent.h"
 #include "os.h"
 #include "DtaEndianFixup.h"
 #include "DtaHexDump.h"
@@ -51,4 +53,30 @@ void DtaDevLinuxDrive::fdclose()
     LOG(D4) << "Closing device file handle " << (int32_t) fd;
     close(fd);
   }
+}
+
+using namespace std;
+vector<string> DtaDevLinuxDrive::enumerateDtaDevLinuxDriveDevRefs()
+{
+  vector<string> devices;
+
+  DIR *dir = opendir("/dev");
+  if (dir==NULL) {
+    LOG(E) << "Can't read /dev ?!";
+    return devices;
+  }
+
+  struct dirent *dirent;
+  while (NULL != (dirent=readdir(dir))) {
+    char devref[261];
+    snprintf(devref,sizeof(devref),"/dev/%s",dirent->d_name);
+    if (isDtaDevOSDriveDevRef(devref))
+      devices.push_back(string(devref));
+  }
+
+  closedir(dir);
+
+  std::sort(devices.begin(),devices.end());
+
+  return devices;
 }

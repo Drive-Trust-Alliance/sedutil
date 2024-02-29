@@ -41,8 +41,9 @@ bool DtaDevLinuxDrive::isDtaDevLinuxDriveDevRef(const char * devref)
     ||   DtaDevLinuxScsi::isDtaDevLinuxScsiDevRef(devref) ;
 }
 
-
-
+std::vector<std::string> DtaDevOSDrive::enumerateDtaDevOSDriveDevRefs() {
+  return DtaDevLinuxDrive::enumerateDtaDevLinuxDriveDevRefs();
+}
 
 DtaDevOSDrive * DtaDevOSDrive::getDtaDevOSDrive(const char * devref,
                                                 DTA_DEVICE_INFO &disk_info)

@@ -80,7 +80,7 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref,
 const unsigned long long DtaDevOS::getSize() { return disk_info.devSize; }
 
 uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                          void * buffer, size_t bufferlen)
+                          void * buffer, unsigned int bufferlen)
 {
   if (!isOpen) return 0xfe; //disk open failed so this will too
 
@@ -110,33 +110,13 @@ int  DtaDevOS::diskScan()
 {
   LOG(D1) << "Entering DtaDevOS:diskScan ";
 
-  DIR *dir = opendir("/dev");
-  if (dir==NULL) {
-    LOG(E) << "Can't read /dev ?!";
-    return 0xff;
-  }
-
-  vector<string> devices;
-
-  struct dirent *dirent;
-  while (NULL != (dirent=readdir(dir)))
-    devices.push_back(string(dirent->d_name));
-  closedir(dir);
-
-
-  std::sort(devices.begin(),devices.end());
-
-
   printf("Scanning for Opal compliant disks\n");
-  for (string & device:devices) {
-
-    char devname[256];
-    snprintf(devname,sizeof(devname),"/dev/%s",device.c_str());
+  for (string & device:DtaDevOSDrive::enumerateDtaDevOSDriveDevRefs()) {
 
     DtaDevOS * d;
-    if (DTAERROR_SUCCESS == getDtaDevOS(devname,d,true)) {
+    if (DTAERROR_SUCCESS == getDtaDevOS(device.c_str(),d,true)) {
 
-      printf("%-10s", devname);
+      printf("%-10s", device.c_str());
       if (d->isAnySSC()) {
         printf(" %s%s%s ",
                (d->isOpal1()  ? "1" : " "),

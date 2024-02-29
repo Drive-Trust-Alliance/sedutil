@@ -35,6 +35,12 @@ public:
 
   static bool isDtaDevLinuxDriveDevRef(const char * devref);
 
+  /** Factory function to enumerate all the devrefs that pass the above filter
+   *
+   */
+  static
+  std::vector<std::string> enumerateDtaDevLinuxDriveDevRefs(void);
+
   /** Factory function to look at the devref and create an instance of the appropriate subclass of
    *  DtaDevLinuxDrive
    *

@@ -124,7 +124,7 @@ int DtaDevLinuxSata::PerformATAPassThroughCommand(int fd,
 {
   uint8_t protocol;
   int dxfer_direction;
-  int timeout;
+  unsigned int timeout;
 
   switch (cmd)
     {

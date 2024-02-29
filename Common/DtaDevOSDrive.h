@@ -18,13 +18,15 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
+#include <vector>
+#include <string>
 #include "DtaStructures.h"
 
 /** virtual implementation for a disk interface-generic disk drive
  */
 class DtaDevOSDrive {
 public:
-    
+
     DtaDevOSDrive() {};
 
     // The next two functions must be implemented in an OS-specific build
@@ -32,13 +34,19 @@ public:
     // For instance, isDtaDevOSDriveDefRef could just pass through to
     // isDtaDevLinuxDriveDefRef, which could then return true iff devref looked
     // like something the linux implementation would support.
-    
+
   /** Factory function to look at the devref to filter out whether it could be a DtaDevOSDrive
    *
    * @param devref OS device reference e.g. "/dev/sda" on a POSIX-style system
    */
 
   static bool isDtaDevOSDriveDevRef(const char * devref);
+
+  /** Factory function to enumerate all the devrefs that pass the above filter
+   *
+   */
+  static
+  std::vector<std::string> enumerateDtaDevOSDriveDevRefs(void);
 
   /** Factory function to look at the devref and create an instance of the appropriate subclass of
    *  DtaDevOSDrive

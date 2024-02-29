@@ -111,7 +111,7 @@ public:
    * @param bufferlen length of the input/output buffer
    */
   virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                          void * buffer, size_t bufferlen) = 0;
+                          void * buffer, unsigned int bufferlen) = 0;
   /** OS specific command to Wait for specified number of milliseconds
    * @param milliseconds  number of milliseconds to wait
    */
@@ -605,7 +605,7 @@ protected:
 };
 
 
-static inline bool __is_all_NULs(const uint8_t * b, const size_t n) {
+static inline bool __is_all_NULs(const uint8_t * b, const unsigned int n) {
   for (const uint8_t * e = b + n; b<e; b++) {
     if ( 0  == *b) continue;
     return false;
@@ -614,7 +614,7 @@ static inline bool __is_all_NULs(const uint8_t * b, const size_t n) {
 }
 
 
-static inline bool __is_all_zeroes(const uint8_t * b, const size_t n) {
+static inline bool __is_all_zeroes(const uint8_t * b, const unsigned int n) {
   for (const uint8_t * e = b + n; b<e; b++) {
     if ( 0  == *b) continue;
     if ('0' == *b) continue;

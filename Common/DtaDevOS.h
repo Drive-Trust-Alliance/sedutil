@@ -50,7 +50,7 @@ public:
    * @param bufferlen length of the input/output buffer
    */
   uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                  void * buffer, size_t bufferlen);
+                  void * buffer, unsigned int bufferlen);
 
   /** A static function to scan for supported drives */
   static int diskScan();
