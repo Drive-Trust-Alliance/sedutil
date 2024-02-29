@@ -265,7 +265,7 @@ int DtaDevLinuxScsi::__inquiry(int fd, uint8_t evpd, uint8_t page_code, void * i
   unsigned char senselen=sizeof(sense);
   unsigned char masked_status;
   return PerformSCSICommand(fd,
-                            SG_DXFER_FROM_DEV,
+                            PSC_FROM_DEV,
                             (uint8_t *)&cdb, sizeof(cdb),
                             inquiryResponse, dataSize,
                             sense, senselen,
@@ -318,7 +318,7 @@ uint8_t DtaDevLinuxScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
     {
     case IF_RECV:
       {
-        dxfer_direction = SG_DXFER_FROM_DEV;
+        dxfer_direction = PSC_FROM_DEV;
         CScsiCmdSecurityProtocolIn & p = * (CScsiCmdSecurityProtocolIn *) cdb;
         p.m_Opcode = CScsiCmdSecurityProtocolIn::OPCODE;
         p.m_SecurityProtocol = protocol;
@@ -329,7 +329,7 @@ uint8_t DtaDevLinuxScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comI
       }
     case IF_SEND:
       {
-        dxfer_direction = SG_DXFER_TO_DEV;
+        dxfer_direction = PSC_TO_DEV;
         CScsiCmdSecurityProtocolOut & p = * (CScsiCmdSecurityProtocolOut *) cdb;
         p.m_Opcode = CScsiCmdSecurityProtocolIn::OPCODE;
         p.m_SecurityProtocol = protocol;
@@ -414,7 +414,7 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
   bzero(&sg, sizeof(sg));
 
   sg.interface_id = 'S';
-  sg.dxfer_direction = dxfer_direction;
+  sg.dxfer_direction = dxfer_direction;  // We pun on dxfer_direction so no conversion
   sg.cmd_len = cdb_len;
   sg.mx_sb_len = senselen;
   sg.dxfer_len = bufferlen;
@@ -424,7 +424,7 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
   sg.timeout = timeout;
 
   IFLOG(D4)
-    if (dxfer_direction ==  SG_DXFER_TO_DEV) {
+    if (dxfer_direction ==  PSC_TO_DEV) {
       LOG(D4) << "PerformSCSICommand buffer before";
       DtaHexDump(buffer,bufferlen);
     }
@@ -476,7 +476,7 @@ int DtaDevLinuxScsi::PerformSCSICommand(int fd,
   }
 
   IFLOG(D4)
-    if (dxfer_direction ==  SG_DXFER_FROM_DEV && 0==result && sg.masked_status == GOOD) {
+    if (dxfer_direction ==  PSC_FROM_DEV && 0==result && sg.masked_status == GOOD) {
       LOG(D4) << "PerformSCSICommand buffer after 0==result && sg.masked_status == GOOD:";
       DtaHexDump(buffer, bufferlen);
     }

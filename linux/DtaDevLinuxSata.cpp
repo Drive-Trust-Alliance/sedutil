@@ -131,19 +131,19 @@ int DtaDevLinuxSata::PerformATAPassThroughCommand(int fd,
     case IDENTIFY:
       timeout=600;  //  IDENTIFY sg.timeout = 600; // Sabrent USB-SATA adapter 1ms,6ms,20ms,60 NG, 600ms OK
       protocol = PIO_DATA_IN;
-      dxfer_direction = SG_DXFER_FROM_DEV;
+      dxfer_direction = PSC_FROM_DEV;
       break;
 
     case IF_RECV:
       timeout=60000;
       protocol = PIO_DATA_IN;
-      dxfer_direction = SG_DXFER_FROM_DEV;
+      dxfer_direction = PSC_FROM_DEV;
       break;
 
     case IF_SEND:
       timeout=60000;
       protocol = PIO_DATA_OUT;
-      dxfer_direction = SG_DXFER_TO_DEV;
+      dxfer_direction = PSC_TO_DEV;
       break;
 
     default:
