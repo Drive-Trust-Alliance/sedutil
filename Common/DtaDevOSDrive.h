@@ -20,6 +20,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 #include <vector>
 #include <string>
+#include "DtaConstants.h"
 #include "DtaStructures.h"
 
 /** virtual implementation for a disk interface-generic disk drive
