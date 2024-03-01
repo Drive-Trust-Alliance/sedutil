@@ -159,10 +159,10 @@ DTA_DEVICE_TYPE DtaDev::getDevType()
 
 
 
-uint8_t DtaDev::TperReset()
+int DtaDev::TperReset()
 {
   LOG(D1) << "Entering DtaDev::TperReset()";
-  uint8_t lastRC;
+  int lastRC;
   void * tpResponse = (void *)((((uintptr_t)discovery0buffer) +
                                 (uintptr_t)IO_BUFFER_ALIGNMENT) &      //  0x00002000 if e.g. 16384
                                (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));  // ~0x00001FFF will be

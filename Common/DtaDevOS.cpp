@@ -79,7 +79,7 @@ uint8_t DtaDevOS::getDtaDevOS(const char * devref,
 
 const unsigned long long DtaDevOS::getSize() { return disk_info.devSize; }
 
-int DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                           void * buffer, unsigned int bufferlen)
 {
   if (!isOpen) return 0xfe; //disk open failed so this will too

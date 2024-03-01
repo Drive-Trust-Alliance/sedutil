@@ -25,9 +25,15 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include <errno.h>
 #include <assert.h>
 #include "DtaConstants.h"
+
 // Why can't I find these??
-#define TRUE 1
-#define FALSE 0
+#if !defined(FALSE)
+#define FALSE (0)
+#endif  // !defined(FALSE)
+#if !defined(TRUE)
+#define TRUE (!(FALSE))
+#endif  // !defined(TRUE)
+
 // a few OS specific methods that need to be worked out
 #define SNPRINTF snprintf
 #define DEVICEMASK snprintf(devname,23,"/dev/disk%d",i)

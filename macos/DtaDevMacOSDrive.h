@@ -36,11 +36,17 @@ public:
 
   static bool isDtaDevMacOSDriveDevRef(const char * devref);
 
-  /** Factory function to look at the devref and create an instance of the appropriate subclass of
+    /** Factory function to enumerate all the devrefs that pass the above filter
+     *
+     */
+    static
+    std::vector<std::string> enumerateDtaDevMacOSDriveDevRefs(void);
+
+    /** Factory function to look at the devref and create an instance of the appropriate subclass of
    *  DtaDevMacOSDrive
    *
    * @param devref OS device reference e.g. "/dev/sda"
-   * @param disk_info weak reference to DTA_DEVICE_INFO structure filled out during device identification
+   * @param disk_info reference to DTA_DEVICE_INFO structure filled out during device identification
    */
   static DtaDevMacOSDrive * getDtaDevMacOSDrive(const char * devref,
                                           DTA_DEVICE_INFO & disk_info);

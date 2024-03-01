@@ -2973,7 +2973,8 @@ uint8_t DtaDevOpal::exec(DtaCommand * cmd, DtaResponse & resp, uint8_t protocol)
     else
       lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), adj_io_buffer_length); //  IO_BUFFER_LENGTH);
 #else
-    lastRC = sendCmd(IF_RECV, protocol, comID(), cmd->getRespBuffer(), cmd->getRespBufferSize());
+    lastRC = sendCmd(IF_RECV, protocol, comID(),
+                     cmd->getRespBuffer(), (unsigned int)(cmd->getRespBufferSize()));
 #endif
 
     //LOG(D) << "hdr->cp.outstandingData)=" << hdr->cp.outstandingData << " hdr->cp.minTransfer=" << hdr->cp.minTransfer << dev;

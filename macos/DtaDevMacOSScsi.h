@@ -54,7 +54,7 @@ public:
   /** Attempt an ATA security command IF_SEND/IF_RECV to a Scsi device
    *  (Note that Sata devices are a separate subclass.)
    */
-  virtual int sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+  virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                       void * buffer, unsigned int bufferlen);
 
 

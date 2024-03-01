@@ -18,19 +18,22 @@
 
    * C:E********************************************************************** */
 #pragma once
+#include <vector>
+#include <functional>
+using namespace std;
+
+#include "os.h"
+
 #include "DtaStructures.h"
 #include "DtaLexicon.h"
 #include "DtaResponse.h"
 #include "DtaConstants.h"
 #include "DtaOptions.h"
+
 class DtaCommand;
 class DtaSession;
+
 #define  __unimplemented__ {throw __PRETTY_FUNCTION__;}
-
-#include <vector>
-#include <functional>
-using namespace std;
-
 
 /** Base class for a disk^H^H^H^H device.
  * This is a virtual base class defining the minimum functionality of device
@@ -98,7 +101,7 @@ public:
   /** displays the information returned by the Discovery 0 reply */
   virtual void puke();
   //
-  uint8_t TperReset();
+  int TperReset();
   /*
    * virtual methods required in the OS specific
    * device class
@@ -110,7 +113,7 @@ public:
    * @param buffer input/output buffer
    * @param bufferlen length of the input/output buffer
    */
-  virtual int sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+  virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                           void * buffer, unsigned int bufferlen) = 0;
   /** OS specific command to Wait for specified number of milliseconds
    * @param milliseconds  number of milliseconds to wait
@@ -530,6 +533,7 @@ public:
   virtual uint8_t exec(DtaCommand * cmd, DtaResponse & response, uint8_t protocol = 0x01) = 0;
   /** return the communications ID to be used for sessions to this device */
   virtual uint16_t comID() = 0;
+
   bool no_hash_passwords = FALSE; /** disables hashing of passwords */
   bool usermodeON = FALSE;
   bool translate_req = FALSE;

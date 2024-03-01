@@ -269,7 +269,7 @@ DtaDevMacOSSata::parseATAIdentifyDeviceResponse(const InterfaceDeviceID & interf
 
 
 /** Send an ioctl to the device using pass through. */
-int DtaDevMacOSSata::sendCmd(ATACOMMAND cmd, uint8_t securityProtocol, uint16_t comID,
+uint8_t DtaDevMacOSSata::sendCmd(ATACOMMAND cmd, uint8_t securityProtocol, uint16_t comID,
                                  void * buffer, uint32_t bufferlen)
 {
   LOG(D1) << "Entering DtaDevMacOSSata::sendCmd";
@@ -296,7 +296,7 @@ int DtaDevMacOSSata::sendCmd(ATACOMMAND cmd, uint8_t securityProtocol, uint16_t 
     }
   }
 
-  return result;
+  return result < 0 ? 0xFF : 0x00;
 }
 
 

@@ -306,7 +306,7 @@ DtaDevMacOSScsi::parseInquiryStandardDataAllResponse(const unsigned char * respo
 
 
 /** Send an ioctl to the device using pass through. */
-int DtaDevMacOSScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+uint8_t DtaDevMacOSScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
                                  void * buffer, unsigned int bufferlen)
 {
   LOG(D4) << "Entering DtaDevMacOSScsi::sendCmd";
@@ -371,7 +371,7 @@ int DtaDevMacOSScsi::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
     IFLOG(D4) DtaHexDump(sense, senselen);
     LOG(D4) << "Error result=" << result << " from PerformSCSICommand "
             << " -- returning 0xff from DtaDevMacOSScsi::sendCmd";
-    return result;
+    return 0xff;
   }
 
   // check for successful target completion

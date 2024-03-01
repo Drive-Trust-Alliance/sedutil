@@ -19,11 +19,35 @@
    * C:E********************************************************************** */
 
 
-
 #include "DtaDevOSDrive.h"
+#include "DtaDevMacOSDrive.h"
+
+/** Factory functions
+ *
+ * Static class members of DtaDevOSDrive that are passed through
+ * to DtaDevMacOSDrive
+ *
+ */
+
+
+bool DtaDevOSDrive::isDtaDevOSDriveDevRef(const char * devref) {
+  return DtaDevMacOSDrive::isDtaDevMacOSDriveDevRef(devref);
+}
+
+std::vector<std::string> DtaDevOSDrive::enumerateDtaDevOSDriveDevRefs() {
+  return DtaDevMacOSDrive::enumerateDtaDevMacOSDriveDevRefs();
+}
+
+DtaDevOSDrive * DtaDevOSDrive::getDtaDevOSDrive(const char * devref,
+                                                DTA_DEVICE_INFO &disk_info)
+{
+  return static_cast<DtaDevOSDrive *>(DtaDevMacOSDrive::getDtaDevMacOSDrive(devref, disk_info));
+}
+
+
 #if defined(NVME)
 #include "DtaDevMacOSNvme.h"
-#endif  // defined(NVME)
+#endif // defined(NVME)
 #include "DtaDevMacOSScsi.h"
 
 
@@ -34,24 +58,16 @@
  *
  */
 
+
 bool DtaDevMacOSDrive::isDtaDevMacOSDriveDevRef(const char * devref)
 {
+    
   return
 #if defined(NVME)
-          DtaDevMacOSNvme::isDtaDevMacOSNvmeDevRef(devref) ||
-#endif  // defined(NVME)
-          DtaDevMacOSScsi::isDtaDevMacOSScsiDevRef(devref) ;
+         DtaDevMacOSNvme::isDtaDevMacOSNvmeDevRef(devref) ||
+#endif // defined(NVME)
+         DtaDevMacOSScsi::isDtaDevMacOSScsiDevRef(devref) ;
 }
-
-
-
-
-DtaDevOSDrive * DtaDevOSDrive::getDtaDevOSDrive(const char * devref,
-                                                DTA_DEVICE_INFO &disk_info)
-{
-  return static_cast<DtaDevOSDrive *>(DtaDevMacOSDrive::getDtaDevMacOSDrive(devref, disk_info));
-}
-
 
 DtaDevMacOSDrive * DtaDevMacOSDrive::getDtaDevMacOSDrive(const char * devref,
                                                          DTA_DEVICE_INFO &disk_info)
@@ -64,7 +80,7 @@ DtaDevMacOSDrive * DtaDevMacOSDrive::getDtaDevMacOSDrive(const char * devref,
   if ( (drive = DtaDevMacOSNvme::getDtaDevMacOSNvme(devref, disk_info)) != NULL )
     return drive ;
   //  LOG(D4) << "DtaDevMacOSNvme::getDtaDevMacOSNvme(\"" << devref <<  "\", disk_info) returned NULL";
-#endif  // defined(NVME)
+#endif // defined(NVME)
 
   if ( (drive = DtaDevMacOSScsi::getDtaDevMacOSScsi(devref, disk_info)) != NULL )
     return drive ;
