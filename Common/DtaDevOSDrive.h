@@ -108,3 +108,10 @@ static inline void safecopy(T * dst, size_t dstsize, const T * src, size_t srcsi
     memset(dst+srcsize, (T)(0), dstsize-srcsize);
   }
 }
+
+static inline void * alloc_aligned_buffer () {
+  return aligned_alloc( IO_BUFFER_ALIGNMENT,
+                        (((MIN_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT - 1)
+                          / IO_BUFFER_ALIGNMENT)
+                         * IO_BUFFER_ALIGNMENT) );
+}

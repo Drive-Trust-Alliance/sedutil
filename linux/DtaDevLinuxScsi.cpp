@@ -216,7 +216,7 @@ bool DtaDevLinuxScsi::deviceIsStandardSCSI(int fd, InterfaceDeviceID & interface
   // and save it in the IO Registry
   bool isStandardSCSI = false;
   unsigned int transferSize = sizeof(CScsiCmdInquiry_StandardData);
-  void * inquiryResponse =  aligned_alloc(IO_BUFFER_ALIGNMENT, MIN_BUFFER_LENGTH);
+  void * inquiryResponse =  alloc_aligned_buffer();
   if ( inquiryResponse != NULL ) {
     bzero ( inquiryResponse, transferSize );
     isStandardSCSI = ( 0 == inquiryStandardDataAll_SCSI( fd,  inquiryResponse, transferSize ) );
