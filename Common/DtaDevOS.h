@@ -32,11 +32,12 @@ public:
   /** Factory method to produce instance of appropriate subclass
    *   Note that all of DtaDevGeneric, DtaDevEnterprise, DtaDevOpal, ... derive from DtaDevOS
    * @param devref             name of the device in the OS lexicon
-   * @param dev                reference into which to store the address of the new instance
+   * @param pdev                pointer to location into which to store the address of the new instance
    * @param genericIfNotTPer   if true, store an instance of DtaDevGeneric for non-TPers;
    *                          if false, store NULL for non-TPers
    */
-  static uint8_t getDtaDevOS(const char * devref, DtaDevOS * & dev,
+  static uint8_t getDtaDevOS(const char * devref, 
+                             DtaDevOS * * pdev,
                              bool genericIfNotTPer=false);
 
 

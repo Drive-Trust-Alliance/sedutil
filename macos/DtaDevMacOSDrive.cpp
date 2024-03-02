@@ -31,39 +31,45 @@
 #include "DtaMacOSConstants.h"
 
 namespace fs = std::__fs::filesystem;
-io_connect_t DtaDevMacOSDrive::fdopen(const char * devref, io_registry_entry_t & dS)
+io_connect_t DtaDevMacOSDrive::fdopen(const char * devref, io_registry_entry_t & dS, bool &isTPer)
 {
     std::string bsdName = fs::path(devref).stem();
     io_registry_entry_t mediaService = findBSDName(bsdName.c_str());
     if (!mediaService)
         return false;
-    fprintf(stderr, "Found media service for %s\n", bsdName.c_str());
 
     io_registry_entry_t _dS;
 
     _dS = findDriverInParents(mediaService);
-    if (_dS == IO_OBJECT_NULL) {
+    isTPer = (_dS != IO_OBJECT_NULL);
+    
+    if (!isTPer) {
         _dS = findDriverSuperClassInParents(mediaService);
         if (_dS == IO_OBJECT_NULL) {
             IOObjectRelease(mediaService);
             return IO_OBJECT_NULL;
-        } else {
-            fprintf(stderr, "Found driver superclass service in parents\n");
-        }
-    } else {
-        fprintf(stderr, "Found driver service in parents\n");
-    }
+        } 
+//        else {
+//            fprintf(stderr, "Is not TPer; found driver superclass service in parents\n");
+//        }
+    } 
+//    else {
+//        fprintf(stderr, "Is TPer; found driver service in parents\n");
+//    }
     IOObjectRelease(mediaService);
-    fprintf(stderr, "Released media service for %s\n", bsdName.c_str());
     dS = _dS;
     
     io_connect_t _c;
     kern_return_t  kernResult = OpenUserClient(dS, &_c);
     if (kernResult != kIOReturnSuccess || _c == IO_OBJECT_NULL) {
-        fprintf(stderr, "Failed to open user client -- error=0x%08X\n", kernResult);
+//        fprintf(stderr, "Failed to open user client -- error=0x%08X\n", kernResult);
         return IO_OBJECT_NULL;
-    } else {
-        fprintf(stderr, "Driver service %u=0x%04x opened user client %u=0x%04x\n", _dS, _dS, _c, _c);
+    } 
+    else {
+//        fprintf(stderr,
+//                "Driver service %u=0x%04x opened user client %u=0x%04x isTPer=%s\n",
+//                _dS, _dS, _c, _c,
+//                (isTPer ? "true" : "false"));
     }
     return _c;
 }
@@ -71,6 +77,12 @@ io_connect_t DtaDevMacOSDrive::fdopen(const char * devref, io_registry_entry_t &
 void DtaDevMacOSDrive::fdclose()
 {
     ReleaseIOObjects();
+}
+
+uint8_t DtaDevMacOSDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
+    return (isTPer)
+            ? (KERN_SUCCESS == TPerUpdate(connection, driverService, &disk_info)) ? DTAERROR_SUCCESS : DTAERROR_COMMAND_ERROR
+            :  DtaDevOSDrive::discovery0(disk_info);
 }
 
 

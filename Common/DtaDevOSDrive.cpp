@@ -29,14 +29,17 @@
 #include "ParseDiscovery0Features.h"
 
 uint8_t DtaDevOSDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
-  uint8_t d0Response[MIN_BUFFER_LENGTH]; // TODO: ALIGNMENT?
-  memset(d0Response, 0, MIN_BUFFER_LENGTH);
+  void * d0Response = alloc_aligned_MIN_BUFFER_LENGTH_buffer();
+  if (d0Response == NULL)
+      return DTAERROR_COMMAND_ERROR;
+  bzero(d0Response, MIN_BUFFER_LENGTH);
 
   int lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, MIN_BUFFER_LENGTH);
   if ((lastRC ) != 0) {
     LOG(D) << "Acquiring Discovery 0 response failed " << lastRC;
     return DTAERROR_COMMAND_ERROR;
   }
-  parseDiscovery0Features(d0Response, disk_info);
+  parseDiscovery0Features((uint8_t *)d0Response, disk_info);
+  free(d0Response);
   return DTAERROR_SUCCESS;
 }

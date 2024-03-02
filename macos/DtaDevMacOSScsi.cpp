@@ -59,12 +59,40 @@ DtaDevMacOSScsi::getDtaDevMacOSScsi(const char * devref, DTA_DEVICE_INFO & di) {
     return NULL;
     
     io_registry_entry_t driverService;
-    io_connect_t connection = fdopen(devref, driverService);
+    bool isTPer = false;
+    io_connect_t connection = fdopen(devref, driverService, isTPer);
     if (connection < 0 || connection == IO_OBJECT_NULL)
         return NULL;
 
     LOG(D4) << "Success opening device " << devref << " as connection " << connection;
+//    fprintf(stderr, "isTper=%s\n", isTPer ? "true" : "false");
+    
+    if (isTPer) {
+        kern_return_t ret = TPerUpdate(connection, driverService, &di);
+        if (ret!=KERN_SUCCESS)
+        {
+//            fprintf(stderr, "TPerUpdate failed with return code %u=0x%08x", ret, ret);
+            IOObjectRelease(driverService);
+            CloseUserClient(connection);
+            return NULL;
+        }
+        
+        switch (di.devType)
+        {
+            case DEVICE_TYPE_SAS:
+                return new DtaDevMacOSScsi(driverService, connection, true);
+            case DEVICE_TYPE_SATA:
+                return new DtaDevMacOSSata(driverService, connection, true);
+            default:
+//                fprintf(stderr, "TPerUpdate failed with unexpected di.devtype %u=0x%08x", di.devType, di.devType);
+                IOObjectRelease(driverService);
+                CloseUserClient(connection);
+                return NULL;
 
+        }
+        
+    } else {
+        
 
   InterfaceDeviceID interfaceDeviceIdentification;
 
@@ -85,16 +113,17 @@ DtaDevMacOSScsi::getDtaDevMacOSScsi(const char * devref, DTA_DEVICE_INFO & di) {
 
     // The completed identifyCharacteristics map could be useful to customizing code here
     if ( NULL != identifyCharacteristics ) {
-      LOG(D3) << "identifyCharacteristics for ATA Device: ";
-      for (dictionary::iterator it=identifyCharacteristics->begin(); it!=identifyCharacteristics->end(); it++)
-        LOG(D3) << "  " << it->first << ":" << it->second << std::endl;
+      IFLOG(D3) {
+        LOG(D3) << "identifyCharacteristics for ATA Device: ";
+        for (dictionary::iterator it=identifyCharacteristics->begin(); it!=identifyCharacteristics->end(); it++)
+          LOG(D3) << "  " << it->first << ":" << it->second << std::endl;
+      }
       delete identifyCharacteristics;
       identifyCharacteristics = NULL ;
     }
-
     LOG(D4) << " Device " << devref << " is Sata";
     di.devType = DEVICE_TYPE_SATA;
-    return new DtaDevMacOSSata(driverService, connection);
+    return new DtaDevMacOSSata(driverService, connection, false);
   }
 
   // Even though the device is SAS,
@@ -110,7 +139,9 @@ DtaDevMacOSScsi::getDtaDevMacOSScsi(const char * devref, DTA_DEVICE_INFO & di) {
 
   LOG(D3) << "Device " << devref << " is Scsi (not Sata, assuming plain SAS)" ;
   di.devType = DEVICE_TYPE_SAS;
-  return new DtaDevMacOSScsi(driverService, connection);
+  return new DtaDevMacOSScsi(driverService, connection, false);
+    }
+
 }
 
 
@@ -219,9 +250,9 @@ bool DtaDevMacOSScsi::deviceIsStandardSCSI(io_connect_t connection, InterfaceDev
   // and save it in the IO Registry
   bool isStandardSCSI = false;
   unsigned int transferSize = sizeof(CScsiCmdInquiry_StandardData);
-    void * inquiryResponse =  alloc_aligned_buffer();
+    void * inquiryResponse =  alloc_aligned_MIN_BUFFER_LENGTH_buffer();
   if ( inquiryResponse != NULL ) {
-    bzero ( inquiryResponse, transferSize );
+    bzero ( inquiryResponse, MIN_BUFFER_LENGTH );
     isStandardSCSI = ( 0 == inquiryStandardDataAll_SCSI(connection, inquiryResponse, transferSize ) );
     if (isStandardSCSI) {
       dictionary * inquiryCharacteristics =
@@ -230,9 +261,11 @@ bool DtaDevMacOSScsi::deviceIsStandardSCSI(io_connect_t connection, InterfaceDev
                                             di);
       // Customization could use Inquiry characteristics
       if ( NULL != inquiryCharacteristics ) {
-        LOG(D3) << "inquiryCharacteristics for Scsi Device: ";
-        for (dictionary::iterator it=inquiryCharacteristics->begin(); it!=inquiryCharacteristics->end(); it++)
-          LOG(D3) << "  " << it->first << ":" << it->second << std::endl;
+        IFLOG(D3) {
+          LOG(D3) << "inquiryCharacteristics for Scsi Device: ";
+          for (dictionary::iterator it=inquiryCharacteristics->begin(); it!=inquiryCharacteristics->end(); it++)
+            LOG(D3) << "  " << it->first << ":" << it->second << std::endl;
+        }
         delete inquiryCharacteristics;
         inquiryCharacteristics = NULL ;
       }

@@ -86,7 +86,7 @@ public:
    */
   virtual bool identify(DTA_DEVICE_INFO& disk_info) = 0;
 
-  uint8_t discovery0(DTA_DEVICE_INFO & di);
+  virtual uint8_t discovery0(DTA_DEVICE_INFO & di);
 
   virtual bool isOpen(void) = 0 ;
 
@@ -110,7 +110,7 @@ static inline void safecopy(T * dst, size_t dstsize, const T * src, size_t srcsi
   }
 }
 
-static inline void * alloc_aligned_buffer () {
+static inline void * alloc_aligned_MIN_BUFFER_LENGTH_buffer () {
   return aligned_alloc( IO_BUFFER_ALIGNMENT,
                         (((MIN_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT - 1)
                           / IO_BUFFER_ALIGNMENT)

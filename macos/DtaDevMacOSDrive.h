@@ -28,8 +28,9 @@ class DtaDevMacOSDrive : public DtaDevOSDrive {
     
 public:
 
-    DtaDevMacOSDrive(io_registry_entry_t dS, io_connect_t c)
+    DtaDevMacOSDrive(io_registry_entry_t dS, io_connect_t c, bool isTP)
     : DtaDevOSDrive::DtaDevOSDrive()
+    , isTPer(isTP)
     , driverService (dS)
     , connection (c)
     {};
@@ -57,15 +58,16 @@ public:
                                                 DTA_DEVICE_INFO & disk_info);
 
 
-    bool isOpen(void) { return ( driverService != IO_OBJECT_NULL && connection != IO_OBJECT_NULL ) ;}
+  bool isOpen(void) { return ( driverService != IO_OBJECT_NULL && connection != IO_OBJECT_NULL ) ;}
 
+  uint8_t discovery0(DTA_DEVICE_INFO & di);
 
   virtual ~DtaDevMacOSDrive() {fdclose();}
 
 
 protected:
-
-  static io_connect_t fdopen(const char * devref, io_registry_entry_t & dS);
+  bool isTPer;
+  static io_connect_t fdopen(const char * devref, io_registry_entry_t & dS, bool & isTPer);
 
   void fdclose(void);
 

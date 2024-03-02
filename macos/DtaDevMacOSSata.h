@@ -59,7 +59,7 @@ public:
 private:
   static
   int PerformATAPassThroughCommand(io_connect_t connection,
-                                   int cmd, int securityProtocol, int comID,
+                                   ATACOMMAND cmd, int securityProtocol, int comID,
                                    void * buffer, unsigned int & bufferlen);
 
   static

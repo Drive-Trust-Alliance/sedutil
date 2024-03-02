@@ -31,30 +31,30 @@
 /** Factory method to produce instance of appropriate subclass
  *   Note that all of DtaDevGeneric, DtaDevEnterprise, DtaDevOpal, ... derive from DtaDevOS
  * @param devref             name of the device in the OS lexicon
- * @param dev                reference into which to store the address of the new instance
+ * @param pdev                reference into which to store the address of the new instance
  * @param genericIfNotTPer   if true, store an instance of DtaDevGeneric for non-TPers;
  *                           if false, store NULL for non-TPers
  */
 // static
 uint8_t DtaDevOS::getDtaDevOS(const char * devref,
-                              DtaDevOS * & dev, bool genericIfNotTPer)
+                              DtaDevOS * * pdev, bool genericIfNotTPer)
 {
   // LOG(D4) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\")";
   DTA_DEVICE_INFO disk_info;
   bzero(&disk_info, sizeof(disk_info));
 
-  DtaDevOSDrive * drive = DtaDevOSDrive::getDtaDevOSDrive(devref, disk_info);
-  if (drive == NULL) {
-    dev = NULL;
+  DtaDevOSDrive * drv = DtaDevOSDrive::getDtaDevOSDrive(devref, disk_info);
+  if (drv == NULL) {
+    *pdev = NULL;
     // LOG(D4) << "DtaDevOSDrive::getDtaDevOSDrive(\"" << devref <<  "\", disk_info) returned NULL";
     if (!genericIfNotTPer) {  LOG(E) << "Invalid or unsupported device " << devref; }
     // LOG(D4) << "DtaDevOS::getDtaDevOS(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
     return DTAERROR_COMMAND_ERROR;
   }
 
-  dev =  getDtaDevOS(devref, drive, disk_info, genericIfNotTPer) ;
-  if (dev == NULL) {
-    delete drive;
+  *pdev =  getDtaDevOS(devref, drv, disk_info, genericIfNotTPer) ;
+  if (*pdev == NULL) {
+    delete drv;
     LOG(D4) << "getDtaDevOS(" << "\"" << devref <<  "\"" << ", "
             << "drive"                 << ", "
             << "disk_info"             << ", "
@@ -114,8 +114,8 @@ int  DtaDevOS::diskScan()
   printf("Scanning for Opal compliant disks\n");
   for (string & device:DtaDevOSDrive::enumerateDtaDevOSDriveDevRefs()) {
 
-    DtaDevOS * d;
-    if (DTAERROR_SUCCESS == getDtaDevOS(device.c_str(),d,true)) {
+    DtaDevOS * d=NULL;
+    if (DTAERROR_SUCCESS == getDtaDevOS(device.c_str(),&d,true) && d!=NULL) {
 
       printf("%-10s", device.c_str());
       if (d->isAnySSC()) {

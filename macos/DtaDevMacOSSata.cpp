@@ -49,15 +49,16 @@ bool DtaDevMacOSSata::identifyUsingATAIdentifyDevice(io_connect_t connection,
   // If it works, as a side effect, parse the Identify response
 
   bool isSAT = false;
-  void * identifyDeviceResponse = aligned_alloc(IO_BUFFER_ALIGNMENT, MIN_BUFFER_LENGTH);
+  void * identifyDeviceResponse = alloc_aligned_MIN_BUFFER_LENGTH_buffer ();
   if ( identifyDeviceResponse == NULL ) {
     LOG(E) << " *** memory buffer allocation failed *** !!!";
     return false;
   }
-#define IDENTIFY_RESPONSE_SIZE 512
-  bzero ( identifyDeviceResponse, IDENTIFY_RESPONSE_SIZE );
+  bzero ( identifyDeviceResponse, MIN_BUFFER_LENGTH );
 
+#define IDENTIFY_RESPONSE_SIZE 512
   unsigned int dataLen = IDENTIFY_RESPONSE_SIZE;
+
   LOG(D4) << "Invoking identifyDevice_SAT --  dataLen=" << std::hex << "0x" << dataLen ;
   isSAT = (0 == identifyDevice_SAT(connection,identifyDeviceResponse, dataLen ));
 
@@ -117,40 +118,46 @@ int DtaDevMacOSSata::identifyDevice_SAT(io_connect_t connection, void * buffer ,
 
 
 int DtaDevMacOSSata::PerformATAPassThroughCommand(io_connect_t connection,
-                                                  int cmd, int securityProtocol, int comID,
+                                                  ATACOMMAND cmd, int securityProtocol, int comID,
                                                   void * buffer,  unsigned int & bufferlen)
 {
   uint8_t protocol;
   int dxfer_direction;
   unsigned int timeout;
-
-  switch (cmd)
-    {
-    case IDENTIFY:
-      timeout=600;  //  IDENTIFY sg.timeout = 600; // Sabrent USB-SATA adapter 1ms,6ms,20ms,60 NG, 600ms OK
-      protocol = PIO_DATA_IN;
-      dxfer_direction = PSC_FROM_DEV;
-      break;
-
-    case IF_RECV:
-      timeout=60000;
-      protocol = PIO_DATA_IN;
-      dxfer_direction = PSC_FROM_DEV;
-      break;
-
-    case IF_SEND:
-      timeout=60000;
-      protocol = PIO_DATA_OUT;
-      dxfer_direction = PSC_TO_DEV;
-      break;
-
-    default:
-      LOG(E) << "Exiting DtaDevMacOSSata::PerformATAPassThroughCommand because of unrecognized cmd=" << cmd << "?!" ;
-      return 0xff;
-    }
-
-
   CScsiCmdATAPassThrough_12 cdb;
+    
+//    fprintf(stderr, "Before switch\n");
+    switch ((ATACOMMAND)cmd)
+    {
+        case (ATACOMMAND)IDENTIFY:
+//            fprintf(stderr, "case IDENTIFY\n");
+            timeout=600;  //  IDENTIFY sg.timeout = 600; // Sabrent USB-SATA adapter 1ms,6ms,20ms,60 NG, 600ms OK
+            protocol = PIO_DATA_IN;
+            dxfer_direction = PSC_FROM_DEV;
+            break;
+            
+        case (ATACOMMAND)IF_RECV:
+//            fprintf(stderr, "case IF_RECV\n");
+            timeout=60000;
+            protocol = PIO_DATA_IN;
+            dxfer_direction = PSC_FROM_DEV;
+            break;
+            
+        case (ATACOMMAND)IF_SEND:
+//            fprintf(stderr, "case IF_SEND\n");
+            timeout=60000;
+            protocol = PIO_DATA_OUT;
+            dxfer_direction = PSC_TO_DEV;
+            break;
+            
+        default:
+//            fprintf(stderr, "default case ??????******????????\n");
+            LOG(E) << "Exiting DtaDevMacOSSata::PerformATAPassThroughCommand because of unrecognized cmd=" << cmd << "?!" ;
+            return 0xff;
+    }
+//    fprintf(stderr, "After switch\n");
+
+    
   uint8_t * cdbBytes=(uint8_t *)&cdb;  // We use direct byte pointer because bitfields are unreliable
   cdbBytes[1] = (uint8_t)(protocol << 1);
   cdbBytes[2] = (uint8_t)((protocol==PIO_DATA_IN ? 1 : 0) << 3 |  // TDir
@@ -177,37 +184,12 @@ int DtaDevMacOSSata::PerformATAPassThroughCommand(io_connect_t connection,
                                                  sense, senselen,
                                                  &masked_status,
                                                  timeout);
-  if (result < 0) {
+  if (result != 0) {
     LOG(D4) << "PerformSCSICommand returned " << result;
-    LOG(D4) << "sense after ";
-    IFLOG(D4) DtaHexDump(&sense, senselen);
     return result;
   }
 
   LOG(D4) << "PerformSCSICommand returned " << result;
-  LOG(D4) << "sense after ";
-  IFLOG(D4) DtaHexDump(&sense, senselen);
-
-  // check for successful target completion
-  if (masked_status != GOOD)
-    {
-      LOG(D4) << "masked_status=" << masked_status << "=" << statusName(masked_status) << " != GOOD  cmd=" <<
-        (cmd == IF_SEND ? std::string("IF_SEND") :
-         cmd == IF_RECV ? std::string("IF_RECV") :
-         cmd == IDENTIFY ? std::string("IDENTIFY") :
-         std::to_string(cmd));
-      LOG(D4) << "sense after ";
-      IFLOG(D4) DtaHexDump(&sense, senselen);
-      return 0xff;
-    }
-
-  if (! ((0x00 == sense[0]) && (0x00 == sense[1])) ||
-      ((0x72 == sense[0]) && (0x0b == sense[1])) ) {
-    LOG(D4) << "PerformATAPassThroughCommand disqualifying ATA response --"
-            << " sense[0]=0x" << std::hex << sense[0]
-            << " sense[1]=0x" << std::hex << sense[1];
-    return 0xff; // not ATA response
-  }
 
   LOG(D4) << "buffer after ";
   IFLOG(D4) DtaHexDump(buffer, dataLength);

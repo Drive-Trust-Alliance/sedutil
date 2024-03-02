@@ -33,7 +33,7 @@
 uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * & device, bool genericIfNotTPer)
 {
   DtaDevOS * d;
-  uint8_t result = DtaDevOS::getDtaDevOS(devref, d, genericIfNotTPer);
+  uint8_t result = DtaDevOS::getDtaDevOS(devref, &d, genericIfNotTPer);
   if (result == DTAERROR_SUCCESS) {
     device = static_cast<DtaDev *>(d);
   }
