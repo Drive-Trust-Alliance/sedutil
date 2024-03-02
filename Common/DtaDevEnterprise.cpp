@@ -108,7 +108,7 @@ uint8_t DtaDevEnterprise::getMaxRanges(uint16_t *maxRanges)
   set8(table, OPALUID[ENTERPRISE_LOCKING_INFO_TABLE]);
 
   // query row 1 of LockingInfo table
-  if ((lastRC = getTable(table, "MaxRanges", "MaxRanges")) != 0) {
+  if (getTable(table, "MaxRanges", "MaxRanges") != 0) {
     delete session;
     // Unable to get values from Enterprise LockingInfo table -- bail out to Opal
     return getMaxRangesOpal(maxRanges);

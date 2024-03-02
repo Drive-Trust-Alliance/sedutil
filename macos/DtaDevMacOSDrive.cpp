@@ -20,63 +20,99 @@
 
 #include <cstdint>
 #include <cstring>
+#include <filesystem>
+#include <SEDKernelInterface/SEDKernelInterface.h>
 #include "os.h"
 #include "log.h"
 #include "dirent.h"
 #include "DtaEndianFixup.h"
 #include "DtaHexDump.h"
 #include "DtaDevMacOSDrive.h"
+#include "DtaMacOSConstants.h"
 
-
-int DtaDevMacOSDrive::fdopen(const char * devref)
+namespace fs = std::__fs::filesystem;
+io_connect_t DtaDevMacOSDrive::fdopen(const char * devref, io_registry_entry_t & dS)
 {
-  if (access(devref, R_OK | W_OK)) {
-    LOG(E) << "You do not have permission to access the raw device in write mode";
-    LOG(E) << "Perhaps you might try sudo to run as root";
-  }
+    std::string bsdName = fs::path(devref).stem();
+    io_registry_entry_t mediaService = findBSDName(bsdName.c_str());
+    if (!mediaService)
+        return false;
+    fprintf(stderr, "Found media service for %s\n", bsdName.c_str());
 
-  int fd = open(devref, O_RDWR);
+    io_registry_entry_t _dS;
 
-  if (fd < 0) {
-    LOG(E) << "Error opening device " << devref << " " << (int32_t) fd;
-    //        if (-EPERM == fd) {
-    //            LOG(E) << "You do not have permission to access the raw disk in write mode";
-    //            LOG(E) << "Perhaps you might try sudo to run as root";
-    //        }
-  }
-  return fd;
+    _dS = findDriverInParents(mediaService);
+    if (_dS == IO_OBJECT_NULL) {
+        _dS = findDriverSuperClassInParents(mediaService);
+        if (_dS == IO_OBJECT_NULL) {
+            IOObjectRelease(mediaService);
+            return IO_OBJECT_NULL;
+        } else {
+            fprintf(stderr, "Found driver superclass service in parents\n");
+        }
+    } else {
+        fprintf(stderr, "Found driver service in parents\n");
+    }
+    IOObjectRelease(mediaService);
+    fprintf(stderr, "Released media service for %s\n", bsdName.c_str());
+    dS = _dS;
+    
+    io_connect_t _c;
+    kern_return_t  kernResult = OpenUserClient(dS, &_c);
+    if (kernResult != kIOReturnSuccess || _c == IO_OBJECT_NULL) {
+        fprintf(stderr, "Failed to open user client -- error=0x%08X\n", kernResult);
+        return IO_OBJECT_NULL;
+    } else {
+        fprintf(stderr, "Driver service %u=0x%04x opened user client %u=0x%04x\n", _dS, _dS, _c, _c);
+    }
+    return _c;
 }
 
 void DtaDevMacOSDrive::fdclose()
 {
-  if (0 <= fd) {
-    LOG(D4) << "Closing device file handle " << (int32_t) fd;
-    close(fd);
-  }
+    ReleaseIOObjects();
 }
+
+
+/** Close the device reference so this object can be delete. */
+void DtaDevMacOSDrive::ClearIOObjects()
+{
+    connection = IO_OBJECT_NULL;
+    driverService = IO_OBJECT_NULL;
+}
+
+
+/** Close the device reference so this object can be delete. */
+void DtaDevMacOSDrive::ReleaseIOObjects()
+{
+    if ( connection != IO_OBJECT_NULL ) {
+        LOG(D1) << "Releasing connection";
+        kern_return_t ret = CloseUserClient(connection);
+        if ( kIOReturnSuccess != ret) {
+            LOG(E) << "CloseUserClient returned " << ret;
+        }
+    }
+    if ( driverService != IO_OBJECT_NULL ) {
+        LOG(D1) << "Releasing driver service";
+        IOObjectRelease(driverService);
+    }
+    ClearIOObjects();
+}
+
+
 
 using namespace std;
 vector<string> DtaDevMacOSDrive::enumerateDtaDevMacOSDriveDevRefs()
 {
   vector<string> devices;
 
-  DIR *dir = opendir("/dev");
-  if (dir==NULL) {
-    LOG(E) << "Can't read /dev ?!";
-    return devices;
+  // MacOS drive names are disk0-disk99
+  char devref[261];
+  for (int i=0; i<=99; i++) {
+      snprintf(devref,sizeof(devref),"/dev/disk%d",i);
+      if (isDtaDevOSDriveDevRef(devref))
+        devices.push_back(string(devref));
   }
-
-  struct dirent *dirent;
-  while (NULL != (dirent=readdir(dir))) {
-    char devref[261];
-    snprintf(devref,sizeof(devref),"/dev/%s",dirent->d_name);
-    if (isDtaDevOSDriveDevRef(devref))
-      devices.push_back(string(devref));
-  }
-
-  closedir(dir);
-
-  std::sort(devices.begin(),devices.end());
 
   return devices;
 }

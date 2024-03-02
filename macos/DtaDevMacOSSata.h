@@ -27,6 +27,8 @@
  */
 class DtaDevMacOSSata: public DtaDevMacOSScsi {
 public:
+    using DtaDevMacOSScsi::DtaDevMacOSScsi;
+    
 
   /** Sata MacOS specific method to send an ATA command to the device
    * @param cmd ATA command to be sent to the device
@@ -47,25 +49,21 @@ public:
 
 
 
-  DtaDevMacOSSata(int _fd)
-    : DtaDevMacOSScsi(_fd)
-  {}
-
 
   static
-  bool identifyUsingATAIdentifyDevice(int fd,
+  bool identifyUsingATAIdentifyDevice(io_connect_t connection,
                                       InterfaceDeviceID & interfaceDeviceIdentification,
                                       DTA_DEVICE_INFO & disk_info,
                                       dictionary ** pIdentifyCharacteristics);
 
 private:
   static
-  int PerformATAPassThroughCommand(int fd,
+  int PerformATAPassThroughCommand(io_connect_t connection,
                                    int cmd, int securityProtocol, int comID,
                                    void * buffer, unsigned int & bufferlen);
 
   static
-  int identifyDevice_SAT( int fd, void * buffer , unsigned int & dataLength);
+  int identifyDevice_SAT(io_connect_t connection, void * buffer , unsigned int & dataLength);
 
   static
   dictionary *

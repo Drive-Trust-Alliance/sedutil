@@ -201,6 +201,7 @@
 		D2BDDC9B28A6369A00001E26 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
 		D2C1CA1E2B196E8C00F11E86 /* DtaDevOpalLoadPBA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaDevOpalLoadPBA.cpp; path = ../Customizations/DtaDevOpalLoadPBA.cpp; sourceTree = "<group>"; };
 		D2D1379E28B55C14003FD51F /* sedutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sedutil.h; path = sedutil/sedutil.h; sourceTree = "<group>"; };
+		D2DCB6ED2B927163005B423F /* TPerKernelInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TPerKernelInterface.h; path = /Users/scott/preboot/DTA/sedutil/macos/../../../../../../Library/Frameworks/SEDKernelInterface.framework/Versions/A/Headers/TPerKernelInterface.h; sourceTree = "<absolute>"; };
 		D2E6FE7E2935696800DAB209 /* oui.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = oui.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2E6FE802935E08D00DAB209 /* get_vendorid */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = get_vendorid; sourceTree = "<group>"; };
 		D2E6FE812935E08D00DAB209 /* oui.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = oui.docc; sourceTree = "<group>"; };
@@ -341,6 +342,7 @@
 		D2466A4628B585F8009F55D9 /* macos */ = {
 			isa = PBXGroup;
 			children = (
+				D2DCB6ED2B927163005B423F /* TPerKernelInterface.h */,
 				D27C8ECC2B903CAC0006A38B /* DtaDevMacOSSata.cpp */,
 				D27C8ECB2B903CAC0006A38B /* DtaDevMacOSSata.h */,
 				D27C8EC22B902E8B0006A38B /* DtaDevMacOSDrive.cpp */,
@@ -409,6 +411,7 @@
 				D2BDDC9B28A6369A00001E26 /* ReadMe.txt */,
 				D2EA843328053B4400A0F685 /* log.h */,
 				D24E866E2B1ADA420098FE03 /* ATAStructures.h */,
+				D271A1F528054AFD00BF043A /* DtaStructures.h */,
 				D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */,
 				D2EA83D828053B3400A0F685 /* DtaAnnotatedDump.cpp */,
 				D2EA843228053B4400A0F685 /* DtaAnnotatedDump.h */,
@@ -436,7 +439,6 @@
 				D271A1FA28054AFE00BF043A /* DtaResponse.h */,
 				D2EA83FC28053B3400A0F685 /* DtaSession.cpp */,
 				D2EA83F828053B3400A0F685 /* DtaSession.h */,
-				D271A1F528054AFD00BF043A /* DtaStructures.h */,
 				D2EA841528053B3D00A0F685 /* DtaOptions.cpp */,
 				D2EA83F228053B3400A0F685 /* DtaDevGeneric.cpp */,
 			);

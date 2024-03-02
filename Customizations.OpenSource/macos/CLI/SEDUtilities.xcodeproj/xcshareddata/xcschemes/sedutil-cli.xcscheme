@@ -94,8 +94,8 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-v"
-            isEnabled = "NO">
+            argument = "-vvvvv"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--scan"

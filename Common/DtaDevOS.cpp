@@ -21,6 +21,7 @@
 #include "os.h"
 #include "log.h"
 #include <dirent.h>
+#include <IOKit/IOKitLib.h>
 
 #include "DtaDevOS.h"
 #include "DtaHexDump.h"
@@ -109,7 +110,7 @@ void DtaDevOS::osmsSleep(uint32_t ms)
 int  DtaDevOS::diskScan()
 {
   LOG(D1) << "Entering DtaDevOS:diskScan ";
-
+  
   printf("Scanning for Opal compliant disks\n");
   for (string & device:DtaDevOSDrive::enumerateDtaDevOSDriveDevRefs()) {
 

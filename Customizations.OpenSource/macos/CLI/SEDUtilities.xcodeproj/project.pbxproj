@@ -49,6 +49,7 @@
 		D2A3E63A2B1B08CC00F9CCF8 /* DtaAuthorizeSedutilExecution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2A3E6352B1B08CC00F9CCF8 /* DtaAuthorizeSedutilExecution.cpp */; };
 		D2C956E42B179B0E00E00FE6 /* sedutil.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2C956E32B179B0E00E00FE6 /* sedutil.framework */; };
 		D2C956EB2B17E8EF00E00FE6 /* BrightPlazaTPer.kext in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956EA2B17E8EF00E00FE6 /* BrightPlazaTPer.kext */; };
+		D2DCB6EC2B92706F005B423F /* SEDKernelInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2C956ED2B17E95600E00FE6 /* SEDKernelInterface.framework */; };
 		D2EBEF092B2835FA009B4FF6 /* sedutil.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2EBEF082B2835D9009B4FF6 /* sedutil.framework */; };
 		D2EBEF0A2B2835FA009B4FF6 /* log.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2EBEF072B2835D8009B4FF6 /* log.framework */; };
 		D2EBEF0B2B2835FA009B4FF6 /* oui.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2EBEF052B2835D6009B4FF6 /* oui.framework */; };
@@ -334,6 +335,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2DCB6EC2B92706F005B423F /* SEDKernelInterface.framework in Frameworks */,
 				D2C956E42B179B0E00E00FE6 /* sedutil.framework in Frameworks */,
 				D2F14B8B2B340B7A0070A95B /* log.framework in Frameworks */,
 			);

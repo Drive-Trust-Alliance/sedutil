@@ -18,8 +18,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
-#include <errno.h>
-#include <fcntl.h>
+#include <IOKit/IOKitLib.h>
 #include "DtaDevOSDrive.h"
 
 /** virtual implementation for a disk interface-generic disk drive
@@ -28,6 +27,12 @@ class DtaDevMacOSDrive : public DtaDevOSDrive {
     using DtaDevOSDrive::DtaDevOSDrive;
     
 public:
+
+    DtaDevMacOSDrive(io_registry_entry_t dS, io_connect_t c)
+    : DtaDevOSDrive::DtaDevOSDrive()
+    , driverService (dS)
+    , connection (c)
+    {};
 
   /** Factory function to look at the devref to filter out whether it could be a DtaDevMacOSDrive
    *
@@ -49,23 +54,29 @@ public:
    * @param disk_info reference to DTA_DEVICE_INFO structure filled out during device identification
    */
   static DtaDevMacOSDrive * getDtaDevMacOSDrive(const char * devref,
-                                          DTA_DEVICE_INFO & disk_info);
+                                                DTA_DEVICE_INFO & disk_info);
 
 
-  bool isOpen(void) {return 0<fd && (fcntl(fd, F_GETFL) != -1 || errno != EBADF);}
+    bool isOpen(void) { return ( driverService != IO_OBJECT_NULL && connection != IO_OBJECT_NULL ) ;}
 
-  DtaDevMacOSDrive(int _fd) :
-    fd(_fd) {}
 
   virtual ~DtaDevMacOSDrive() {fdclose();}
 
 
 protected:
 
-  static int fdopen(const char * devref);
+  static io_connect_t fdopen(const char * devref, io_registry_entry_t & dS);
+
   void fdclose(void);
 
-public:  // *** TODO *** DEBUGGING *** this should just be protected
-  int fd=0; /**< MacOS handle for the device  */
+    /** Close the device reference so this object can be delete. */
+    void ClearIOObjects(void);
+    /** Close the device reference so this object can be delete. */
+    void ReleaseIOObjects(void);
+    
+    io_registry_entry_t driverService;
+    io_connect_t connection;
+//    bool ownDriverService;
+//    bool ownConnection;
 
 };

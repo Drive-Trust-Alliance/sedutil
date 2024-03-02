@@ -39,7 +39,7 @@
 //
 
 
-bool DtaDevMacOSSata::identifyUsingATAIdentifyDevice(int fd,
+bool DtaDevMacOSSata::identifyUsingATAIdentifyDevice(io_connect_t connection,
                                                      InterfaceDeviceID & interfaceDeviceIdentification,
                                                      DTA_DEVICE_INFO & disk_info,
                                                      dictionary ** ppIdentifyCharacteristics) {
@@ -59,7 +59,7 @@ bool DtaDevMacOSSata::identifyUsingATAIdentifyDevice(int fd,
 
   unsigned int dataLen = IDENTIFY_RESPONSE_SIZE;
   LOG(D4) << "Invoking identifyDevice_SAT --  dataLen=" << std::hex << "0x" << dataLen ;
-  isSAT = (0 == identifyDevice_SAT( fd, identifyDeviceResponse, dataLen ));
+  isSAT = (0 == identifyDevice_SAT(connection,identifyDeviceResponse, dataLen ));
 
   if (isSAT) {
     LOG(D4) << " identifyDevice_SAT returned zero -- is SAT" ;
@@ -100,11 +100,11 @@ bool DtaDevMacOSSata::identifyUsingATAIdentifyDevice(int fd,
 
 
 
-int DtaDevMacOSSata::identifyDevice_SAT( int fd, void * buffer , unsigned int & dataLength)
+int DtaDevMacOSSata::identifyDevice_SAT(io_connect_t connection, void * buffer , unsigned int & dataLength)
 {
 
   // LOG(D4) << " identifyDevice_SAT about to PerformATAPassThroughCommand" ;
-  int result=PerformATAPassThroughCommand(fd,
+  int result=PerformATAPassThroughCommand(connection,
                                           IDENTIFY, 0, 0,
                                           buffer, dataLength);
   IFLOG(D4) {
@@ -116,7 +116,7 @@ int DtaDevMacOSSata::identifyDevice_SAT( int fd, void * buffer , unsigned int & 
 }
 
 
-int DtaDevMacOSSata::PerformATAPassThroughCommand(int fd,
+int DtaDevMacOSSata::PerformATAPassThroughCommand(io_connect_t connection,
                                                   int cmd, int securityProtocol, int comID,
                                                   void * buffer,  unsigned int & bufferlen)
 {
@@ -170,7 +170,7 @@ int DtaDevMacOSSata::PerformATAPassThroughCommand(int fd,
   unsigned int dataLength = bufferlen;
   unsigned char masked_status=GOOD;
 
-  int result=DtaDevMacOSScsi::PerformSCSICommand(fd,
+  int result=DtaDevMacOSScsi::PerformSCSICommand(connection,
                                                  dxfer_direction,
                                                  cdbBytes, (unsigned char)sizeof(cdb),
                                                  buffer, dataLength,
@@ -285,7 +285,7 @@ uint8_t DtaDevMacOSSata::sendCmd(ATACOMMAND cmd, uint8_t securityProtocol, uint1
   /*
    * Do the IO
    */
-  int result= PerformATAPassThroughCommand(fd, cmd, securityProtocol, comID,
+  int result= PerformATAPassThroughCommand(connection, cmd, securityProtocol, comID,
                                            buffer, bufferlen);
 
   LOG(D4) << "sendCmd: after -- result = " << result ;
@@ -303,5 +303,5 @@ uint8_t DtaDevMacOSSata::sendCmd(ATACOMMAND cmd, uint8_t securityProtocol, uint1
 bool  DtaDevMacOSSata::identify(DTA_DEVICE_INFO& disk_info)
 {
   InterfaceDeviceID interfaceDeviceIdentification;
-  return identifyUsingATAIdentifyDevice(fd, interfaceDeviceIdentification, disk_info, NULL);
+  return identifyUsingATAIdentifyDevice(connection,interfaceDeviceIdentification, disk_info, NULL);
 }

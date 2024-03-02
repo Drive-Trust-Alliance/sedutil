@@ -31,7 +31,8 @@ typedef std::map<std::string,std::string>::iterator dictionary_iterator;
  */
 class DtaDevMacOSScsi: public DtaDevMacOSDrive {
 public:
-
+    using DtaDevMacOSDrive::DtaDevMacOSDrive;
+    
   /** Factory function to look at the devref to filter whether it could be an instance
    *
    * @param devref OS device reference e.g. "/dev/sda"
@@ -64,14 +65,11 @@ public:
    */
   virtual bool identify(DTA_DEVICE_INFO& disk_info);
 
-  DtaDevMacOSScsi(int _fd)
-    : DtaDevMacOSDrive(_fd)
-  {}
-
+  
   ~DtaDevMacOSScsi(){}
 
   static
-  bool identifyUsingSCSIInquiry(int fd,
+  bool identifyUsingSCSIInquiry(io_connect_t connection,
                                 InterfaceDeviceID & interfaceDeviceIdentification,
                                 DTA_DEVICE_INFO & disk_info);
 
@@ -107,7 +105,7 @@ protected:
                          unsigned char * sense, unsigned char& senselen,
                          unsigned char * pmasked_status=NULL)
   {
-    return DtaDevMacOSScsi::PerformSCSICommand(this->fd,
+    return DtaDevMacOSScsi::PerformSCSICommand(this->connection,
                                                dxfer_direction,
                                                cdb, cdb_len,
                                                buffer, bufferlen,
@@ -115,11 +113,10 @@ protected:
                                                pmasked_status);
   }
 
-
 protected:
   /** Perform a SCSI command using the SCSI generic interface. (static class function)
    *
-   * @param fd              file descriptor of already-opened raw device file
+   * @param connection            io_connect_t connection of already-opened raw device file
    * @param dxfer_direction direction of transfer PSC_FROM/TO_DEV
    * @param cdb             SCSI command data buffer
    * @param cdb_len         length of SCSI command data buffer (often 12)
@@ -132,7 +129,7 @@ protected:
    *
    * Returns the result of the ioctl call, as well as possibly setting *pmasked_status
    */
-  static int PerformSCSICommand(int fd,
+  static int PerformSCSICommand(io_connect_t connection,
                                 int dxfer_direction,
                                 uint8_t * cdb,   unsigned char cdb_len,
                                 void * buffer,   unsigned int& bufferlen,
@@ -142,16 +139,16 @@ protected:
 
 private:
   static
-  bool deviceIsStandardSCSI(int fd,
+  bool deviceIsStandardSCSI(io_connect_t connection,
                             InterfaceDeviceID & interfaceDeviceIdentification,
                             DTA_DEVICE_INFO & disk_info);
 
   static
-  int inquiryStandardDataAll_SCSI(int fd, void * inquiryResponse, unsigned int & dataSize );
+  int inquiryStandardDataAll_SCSI(io_connect_t connection, void * inquiryResponse, unsigned int & dataSize );
 
 
   static
-  int __inquiry(int fd, uint8_t evpd, uint8_t page_code, void * buffer, unsigned int & dataSize);
+  int __inquiry(io_connect_t connection, uint8_t evpd, uint8_t page_code, void * buffer, unsigned int & dataSize);
 
 
   static
