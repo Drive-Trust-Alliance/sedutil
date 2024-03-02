@@ -16,7 +16,6 @@
 #include <stdarg.h>
 
 #include "DtaStructures.h"
-#include <algorithm>
 
 static __inline
 int
