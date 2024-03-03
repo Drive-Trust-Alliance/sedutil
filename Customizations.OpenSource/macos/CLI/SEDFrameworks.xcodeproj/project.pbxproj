@@ -33,9 +33,7 @@
 		D27C8EB62B9027BF0006A38B /* ParseATIdentify.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EAB2B9027BE0006A38B /* ParseATIdentify.h */; };
 		D27C8EB72B9027BF0006A38B /* DtaDevOSDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EAC2B9027BE0006A38B /* DtaDevOSDrive.h */; };
 		D27C8EB82B9027BF0006A38B /* ParseDiscovery0Features.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EAD2B9027BE0006A38B /* ParseDiscovery0Features.cpp */; };
-		D27C8EBD2B9027D50006A38B /* DtaDevDriveFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EB92B9027D50006A38B /* DtaDevDriveFactory.h */; };
 		D27C8EBE2B9027D50006A38B /* DtaMacOSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EBA2B9027D50006A38B /* DtaMacOSConstants.h */; };
-		D27C8EBF2B9027D50006A38B /* DtaDevDriveFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EBB2B9027D50006A38B /* DtaDevDriveFactory.cpp */; };
 		D27C8EC62B902E8B0006A38B /* DtaDevMacOSDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EC12B902E8B0006A38B /* DtaDevMacOSDrive.h */; };
 		D27C8EC72B902E8B0006A38B /* DtaDevMacOSDrive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EC22B902E8B0006A38B /* DtaDevMacOSDrive.cpp */; };
 		D27C8EC82B902E8B0006A38B /* DtaDevMacOSScsi.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EC32B902E8B0006A38B /* DtaDevMacOSScsi.h */; };
@@ -44,6 +42,8 @@
 		D27C8ECD2B903CAC0006A38B /* DtaDevMacOSSata.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8ECB2B903CAC0006A38B /* DtaDevMacOSSata.h */; };
 		D27C8ECE2B903CAC0006A38B /* DtaDevMacOSSata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8ECC2B903CAC0006A38B /* DtaDevMacOSSata.cpp */; };
 		D27CDC6F2B913CF400196584 /* DtaDevFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27CDC6E2B913CF300196584 /* DtaDevFactory.cpp */; };
+		D285034D2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D285034B2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.cpp */; };
+		D285034E2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = D285034C2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.h */; };
 		D2A06C9628B5D88800C0DDB6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9528B5D88800C0DDB6 /* Foundation.framework */; };
 		D2A06C9C28B5D8FE00C0DDB6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */; };
 		D2A06C9D28B5DC7900C0DDB6 /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
@@ -164,13 +164,6 @@
 		D271A1F928054AFE00BF043A /* DtaLexicon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaLexicon.h; sourceTree = "<group>"; };
 		D271A1FA28054AFE00BF043A /* DtaResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaResponse.h; sourceTree = "<group>"; };
 		D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal2.cpp; sourceTree = "<group>"; };
-		D2772AD328BBFFB60005E001 /* DtaDevMacOSTPer_SAT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer_SAT.h; sourceTree = "<group>"; };
-		D2772AD428BBFFB60005E001 /* DtaDevMacOSBlockStorageDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSBlockStorageDevice.h; sourceTree = "<group>"; };
-		D2772AD528BBFFB60005E001 /* DtaDevMacOSTPer_SAT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSTPer_SAT.cpp; sourceTree = "<group>"; };
-		D2772AD628BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSBlockStorageDevice.cpp; sourceTree = "<group>"; };
-		D2772AD728BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSTPer_SCSI.cpp; sourceTree = "<group>"; };
-		D2772AD828BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer_SCSI.h; sourceTree = "<group>"; };
-		D2772AD928BBFFB70005E001 /* DtaDevMacOSTPer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSTPer.cpp; sourceTree = "<group>"; };
 		D27C8EA32B9027BE0006A38B /* db.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = db.h; sourceTree = "<group>"; };
 		D27C8EA42B9027BE0006A38B /* InterfaceDeviceID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InterfaceDeviceID.cpp; sourceTree = "<group>"; };
 		D27C8EA52B9027BE0006A38B /* DtaDevOSDrive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOSDrive.cpp; sourceTree = "<group>"; };
@@ -182,9 +175,7 @@
 		D27C8EAB2B9027BE0006A38B /* ParseATIdentify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseATIdentify.h; sourceTree = "<group>"; };
 		D27C8EAC2B9027BE0006A38B /* DtaDevOSDrive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOSDrive.h; sourceTree = "<group>"; };
 		D27C8EAD2B9027BE0006A38B /* ParseDiscovery0Features.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParseDiscovery0Features.cpp; sourceTree = "<group>"; };
-		D27C8EB92B9027D50006A38B /* DtaDevDriveFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevDriveFactory.h; sourceTree = "<group>"; };
 		D27C8EBA2B9027D50006A38B /* DtaMacOSConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaMacOSConstants.h; sourceTree = "<group>"; };
-		D27C8EBB2B9027D50006A38B /* DtaDevDriveFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevDriveFactory.cpp; sourceTree = "<group>"; };
 		D27C8EC12B902E8B0006A38B /* DtaDevMacOSDrive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSDrive.h; sourceTree = "<group>"; };
 		D27C8EC22B902E8B0006A38B /* DtaDevMacOSDrive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSDrive.cpp; sourceTree = "<group>"; };
 		D27C8EC32B902E8B0006A38B /* DtaDevMacOSScsi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSScsi.h; sourceTree = "<group>"; };
@@ -193,10 +184,11 @@
 		D27C8ECB2B903CAC0006A38B /* DtaDevMacOSSata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSSata.h; sourceTree = "<group>"; };
 		D27C8ECC2B903CAC0006A38B /* DtaDevMacOSSata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSSata.cpp; sourceTree = "<group>"; };
 		D27CDC6E2B913CF300196584 /* DtaDevFactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevFactory.cpp; sourceTree = "<group>"; };
+		D285034B2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSBlockStorageDevice.cpp; sourceTree = "<group>"; };
+		D285034C2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSBlockStorageDevice.h; sourceTree = "<group>"; };
 		D29C45F628C185590093AC75 /* CleanVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = CleanVersion.sh; path = sedutil/CleanVersion.sh; sourceTree = "<group>"; };
 		D2A06C9528B5D88800C0DDB6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
-		D2B2036428BBFF1D004C88FF /* DtaDevMacOSTPer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSTPer.h; sourceTree = "<group>"; };
 		D2BDCEB329648F6700D07633 /* oui-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "oui-test"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2BDDC9B28A6369A00001E26 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
 		D2C1CA1E2B196E8C00F11E86 /* DtaDevOpalLoadPBA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaDevOpalLoadPBA.cpp; path = ../Customizations/DtaDevOpalLoadPBA.cpp; sourceTree = "<group>"; };
@@ -342,6 +334,8 @@
 		D2466A4628B585F8009F55D9 /* macos */ = {
 			isa = PBXGroup;
 			children = (
+				D285034B2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.cpp */,
+				D285034C2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.h */,
 				D2DCB6ED2B927163005B423F /* TPerKernelInterface.h */,
 				D27C8ECC2B903CAC0006A38B /* DtaDevMacOSSata.cpp */,
 				D27C8ECB2B903CAC0006A38B /* DtaDevMacOSSata.h */,
@@ -350,17 +344,7 @@
 				D27C8EC42B902E8B0006A38B /* DtaDevMacOSScsi.cpp */,
 				D27C8EC32B902E8B0006A38B /* DtaDevMacOSScsi.h */,
 				D27C8EC52B902E8B0006A38B /* DtaDevOSFactory.cpp */,
-				D27C8EBB2B9027D50006A38B /* DtaDevDriveFactory.cpp */,
-				D27C8EB92B9027D50006A38B /* DtaDevDriveFactory.h */,
 				D27C8EBA2B9027D50006A38B /* DtaMacOSConstants.h */,
-				D2772AD428BBFFB60005E001 /* DtaDevMacOSBlockStorageDevice.h */,
-				D2772AD628BBFFB70005E001 /* DtaDevMacOSBlockStorageDevice.cpp */,
-				D2B2036428BBFF1D004C88FF /* DtaDevMacOSTPer.h */,
-				D2772AD928BBFFB70005E001 /* DtaDevMacOSTPer.cpp */,
-				D2772AD328BBFFB60005E001 /* DtaDevMacOSTPer_SAT.h */,
-				D2772AD528BBFFB60005E001 /* DtaDevMacOSTPer_SAT.cpp */,
-				D2772AD828BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.h */,
-				D2772AD728BBFFB70005E001 /* DtaDevMacOSTPer_SCSI.cpp */,
 			);
 			name = macos;
 			path = ../../../macos;
@@ -555,8 +539,8 @@
 				D2EA845228053B4C00A0F685 /* DtaDevOpal.h in Headers */,
 				D27C8EB52B9027BF0006A38B /* InterfaceDeviceID.h in Headers */,
 				D27C8ECD2B903CAC0006A38B /* DtaDevMacOSSata.h in Headers */,
+				D285034E2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.h in Headers */,
 				D2EA844E28053B4C00A0F685 /* DtaDevOpal1.h in Headers */,
-				D27C8EBD2B9027D50006A38B /* DtaDevDriveFactory.h in Headers */,
 				D2EA849028053B4D00A0F685 /* DtaDevOpal2.h in Headers */,
 				D2EA849928053B4D00A0F685 /* DtaSession.h in Headers */,
 				D2EA84AA28053B4E00A0F685 /* DtaAnnotatedDump.h in Headers */,
@@ -861,7 +845,6 @@
 				D27C8EB32B9027BF0006A38B /* DtaDevOS.cpp in Sources */,
 				D2EA848028053B4D00A0F685 /* DtaOptions.cpp in Sources */,
 				D2EA84A628053B4E00A0F685 /* DtaDev.cpp in Sources */,
-				D27C8EBF2B9027D50006A38B /* DtaDevDriveFactory.cpp in Sources */,
 				D22C11BB2B38CBA3003825C7 /* DtaHashPassword.cpp in Sources */,
 				D2EA848D28053B4D00A0F685 /* DtaDevGeneric.cpp in Sources */,
 				D2EA848C28053B4D00A0F685 /* DtaDevEnterprise.cpp in Sources */,
@@ -878,6 +861,7 @@
 				D2EA849C28053B4D00A0F685 /* DtaHexDump.cpp in Sources */,
 				D2EA847D28053B4D00A0F685 /* DtaCommand.cpp in Sources */,
 				D27C8ECE2B903CAC0006A38B /* DtaDevMacOSSata.cpp in Sources */,
+				D285034D2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.cpp in Sources */,
 				D2EA84A728053B4E00A0F685 /* DtaResponse.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

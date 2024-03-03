@@ -18,9 +18,11 @@
 
    * C:E********************************************************************** */
 
-
+#include <SEDKernelInterface/SEDKernelInterface.h>
+#include "log.h"
 #include "DtaDevOSDrive.h"
 #include "DtaDevMacOSDrive.h"
+#include "DtaDevMacOSBlockStorageDevice.h"
 
 /** Factory functions
  *
@@ -49,6 +51,7 @@ DtaDevOSDrive * DtaDevOSDrive::getDtaDevOSDrive(const char * devref,
 #include "DtaDevMacOSNvme.h"
 #endif // defined(NVME)
 #include "DtaDevMacOSScsi.h"
+#include "DtaDevMacOSSata.h"
 
 
 /** Factory functions
@@ -58,33 +61,55 @@ DtaDevOSDrive * DtaDevOSDrive::getDtaDevOSDrive(const char * devref,
  *
  */
 
-
-bool DtaDevMacOSDrive::isDtaDevMacOSDriveDevRef(const char * devref)
-{
-    
-  return
-#if defined(NVME)
-         DtaDevMacOSNvme::isDtaDevMacOSNvmeDevRef(devref) ||
-#endif // defined(NVME)
-         DtaDevMacOSScsi::isDtaDevMacOSScsiDevRef(devref) ;
-}
-
 DtaDevMacOSDrive * DtaDevMacOSDrive::getDtaDevMacOSDrive(const char * devref,
                                                          DTA_DEVICE_INFO &disk_info)
 {
-  DtaDevMacOSDrive * drive ;
+    disk_info.devType = DEVICE_TYPE_OTHER;
+    
+    io_registry_entry_t driverService;
+    io_connect_t connection = fdopen(devref, driverService);
+    
+    LOG(D4)
+    << "getDtaDevMacOSDrive opening device " << devref
+    << " "
+    << "with driverService " << driverService
+    << " "
+    << "as connection " << connection
+    ;
+    //    fprintf(stderr, "isTper=%s\n", isTPer ? "true" : "false");
+    
+    // Best case: devref -> TPer driver
+    if (connection != IO_OBJECT_NULL) {
+        kern_return_t ret = TPerUpdate(connection, driverService, &disk_info);  // a/k/a discovery0, done by the driver
+        if (ret!=KERN_SUCCESS)
+        {
+            fprintf(stderr, "TPerUpdate failed with return code %u=0x%08x", ret, ret);
+            IOObjectRelease(driverService);
+            CloseUserClient(connection);
+            return NULL;
+        }
+        
+        switch (disk_info.devType)
+        {
+            case DEVICE_TYPE_SAS:
+                return new DtaDevMacOSScsi(driverService, connection);
+            case DEVICE_TYPE_SATA:
+                return new DtaDevMacOSSata(driverService, connection);
+            default:
+                LOG(E)
+                << "TPerUpdate failed with unexpected di.devtype "
+                << disk_info.devType << "=0x" << std::hex << std::setw(8) << disk_info.devType;
+                IOObjectRelease(driverService);
+                CloseUserClient(connection);
+                return NULL;
+        }
+    }
 
-  disk_info.devType = DEVICE_TYPE_OTHER;
-
-#if defined(NVME)
-  if ( (drive = DtaDevMacOSNvme::getDtaDevMacOSNvme(devref, disk_info)) != NULL )
-    return drive ;
-  //  LOG(D4) << "DtaDevMacOSNvme::getDtaDevMacOSNvme(\"" << devref <<  "\", disk_info) returned NULL";
-#endif // defined(NVME)
-
-  if ( (drive = DtaDevMacOSScsi::getDtaDevMacOSScsi(devref, disk_info)) != NULL )
-    return drive ;
-  // LOG(D4) << "DtaDevMacOSScsi::getDtaDevMacOSScsi(\"" << devref <<  "\", disk_info) returned NULL";
-
-  return NULL ;
+    // OK case: devref -> BlockStorageDevice -- can't do useful I/O, but the I/O Registry can fill in useful info
+    if (driverService != IO_OBJECT_NULL) {
+        DtaDevMacOSBlockStorageDevice::BlockStorageDeviceUpdate(driverService, disk_info);
+        return new DtaDevMacOSBlockStorageDevice(driverService);
+    }
+    
+    return NULL;
 }

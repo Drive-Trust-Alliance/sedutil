@@ -28,9 +28,8 @@ class DtaDevMacOSDrive : public DtaDevOSDrive {
     
 public:
 
-    DtaDevMacOSDrive(io_registry_entry_t dS, io_connect_t c, bool isTP)
+    DtaDevMacOSDrive(io_registry_entry_t dS, io_connect_t c)
     : DtaDevOSDrive::DtaDevOSDrive()
-    , isTPer(isTP)
     , driverService (dS)
     , connection (c)
     {};
@@ -45,8 +44,8 @@ public:
     /** Factory function to enumerate all the devrefs that pass the above filter
      *
      */
-    static
-    std::vector<std::string> enumerateDtaDevMacOSDriveDevRefs(void);
+  static
+  std::vector<std::string> enumerateDtaDevMacOSDriveDevRefs(void);
 
     /** Factory function to look at the devref and create an instance of the appropriate subclass of
    *  DtaDevMacOSDrive
@@ -66,8 +65,7 @@ public:
 
 
 protected:
-  bool isTPer;
-  static io_connect_t fdopen(const char * devref, io_registry_entry_t & dS, bool & isTPer);
+  static io_connect_t fdopen(const char * devref, io_registry_entry_t & dS);
 
   void fdclose(void);
 

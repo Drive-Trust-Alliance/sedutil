@@ -33,11 +33,6 @@ class DtaDevMacOSScsi: public DtaDevMacOSDrive {
 public:
     using DtaDevMacOSDrive::DtaDevMacOSDrive;
     
-  /** Factory function to look at the devref to filter whether it could be an instance
-   *
-   * @param devref OS device reference e.g. "/dev/sda"
-   */
-  static bool isDtaDevMacOSScsiDevRef(const char * devref);
 
   /** Factory function to look at the devref and create an instance of
    *  (possibly the appropriate subclass of) DtaDevMacOSScsi, which will either be
@@ -46,7 +41,7 @@ public:
    *    (if the device seems to know the SCSI ATA pass-through protocol)
    *
    * @param devref OS device reference e.g. "/dev/sda"
-   * @param disk_info weak reference to DTA_DEVICE_INFO structure filled out during device identification
+   * @param disk_info reference to DTA_DEVICE_INFO structure filled out during device identification
    */
   static DtaDevMacOSScsi * getDtaDevMacOSScsi(const char * devref,
                                               DTA_DEVICE_INFO & disk_info);

@@ -18,92 +18,62 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
-
-#if defined(__APPLE__) && defined(__MACH__)
-
-#include <IOKit/IOKitLib.h>
-#include <vector>
-#include <string>
 #include "DtaStructures.h"
-#include "DtaDev.h"
+#include "DtaDevMacOSDrive.h"
+#include <string>
+#include <map>
 
-/** virtual implementation for a block storage device
+typedef std::map<std::string,std::string>dictionary;
+typedef std::map<std::string,std::string>::iterator dictionary_iterator;
+
+/** MacOS specific implementation SCSI generic ioctls to send commands to the
+ * device
  */
-class DtaDevMacOSBlockStorageDevice {
+class DtaDevMacOSBlockStorageDevice: public DtaDevMacOSDrive {
 public:
-    DtaDevMacOSBlockStorageDevice(std::string entryName,
-                                  std::string deviceName,
-                                  CFDictionaryRef properties,
-                                  DTA_DEVICE_INFO * pdi)
-        : deviceName(deviceName),
-          entryName(entryName),
-          properties(properties),
-          pdevice_info(pdi)
-    {parse_properties_into_device_info();};
-
-    virtual ~DtaDevMacOSBlockStorageDevice();
-    /** Does the device conform to ANY TCG storage SSC */
-    uint8_t isAnySSC();
-    /** Returns the Vendor ID reported by the Identify command */
-    const char *getVendorID();
-    /** Returns the Manufacturer Name reported by the Identify command */
-    const char *getManufacturerName();
-    /** Returns the Firmware revision reported by the identify command */
-    const char *getFirmwareRev();
-    /** Returns the Model Number reported by the Identify command */
-    const char *getModelNum();
-    /** Returns the Serial Number reported by the Identify command */
-    const char *getSerialNum();
-    /** Returns the password salt, usually the Serial Number reported by the Identify command unmodified by subsequent polishing*/
-    const vector<uint8_t> getPasswordSalt();
-    /** Returns the World Wide Name reported by the Identify command */
-    const vector<uint8_t> getWorldWideName();
-    /** Returns whether that World Wide Name was actually derived using OUI data based heuristics */
-    uint8_t getWorldWideNameIsSynthetic();
-    /** Returns the Physical Interconnect technology */
-    const char *getPhysicalInterconnect();
-    /** Returns the Physical Interconnect Location */
-    const char * getPhysicalInterconnectLocation();
-    /** Returns the BSD Name */
-    const char *getBSDName();
-    /* What type of disk attachment is used */
-    DTA_DEVICE_TYPE getDevType();
-
-    const std::string getDevPath ();
-
-    const unsigned long long getSize();
+    using DtaDevMacOSDrive::DtaDevMacOSDrive;
     
-    static std::vector<DtaDevMacOSBlockStorageDevice *> enumerateBlockStorageDevices();
-    static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(io_service_t aBlockStorageDevice,
-                                                                 const char *devref,
-                                                                 DTA_DEVICE_INFO *pdi);
-    
-    static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(const char * devref, DTA_DEVICE_INFO * pdi);  // Factory for this class or subclass instances
+  /** Factory function to look at the devref to filter whether it could be an instance
+   *
+   * @param devref OS device reference e.g. "/dev/sda"
+   */
+  static bool isDtaDevMacOSBlockStorageDeviceDevRef(const char * devref);
 
-    static DtaDevMacOSBlockStorageDevice * getBlockStorageDevice(std::string entryName,
-                                                                 std::string deviceName,
-                                                                 CFDictionaryRef properties,
-                                                                 DTA_DEVICE_INFO * pdi);  // Factory for this class or subclass instances
-    
-    const DTA_DEVICE_INFO & device_info(void);  /**< Weak reference to Structure containing info from properties, including identify and discovery 0 if available
-                                           Asserts if no such reference.*/
-    
-    void updatePropertiesInIORegistry(void);
+  /** Attempt an ATA security command IF_SEND/IF_RECV to a BlockStorageDevice device
+   *  (Note that Sata devices are a separate subclass.)
+   */
+  virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
+                      void * buffer, unsigned int bufferlen);
 
 
-private:
+  /** Identify this device using SCSI Inquiry Standard Data All command
+   *  to obtain data to fill out disk_info.
+   *  (Note that Sata devices are a separate subclass.)
+   */
+  virtual bool identify(DTA_DEVICE_INFO& disk_info);
 
-    std::string deviceName;
-    std::string entryName;
-    CFDictionaryRef properties;
+  
+  ~DtaDevMacOSBlockStorageDevice(){}
 
-    // derived
-    void parse_properties_into_device_info(void);
-    static bool deviceNameLessThan(DtaDevMacOSBlockStorageDevice * a,
-                                DtaDevMacOSBlockStorageDevice * b);  // for sorting
-protected:
-    DTA_DEVICE_INFO * pdevice_info;  /**< Weak reference to Structure containing info from properties, including identify and discovery 0 if available*/
-    static void polishDeviceInfo(DTA_DEVICE_INFO & device_info);
+  static
+  bool identifyUsingSCSIInquiry(io_connect_t connection,
+                                InterfaceDeviceID & interfaceDeviceIdentification,
+                                DTA_DEVICE_INFO & disk_info);
+
+    /** Factory function to look at the devref and create an instance of
+     *  (possibly the appropriate subclass of) DtaDevMacOSBlockStorageDevice, which will either be
+     *  DtaDevMacOSBlockStorageDevice itself (for SAS drives) or
+     *  DtaDevMacOSSata (SCSI/ATA translation for SATA drives)
+     *    (if the device seems to know the SCSI ATA pass-through protocol)
+     *
+     * @param driverService I/O registry entry for block storage device node from which to fill out `disk_info'`
+     * @param disk_info reference to DTA_DEVICE_INFO structure filled out 
+     */
+    static void BlockStorageDeviceUpdate(io_registry_entry_t driverService,
+                                                                    DTA_DEVICE_INFO & disk_info);
+
+    DtaDevMacOSBlockStorageDevice(io_registry_entry_t dS)
+    : DtaDevMacOSDrive::DtaDevMacOSDrive(dS, IO_OBJECT_NULL)
+    {};
+
 };
-
-#endif // defined(__APPLE__) && defined(__MACH__)
