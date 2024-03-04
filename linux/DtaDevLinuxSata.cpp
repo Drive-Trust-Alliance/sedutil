@@ -51,7 +51,7 @@ bool DtaDevLinuxSata::identifyUsingATAIdentifyDevice(int fd,
   // If it works, as a side effect, parse the Identify response
 
   bool isSAT = false;
-  void * identifyDeviceResponse = alloc_aligned_buffer();
+  void * identifyDeviceResponse = alloc_aligned_MIN_BUFFER_LENGTH_buffer();
   if ( identifyDeviceResponse == NULL ) {
     LOG(E) << " *** memory buffer allocation failed *** !!!";
     return false;

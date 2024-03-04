@@ -19,72 +19,50 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 * C:E********************************************************************** */
 #include "os.h"
 #include "UnlockSEDs.h"
-#include "DtaDevGeneric.h"
-#include "DtaDevOpal1.h"
-#include "DtaDevOpal2.h"
+#include "DtaDevOS.h"
 
-#include <dirent.h>
-#include <fnmatch.h>
-#include <algorithm>
 
 using namespace std;
 
 uint8_t UnlockSEDs(char * password) {
 /* Loop through drives */
-    char devref[25];
-    int failed = 0;
-    DtaDevOS *d;
-    DIR *dir;
-    struct dirent *dirent;
-    vector<string> devices;
-     string tempstring;
-    LOG(D4) << "Enter UnlockSEDs";
-    dir = opendir("/dev");
-    if(dir!=NULL)
-    {
-        while((dirent=readdir(dir))!=NULL) {
-            if((!fnmatch("sd[a-z]",dirent->d_name,0)) ||
-                    (!fnmatch("nvme[0-9]",dirent->d_name,0)) ||
-                    (!fnmatch("nvme[0-9][0-9]",dirent->d_name,0))
-                    ) {
-                tempstring = dirent->d_name;
-                devices.push_back(tempstring);
-            }
-        }
-        closedir(dir);
-    }
-    std::sort(devices.begin(),devices.end());
-    printf("\nScanning....\n");
-    for(uint16_t i = 0; i < devices.size(); i++) {
-        snprintf(devref,23,"/dev/%s",devices[i].c_str());
-        if (DTAERROR_SUCCESS != DtaDevOS::getDtaDevOS(devref, d)) {
-            break;
-        }
+
+  for (string & device:DtaDevOSDrive::enumerateDtaDevOSDriveDevRefs()) {
+
+    DtaDevOS * d=NULL;
+    const char * devref = (const char *)device.c_str();
+    if (DTAERROR_SUCCESS == DtaDevOS::getDtaDevOS(devref, &d, true)  &&  d!=NULL) {
+
         if ((!d->isOpal1()) && (!d->isOpal2())) {
             printf("Drive %-10s %-40s not OPAL  \n", devref, d->getModelNum());
             delete d;
             continue;
         }
+
         d->no_hash_passwords = false;
-        failed = 0;
+        bool failed = false;
         if (d->Locked()) {
             if (d->MBREnabled()) {
                 if (d->setMBRDone(1, password)) {
-                    failed = 1;
+                    failed = true;
                 }
             }
             if (d->setLockingRange(0, OPAL_LOCKINGSTATE::READWRITE, password)) {
-                failed = 1;
+                failed = true;
             }
-            failed ? printf("Drive %-10s %-40s is OPAL Failed  \n", devref, d->getModelNum()) :
-                    printf("Drive %-10s %-40s is OPAL Unlocked   \n", devref, d->getModelNum());
-            delete d;
+            if (failed)
+              printf("Drive %-10s %-40s is OPAL Failed  \n", devref, d->getModelNum());
+            else
+              printf("Drive %-10s %-40s is OPAL Unlocked   \n", devref, d->getModelNum());
+
         }
         else {
             printf("Drive %-10s %-40s is OPAL NOT LOCKED   \n", devref, d->getModelNum());
-            delete d;
         }
+        delete d;
 
     }
-    return 0x00;
-};
+  }
+
+  return 0x00;
+}

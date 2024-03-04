@@ -21,7 +21,6 @@
 #include "os.h"
 #include "log.h"
 #include <dirent.h>
-#include <IOKit/IOKitLib.h>
 
 #include "DtaDevOS.h"
 #include "DtaHexDump.h"
