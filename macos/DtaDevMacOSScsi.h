@@ -60,7 +60,6 @@ public:
    */
   virtual bool identify(DTA_DEVICE_INFO& disk_info);
 
-  
   ~DtaDevMacOSScsi(){}
 
   static

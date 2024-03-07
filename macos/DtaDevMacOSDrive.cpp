@@ -38,6 +38,8 @@ bool DtaDevMacOSDrive::isDtaDevMacOSDriveDevRef(const char * devref) {
 }
 
 namespace fs = std::__fs::filesystem;
+#undef USEDRIVERUSPERCLASS
+#define USEBLOCKSTORAGEDEVICE
 io_connect_t DtaDevMacOSDrive::fdopen(const char * devref, io_registry_entry_t & dS)
 {
     std::string bsdName = fs::path(devref).stem();
@@ -62,7 +64,8 @@ io_connect_t DtaDevMacOSDrive::fdopen(const char * devref, io_registry_entry_t &
         IOObjectRelease(mediaService);
         return _c;
     }
-    
+
+#if defined(USEDRIVERUSPERCLASS)
     dS = findDriverSuperClassInParents(mediaService);
     if (dS != IO_OBJECT_NULL)  {
         LOG(D4) << "Is not TPer; found block storage device service in parents";
@@ -74,7 +77,9 @@ io_connect_t DtaDevMacOSDrive::fdopen(const char * devref, io_registry_entry_t &
         IOObjectRelease(mediaService);
         return IO_OBJECT_NULL;
     }
-    
+#endif // defined(USEDRIVERUSPERCLASS)
+
+#if defined(USEBLOCKSTORAGEDEVICE)
     dS = findBlockStorageDeviceInParents(mediaService);
     if (dS != IO_OBJECT_NULL)  {
         LOG(D4) << "Is not TPer; found block storage device service in parents";
@@ -89,6 +94,7 @@ io_connect_t DtaDevMacOSDrive::fdopen(const char * devref, io_registry_entry_t &
 
     IOObjectRelease(mediaService);
     return IO_OBJECT_NULL;
+#endif // defined(USEBLOCKSTORAGEDEVICE)
 }
 
 void DtaDevMacOSDrive::fdclose()

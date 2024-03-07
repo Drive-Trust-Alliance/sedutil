@@ -106,9 +106,9 @@ DtaDevMacOSDrive * DtaDevMacOSDrive::getDtaDevMacOSDrive(const char * devref,
     }
 
     // OK case: devref -> BlockStorageDevice -- can't do useful I/O, but the I/O Registry can fill in useful info
-    if (driverService != IO_OBJECT_NULL) {
-        DtaDevMacOSBlockStorageDevice::BlockStorageDeviceUpdate(driverService, disk_info);
-        return new DtaDevMacOSBlockStorageDevice(driverService);
+    if (driverService != IO_OBJECT_NULL &&
+        DtaDevMacOSBlockStorageDevice::BlockStorageDeviceUpdate(driverService, disk_info)) {
+            return new DtaDevMacOSBlockStorageDevice(driverService);
     }
     
     return NULL;

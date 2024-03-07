@@ -83,8 +83,9 @@ protected:
 
   /** OS specific routine to send an ATA identify to the device */
   bool identify(DTA_DEVICE_INFO& disk_info);
-
-  /** return drive size in bytes */
+    
+  
+    /** return drive size in bytes */
   const unsigned long long getSize();
 
 private:

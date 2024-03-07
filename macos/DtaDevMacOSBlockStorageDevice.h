@@ -52,7 +52,8 @@ public:
    */
   virtual bool identify(DTA_DEVICE_INFO& disk_info);
 
-  
+  virtual uint8_t discovery0(DTA_DEVICE_INFO & di);
+
   ~DtaDevMacOSBlockStorageDevice(){}
 
   static
@@ -69,11 +70,14 @@ public:
      * @param driverService I/O registry entry for block storage device node from which to fill out `disk_info'`
      * @param disk_info reference to DTA_DEVICE_INFO structure filled out 
      */
-    static void BlockStorageDeviceUpdate(io_registry_entry_t driverService,
-                                                                    DTA_DEVICE_INFO & disk_info);
+    
+    
+    
+    // Get info from I/O Registry
+    static
+    bool BlockStorageDeviceUpdate(io_registry_entry_t driverService, DTA_DEVICE_INFO & disk_info);
 
     DtaDevMacOSBlockStorageDevice(io_registry_entry_t dS)
     : DtaDevMacOSDrive::DtaDevMacOSDrive(dS, IO_OBJECT_NULL)
     {};
-
 };

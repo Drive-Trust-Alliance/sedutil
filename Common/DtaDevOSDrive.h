@@ -58,13 +58,6 @@ public:
   static DtaDevOSDrive * getDtaDevOSDrive(const char * devref,
                                           DTA_DEVICE_INFO & disk_info);
 
-  /** Method to send a command to the device
-   * @param cmd command to be sent to the device
-   * @param protocol security protocol to be used in the command
-   * @param comID communications ID to be used
-   * @param buffer input/output buffer
-   * @param bufferlen length of the input/output buffer
-   */
 
   /** Method to send a command to the device
    * @param cmd command to be sent to the device
@@ -84,8 +77,10 @@ public:
    * to fill out the disk_info structure
    * @param disk_info reference to the device info structure to fill out
    */
-  virtual bool identify(DTA_DEVICE_INFO& disk_info) = 0;
+    virtual bool identify(DTA_DEVICE_INFO& disk_info) = 0;
 
+
+    
   virtual uint8_t discovery0(DTA_DEVICE_INFO & di);
 
   virtual bool isOpen(void) = 0 ;
@@ -97,7 +92,7 @@ public:
 
 
 template <typename T>
-static inline void safecopy(T * dst, size_t dstsize, const T * src, size_t srcsize)
+static inline void safecopy(T * dst, size_t dstsize, const T * src, size_t srcsize, const T fill = (T)(0))
 {
   const T *p=src, *p_end=p+srcsize;
   while ((T)(0)==(*p)) if (p_end==++p) return;  // Do not erase dst if src is all zeros
@@ -106,7 +101,7 @@ static inline void safecopy(T * dst, size_t dstsize, const T * src, size_t srcsi
     memcpy(dst,src,dstsize);
   else {
     memcpy(dst,src,srcsize);
-    memset(dst+srcsize, (T)(0), dstsize-srcsize);
+    memset(dst+srcsize, fill, dstsize-srcsize);
   }
 }
 
