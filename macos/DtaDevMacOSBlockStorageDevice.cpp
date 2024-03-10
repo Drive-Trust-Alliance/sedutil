@@ -146,51 +146,45 @@ static bool FillDeviceInfoFromProperties(CFDictionaryRef deviceProperties, CFDic
 static
 bool parse_properties_into_device_info(CFDictionaryRef & properties, DTA_DEVICE_INFO & device_info) {
     bool isPhysical = false;
-        CFDictionaryRef deviceProperties = GetDict(properties, "device");
-        if (NULL != deviceProperties) {
-         
-            CFDictionaryRef protocolProperties = GetDict(deviceProperties, "Protocol Characteristics");
-            if (NULL != protocolProperties) {
-                CFStringRef interconnect = GetString(protocolProperties, "Physical Interconnect");
-                if (NULL != interconnect) {
-                    if (CFEqual(interconnect, CFSTR("USB"))) {
-                        device_info.devType = DEVICE_TYPE_USB;
-                    } else if (CFEqual(interconnect, CFSTR("Apple Fabric"))) {
-                        device_info.devType = DEVICE_TYPE_NVME;
-                    } else if (CFEqual(interconnect, CFSTR("PCI-Express"))) {
-                        device_info.devType = DEVICE_TYPE_OTHER;  // TODO ... what?
-                    } else if (CFEqual(interconnect, CFSTR("SATA"))) {
-                        device_info.devType = DEVICE_TYPE_ATA;
-                    } else {
-                        device_info.devType = DEVICE_TYPE_OTHER;
-                    }
+    CFDictionaryRef deviceProperties = GetDict(properties, "device");
+    if (NULL != deviceProperties) {
+        
+        CFDictionaryRef protocolProperties = GetDict(deviceProperties, "Protocol Characteristics");
+        if (NULL != protocolProperties) {
+            CFStringRef interconnect = GetString(protocolProperties, "Physical Interconnect");
+            if (NULL != interconnect) {
+                if (CFEqual(interconnect, CFSTR("USB"))) {
+                    device_info.devType = DEVICE_TYPE_USB;
+                    isPhysical = true;
+                } else if (CFEqual(interconnect, CFSTR("Apple Fabric"))) {
+                    device_info.devType = DEVICE_TYPE_NVME;
+                    isPhysical = true;
+                } else if (CFEqual(interconnect, CFSTR("PCI-Express"))) {
+                    device_info.devType = DEVICE_TYPE_OTHER;  // TODO ... what?
+                    isPhysical = true;
+                } else if (CFEqual(interconnect, CFSTR("SATA"))) {
+                    device_info.devType = DEVICE_TYPE_ATA;
+                    isPhysical = true;
+                } else if (CFEqual(interconnect, CFSTR("Virtual Interface"))) {
+                    device_info.devType = DEVICE_TYPE_OTHER;
+                    isPhysical = false;
+                } else {
+                    device_info.devType = DEVICE_TYPE_OTHER;
+                    isPhysical = false;
                 }
             }
-
-            CFDictionaryRef deviceCharacteristicsProperties = GetDict(deviceProperties, "Device Characteristics");
-            if (NULL != deviceCharacteristicsProperties) {
-                CFStringRef mediumType = GetString(deviceCharacteristicsProperties, "Medium Type");
-                if (NULL != mediumType) {
-                    if (CFEqual(mediumType, CFSTR("disk"))) {
-                        isPhysical = true;
-                    } else if (CFEqual(mediumType, CFSTR("Solid State"))) {
-                        isPhysical = true;
-                    } else {
-                        isPhysical = false;
-                    }
-                }
-            }
-            
-            
-        } else {
-            device_info.devType = DEVICE_TYPE_OTHER; // TODO -- generalize for other devices when they are supported by BPTperDriver
-            isPhysical = true;
         }
         
-        CFDictionaryRef mediaProperties = GetDict(properties, "media");
         
-        FillDeviceInfoFromProperties(deviceProperties, mediaProperties, device_info);
-     
+    } else {
+        device_info.devType = DEVICE_TYPE_OTHER; // TODO -- generalize for other devices when they are supported by BPTperDriver
+        isPhysical = true;
+    }
+    
+    CFDictionaryRef mediaProperties = GetDict(properties, "media");
+    
+    FillDeviceInfoFromProperties(deviceProperties, mediaProperties, device_info);
+    
     return isPhysical;
 }
     
@@ -299,103 +293,65 @@ uint8_t DtaDevMacOSBlockStorageDevice::discovery0(DTA_DEVICE_INFO & /* di */) {
   /** Factory function to enumerate all the devrefs that pass the above filter
    *
    */
-static
-std::vector<std::string> enumerateDtaDevMacOSBlockStorageDeviceDevRefs(void);
-
-
-std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enumerateBlockStorageDevices() {        std::vector<DtaDevMacOSBlockStorageDevice *>devices;
-io_iterator_t iterator = findMatchingServices(kIOBlockStorageDeviceClass);
-io_service_t aBlockStorageDevice;
-io_service_t media;
-io_service_t tPer;
-DTA_DEVICE_INFO * pdi;
-CFDictionaryRef deviceProperties;
-CFDictionaryRef mediaProperties;
-CFDictionaryRef tPerProperties;
-CFDictionaryRef allProperties;
-
-const CFIndex kCStringSize = 128;
-char nameBuffer[kCStringSize];
-bzero(nameBuffer,kCStringSize);
-
-    std::string entryNameStr;
-    std::string bsdNameStr;
-
-// Iterate over nodes of class IOBlockStorageDevice or subclass thereof
-while ( (IO_OBJECT_NULL != (aBlockStorageDevice = IOIteratorNext( iterator )))) {
+std::vector<std::string> DtaDevMacOSBlockStorageDevice::enumerateDtaDevMacOSBlockStorageDeviceDevRefs() {
+    std::vector<DtaDevMacOSBlockStorageDevice *>devices;
+    std::vector<std::string>device_names;
+    io_iterator_t iterator = findBlockStorageDevices();
+    io_service_t aBlockStorageDevice;
+    io_service_t media;
+    CFDictionaryRef deviceProperties;
+    CFDictionaryRef mediaProperties;
     
-    std::vector<const void *>keys;
-    std::vector<const void *>values;
-    CFDictionaryRef protocolCharacteristics;
-    CFStringRef physicalInterconnectLocation;
-    
-    deviceProperties = copyProperties( aBlockStorageDevice );
-    if (NULL == deviceProperties) {
-        goto finishedWithDevice;
-    }
-    protocolCharacteristics = GetDict(deviceProperties, "Protocol Characteristics");
-    if (NULL == protocolCharacteristics) {
-        goto finishedWithDevice;
-    }
-    physicalInterconnectLocation = GetString(protocolCharacteristics, "Physical Interconnect Location");
-    if (NULL == physicalInterconnectLocation ||
-        CFEqual(physicalInterconnectLocation, CFSTR("File"))) {
-        goto finishedWithDevice;
-    }
-    
-    
-    
-    keys.push_back( CFSTR("device"));
-    values.push_back( deviceProperties);
-    
-    
-    media = findServiceForClassInChildren(aBlockStorageDevice, kIOMediaClass);
-    if (IO_OBJECT_NULL == media) {
-        goto finishedWithMedia;
-    }
-    mediaProperties = copyProperties( media );
-    if (NULL == mediaProperties ) {
-        goto finishedWithMedia ;
-    }
-    keys.push_back( CFSTR("media"));
-    values.push_back( mediaProperties);
-    
-    
-    tPer = findParent(aBlockStorageDevice);
-    if (IOObjectConformsTo(tPer, kDriverClass)) {
-        tPerProperties = copyProperties( tPer );
-        keys.push_back( CFSTR("TPer"));
-        values.push_back(tPerProperties);
-    }
-    
-    
-    allProperties = CFDictionaryCreate(CFAllocatorGetDefault(), keys.data(), values.data(), (CFIndex)keys.size(), NULL, NULL);
-    
+    const CFIndex kCStringSize = 128;
+    char nameBuffer[kCStringSize];
     bzero(nameBuffer,kCStringSize);
-    CFStringGetCString(GetString(mediaProperties, "BSD Name"),
-                       nameBuffer, kCStringSize, kCFStringEncodingUTF8);
-    bsdNameStr = string(nameBuffer);
     
-    bzero(nameBuffer,kCStringSize);
-    GetName(media,nameBuffer);
-    entryNameStr = string(nameBuffer);
+    // Iterate over nodes of class IOBlockStorageDevice or subclass thereof
+    while ( (IO_OBJECT_NULL != (aBlockStorageDevice = IOIteratorNext( iterator )))) {
+        
+        CFDictionaryRef protocolCharacteristics;
+        CFStringRef physicalInterconnectLocation;
+        
+        deviceProperties = copyProperties( aBlockStorageDevice );
+        if (NULL == deviceProperties) {
+            goto finishedWithDevice;
+        }
+        protocolCharacteristics = GetDict(deviceProperties, "Protocol Characteristics");
+        if (NULL == protocolCharacteristics) {
+            goto finishedWithDevice;
+        }
+        physicalInterconnectLocation = GetString(protocolCharacteristics, "Physical Interconnect Location");
+        if (NULL == physicalInterconnectLocation ||
+            CFEqual(physicalInterconnectLocation, CFSTR("File"))) {
+            goto finishedWithDevice;
+        }
+        
+        
+        media = findServiceForClassInChildren(aBlockStorageDevice, kIOMediaClass);
+        if (IO_OBJECT_NULL == media) {
+            goto finishedWithMedia;
+        }
+        
+        mediaProperties = copyProperties( media );
+        if (NULL == mediaProperties ) {
+            goto finishedWithMedia ;
+        }
+        
+        bzero(nameBuffer,kCStringSize);
+        CFStringGetCString(GetString(mediaProperties, "BSD Name"),
+                           nameBuffer, kCStringSize, kCFStringEncodingUTF8);
+        
+        device_names.push_back(nameBuffer);
+                
+    finishedWithMedia:
+        IOObjectRelease(media);
+        
+    finishedWithDevice:
+        IOObjectRelease(aBlockStorageDevice);
+    }
     
-    pdi = static_cast <DTA_DEVICE_INFO *> (malloc(sizeof(DTA_DEVICE_INFO)));
-    bzero(pdi, sizeof(DTA_DEVICE_INFO));
-    
-    devices.push_back( getBlockStorageDevice(entryNameStr, bsdNameStr, allProperties, pdi) );
-    
-    IOObjectRelease(tPer);
-    
-finishedWithMedia:
-    IOObjectRelease(media);
-    
-finishedWithDevice:
-    IOObjectRelease(aBlockStorageDevice);
-}
-
-sort(devices.begin(), devices.end(), DtaDevMacOSBlockStorageDevice::bsdNameLessThan);
-return devices;
+    sort(device_names.begin(), device_names.end());
+    return device_names;
 }
 
 #if OLD_STUFF_BELOW

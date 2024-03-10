@@ -62,7 +62,7 @@ public:
        */
     static
     std::vector<std::string> enumerateDtaDevMacOSBlockStorageDeviceDevRefs(void);
-    
+
     static
   bool identifyUsingSCSIInquiry(io_connect_t connection,
                                 InterfaceDeviceID & interfaceDeviceIdentification,
