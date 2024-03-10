@@ -56,7 +56,14 @@ public:
 
   ~DtaDevMacOSBlockStorageDevice(){}
 
-  static
+
+      /** Factory function to enumerate all the devrefs that pass the above filter
+       *
+       */
+    static
+    std::vector<std::string> enumerateDtaDevMacOSBlockStorageDeviceDevRefs(void);
+    
+    static
   bool identifyUsingSCSIInquiry(io_connect_t connection,
                                 InterfaceDeviceID & interfaceDeviceIdentification,
                                 DTA_DEVICE_INFO & disk_info);

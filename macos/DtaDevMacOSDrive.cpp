@@ -137,7 +137,14 @@ void DtaDevMacOSDrive::ReleaseIOObjects()
 using namespace std;
 vector<string> DtaDevMacOSDrive::enumerateDtaDevMacOSDriveDevRefs()
 {
-  vector<string> devices;
+  /**
+   *  The code below does not work on MacOS because of container disks, which result in more than one
+   *  disknn being assigned to the same physical device.  Instead we must abstain implementation at this
+   *  level and instead ask DtaDevMacOSBlockStorageDevice to enumerate.
+   */
+
+#if defined(EACH_DEV_DISK_CORRESPONDS_TO_AT_MOST_ONE_BLOCK_STORAGE_DEVICE)
+    vector<string> devices;
 
   // MacOS drive names are disk0-disk99
   char devref[261];
@@ -147,5 +154,9 @@ vector<string> DtaDevMacOSDrive::enumerateDtaDevMacOSDriveDevRefs()
         devices.push_back(string(devref));
   }
 
-  return devices;
+    return devices;
+#endif // defined(EACH_DEV_DISK_CORRESPONDS_TO_AT_MOST_ONE_BLOCK_STORAGE_DEVICE)
+    
+    return DtaDevMacOSBlockStorageDevice::enumerateDtaDevMacOSBlockStorageDeviceDevRefs();
+    
 }

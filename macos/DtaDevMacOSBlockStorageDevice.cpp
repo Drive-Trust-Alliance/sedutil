@@ -28,9 +28,29 @@
 
 
 bool DtaDevMacOSBlockStorageDevice::isDtaDevMacOSBlockStorageDeviceDevRef(const char * devref) {
-  return ( 0 == fnmatch("/dev/disk[0-9]", devref, 0) )
-     ||  ( 0 == fnmatch("/dev/disk[1-9][0-9]", devref, 0) );
+    if (! (  ( 0 == fnmatch("/dev/disk[0-9]"     , devref, 0) )
+           ||( 0 == fnmatch("/dev/disk[1-9][0-9]", devref, 0) ) ) )
+        return false;
+    
+    const char * bsdName=devref+5; // After the "/dev/"
+    io_registry_entry_t media = findBSDName(bsdName);
+    io_registry_entry_t parent = media == IO_OBJECT_NULL ? IO_OBJECT_NULL : findParent(media);
+    io_registry_entry_t grandparent = parent == IO_OBJECT_NULL ? IO_OBJECT_NULL : findParent(parent);
+    bool result=false;
+    if (media == IO_OBJECT_NULL) goto EXIT;
+    if (parent == IO_OBJECT_NULL) goto EXIT;
+    if (grandparent == IO_OBJECT_NULL) goto EXIT;
+                
+                
+EXIT:
+    IOObjectRelease(grandparent);
+    IOObjectRelease(parent);
+    IOObjectRelease(media);
+    return result;
 }
+
+
+
 
 /** Send an ioctl to the device using pass through. */
 uint8_t DtaDevMacOSBlockStorageDevice::sendCmd(ATACOMMAND /* cmd */, uint8_t /* protocol */, uint16_t /* comID */,
@@ -191,7 +211,7 @@ CFMutableDictionaryRef copyProperties(io_registry_entry_t service) {
 }
 
 static
-CFDictionaryRef createBlockStorageDeviceProperties(io_registry_entry_t aBlockStorageDevice) {
+CFDictionaryRef createBlockStorageDeviceProperties(io_registry_entry_t blockStorageDevice) {
     
     CFDictionaryRef allProperties=NULL;
 
@@ -206,6 +226,109 @@ CFDictionaryRef createBlockStorageDeviceProperties(io_registry_entry_t aBlockSto
     io_service_t tPer;
     CFDictionaryRef tPerProperties;
 
+    deviceProperties = copyProperties( blockStorageDevice );
+    if (NULL == deviceProperties) {
+        goto finishedWithDevice;
+    }
+    protocolCharacteristics = GetDict(deviceProperties, "Protocol Characteristics");
+    if (NULL == protocolCharacteristics) {
+        goto finishedWithDevice;
+    }
+    physicalInterconnectLocation = GetString(protocolCharacteristics, "Physical Interconnect Location");
+    if (NULL == physicalInterconnectLocation) {
+        goto finishedWithDevice;
+    }
+    
+    keys.push_back( CFSTR("device"));
+    values.push_back( deviceProperties);
+        
+    media = findServiceForClassInChildren(blockStorageDevice, kIOMediaClass);
+    if (IO_OBJECT_NULL == media) {
+        goto finishedWithMedia;
+    }
+    mediaProperties = copyProperties( media );
+    if (NULL == mediaProperties ) {
+        goto finishedWithMedia ;
+    }
+    keys.push_back( CFSTR("media"));
+    values.push_back( mediaProperties);
+    
+    
+    tPer = findParent(blockStorageDevice);
+    if (IOObjectConformsTo(tPer, kDriverClass)) {
+        tPerProperties = copyProperties( tPer );
+        keys.push_back( CFSTR("TPer"));
+        values.push_back(tPerProperties);
+    }
+    
+    
+    allProperties = CFDictionaryCreate(CFAllocatorGetDefault(), keys.data(), values.data(), (CFIndex)keys.size(), NULL, NULL);
+
+    IOObjectRelease(tPer);
+    
+finishedWithMedia:
+    IOObjectRelease(media);
+    
+finishedWithDevice:
+    IOObjectRelease(blockStorageDevice);
+    
+    return allProperties;
+}
+
+bool DtaDevMacOSBlockStorageDevice::BlockStorageDeviceUpdate(io_registry_entry_t dS, DTA_DEVICE_INFO &disk_info) {
+    CFDictionaryRef properties = createBlockStorageDeviceProperties(dS);
+    if (properties == NULL)
+        return false;
+    bool result = parse_properties_into_device_info(properties, disk_info);
+    CFRelease(properties);
+    return result;
+}
+
+bool DtaDevMacOSBlockStorageDevice::identify(DTA_DEVICE_INFO& disk_info ) {
+    return BlockStorageDeviceUpdate(driverService, disk_info);
+}
+
+uint8_t DtaDevMacOSBlockStorageDevice::discovery0(DTA_DEVICE_INFO & /* di */) {
+    return DTAERROR_SUCCESS;
+}
+
+
+
+
+
+  /** Factory function to enumerate all the devrefs that pass the above filter
+   *
+   */
+static
+std::vector<std::string> enumerateDtaDevMacOSBlockStorageDeviceDevRefs(void);
+
+
+std::vector<DtaDevMacOSBlockStorageDevice *> DtaDevMacOSBlockStorageDevice::enumerateBlockStorageDevices() {        std::vector<DtaDevMacOSBlockStorageDevice *>devices;
+io_iterator_t iterator = findMatchingServices(kIOBlockStorageDeviceClass);
+io_service_t aBlockStorageDevice;
+io_service_t media;
+io_service_t tPer;
+DTA_DEVICE_INFO * pdi;
+CFDictionaryRef deviceProperties;
+CFDictionaryRef mediaProperties;
+CFDictionaryRef tPerProperties;
+CFDictionaryRef allProperties;
+
+const CFIndex kCStringSize = 128;
+char nameBuffer[kCStringSize];
+bzero(nameBuffer,kCStringSize);
+
+    std::string entryNameStr;
+    std::string bsdNameStr;
+
+// Iterate over nodes of class IOBlockStorageDevice or subclass thereof
+while ( (IO_OBJECT_NULL != (aBlockStorageDevice = IOIteratorNext( iterator )))) {
+    
+    std::vector<const void *>keys;
+    std::vector<const void *>values;
+    CFDictionaryRef protocolCharacteristics;
+    CFStringRef physicalInterconnectLocation;
+    
     deviceProperties = copyProperties( aBlockStorageDevice );
     if (NULL == deviceProperties) {
         goto finishedWithDevice;
@@ -220,9 +343,12 @@ CFDictionaryRef createBlockStorageDeviceProperties(io_registry_entry_t aBlockSto
         goto finishedWithDevice;
     }
     
+    
+    
     keys.push_back( CFSTR("device"));
     values.push_back( deviceProperties);
-        
+    
+    
     media = findServiceForClassInChildren(aBlockStorageDevice, kIOMediaClass);
     if (IO_OBJECT_NULL == media) {
         goto finishedWithMedia;
@@ -244,7 +370,21 @@ CFDictionaryRef createBlockStorageDeviceProperties(io_registry_entry_t aBlockSto
     
     
     allProperties = CFDictionaryCreate(CFAllocatorGetDefault(), keys.data(), values.data(), (CFIndex)keys.size(), NULL, NULL);
-
+    
+    bzero(nameBuffer,kCStringSize);
+    CFStringGetCString(GetString(mediaProperties, "BSD Name"),
+                       nameBuffer, kCStringSize, kCFStringEncodingUTF8);
+    bsdNameStr = string(nameBuffer);
+    
+    bzero(nameBuffer,kCStringSize);
+    GetName(media,nameBuffer);
+    entryNameStr = string(nameBuffer);
+    
+    pdi = static_cast <DTA_DEVICE_INFO *> (malloc(sizeof(DTA_DEVICE_INFO)));
+    bzero(pdi, sizeof(DTA_DEVICE_INFO));
+    
+    devices.push_back( getBlockStorageDevice(entryNameStr, bsdNameStr, allProperties, pdi) );
+    
     IOObjectRelease(tPer);
     
 finishedWithMedia:
@@ -252,26 +392,11 @@ finishedWithMedia:
     
 finishedWithDevice:
     IOObjectRelease(aBlockStorageDevice);
-    
-    return allProperties;
 }
 
-bool DtaDevMacOSBlockStorageDevice::BlockStorageDeviceUpdate(io_registry_entry_t dS, DTA_DEVICE_INFO &disk_info) {
-    CFDictionaryRef properties = createBlockStorageDeviceProperties(dS);
-    bool result = parse_properties_into_device_info(properties, disk_info);
-    CFRelease(properties);
-    return result;
+sort(devices.begin(), devices.end(), DtaDevMacOSBlockStorageDevice::bsdNameLessThan);
+return devices;
 }
-
-bool DtaDevMacOSBlockStorageDevice::identify(DTA_DEVICE_INFO& disk_info ) {
-    return BlockStorageDeviceUpdate(driverService, disk_info);
-}
-
-uint8_t DtaDevMacOSBlockStorageDevice::discovery0(DTA_DEVICE_INFO & /* di */) {
-    return DTAERROR_SUCCESS;
-}
-
-
 
 #if OLD_STUFF_BELOW
 
