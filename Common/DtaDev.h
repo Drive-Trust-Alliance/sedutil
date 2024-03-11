@@ -95,6 +95,15 @@ public:
   char *getSerialNum();
   /** Returns the device-specific data to be used as a password salt */
   vector<uint8_t>getPasswordSalt();
+  /** Returns the Vendor ID reported by the Identify command */
+  char *getVendorID();
+  /** Returns the Manufacturer Name reported by the Identify command */
+  char *getManufacturerName();
+  /** Returns the World Wide Name reported by the Identify command */
+  vector<uint8_t>getWorldWideName();
+  /** Returns whether the World Wide Name was synthesized from the Manufacturer Name and Serial Number */
+  bool isWorldWideNameSynthetic();
+
 
   /* What type of disk attachment is used */
   DTA_DEVICE_TYPE getDevType();

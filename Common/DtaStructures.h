@@ -625,9 +625,9 @@ typedef struct _DTA_DEVICE_INFO {
 
 
   // Physical interconnection information
-  uint8_t physicalInterconnect[8];
+  uint8_t physicalInterconnect[15];
   uint8_t physicalInterconnectNull;  // make physical Interconnect a cstring
-  uint8_t physicalInterconnectLocation[12];
+  uint8_t physicalInterconnectLocation[15];
   uint8_t physicalInterconnectLocationNull;  // make physical Interconnect Location a cstring
 
   uint8_t passwordSalt[20];             // copy of serialNum before polishing -- bytes, not a cstring

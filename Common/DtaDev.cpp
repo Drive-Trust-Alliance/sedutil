@@ -50,89 +50,89 @@ DtaDev::~DtaDev()
 
 uint8_t DtaDev::isRuby()
 {
-  LOG(D1) << "Entering DtaDev::isRuby " << (uint16_t)disk_info.RUBY;
+  LOG(D2) << "Entering DtaDev::isRuby " << (uint16_t)disk_info.RUBY;
   return disk_info.RUBY;
 }
 
 uint8_t DtaDev::isFIPS()
 {
-  LOG(D1) << "Entering DtaDev::isFIPS " << (uint16_t)disk_info.fips;
+  LOG(D2) << "Entering DtaDev::isFIPS " << (uint16_t)disk_info.fips;
   return disk_info.fips;
 }
 
 uint8_t DtaDev::isOpalite()
 {
-  LOG(D1) << "Entering DtaDev::isOpalite " << (uint16_t) disk_info.OPALITE;
+  LOG(D2) << "Entering DtaDev::isOpalite " << (uint16_t) disk_info.OPALITE;
   return disk_info.OPALITE;
 }
 uint8_t DtaDev::isPyrite2()
 {
-  LOG(D1) << "Entering DtaDev::isPyrite2 " << (uint16_t)disk_info.PYRITE2;
+  LOG(D2) << "Entering DtaDev::isPyrite2 " << (uint16_t)disk_info.PYRITE2;
   return disk_info.PYRITE2;
 }
 uint8_t DtaDev::isPyrite()
 {
-  LOG(D1) << "Entering DtaDev::isPyrite " << (uint16_t) disk_info.PYRITE;
+  LOG(D2) << "Entering DtaDev::isPyrite " << (uint16_t) disk_info.PYRITE;
   return disk_info.PYRITE;
 }
 uint8_t DtaDev::isOpal2_minor_v()
 {
-  LOG(D1) << "Entering DtaDev::isOpal2_minor " << (uint16_t)disk_info.OPAL20_minor_v;
+  LOG(D2) << "Entering DtaDev::isOpal2_minor " << (uint16_t)disk_info.OPAL20_minor_v;
   return disk_info.OPAL20_minor_v;
 }
 uint8_t DtaDev::isOpal2_version()
 {
-  LOG(D1) << "Entering DtaDev::isOpal2_version " << (uint16_t)disk_info.OPAL20_version;
+  LOG(D2) << "Entering DtaDev::isOpal2_version " << (uint16_t)disk_info.OPAL20_version;
   return disk_info.OPAL20_version;
 }
 uint8_t DtaDev::isOpal2()
 {
-  LOG(D1) << "Entering DtaDev::isOpal2 " << (uint16_t) disk_info.OPAL20;
+  LOG(D2) << "Entering DtaDev::isOpal2 " << (uint16_t) disk_info.OPAL20;
   return disk_info.OPAL20;
 }
 uint8_t DtaDev::isOpal1()
 {
-  LOG(D1) << "Entering DtaDev::isOpal1() " << (uint16_t)disk_info.OPAL10;
+  LOG(D2) << "Entering DtaDev::isOpal1() " << (uint16_t)disk_info.OPAL10;
   return disk_info.OPAL10;
 }
 uint8_t DtaDev::isEprise()
 {
-  LOG(D1) << "Entering DtaDev::isEprise " << (uint16_t) disk_info.Enterprise;
+  LOG(D2) << "Entering DtaDev::isEprise " << (uint16_t) disk_info.Enterprise;
   return disk_info.Enterprise;
 }
 uint8_t DtaDev::isAnySSC()
 {
-  LOG(D1) << "Entering DtaDev::isAnySSC " << (uint16_t)disk_info.ANY_OPAL_SSC;
+  LOG(D2) << "Entering DtaDev::isAnySSC " << (uint16_t)disk_info.ANY_OPAL_SSC;
   return disk_info.ANY_OPAL_SSC;
 }
 uint8_t DtaDev::isPresent()
 {
-  LOG(D1) << "Entering DtaDev::isPresent() " << (uint16_t) isOpen;
+  LOG(D2) << "Entering DtaDev::isPresent() " << (uint16_t) isOpen;
   return isOpen;
 }
 uint8_t DtaDev::isNVMEbus()
 {
-  LOG(D1) << "Entering DtaDev::isNVMEbus() " << (uint16_t)isNVME;
+  LOG(D2) << "Entering DtaDev::isNVMEbus() " << (uint16_t)isNVME;
   return isNVME;
 }
 uint8_t DtaDev::MBREnabled()
 {
-  LOG(D1) << "Entering DtaDev::MBRENabled" << (uint16_t)disk_info.Locking_MBREnabled;
+  LOG(D2) << "Entering DtaDev::MBRENabled" << (uint16_t)disk_info.Locking_MBREnabled;
   return disk_info.Locking_MBREnabled;
 }
 uint8_t DtaDev::MBRDone()
 {
-  LOG(D1) << "Entering DtaDev::MBRDone" << (uint16_t)disk_info.Locking_MBRDone;
+  LOG(D2) << "Entering DtaDev::MBRDone" << (uint16_t)disk_info.Locking_MBRDone;
   return disk_info.Locking_MBRDone;
 }
 uint8_t DtaDev::Locked()
 {
-  LOG(D1) << "Entering DtaDev::Locked" << (uint16_t)disk_info.Locking_locked;
+  LOG(D2) << "Entering DtaDev::Locked" << (uint16_t)disk_info.Locking_locked;
   return disk_info.Locking_locked;
 }
 uint8_t DtaDev::LockingEnabled()
 {
-  LOG(D1) << "Entering DtaDev::LockingEnabled" << (uint16_t)disk_info.Locking_lockingEnabled;
+  LOG(D2) << "Entering DtaDev::LockingEnabled" << (uint16_t)disk_info.Locking_lockingEnabled;
   return disk_info.Locking_lockingEnabled;
 }
 char *DtaDev::getFirmwareRev()
@@ -157,11 +157,31 @@ DTA_DEVICE_TYPE DtaDev::getDevType()
   return disk_info.devType;
 }
 
+char *DtaDev::getVendorID()
+{
+  return (char *)&disk_info.vendorID;
+}
+
+char *DtaDev::getManufacturerName()
+{
+  return (char *)&disk_info.manufacturerName;
+}
+
+vector<uint8_t>DtaDev::getWorldWideName()
+{
+  const uint8_t * b=disk_info.worldWideName;
+  return vector<uint8_t>(b,b+sizeof(disk_info.worldWideName));
+}
+
+bool DtaDev::isWorldWideNameSynthetic()
+{
+    return 0!=disk_info.worldWideNameIsSynthetic;
+}
 
 
 int DtaDev::TperReset()
 {
-  LOG(D1) << "Entering DtaDev::TperReset()";
+  LOG(D2) << "Entering DtaDev::TperReset()";
   int lastRC;
   void * tpResponse = (void *)((((uintptr_t)discovery0buffer) +
                                 (uintptr_t)IO_BUFFER_ALIGNMENT) &      //  0x00002000 if e.g. 16384
@@ -170,7 +190,7 @@ int DtaDev::TperReset()
   memset(tpResponse, 0, MIN_BUFFER_LENGTH);
   // TperReset ProtocolID=0x02 ComID=0x0004
   if ((lastRC = sendCmd(IF_SEND, 0x02, 0x0004, tpResponse, 512)) != 0) { // 2048->512
-    LOG(D1) << "Send TperReset to device failed " << (uint16_t)lastRC;
+    LOG(D2) << "Send TperReset to device failed " << (uint16_t)lastRC;
     return lastRC;
   }
   IFLOG(D2) DtaHexDump((char *)tpResponse,64);
@@ -180,7 +200,7 @@ int DtaDev::TperReset()
 /*
   uint8_t DtaDev::STACK_Reset()
   {
-  LOG(D1) << "Entering DtaDev::STACK_Reset()";
+  LOG(D2) << "Entering DtaDev::STACK_Reset()";
   uint8_t lastRC;
   void * STACKResponse = NULL;
   STACKResponse = discovery0buffer + IO_BUFFER_ALIGNMENT;
@@ -188,7 +208,7 @@ int DtaDev::TperReset()
   memset(STACKResponse, 0, IO_BUFFER_LENGTH);
   // STACK_RESET
   if ((lastRC = sendCmd(IF_SEND, 0x02, 0x0004, STACKResponse, 512)) != 0) { // 2048->512
-  LOG(D1) << "Send STACK_Reset to device failed " << (uint16_t)lastRC;
+  LOG(D2) << "Send STACK_Reset to device failed " << (uint16_t)lastRC;
   return lastRC;
   }
   DtaHexDump((char *)STACKResponse, 64);
@@ -199,7 +219,7 @@ int DtaDev::TperReset()
 
 void DtaDev::puke()
 {
-  LOG(D1) << "Entering DtaDev::puke()";
+  LOG(D2) << "Entering DtaDev::puke()";
   /* IDENTIFY */
   const char * devType =
     disk_info.devType == DEVICE_TYPE_ATA  ? " ATA "

@@ -189,9 +189,8 @@ bool parse_properties_into_device_info(CFDictionaryRef & properties, DTA_DEVICE_
 }
     
     
-    
-// extern CFMutableDictionaryRef copyProperties(io_registry_entry_t service);
-// #import <Foundation/Foundation.h>
+// Create a copy of the properties of this I/O registry entry
+// Receiver owns this CFMutableDictionary instance if not NULL
 static
 CFMutableDictionaryRef copyProperties(io_registry_entry_t service) {
     CFMutableDictionaryRef cfproperties = NULL;
@@ -209,7 +208,6 @@ CFDictionaryRef createBlockStorageDeviceProperties(io_registry_entry_t blockStor
     
     CFDictionaryRef allProperties=NULL;
 
-    
     CFDictionaryRef deviceProperties;
     CFDictionaryRef protocolCharacteristics;
     CFStringRef physicalInterconnectLocation;
@@ -246,7 +244,7 @@ CFDictionaryRef createBlockStorageDeviceProperties(io_registry_entry_t blockStor
     }
     keys.push_back( CFSTR("media"));
     values.push_back( mediaProperties);
-    
+
     
     tPer = findParent(blockStorageDevice);
     if (IOObjectConformsTo(tPer, kDriverClass)) {
@@ -254,11 +252,12 @@ CFDictionaryRef createBlockStorageDeviceProperties(io_registry_entry_t blockStor
         keys.push_back( CFSTR("TPer"));
         values.push_back(tPerProperties);
     }
-    
-    
-    allProperties = CFDictionaryCreate(CFAllocatorGetDefault(), keys.data(), values.data(), (CFIndex)keys.size(), NULL, NULL);
-
     IOObjectRelease(tPer);
+
+    
+    allProperties = CFDictionaryCreate(CFAllocatorGetDefault(), keys.data(), values.data(), 
+                                       (CFIndex)keys.size(), NULL, NULL);
+
     
 finishedWithMedia:
     IOObjectRelease(media);
@@ -282,8 +281,8 @@ bool DtaDevMacOSBlockStorageDevice::identify(DTA_DEVICE_INFO& disk_info ) {
     return BlockStorageDeviceUpdate(driverService, disk_info);
 }
 
-uint8_t DtaDevMacOSBlockStorageDevice::discovery0(DTA_DEVICE_INFO & /* di */) {
-    return DTAERROR_SUCCESS;
+uint8_t DtaDevMacOSBlockStorageDevice::discovery0(DTA_DEVICE_INFO& disk_info ) {
+    return BlockStorageDeviceUpdate(driverService, disk_info) ? 0x00 : 0xff;
 }
 
 
@@ -340,6 +339,7 @@ std::vector<std::string> DtaDevMacOSBlockStorageDevice::enumerateDtaDevMacOSBloc
         bzero(nameBuffer,kCStringSize);
         CFStringGetCString(GetString(mediaProperties, "BSD Name"),
                            nameBuffer, kCStringSize, kCFStringEncodingUTF8);
+        CFRelease(mediaProperties);
         
         device_names.push_back(nameBuffer);
                 

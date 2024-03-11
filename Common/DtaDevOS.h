@@ -18,6 +18,8 @@
 
    * C:E********************************************************************** */
 #pragma once
+#include "os.h"
+#include "log.h"
 #include "DtaDev.h"
 #include "DtaDevOSDrive.h"
 
@@ -26,7 +28,7 @@
 class DtaDevOS : public DtaDev {
 public:
   /** Destructor */
-  ~DtaDevOS();
+    ~DtaDevOS();
 
 
   /** Factory method to produce instance of appropriate subclass

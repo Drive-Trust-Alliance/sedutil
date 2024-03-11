@@ -74,28 +74,20 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-v"
+            argument = "-vv"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-v"
+            argument = "-vvv"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-v"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-v"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-v"
+            argument = "-vvvv"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-vvvvv"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--scan"
