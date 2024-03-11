@@ -32,7 +32,7 @@ typedef enum _sedutiloutput {
 
 #define DEFAULT_OUTPUT_FORMAT sedutilReadable
 
-#if DEBUG
+#if DEBUG && defined(AUTOMATICALLY_BUMP_LOGGING_LEVEL_IN_DEBUG_BUILDS)
 #define DEFAULT_LOGGING_LEVEL 3
 #else // !DEBUG
 #define DEFAULT_LOGGING_LEVEL 2
