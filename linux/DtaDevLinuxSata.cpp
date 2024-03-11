@@ -274,7 +274,7 @@ DtaDevLinuxSata::parseATAIdentifyDeviceResponse(const InterfaceDeviceID & interf
 uint8_t DtaDevLinuxSata::sendCmd(ATACOMMAND cmd, uint8_t securityProtocol, uint16_t comID,
                                  void * buffer, uint32_t bufferlen)
 {
-  LOG(D1) << "Entering DtaDevLinuxSata::sendCmd";
+  LOG(D4) << "Entering DtaDevLinuxSata::sendCmd";
 
   IFLOG(D4) {
     LOG(D4) << "sendCmd: before";

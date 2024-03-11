@@ -36,7 +36,7 @@ uint8_t DtaDevOSDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
 
   int lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, MIN_BUFFER_LENGTH);
   if ((lastRC ) != 0) {
-    LOG(D) << "Acquiring Discovery 0 response failed " << lastRC;
+    LOG(D4) << "Acquiring Discovery 0 response failed " << lastRC;
     return DTAERROR_COMMAND_ERROR;
   }
   parseDiscovery0Features((uint8_t *)d0Response, disk_info);
