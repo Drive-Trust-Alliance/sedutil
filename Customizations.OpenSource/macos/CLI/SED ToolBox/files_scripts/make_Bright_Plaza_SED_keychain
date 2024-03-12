@@ -1,0 +1,31 @@
+#!/bin/bash 
+
+# Source from the same directory as this script
+cur=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. "${cur}/Bright_Plaza_customizations.sh"
+
+
+function generate_SED_keychain_password_if_necessary {
+    KEYCHAIN_PASSWORD="$( read_SED_keychain_password_from_system_keychain )"
+    if [ -z "${KEYCHAIN_PASSWORD}" ]
+    then
+        KEYCHAIN_PASSWORD="$( generate_password )"         || fail "generating SED keychain password"                57
+        save_SED_keychain_password_in_system_keychain_item  || fail "saving SED keychain password in system keychain" 58
+    fi
+}
+
+function create_SED_keychain_if_necessary {
+    if SED_keychain_exists
+    then
+        unlock_SED_keychain && return
+        delete_SED_keychain || fail "deleting old ${KEYCHAIN_NAME} SED keychain" 59
+    fi
+    create_SED_keychain || fail "creating ${KEYCHAIN_NAME} SED keychain"         59
+}
+
+function main {
+    generate_SED_keychain_password_if_necessary
+    create_SED_keychain_if_necessary
+}
+
+main

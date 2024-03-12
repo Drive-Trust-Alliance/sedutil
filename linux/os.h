@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -32,4 +32,6 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 // a few OS specific methods that need to be worked out
 #define SNPRINTF snprintf
 #define DEVICEMASK snprintf(devname,23,"/dev/sd%c",(char) 0x61+i)
+#define DEVICEMASKN snprintf(devname,23,"/dev/nvme%i",j)
 #define DEVICEEXAMPLE "/dev/sdc"
+

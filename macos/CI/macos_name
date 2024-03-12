@@ -1,0 +1,20 @@
+#!/bin/bash
+function major { echo "${1%%.*}" ; }
+
+read -r -d '' perl_command <<EOF
+while (<>) {
+	if (/.*macos_$(major `sw_vers --productversion`).*/i ) {
+		\$maybe_found=1 ;
+	} elsif ( \$maybe_found &&  /^$(major `uname -r`)\$/ ) {
+		print \$maybe_name ;
+		\$maybe_found=0 ;
+	} elsif ( \$maybe_found ) {
+		\$maybe_name=\$_ ;
+	}
+}
+EOF
+# echo $perl_command
+
+curl -sS https://en.wikipedia.org/wiki/Template:MacOS_versions | \
+html2text -nobs -ascii | \
+perl -e "$perl_command"

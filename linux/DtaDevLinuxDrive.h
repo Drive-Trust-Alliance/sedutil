@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -18,31 +18,52 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
-#include "DtaStructures.h"
+
+#include "DtaDevOSDrive.h"
+#include <errno.h>
+#include <fcntl.h>
 
 /** virtual implementation for a disk interface-generic disk drive
  */
-class DtaDevLinuxDrive {
+class DtaDevLinuxDrive : public DtaDevOSDrive {
 public:
-    virtual ~DtaDevLinuxDrive( void ) {};
-    /**Initialization.
-     * This function should perform the necessary authority and environment checking
-     * to allow proper functioning of the program, open the device, perform an ATA
-     * identify, add the fields from the identify response to the disk info structure
-     * and if the device is an ATA device perform a call to Discovery0() to complete
-     * the disk_info structure
-     * @param devref character representation of the device is standard OS lexicon
-     */
-    virtual bool init(const char * devref) = 0;
-    /** Method to send a command to the device
-     * @param cmd command to be sent to the device
-     * @param protocol security protocol to be used in the command
-     * @param comID communications ID to be used
-     * @param buffer input/output buffer
-     * @param bufferlen length of the input/output buffer
-     */
-    virtual uint8_t sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-            void * buffer, uint32_t bufferlen) = 0;
-    /** Routine to send an identify to the device */
-    virtual void identify(OPAL_DiskInfo& disk_info) = 0;
+
+  /** Factory function to look at the devref to filter out whether it could be a DtaDevLinuxDrive
+   *
+   * @param devref OS device reference e.g. "/dev/sda"
+   */
+
+  static bool isDtaDevLinuxDriveDevRef(const char * devref);
+
+  /** Factory function to enumerate all the devrefs that pass the above filter
+   *
+   */
+  static
+  std::vector<std::string> enumerateDtaDevLinuxDriveDevRefs(void);
+
+  /** Factory function to look at the devref and create an instance of the appropriate subclass of
+   *  DtaDevLinuxDrive
+   *
+   * @param devref OS device reference e.g. "/dev/sda"
+   * @param pdisk_info weak reference to DTA_DEVICE_INFO structure filled out during device identification
+   */
+  static DtaDevLinuxDrive * getDtaDevLinuxDrive(const char * devref,
+                                          DTA_DEVICE_INFO & disk_info);
+
+
+  bool isOpen(void) {return 0<fd && (fcntl(fd, F_GETFL) != -1 || errno != EBADF);}
+
+  DtaDevLinuxDrive(int _fd) :fd(_fd) {}
+
+  virtual ~DtaDevLinuxDrive() {fdclose();}
+
+
+protected:
+
+  static int fdopen(const char * devref);
+  void fdclose(void);
+
+public:  // *** TODO *** DEBUGGING *** this should just be protected
+  int fd=0; /**< Linux handle for the device  */
+
 };

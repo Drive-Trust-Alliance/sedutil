@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -23,4 +23,4 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * @param address Starting address for the dump
  * @param length  Length of the area to be dumped
  */
-void DtaHexDump(void * address, int length);
+void DtaHexDump(void * address, unsigned int length);

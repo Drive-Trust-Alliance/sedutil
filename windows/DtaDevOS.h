@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -21,8 +21,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDev.h"
 #include "DtaDiskType.h"
 /** Windows specific implementation of DtaDevOS.
- * Uses the ATA_PASSTHROUGH_DIRECT ioctls to send commands to the 
- * device 
+ * Uses the ATA_PASSTHROUGH_DIRECT ioctls to send commands to the
+ * device
  */
 class DtaDevOS : public DtaDev {
 public:
@@ -53,21 +53,28 @@ public:
 	* @param buffer input/output buffer
 	* @param bufferlen length of the input/output buffer
 	*/
-	unsigned long long	getSize();
+	const unsigned long long	getSize();
 	/** A static class to scan for supported drives */
 	static int diskScan();
 protected:
-     /** OS specific command to Wait for specified number of milliseconds 
+     /** OS specific command to Wait for specified number of milliseconds
      * @param milliseconds  number of milliseconds to wait
      */
 	void osmsSleep(uint32_t milliseconds);
         /** OS specific routine to send an ATA identify to the device */
-	void identify(OPAL_DiskInfo& disk_info);
+	bool identify(DTA_DEVICE_INFO& disk_info);
+	void identifyPd(DTA_DEVICE_INFO& disk_info);
+	void identifyNVMeASMedia(DTA_DEVICE_INFO& disk_info);
+	void identifyNVMeRealtek(DTA_DEVICE_INFO& disk_info);
+
 private:
 	GET_LENGTH_INFORMATION lengthInfo;
 	DWORD infoBytesReturned;
 	DtaDiskType * disk;
 	HANDLE hDev;
 	void *ataPointer; /**< pointer ro ATA_PASSTHROUGH_DIRECT structure */
-
+public:
+	BYTE disc0Sts = 1;// any error
+	uint8_t RTS_SATA = 0;
+	uint8_t RTS_NVME = 0;
 };

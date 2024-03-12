@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -36,12 +36,13 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDiskNVMe.h"
 
 using namespace std;
-DtaDevOS::DtaDevOS() {};
+DtaDevOS::DtaDevOS() { LOG(D1) << "Entering DtaDevOS Constructor"; };
 void DtaDevOS::init(const char * devref)
 {
-    LOG(D1) << "Creating DtaDevOS::DtaDevOS() " << devref;
-    dev = devref;
-    memset(&disk_info, 0, sizeof (OPAL_DiskInfo));
+
+	LOG(D1) << "Creating DtaDevOS::DtaDevOS() " << devref;
+	dev = devref;
+	memset(&disk_info, 0, sizeof(DTA_DEVICE_INFO));
 	/*  Open the drive to see if we have access */
 	ATA_PASS_THROUGH_DIRECT * ata =
 		(ATA_PASS_THROUGH_DIRECT *)_aligned_malloc(sizeof(ATA_PASS_THROUGH_DIRECT), 8);
@@ -82,27 +83,246 @@ void DtaDevOS::init(const char * devref)
 		_In_(DWORD)        sizeof(STORAGE_DEVICE_DESCRIPTOR),		// size of output buffer
 		_Out_opt_(LPDWORD)      &BytesReturned,						// number of bytes returned
 		_Inout_opt_(LPOVERLAPPED) NULL)) {
+		cout << endl;
+		//LOG(E) << "Can not determine the device type";
 		return;
 	}
+	LOG(D1) << "descriptor.BusType = " << descriptor.BusType << "\n";
 	// OVERLAPPED structure
 	switch (descriptor.BusType) {
 	case BusTypeAta:
 	case BusTypeSata:
+		LOG(D1) << "Enter Sata bus type case";
 		disk = new DtaDiskATA();
+		LOG(D1) << "Return from DtaDiskATA bus type case";
 		break;
 	case BusTypeUsb:
+		LOG(D1) << "Enter USB bus type case";
+		disk = new DtaDiskUSB();
+		// now nvme is potentially on USB bus
+		disk->init(dev);
+		/////////////
+		LOG(D) << "Entering USB DtaDevOS::identifyNVMeRealtec()";
+		identifyNVMeRealtek(disk_info);
+		LOG(D) << "Exiting USB DtaDevOS::identifyNVMeRealtec()";
+		if (strlen((char *)disk_info.modelNum) == 0) // only usb dongle or non-sata non-nvme will return nothing here
+		{
+			// Not Nvme Realtec, continue
+		}
+		else {
+			LOG(D) << " find Nvme Realtec Enclosure on device : " << devref;
+			disk_info.enclosure = 1;
+			// do discovery0
+			delete disk;
+			disk = new DtaDiskNVME();
+			disk->init(dev);
+			identifyNVMeRealtek(disk_info);
+			disk_info.devType = DEVICE_TYPE_NVME;
+			discovery0(&disc0Sts);
+			return;
+		}
+
+		LOG(D) << "Entering USB DtaDevOS::identify()";
+		identify(disk_info); // will come back either it is SATA or Nvme
+		LOG(D) << "Exiting USB returning DtaDevOS::identify()";
+		//uint8_t modelNum[40];
+		if (strlen((char *)disk_info.modelNum) == 0) // only usb dongle or non-sata non-nvme will return nothing here
+		{
+			// Not SATA, Not Nvme
+		}
+		else {
+			// do discovery0
+			disk_info.devType = DEVICE_TYPE_USB;
+			discovery0(&disc0Sts);
+			return;
+		}
+
+		// check  if nvme
+		//DoIdentifyDeviceNVMeASMedia(INT physicalDriveId, INT scsiPort, INT scsiTargetId, IDENTIFY_DEVICE* data);
+		LOG(D) << "Entering USB DtaDevOS::identifyNVMeASMedia()";
+
+		identifyNVMeASMedia(disk_info);
+		if (strlen((char *)disk_info.modelNum) == 0) // only usb dongle or non-sata non-nvme will return nothing here
+		{
+			// Not SATA, Not Nvme
+		} else {
+			// do discovery0
+			delete disk;
+			disk = new DtaDiskNVME();
+			disk->init(dev);
+
+			identifyNVMeASMedia(disk_info);
+			disk_info.devType = DEVICE_TYPE_NVME;
+			discovery0(&disc0Sts);
+			return;
+		}
+
+		// assume it is nvme
+			/*
+		delete disk;
+		disk = new DtaDiskNVME();
+		disk->init(dev);
+		identify(disk_info);
+		if (strlen((char *)disk_info.modelNum) == 0) // only usb dongle or non-sata non-nvme will return nothing here
+		{
+			// Not SATA, Not Nvme
+		}
+		else {
+			// do discovery0
+			disk_info.devType = DEVICE_TYPE_NVME;
+			discovery0(&disc0Sts);
+			return;
+		}*/
+		// doesn't matter any more since no nvme no ata
+
+
+		break;
+	case BusTypeNvme:
+		LOG(D1) << "Enter Nvme bus type case";
+		disk = new DtaDiskNVME();
+		break;
+	case BusTypeRAID:
+		LOG(D1) << "Enter RAID bus type case";
+		disk = new DtaDiskUSB();
+		disk->init(dev);
+		/////////////
+		LOG(D) << "Entering USB DtaDevOS::identify()";
+		identify(disk_info); // will come back either it is SATA or Nvme
+		LOG(D) << "Exiting USB returning DtaDevOS::identify()";
+		//uint8_t modelNum[40];
+		if (strlen((char *)disk_info.modelNum) == 0) // only usb dongle or non-sata non-nvme will return nothing here
+		{
+			// Not SATA, Not Nvme
+		}
+		else {
+			// do discovery0
+			disk_info.devType = DEVICE_TYPE_ATA;
+			discovery0(&disc0Sts);
+			return;
+		}
+		// what the discovery0 say, invalid or non-TCG/TCG
+		LOG(D) << "Entering USB DtaDevOS::identifyPd()";
+		identifyPd(disk_info);
+		LOG(D) << "Exiting USB DtaDevOS::identifyPd()";
+		if (strlen((char *)disk_info.modelNum) == 0) // only usb dongle or non-sata non-nvme will return nothing here
+		{
+			// Not SATA, Not Nvme
+			disk_info.devType = DEVICE_TYPE_OTHER;
+		}
+		else {
+			// do discovery0
+			// Not SATA , potential Nvme
+			disk_info.devType = DEVICE_TYPE_NVME;
+			LOG(D) << "USB DtaDevOS::identifyPd() OK"; // need to be done in nvme
+			// usb device discovery0 command OK?
+			delete disk;
+			disk = new DtaDiskNVME();
+			disk->init(dev);
+			discovery0(&disc0Sts);
+			LOG(D) << "end of USB DtaDevOS::discovery0()";
+			return;
+		}
+		// otherwise set it as USB type
+		delete disk;
+		disk = new DtaDiskUSB();
+		disk->init(dev);
+		break; // not SATA , not nvme lease it open
+
+
+
+
+
+		/*
+		if (disk_info.devType == DEVICE_TYPE_OTHER)
+		{
+			LOG(D) << "Device on RAID is not identified as USB SATA";
+			delete disk;
+			disk = new DtaDiskNVME();
+			disk->init(dev);
+			identify(disk_info);
+			if (disk_info.devType == DEVICE_TYPE_OTHER)
+			{
+				LOG(D) << "Device on RAID is not identified as nvme";
+				delete disk;
+				disk = new DtaDiskUSB; // assume USB bus even it can not be identified
+				disk_info.devType = DEVICE_TYPE_USB;
+				break;
+			}
+		}
+		else {
+			LOG(D) << "Device on RAID is identified at first galance but it can be a SATA or Nvme";
+			// find out if it is discovery work for SATA or Nvme
+			// discovery zero send disk->sendCmd(cmd, protocol, comID, buffer, bufferlen
+			// disk-> must point to either SATA or Nvme
+			discovery0(&disc0Sts);
+			if (!disc0Sts) {
+				disk_info.devType = DEVICE_TYPE_USB;
+				break; // OK
+			}
+			else { // try nvme again
+				delete disk;
+				disk = new DtaDiskNVME();
+				disk->init(dev);
+				discovery0(&disc0Sts);
+				disk_info.devType = DEVICE_TYPE_NVME;
+			}
+		}*/
+		break;
+	case BusTypeSas:
+		LOG(D1) << "Enter Sas bus type case";
 		disk = new DtaDiskUSB();
 		break;
 	case BusTypeNvme:
 		disk = new DtaDiskNVMe();
 		break;
 	default:
+		LOG(D) << "Unknown bus Type on system storage";
+		delete disk;
 		return;
 	}
+	if (descriptor.BusType != BusTypeRAID) {
+		LOG(D1) << "Before Entering disk->init";
+		disk->init(dev);
+		LOG(D1) << "Before Entering identify(disk_info)";
+	}
 
-	disk->init(dev);
-    identify(disk_info);
-	if (DEVICE_TYPE_OTHER != disk_info.devType) discovery0();
+	uint8_t geometry[256];
+	uint32_t disksz;
+	PDISK_GEOMETRY_EX DiskGeometry = (PDISK_GEOMETRY_EX)(void*)geometry; // defined in winioctl.h
+	BOOL r = 0;																	 // double check if it is a usb thumb drive, ignore discovery0()
+	if (!(r = DeviceIoControl(hDev, IOCTL_DISK_GET_DRIVE_GEOMETRY_EX,
+		NULL, 0, geometry, sizeof(geometry), &BytesReturned, NULL)))
+	{
+		LOG(D1) << "IOCTL_DISK_GET_DRIVE_GEOMETRY_EX error"  ;
+		LOG(D1) << "Pyrite return error for some reason (when locked), ignore error for now";
+		// return; // jerry pyrite return error for geometry info ????
+	}
+	/*
+	printf("Disk size = %I64d\n", DiskGeometry->DiskSize.QuadPart);
+	printf("Disk byte per sector = %ld\n",DiskGeometry->Geometry.BytesPerSector);
+	printf("Disk sector per track = %ld\n", DiskGeometry->Geometry.SectorsPerTrack);
+	printf("Disk track per cylinder = %ld\n", DiskGeometry->Geometry.TracksPerCylinder);
+	printf("Disk media type = %ld\n", DiskGeometry->Geometry.MediaType);
+	//LARGE_INTEGER ??
+	printf("Disk total cylinder = %ld\n", DiskGeometry->Geometry.Cylinders);
+	//printf("Calculate the disk size (MB) = %ld\n", disksz);
+	*/
+	disksz = (DiskGeometry->Geometry.Cylinders.LowPart *
+		DiskGeometry->Geometry.TracksPerCylinder *
+		DiskGeometry->Geometry.SectorsPerTrack) / 2000; // size in MB
+	if ((disksz > (32 * 1000)) || (descriptor.BusType != BusTypeUsb)) { // only > 32GB and not usb-bus consider as SSD otherwise treat it as usb thumb
+		identify(disk_info);
+	}
+	else {
+		LOG(D) << "disksz is less than 32GB treat it as flash usb drive";
+	}
+
+	LOG(D) << "Before Entering disk->init";
+	if (DEVICE_TYPE_OTHER != disk_info.devType)
+	{
+		if ((disksz > (32 * 1000)) || (descriptor.BusType != BusTypeUsb)) // only > 32GB consider as SSD otherwise treat it as usb thumb
+			if(descriptor.BusType != BusTypeRAID) discovery0(&disc0Sts);
+	}
 }
 
 uint8_t DtaDevOS::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
@@ -117,7 +337,7 @@ void DtaDevOS::osmsSleep(uint32_t milliseconds)
 {
     Sleep(milliseconds);
 }
-unsigned long long DtaDevOS::getSize() {
+const unsigned long long DtaDevOS::getSize() {
 	if (DeviceIoControl(
 		(HANDLE)hDev,              // handle to device
 		IOCTL_DISK_GET_LENGTH_INFO,    // dwIoControlCode
@@ -133,10 +353,8 @@ unsigned long long DtaDevOS::getSize() {
 
 /** adds the IDENTIFY information to the disk_info structure */
 
-void DtaDevOS::identify(OPAL_DiskInfo& di)
+bool DtaDevOS::identify(DTA_DEVICE_INFO& di)
 {
-    LOG(D1) << "Entering DtaDevOS::identify()";
-	LOG(D1) << "Exiting DtaDevOS::identify()";
 	return(disk->identify(di));
 }
 /** Static member to scann for supported drives */
@@ -149,7 +367,9 @@ int DtaDevOS::diskScan()
 	printf("\nScanning for Opal compliant disks\n");
 	while (TRUE) {
 		sprintf_s(devname, 23, "\\\\.\\PhysicalDrive%i", i);
-		d = new DtaDevGeneric(devname);
+                if (DTAERROR_SUCCESS != getDtaDevOS(devname, d, true) {
+                    break;
+                }
 		if (d->isPresent()) {
 			printf("%s", devname);
 			if (d->isAnySSC())
@@ -172,6 +392,7 @@ int DtaDevOS::diskScan()
 	printf("No more disks present ending scan\n");
 	return 0;
 }
+
 /** Close the filehandle so this object can be delete. */
 
 DtaDevOS::~DtaDevOS()

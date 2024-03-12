@@ -1,0 +1,10 @@
+#!/bin/bash 
+# set -xv
+. driver_info
+if [[ -d "${DRIVER_BUNDLE_PATH}" ]] 
+then
+    2>/dev/null kmutil print-diagnostics -pv "${DRIVER_BUNDLE_PATH}"
+else
+    echo 2>&1 "Could not find kext bundle ${DRIVER_BUNDLE_PATH}"
+    exit 1
+fi

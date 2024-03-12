@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# Source Utility_functions.sh from the same directory as this script
+cur=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. "${cur}/Utility_functions.sh"
+
+# Certificate Variables
+CERTIFICATES_DIR_PATH="./"
+DURATION="$( dc -e "2 31 ^ 1 - $( date '+%s' ) - 86399 + 86400 / p" )" # days until the 
+C_REQUIRED=1
+ST_REQUIRED=1
+L_REQUIRED=0
+O_REQUIRED=1
+OU_REQUIRED=0
+CACN_REQUIRED=1
+emailAddress_REQUIRED=0
+
+
+
+# Help Screen
+help() {
+    echo -n "$0 [OPTIONS] 
+
+Generate self-signed CA certificate using OpenSSL
+
+ Options:
+  -c|--country             Country Name (2 letter code)
+  -s|--state               State or Province Name (full name)
+  -l|--locality            Locality Name (eg, city)
+  -o|--organization        Organization Name (eg, company)
+  -u|--unit                Organizational Unit Name (eg, section)
+  -n|--common-name         Common Name (e.g. server FQDN or YOUR name)
+  -e|--email               Email Address
+  -p|--path                Path to output generated keys
+  -d|--duration            Validity duration of the certificate (in days)
+  -P|--identity-password   Wrapped identity key password
+  -h|--help                Display this help and exit
+  -v|--verbose             Verbose output
+"
+}
+
+# Process Arguments
+while [ "$1" != "" ]; do
+    PARAM="$( echo $1 | awk -F= '{print $1}' )"
+    VALUE="$( echo $1 | awk -F= '{print $2}' )"
+    case "${PARAM}" in
+        -h|--help) help; safeExit ;;
+        -c|--country) C="${VALUE}" ;;
+        -s|--state) ST="${VALUE}" ;;
+        -l|--locality) L="${VALUE}" ;;
+        -o|--organization) O="${VALUE}" ;;
+        -u|--unit) OU="${VALUE}" ;;
+        -n|--common-name) CACN="${VALUE}" ;;
+        -e|--email) emailAddress="${VALUE}" ;;
+        -p|--path) CERTIFICATES_DIR_PATH="${VALUE}"; testPath ;;
+	-d|--duration) DURATION="${VALUE}" ;;
+        -v|--verbose) VERBOSE=1 ;;
+        -P|--password) CA_IDENTITY_PASSWORD="${VALUE}" ;;
+        *) echo "ERROR: unknown parameter \""${PARAM}"\""; help; exit 1 ;;
+    esac
+    shift
+done
+
+# Build TLS Certificate
+build() {
+    # Sanitize domain name for file name
+    CAFILENAME="${CACN/\*\./}"
+    CAFILEPATH="${CERTIFICATES_DIR_PATH}${CAFILENAME}"
+    
+    # Generate CA key
+    generateCAKey
+    
+    # Create ext configuration file
+    buildCAExtCnf
+    
+    # Generate CA crt
+    generateCACert
+
+    # Generate CA identity
+    generateCAIdentity
+
+}
+
+main () {
+    checkVariables
+    makeTemp
+    build
+    [ $VERBOSE -eq 1 ] && showVals
+    safeExit
+}
+
+
+main

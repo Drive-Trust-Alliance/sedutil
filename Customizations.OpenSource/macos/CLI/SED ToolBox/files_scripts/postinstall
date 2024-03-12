@@ -1,0 +1,182 @@
+#!/bin/bash -xv
+
+DEBUG=${DEBUG:-1}
+if [ $DEBUG -eq 1 ]
+then
+    DEBUGGING_OUTPUT="${HOME}/Desktop/install.txt"
+    echo "$0" at $(date) > "${DEBUGGING_OUTPUT}"
+    function DEBUG_PRINT {
+        echo "$*" >> "${DEBUGGING_OUTPUT}"
+    }
+    function DEBUG_FAIL {
+        DEBUG_PRINT "Failed $1" "$2"
+        fail "$1" "$2"
+    }
+    function DEBUG_FAILURE_RETURN {
+        local exit_code=$?
+        DEBUG_PRINT "Failed $*"
+        return $exit_code
+    }
+    function PAUSE {
+        local ignore
+        echo -n "Hit Enter to continue..."
+        read ignore
+        echo ""
+        return 0
+    }
+else
+    function DEBUG_PRINT {
+        return
+    }
+    function DEBUG_FAIL {
+        fail "$1" "$2"
+    }
+    function DEBUG_FAILURE_RETURN {
+        return $?
+    }
+    function PAUSE {
+        return 0
+    }
+fi
+
+DEBUG_PRINT "Source for this file is "\
+"/Users/scott/Drive Trust Alliance/DTA/submodules/FH/sedutil/macos/SED ToolBox/files_scripts/postinstall"
+
+# Certificates should be in a folder that is a peer of the pkg being installed
+DEBUG_PRINT "pkg being installed is ${1}"
+DEBUG_PRINT "dir of pkg being installed is $(dirname "${1}")"
+#CERTIFICATES_DIR_PATH="$( cd "$( dirname "${1}" )/.." && pwd )/Certificates/"
+#DEBUG_PRINT "CERTIFICATES_DIR_PATH=${CERTIFICATES_DIR_PATH}"
+#[ -d "${CERTIFICATES_DIR_PATH}." ] ||
+#    DEBUG_FAIL "checking for Certificates folder ${CERTIFICATES_DIR_PATH}." 1
+CERTIFICATES_DIR_PATH="$( cd "$( dirname "${1}" )" && pwd )/Certificates/"
+DEBUG_PRINT "CERTIFICATES_DIR_PATH=${CERTIFICATES_DIR_PATH}"
+[ -d "${CERTIFICATES_DIR_PATH}." ] ||
+    DEBUG_FAIL "checking for Certificates folder ${CERTIFICATES_DIR_PATH}." 1
+
+
+
+# Source from the same directory as this script
+cur=$( cd "$( dirname "${0}" )" && pwd )
+. "${cur}/Bright_Plaza_customizations.sh"
+
+
+############## Verification functions ################
+
+function system_keychain_has_SED_keychain_password {
+    DEBUG_PRINT "system_keychain_has_SED_keychain_password?"
+    KEYCHAIN_PASSWORD="$( read_SED_keychain_password_from_system_keychain )"
+    local -i result=$?
+    DEBUG_PRINT "KEYCHAIN_PASSWORD=${KEYCHAIN_PASSWORD}"  ## TODO: naughty
+    DEBUG_PRINT "result=$result"
+    return $result
+}
+
+function system_keychain_has_CA_cert {
+    DEBUG_PRINT "system_keychain_has_CA_cert?"
+    find_CA_cert
+}
+
+function SED_keychain_has_SED_identity {
+    DEBUG_PRINT "SED_keychain_has_SED_identity?"
+    find_server_identity_in_SED_keychain
+}
+
+function validate_installation {
+    DEBUG_PRINT "validate_installation"
+    if SED_keychain_exists  >> "${DEBUGGING_OUTPUT}" 2>&1 &&
+            system_keychain_has_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1 &&
+            system_keychain_has_CA_cert  >> "${DEBUGGING_OUTPUT}" 2>&1 &&
+            SED_keychain_has_SED_identity  >> "${DEBUGGING_OUTPUT}" 2>&1
+    then
+        echo "good"
+    elif ! SED_keychain_exists &&
+            ! system_keychain_has_SED_keychain_password &&
+            ! system_keychain_has_CA_cert
+    then
+        echo "none"
+    else
+        echo "broken"
+    fi
+}
+
+function remove_SED_keychain {
+    DEBUG_PRINT "remove_SED_keychain"
+    SED_keychain_exists  >> "${DEBUGGING_OUTPUT}" 2>&1 || return
+    KEYCHAIN_PASSWORD="$( read_SED_keychain_password_from_system_keychain )" \
+        || return $(DEBUG_FAILURE_RETURN "finding System keychain item \"${KEYCHAIN_PASSWORD_LABEL}\"")
+    unlock_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1 \
+        || return $(DEBUG_FAILURE_RETURN "unlocking \"${KEYCHAIN_PATH}\"")
+    delete_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1 \
+        || return $(DEBUG_FAILURE_RETURN "deleting \"${KEYCHAIN_PATH}\"")
+}
+
+function remove_SED_keychain_password {
+    DEBUG_PRINT "remove_SED_keychain_password"
+    system_keychain_has_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1 || return
+    delete_SED_keychain_password_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1 ||
+        DEBUG_FAIL "deleting System keychain item \"${KEYCHAIN_PASSWORD_LABEL}\""  $?
+}
+
+function remove_SED_server_CA_cert_from_system_keychain {
+    DEBUG_PRINT "remove_SED_server_CA_cert_from_system_keychain"
+    remove_CA_cert_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1
+}
+
+function erase_old_installation {
+    DEBUG_PRINT "erase_old_installation"
+    remove_SED_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1
+    remove_SED_keychain_password  >> "${DEBUGGING_OUTPUT}" 2>&1
+    remove_SED_server_CA_cert_from_system_keychain  >> "${DEBUGGING_OUTPUT}" 2>&1
+    return 0
+}
+
+function install {
+    DEBUG_PRINT "install"
+   return
+}
+
+
+function stop_installation {
+    return 130 # possibly interpreted as Ctrl-C
+}
+
+function main {
+    makeTemp                               || DEBUG_FAIL "making temporary directory"  131
+    case "$( validate_installation )" in
+        good)   DEBUG_PRINT "good"
+                ;;
+        broken) DEBUG_PRINT "broken"
+                if confirm_replace "Replace partial or broken installation?"
+                then
+                    erase_old_installation || DEBUG_FAIL "erasing old installation"    132
+#                     install                || DEBUG_FAIL "installing as replacement"   133
+                else
+                    stop_installation
+                fi ;;
+
+        none)   DEBUG_PRINT "none"
+#                 install                    || DEBUG_FAIL "installing new installation" 134
+                ;;
+    esac
+    safeExit
+}
+
+# if SED_keychain_exists
+# then echo SED_keychain_exists
+# else echo no SED_keychain_exists
+# fi
+
+# if system_keychain_has_SED_keychain_password
+# then echo system_keychain_has_SED_keychain_password is true
+# else echo system_keychain_has_SED_keychain_password is FALSE
+# fi
+
+# if system_keychain_has_CA_cert
+# then echo system_keychain_has_CA_cert is true
+# else echo system_keychain_has_CA_cert is FALSE
+# fi
+
+# exit $?
+
+main

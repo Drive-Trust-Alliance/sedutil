@@ -44,6 +44,8 @@
 #include <stdlib.h>
 #include "DtaOptions.h"
 
+#define NOLOGGING 0
+
 inline std::string NowTime();
 
 enum TLogLevel {
@@ -308,10 +310,28 @@ class FILELOG_DECLSPEC RCLog : public RLog<Output2FILE> {
 	else CLog().Get(level)
 #endif
 
+#if 0
 #define IFLOG(level) \
+    if (level > CLOG_MAX_LEVEL) ;\
+    else if (level > CLog::Level() || !Output2FILE::Stream()) ; \
+    else
+#endif
+
+
+extern "C" sedutiloutput outputFormat;
+extern TLogLevel& CLogLevel;
+extern TLogLevel& RCLogLevel;
+
+// This version allows an else part
+#define IFLOG(level) \
+    if (level > CLOG_MAX_LEVEL) ;\
+    else if (!(level > CLogLevel || !Output2FILE::Stream()))
+
+#define	LOGX(level) \
 	if (level > CLOG_MAX_LEVEL) ;\
-	else if (level > CLog::Level() || !Output2FILE::Stream()) ; \
-	else
+	else if (level > RCLogLevel || !Output2FILE::Stream()) ; \
+	else RCLog().Get(level, outputFormat)
+#define	LOG LOGX
 
 extern sedutiloutput outputFormat;
 
@@ -347,7 +367,7 @@ inline std::string NowTime() {
     char buffer[11];
     time_t t;
     time(&t);
-    tm r = {0};
+    tm r = {0,0,0,0,0,0,0,0,0,0,0};
     strftime(buffer, sizeof (buffer), "%X", localtime_r(&t, &r));
     struct timeval tv;
     gettimeofday(&tv, 0);
@@ -357,5 +377,9 @@ inline std::string NowTime() {
 }
 
 #endif //WIN32
+
+
+extern void turnOffLogging(void);
+extern void SetLoggingLevel(int loggingLevel);
 
 #endif //__LOG_H__

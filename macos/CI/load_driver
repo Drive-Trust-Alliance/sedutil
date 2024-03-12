@@ -1,0 +1,3 @@
+#!/bin/bash
+. driver_info
+asroot kmutil load -p "${DRIVER_BUNDLE_PATH}"

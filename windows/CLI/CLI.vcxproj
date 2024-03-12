@@ -19,7 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Common\compressapi-8.1.h" />
     <ClInclude Include="..\..\Common\DtaAnnotatedDump.h" />
+    <ClInclude Include="..\..\Common\DtaAudit.h" />
     <ClInclude Include="..\..\Common\DtaCommand.h" />
     <ClInclude Include="..\..\Common\DtaConstants.h" />
     <ClInclude Include="..\..\Common\DtaDev.h" />
@@ -37,6 +39,7 @@
     <ClInclude Include="..\..\Common\DtaSession.h" />
     <ClInclude Include="..\..\Common\DtaStructures.h" />
     <ClInclude Include="..\..\common\log.h" />
+    <ClInclude Include="..\..\Common\ob.h" />
     <ClInclude Include="..\..\Common\pbkdf2\bitops.h" />
     <ClInclude Include="..\..\Common\pbkdf2\blockwise.h" />
     <ClInclude Include="..\..\Common\pbkdf2\chash.h" />
@@ -45,11 +48,22 @@
     <ClInclude Include="..\..\Common\pbkdf2\pbkdf2.h" />
     <ClInclude Include="..\..\Common\pbkdf2\sha1.h" />
     <ClInclude Include="..\..\Common\pbkdf2\tassert.h" />
+    <ClInclude Include="..\..\Common\sedsize.h" />
+    <ClInclude Include="..\..\License\LicenseValidator.h" />
+    <ClInclude Include="..\..\License\PyExt.h" />
+    <ClInclude Include="..\..\License\stdafx.h" />
+    <ClInclude Include="..\..\linux\VersionPBA.h" />
     <ClInclude Include="..\DtaDevOS.h" />
     <ClInclude Include="..\DtaDiskATA.h" />
     <ClInclude Include="..\DtaDiskNVMe.h" />
     <ClInclude Include="..\DtaDiskUSB.h" />
+    <ClInclude Include="..\IntelRST.h" />
+    <ClInclude Include="..\nvme.h" />
+    <ClInclude Include="..\nvmeIoctl.h" />
     <ClInclude Include="..\os.h" />
+    <ClInclude Include="..\uuid.h" />
+    <ClInclude Include="..\Version.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\DtaAnnotatedDump.cpp" />
@@ -66,22 +80,44 @@
     <ClCompile Include="..\..\Common\DtaOptions.cpp" />
     <ClCompile Include="..\..\Common\DtaResponse.cpp" />
     <ClCompile Include="..\..\Common\DtaSession.cpp" />
+    <ClCompile Include="..\..\Common\ob.cpp" />
     <ClCompile Include="..\..\Common\pbkdf2\blockwise.c" />
     <ClCompile Include="..\..\Common\pbkdf2\chash.c" />
     <ClCompile Include="..\..\Common\pbkdf2\hmac.c" />
     <ClCompile Include="..\..\Common\pbkdf2\pbkdf2.c" />
     <ClCompile Include="..\..\Common\pbkdf2\sha1.c" />
+    <ClCompile Include="..\..\Common\regtry.cpp" />
     <ClCompile Include="..\..\Common\sedutil.cpp" />
+    <ClCompile Include="..\..\License\LicenseValidator.cpp" />
+    <ClCompile Include="..\..\License\stdafx.cpp" />
     <ClCompile Include="..\DtaDevOS.cpp" />
     <ClCompile Include="..\DtaDiskATA.cpp" />
     <ClCompile Include="..\DtaDiskNVMe.cpp" />
     <ClCompile Include="..\DtaDiskUSB.cpp" />
+    <ClCompile Include="..\uuid.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\..\rc\Cabinet_x64.Lib" />
+    <Library Include="..\..\rc\Cabinet_x86.Lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="QlmLicenseLib.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="QlmLicenseLib.dll.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CLI.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\rc\icon-opal.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{267E9D28-7245-4182-9740-F386F4299E83}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CLI</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -102,6 +138,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
+    <CLRSupport>false</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -146,7 +183,6 @@
     <IntDir>$(OutDir)\OBJDIR\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
     <TargetName>sedutil-cli</TargetName>
     <IntDir>$(OutDir)\OBJDIR\</IntDir>
   </PropertyGroup>
@@ -157,6 +193,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+
       <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MinimalRebuild>false</MinimalRebuild>
@@ -168,7 +205,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h</Command>
+      <Command>powershell -ExecutionPolicy ByPass -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
+copy  "..\..\rc\QlmLicenseLib.*"  "$(TargetDir)"
+copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
+$(SolutionDir)..\..\windows\PyExtuD.bat
+
+</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Create version header from git --version dirty</Message>
@@ -183,7 +225,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
@@ -196,15 +238,19 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ShowProgress>NotSet</ShowProgress>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h</Command>
+      <Command>powershell -ExecutionPolicy ByPass  -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
+copy  "..\..\rc\QlmLicenseLib.*"  "$(TargetDir)"
+copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
+</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Create version header from git --version dirty</Message>
     </PreBuildEvent>
     <PreLinkEvent>
-      <Command>del ..\Version.h</Command>
+      <Command>REM del ..\Version.h</Command>
     </PreLinkEvent>
     <PreLinkEvent>
       <Message>Remove version header file</Message>
@@ -212,7 +258,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -231,7 +277,11 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h</Command>
+      <Command>powershell -ExecutionPolicy ByPass -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
+copy  "..\..\rc\QlmLicenseLib.*"  "$(TargetDir)"
+copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
+$(SolutionDir)..\..\windows\PyExtuD.bat
+</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Create version header from git --version dirty</Message>
@@ -245,32 +295,38 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2;$(SolutionDir)..\..\License</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <UACUIAccess>false</UACUIAccess>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h</Command>
+      <Command>powershell -ExecutionPolicy ByPass -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
+copy  "..\..\rc\QlmLicenseLib.*"  "$(TargetDir)"
+copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
+$(SolutionDir)..\..\windows\PyExtuD.bat</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Create version header from git --version dirty</Message>
     </PreBuildEvent>
     <PreLinkEvent>
-      <Command>del ..\Version.h</Command>
+      <Command>REM del ..\Version.h</Command>
     </PreLinkEvent>
     <PreLinkEvent>
       <Message>Remove version header file</Message>

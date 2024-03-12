@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# Execute this script from a Terminal running in Recovery mode
+#
+kmutil clear-staging
+for v in /Volumes/Macintosh\ HD* ; do kmutil trigger-panic-medic --volume-root "${v}" ; done
+reboot
+# /Volumes/Macintosh\ HD\ -\ Data/Users/scott/preboot/DTA/sedutil/CI/clear_driver_from_kernel

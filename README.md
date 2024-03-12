@@ -1,6 +1,6 @@
 ![alt tag](https://avatars0.githubusercontent.com/u/13870012?v=3&s=200)
 
-This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -22,7 +22,7 @@ sedutil - The Drive Trust Alliance Self Encrypting Drive Utility
 
 This program and it's accompanying Pre-Boot Authorization image allow
 you to enable the locking in SED's that comply with the TCG OPAL 2.00
-standard on bios machines.   
+standard on bios machines.
 
 You must be administrator/root to run the host management program
 
@@ -35,7 +35,7 @@ do not need this parameter.
 
 ***** sleep (S3) is not supported.
 
-Source code is available on GitHub at https://github.com/Drive-Trust-Alliance/sedutil 
+Source code is available on GitHub at https://github.com/Drive-Trust-Alliance/sedutil
 
 Linux and Windows executables are available at https://github.com/Drive-Trust-Alliance/sedutil/wiki/Executable-Distributions
 

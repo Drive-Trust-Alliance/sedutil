@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 #set -x
 GIT=`which git`
 if [ "x"${GIT} == "x" ]; then

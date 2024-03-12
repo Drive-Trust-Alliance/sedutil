@@ -1,0 +1,19 @@
+#!/bin/bash 
+
+# set -xv
+
+. img_utils.sh
+
+version="${1:-Release}"
+project="${2:-SED ToolBox}"
+
+iso="${HOME}/Desktop/${project} (${version}).iso"
+isoVol="/Volumes/${project}"
+dmg="${isoVol}/macOS.dmg"
+dmgVol="/Volumes/SED software by Drive Trust Alliance" 
+
+detach_dmg "${dmgVol}"
+
+possibly_eject "${isoVol}"
+
+exit $?

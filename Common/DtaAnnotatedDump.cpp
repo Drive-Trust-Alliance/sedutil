@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -21,6 +21,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "os.h"
 #include <stdio.h>
+#include <log/log.h>
+
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -356,7 +358,7 @@ uint8_t DtaAnnotatedDump(ATACOMMAND cmd, void * buffer, uint32_t bufferlen)
         fprintf(stream, "<< 0x%2.2X\n >>\n", cmd);
 
     // echo header
-    OPALHeader h;
+    DTA_Header h;
     memcpy(&h, buffer, sizeof(h));
     IFLOG(D1)
     {

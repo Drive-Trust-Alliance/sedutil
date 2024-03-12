@@ -1,0 +1,3014 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D20A63AB1F73204000F154AC /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D20A63AA1F73204000F154AC /* log.cpp */; settings = {COMPILER_FLAGS = "-Wno-missing-field-initializers -Wno-missing-prototypes"; }; };
+		D22042022B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h in Headers */ = {isa = PBXBuildFile; fileRef = D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D22369B928D686C400D7D851 /* sedutil.h in Headers */ = {isa = PBXBuildFile; fileRef = D2D1379E28B55C14003FD51F /* sedutil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D22C11BB2B38CBA3003825C7 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D22C11BA2B38CBA3003825C7 /* DtaHashPassword.cpp */; };
+		D24E866F2B1ADA420098FE03 /* ATAStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D24E866E2B1ADA420098FE03 /* ATAStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D263209A2937F65500F0927B /* oui_vendor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D26320982937F65500F0927B /* oui_vendor.cpp */; };
+		D263209B2937F65500F0927B /* oui_vendor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D26320992937F65500F0927B /* oui_vendor.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		D26C25742957BC2600E46646 /* log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF828B57BB400741CC0 /* log.framework */; };
+		D271A1FB28054AFE00BF043A /* DtaStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F528054AFD00BF043A /* DtaStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D271A1FC28054AFE00BF043A /* DtaDev.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F628054AFD00BF043A /* DtaDev.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D271A1FD28054AFE00BF043A /* DtaOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F728054AFD00BF043A /* DtaOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D271A1FE28054AFE00BF043A /* DtaConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F828054AFD00BF043A /* DtaConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D271A1FF28054AFE00BF043A /* DtaLexicon.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F928054AFE00BF043A /* DtaLexicon.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D271A20028054AFE00BF043A /* DtaResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1FA28054AFE00BF043A /* DtaResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D27591BA28B579F1005B9081 /* DtaDevOpal2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */; };
+		D27C8EAE2B9027BE0006A38B /* db.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EA32B9027BE0006A38B /* db.h */; };
+		D27C8EAF2B9027BE0006A38B /* InterfaceDeviceID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EA42B9027BE0006A38B /* InterfaceDeviceID.cpp */; };
+		D27C8EB02B9027BE0006A38B /* DtaDevOSDrive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EA52B9027BE0006A38B /* DtaDevOSDrive.cpp */; };
+		D27C8EB12B9027BF0006A38B /* DtaDevOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EA62B9027BE0006A38B /* DtaDevOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D27C8EB22B9027BF0006A38B /* ParseDiscovery0Features.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EA72B9027BE0006A38B /* ParseDiscovery0Features.h */; };
+		D27C8EB32B9027BF0006A38B /* DtaDevOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EA82B9027BE0006A38B /* DtaDevOS.cpp */; };
+		D27C8EB42B9027BF0006A38B /* ParseATIdentify.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EA92B9027BE0006A38B /* ParseATIdentify.cpp */; };
+		D27C8EB52B9027BF0006A38B /* InterfaceDeviceID.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EAA2B9027BE0006A38B /* InterfaceDeviceID.h */; };
+		D27C8EB62B9027BF0006A38B /* ParseATIdentify.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EAB2B9027BE0006A38B /* ParseATIdentify.h */; };
+		D27C8EB72B9027BF0006A38B /* DtaDevOSDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EAC2B9027BE0006A38B /* DtaDevOSDrive.h */; };
+		D27C8EB82B9027BF0006A38B /* ParseDiscovery0Features.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EAD2B9027BE0006A38B /* ParseDiscovery0Features.cpp */; };
+		D27C8EBE2B9027D50006A38B /* DtaMacOSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EBA2B9027D50006A38B /* DtaMacOSConstants.h */; };
+		D27C8EC62B902E8B0006A38B /* DtaDevMacOSDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EC12B902E8B0006A38B /* DtaDevMacOSDrive.h */; };
+		D27C8EC72B902E8B0006A38B /* DtaDevMacOSDrive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EC22B902E8B0006A38B /* DtaDevMacOSDrive.cpp */; };
+		D27C8EC82B902E8B0006A38B /* DtaDevMacOSScsi.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EC32B902E8B0006A38B /* DtaDevMacOSScsi.h */; };
+		D27C8EC92B902E8B0006A38B /* DtaDevMacOSScsi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EC42B902E8B0006A38B /* DtaDevMacOSScsi.cpp */; };
+		D27C8ECA2B902E8B0006A38B /* DtaDevOSFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EC52B902E8B0006A38B /* DtaDevOSFactory.cpp */; };
+		D27C8ECD2B903CAC0006A38B /* DtaDevMacOSSata.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8ECB2B903CAC0006A38B /* DtaDevMacOSSata.h */; };
+		D27C8ECE2B903CAC0006A38B /* DtaDevMacOSSata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8ECC2B903CAC0006A38B /* DtaDevMacOSSata.cpp */; };
+		D27CDC6F2B913CF400196584 /* DtaDevFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27CDC6E2B913CF300196584 /* DtaDevFactory.cpp */; };
+		D285034D2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D285034B2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.cpp */; };
+		D285034E2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = D285034C2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.h */; };
+		D2A06C9628B5D88800C0DDB6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9528B5D88800C0DDB6 /* Foundation.framework */; };
+		D2A06C9C28B5D8FE00C0DDB6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */; };
+		D2A06C9D28B5DC7900C0DDB6 /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
+		D2BDDC9D28A6369A00001E26 /* ReadMe.txt in Resources */ = {isa = PBXBuildFile; fileRef = D2BDDC9B28A6369A00001E26 /* ReadMe.txt */; };
+		D2D0F56B293A85F00077966A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9528B5D88800C0DDB6 /* Foundation.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		D2D0F56D293AA5DA0077966A /* oui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2E6FE7E2935696800DAB209 /* oui.framework */; };
+		D2D137A128B56329003FD51F /* log.h in Headers */ = {isa = PBXBuildFile; fileRef = D20A63A81F731FDB00F154AC /* log.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2E6FE8F2935E08D00DAB209 /* oui.docc in Sources */ = {isa = PBXBuildFile; fileRef = D2E6FE812935E08D00DAB209 /* oui.docc */; };
+		D2E6FE902935E08D00DAB209 /* CStringMap.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D2E6FE822935E08D00DAB209 /* CStringMap.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2E6FE932935E08D00DAB209 /* oui.h in Headers */ = {isa = PBXBuildFile; fileRef = D2E6FE852935E08D00DAB209 /* oui.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2E6FE942935E08D00DAB209 /* oui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2E6FE862935E08D00DAB209 /* oui.cpp */; };
+		D2E6FE952935E08D00DAB209 /* t10_vendorid.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D2E6FE872935E08D00DAB209 /* t10_vendorid.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2E6FE972935E08E00DAB209 /* oui.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D2E6FE892935E08D00DAB209 /* oui.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2E6FE992935E08E00DAB209 /* t10_vendorid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2E6FE8B2935E08D00DAB209 /* t10_vendorid.cpp */; };
+		D2E6FEB52935E6F600DAB209 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2E6FEB32935E6DE00DAB209 /* main.cpp */; };
+		D2E6FEB62935E80500DAB209 /* oui.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2E6FE7E2935696800DAB209 /* oui.framework */; };
+		D2EA844728053B4C00A0F685 /* DtaDevOpal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83D628053B3400A0F685 /* DtaDevOpal.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EA844A28053B4C00A0F685 /* DtaDevEnterprise.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA840628053B3600A0F685 /* DtaDevEnterprise.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA844B28053B4C00A0F685 /* DtaAnnotatedDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83D828053B3400A0F685 /* DtaAnnotatedDump.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EA844E28053B4C00A0F685 /* DtaDevOpal1.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA841128053B3B00A0F685 /* DtaDevOpal1.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA844F28053B4C00A0F685 /* Copyright.txt in Resources */ = {isa = PBXBuildFile; fileRef = D2EA83DA28053B3400A0F685 /* Copyright.txt */; };
+		D2EA845228053B4C00A0F685 /* DtaDevOpal.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA842828053B3F00A0F685 /* DtaDevOpal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA847D28053B4D00A0F685 /* DtaCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83EB28053B3400A0F685 /* DtaCommand.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EA848028053B4D00A0F685 /* DtaOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA841528053B3D00A0F685 /* DtaOptions.cpp */; };
+		D2EA848428053B4D00A0F685 /* DtaDevGeneric.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA843728053B4600A0F685 /* DtaDevGeneric.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA848528053B4D00A0F685 /* DtaDevOpal1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83EF28053B3400A0F685 /* DtaDevOpal1.cpp */; };
+		D2EA848C28053B4D00A0F685 /* DtaDevEnterprise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA840A28053B3700A0F685 /* DtaDevEnterprise.cpp */; settings = {COMPILER_FLAGS = "-Wno-unused-parameter -Wno-sign-conversion"; }; };
+		D2EA848D28053B4D00A0F685 /* DtaDevGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83F228053B3400A0F685 /* DtaDevGeneric.cpp */; settings = {COMPILER_FLAGS = "-Wno-unused-parameter"; }; };
+		D2EA849028053B4D00A0F685 /* DtaDevOpal2.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA840C28053B3800A0F685 /* DtaDevOpal2.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA849128053B4D00A0F685 /* DtaHashPwd.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA83F428053B3400A0F685 /* DtaHashPwd.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA849428053B4D00A0F685 /* DtaHashPwd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA842728053B3F00A0F685 /* DtaHashPwd.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EA849928053B4D00A0F685 /* DtaSession.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA83F828053B3400A0F685 /* DtaSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA849C28053B4D00A0F685 /* DtaHexDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83F928053B3400A0F685 /* DtaHexDump.cpp */; };
+		D2EA84A328053B4E00A0F685 /* DtaSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83FC28053B3400A0F685 /* DtaSession.cpp */; };
+		D2EA84A628053B4E00A0F685 /* DtaDev.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA840928053B3700A0F685 /* DtaDev.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EA84A728053B4E00A0F685 /* DtaResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA83FE28053B3400A0F685 /* DtaResponse.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EA84AA28053B4E00A0F685 /* DtaAnnotatedDump.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA843228053B4400A0F685 /* DtaAnnotatedDump.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA84AB28053B4E00A0F685 /* DtaEndianFixup.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA840028053B3400A0F685 /* DtaEndianFixup.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA84AF28053B4E00A0F685 /* DtaHexDump.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA840228053B3400A0F685 /* DtaHexDump.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EA84B228053B4E00A0F685 /* DtaCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA840F28053B3A00A0F685 /* DtaCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4931F055579002F8780 /* cifra.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4911F055579002F8780 /* cifra.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4AC1F055590002F8780 /* bitops.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA49E1F055590002F8780 /* bitops.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4AD1F055590002F8780 /* blockwise.c in Sources */ = {isa = PBXBuildFile; fileRef = D2EBA49F1F055590002F8780 /* blockwise.c */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EBA4AE1F055590002F8780 /* blockwise.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4A01F055590002F8780 /* blockwise.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4AF1F055590002F8780 /* chash.c in Sources */ = {isa = PBXBuildFile; fileRef = D2EBA4A11F055590002F8780 /* chash.c */; };
+		D2EBA4B01F055590002F8780 /* chash.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4A21F055590002F8780 /* chash.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4B11F055590002F8780 /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = D2EBA4A31F055590002F8780 /* COPYING */; };
+		D2EBA4B21F055590002F8780 /* handy.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4A41F055590002F8780 /* handy.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4B31F055590002F8780 /* hmac.c in Sources */ = {isa = PBXBuildFile; fileRef = D2EBA4A51F055590002F8780 /* hmac.c */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EBA4B41F055590002F8780 /* hmac.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4A61F055590002F8780 /* hmac.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4B51F055590002F8780 /* pbkdf2.c in Sources */ = {isa = PBXBuildFile; fileRef = D2EBA4A71F055590002F8780 /* pbkdf2.c */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EBA4B61F055590002F8780 /* pbkdf2.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4A81F055590002F8780 /* pbkdf2.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4B71F055590002F8780 /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = D2EBA4A91F055590002F8780 /* sha1.c */; settings = {COMPILER_FLAGS = "-Wno-sign-conversion"; }; };
+		D2EBA4B81F055590002F8780 /* sha1.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4AA1F055590002F8780 /* sha1.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBA4B91F055590002F8780 /* tassert.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EBA4AB1F055590002F8780 /* tassert.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2EBEF002B282680009B4FF6 /* SEDKernelInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */; };
+		D2EBEF022B283368009B4FF6 /* DtaDevOpalLoadPBA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2C1CA1E2B196E8C00F11E86 /* DtaDevOpalLoadPBA.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D2A06C9728B5D8BC00C0DDB6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D20A63961F731F3600F154AC;
+			remoteInfo = log;
+		};
+		D2A06C9928B5D8BE00C0DDB6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2EBA48E1F055579002F8780;
+			remoteInfo = cifra;
+		};
+		D2E60B502963817700EF4C4F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D2BD8F551F02016B00747F4A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D2941F4E29354E8B00F7F8EE;
+			remoteInfo = oui;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D2E6FEA12935E67800DAB209 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		D20A63A81F731FDB00F154AC /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = log.h; path = ../../../../Common/log.h; sourceTree = "<group>"; };
+		D20A63AA1F73204000F154AC /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = log.cpp; path = ../../../../log/log.cpp; sourceTree = "<group>"; };
+		D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaAuthorizeSedutilExecution.h; sourceTree = "<group>"; };
+		D22C11B72B38CA74003825C7 /* os.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = os.h; path = ../../../macos/os.h; sourceTree = "<group>"; };
+		D22C11B82B38CA9E003825C7 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Version.h; path = ../Version.h; sourceTree = "<group>"; };
+		D22C11B92B38CAD8003825C7 /* DtaHashPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaHashPassword.h; path = ../../../Common/DtaHashPassword.h; sourceTree = "<group>"; };
+		D22C11BA2B38CBA3003825C7 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
+		D23F3DF728B57BB400741CC0 /* sedutil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sedutil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D23F3DF828B57BB400741CC0 /* log.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D23F3DF928B57BB400741CC0 /* cifra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = cifra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = SEDKernelInterface.framework; path = /Library/Frameworks/SEDKernelInterface.framework; sourceTree = "<absolute>"; };
+		D2486D602B184266002D347E /* DtaExtensionOptions.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptions.inc; sourceTree = "<group>"; };
+		D2486D622B184266002D347E /* DtaAuthorizeSedutilExecution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAuthorizeSedutilExecution.cpp; sourceTree = "<group>"; };
+		D2486D6F2B18465B002D347E /* DtaExtensionOptionImplementations.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = DtaExtensionOptionImplementations.inc; sourceTree = "<group>"; };
+		D24E866E2B1ADA420098FE03 /* ATAStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATAStructures.h; sourceTree = "<group>"; };
+		D26320982937F65500F0927B /* oui_vendor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = oui_vendor.cpp; sourceTree = "<group>"; };
+		D26320992937F65500F0927B /* oui_vendor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = oui_vendor.hpp; sourceTree = "<group>"; };
+		D271A1F528054AFD00BF043A /* DtaStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaStructures.h; sourceTree = "<group>"; };
+		D271A1F628054AFD00BF043A /* DtaDev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDev.h; sourceTree = "<group>"; };
+		D271A1F728054AFD00BF043A /* DtaOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
+		D271A1F828054AFD00BF043A /* DtaConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DtaConstants.h; path = ../../../macos/DtaConstants.h; sourceTree = "<group>"; };
+		D271A1F928054AFE00BF043A /* DtaLexicon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaLexicon.h; sourceTree = "<group>"; };
+		D271A1FA28054AFE00BF043A /* DtaResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaResponse.h; sourceTree = "<group>"; };
+		D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal2.cpp; sourceTree = "<group>"; };
+		D27C8EA32B9027BE0006A38B /* db.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = db.h; sourceTree = "<group>"; };
+		D27C8EA42B9027BE0006A38B /* InterfaceDeviceID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InterfaceDeviceID.cpp; sourceTree = "<group>"; };
+		D27C8EA52B9027BE0006A38B /* DtaDevOSDrive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOSDrive.cpp; sourceTree = "<group>"; };
+		D27C8EA62B9027BE0006A38B /* DtaDevOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOS.h; sourceTree = "<group>"; };
+		D27C8EA72B9027BE0006A38B /* ParseDiscovery0Features.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseDiscovery0Features.h; sourceTree = "<group>"; };
+		D27C8EA82B9027BE0006A38B /* DtaDevOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOS.cpp; sourceTree = "<group>"; };
+		D27C8EA92B9027BE0006A38B /* ParseATIdentify.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParseATIdentify.cpp; sourceTree = "<group>"; };
+		D27C8EAA2B9027BE0006A38B /* InterfaceDeviceID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterfaceDeviceID.h; sourceTree = "<group>"; };
+		D27C8EAB2B9027BE0006A38B /* ParseATIdentify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseATIdentify.h; sourceTree = "<group>"; };
+		D27C8EAC2B9027BE0006A38B /* DtaDevOSDrive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOSDrive.h; sourceTree = "<group>"; };
+		D27C8EAD2B9027BE0006A38B /* ParseDiscovery0Features.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParseDiscovery0Features.cpp; sourceTree = "<group>"; };
+		D27C8EBA2B9027D50006A38B /* DtaMacOSConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaMacOSConstants.h; sourceTree = "<group>"; };
+		D27C8EC12B902E8B0006A38B /* DtaDevMacOSDrive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSDrive.h; sourceTree = "<group>"; };
+		D27C8EC22B902E8B0006A38B /* DtaDevMacOSDrive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSDrive.cpp; sourceTree = "<group>"; };
+		D27C8EC32B902E8B0006A38B /* DtaDevMacOSScsi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSScsi.h; sourceTree = "<group>"; };
+		D27C8EC42B902E8B0006A38B /* DtaDevMacOSScsi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSScsi.cpp; sourceTree = "<group>"; };
+		D27C8EC52B902E8B0006A38B /* DtaDevOSFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOSFactory.cpp; sourceTree = "<group>"; };
+		D27C8ECB2B903CAC0006A38B /* DtaDevMacOSSata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSSata.h; sourceTree = "<group>"; };
+		D27C8ECC2B903CAC0006A38B /* DtaDevMacOSSata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSSata.cpp; sourceTree = "<group>"; };
+		D27CDC6E2B913CF300196584 /* DtaDevFactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevFactory.cpp; sourceTree = "<group>"; };
+		D285034B2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevMacOSBlockStorageDevice.cpp; sourceTree = "<group>"; };
+		D285034C2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevMacOSBlockStorageDevice.h; sourceTree = "<group>"; };
+		D29C45F628C185590093AC75 /* CleanVersion.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = CleanVersion.sh; path = sedutil/CleanVersion.sh; sourceTree = "<group>"; };
+		D2A06C9528B5D88800C0DDB6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		D2BDCEB329648F6700D07633 /* oui-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "oui-test"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2BDDC9B28A6369A00001E26 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
+		D2C1CA1E2B196E8C00F11E86 /* DtaDevOpalLoadPBA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaDevOpalLoadPBA.cpp; path = ../Customizations/DtaDevOpalLoadPBA.cpp; sourceTree = "<group>"; };
+		D2D1379E28B55C14003FD51F /* sedutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sedutil.h; path = sedutil/sedutil.h; sourceTree = "<group>"; };
+		D2DCB6ED2B927163005B423F /* TPerKernelInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TPerKernelInterface.h; path = /Users/scott/preboot/DTA/sedutil/macos/../../../../../../Library/Frameworks/SEDKernelInterface.framework/Versions/A/Headers/TPerKernelInterface.h; sourceTree = "<absolute>"; };
+		D2E6FE7E2935696800DAB209 /* oui.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = oui.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2E6FE802935E08D00DAB209 /* get_vendorid */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = get_vendorid; sourceTree = "<group>"; };
+		D2E6FE812935E08D00DAB209 /* oui.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = oui.docc; sourceTree = "<group>"; };
+		D2E6FE822935E08D00DAB209 /* CStringMap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CStringMap.hpp; sourceTree = "<group>"; };
+		D2E6FE832935E08D00DAB209 /* t10_vendorid.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = t10_vendorid.inc; sourceTree = "<group>"; };
+		D2E6FE842935E08D00DAB209 /* t10_vendorid.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = t10_vendorid.txt; sourceTree = "<group>"; };
+		D2E6FE852935E08D00DAB209 /* oui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oui.h; sourceTree = "<group>"; };
+		D2E6FE862935E08D00DAB209 /* oui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = oui.cpp; sourceTree = "<group>"; };
+		D2E6FE872935E08D00DAB209 /* t10_vendorid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = t10_vendorid.hpp; sourceTree = "<group>"; };
+		D2E6FE882935E08D00DAB209 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		D2E6FE892935E08D00DAB209 /* oui.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = oui.hpp; sourceTree = "<group>"; };
+		D2E6FE8A2935E08D00DAB209 /* make_oui_db */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_oui_db; sourceTree = "<group>"; };
+		D2E6FE8B2935E08D00DAB209 /* t10_vendorid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = t10_vendorid.cpp; sourceTree = "<group>"; };
+		D2E6FE8C2935E08D00DAB209 /* oui.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = oui.txt; sourceTree = "<group>"; };
+		D2E6FE8D2935E08D00DAB209 /* oui.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = oui.inc; sourceTree = "<group>"; };
+		D2E6FE9C2935E19700DAB209 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D2E6FEB32935E6DE00DAB209 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		D2EA83D628053B3400A0F685 /* DtaDevOpal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal.cpp; sourceTree = "<group>"; };
+		D2EA83D828053B3400A0F685 /* DtaAnnotatedDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaAnnotatedDump.cpp; sourceTree = "<group>"; };
+		D2EA83DA28053B3400A0F685 /* Copyright.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Copyright.txt; sourceTree = "<group>"; };
+		D2EA83EB28053B3400A0F685 /* DtaCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaCommand.cpp; sourceTree = "<group>"; };
+		D2EA83EF28053B3400A0F685 /* DtaDevOpal1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpal1.cpp; sourceTree = "<group>"; };
+		D2EA83F228053B3400A0F685 /* DtaDevGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevGeneric.cpp; sourceTree = "<group>"; };
+		D2EA83F428053B3400A0F685 /* DtaHashPwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaHashPwd.h; sourceTree = "<group>"; };
+		D2EA83F828053B3400A0F685 /* DtaSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaSession.h; sourceTree = "<group>"; };
+		D2EA83F928053B3400A0F685 /* DtaHexDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaHexDump.cpp; sourceTree = "<group>"; };
+		D2EA83FC28053B3400A0F685 /* DtaSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaSession.cpp; sourceTree = "<group>"; };
+		D2EA83FE28053B3400A0F685 /* DtaResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaResponse.cpp; sourceTree = "<group>"; };
+		D2EA840028053B3400A0F685 /* DtaEndianFixup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaEndianFixup.h; sourceTree = "<group>"; };
+		D2EA840228053B3400A0F685 /* DtaHexDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaHexDump.h; sourceTree = "<group>"; };
+		D2EA840628053B3600A0F685 /* DtaDevEnterprise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevEnterprise.h; sourceTree = "<group>"; };
+		D2EA840928053B3700A0F685 /* DtaDev.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDev.cpp; sourceTree = "<group>"; };
+		D2EA840A28053B3700A0F685 /* DtaDevEnterprise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevEnterprise.cpp; sourceTree = "<group>"; };
+		D2EA840C28053B3800A0F685 /* DtaDevOpal2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOpal2.h; sourceTree = "<group>"; };
+		D2EA840F28053B3A00A0F685 /* DtaCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaCommand.h; sourceTree = "<group>"; };
+		D2EA841128053B3B00A0F685 /* DtaDevOpal1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOpal1.h; sourceTree = "<group>"; };
+		D2EA841528053B3D00A0F685 /* DtaOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaOptions.cpp; sourceTree = "<group>"; };
+		D2EA842728053B3F00A0F685 /* DtaHashPwd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaHashPwd.cpp; sourceTree = "<group>"; };
+		D2EA842828053B3F00A0F685 /* DtaDevOpal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevOpal.h; sourceTree = "<group>"; };
+		D2EA843228053B4400A0F685 /* DtaAnnotatedDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaAnnotatedDump.h; sourceTree = "<group>"; };
+		D2EA843328053B4400A0F685 /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
+		D2EA843728053B4600A0F685 /* DtaDevGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDevGeneric.h; sourceTree = "<group>"; };
+		D2EBA4911F055579002F8780 /* cifra.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cifra.h; sourceTree = "<group>"; };
+		D2EBA4921F055579002F8780 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D2EBA49E1F055590002F8780 /* bitops.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitops.h; sourceTree = "<group>"; };
+		D2EBA49F1F055590002F8780 /* blockwise.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blockwise.c; sourceTree = "<group>"; };
+		D2EBA4A01F055590002F8780 /* blockwise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blockwise.h; sourceTree = "<group>"; };
+		D2EBA4A11F055590002F8780 /* chash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = chash.c; sourceTree = "<group>"; };
+		D2EBA4A21F055590002F8780 /* chash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chash.h; sourceTree = "<group>"; };
+		D2EBA4A31F055590002F8780 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		D2EBA4A41F055590002F8780 /* handy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = handy.h; sourceTree = "<group>"; };
+		D2EBA4A51F055590002F8780 /* hmac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hmac.c; sourceTree = "<group>"; };
+		D2EBA4A61F055590002F8780 /* hmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hmac.h; sourceTree = "<group>"; };
+		D2EBA4A71F055590002F8780 /* pbkdf2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pbkdf2.c; sourceTree = "<group>"; };
+		D2EBA4A81F055590002F8780 /* pbkdf2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pbkdf2.h; sourceTree = "<group>"; };
+		D2EBA4A91F055590002F8780 /* sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha1.c; sourceTree = "<group>"; };
+		D2EBA4AA1F055590002F8780 /* sha1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha1.h; sourceTree = "<group>"; };
+		D2EBA4AB1F055590002F8780 /* tassert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tassert.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D20A63931F731F3600F154AC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2941F5629354E8B00F7F8EE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2D0F56B293A85F00077966A /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2E6FEA02935E67800DAB209 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2E6FEB62935E80500DAB209 /* oui.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2EBA3031F0549B7002F8780 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D26C25742957BC2600E46646 /* log.framework in Frameworks */,
+				D2D0F56D293AA5DA0077966A /* oui.framework in Frameworks */,
+				D2A06C9D28B5DC7900C0DDB6 /* cifra.framework in Frameworks */,
+				D2EBEF002B282680009B4FF6 /* SEDKernelInterface.framework in Frameworks */,
+				D2A06C9C28B5D8FE00C0DDB6 /* IOKit.framework in Frameworks */,
+				D2A06C9628B5D88800C0DDB6 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2EBA48B1F055579002F8780 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D20A63981F731F3600F154AC /* log */ = {
+			isa = PBXGroup;
+			children = (
+				D20A63A81F731FDB00F154AC /* log.h */,
+				D20A63AA1F73204000F154AC /* log.cpp */,
+			);
+			path = log;
+			sourceTree = "<group>";
+		};
+		D22042002B1962FC00116D30 /* Customizations */ = {
+			isa = PBXGroup;
+			children = (
+				D2C1CA1E2B196E8C00F11E86 /* DtaDevOpalLoadPBA.cpp */,
+				D2486D622B184266002D347E /* DtaAuthorizeSedutilExecution.cpp */,
+				D2486D602B184266002D347E /* DtaExtensionOptions.inc */,
+				D2486D6F2B18465B002D347E /* DtaExtensionOptionImplementations.inc */,
+			);
+			path = Customizations;
+			sourceTree = "<group>";
+		};
+		D23F3E0B28B57E6800741CC0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */,
+				D2A06C9528B5D88800C0DDB6 /* Foundation.framework */,
+				D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D2466A4628B585F8009F55D9 /* macos */ = {
+			isa = PBXGroup;
+			children = (
+				D285034B2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.cpp */,
+				D285034C2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.h */,
+				D2DCB6ED2B927163005B423F /* TPerKernelInterface.h */,
+				D27C8ECC2B903CAC0006A38B /* DtaDevMacOSSata.cpp */,
+				D27C8ECB2B903CAC0006A38B /* DtaDevMacOSSata.h */,
+				D27C8EC22B902E8B0006A38B /* DtaDevMacOSDrive.cpp */,
+				D27C8EC12B902E8B0006A38B /* DtaDevMacOSDrive.h */,
+				D27C8EC42B902E8B0006A38B /* DtaDevMacOSScsi.cpp */,
+				D27C8EC32B902E8B0006A38B /* DtaDevMacOSScsi.h */,
+				D27C8EC52B902E8B0006A38B /* DtaDevOSFactory.cpp */,
+				D27C8EBA2B9027D50006A38B /* DtaMacOSConstants.h */,
+			);
+			name = macos;
+			path = ../../../macos;
+			sourceTree = "<group>";
+		};
+		D2BD8F541F02016B00747F4A = {
+			isa = PBXGroup;
+			children = (
+				D22C11BA2B38CBA3003825C7 /* DtaHashPassword.cpp */,
+				D22C11B92B38CAD8003825C7 /* DtaHashPassword.h */,
+				D22C11B82B38CA9E003825C7 /* Version.h */,
+				D22C11B72B38CA74003825C7 /* os.h */,
+				D271A1F828054AFD00BF043A /* DtaConstants.h */,
+				D2D1379E28B55C14003FD51F /* sedutil.h */,
+				D29C45F628C185590093AC75 /* CleanVersion.sh */,
+				D2D137A028B55C15003FD51F /* Common */,
+				D2466A4628B585F8009F55D9 /* macos */,
+				D2EBA4901F055579002F8780 /* cifra (open source crypto) */,
+				D20A63981F731F3600F154AC /* log */,
+				D2E6FE7F2935E08D00DAB209 /* oui */,
+				D23F3E0B28B57E6800741CC0 /* Frameworks */,
+				D2E6FEB22935E6DE00DAB209 /* oui-test */,
+				D23F3DF728B57BB400741CC0 /* sedutil.framework */,
+				D23F3DF828B57BB400741CC0 /* log.framework */,
+				D2E6FE7E2935696800DAB209 /* oui.framework */,
+				D23F3DF928B57BB400741CC0 /* cifra.framework */,
+				D2BDCEB329648F6700D07633 /* oui-test */,
+			);
+			sourceTree = "<group>";
+		};
+		D2D137A028B55C15003FD51F /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				D27CDC6E2B913CF300196584 /* DtaDevFactory.cpp */,
+				D27C8EA32B9027BE0006A38B /* db.h */,
+				D27C8EA82B9027BE0006A38B /* DtaDevOS.cpp */,
+				D27C8EA62B9027BE0006A38B /* DtaDevOS.h */,
+				D27C8EA52B9027BE0006A38B /* DtaDevOSDrive.cpp */,
+				D27C8EAC2B9027BE0006A38B /* DtaDevOSDrive.h */,
+				D27C8EA42B9027BE0006A38B /* InterfaceDeviceID.cpp */,
+				D27C8EAA2B9027BE0006A38B /* InterfaceDeviceID.h */,
+				D27C8EA92B9027BE0006A38B /* ParseATIdentify.cpp */,
+				D27C8EAB2B9027BE0006A38B /* ParseATIdentify.h */,
+				D27C8EAD2B9027BE0006A38B /* ParseDiscovery0Features.cpp */,
+				D27C8EA72B9027BE0006A38B /* ParseDiscovery0Features.h */,
+				D22042002B1962FC00116D30 /* Customizations */,
+				D2EA83DA28053B3400A0F685 /* Copyright.txt */,
+				D2BDDC9B28A6369A00001E26 /* ReadMe.txt */,
+				D2EA843328053B4400A0F685 /* log.h */,
+				D24E866E2B1ADA420098FE03 /* ATAStructures.h */,
+				D271A1F528054AFD00BF043A /* DtaStructures.h */,
+				D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */,
+				D2EA83D828053B3400A0F685 /* DtaAnnotatedDump.cpp */,
+				D2EA843228053B4400A0F685 /* DtaAnnotatedDump.h */,
+				D2EA83EB28053B3400A0F685 /* DtaCommand.cpp */,
+				D2EA840F28053B3A00A0F685 /* DtaCommand.h */,
+				D2EA840928053B3700A0F685 /* DtaDev.cpp */,
+				D271A1F628054AFD00BF043A /* DtaDev.h */,
+				D2EA840A28053B3700A0F685 /* DtaDevEnterprise.cpp */,
+				D2EA840628053B3600A0F685 /* DtaDevEnterprise.h */,
+				D2EA843728053B4600A0F685 /* DtaDevGeneric.h */,
+				D2EA83D628053B3400A0F685 /* DtaDevOpal.cpp */,
+				D2EA842828053B3F00A0F685 /* DtaDevOpal.h */,
+				D2EA841128053B3B00A0F685 /* DtaDevOpal1.h */,
+				D2EA83EF28053B3400A0F685 /* DtaDevOpal1.cpp */,
+				D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */,
+				D2EA840C28053B3800A0F685 /* DtaDevOpal2.h */,
+				D2EA840028053B3400A0F685 /* DtaEndianFixup.h */,
+				D2EA842728053B3F00A0F685 /* DtaHashPwd.cpp */,
+				D2EA83F428053B3400A0F685 /* DtaHashPwd.h */,
+				D2EA840228053B3400A0F685 /* DtaHexDump.h */,
+				D2EA83F928053B3400A0F685 /* DtaHexDump.cpp */,
+				D271A1F928054AFE00BF043A /* DtaLexicon.h */,
+				D271A1F728054AFD00BF043A /* DtaOptions.h */,
+				D2EA83FE28053B3400A0F685 /* DtaResponse.cpp */,
+				D271A1FA28054AFE00BF043A /* DtaResponse.h */,
+				D2EA83FC28053B3400A0F685 /* DtaSession.cpp */,
+				D2EA83F828053B3400A0F685 /* DtaSession.h */,
+				D2EA841528053B3D00A0F685 /* DtaOptions.cpp */,
+				D2EA83F228053B3400A0F685 /* DtaDevGeneric.cpp */,
+			);
+			name = Common;
+			path = ../../../Common;
+			sourceTree = "<group>";
+		};
+		D2E6FE7F2935E08D00DAB209 /* oui */ = {
+			isa = PBXGroup;
+			children = (
+				D2E6FE882935E08D00DAB209 /* README.md */,
+				D2E6FE852935E08D00DAB209 /* oui.h */,
+				D2E6FE822935E08D00DAB209 /* CStringMap.hpp */,
+				D2E6FE8A2935E08D00DAB209 /* make_oui_db */,
+				D2E6FE8C2935E08D00DAB209 /* oui.txt */,
+				D2E6FE8D2935E08D00DAB209 /* oui.inc */,
+				D2E6FE892935E08D00DAB209 /* oui.hpp */,
+				D2E6FE862935E08D00DAB209 /* oui.cpp */,
+				D2E6FE802935E08D00DAB209 /* get_vendorid */,
+				D2E6FE832935E08D00DAB209 /* t10_vendorid.inc */,
+				D2E6FE842935E08D00DAB209 /* t10_vendorid.txt */,
+				D2E6FE872935E08D00DAB209 /* t10_vendorid.hpp */,
+				D2E6FE8B2935E08D00DAB209 /* t10_vendorid.cpp */,
+				D26320982937F65500F0927B /* oui_vendor.cpp */,
+				D26320992937F65500F0927B /* oui_vendor.hpp */,
+				D2E6FE9C2935E19700DAB209 /* Info.plist */,
+				D2E6FE812935E08D00DAB209 /* oui.docc */,
+			);
+			name = oui;
+			path = ../../../../Users/scott/preboot/DTA/sedutil/oui;
+			sourceTree = DEVELOPER_DIR;
+		};
+		D2E6FEB22935E6DE00DAB209 /* oui-test */ = {
+			isa = PBXGroup;
+			children = (
+				D2E6FEB32935E6DE00DAB209 /* main.cpp */,
+			);
+			path = "oui-test";
+			sourceTree = SOURCE_ROOT;
+		};
+		D2EBA4901F055579002F8780 /* cifra (open source crypto) */ = {
+			isa = PBXGroup;
+			children = (
+				D2EBA49D1F055590002F8780 /* pbkdf2 */,
+				D2EBA4911F055579002F8780 /* cifra.h */,
+				D2EBA4921F055579002F8780 /* Info.plist */,
+			);
+			name = "cifra (open source crypto)";
+			path = cifra;
+			sourceTree = "<group>";
+		};
+		D2EBA49D1F055590002F8780 /* pbkdf2 */ = {
+			isa = PBXGroup;
+			children = (
+				D2EBA49E1F055590002F8780 /* bitops.h */,
+				D2EBA49F1F055590002F8780 /* blockwise.c */,
+				D2EBA4A01F055590002F8780 /* blockwise.h */,
+				D2EBA4A11F055590002F8780 /* chash.c */,
+				D2EBA4A21F055590002F8780 /* chash.h */,
+				D2EBA4A31F055590002F8780 /* COPYING */,
+				D2EBA4A41F055590002F8780 /* handy.h */,
+				D2EBA4A51F055590002F8780 /* hmac.c */,
+				D2EBA4A61F055590002F8780 /* hmac.h */,
+				D2EBA4A71F055590002F8780 /* pbkdf2.c */,
+				D2EBA4A81F055590002F8780 /* pbkdf2.h */,
+				D2EBA4A91F055590002F8780 /* sha1.c */,
+				D2EBA4AA1F055590002F8780 /* sha1.h */,
+				D2EBA4AB1F055590002F8780 /* tassert.h */,
+			);
+			name = pbkdf2;
+			path = ../../../../Common/pbkdf2;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D20A63941F731F3600F154AC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2D137A128B56329003FD51F /* log.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2941F4F29354E8B00F7F8EE /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2E6FE932935E08D00DAB209 /* oui.h in Headers */,
+				D263209B2937F65500F0927B /* oui_vendor.hpp in Headers */,
+				D2E6FE902935E08D00DAB209 /* CStringMap.hpp in Headers */,
+				D2E6FE972935E08E00DAB209 /* oui.hpp in Headers */,
+				D2E6FE952935E08D00DAB209 /* t10_vendorid.hpp in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2EBA3041F0549B7002F8780 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D22369B928D686C400D7D851 /* sedutil.h in Headers */,
+				D27C8EB62B9027BF0006A38B /* ParseATIdentify.h in Headers */,
+				D24E866F2B1ADA420098FE03 /* ATAStructures.h in Headers */,
+				D271A1FF28054AFE00BF043A /* DtaLexicon.h in Headers */,
+				D271A1FE28054AFE00BF043A /* DtaConstants.h in Headers */,
+				D27C8EB12B9027BF0006A38B /* DtaDevOS.h in Headers */,
+				D271A1FB28054AFE00BF043A /* DtaStructures.h in Headers */,
+				D27C8EAE2B9027BE0006A38B /* db.h in Headers */,
+				D271A1FD28054AFE00BF043A /* DtaOptions.h in Headers */,
+				D27C8EC62B902E8B0006A38B /* DtaDevMacOSDrive.h in Headers */,
+				D271A1FC28054AFE00BF043A /* DtaDev.h in Headers */,
+				D2EA848428053B4D00A0F685 /* DtaDevGeneric.h in Headers */,
+				D2EA844A28053B4C00A0F685 /* DtaDevEnterprise.h in Headers */,
+				D2EA845228053B4C00A0F685 /* DtaDevOpal.h in Headers */,
+				D27C8EB52B9027BF0006A38B /* InterfaceDeviceID.h in Headers */,
+				D27C8ECD2B903CAC0006A38B /* DtaDevMacOSSata.h in Headers */,
+				D285034E2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.h in Headers */,
+				D2EA844E28053B4C00A0F685 /* DtaDevOpal1.h in Headers */,
+				D2EA849028053B4D00A0F685 /* DtaDevOpal2.h in Headers */,
+				D2EA849928053B4D00A0F685 /* DtaSession.h in Headers */,
+				D2EA84AA28053B4E00A0F685 /* DtaAnnotatedDump.h in Headers */,
+				D2EA849128053B4D00A0F685 /* DtaHashPwd.h in Headers */,
+				D2EA84B228053B4E00A0F685 /* DtaCommand.h in Headers */,
+				D271A20028054AFE00BF043A /* DtaResponse.h in Headers */,
+				D27C8EBE2B9027D50006A38B /* DtaMacOSConstants.h in Headers */,
+				D27C8EB72B9027BF0006A38B /* DtaDevOSDrive.h in Headers */,
+				D2EA84AB28053B4E00A0F685 /* DtaEndianFixup.h in Headers */,
+				D27C8EC82B902E8B0006A38B /* DtaDevMacOSScsi.h in Headers */,
+				D27C8EB22B9027BF0006A38B /* ParseDiscovery0Features.h in Headers */,
+				D2EA84AF28053B4E00A0F685 /* DtaHexDump.h in Headers */,
+				D22042022B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2EBA48C1F055579002F8780 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2EBA4B81F055590002F8780 /* sha1.h in Headers */,
+				D2EBA4B61F055590002F8780 /* pbkdf2.h in Headers */,
+				D2EBA4B21F055590002F8780 /* handy.h in Headers */,
+				D2EBA4B41F055590002F8780 /* hmac.h in Headers */,
+				D2EBA4B01F055590002F8780 /* chash.h in Headers */,
+				D2EBA4AE1F055590002F8780 /* blockwise.h in Headers */,
+				D2EBA4AC1F055590002F8780 /* bitops.h in Headers */,
+				D2EBA4B91F055590002F8780 /* tassert.h in Headers */,
+				D2EBA4931F055579002F8780 /* cifra.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D20A63961F731F3600F154AC /* log */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D20A639C1F731F3600F154AC /* Build configuration list for PBXNativeTarget "log" */;
+			buildPhases = (
+				D20A63921F731F3600F154AC /* Sources */,
+				D20A63931F731F3600F154AC /* Frameworks */,
+				D20A63941F731F3600F154AC /* Headers */,
+				D20A63951F731F3600F154AC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = log;
+			productName = log;
+			productReference = D23F3DF828B57BB400741CC0 /* log.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D2941F4E29354E8B00F7F8EE /* oui */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D2941F5829354E8B00F7F8EE /* Build configuration list for PBXNativeTarget "oui" */;
+			buildPhases = (
+				D2941F4F29354E8B00F7F8EE /* Headers */,
+				D2941F5329354E8B00F7F8EE /* Sources */,
+				D2941F5629354E8B00F7F8EE /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = oui;
+			productName = non;
+			productReference = D2E6FE7E2935696800DAB209 /* oui.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D2E6FEA22935E67800DAB209 /* oui-test */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D2E6FEA72935E68200DAB209 /* Build configuration list for PBXNativeTarget "oui-test" */;
+			buildPhases = (
+				D2E6FE9F2935E67800DAB209 /* Sources */,
+				D2E6FEA02935E67800DAB209 /* Frameworks */,
+				D2E6FEA12935E67800DAB209 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "oui-test";
+			productName = "oui-test";
+			productReference = D2BDCEB329648F6700D07633 /* oui-test */;
+			productType = "com.apple.product-type.tool";
+		};
+		D2EBA3061F0549B7002F8780 /* sedutil */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D2EBA30C1F0549B7002F8780 /* Build configuration list for PBXNativeTarget "sedutil" */;
+			buildPhases = (
+				D244204E1F537182005D2339 /* ShellScript */,
+				D2EBA3021F0549B7002F8780 /* Sources */,
+				D2EBA3031F0549B7002F8780 /* Frameworks */,
+				D2EBA3041F0549B7002F8780 /* Headers */,
+				D2EBA3051F0549B7002F8780 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D2A06C9828B5D8BC00C0DDB6 /* PBXTargetDependency */,
+				D2A06C9A28B5D8BE00C0DDB6 /* PBXTargetDependency */,
+				D2E60B512963817700EF4C4F /* PBXTargetDependency */,
+			);
+			name = sedutil;
+			productName = sedutil;
+			productReference = D23F3DF728B57BB400741CC0 /* sedutil.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D2EBA48E1F055579002F8780 /* cifra */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D2EBA4941F055579002F8780 /* Build configuration list for PBXNativeTarget "cifra" */;
+			buildPhases = (
+				D2EBA48A1F055579002F8780 /* Sources */,
+				D2EBA48B1F055579002F8780 /* Frameworks */,
+				D2EBA48C1F055579002F8780 /* Headers */,
+				D2EBA48D1F055579002F8780 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = cifra;
+			productName = cifra;
+			productReference = D23F3DF928B57BB400741CC0 /* cifra.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D2BD8F551F02016B00747F4A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1510;
+				ORGANIZATIONNAME = "Bright Plaza, Inc.";
+				TargetAttributes = {
+					D20A63961F731F3600F154AC = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = UES63D9K7E;
+						ProvisioningStyle = Automatic;
+					};
+					D2E6FEA22935E67800DAB209 = {
+						CreatedOnToolsVersion = 14.1;
+						DevelopmentTeam = UES63D9K7E;
+						ProvisioningStyle = Automatic;
+					};
+					D2EBA3061F0549B7002F8780 = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = UES63D9K7E;
+						ProvisioningStyle = Automatic;
+					};
+					D2EBA48E1F055579002F8780 = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = UES63D9K7E;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = D2BD8F581F02016B00747F4A /* Build configuration list for PBXProject "SEDFrameworks" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				de,
+				he,
+				en_AU,
+				ar,
+				el,
+				ja,
+				uk,
+				es_419,
+				zh_CN,
+				es,
+				da,
+				it,
+				sk,
+				pt_PT,
+				ms,
+				sv,
+				cs,
+				ko,
+				no,
+				nb,
+				hu,
+				zh_HK,
+				tr,
+				pl,
+				zh_TW,
+				en_GB,
+				vi,
+				ru,
+				fr_CA,
+				fr,
+				fi,
+				id,
+				nl,
+				th,
+				pt,
+				ro,
+				hr,
+				hi,
+				ca,
+				Base,
+			);
+			mainGroup = D2BD8F541F02016B00747F4A;
+			productRefGroup = D2BD8F541F02016B00747F4A;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D2EBA3061F0549B7002F8780 /* sedutil */,
+				D20A63961F731F3600F154AC /* log */,
+				D2EBA48E1F055579002F8780 /* cifra */,
+				D2941F4E29354E8B00F7F8EE /* oui */,
+				D2E6FEA22935E67800DAB209 /* oui-test */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D20A63951F731F3600F154AC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2EBA3051F0549B7002F8780 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2BDDC9D28A6369A00001E26 /* ReadMe.txt in Resources */,
+				D2EA844F28053B4C00A0F685 /* Copyright.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2EBA48D1F055579002F8780 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2EBA4B11F055590002F8780 /* COPYING in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D244204E1F537182005D2339 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Version.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "export mac_root=\"$(pwd)\"\n./MakeVersion.sh \n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D20A63921F731F3600F154AC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D20A63AB1F73204000F154AC /* log.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2941F5329354E8B00F7F8EE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2E6FE992935E08E00DAB209 /* t10_vendorid.cpp in Sources */,
+				D263209A2937F65500F0927B /* oui_vendor.cpp in Sources */,
+				D2E6FE942935E08D00DAB209 /* oui.cpp in Sources */,
+				D2E6FE8F2935E08D00DAB209 /* oui.docc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2E6FE9F2935E67800DAB209 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2E6FEB52935E6F600DAB209 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2EBA3021F0549B7002F8780 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D27C8ECA2B902E8B0006A38B /* DtaDevOSFactory.cpp in Sources */,
+				D2EBEF022B283368009B4FF6 /* DtaDevOpalLoadPBA.cpp in Sources */,
+				D27C8EAF2B9027BE0006A38B /* InterfaceDeviceID.cpp in Sources */,
+				D27CDC6F2B913CF400196584 /* DtaDevFactory.cpp in Sources */,
+				D27C8EC92B902E8B0006A38B /* DtaDevMacOSScsi.cpp in Sources */,
+				D27C8EB32B9027BF0006A38B /* DtaDevOS.cpp in Sources */,
+				D2EA848028053B4D00A0F685 /* DtaOptions.cpp in Sources */,
+				D2EA84A628053B4E00A0F685 /* DtaDev.cpp in Sources */,
+				D22C11BB2B38CBA3003825C7 /* DtaHashPassword.cpp in Sources */,
+				D2EA848D28053B4D00A0F685 /* DtaDevGeneric.cpp in Sources */,
+				D2EA848C28053B4D00A0F685 /* DtaDevEnterprise.cpp in Sources */,
+				D2EA844728053B4C00A0F685 /* DtaDevOpal.cpp in Sources */,
+				D2EA848528053B4D00A0F685 /* DtaDevOpal1.cpp in Sources */,
+				D27C8EB42B9027BF0006A38B /* ParseATIdentify.cpp in Sources */,
+				D27591BA28B579F1005B9081 /* DtaDevOpal2.cpp in Sources */,
+				D2EA84A328053B4E00A0F685 /* DtaSession.cpp in Sources */,
+				D27C8EB02B9027BE0006A38B /* DtaDevOSDrive.cpp in Sources */,
+				D27C8EB82B9027BF0006A38B /* ParseDiscovery0Features.cpp in Sources */,
+				D27C8EC72B902E8B0006A38B /* DtaDevMacOSDrive.cpp in Sources */,
+				D2EA844B28053B4C00A0F685 /* DtaAnnotatedDump.cpp in Sources */,
+				D2EA849428053B4D00A0F685 /* DtaHashPwd.cpp in Sources */,
+				D2EA849C28053B4D00A0F685 /* DtaHexDump.cpp in Sources */,
+				D2EA847D28053B4D00A0F685 /* DtaCommand.cpp in Sources */,
+				D27C8ECE2B903CAC0006A38B /* DtaDevMacOSSata.cpp in Sources */,
+				D285034D2B94FCFE00877DA8 /* DtaDevMacOSBlockStorageDevice.cpp in Sources */,
+				D2EA84A728053B4E00A0F685 /* DtaResponse.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2EBA48A1F055579002F8780 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2EBA4B71F055590002F8780 /* sha1.c in Sources */,
+				D2EBA4B31F055590002F8780 /* hmac.c in Sources */,
+				D2EBA4AD1F055590002F8780 /* blockwise.c in Sources */,
+				D2EBA4B51F055590002F8780 /* pbkdf2.c in Sources */,
+				D2EBA4AF1F055590002F8780 /* chash.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D2A06C9828B5D8BC00C0DDB6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D20A63961F731F3600F154AC /* log */;
+			targetProxy = D2A06C9728B5D8BC00C0DDB6 /* PBXContainerItemProxy */;
+		};
+		D2A06C9A28B5D8BE00C0DDB6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2EBA48E1F055579002F8780 /* cifra */;
+			targetProxy = D2A06C9928B5D8BE00C0DDB6 /* PBXContainerItemProxy */;
+		};
+		D2E60B512963817700EF4C4F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D2941F4E29354E8B00F7F8EE /* oui */;
+			targetProxy = D2E60B502963817700EF4C4F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		D20A639D1F731F3600F154AC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D20A639E1F731F3600F154AC /* Debug Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D20A639F1F731F3600F154AC /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug Bluetooth";
+		};
+		D20A63A01F731F3600F154AC /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug Bonjour";
+		};
+		D20A63A11F731F3600F154AC /* Debug Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug Bonjour Multistart";
+		};
+		D20A63A21F731F3600F154AC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		D20A63A31F731F3600F154AC /* Release Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Release Bonjour";
+		};
+		D20A63A41F731F3600F154AC /* Release Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Release Bonjour Multistart";
+		};
+		D20A63A51F731F3600F154AC /* Release Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Release Bluetooth";
+		};
+		D20A63A61F731F3600F154AC /* Release Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = ..;
+				INFOPLIST_FILE = "$(SRCROOT)/log/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.log;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Release Bonjour and Bluetooth";
+		};
+		D2763BE21F1273A50015B62C /* Debug Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CURRENT_PROJECT_VERSION = 625;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 625;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"ENABLE_BONJOUR=1",
+					"MULTISTART=1",
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+					/Library/Frameworks,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.5;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				WARNING_CFLAGS = "-Wall";
+			};
+			name = "Debug Bonjour Multistart";
+		};
+		D2763BE81F1273A50015B62C /* Debug Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+			};
+			name = "Debug Bonjour Multistart";
+		};
+		D2763BE91F1273A50015B62C /* Debug Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug Bonjour Multistart";
+		};
+		D2763BEB1F1273B40015B62C /* Release Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CURRENT_PROJECT_VERSION = 626;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 626;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"ENABLE_BONJOUR=1",
+					"MULTISTART=1",
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+					/Library/Frameworks,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release Bonjour Multistart";
+		};
+		D2763BF11F1273B40015B62C /* Release Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+			};
+			name = "Release Bonjour Multistart";
+		};
+		D2763BF21F1273B40015B62C /* Release Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Release Bonjour Multistart";
+		};
+		D2941F5929354E8B00F7F8EE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D2941F5A29354E8B00F7F8EE /* Debug Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D2941F5B29354E8B00F7F8EE /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug Bluetooth";
+		};
+		D2941F5C29354E8B00F7F8EE /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug Bonjour";
+		};
+		D2941F5D29354E8B00F7F8EE /* Debug Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug Bonjour Multistart";
+		};
+		D2941F5E29354E8B00F7F8EE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		D2941F5F29354E8B00F7F8EE /* Release Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Release Bonjour";
+		};
+		D2941F6029354E8B00F7F8EE /* Release Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Release Bonjour Multistart";
+		};
+		D2941F6129354E8B00F7F8EE /* Release Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Release Bluetooth";
+		};
+		D2941F6229354E8B00F7F8EE /* Release Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/oui/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.oui;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Release Bonjour and Bluetooth";
+		};
+		D2B7FA681F02ABC600F2D820 /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CURRENT_PROJECT_VERSION = 625;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 625;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"ENABLE_BONJOUR=1",
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+					/Library/Frameworks,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.5;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				WARNING_CFLAGS = "-Wall";
+			};
+			name = "Debug Bonjour";
+		};
+		D2B7FA6D1F02ABD100F2D820 /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CURRENT_PROJECT_VERSION = 625;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 625;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"ENABLE_BLUETOOTH=1",
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+					/Library/Frameworks,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.5;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				WARNING_CFLAGS = "-Wall";
+			};
+			name = "Debug Bluetooth";
+		};
+		D2B7FA721F02ABDB00F2D820 /* Debug Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CURRENT_PROJECT_VERSION = 625;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 625;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"ENABLE_BONJOUR=1",
+					"ENABLE_BLUETOOTH=1",
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+					/Library/Frameworks,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.5;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				WARNING_CFLAGS = "-Wall";
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D2B7FA771F02ABEF00F2D820 /* Release Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CURRENT_PROJECT_VERSION = 626;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 626;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "ENABLE_BONJOUR=1";
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+					/Library/Frameworks,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release Bonjour";
+		};
+		D2B7FA7C1F02ABFA00F2D820 /* Release Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CURRENT_PROJECT_VERSION = 626;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 626;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "ENABLE_BLUETOOTH=1";
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+					/Library/Frameworks,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release Bluetooth";
+		};
+		D2B7FA811F02AC1000F2D820 /* Release Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CURRENT_PROJECT_VERSION = 626;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 626;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"ENABLE_BONJOUR=1",
+					"ENABLE_BLUETOOTH=1",
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+					/Library/Frameworks,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release Bonjour and Bluetooth";
+		};
+		D2BD8F591F02016B00747F4A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CURRENT_PROJECT_VERSION = 625;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 625;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+					/Library/Frameworks,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.5;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				WARNING_CFLAGS = "-Wall";
+			};
+			name = Debug;
+		};
+		D2BD8F5A1F02016B00747F4A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_GCD_PERFORMANCE = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ANALYZER_OSOBJECT_C_STYLE_CAST = YES;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
+				CLANG_TIDY_MISC_REDUNDANT_EXPRESSION = YES;
+				CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMPLETION_HANDLER_MISUSE = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_FRAMEWORK_INCLUDE_PRIVATE_FROM_PUBLIC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_INTERFACE_IVARS = YES;
+				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
+				CURRENT_PROJECT_VERSION = 626;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 626;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+					/Library/Frameworks,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 2.0.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-inconsistent-missing-override",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		D2E6FEA82935E68200DAB209 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
+			};
+			name = Debug;
+		};
+		D2E6FEA92935E68200DAB209 /* Debug Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D2E6FEAA2935E68200DAB209 /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
+			};
+			name = "Debug Bluetooth";
+		};
+		D2E6FEAB2935E68200DAB209 /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
+			};
+			name = "Debug Bonjour";
+		};
+		D2E6FEAC2935E68200DAB209 /* Debug Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
+			};
+			name = "Debug Bonjour Multistart";
+		};
+		D2E6FEAD2935E68200DAB209 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
+			};
+			name = Release;
+		};
+		D2E6FEAE2935E68200DAB209 /* Release Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
+			};
+			name = "Release Bonjour";
+		};
+		D2E6FEAF2935E68200DAB209 /* Release Bonjour Multistart */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
+			};
+			name = "Release Bonjour Multistart";
+		};
+		D2E6FEB02935E68200DAB209 /* Release Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
+			};
+			name = "Release Bluetooth";
+		};
+		D2E6FEB12935E68200DAB209 /* Release Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.oui-test";
+			};
+			name = "Release Bonjour and Bluetooth";
+		};
+		D2EBA30D1F0549B7002F8780 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+			};
+			name = Debug;
+		};
+		D2EBA30E1F0549B7002F8780 /* Debug Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D2EBA30F1F0549B7002F8780 /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+			};
+			name = "Debug Bluetooth";
+		};
+		D2EBA3101F0549B7002F8780 /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+			};
+			name = "Debug Bonjour";
+		};
+		D2EBA3111F0549B7002F8780 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+			};
+			name = Release;
+		};
+		D2EBA3121F0549B7002F8780 /* Release Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+			};
+			name = "Release Bonjour";
+		};
+		D2EBA3131F0549B7002F8780 /* Release Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+			};
+			name = "Release Bluetooth";
+		};
+		D2EBA3141F0549B7002F8780 /* Release Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../Common";
+				INFOPLIST_FILE = "$(SRCROOT)/sedutil/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.sedutil;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+			};
+			name = "Release Bonjour and Bluetooth";
+		};
+		D2EBA4951F055579002F8780 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D2EBA4961F055579002F8780 /* Debug Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug Bonjour and Bluetooth";
+		};
+		D2EBA4971F055579002F8780 /* Debug Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug Bluetooth";
+		};
+		D2EBA4981F055579002F8780 /* Debug Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug Bonjour";
+		};
+		D2EBA4991F055579002F8780 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		D2EBA49A1F055579002F8780 /* Release Bonjour */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Release Bonjour";
+		};
+		D2EBA49B1F055579002F8780 /* Release Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Release Bluetooth";
+		};
+		D2EBA49C1F055579002F8780 /* Release Bonjour and Bluetooth */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "$(SRCROOT)/cifra/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightplaza.cifra;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Release Bonjour and Bluetooth";
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D20A639C1F731F3600F154AC /* Build configuration list for PBXNativeTarget "log" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D20A639D1F731F3600F154AC /* Debug */,
+				D20A639E1F731F3600F154AC /* Debug Bonjour and Bluetooth */,
+				D20A639F1F731F3600F154AC /* Debug Bluetooth */,
+				D20A63A01F731F3600F154AC /* Debug Bonjour */,
+				D20A63A11F731F3600F154AC /* Debug Bonjour Multistart */,
+				D20A63A21F731F3600F154AC /* Release */,
+				D20A63A31F731F3600F154AC /* Release Bonjour */,
+				D20A63A41F731F3600F154AC /* Release Bonjour Multistart */,
+				D20A63A51F731F3600F154AC /* Release Bluetooth */,
+				D20A63A61F731F3600F154AC /* Release Bonjour and Bluetooth */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release Bonjour Multistart";
+		};
+		D2941F5829354E8B00F7F8EE /* Build configuration list for PBXNativeTarget "oui" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D2941F5929354E8B00F7F8EE /* Debug */,
+				D2941F5A29354E8B00F7F8EE /* Debug Bonjour and Bluetooth */,
+				D2941F5B29354E8B00F7F8EE /* Debug Bluetooth */,
+				D2941F5C29354E8B00F7F8EE /* Debug Bonjour */,
+				D2941F5D29354E8B00F7F8EE /* Debug Bonjour Multistart */,
+				D2941F5E29354E8B00F7F8EE /* Release */,
+				D2941F5F29354E8B00F7F8EE /* Release Bonjour */,
+				D2941F6029354E8B00F7F8EE /* Release Bonjour Multistart */,
+				D2941F6129354E8B00F7F8EE /* Release Bluetooth */,
+				D2941F6229354E8B00F7F8EE /* Release Bonjour and Bluetooth */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release Bonjour Multistart";
+		};
+		D2BD8F581F02016B00747F4A /* Build configuration list for PBXProject "SEDFrameworks" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D2BD8F591F02016B00747F4A /* Debug */,
+				D2B7FA721F02ABDB00F2D820 /* Debug Bonjour and Bluetooth */,
+				D2B7FA6D1F02ABD100F2D820 /* Debug Bluetooth */,
+				D2B7FA681F02ABC600F2D820 /* Debug Bonjour */,
+				D2763BE21F1273A50015B62C /* Debug Bonjour Multistart */,
+				D2BD8F5A1F02016B00747F4A /* Release */,
+				D2B7FA771F02ABEF00F2D820 /* Release Bonjour */,
+				D2763BEB1F1273B40015B62C /* Release Bonjour Multistart */,
+				D2B7FA7C1F02ABFA00F2D820 /* Release Bluetooth */,
+				D2B7FA811F02AC1000F2D820 /* Release Bonjour and Bluetooth */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release Bonjour Multistart";
+		};
+		D2E6FEA72935E68200DAB209 /* Build configuration list for PBXNativeTarget "oui-test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D2E6FEA82935E68200DAB209 /* Debug */,
+				D2E6FEA92935E68200DAB209 /* Debug Bonjour and Bluetooth */,
+				D2E6FEAA2935E68200DAB209 /* Debug Bluetooth */,
+				D2E6FEAB2935E68200DAB209 /* Debug Bonjour */,
+				D2E6FEAC2935E68200DAB209 /* Debug Bonjour Multistart */,
+				D2E6FEAD2935E68200DAB209 /* Release */,
+				D2E6FEAE2935E68200DAB209 /* Release Bonjour */,
+				D2E6FEAF2935E68200DAB209 /* Release Bonjour Multistart */,
+				D2E6FEB02935E68200DAB209 /* Release Bluetooth */,
+				D2E6FEB12935E68200DAB209 /* Release Bonjour and Bluetooth */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release Bonjour Multistart";
+		};
+		D2EBA30C1F0549B7002F8780 /* Build configuration list for PBXNativeTarget "sedutil" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D2EBA30D1F0549B7002F8780 /* Debug */,
+				D2EBA30E1F0549B7002F8780 /* Debug Bonjour and Bluetooth */,
+				D2EBA30F1F0549B7002F8780 /* Debug Bluetooth */,
+				D2EBA3101F0549B7002F8780 /* Debug Bonjour */,
+				D2763BE81F1273A50015B62C /* Debug Bonjour Multistart */,
+				D2EBA3111F0549B7002F8780 /* Release */,
+				D2EBA3121F0549B7002F8780 /* Release Bonjour */,
+				D2763BF11F1273B40015B62C /* Release Bonjour Multistart */,
+				D2EBA3131F0549B7002F8780 /* Release Bluetooth */,
+				D2EBA3141F0549B7002F8780 /* Release Bonjour and Bluetooth */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release Bonjour Multistart";
+		};
+		D2EBA4941F055579002F8780 /* Build configuration list for PBXNativeTarget "cifra" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D2EBA4951F055579002F8780 /* Debug */,
+				D2EBA4961F055579002F8780 /* Debug Bonjour and Bluetooth */,
+				D2EBA4971F055579002F8780 /* Debug Bluetooth */,
+				D2EBA4981F055579002F8780 /* Debug Bonjour */,
+				D2763BE91F1273A50015B62C /* Debug Bonjour Multistart */,
+				D2EBA4991F055579002F8780 /* Release */,
+				D2EBA49A1F055579002F8780 /* Release Bonjour */,
+				D2763BF21F1273B40015B62C /* Release Bonjour Multistart */,
+				D2EBA49B1F055579002F8780 /* Release Bluetooth */,
+				D2EBA49C1F055579002F8780 /* Release Bonjour and Bluetooth */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release Bonjour Multistart";
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D2BD8F551F02016B00747F4A /* Project object */;
+}

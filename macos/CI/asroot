@@ -1,0 +1,16 @@
+#!/bin/bash
+# echo asroot "${@}" >&2
+# set -xv
+
+
+[[ -n "${1}" ]] || set -- '/bin/bash' '-l' "${@:2}"
+
+authenticate || die "Authentication failed"
+
+# declare cmd="${1}"
+# declare command="$(sudo which "${cmd}")"
+# [[ -n "${command}" ]] || die "${cmd}: command not found"
+
+# exec -a "${command}" sudo ${@}
+
+exec sudo ${@}

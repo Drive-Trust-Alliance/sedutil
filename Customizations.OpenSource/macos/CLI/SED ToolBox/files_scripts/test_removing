@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Source from the same directory as this script
+cur=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. "${cur}/Utility_functions.sh"
+
+
+./test_removing_SED_keychain || warn "removing SED keychain"
+./test_removing_CA           || warn "removing CA identity"

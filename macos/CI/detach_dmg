@@ -1,0 +1,11 @@
+#!/bin/bash 
+
+#set -xv
+
+. img_utils.sh
+
+dmgVol="/Volumes/SED software by Drive Trust Alliance" 
+
+possibly_eject "${dmgVol}"
+exit $?
+

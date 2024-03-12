@@ -1,0 +1,3 @@
+#!/bin/bash
+this_script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+"${this_script_dir}/make_sed_tools_iso" 'SED ToolBox (Debug).iso' "Debug Bonjour Multistart"

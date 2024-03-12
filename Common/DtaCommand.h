@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -42,14 +42,14 @@ class DtaCommand {
 public:
     /** Default constructor, allocates the command and resonse buffers. */
     DtaCommand();
-    /** Constructor that initializes the incokingUid and method fields. 
-     *   @param InvokingUid  The UID used to call the SSC method 
+    /** Constructor that initializes the incokingUid and method fields.
+     *   @param InvokingUid  The UID used to call the SSC method
      *   @param method The SSC method to be called
      */
     DtaCommand(OPAL_UID InvokingUid, OPAL_METHOD method);
     /** destructor  frees the command and response buffers */
     ~DtaCommand();
-    /** Add a Token to the bytstream of type OPAL_TOKEN. */ 
+    /** Add a Token to the bytstream of type OPAL_TOKEN. */
     void addToken(OPAL_TOKEN token);
     /** Add a Token to the bytstream of type OPL_SHORT ATOM. */
     void addToken(OPAL_SHORT_ATOM token);
@@ -57,6 +57,7 @@ public:
     void addToken(OPAL_TINY_ATOM token);
     /** Add a Token to the bytstream of from the OPALUID array. */
     void addToken(OPAL_UID token);
+	void addToken(OPAL_UID token, uint8_t factor);
     /** Add a Token to the bytstream of type c-string */
     void addToken(const char * bytestring);
     /** Add a Token to the bytstream of type vector<uint8_t>.
@@ -72,11 +73,11 @@ public:
     /** Set the TPer session number to be used for the command. */
     void setTSN(uint32_t TSN);
     /** Add the required fields to the end of the bytestream. If EOD is true (default) the
-     * EOD token and the method status list will be added to the end of the bytestream. 
+     * EOD token and the method status list will be added to the end of the bytestream.
      * Then the bytstram is padded to a 4-byte boundary if required and the length fields
      * are populated in packet, subpacket and command packet.
-     * 
-     *  @param EOD a bool to signal that command requires the EOD and method status fields 
+     *
+     *  @param EOD a bool to signal that command requires the EOD and method status fields
      */
     void complete(uint8_t EOD = 1);
     /** Clears the command buffer and resets the the end of buffer pointer
@@ -85,32 +86,32 @@ public:
     void reset();
     /** Clears the command buffer and resets the the end of buffer pointer
      * also initializes the invoker and method fields.
-     * 
+     *
      *   @param InvokingUid  The UID used to call the SSC method
-     *   @param method The SSC method to be called 
+     *   @param method The SSC method to be called
      */
     void reset(OPAL_UID InvokingUid, OPAL_METHOD method);
     /** Clears the command buffer and resets the the end of buffer pointer
      * also initializes the invoker and method fields.
      * The invoker is passed as a vector<uint8_t> this is used for the case
-     * where the invoker is not an OPAL user, typically a table. 
-     * 
-     *   @param InvokingUid  The UID used to call the SSC method 
-     *   @param method The SSC method to be called  
+     * where the invoker is not an OPAL user, typically a table.
+     *
+     *   @param InvokingUid  The UID used to call the SSC method
+     *   @param method The SSC method to be called
      */
     void reset(OPAL_UID InvokingUid, vector<uint8_t> method);
     /** Clears the command buffer and resets the the end of buffer pointer
      * also initializes the invoker and method fields.
      * Both the invoker and method are passed as a vector<uint8_t>
-     * 
-     *   @param InvokingUid  The UID used to call the SSC method 
-     *   @param method The SSC method to be called  
+     *
+     *   @param InvokingUid  The UID used to call the SSC method
+     *   @param method The SSC method to be called
      */
     void reset(vector<uint8_t> InvokingUid, vector<uint8_t> method);
     /** Changes the invoker field.
      * The invoker is passed as a vector<uint8_t> this is used for the case
-     * where the invoker is not an OPAL user, typically a table. 
-     * 
+     * where the invoker is not an OPAL user, typically a table.
+     *
      *   @param Invoker  The UID used to call the SSC method
      */
     void changeInvokingUid(vector<uint8_t> Invoker);
@@ -122,11 +123,13 @@ public:
 	uint16_t outputBufferSize();
 private:
     /** return a pointer to the command buffer */
+    uint8_t commandbuffer[MAX_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT]; /**< buffer allocation allow for 1k alignment */
 	void * getCmdBuffer();
+    size_t getCmdBufferSize() {return MAX_BUFFER_LENGTH;}
     /** return a pointer to the response buffer. */
+    uint8_t responsebuffer[MIN_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT]; /**< buffer allocation allow for 1k alignment */
 	void * getRespBuffer();
-	uint8_t commandbuffer[MAX_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT]; /**< buffer allocation allow for 1k alignment */
-	uint8_t responsebuffer[MIN_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT]; /**< buffer allocation allow for 1k alignment */
+    size_t getRespBufferSize() {return MIN_BUFFER_LENGTH;}
 	uint8_t *cmdbuf;  /**< Pointer to the command buffer */
     uint8_t *respbuf;  /**< pointer to the response buffer */
     uint32_t bufferpos = 0;  /**< position of the next byte in the command buffer */

@@ -1,0 +1,129 @@
+#!/bin/bash
+# set -xv
+
+cleanup=0
+
+
+function maybe_sudo_for_cleanup {
+    [ $cleanup -ne 0 ] || return;
+    enable_sudo
+    can_sudo || exit 1
+}
+
+
+function maybe_cleanup {
+    maybe_sudo_for_cleanup && sudo rm -rf build
+    true
+}
+
+function require_dir_var {
+#     echo First parameter is $1
+#     echo First parameter value is "${!1}"
+#     echo Second parameter is $2
+    [ -n "${!1}" ] && [ -d "${!1}" ] || export $1="${2}"
+    [ -d "${!1}" ] || die "Can not find folder ${!1}"
+#     echo On exit, $1 value is "${!1}"
+}
+export -f require_dir_var
+
+
+require_dir_var DTA_root "${DTA_ROOT:-${HOME}/preboot/DTA/sedutil}"
+
+require_dir_var mac_root "${DTA_root}/macos"
+
+require_dir_var DTA_project_root "${DTA_PROJECT_ROOT:-${mac_root}/CLI}"
+
+require_dir_var xcw_path "${DTA_project_root}/SEDTools.xcworkspace"
+
+require_dir_var out_root "${HOME}/Desktop"
+
+# export out_root="${HOME}/Desktop"
+# [ -d "${out_root}" ] || fail "Can not find folder ${out_root}"
+
+if [ -n "$1" ]
+then
+    export iso_name="$1"
+    shift
+else
+    fail "Missing parameter iso_name"
+fi
+if [ -n "$1" ]
+then
+    export config="$1"
+    shift
+else
+    fail "Missing parameter config"
+fi
+
+if [ -n "$1" ]
+then
+    export builderfn="$1"
+    shift
+else
+    fail "Missing parameter builderfn"
+fi
+
+export iso_path="${out_root}/${iso_name}"
+export out_path="${out_root}/sedutil.out"
+
+echo "Building ${iso_path} using \"${config}\""
+
+cd "${DTA_project_root}"
+
+utils="SED ToolBox/DTA/macOS/.Utilities/Utility_functions.sh"
+[ -f "${utils}" ] || fail "Can not find utility functions library file ${utils}"
+
+. "${utils}"
+
+
+export derived_root=${HOME}/Library/Developer/Xcode/DerivedData
+if  maybe_sudo_for_cleanup
+then
+    sudo rm -rf ${derived_root}/{DTA,SED,iSED,SEDTools,macos-driver}-*
+    sudo rm -rf "${out_path}"
+    sudo rm -rf build
+fi
+
+function fail {
+    local exit_status=$?
+    echo "Failed $*" 1>&2
+    return $exit_status
+}
+export -f fail
+
+# Invoke builderfn with these definitions:
+#
+#  export DTA_project_root="${HOME}/preboot/sedutil"
+#  export xcw_path="${DTA_project_root}/sedutil.xcworkspace"
+#  export mac_root="${DTA_project_root}/macos"
+#  export out_root="${HOME}/Desktop"
+#  export iso_name="$1"
+#  export config="$2"
+#  export builderfn="$3"
+#  export iso_path="${out_root}/${iso_name}"
+#  export out_path="${out_root}/sedutil.out"
+#  export derived_root=${HOME}/Library/Developer/Xcode/DerivedData
+#
+
+
+
+1>>"${out_path}" 2>&1 echo "Executing in environment:"
+1>>"${out_path}" 2>&1 env
+
+
+if 1>>"${out_path}" 2>&1 "${builderfn}"
+then
+    created_iso="$(find "${derived_root}" -name "${iso_name}")" && \
+    mv -v "${created_iso}" "${iso_path}"                        && \
+    maybe_cleanup
+#    maybe_cleanup                                   && \
+#    hdiutil attach -quiet "${iso_path}"             && \
+#    open "/Volumes/SED ToolBox/macOS.dmg"
+else
+    error=$?
+    echo "Build using $builderfn failed."
+    sleep 2
+    echo tail -20 "${out_path}"
+    tail -20 "${out_path}"
+    exit $error
+fi

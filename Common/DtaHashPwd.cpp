@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
+
+
 #include "os.h"
 #include <iostream>
 #include <iomanip>
@@ -30,60 +32,180 @@ extern "C" {
 #include "pbkdf2.h"
 #include "sha1.h"
 }
-using namespace std;
 
-void DtaHashPassword(vector<uint8_t> &hash, char * password, vector<uint8_t> salt,
-	unsigned int iter, uint8_t hashsize)
+
+#include <stdio.h>
+
+#include "DtaHashPassword.h"
+
+
+// credit
+// https://www.codeproject.com/articles/99547/hex-strings-to-raw-data-and-back
+//
+
+inline unsigned char hex_digit_to_nybble(char ch)
 {
-	LOG(D1) << " Entered DtaHashPassword";
-	// if the hashsize can be > 255 the token overhead logic needs to be fixed
-	assert(1 == sizeof(hashsize));
-	if (253 < hashsize) { LOG(E) << "Hashsize > 253 incorrect token generated"; }
-	
-	hash.clear();
-	// don't hash the devault OPAL password ''
-	if (0 == strnlen(password, 32)) {
-		goto exit;
+	switch (ch)
+	{
+	case '0': return 0x0;
+	case '1': return 0x1;
+	case '2': return 0x2;
+	case '3': return 0x3;
+	case '4': return 0x4;
+	case '5': return 0x5;
+	case '6': return 0x6;
+	case '7': return 0x7;
+	case '8': return 0x8;
+	case '9': return 0x9;
+	case 'a':
+	case 'A': return 0xa;
+	case 'b':
+	case 'B': return 0xb;
+	case 'c':
+	case 'C': return 0xc;
+	case 'd':
+	case 'D': return 0xd;
+	case 'e':
+	case 'E': return 0xe;
+	case 'f':
+	case 'F': return 0xf;
+	default: return 0xff;  // throw std::invalid_argument();
 	}
-	hash.reserve(hashsize + 2); // hope this will prevent reallocation
-	for (uint16_t i = 0; i < hashsize; i++) {
-		hash.push_back(' ');
-	}
-	
-	cf_pbkdf2_hmac((uint8_t *)password, strnlen(password, 256),
-		salt.data(), salt.size(),
-		iter,
-		hash.data(), hash.size(),
-		&cf_sha1);
-
-//	gc_pbkdf2_sha1(password, strnlen(password, 256), (const char *)salt.data(), salt.size(), iter,
-//		(char *)hash.data(), hash.size());
-exit:	// add the token overhead
-	hash.insert(hash.begin(), (uint8_t)hash.size());
-	hash.insert(hash.begin(), 0xd0);
 }
 
-void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d)
+static
+vector<uint8_t> hex2data(char * password)
 {
+	vector<uint8_t> h;
+	h.clear();
+	if ((false))
+		printf("strlen(password)=%d\n", (int)strlen(password));
+	if (strlen(password) != 64)
+	{
+		//LOG(D) << "Hashed Password length isn't 64-byte, no translation";
+		h.clear();
+		for (uint16_t i = 0; i < (uint16_t)strnlen(password, 32); i++)
+			h.push_back((uint8_t)password[i]);
+		return h;
+	}
+
+	//printf("GUI hashed password=");
+	for (uint16_t i=0; i < (uint16_t)strlen(password); i+=2)
+	{
+		h.push_back((uint8_t)(((hex_digit_to_nybble(password[i]) << 4) & 0xf0)
+                             |((hex_digit_to_nybble(password[i + 1]) ) & 0x0f)));
+	}
+	//for (uint16_t i = 0; i < (uint16_t)h.size(); i++)
+	//	fprintf(Output2FILE::Stream(), "%02x", h[i]);
+	//fprintf(Output2FILE::Stream(), "\n");
+	return h;
+}
+
+// hex data to asci Upper case 
+inline unsigned char hex_nibble_to_ascii(uint8_t ch)
+{
+	switch (ch)
+	{
+	case 0: return '0';
+	case 1: return '1';
+	case 2: return '2';
+	case 3: return '3';
+	case 4: return '4';
+	case 5: return '5';
+	case 6: return '6';
+	case 7: return '7';
+	case 8: return '8';
+	case 9: return '9';
+	case 0xA: return 'A';
+	case 0xB: return 'B';
+	case 0xC: return 'C';
+	case 0xD: return 'D';
+	case 0xE: return 'E';
+	case 0xF: return 'F';
+	default: return '?';  // throw std::invalid_argument();
+	}
+}
+
+void data2ascii(vector<uint8_t> &h , vector<uint8_t> &password)
+{
+	// 32-byte hash hex to 64 byte ascii 
+	for (uint16_t i = 0; i < h.size(); i += 1)
+	{
+		password.push_back(hex_nibble_to_ascii((h[i] >> 4) & 0x0f));
+		password.push_back(hex_nibble_to_ascii(h[i] & 0x0f));
+		//password[i * 2] = hex_nibble_to_ascii((h[i]>>4) & 0x0f); // high nibble
+		//password[i * 2 + 1] = hex_nibble_to_ascii(h[i] & 0x0f); // low nibble
+	}
+#if 0
+	printf("32-byte hex to 64-byte ascii : ");
+	for (uint16_t i = 0; i < password.size(); i++)
+        fprintf(Output2FILE::Stream(), "%02X", password[i]);
+    fprintf(Output2FILE::Stream(), "\n");
+#endif
+
+}
+
+
+void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int iter)
+{
+
     LOG(D1) << " Entered DtaHashPwd";
-    char *serNum;
 
-    if (d->no_hash_passwords) {
-        hash.clear();
-	for (uint16_t i = 0; i < strnlen(password, 32); i++)
-		hash.push_back(password[i]);
-	// add the token overhead
-	hash.insert(hash.begin(), (uint8_t)hash.size());
-	hash.insert(hash.begin(), 0xd0);
-	LOG(D1) << " Exit DtaHashPwd";
-	return;
+	//d->no_hash_passwords = true; // force no hashing for debug purpose
+	IFLOG(D4) fprintf(Output2FILE::Stream(), "d->translate_req = %d\n", d->translate_req);
+	if (d->no_hash_passwords) {
+		if (d->translate_req) { // host-hashed password, convert 64-byte ascii into 32-byte data ???????
+			hash = hex2data(password); 
+		}
+		else {
+			hash.clear();
+			for (uint16_t i = 0; i < strnlen(password, 32); i++)
+				hash.push_back((uint8_t)password[i]);
+		}
+		// add the token overhead
+		hash.insert(hash.begin(), (uint8_t)hash.size());
+		hash.insert(hash.begin(), 0xd0);
+		LOG(D1) << " Exit DtaHashPwd";
+		return;
     }
-    serNum = d->getSerialNum();
-    vector<uint8_t> salt(serNum, serNum + 20);
+
+#define USE_PASSWORD_SALT
+#if defined( USE_PASSWORD_SALT )
+    vector<uint8_t> salt(d->getPasswordSalt());
+#else // ! defined( USE_PASSWORD_SALT )
+    char serialNum[21];
+    bzero(serialNum, sizeof(serialNum));
+    strncpy(serialNum, d->getSerialNum(),sizeof(serialNum));
+    vector<uint8_t> salt(serialNum,serialNum+sizeof(serialNum)-1);
+#endif // defined( USE_PASSWORD_SALT )
+
     //	vector<uint8_t> salt(DEFAULTSALT);
-    DtaHashPassword(hash, password, salt);
-    LOG(D1) << " Exit DtaHashPwd"; // log for hash timing
+	if (iter == 75000) {
+		DtaHashPassword(hash, password, salt);
+	} else {
+		DtaHashPassword(hash, password, salt, iter);
+	}
+
+    // non-printable char cause screen error
+//    IFLOG(D4) fprintf(Output2FILE::Stream(), "password as string =%s", password);
+//    IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "password:\n");
+    for (size_t i = 0; i < strlen(password); i++) IFLOG(D4) fprintf(Output2FILE::Stream(), "%02X", password[i]);
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "salt:\n");
+	for (size_t i = 0; i < salt.size(); i++) IFLOG(D4) fprintf(Output2FILE::Stream(), "%02X", salt[i]);
+	IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+	IFLOG(D4) fprintf(Output2FILE::Stream(), "salt as string =%s", salt.data());
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+    
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "Hashed password size = %lu",hash.size());
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+    IFLOG(D4) fprintf(Output2FILE::Stream(), "hashed password:\n");
+	for (size_t i = 0; i < hash.size(); i++) IFLOG(D4) fprintf(Output2FILE::Stream(), "%02X", hash[i]);
+	IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
+
 }
+
 
 struct PBKDF_TestTuple
 {
@@ -92,6 +214,8 @@ struct PBKDF_TestTuple
     const char *Password, *Salt, *hexDerivedKey;
 };
 
+
+static
 int testresult(std::vector<uint8_t> &result, const char * expected, size_t len) {
 	char work[50];
 	if (len > 50) return 1;
@@ -106,6 +230,7 @@ int testresult(std::vector<uint8_t> &result, const char * expected, size_t len) 
 	return memcmp(result.data()+2, work, len);
 }
 
+static
 int Testsedutil(const PBKDF_TestTuple *testSet, unsigned int testSetSize)
 {
     int pass = 1;
@@ -116,7 +241,7 @@ int Testsedutil(const PBKDF_TestTuple *testSet, unsigned int testSetSize)
         hash.clear();
         seaSalt.clear();
         for (uint16_t j = 0; j < strnlen(tuple.Salt, 255); j++) {
-            seaSalt.push_back(tuple.Salt[j]);
+            seaSalt.push_back((uint8_t)tuple.Salt[j]);
         }
 		printf("Password %s Salt %s Iterations %i Length %i\n", (char *)tuple.Password,
 			(char *) tuple.Salt, tuple.iterations, tuple.hashlen);
@@ -127,6 +252,7 @@ int Testsedutil(const PBKDF_TestTuple *testSet, unsigned int testSetSize)
 
     return pass;
 }
+
 int TestPBKDF2()
 {
     int pass = 1;
@@ -158,4 +284,3 @@ int TestPBKDF2()
         cout << "**FAILED**\n";
     return 0;
 }
-

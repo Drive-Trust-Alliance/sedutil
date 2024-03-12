@@ -39,6 +39,7 @@ build/
 *.tmp
 *.tmp_proj
 *.log
+*.vs
 *.vspscc
 *.vssscc
 .builds
@@ -196,3 +197,8 @@ Doxygen/
 windows/installer/Output/
 # hacked exe files for different flavors
 windows/installer/exe
+# Xcode
+## User settings
+xcuserdata/
+
+Version.h

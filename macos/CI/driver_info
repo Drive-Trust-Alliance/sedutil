@@ -1,0 +1,4 @@
+#!/bin/bash
+DRIVER_BUNDLE_PATH=/Library/Extensions/BrightPlazaTPer.kext
+DRIVER_BUNDLE_IDENTIFIER="$(plutil -extract "CFBundleIdentifier" raw "${DRIVER_BUNDLE_PATH}/Contents/Info.plist")"
+

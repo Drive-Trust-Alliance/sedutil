@@ -1,0 +1,5 @@
+#!/bin/bash
+. driver_info
+[[ -d "${DRIVER_BUNDLE_PATH}" ]] || exit 1
+plutil -extract "CFBundleVersion" raw "${DRIVER_BUNDLE_PATH}/Contents/Info.plist"
+

@@ -1,0 +1,11 @@
+#!/bin/bash
+version="${1:-Release}"
+project="${2:-SED ToolBox}"
+pkg="${3:-DTATools}"
+
+attach_iso "${version}" "${project}"
+pkg="/Volumes/SED software by Drive Trust Alliance/${pkg}.pkg"
+[ -f "${pkg}" ] && open -W "${pkg}"
+detach_iso "${version}" "${project}"
+exit $?
+

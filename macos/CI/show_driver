@@ -1,0 +1,5 @@
+#!/bin/bash 
+# set -xv
+. driver_info
+2>/dev/null kmutil showloaded | fgrep "${DRIVER_BUNDLE_IDENTIFIER}"
+
