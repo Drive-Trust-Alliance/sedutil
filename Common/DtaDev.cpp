@@ -194,6 +194,12 @@ void DtaDev::discovery0()
             disk_info.OPAL20_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
             disk_info.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
             break;
+        case FC_BLOCKSIDAUTH: /* BLOCK SID AUTHENTICATION */
+            disk_info.BlockSIDAuthentication = 1;
+            disk_info.BlockSIDAuthentication_SIDValueState = body->blockSIDAuthentication.sidValueState;
+            disk_info.BlockSIDAuthentication_SIDBlockedState = body->blockSIDAuthentication.sidBlockedState;
+            disk_info.BlockSIDAuthentication_HardwareReset = body->blockSIDAuthentication.hardwareReset;
+            break;
         default:
 			if (0xbfff < (SWAP16(body->TPer.featureCode))) {
 				// silently ignore vendor specific segments as there is no public doc on them
@@ -297,6 +303,15 @@ void DtaDev::puke()
 		cout << ", Range Crossing = " << (disk_info.OPAL20_rangeCrossing ? "Y" : "N");
 		cout << std::endl;
 	}
+
+	if (disk_info.BlockSIDAuthentication) {
+        cout << "Block SID Authentication (" << HEXON(4) << FC_BLOCKSIDAUTH << ")" << HEXOFF << std::endl;
+        cout << "    SID equals MSID = " << (disk_info.BlockSIDAuthentication_SIDValueState ? "N, " : "Y, ")
+            << "SID blocked = " << (disk_info.BlockSIDAuthentication_SIDBlockedState ? "Y, " : "N, ")
+            << "HW Reset can clear  = " << (disk_info.BlockSIDAuthentication_HardwareReset ? "Y" : "N")
+            << std::endl;
+	}
+
 	if (disk_info.Unknown)
 		cout << "**** " << (uint16_t)disk_info.Unknown << " **** Unknown function codes IGNORED " << std::endl;
 }
