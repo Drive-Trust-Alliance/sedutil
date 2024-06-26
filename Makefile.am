@@ -28,6 +28,7 @@ SEDUTIL_LINUX_CODE = \
 	linux/Version.h linux/os.h linux/DtaDevLinuxDrive.h \
 	linux/DtaDevLinuxNvme.cpp linux/DtaDevLinuxSata.cpp \
 	linux/DtaDevLinuxNvme.h linux/DtaDevLinuxSata.h \
+	linux/DtaDevLinuxNvmeMi.h linux/DtaDevLinuxNvmeMi.cpp \
 	linux/DtaDevOS.cpp linux/DtaDevOS.h 
 sbin_PROGRAMS = sedutil-cli linuxpba
 sedutil_cli_SOURCES = Common/sedutil.cpp Common/DtaOptions.cpp \

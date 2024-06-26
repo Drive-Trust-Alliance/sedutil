@@ -11,6 +11,10 @@ AC_PROG_CXX
 AC_PROG_CC
 
 # Checks for libraries.
+AC_CHECK_LIB(nvme-mi, nvme_mi_create_root)
+
+# libnvme-mi uses meson build tool which enables D_FILE_OFFSET_BITS=64 by default
+AC_SYS_LARGEFILE
 
 # Checks for header files.
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h malloc.h stdint.h stdlib.h string.h sys/ioctl.h unistd.h])
@@ -22,6 +26,7 @@ AC_TYPE_SIZE_T
 AC_TYPE_UINT16_T
 AC_TYPE_UINT32_T
 AC_TYPE_UINT8_T
+
 
 # Checks for library functions.
 AC_CHECK_FUNCS([memset])
