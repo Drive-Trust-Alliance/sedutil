@@ -23,4 +23,4 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 DtaDevOpal2::~DtaDevOpal2(){}
 
-uint16_t DtaDevOpal2::comID() { return disk_info.OPAL20_basecomID; }
+uint16_t DtaDevOpal2::comID() { return device_info.OPAL20_basecomID; }

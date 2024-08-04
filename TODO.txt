@@ -1,0 +1,1 @@
+Nonexistent devices somehow give "No such device" as well as "Invalid or unsupported device"

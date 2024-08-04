@@ -18,12 +18,6 @@
 
    * C:E********************************************************************** */
 
-#include <cstdint>
-#include <cstring>
-#include "os.h"
-#include "DtaEndianFixup.h"
-#include "DtaHexDump.h"
-#include "DtaDevOSDrive.h"
 #include "DtaStructures.h"
 
 extern

@@ -42,15 +42,30 @@
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
-#include "DtaOptions.h"
 
 #define NOLOGGING 0
+
+/** Output modes */
+typedef enum _sedutiloutput {
+    sedutilNormal,
+    sedutilReadable,
+    sedutilJSON,
+    sedutilJSONCompact
+} sedutiloutput;
+
+#define DEFAULT_OUTPUT_FORMAT sedutilReadable
+
+/* Default */
+extern sedutiloutput outputFormat;
+
 
 inline std::string NowTime();
 
 enum TLogLevel {
     E, W, I, D, D1, D2, D3, D4
 };
+extern TLogLevel& CLogLevel;
+extern TLogLevel& RCLogLevel;
 
 template <typename T>
 class Log {
@@ -164,8 +179,11 @@ private:
     sedutiloutput outputformat;
 };
 
+
 template <typename T>
 RLog<T>::RLog() {
+    curlevel = RCLogLevel;
+    outputformat = outputFormat;
 }
 
 template <typename T>
@@ -318,9 +336,6 @@ class FILELOG_DECLSPEC RCLog : public RLog<Output2FILE> {
 #endif
 
 
-extern "C" sedutiloutput outputFormat;
-extern TLogLevel& CLogLevel;
-extern TLogLevel& RCLogLevel;
 
 // This version allows an else part
 #define IFLOG(level) \
@@ -333,13 +348,6 @@ extern TLogLevel& RCLogLevel;
 	else RCLog().Get(level, outputFormat)
 #define	LOG LOGX
 
-extern sedutiloutput outputFormat;
-
-#define	LOGX(level) \
-	if (level > CLOG_MAX_LEVEL) ;\
-	else if (level > RCLog::Level() || !Output2FILE::Stream()) ; \
-	else RCLog().Get(level, outputFormat)
-#define	LOG LOGX
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 
@@ -347,16 +355,18 @@ extern sedutiloutput outputFormat;
 #include <cstdlib>
 
 inline std::string NowTime() {
-    const int MAX_LEN = 200;
+    constexpr int MAX_LEN = 200;
     char buffer[MAX_LEN];
     if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0,
-            "HH':'mm':'ss", buffer, MAX_LEN) == 0)
+            "HH':'mm':'ss", &buffer[0], MAX_LEN) == 0)
         return "Error in NowTime()";
 
     char result[100] = {0};
-    static DWORD first = GetTickCount();
-    sprintf_s(result, 99, "%s.%03ld", buffer, (long) (GetTickCount() - first) % 1000);
-    return result;
+    static DWORD first = static_cast<DWORD>(GetTickCount64());
+    sprintf_s(result, 99, "%s.%03ld",
+              &buffer[0],
+              static_cast<long>(static_cast<DWORD>(GetTickCount64())-first) % 1000);
+    return std::string(&result[0]);
 }
 
 #else
@@ -381,5 +391,12 @@ inline std::string NowTime() {
 
 extern void turnOffLogging(void);
 extern void SetLoggingLevel(int loggingLevel);
+
+
+/** iomanip commands to hexdump a field */
+#include <iomanip>
+#define HEXON(x) "0x" << std::hex << std::setw(x) << std::setfill('0')
+/** iomanip command to return to standard ascii output */
+#define HEXOFF std::dec << std::setw(0) << std::setfill(' ')
 
 #endif //__LOG_H__

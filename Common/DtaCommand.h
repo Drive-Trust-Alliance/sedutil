@@ -123,11 +123,11 @@ public:
 	uint16_t outputBufferSize();
 private:
     /** return a pointer to the command buffer */
-    uint8_t commandbuffer[MAX_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT]; /**< buffer allocation allow for 1k alignment */
+    uint8_t commandbuffer[MAX_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT] = { 0 }; /**< buffer allocation allow for 1k alignment */
 	void * getCmdBuffer();
     size_t getCmdBufferSize() {return MAX_BUFFER_LENGTH;}
     /** return a pointer to the response buffer. */
-    uint8_t responsebuffer[MIN_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT]; /**< buffer allocation allow for 1k alignment */
+    uint8_t responsebuffer[MIN_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT] = { 0 }; /**< buffer allocation allow for 1k alignment */
 	void * getRespBuffer();
     size_t getRespBufferSize() {return MIN_BUFFER_LENGTH;}
 	uint8_t *cmdbuf;  /**< Pointer to the command buffer */

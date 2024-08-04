@@ -19,30 +19,11 @@
    * C:E********************************************************************** */
 
 
-#include "DtaDev.h"
-#include "DtaDevOS.h"
-
-
-/** Factory functions
- *
- * Static class member that passes through DtaDev instantiaion to DtaDevOS.
- *
- */
-
-
-uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * & device, bool genericIfNotTPer)
-{
-  DtaDevOS * d;
-  uint8_t result = DtaDevOS::getDtaDevOS(devref, &d, genericIfNotTPer);
-  if (result == DTAERROR_SUCCESS) {
-    device = static_cast<DtaDev *>(d);
-  }
-  return result;
-}
-
-
-
+#include "os.h"
 #include "log.h"
+
+
+
 #include "DtaDevOpal1.h"
 #include "DtaDevOpal2.h"
 #include "DtaDevEnterprise.h"
@@ -54,24 +35,25 @@ uint8_t DtaDev::getDtaDev(const char * devref, DtaDev * & device, bool genericIf
  *
  * Static class members that support instantiation of subclass members
  * with the subclass switching logic localized here for easier maintenance.
- *
- * This method is invoked after the instantiation process for `drive`
- * has initialized it and filled out the device information in `di`.
  */
 
-
-DtaDevOS* DtaDevOS::getDtaDevOS(const char * devref,
-                                DtaDevOSDrive * drive,
+/**
+ * This method is invoked after the instantiation process for `drive`
+ * has initialized it and filled out the device information in `di`.
+ *
+ * The initial test for whether the drive is a `Tper` (`drive->discovery0(di)`)
+ * could potentially also as a side-effect further fill out fields in `di`.
+ */
+DtaDev* DtaDev::getDtaDev(const char * devref,
+                                DtaDrive * drive,
                                 DTA_DEVICE_INFO & di,
                                 bool genericIfNotTPer) {
-  if (DTAERROR_SUCCESS == drive->discovery0(di)) {  // drive responds to most basic IF_RECV
+  if (DTAERROR_SUCCESS == drive->discovery0(di)) {  // drive responds to most basic TRUSTED_RECEIVE
     if (di.OPAL20)        return new DtaDevOpal2(devref, drive, di);
     if (di.OPAL10)        return new DtaDevOpal1(devref, drive, di);
     if (di.Enterprise)    return new DtaDevEnterprise(devref, drive, di);
     //  if (di.RUBY) ...  etc.
   }
   if (genericIfNotTPer) return new DtaDevGeneric(devref, drive, di);
-
-  LOG(E) << "Unknown OPAL SSC ";
   return NULL;
 }

@@ -18,6 +18,8 @@ This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrus
 
    * C:E********************************************************************** */
 #pragma once
+#include <stdint.h>
+
 #if !defined(__DTA_LEXICON__H_INCLUDED__)
 #define __DTA_LEXICON__H_INCLUDED__
 /*

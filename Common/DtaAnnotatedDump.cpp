@@ -21,7 +21,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "os.h"
 #include <stdio.h>
-#include <log/log.h>
+#include "log.h"
 
 #include <iostream>
 #include <fstream>
@@ -350,10 +350,10 @@ uint8_t DtaAnnotatedDump(ATACOMMAND cmd, void * buffer, uint32_t bufferlen)
     FILE * stream = stderr;
 
     // hello
-    if (cmd == IF_RECV)
-        fprintf(stream, "<< IF_RECV >>\n");
-    else if (cmd == IF_SEND)
-        fprintf(stream, "<< IF_SEND >>\n");
+    if (cmd == TRUSTED_RECEIVE)
+        fprintf(stream, "<< TRUSTED_RECEIVE >>\n");
+    else if (cmd == TRUSTED_SEND)
+        fprintf(stream, "<< TRUSTED_SEND >>\n");
     else
         fprintf(stream, "<< 0x%2.2X\n >>\n", cmd);
 

@@ -21,30 +21,11 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * also supports the Opal 1.0 SSC
  */
 
-#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
-#else // Windows
-#pragma warning(disable: 4224) //C2224: conversion from int to char , possible loss of data
-#pragma warning(disable: 4244) //C4244: 'argument' : conversion from 'uint16_t' to 'uint8_t', possible loss of data
-#pragma warning(disable: 4996)
-#pragma comment(lib, "rpcrt4.lib")  // UuidCreate - Minimum supported OS Win 2000
-#endif
 
 #include "os.h"
-#include <log/log.h>
 
-#if defined(__unix__) || defined(linux) || defined(__linux__) || defined(__gnu_linux__) || defined(__APPLE__)
-#else // Windows
-#include <Windows.h>
-#include "compressapi-8.1.h"
-#include "sedsize.h" 
-#endif
-
-#include <stdio.h>
 #include <iostream>
 #include <fstream>
-#include <iomanip>
-
-#include <signal.h>
 
 #include "DtaDevOpal.h"
 #include "DtaCommand.h"
@@ -60,7 +41,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	uint32_t eofpos;
 	ifstream pbafile;
 
-	if (disk_info.enclosure) {
+	if (device_info.enclosure) {
 		// do not change host property for enclosure
 		adj_host = 0;
 		blockSize = 1950;
@@ -68,7 +49,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	}
 	else
 	if (Tper_sz_MaxComPacketSize > IO_BUFFER_LENGTH_HI) adj_host = 1; else adj_host = 2;
-	if (!disk_info.enclosure) { // only if not enclosure need recovery of property
+	if (!device_info.enclosure) { // only if not enclosure need recovery of property
 		lastRC = properties();
 		if (lastRC != 0) {
 			LOG(E) << "adjust host property fail ; go back to MINIMUM packet size";
@@ -83,7 +64,7 @@ uint8_t DtaDevOpal::loadPBA(char * password, char * filename) {
 	}
 	vector <uint8_t> buffer, lengthtoken; 
 
-	if (!disk_info.enclosure) { // only if not enclosure need packet size change 
+	if (!device_info.enclosure) { // only if not enclosure need packet size change 
 		uint32_t tperMaxPacket = Tper_sz_MaxComPacketSize;
 		uint32_t tperMaxToken = Tper_sz_MaxIndTokenSize;
         

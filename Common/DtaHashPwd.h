@@ -18,6 +18,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
+#include "os.h"
 #include <vector>
 class DtaDev;
 
@@ -34,5 +35,5 @@ using namespace std;
  */
 void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * device, unsigned int iter = 75000);
 /** Test the hshing function using publicly available test cased and report */
-int TestPBKDF2();
+uint8_t TestPBKDF2();
 void data2ascii(vector<uint8_t> &h, vector<uint8_t>  &password);

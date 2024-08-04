@@ -29,9 +29,6 @@ This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrus
 
 using namespace std;
 
-/* Default to output that includes timestamps and goes to stderr*/
-sedutiloutput outputFormat = sedutilNormal;
-
 int main(int argc, char** argv) {
     
     CLog::Level() = CLog::FromInt(2);

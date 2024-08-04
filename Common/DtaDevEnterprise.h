@@ -19,23 +19,16 @@
 
    * C:E********************************************************************** */
 #pragma once
-class DtaCommand;
-class DtaSession;
 
-#include "os.h"
-#include "DtaOptions.h"
 #include "DtaDev.h"
-#include "DtaDevOS.h"
 #include "DtaStructures.h"
 #include "DtaLexicon.h"
-#include "DtaResponse.h"   // wouldn't take class
-#include <vector>
 
 using namespace std;
 /** Device Class represents a disk device, conforming to the TCG Enterprise standard
  */
 
-class DtaDevEnterprise : public DtaDevOS {
+class DtaDevEnterprise : public DtaDev {
 public:
   /** Inform TPer of the communication propertied I wiah to use and
    * receive the TPer maximum values
@@ -317,8 +310,8 @@ public:
   uint8_t getMSID(string& MSID);
 
   // /** Short-circuit routine re-uses initialized drive and disk_info */
-  DtaDevEnterprise(const char * devref, DtaDevOSDrive * drive, DTA_DEVICE_INFO& di)
-    : DtaDevOS(devref, drive, di)
+  DtaDevEnterprise(const char * devref, DtaDrive * drive, DTA_DEVICE_INFO& di)
+    : DtaDev(devref, drive, di)
   {} ;
 
   /** Default destructor, does nothing*/

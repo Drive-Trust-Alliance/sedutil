@@ -43,12 +43,12 @@ inline unsigned char hex_digit_to_nybble(char ch)
 
 vector <uint8_t>  ugenv(UUID &uuid, uint8_t * strfat)
 {
-	UuidCreate(&uuid);
+	(void)UuidCreate(&uuid);
 	char *str;
 	vector <uint8_t> u;
 
 	u.clear();
-	UuidToStringA(&uuid, (RPC_CSTR*)&str);
+	(void)UuidToStringA(&uuid, (RPC_CSTR*)&str);
 	cout << str << endl;
 
 	for (int i = 0; i < 4; i++) {

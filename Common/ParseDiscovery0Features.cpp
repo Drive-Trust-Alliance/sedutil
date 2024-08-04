@@ -24,7 +24,7 @@
 #include "log.h"
 #include "DtaEndianFixup.h"
 #include "DtaHexDump.h"
-#include "DtaDevOSDrive.h"
+#include "DtaDrive.h"
 
 #include "ParseDiscovery0Features.h"
 

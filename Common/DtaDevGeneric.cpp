@@ -22,22 +22,12 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #pragma warning(disable:4100)
 #endif
 
-#include "os.h"
-#include <stdio.h>
-#include <log/log.h>
-
+//#include "os.h"
+//#include <stdio.h>
+//#include "log.h"
+//
 #include <iostream>
-#include <fstream>
-#include<iomanip>
-#include "DtaOptions.h"
 #include "DtaDevGeneric.h"
-#include "DtaHashPwd.h"
-#include "DtaEndianFixup.h"
-#include "DtaStructures.h"
-#include "DtaCommand.h"
-#include "DtaResponse.h"
-#include "DtaSession.h"
-#include "DtaHexDump.h"
 
 using namespace std;
 

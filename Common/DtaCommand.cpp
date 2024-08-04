@@ -19,7 +19,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
  * C:E********************************************************************** */
 #include "os.h"
 #include <stdio.h>
-#include <log/log.h>
+#include "log.h"
 #include "DtaCommand.h"
 #include "DtaEndianFixup.h"
 #include "DtaHexDump.h"

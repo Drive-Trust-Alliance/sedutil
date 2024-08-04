@@ -2,15 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "container:../..">
-   </FileRef>
-   <FileRef
-      location = "group:../../../macos/CI">
+      location = "absolute:SEDUtilities.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:SEDFrameworks.xcodeproj">
    </FileRef>
    <FileRef
-      location = "absolute:SEDUtilities.xcodeproj">
+      location = "absolute:/Users/scott/preboot/DTA">
    </FileRef>
 </Workspace>

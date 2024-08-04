@@ -11,6 +11,7 @@ AC_PROG_CXX
 AC_PROG_CC
 
 # Checks for libraries.
+AC_SEARCH_LIBS([systemd])
 
 # Checks for header files.
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h malloc.h stdint.h stdlib.h string.h sys/ioctl.h unistd.h])
@@ -25,10 +26,11 @@ AC_TYPE_UINT8_T
 
 # Checks for library functions.
 AC_CHECK_FUNCS([memset])
+AC_CHECK_FUNCS([sd_device_unref])
 
 # use automake
 AM_INIT_AUTOMAKE([-Wall -Werror])
-AM_SILENT_RULES 
+AM_SILENT_RULES
 AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT

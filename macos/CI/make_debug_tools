@@ -1,0 +1,27 @@
+#!/bin/bash
+function pre {
+    sudo xcode-select -s /Applications/Xcode.app
+}
+
+function post {
+    return
+}
+
+function unmount {
+    2>/dev/null ls -1d "/Volumes/Self*" "/Volumes/SED*" || sleep 15
+    sync
+    2>/dev/null ls -1d "/Volumes/Self*" "/Volumes/SED*" || return 0
+    for f in "/Volumes/Self*" "/Volumes/SED*" ; do diskutil unmount $f ; done
+    sync
+    sleep 10
+    sync
+}
+
+
+
+asroot true
+echo "Starting build ..." &&
+    pre
+    ./make_debug_tools_iso                  &&  unmount
+    post
+echo "Done"

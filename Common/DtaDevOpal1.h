@@ -18,7 +18,7 @@
 
    * C:E********************************************************************** */
 #pragma once
-#include "os.h"
+
 #include "DtaDevOpal.h"
 
 using namespace std;
@@ -36,7 +36,7 @@ public:
   uint16_t comID();
 
   // /** Short-circuit routine re-uses initialized drive and disk_info */
-  DtaDevOpal1(const char * devref, DtaDevOSDrive * drive, DTA_DEVICE_INFO& di)
+  DtaDevOpal1(const char * devref, DtaDrive * drive, DTA_DEVICE_INFO& di)
     : DtaDevOpal(devref, drive, di)
   {} ;
 

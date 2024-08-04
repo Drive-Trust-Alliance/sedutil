@@ -41,6 +41,7 @@
 		D20A961929A706C800B2FCF2 /* sedutil-cli in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28CFD6028E2C1AF00A33B00 /* sedutil-cli */; };
 		D20A961A29A706CE00B2FCF2 /* reenumerate in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28CFD6128E2C1AF00A33B00 /* reenumerate */; };
 		D22C11BC2B38DA02003825C7 /* SEDKernelInterface.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956ED2B17E95600E00FE6 /* SEDKernelInterface.framework */; };
+		D23055512BC07FD100A1E92F /* DtaOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D23055502BC07FD100A1E92F /* DtaOptions.cpp */; };
 		D2486D772B186060002D347E /* sedutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2486D762B18605A002D347E /* sedutil.cpp */; };
 		D26904CE28D7A17B0095769E /* reenumerate.c in Sources */ = {isa = PBXBuildFile; fileRef = D26904CD28D7A17B0095769E /* reenumerate.c */; };
 		D28B7E542A41244D00582735 /* Bright Plaza CA.pem in CopyFiles */ = {isa = PBXBuildFile; fileRef = D28B7E4D2A41237600582735 /* Bright Plaza CA.pem */; };
@@ -51,11 +52,8 @@
 		D2C956EB2B17E8EF00E00FE6 /* BrightPlazaTPer.kext in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2C956EA2B17E8EF00E00FE6 /* BrightPlazaTPer.kext */; };
 		D2DCB6EC2B92706F005B423F /* SEDKernelInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2C956ED2B17E95600E00FE6 /* SEDKernelInterface.framework */; };
 		D2EBEF092B2835FA009B4FF6 /* sedutil.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2EBEF082B2835D9009B4FF6 /* sedutil.framework */; };
-		D2EBEF0A2B2835FA009B4FF6 /* log.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2EBEF072B2835D8009B4FF6 /* log.framework */; };
 		D2EBEF0B2B2835FA009B4FF6 /* oui.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2EBEF052B2835D6009B4FF6 /* oui.framework */; };
 		D2EBEF0C2B2835FA009B4FF6 /* cifra.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D2EBEF062B2835D7009B4FF6 /* cifra.framework */; };
-		D2F14B8B2B340B7A0070A95B /* log.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2EBEF072B2835D8009B4FF6 /* log.framework */; };
-		D2F14B8C2B340B7A0070A95B /* log.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D2EBEF072B2835D8009B4FF6 /* log.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,7 +99,6 @@
 			files = (
 				D22C11BC2B38DA02003825C7 /* SEDKernelInterface.framework in CopyFiles */,
 				D2EBEF092B2835FA009B4FF6 /* sedutil.framework in CopyFiles */,
-				D2EBEF0A2B2835FA009B4FF6 /* log.framework in CopyFiles */,
 				D2EBEF0B2B2835FA009B4FF6 /* oui.framework in CopyFiles */,
 				D2EBEF0C2B2835FA009B4FF6 /* cifra.framework in CopyFiles */,
 			);
@@ -153,7 +150,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				D2F14B8C2B340B7A0070A95B /* log.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -261,6 +257,7 @@
 		D20A971029A8025600B2FCF2 /* build_disk_image.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build_disk_image.sh; sourceTree = "<group>"; };
 		D20A971129A8025600B2FCF2 /* distribution.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = distribution.xml; sourceTree = "<group>"; };
 		D20A972329A8025600B2FCF2 /* DTABundles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DTABundles.plist; sourceTree = "<group>"; };
+		D23055502BC07FD100A1E92F /* DtaOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaOptions.cpp; path = ../../../Common/DtaOptions.cpp; sourceTree = "<group>"; };
 		D2486D762B18605A002D347E /* sedutil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sedutil.cpp; sourceTree = "<group>"; };
 		D24E86672B1AD6F10098FE03 /* DtaOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaOptions.h; sourceTree = "<group>"; };
 		D26496E62A36849E00F09A67 /* extract_configuration_type_from_Xcode_build_environment */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = extract_configuration_type_from_Xcode_build_environment; sourceTree = "<group>"; };
@@ -281,7 +278,7 @@
 		D28B7E7E2A4125B100582735 /* Install_daemon.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = Install_daemon.sh; sourceTree = "<group>"; };
 		D28CFD6028E2C1AF00A33B00 /* sedutil-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "sedutil-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D28CFD6128E2C1AF00A33B00 /* reenumerate */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = reenumerate; sourceTree = BUILT_PRODUCTS_DIR; };
-		D2A3E62B2B1B03AB00F9CCF8 /* DtaConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DtaConstants.h; path = ../../../macos/DtaConstants.h; sourceTree = "<group>"; };
+		D2A3E62B2B1B03AB00F9CCF8 /* DtaConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DtaConstants.h; path = ../../../Common/DtaConstants.h; sourceTree = "<group>"; };
 		D2A3E62C2B1B04CB00F9CCF8 /* DtaDev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDev.h; sourceTree = "<group>"; };
 		D2A3E62D2B1B04F600F9CCF8 /* DtaStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaStructures.h; sourceTree = "<group>"; };
 		D2A3E6312B1B08CC00F9CCF8 /* DtaDevOpalLoadPBA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevOpalLoadPBA.cpp; sourceTree = "<group>"; };
@@ -314,7 +311,6 @@
 		D2EBEF012B28311C009B4FF6 /* DtaExtensionOptionEnumerations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaExtensionOptionEnumerations.h; sourceTree = "<group>"; };
 		D2EBEF052B2835D6009B4FF6 /* oui.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = oui.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2EBEF062B2835D7009B4FF6 /* cifra.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = cifra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D2EBEF072B2835D8009B4FF6 /* log.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = log.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2EBEF082B2835D9009B4FF6 /* sedutil.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = sedutil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2F0B47F2A59F8DE002E54A9 /* 02_Uninstall_SEDAccess.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 02_Uninstall_SEDAccess.sh; path = "SED ToolBox/DTA/macOS/.Utilities/02_Uninstall_SEDAccess.sh"; sourceTree = SOURCE_ROOT; };
 		D2F0B4802A59F926002E54A9 /* 51_Uninstall_security_items.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = 51_Uninstall_security_items.sh; path = "SED ToolBox/DTA/macOS/.Utilities/51_Uninstall_security_items.sh"; sourceTree = SOURCE_ROOT; };
@@ -337,7 +333,6 @@
 			files = (
 				D2DCB6EC2B92706F005B423F /* SEDKernelInterface.framework in Frameworks */,
 				D2C956E42B179B0E00E00FE6 /* sedutil.framework in Frameworks */,
-				D2F14B8B2B340B7A0070A95B /* log.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -654,11 +649,11 @@
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D23055502BC07FD100A1E92F /* DtaOptions.cpp */,
 				D2F223392B34F8A9006EDA4A /* Version.h */,
 				D2A3E62B2B1B03AB00F9CCF8 /* DtaConstants.h */,
 				D2C956ED2B17E95600E00FE6 /* SEDKernelInterface.framework */,
 				D2EBEF082B2835D9009B4FF6 /* sedutil.framework */,
-				D2EBEF072B2835D8009B4FF6 /* log.framework */,
 				D2EBEF052B2835D6009B4FF6 /* oui.framework */,
 				D2EBEF062B2835D7009B4FF6 /* cifra.framework */,
 				D2C956EA2B17E8EF00E00FE6 /* BrightPlazaTPer.kext */,
@@ -754,7 +749,7 @@
 				KnownAssetTags = (
 					New,
 				);
-				LastUpgradeCheck = 1510;
+				LastUpgradeCheck = 1540;
 				ORGANIZATIONNAME = "Bright Plaza, Inc.";
 				TargetAttributes = {
 					D20A95F629A6E9E600B2FCF2 = {
@@ -884,6 +879,7 @@
 			files = (
 				D2A3E63A2B1B08CC00F9CCF8 /* DtaAuthorizeSedutilExecution.cpp in Sources */,
 				D2A3E6362B1B08CC00F9CCF8 /* DtaDevOpalLoadPBA.cpp in Sources */,
+				D23055512BC07FD100A1E92F /* DtaOptions.cpp in Sources */,
 				D2486D772B186060002D347E /* sedutil.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1177,6 +1173,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
@@ -1190,6 +1187,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
@@ -1203,6 +1201,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
@@ -1216,6 +1215,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
@@ -1229,6 +1229,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
@@ -1242,6 +1243,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
@@ -1255,6 +1257,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
@@ -1268,6 +1271,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
@@ -1281,6 +1285,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
@@ -1294,6 +1299,7 @@
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				LD_RUNPATH_SEARCH_PATHS = /Library/Frameworks;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.brightplaza.sedutil-cli";
 				USER_HEADER_SEARCH_PATHS = pbkdf2;
 			};
@@ -1390,6 +1396,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.5;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				MTL_FAST_MATH = YES;
@@ -1492,6 +1499,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -1594,6 +1602,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.5;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				MTL_FAST_MATH = YES;
@@ -1698,6 +1707,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.5;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				MTL_FAST_MATH = YES;
@@ -1803,6 +1813,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.5;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				MTL_FAST_MATH = YES;
@@ -1902,6 +1913,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -1999,6 +2011,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -2099,6 +2112,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -2198,6 +2212,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.5;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				MTL_FAST_MATH = YES;
@@ -2296,6 +2311,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MARKETING_VERSION = 2.0.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;

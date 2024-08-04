@@ -13,30 +13,57 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\pbkdf2">
-      <UniqueIdentifier>{89811d18-54fb-4118-b53a-93e9250beb0f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\pbkdf2">
-      <UniqueIdentifier>{25ecd795-bbcf-41c5-9773-4f8e6e8c6958}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\os.h">
+    <ClInclude Include="..\..\Common\DtaHashPwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\log.h">
+    <ClInclude Include="..\..\Common\DtaDev.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\DtaAnnotatedDump.h">
+    <ClInclude Include="..\..\Common\DtaResponse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\DtaHexDump.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\DtaSession.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Common\DtaCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\DtaConstants.h">
+    <ClInclude Include="..\..\Common\DtaHashPassword.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\DtaDev.h">
+    <ClInclude Include="..\..\Common\DtaOptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\bitops.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\blockwise.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\chash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\handy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\hmac.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\pbkdf2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\sha1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\pbkdf2\tassert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Common\DtaDevEnterprise.h">
@@ -54,88 +81,121 @@
     <ClInclude Include="..\..\Common\DtaDevOpal2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\DtaEndianFixup.h">
+    <ClInclude Include="..\..\Common\DtaAnnotatedDump.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\DtaHashPwd.h">
+    <ClInclude Include="..\..\Common\DtaAuthorizeSedutilExecution.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\DtaHexDump.h">
+    <ClInclude Include="..\DtaDevWindowsDrive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\DtaLexicon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\DtaResponse.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\DtaSession.h">
+    <ClInclude Include="..\..\Common\DtaConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Common\DtaStructures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\DtaDevOS.h">
+    <ClInclude Include="..\..\Common\InterfaceDeviceID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\DtaDiskATA.h">
+    <ClInclude Include="..\DtaDevWindowsSata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\DtaDiskUSB.h">
+    <ClInclude Include="..\DtaDevWindowsScsi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\DtaDiskType.h">
+    <ClInclude Include="..\..\Common\ParseDiscovery0Features.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\DtaDiskNvme.h">
+    <ClInclude Include="..\..\Common\ParseATIdentify.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\nvmeIoctl.h">
+    <ClInclude Include="..\db.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\nvme.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\sedsize.h">
+    <ClInclude Include="..\..\Common\SCSICmds_INQUIRY_Definitions.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\DtaAudit.h">
+    <ClInclude Include="..\DtaWindows.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\License\LicenseValidator.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\os.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\License\stdafx.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\Common\ATAStructures.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\DtaBlockStorageDevice.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\DtaDrive.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\DtaEndianFixup.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\DtaLexicon.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\DtaNvmeDrive.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\DtaSataDrive.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\DtaScsiDrive.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\NVMeStructures.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DtaWindowsNvmeDrive.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DtaWindowsSataDrive.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DtaWindowsScsiDrive.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IntelRST.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\nvme.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\nvmeIoctl.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\nvmeReg.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uuid.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Version.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Customizations.OpenSource\Common\DtaExtensionOptionEnumerations.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\DtaOS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\bitops.h">
-      <Filter>Header Files\pbkdf2</Filter>
+    <ClInclude Include="..\DtaWindowsBlockStorageDevice.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\blockwise.h">
-      <Filter>Header Files\pbkdf2</Filter>
+    <ClInclude Include="..\..\Common\DtaAtaDrive.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\chash.h">
-      <Filter>Header Files\pbkdf2</Filter>
+    <ClInclude Include="..\DtaWindowsAtaDrive.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\handy.h">
-      <Filter>Header Files\pbkdf2</Filter>
+    <ClInclude Include="..\..\Common\DtaJson.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\hmac.h">
-      <Filter>Header Files\pbkdf2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\pbkdf2.h">
-      <Filter>Header Files\pbkdf2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\sha1.h">
-      <Filter>Header Files\pbkdf2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\pbkdf2\tassert.h">
-      <Filter>Header Files\pbkdf2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\DtaDiskNVMe.h">
+    <ClInclude Include="..\..\Common\json_struct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -143,83 +203,174 @@
     <ClCompile Include="..\..\Common\sedutil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Common\DtaSession.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\DtaResponse.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\DtaOptions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\DtaHexDump.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Common\DtaHashPwd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\DtaDevOpal2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\DtaDevOpal1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\DtaDevOpal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\DtaDevGeneric.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\DtaDevEnterprise.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\DtaDev.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Common\DtaResponse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\DtaHexDump.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\DtaSession.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Common\DtaCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\log.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\DtaHashPassword.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\DtaOptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\pbkdf2\blockwise.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\pbkdf2\chash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\pbkdf2\hmac.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\pbkdf2\pbkdf2.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\pbkdf2\sha1.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\DtaDevFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Customizations.OpenSource\Common\DtaAuthorizeSedutilExecution.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\DtaDevEnterprise.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\DtaDevGeneric.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\DtaDevOpal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\DtaDevOpal1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\DtaDevOpal2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\DtaAnnotatedDump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\DtaDevOS.cpp">
+    <ClCompile Include="..\..\Common\ParseDiscovery0Features.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\DtaDiskATA.cpp">
+    <ClCompile Include="..\..\Common\InterfaceDeviceID.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\DtaDiskUSB.cpp">
+    <ClCompile Include="..\..\Common\ParseATIdentify.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Common\DtaDiskType.cpp">
+    <ClCompile Include="..\DtaWindows.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\DtaDiskNvme.cpp">
+    <ClCompile Include="..\..\Common\DtaBlockStorageDevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\License\LicenseValidator.cpp">
+    <ClCompile Include="..\..\Common\DtaDrive.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\License\stdafx.cpp">
+    <ClCompile Include="..\..\Common\DtaNvmeDrive.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Common\pbkdf2\blockwise.c">
-      <Filter>Source Files\pbkdf2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\pbkdf2\chash.c">
-      <Filter>Source Files\pbkdf2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\pbkdf2\hmac.c">
-      <Filter>Source Files\pbkdf2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\pbkdf2\pbkdf2.c">
-      <Filter>Source Files\pbkdf2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\pbkdf2\sha1.c">
-      <Filter>Source Files\pbkdf2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\DtaDiskNVMe.cpp">
+    <ClCompile Include="..\..\Common\DtaSataDrive.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Common\DtaScsiDrive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DtaWindowsNvmeDrive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DtaWindowsSataDrive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DtaWindowsScsiDrive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uuid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Customizations\Common\DtaDevOpalLoadPBA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DtaWindowsDriveFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DtaWindowsBlockStorageDevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\DtaAtaDrive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DtaWindowsAtaDrive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CLI.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\rc\icon-opal.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="..\..\Common\pbkdf2\COPYING" />
+    <None Include="..\GitVersion.ps1">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\Package.cmd">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\sedutil_baseline">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\TestSuite.sh">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\Customizations.OpenSource\Common\DtaExtensionOptionImplementations.inc">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\Customizations.OpenSource\Common\DtaExtensionOptions.inc">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\Common\Copyright.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="..\..\Common\LICENSE.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="..\..\Common\ReadMe.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="..\PSIDRevert_WINDOWS.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="..\ReadMe_Windows.txt">
+      <Filter>Source Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

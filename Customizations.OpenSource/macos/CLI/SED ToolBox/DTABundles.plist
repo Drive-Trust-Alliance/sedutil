@@ -32,18 +32,6 @@
 		<key>BundleOverwriteAction</key>
 		<string>upgrade</string>
 		<key>RootRelativeBundlePath</key>
-		<string>Library/Frameworks/log.framework</string>
-	</dict>
-	<dict>
-		<key>BundleHasStrictIdentifier</key>
-		<true/>
-		<key>BundleIsRelocatable</key>
-		<true/>
-		<key>BundleIsVersionChecked</key>
-		<true/>
-		<key>BundleOverwriteAction</key>
-		<string>upgrade</string>
-		<key>RootRelativeBundlePath</key>
 		<string>Library/Frameworks/cifra.framework</string>
 	</dict>
 	<dict>

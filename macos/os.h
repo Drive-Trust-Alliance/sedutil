@@ -18,13 +18,15 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 #pragma once
+#include <unistd.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <unistd.h>
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
+#include <IOKit/IOKitLib.h>
 #include "DtaConstants.h"
+#include <arpa/inet.h>
 
 // Why can't I find these??
 #if !defined(FALSE)
@@ -39,3 +41,20 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define DEVICEMASK snprintf(devname,23,"/dev/disk%d",i)
 // #define DEVICEEXAMPLE "/dev/disk3"
 #define DEVICEEXAMPLE "disk3"
+
+#define  __unimplemented__ {throw __PRETTY_FUNCTION__;}
+
+
+/** OS specific command to Wait for specified number of milliseconds
+ * @param milliseconds  number of milliseconds to wait
+ */
+static inline void osmsSleep(uint32_t milliseconds) {
+    (void)usleep(milliseconds * 1000);
+}
+
+typedef void * OSDEVICEHANDLE;
+#define INVALID_HANDLE_VALUE (reinterpret_cast<OSDEVICEHANDLE>( -1 ))
+
+#define handle(service,connection)(reinterpret_cast<OSDEVICEHANDLE>( static_cast<uintptr_t>(service) << 32 | connection ))
+#define handleDeviceService(handle) (reinterpret_cast<io_registry_entry_t>(static_cast<unsigned int>(reinterpret_cast<uintptr_t>(handle) >> 32)))
+#define handleConnection(handle) (reinterpret_cast<io_connect_t>(static_cast<unsigned int>(reinterpret_cast<uintptr_t>(handle) & 0xFFFFFFFF)))

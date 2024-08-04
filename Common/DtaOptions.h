@@ -22,15 +22,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define	_DTAOPTIONS_H
 #include <cstdint>
 
-/** Output modes */
-typedef enum _sedutiloutput {
-	sedutilNormal,
-	sedutilReadable,
-	sedutilJSON
-} sedutiloutput;
-
-
-#define DEFAULT_OUTPUT_FORMAT sedutilReadable
+#include "log.h"
 
 #if DEBUG && defined(AUTOMATICALLY_BUMP_LOGGING_LEVEL_IN_DEBUG_BUILDS)
 #define DEFAULT_LOGGING_LEVEL 3
@@ -154,9 +146,15 @@ typedef enum _sedutiloption {
 /** verify the number of arguments passed */
 #define CHECKARGS(x) \
             if((x+baseOptions) != argc) { \
-                LOG(E) << "Incorrect number of paramaters for " << argv[i] << " command"; \
-	        return 100; \
-	    }
+                LOG(E) << "Incorrect number of parameters for " << argv[i] << " command"; \
+            return 100; \
+        }
+
+#define CHECKMAXARGS(x) \
+            if((x+baseOptions) < argc) { \
+                LOG(E) << "Too many parameters for " << argv[i] << " command"; \
+            return 100; \
+        }
 
 /** Test the command input for a recognized argument */
 #define BEGIN_OPTION(cmdstring,args) \
@@ -164,13 +162,25 @@ typedef enum _sedutiloption {
             CHECKARGS(args) \
             opts->action = sedutiloption::cmdstring; \
 
+#define BEGIN_OPTION_MAX(cmdstring,args) \
+        else if (!(strcasecmp(#cmdstring, &argv[i][2]))) { \
+            CHECKMAXARGS(args) \
+            opts->action = sedutiloption::cmdstring; \
+
 /** end of an OPTION */
 #define END_OPTION }
 /** test an argument for a value */
 #define TESTARG(literal,structfield,value) \
-	if (!(strcasecmp(#literal, argv[i + 1]))) \
+    if (!(strcasecmp(#literal, argv[i + 1]))) \
             {opts->structfield = value;} \
         else
+/** test an argument for a value */
+#define TESTOPTIONALARG(literal,structfield,value) \
+    if (i+1<argc && !(strcasecmp(#literal, argv[i + 1]))) \
+            {opts->structfield = value; i++;} \
+        else
+#define ENDOPTIONALARGS ;
+
 /** if all testargs fail then do this */
 #define TESTFAIL(msg) \
             { \

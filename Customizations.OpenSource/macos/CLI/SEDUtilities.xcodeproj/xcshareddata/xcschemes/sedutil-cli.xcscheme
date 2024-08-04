@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1510"
+   LastUpgradeVersion = "1540"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -87,7 +87,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-vvvvv"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--scan"
@@ -95,6 +95,10 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--query"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--json"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -138,6 +142,10 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "disk0"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "disk2"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -163,6 +171,10 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "disk8"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "disk99"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>

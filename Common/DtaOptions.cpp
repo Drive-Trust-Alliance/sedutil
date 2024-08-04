@@ -42,8 +42,18 @@ void usage()
     printf("--scan\n");
     printf("                                Scans the devices on the system \n");
     printf("                                identifying the TPers \n");
+    printf("--scan --json\n");
+    printf("                                Scans the devices on the system \n");
+    printf("                                identifying the TPers; output in JSON \n");
+    printf("--scan --json-compact\n");
+    printf("                                Scans the devices on the system \n");
+    printf("                                identifying the TPers; output in compact JSON \n");
     printf("--query <device>\n");
-    printf("                                Display the Discovery 0 response of a device\n");
+    printf("                                Display the complete device information, including Discovery 0 response\n");
+    printf("--query --json <device>\n");
+    printf("                                Display the complete device information, including Discovery 0 response, in JSON format\n");
+    printf("--query --json-compact <device>\n");
+    printf("                                Display the complete device information, including the Discovery 0 response, in compact JSON format\n");
     printf("--isValidSED <device>\n");
     printf("                                Verify whether the given device is SED or not\n");
     printf("--listLockingRanges <password> <device>\n");
@@ -122,8 +132,6 @@ void usage()
     return;
 }
 
-/* Default to output that omits timestamps and goes to stdout */
-sedutiloutput outputFormat = DEFAULT_OUTPUT_FORMAT;
 
 #define LOCKINGRANGEARG(lockingrange) \
 TESTARG(0, lockingrange, 0)            \
@@ -186,7 +194,10 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
         if (!(strcmp("-h", argv[i])) || !(strcmp("--help", argv[i]))) {
             usage();
             return DTAERROR_INVALID_COMMAND;
-        } else if ('v' == argv[i][1]) {
+        }
+        
+        if ('v' == argv[i][1]) {
+            // logging level set to length of any arg staring with 'v'
           baseOptions += 1;
           loggingLevel += (uint16_t)(strlen(argv[i]) - 1);
           if (loggingLevel > MAX_LOGGING_LEVEL) loggingLevel = MAX_LOGGING_LEVEL;
@@ -269,9 +280,17 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
             OPTION_IS(password)
             OPTION_IS(device)
         END_OPTION
-        BEGIN_OPTION(query, 1) OPTION_IS(device) END_OPTION
-//        BEGIN_OPTION(scan, 1) OPTION_IS(device) END_OPTION
-        BEGIN_OPTION(scan, 0) END_OPTION
+        BEGIN_OPTION_MAX(query, 2)
+            TESTOPTIONALARG(--json, output_format, sedutilJSON)
+            TESTOPTIONALARG(--json-compact, output_format, sedutilJSONCompact)
+            ENDOPTIONALARGS
+            OPTION_IS(device)
+        END_OPTION
+        BEGIN_OPTION_MAX(scan, 1) 
+            TESTOPTIONALARG(--json, output_format, sedutilJSON)
+            TESTOPTIONALARG(--json-compact, output_format, sedutilJSONCompact)
+            ENDOPTIONALARGS
+        END_OPTION
         BEGIN_OPTION(version, 0)  END_OPTION
         BEGIN_OPTION(isValidSED, 1) OPTION_IS(device) END_OPTION
         BEGIN_OPTION(eraseLockingRange, 3)

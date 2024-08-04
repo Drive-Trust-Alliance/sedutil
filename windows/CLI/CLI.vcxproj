@@ -19,9 +19,70 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Common\compressapi-8.1.h" />
+    <ClCompile Include="..\..\Common\DtaAnnotatedDump.cpp" />
+    <ClCompile Include="..\..\Common\DtaAtaDrive.cpp" />
+    <ClCompile Include="..\..\Common\DtaBlockStorageDevice.cpp" />
+    <ClCompile Include="..\..\Common\DtaCommand.cpp" />
+    <ClCompile Include="..\..\Common\DtaDev.cpp" />
+    <ClCompile Include="..\..\Common\DtaDevEnterprise.cpp" />
+    <ClCompile Include="..\..\Common\DtaDevFactory.cpp" />
+    <ClCompile Include="..\..\Common\DtaDevGeneric.cpp" />
+    <ClCompile Include="..\..\Common\DtaDevOpal.cpp" />
+    <ClCompile Include="..\..\Common\DtaDevOpal1.cpp" />
+    <ClCompile Include="..\..\Common\DtaDevOpal2.cpp" />
+    <ClCompile Include="..\..\Common\DtaDrive.cpp" />
+    <ClCompile Include="..\..\Common\DtaHashPassword.cpp" />
+    <ClCompile Include="..\..\Common\DtaHashPwd.cpp" />
+    <ClCompile Include="..\..\Common\DtaHexDump.cpp" />
+    <ClCompile Include="..\..\Common\DtaNvmeDrive.cpp" />
+    <ClCompile Include="..\..\Common\DtaOptions.cpp" />
+    <ClCompile Include="..\..\Common\DtaResponse.cpp" />
+    <ClCompile Include="..\..\Common\DtaSataDrive.cpp" />
+    <ClCompile Include="..\..\Common\DtaScsiDrive.cpp" />
+    <ClCompile Include="..\..\Common\DtaSession.cpp" />
+    <ClCompile Include="..\..\Common\InterfaceDeviceID.cpp" />
+    <ClCompile Include="..\..\Common\log.cpp" />
+    <ClCompile Include="..\..\Common\ParseATIdentify.cpp" />
+    <ClCompile Include="..\..\Common\ParseDiscovery0Features.cpp" />
+    <ClCompile Include="..\..\Common\pbkdf2\blockwise.c" />
+    <ClCompile Include="..\..\Common\pbkdf2\chash.c" />
+    <ClCompile Include="..\..\Common\pbkdf2\hmac.c" />
+    <ClCompile Include="..\..\Common\pbkdf2\pbkdf2.c" />
+    <ClCompile Include="..\..\Common\pbkdf2\sha1.c" />
+    <ClCompile Include="..\..\Common\sedutil.cpp" />
+    <ClCompile Include="..\..\Customizations.OpenSource\Common\DtaAuthorizeSedutilExecution.cpp" />
+    <ClCompile Include="..\..\Customizations\Common\DtaDevOpalLoadPBA.cpp" />
+    <ClCompile Include="..\DtaWindows.cpp" />
+    <ClCompile Include="..\DtaWindowsAtaDrive.cpp" />
+    <ClCompile Include="..\DtaWindowsBlockStorageDevice.cpp" />
+    <ClCompile Include="..\DtaWindowsDriveFactory.cpp" />
+    <ClCompile Include="..\DtaWindowsNvmeDrive.cpp" />
+    <ClCompile Include="..\DtaWindowsSataDrive.cpp" />
+    <ClCompile Include="..\DtaWindowsScsiDrive.cpp" />
+    <ClCompile Include="..\uuid.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Common\pbkdf2\COPYING" />
+    <None Include="..\..\Customizations.OpenSource\Common\DtaExtensionOptionImplementations.inc" />
+    <None Include="..\..\Customizations.OpenSource\Common\DtaExtensionOptions.inc" />
+    <None Include="..\GitVersion.ps1" />
+    <None Include="..\Package.cmd" />
+    <None Include="..\sedutil_baseline" />
+    <None Include="..\TestSuite.sh" />
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CLI.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\rc\icon-opal.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Common\ATAStructures.h" />
     <ClInclude Include="..\..\Common\DtaAnnotatedDump.h" />
-    <ClInclude Include="..\..\Common\DtaAudit.h" />
+    <ClInclude Include="..\..\Common\DtaAtaDrive.h" />
+    <ClInclude Include="..\..\Common\DtaAuthorizeSedutilExecution.h" />
+    <ClInclude Include="..\..\Common\DtaBlockStorageDevice.h" />
     <ClInclude Include="..\..\Common\DtaCommand.h" />
     <ClInclude Include="..\..\Common\DtaConstants.h" />
     <ClInclude Include="..\..\Common\DtaDev.h" />
@@ -30,16 +91,27 @@
     <ClInclude Include="..\..\Common\DtaDevOpal.h" />
     <ClInclude Include="..\..\Common\DtaDevOpal1.h" />
     <ClInclude Include="..\..\Common\DtaDevOpal2.h" />
-    <ClInclude Include="..\..\Common\DtaDiskType.h" />
+    <ClInclude Include="..\..\Common\DtaDrive.h" />
     <ClInclude Include="..\..\Common\DtaEndianFixup.h" />
+    <ClInclude Include="..\..\Common\DtaHashPassword.h" />
     <ClInclude Include="..\..\Common\DtaHashPwd.h" />
     <ClInclude Include="..\..\Common\DtaHexDump.h" />
+    <ClInclude Include="..\..\Common\DtaJson.h" />
     <ClInclude Include="..\..\Common\DtaLexicon.h" />
+    <ClInclude Include="..\..\Common\DtaNvmeDrive.h" />
+    <ClInclude Include="..\..\Common\DtaOptions.h" />
+    <ClInclude Include="..\..\Common\DtaOS.h" />
     <ClInclude Include="..\..\Common\DtaResponse.h" />
+    <ClInclude Include="..\..\Common\DtaSataDrive.h" />
+    <ClInclude Include="..\..\Common\DtaScsiDrive.h" />
     <ClInclude Include="..\..\Common\DtaSession.h" />
     <ClInclude Include="..\..\Common\DtaStructures.h" />
-    <ClInclude Include="..\..\common\log.h" />
-    <ClInclude Include="..\..\Common\ob.h" />
+    <ClInclude Include="..\..\Common\InterfaceDeviceID.h" />
+    <ClInclude Include="..\..\Common\json_struct.h" />
+    <ClInclude Include="..\..\Common\log.h" />
+    <ClInclude Include="..\..\Common\NVMeStructures.h" />
+    <ClInclude Include="..\..\Common\ParseATIdentify.h" />
+    <ClInclude Include="..\..\Common\ParseDiscovery0Features.h" />
     <ClInclude Include="..\..\Common\pbkdf2\bitops.h" />
     <ClInclude Include="..\..\Common\pbkdf2\blockwise.h" />
     <ClInclude Include="..\..\Common\pbkdf2\chash.h" />
@@ -48,102 +120,64 @@
     <ClInclude Include="..\..\Common\pbkdf2\pbkdf2.h" />
     <ClInclude Include="..\..\Common\pbkdf2\sha1.h" />
     <ClInclude Include="..\..\Common\pbkdf2\tassert.h" />
-    <ClInclude Include="..\..\Common\sedsize.h" />
-    <ClInclude Include="..\..\License\LicenseValidator.h" />
-    <ClInclude Include="..\..\License\PyExt.h" />
-    <ClInclude Include="..\..\License\stdafx.h" />
-    <ClInclude Include="..\..\linux\VersionPBA.h" />
-    <ClInclude Include="..\DtaDevOS.h" />
-    <ClInclude Include="..\DtaDiskATA.h" />
-    <ClInclude Include="..\DtaDiskNVMe.h" />
-    <ClInclude Include="..\DtaDiskUSB.h" />
+    <ClInclude Include="..\..\Common\SCSICmds_INQUIRY_Definitions.h" />
+    <ClInclude Include="..\..\Customizations.OpenSource\Common\DtaExtensionOptionEnumerations.h" />
+    <ClInclude Include="..\db.h" />
+    <ClInclude Include="..\DtaDevWindowsDrive.h" />
+    <ClInclude Include="..\DtaDevWindowsSata.h" />
+    <ClInclude Include="..\DtaDevWindowsScsi.h" />
+    <ClInclude Include="..\DtaWindows.h" />
+    <ClInclude Include="..\DtaWindowsAtaDrive.h" />
+    <ClInclude Include="..\DtaWindowsBlockStorageDevice.h" />
+    <ClInclude Include="..\DtaWindowsNvmeDrive.h" />
+    <ClInclude Include="..\DtaWindowsSataDrive.h" />
+    <ClInclude Include="..\DtaWindowsScsiDrive.h" />
     <ClInclude Include="..\IntelRST.h" />
     <ClInclude Include="..\nvme.h" />
     <ClInclude Include="..\nvmeIoctl.h" />
+    <ClInclude Include="..\nvmeReg.h" />
     <ClInclude Include="..\os.h" />
     <ClInclude Include="..\uuid.h" />
     <ClInclude Include="..\Version.h" />
-    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Common\DtaAnnotatedDump.cpp" />
-    <ClCompile Include="..\..\Common\DtaCommand.cpp" />
-    <ClCompile Include="..\..\Common\DtaDev.cpp" />
-    <ClCompile Include="..\..\Common\DtaDevEnterprise.cpp" />
-    <ClCompile Include="..\..\Common\DtaDevGeneric.cpp" />
-    <ClCompile Include="..\..\Common\DtaDevOpal.cpp" />
-    <ClCompile Include="..\..\Common\DtaDevOpal1.cpp" />
-    <ClCompile Include="..\..\Common\DtaDevOpal2.cpp" />
-    <ClCompile Include="..\..\Common\DtaDiskType.cpp" />
-    <ClCompile Include="..\..\Common\DtaHashPwd.cpp" />
-    <ClCompile Include="..\..\Common\DtaHexDump.cpp" />
-    <ClCompile Include="..\..\Common\DtaOptions.cpp" />
-    <ClCompile Include="..\..\Common\DtaResponse.cpp" />
-    <ClCompile Include="..\..\Common\DtaSession.cpp" />
-    <ClCompile Include="..\..\Common\ob.cpp" />
-    <ClCompile Include="..\..\Common\pbkdf2\blockwise.c" />
-    <ClCompile Include="..\..\Common\pbkdf2\chash.c" />
-    <ClCompile Include="..\..\Common\pbkdf2\hmac.c" />
-    <ClCompile Include="..\..\Common\pbkdf2\pbkdf2.c" />
-    <ClCompile Include="..\..\Common\pbkdf2\sha1.c" />
-    <ClCompile Include="..\..\Common\regtry.cpp" />
-    <ClCompile Include="..\..\Common\sedutil.cpp" />
-    <ClCompile Include="..\..\License\LicenseValidator.cpp" />
-    <ClCompile Include="..\..\License\stdafx.cpp" />
-    <ClCompile Include="..\DtaDevOS.cpp" />
-    <ClCompile Include="..\DtaDiskATA.cpp" />
-    <ClCompile Include="..\DtaDiskNVMe.cpp" />
-    <ClCompile Include="..\DtaDiskUSB.cpp" />
-    <ClCompile Include="..\uuid.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\..\rc\Cabinet_x64.Lib" />
-    <Library Include="..\..\rc\Cabinet_x86.Lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="QlmLicenseLib.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <Manifest Include="QlmLicenseLib.dll.manifest" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="CLI.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\..\rc\icon-opal.ico" />
+    <Text Include="..\..\Common\Copyright.txt" />
+    <Text Include="..\..\Common\LICENSE.txt" />
+    <Text Include="..\..\Common\ReadMe.txt" />
+    <Text Include="..\PSIDRevert_WINDOWS.txt" />
+    <Text Include="..\ReadMe_Windows.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{267E9D28-7245-4182-9740-F386F4299E83}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CLI</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
     <CLRSupport>false</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
@@ -175,6 +209,8 @@
     <LinkIncremental>true</LinkIncremental>
     <TargetName>sedutil-cli</TargetName>
     <IntDir>$(OutDir)\OBJDIR\</IntDir>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -185,6 +221,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>sedutil-cli</TargetName>
     <IntDir>$(OutDir)\OBJDIR\</IntDir>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -193,7 +230,6 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-
       <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MinimalRebuild>false</MinimalRebuild>
@@ -229,7 +265,7 @@ $(SolutionDir)..\..\windows\PyExtuD.bat
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..;$(SolutionDir)..\..\common;$(SolutionDir)..\..\common\pbkdf2;$(SolutionDir)..\..\log;$(SolutionDir)..\..\Customizations\Common</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MinimalRebuild>false</MinimalRebuild>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -239,12 +275,10 @@ $(SolutionDir)..\..\windows\PyExtuD.bat
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>NotSet</ShowProgress>
+      <AdditionalDependencies>Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -ExecutionPolicy ByPass  -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
-copy  "..\..\rc\QlmLicenseLib.*"  "$(TargetDir)"
-copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
-</Command>
+      <Command>powershell -ExecutionPolicy ByPass -NonInteractive -NoProfile -File ..\GitVersion.ps1</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Create version header from git --version dirty</Message>
@@ -313,14 +347,11 @@ $(SolutionDir)..\..\windows\PyExtuD.bat
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
-      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <UACUIAccess>false</UACUIAccess>
+      <AdditionalDependencies>Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -ExecutionPolicy ByPass -NonInteractive -NoProfile -File ..\GitVersion.ps1 ..\Version.h
-copy  "..\..\rc\QlmLicenseLib.*"  "$(TargetDir)"
-copy  "..\..\rc\QlmLicenseLib.*"  "$(ProjectDir)"
-$(SolutionDir)..\..\windows\PyExtuD.bat</Command>
+      <Command>powershell -ExecutionPolicy ByPass -NonInteractive -NoProfile -File ..\GitVersion.ps1</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Create version header from git --version dirty</Message>

@@ -18,14 +18,10 @@
 
    * C:E********************************************************************** */
 #pragma once
-class DtaCommand;
-class DtaSession;
-#include "os.h"
-#include "DtaDev.h"
-#include "DtaDevOS.h"
-#include "DtaStructures.h"
 
+#include "log.h"
 #include <vector>
+#include "DtaDev.h"
 
 using namespace std;
 /** Device Class representing an unknown type of disk device.
@@ -34,15 +30,15 @@ using namespace std;
  * it is not known if the device supports a SSC
  *
  */
-class DtaDevGeneric : public DtaDevOS {
+class DtaDevGeneric : public DtaDev {
 public:
   /** Constructor using an OS specific device descriptor.
    * @param devref reference to device is OS specific lexicon
    *  */
   DtaDevGeneric(const char * devref);
 
-    DtaDevGeneric(const char * devref, DtaDevOSDrive * drive, DTA_DEVICE_INFO& di)
-    : DtaDevOS(devref, drive, di)
+    DtaDevGeneric(const char * devref, DtaDrive * drive, DTA_DEVICE_INFO& di)
+    : DtaDev(devref, drive, di)
     {
     } ;
 
