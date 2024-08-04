@@ -182,6 +182,7 @@ TESTFAIL("Invalid TCGreset argument not <0|1|2|3>")
 uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 {
     memset(opts, 0, sizeof (DTA_OPTIONS));
+    opts->output_format = DEFAULT_OUTPUT_FORMAT;
     uint16_t loggingLevel = DEFAULT_LOGGING_LEVEL;
     uint8_t baseOptions = 2; // program and option
     CLogLevel = CLog::FromInt(loggingLevel);
