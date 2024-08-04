@@ -1,1 +1,22 @@
 Nonexistent devices somehow give "No such device" as well as "Invalid or unsupported device"
+
+Cleaned-up architecture for v 2.0
+
+command processors invoked by DtaOptions -- only this layer can do terminal I/O, except in fatal error cases
+Invokes libsed
+
+--------------- public libsed -----------------------
+--------------- private libdtadev -----------------------
+dtadev member functions as sed library functions -- can return fat values like dicts to command layer for nice I/O like scan
+-------------- private libdtadrive ----------------------
+dta drive(s) member functions as private library functions for dtadev -- static identify; and if TPer, IF_SEND, IF_RECV
+-------------- private libdtaos -------------------------
+os singleton functions as private global os-specific versions of e.g. open, PerformSCSICommand, etc. using unified standards-compliant args
+    -------------- private libdtalinux -------------------------
+    -------------- private libdtamacos -------------------------
+    -------------- private libdtawindows -------------------------
+
+libXXX could mean literally a Linux -lXXX lib, which would mean a MacOS framework and a Windows lib or dll, or
+could mean just a top-level class header backed up by sub-classes and implementation files.
+Perhaps libsed could be a clever C wrapper of libdtadev using void * handles for the DtaDev * object pointers
+which would also simplify foreign-language interfacing for e.g. Python or Haskell.
