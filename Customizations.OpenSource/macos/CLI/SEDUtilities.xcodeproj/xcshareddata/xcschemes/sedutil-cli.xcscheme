@@ -71,7 +71,7 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-v"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-vv"
@@ -91,11 +91,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--scan"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--query"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--json"
@@ -147,7 +147,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "disk2"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "disk3"
