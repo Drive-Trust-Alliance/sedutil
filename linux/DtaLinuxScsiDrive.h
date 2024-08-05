@@ -22,9 +22,9 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaScsiDrive.h"
 
 
-/** Linux specific implementation SCSI generic ioctls to send commands to the
- * device
- */
+// /** Linux specific implementation SCSI generic ioctls to send commands to the
+//  * device
+//  */
 // class DtaLinuxScsiDrive: public DtaScsiDrive {
 // public:
 //     using DtaScsiDrive::DtaScsiDrive;

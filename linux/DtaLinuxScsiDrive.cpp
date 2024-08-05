@@ -17,8 +17,6 @@
    along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
    * C:E********************************************************************** */
-#include "log.h"
-
 #include "DtaLinuxScsiDrive.h"
 
 DtaScsiDrive * DtaScsiDrive::getDtaOSSpecificScsiDrive(OSDEVICEHANDLE _osDeviceHandle)

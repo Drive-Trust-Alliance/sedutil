@@ -18,9 +18,6 @@
 
    * C:E********************************************************************** */
 
-
-#include "log.h"
-
 #include "DtaLinuxNvmeDrive.h"
 
 DtaNvmeDrive * DtaNvmeDrive::getDtaOSSpecificNvmeDrive(OSDEVICEHANDLE _osDeviceHandle)

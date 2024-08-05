@@ -30,16 +30,16 @@ DtaSataDrive * DtaSataDrive::getDtaOSSpecificSataDrive(OSDEVICEHANDLE _osDeviceH
 };
 
 
-uint8_t DtaMacOSSataDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
-    io_connect_t connect = handleConnection(osDeviceHandle);
-    io_registry_entry_t deviceService = handleDeviceService(osDeviceHandle);
-    if (!IORegistryEntryInPlane(deviceService, "IOService")) {
-        LOG(E) << "deviceService " << deviceService << " " << HEXON(4) << deviceService << " invalid!";
-        return DTAERROR_COMMAND_ERROR;
-    }
-    io_service_t controllerService = findParent(deviceService);
-    return ((connect != IO_OBJECT_NULL && deviceService != IO_OBJECT_NULL &&
-             KERN_SUCCESS == TPerUpdate(connect, controllerService, &disk_info)))
-            ? DTAERROR_SUCCESS
-            : DTAERROR_COMMAND_ERROR;
-}
+// uint8_t DtaMacOSSataDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
+//     io_connect_t connect = handleConnection(osDeviceHandle);
+//     io_registry_entry_t deviceService = handleDeviceService(osDeviceHandle);
+//     if (!IORegistryEntryInPlane(deviceService, "IOService")) {
+//         LOG(E) << "deviceService " << deviceService << " " << HEXON(4) << deviceService << " invalid!";
+//         return DTAERROR_COMMAND_ERROR;
+//     }
+//     io_service_t controllerService = findParent(deviceService);
+//     return ((connect != IO_OBJECT_NULL && deviceService != IO_OBJECT_NULL &&
+//              KERN_SUCCESS == TPerUpdate(connect, controllerService, &disk_info)))
+//             ? DTAERROR_SUCCESS
+//             : DTAERROR_COMMAND_ERROR;
+// }

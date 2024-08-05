@@ -28,7 +28,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 class DtaMacOSScsiDrive: public DtaScsiDrive {
 public:
     using DtaScsiDrive::DtaScsiDrive;
-    
+
     /** Factory function to look at the devref and create an instance of DtaMacOSScsiDrive
      * @param devref OS device reference e.g. "/dev/sda"
      * @param disk_info reference to DTA_DEVICE_INFO structure filled out during device identification
@@ -39,6 +39,6 @@ public:
         return getDtaScsiDrive(devref,disk_info);
     }
 
-    virtual uint8_t discovery0(DTA_DEVICE_INFO & disk_info);
-    
+  //    virtual uint8_t discovery0(DTA_DEVICE_INFO & disk_info);
+
 };

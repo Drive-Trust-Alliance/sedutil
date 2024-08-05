@@ -18,7 +18,7 @@
 
    * C:E********************************************************************** */
 #pragma once
-#include "DtaStructures.h"
+
 #include "DtaSataDrive.h"
 
 // /** Linux specific implementation of DtaDev.
