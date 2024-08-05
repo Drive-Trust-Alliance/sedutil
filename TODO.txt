@@ -1,3 +1,7 @@
+DTA_DEVICE_INFO -> dictionary where non-present templates => swaths of missing zero entries
+could also leave out all-zero byte arrays
+intermediate step to producing nicer i.e. smaller jsonization
+
 Nonexistent devices somehow give "No such device" as well as "Invalid or unsupported device"
 
 Cleaned-up architecture for v 2.0
@@ -6,6 +10,8 @@ command processors invoked by DtaOptions -- only this layer can do terminal I/O,
 Invokes libsed
 
 --------------- public libsed -----------------------
+--------------- private libdtaoptions -----------------------
+dtaoptions member functions as command line parser tools
 --------------- private libdtadev -----------------------
 dtadev member functions as sed library functions -- can return fat values like dicts to command layer for nice I/O like scan
 -------------- private libdtadrive ----------------------
