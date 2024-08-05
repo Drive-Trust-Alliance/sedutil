@@ -23,5 +23,5 @@
 
 DtaSataDrive * DtaSataDrive::getDtaOSSpecificSataDrive(OSDEVICEHANDLE _osDeviceHandle)
 {
-    return new DtaLinuxSataDrive(_osDeviceHandle);
+    return new DtaSataDrive(_osDeviceHandle);
 };
