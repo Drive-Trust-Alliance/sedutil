@@ -18,25 +18,24 @@
 
    * C:E********************************************************************** */
 #pragma once
-#include "DtaStructures.h"
 #include "DtaAtaDrive.h"
 
-/** Windows specific implementation of DtaDev.
- * Uses the ATA ioctls to send commands to the
- * device
- */
-class DtaWindowsAtaDrive: public DtaAtaDrive {
-public:
-    using DtaAtaDrive::DtaAtaDrive;
-
-    /** Factory function to look at the devref and create an instance of DtaWindowsAtaDrive
-     * @param devref OS device reference e.g. "/dev/sda"
-     * @param disk_info reference to DTA_DEVICE_INFO structure filled out during device identification
-     */
-    static DtaDrive * getDtaWindowsAtaDrive(const char * devref,
-                                          DTA_DEVICE_INFO & disk_info)
-    {
-        return getDtaAtaDrive(devref,disk_info);
-    }
-
-};
+///** Windows specific implementation of DtaDev.
+// * Uses the ATA ioctls to send commands to the
+// * device
+// */
+//class DtaWindowsAtaDrive: public DtaAtaDrive {
+//public:
+//    using DtaAtaDrive::DtaAtaDrive;
+//
+//    /** Factory function to look at the devref and create an instance of DtaWindowsAtaDrive
+//     * @param devref OS device reference e.g. "/dev/sda"
+//     * @param disk_info reference to DTA_DEVICE_INFO structure filled out during device identification
+//     */
+//    static DtaDrive * getDtaWindowsAtaDrive(const char * devref,
+//                                          DTA_DEVICE_INFO & disk_info)
+//    {
+//        return getDtaAtaDrive(devref,disk_info);
+//    }
+//
+//};

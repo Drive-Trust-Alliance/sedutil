@@ -46,19 +46,19 @@ DtaDrive * DtaDrive::getDtaDrive(Protocol p,
             break;
 
         case AtaDrive:
-            drive = DtaWindowsAtaDrive::getDtaWindowsAtaDrive(devref, device_info);
+            drive = DtaAtaDrive::getDtaAtaDrive(devref, device_info);
             break;
 
         case NvmeDrive:
-            drive = DtaWindowsNvmeDrive::getDtaWindowsNvmeDrive(devref, device_info);
+            drive = DtaNvmeDrive::getDtaNvmeDrive(devref, device_info);
             break;
 
         case ScsiDrive:
-            drive = DtaWindowsScsiDrive::getDtaWindowsScsiDrive(devref, device_info);
+            drive = DtaScsiDrive::getDtaScsiDrive(devref, device_info);
             break;
 
         case SataDrive:
-            drive = DtaWindowsSataDrive::getDtaWindowsSataDrive(devref, device_info);
+            drive = DtaSataDrive::getDtaSataDrive(devref, device_info);
             break;
 
         default:

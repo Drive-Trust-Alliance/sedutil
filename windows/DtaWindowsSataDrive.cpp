@@ -17,11 +17,9 @@
    along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
    * C:E********************************************************************** */
-#include "log.h"
-
 #include "DtaWindowsSataDrive.h"
 
 DtaSataDrive * DtaSataDrive::getDtaOSSpecificSataDrive(OSDEVICEHANDLE _osDeviceHandle)
 {
-    return new DtaWindowsSataDrive(_osDeviceHandle);
+    return new DtaSataDrive(_osDeviceHandle);
 };

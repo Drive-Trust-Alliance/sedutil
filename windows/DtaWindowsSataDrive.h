@@ -18,25 +18,24 @@
 
    * C:E********************************************************************** */
 #pragma once
-#include "DtaStructures.h"
 #include "DtaSataDrive.h"
 
-/** Windows specific implementation of DtaDev.
- * Uses the SCSI generic ioctls to send commands to the
- * device
- */
-class DtaWindowsSataDrive: public DtaSataDrive {
-public:
-    using DtaSataDrive::DtaSataDrive;
-
-    /** Factory function to look at the devref and create an instance of DtaWindowsSataDrive
-     * @param devref OS device reference e.g. "/dev/sda"
-     * @param disk_info reference to DTA_DEVICE_INFO structure filled out during device identification
-     */
-    static DtaDrive * getDtaWindowsSataDrive(const char * devref,
-                                                    DTA_DEVICE_INFO & disk_info)
-    {
-        return getDtaSataDrive(devref,disk_info);
-    }
-
-};
+///** Windows specific implementation of DtaDev.
+// * Uses the SCSI generic ioctls to send commands to the
+// * device
+// */
+//class DtaWindowsSataDrive: public DtaSataDrive {
+//public:
+//    using DtaSataDrive::DtaSataDrive;
+//
+//    /** Factory function to look at the devref and create an instance of DtaWindowsSataDrive
+//     * @param devref OS device reference e.g. "/dev/sda"
+//     * @param disk_info reference to DTA_DEVICE_INFO structure filled out during device identification
+//     */
+//    static DtaDrive * getDtaWindowsSataDrive(const char * devref,
+//                                                    DTA_DEVICE_INFO & disk_info)
+//    {
+//        return getDtaSataDrive(devref,disk_info);
+//    }
+//
+//};
