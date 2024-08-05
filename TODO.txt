@@ -1,3 +1,6 @@
+DTA_DEVICE_INFO -> dictionary where non-present templates => swaths of missing zero entries
+intermediate step to producing nicer jsonization
+
 Nonexistent devices somehow give "No such device" as well as "Invalid or unsupported device"
 
 Cleaned-up architecture for v 2.0
