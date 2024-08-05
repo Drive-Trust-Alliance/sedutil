@@ -17,16 +17,16 @@
    along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
    * C:E********************************************************************** */
-#include "log.h"
+// #include "log.h"
 //
-#include <SEDKernelInterface/SEDKernelInterface.h>
+// #include <SEDKernelInterface/SEDKernelInterface.h>
 //
 
 #include "DtaMacOSSataDrive.h"
 
 DtaSataDrive * DtaSataDrive::getDtaOSSpecificSataDrive(OSDEVICEHANDLE _osDeviceHandle)
 {
-    return new DtaMacOSSataDrive(_osDeviceHandle);
+    return new DtaSataDrive(_osDeviceHandle);
 };
 
 

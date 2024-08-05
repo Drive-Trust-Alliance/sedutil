@@ -22,8 +22,8 @@
 #include <SEDKernelInterface/SEDKernelInterface.h>
 
 #include "DtaMacOSBlockStorageDevice.h"
-// #include "DtaDevMacOSAtaDrive.h"
-// #include "DtaDevMacOSNvmeDrive.h"
+#include "DtaMacOSAtaDrive.h"
+#include "DtaMacOSNvmeDrive.h"
 #include "DtaMacOSScsiDrive.h"
 #include "DtaMacOSSataDrive.h"
 
@@ -46,19 +46,19 @@ DtaDrive * DtaDrive::getDtaDrive(Protocol p,
             break;
             
         case AtaDrive:
-//            drive = DtaMacOSBlockStorageDevice::getDtaMacOSBlockStorageDevice(devref, device_info);
+            drive = DtaAtaDrive::getDtaAtaDrive(devref, device_info);
             break;
             
         case NvmeDrive:
-//            drive = DtaMacOSBlockStorageDevice::getDtaMacOSBlockStorageDevice(devref, device_info);
+            drive = DtaNvmeDrive::getDtaNvmeDrive(devref, device_info);
             break;
             
         case ScsiDrive:
-            drive = DtaMacOSScsiDrive::getDtaMacOSScsiDrive(devref, device_info);
+            drive = DtaScsiDrive::getDtaScsiDrive(devref, device_info);
             break;
             
         case SataDrive:
-            drive = DtaMacOSSataDrive::getDtaMacOSSataDrive(devref, device_info);
+            drive = DtaSataDrive::getDtaSataDrive(devref, device_info);
             break;
             
         default:

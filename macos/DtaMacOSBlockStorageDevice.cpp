@@ -283,5 +283,5 @@ bool DtaMacOSBlockStorageDevice::identify(OSDEVICEHANDLE osDeviceHandle,
 }
 
 uint8_t DtaMacOSBlockStorageDevice::discovery0(DTA_DEVICE_INFO& /* device_info */ ) {
-    return 0xff;
+    return DTAERROR_FAILURE;
 }
