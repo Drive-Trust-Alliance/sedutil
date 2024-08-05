@@ -66,10 +66,10 @@ linux/os.h \
 linux/DtaLinux.cpp \
 linux/DtaLinux.h \
 linux/DtaLinuxDriveFactory.cpp \
-linux/DtaLinuxAtaDrive.cpp \
-linux/DtaLinuxAtaDrive.h \
 linux/DtaLinuxBlockStorageDevice.cpp \
 linux/DtaLinuxBlockStorageDevice.h \
+linux/DtaLinuxAtaDrive.cpp \
+linux/DtaLinuxAtaDrive.h \
 linux/DtaLinuxNvmeDrive.cpp \
 linux/DtaLinuxNvmeDrive.h \
 linux/DtaLinuxSataDrive.cpp \

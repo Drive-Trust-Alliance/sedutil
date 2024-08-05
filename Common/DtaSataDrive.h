@@ -30,5 +30,5 @@ public:
     using DtaAtaDrive::DtaAtaDrive;
     static DtaSataDrive * getDtaOSSpecificSataDrive(OSDEVICEHANDLE _osDeviceHandle);
     static DtaDrive * getDtaSataDrive(const char * devref,
-                                      DTA_DEVICE_INFO & disk_info);
+                                      DTA_DEVICE_INFO & device_info);
 };

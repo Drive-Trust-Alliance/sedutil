@@ -23,5 +23,5 @@
 
 DtaScsiDrive * DtaScsiDrive::getDtaOSSpecificScsiDrive(OSDEVICEHANDLE _osDeviceHandle)
 {
-    return new DtaLinuxScsiDrive(_osDeviceHandle);
+    return new DtaScsiDrive(_osDeviceHandle);
 };

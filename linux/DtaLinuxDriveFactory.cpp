@@ -22,10 +22,10 @@
 
 
 #include "DtaLinuxBlockStorageDevice.h"
-#include "DtaLinuxAtaDrive.h"
-#include "DtaLinuxNvmeDrive.h"
-#include "DtaLinuxScsiDrive.h"
-#include "DtaLinuxSataDrive.h"
+#include "DtaAtaDrive.h"
+#include "DtaNvmeDrive.h"
+#include "DtaScsiDrive.h"
+#include "DtaSataDrive.h"
 
 
 /** Factory functions
@@ -46,19 +46,23 @@ DtaDrive * DtaDrive::getDtaDrive(Protocol p,
     break;
 
   case AtaDrive:
-    drive = DtaLinuxAtaDrive::getDtaLinuxAtaDrive(devref, device_info);
+    //    drive = DtaAtaDrive::getDtaAtaDrive(devref, device_info);
+    drive = DtaAtaDrive::getDtaAtaDrive(devref, device_info);
     break;
 
   case NvmeDrive:
-    drive = DtaLinuxNvmeDrive::getDtaLinuxNvmeDrive(devref, device_info);
+    //    drive = DtaLinuxNvmeDrive::getDtaLinuxNvmeDrive(devref, device_info);
+    drive = DtaNvmeDrive::getDtaNvmeDrive(devref, device_info);
     break;
 
   case ScsiDrive:
-    drive = DtaLinuxScsiDrive::getDtaLinuxScsiDrive(devref, device_info);
+    //    drive = DtaLinuxScsiDrive::getDtaLinuxScsiDrive(devref, device_info);
+    drive = DtaScsiDrive::getDtaScsiDrive(devref, device_info);
     break;
 
   case SataDrive:
-    drive = DtaLinuxSataDrive::getDtaLinuxSataDrive(devref, device_info);
+    //    drive = DtaLinuxSataDrive::getDtaLinuxSataDrive(devref, device_info);
+    drive = DtaSataDrive::getDtaSataDrive(devref, device_info);
     break;
 
   default:
