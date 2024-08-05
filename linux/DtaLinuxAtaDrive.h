@@ -21,22 +21,22 @@
 #include "DtaStructures.h"
 #include "DtaAtaDrive.h"
 
-/** Linux specific implementation of DtaDev.
- * Uses the ATA ioctls to send commands to the
- * device
- */
-class DtaLinuxAtaDrive: public DtaAtaDrive {
-public:
-    using DtaAtaDrive::DtaAtaDrive;
+// /** Linux specific implementation of DtaDev.
+//  * Uses the ATA ioctls to send commands to the
+//  * device
+//  */
+// class DtaLinuxAtaDrive: public DtaAtaDrive {
+// public:
+//     using DtaAtaDrive::DtaAtaDrive;
 
-    /** Factory function to look at the devref and create an instance of DtaLinuxAtaDrive
-     * @param devref OS device reference e.g. "/dev/sda"
-     * @param disk_info reference to DTA_DEVICE_INFO structure filled out during device identification
-     */
-    static DtaDrive * getDtaLinuxAtaDrive(const char * devref,
-                                          DTA_DEVICE_INFO & disk_info)
-    {
-        return getDtaAtaDrive(devref,disk_info);
-    }
+//     /** Factory function to look at the devref and create an instance of DtaLinuxAtaDrive
+//      * @param devref OS device reference e.g. "/dev/sda"
+//      * @param disk_info reference to DTA_DEVICE_INFO structure filled out during device identification
+//      */
+//     static DtaDrive * getDtaLinuxAtaDrive(const char * devref,
+//                                           DTA_DEVICE_INFO & disk_info)
+//     {
+//         return getDtaAtaDrive(devref,disk_info);
+//     }
 
-};
+// };

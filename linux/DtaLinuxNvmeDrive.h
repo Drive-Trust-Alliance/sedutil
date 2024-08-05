@@ -22,20 +22,20 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaNvmeDrive.h"
 
 
-/** Linux specific implementation SCSI generic ioctls to send commands to the
- * device
- */
-class DtaLinuxNvmeDrive: public DtaNvmeDrive {
-public:
-    using DtaNvmeDrive::DtaNvmeDrive;
+// /** Linux specific implementation SCSI generic ioctls to send commands to the
+//  * device
+//  */
+// class DtaLinuxNvmeDrive: public DtaNvmeDrive {
+// public:
+//     using DtaNvmeDrive::DtaNvmeDrive;
 
-    /** Factory function to look at the devref and create an instance of DtaLinuxNvmeDrive
-     * @param devref OS device reference e.g. "/dev/sda"
-     * @param disk_info reference to DTA_DEVICE_INFO structure filled out during device identification
-     */
-    static DtaDrive * getDtaLinuxNvmeDrive(const char * devref,
-                                           DTA_DEVICE_INFO & disk_info)
-    {
-        return getDtaNvmeDrive(devref,disk_info);
-    }
-};
+//     /** Factory function to look at the devref and create an instance of DtaLinuxNvmeDrive
+//      * @param devref OS device reference e.g. "/dev/sda"
+//      * @param disk_info reference to DTA_DEVICE_INFO structure filled out during device identification
+//      */
+//     static DtaDrive * getDtaLinuxNvmeDrive(const char * devref,
+//                                            DTA_DEVICE_INFO & disk_info)
+//     {
+//         return getDtaNvmeDrive(devref,disk_info);
+//     }
+// };

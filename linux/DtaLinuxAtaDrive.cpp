@@ -22,5 +22,5 @@
 
 DtaAtaDrive * DtaAtaDrive::getDtaOSSpecificAtaDrive(OSDEVICEHANDLE _osDeviceHandle, bool _scsiTranslated)
 {
-  return new DtaLinuxAtaDrive(_osDeviceHandle, _scsiTranslated);
+  return new DtaAtaDrive(_osDeviceHandle, _scsiTranslated);
 };
