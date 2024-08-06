@@ -428,6 +428,8 @@ int DtaMacOS::PerformNVMeCommand(OSDEVICEHANDLE osDeviceHandle,
     LOG(D4) << " DtaMacOS::PerformNVMeCommand cmd:" ;
     DtaHexDump(&cmd, sizeof(cmd));
   }
-  LOG(E)<< " DtaMacOS::PerformNVMeCommand UNIMPLEMENTED!!";
-  return 0xff;
+
+  LOG(E) << "DtaMacOS::PerformNVMeCommand UNIMPLEMENTED!!";
+
+  return DTAERROR_FAILURE;
 }
