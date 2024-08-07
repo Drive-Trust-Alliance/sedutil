@@ -44,10 +44,9 @@ DtaNvmeDrive::getDtaNvmeDrive(const char * devref, DTA_DEVICE_INFO & device_info
 
   InterfaceDeviceID interfaceDeviceIdentification;
 
-  // In theory every USB device should respond to Nvme commands, in particularly Inquiry.  Is this true?
   if (! identifyUsingNvmeIdentify(osDeviceHandle, interfaceDeviceIdentification, device_info)) {
     device_info.devType = DEVICE_TYPE_OTHER;
-    LOG(E) << "DtaNvmeDrive::getDtaNvmeDrive: Device " << devref << " is NOT Nvme?! -- file handle " << HEXON(2) << (size_t) osDeviceHandle;
+    // LOG(E) << "DtaNvmeDrive::getDtaNvmeDrive: Device " << devref << " is NOT Nvme?! -- file handle " << HEXON(2) << (size_t) osDeviceHandle;
     OS.closeDeviceHandle(osDeviceHandle);
     return NULL;
   }
