@@ -28,6 +28,15 @@ typedef enum _sedutiloutput {
 	sedutilJSON
 } sedutiloutput;
 
+/*
+ * Force disk type: '-d' flag
+ */
+#define FORCE_DEV_NONE     0
+#define FORCE_DEV_NVME     1
+#define FORCE_DEV_SCSI     2
+
+extern uint8_t g_force_dev; /** force device type */
+
 /** Structure representing the command line issued to the program */
 typedef struct _DTA_OPTIONS {
     uint8_t password;   /**< password supplied */

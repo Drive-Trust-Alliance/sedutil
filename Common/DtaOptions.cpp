@@ -144,6 +144,18 @@ uint8_t DtaOptions(int argc, char * argv[], DTA_OPTIONS * opts)
 			opts->output_format = sedutilNormal;
 			outputFormat = sedutilNormal;
 		}
+		else if (!(strcmp("-d", argv[i]))) {
+			if (i+1 < argc && !strcmp("nvme", argv[i+1])) {
+				g_force_dev = FORCE_DEV_NVME;
+			} else if (i+1 < argc && !strcmp("scsi", argv[i+1])) {
+				g_force_dev = FORCE_DEV_SCSI;
+			} else {
+				LOG(E) << "Argument " << (uint16_t) i << " (" << argv[i] << ") requires nvme|scsi";
+				return DTAERROR_INVALID_COMMAND;
+			}
+			i++;
+			baseOptions += 2;
+		}
 		else if (!(('-' == argv[i][0]) && ('-' == argv[i][1])) && 
 			(0 == opts->action))
 		{

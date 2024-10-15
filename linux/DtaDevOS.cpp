@@ -40,6 +40,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #include "DtaDevGeneric.h"
 
 using namespace std;
+uint8_t g_force_dev = FORCE_DEV_NONE;
 
 /** The Device class represents a Linux generic storage device.
   * At initialization we determine if we map to the NVMe or SATA derived class
@@ -60,14 +61,22 @@ void DtaDevOS::init(const char * devref)
 	memset(&disk_info, 0, sizeof(OPAL_DiskInfo));
 	dev = devref;
 
-	if (!strncmp(devref, "/dev/nvme", 9))
+	if (g_force_dev == FORCE_DEV_NVME)
 	{
 //		DtaDevLinuxNvme *NvmeDrive = new DtaDevLinuxNvme();
 		drive = new DtaDevLinuxNvme();
 	}
-	else if (!strncmp(devref, "/dev/s", 6))
+	else if (g_force_dev == FORCE_DEV_SCSI)
 	{
 //		DtaDevLinuxSata *SataDrive = new DtaDevLinuxSata();
+		drive = new DtaDevLinuxSata();
+	}
+	else if (!strncmp(devref, "/dev/nvme", 9))
+	{
+		drive = new DtaDevLinuxNvme();
+	}
+	else if (!strncmp(devref, "/dev/s", 6))
+	{
 		drive = new DtaDevLinuxSata();
 	}
 	else 
