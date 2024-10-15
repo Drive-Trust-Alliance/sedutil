@@ -59,5 +59,7 @@ public:
             void * buffer, uint32_t bufferlen);
     /** NVMe specific routine to send an identify to the device */
     void identify(OPAL_DiskInfo& disk_info);
+    /** Routine to check NVMe dev type without going to device */
+    bool isNVMe();
     int fd; /**< Linux handle for the device  */
 };

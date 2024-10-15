@@ -146,6 +146,17 @@ void DtaDevLinuxNvme::identify(OPAL_DiskInfo& disk_info)
     return;
 }
 
+bool DtaDevLinuxNvme::isNVMe()
+{
+	/*
+	 * NVME_IOCTL_ID returns dev ns-id which should be always greater than 0.
+	 * For SCSI, we should get -1.
+	 */
+	if (ioctl(fd, NVME_IOCTL_ID) > 0)
+		return true;
+	return false;
+}
+
 /** Close the device reference so this object can be delete. */
 DtaDevLinuxNvme::~DtaDevLinuxNvme()
 {

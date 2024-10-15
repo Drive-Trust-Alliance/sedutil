@@ -57,36 +57,44 @@ DtaDevOS::DtaDevOS()
 void DtaDevOS::init(const char * devref)
 {
 	LOG(D1) << "DtaDevOS::init " << devref;
+	DtaDevLinuxNvme *nvmeDrive = new DtaDevLinuxNvme();
+	bool drive_init = false;
 
 	memset(&disk_info, 0, sizeof(OPAL_DiskInfo));
 	dev = devref;
 
 	if (g_force_dev == FORCE_DEV_NVME)
 	{
-//		DtaDevLinuxNvme *NvmeDrive = new DtaDevLinuxNvme();
-		drive = new DtaDevLinuxNvme();
+		drive = nvmeDrive;
 	}
 	else if (g_force_dev == FORCE_DEV_SCSI)
 	{
-//		DtaDevLinuxSata *SataDrive = new DtaDevLinuxSata();
+		delete nvmeDrive;
 		drive = new DtaDevLinuxSata();
+	}
+	else if (nvmeDrive->init(devref) && nvmeDrive->isNVMe())
+	{
+		drive_init = true;
+		drive = nvmeDrive;
 	}
 	else if (!strncmp(devref, "/dev/nvme", 9))
 	{
-		drive = new DtaDevLinuxNvme();
+		drive = nvmeDrive;
 	}
 	else if (!strncmp(devref, "/dev/s", 6))
 	{
+		delete nvmeDrive;
 		drive = new DtaDevLinuxSata();
 	}
 	else 
         {
+		delete nvmeDrive;
 		LOG(E) << "DtaDevOS::init ERROR - unknown drive type";
                 isOpen = FALSE;
                 return;
         }
 
-	if (drive->init(devref))
+	if (drive_init || drive->init(devref))
 	{
 		isOpen = TRUE;
 		drive->identify(disk_info);
