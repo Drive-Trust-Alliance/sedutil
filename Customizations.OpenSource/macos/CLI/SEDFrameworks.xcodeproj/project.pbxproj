@@ -23,27 +23,27 @@
 		D27591BA28B579F1005B9081 /* DtaDevOpal2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */; };
 		D275D3B02C4B14560083605E /* sedutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D275D3AC2C4B14560083605E /* sedutil.cpp */; };
 		D275D3B22C4B14560083605E /* DtaNvmeDrive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D275D3AE2C4B14560083605E /* DtaNvmeDrive.cpp */; };
-		D275D3B32C4B14560083605E /* NVMeStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D275D3AF2C4B14560083605E /* NVMeStructures.h */; };
-		D275D3B52C4B15270083605E /* DtaNvmeDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D275D3B42C4B15270083605E /* DtaNvmeDrive.h */; };
+		D275D3B32C4B14560083605E /* NVMeStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D275D3AF2C4B14560083605E /* NVMeStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D275D3B52C4B15270083605E /* DtaNvmeDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D275D3B42C4B15270083605E /* DtaNvmeDrive.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D275D3B62C4B16650083605E /* DtaAuthorizeSedutilExecution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2486D622B184266002D347E /* DtaAuthorizeSedutilExecution.cpp */; };
 		D275D3B72C4B16990083605E /* DtaOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2EA841528053B3D00A0F685 /* DtaOptions.cpp */; };
-		D27C8EAE2B9027BE0006A38B /* db.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EA32B9027BE0006A38B /* db.h */; };
+		D27C8EAE2B9027BE0006A38B /* db.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EA32B9027BE0006A38B /* db.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D27C8EAF2B9027BE0006A38B /* InterfaceDeviceID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EA42B9027BE0006A38B /* InterfaceDeviceID.cpp */; };
-		D27C8EB22B9027BF0006A38B /* ParseDiscovery0Features.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EA72B9027BE0006A38B /* ParseDiscovery0Features.h */; };
+		D27C8EB22B9027BF0006A38B /* ParseDiscovery0Features.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EA72B9027BE0006A38B /* ParseDiscovery0Features.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D27C8EB42B9027BF0006A38B /* ParseATIdentify.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EA92B9027BE0006A38B /* ParseATIdentify.cpp */; };
-		D27C8EB52B9027BF0006A38B /* InterfaceDeviceID.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EAA2B9027BE0006A38B /* InterfaceDeviceID.h */; };
-		D27C8EB62B9027BF0006A38B /* ParseATIdentify.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EAB2B9027BE0006A38B /* ParseATIdentify.h */; };
+		D27C8EB52B9027BF0006A38B /* InterfaceDeviceID.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EAA2B9027BE0006A38B /* InterfaceDeviceID.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D27C8EB62B9027BF0006A38B /* ParseATIdentify.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EAB2B9027BE0006A38B /* ParseATIdentify.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D27C8EB82B9027BF0006A38B /* ParseDiscovery0Features.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EAD2B9027BE0006A38B /* ParseDiscovery0Features.cpp */; };
-		D27C8EBE2B9027D50006A38B /* DtaMacOSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EBA2B9027D50006A38B /* DtaMacOSConstants.h */; };
-		D27C8EC82B902E8B0006A38B /* DtaMacOSScsiDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EC32B902E8B0006A38B /* DtaMacOSScsiDrive.h */; };
+		D27C8EBE2B9027D50006A38B /* DtaMacOSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EBA2B9027D50006A38B /* DtaMacOSConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D27C8EC82B902E8B0006A38B /* DtaMacOSScsiDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8EC32B902E8B0006A38B /* DtaMacOSScsiDrive.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D27C8EC92B902E8B0006A38B /* DtaMacOSScsiDrive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EC42B902E8B0006A38B /* DtaMacOSScsiDrive.cpp */; };
 		D27C8ECA2B902E8B0006A38B /* DtaMacOSDriveFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8EC52B902E8B0006A38B /* DtaMacOSDriveFactory.cpp */; };
-		D27C8ECD2B903CAC0006A38B /* DtaMacOSSataDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8ECB2B903CAC0006A38B /* DtaMacOSSataDrive.h */; };
+		D27C8ECD2B903CAC0006A38B /* DtaMacOSSataDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D27C8ECB2B903CAC0006A38B /* DtaMacOSSataDrive.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D27C8ECE2B903CAC0006A38B /* DtaMacOSSataDrive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27C8ECC2B903CAC0006A38B /* DtaMacOSSataDrive.cpp */; };
 		D27CB0302C5586B90078E067 /* DtaAtaDrive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27CB02D2C5586B90078E067 /* DtaAtaDrive.cpp */; };
-		D27CB0312C5586B90078E067 /* DtaAtaDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D27CB02E2C5586B90078E067 /* DtaAtaDrive.h */; };
-		D27CB0322C5586B90078E067 /* SCSICmds_INQUIRY_Definitions.h in Headers */ = {isa = PBXBuildFile; fileRef = D27CB02F2C5586B90078E067 /* SCSICmds_INQUIRY_Definitions.h */; };
-		D27CB0352C558B750078E067 /* DtaMacOSAtaDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D27CB0332C558B740078E067 /* DtaMacOSAtaDrive.h */; };
+		D27CB0312C5586B90078E067 /* DtaAtaDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D27CB02E2C5586B90078E067 /* DtaAtaDrive.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D27CB0322C5586B90078E067 /* SCSICmds_INQUIRY_Definitions.h in Headers */ = {isa = PBXBuildFile; fileRef = D27CB02F2C5586B90078E067 /* SCSICmds_INQUIRY_Definitions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D27CB0352C558B750078E067 /* DtaMacOSAtaDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D27CB0332C558B740078E067 /* DtaMacOSAtaDrive.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D27CB0362C558B750078E067 /* DtaMacOSAtaDrive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27CB0342C558B740078E067 /* DtaMacOSAtaDrive.cpp */; };
 		D27CDC6F2B913CF400196584 /* DtaDevFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27CDC6E2B913CF300196584 /* DtaDevFactory.cpp */; };
 		D2803E212C45F19900ACE051 /* DtaScsiDrive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2803E1B2C45F19800ACE051 /* DtaScsiDrive.cpp */; };
@@ -53,16 +53,15 @@
 		D2803E252C45F19900ACE051 /* DtaBlockStorageDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = D2803E1F2C45F19800ACE051 /* DtaBlockStorageDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2803E262C45F19900ACE051 /* DtaScsiDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D2803E202C45F19900ACE051 /* DtaScsiDrive.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D285034D2B94FCFE00877DA8 /* DtaMacOSBlockStorageDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D285034B2B94FCFE00877DA8 /* DtaMacOSBlockStorageDevice.cpp */; };
-		D285034E2B94FCFE00877DA8 /* DtaMacOSBlockStorageDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = D285034C2B94FCFE00877DA8 /* DtaMacOSBlockStorageDevice.h */; };
-		D29CBD372C41AB600049DAAF /* DtaOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D29CBD362C41AB600049DAAF /* DtaOS.h */; };
-		D29CBD392C41ACFC0049DAAF /* DtaMacOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D29CBD382C41ACFC0049DAAF /* DtaMacOS.h */; };
+		D285034E2B94FCFE00877DA8 /* DtaMacOSBlockStorageDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = D285034C2B94FCFE00877DA8 /* DtaMacOSBlockStorageDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D29CBD372C41AB600049DAAF /* DtaOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D29CBD362C41AB600049DAAF /* DtaOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D29CBD392C41ACFC0049DAAF /* DtaMacOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D29CBD382C41ACFC0049DAAF /* DtaMacOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D29CBD3B2C41AE750049DAAF /* DtaMacOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D29CBD3A2C41AE750049DAAF /* DtaMacOS.cpp */; };
 		D2A06C9628B5D88800C0DDB6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9528B5D88800C0DDB6 /* Foundation.framework */; };
 		D2A06C9C28B5D8FE00C0DDB6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */; };
 		D2A06C9D28B5DC7900C0DDB6 /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
 		D2A547332C448A9A0010F703 /* DtaDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D2A547322C448A9A0010F703 /* DtaDrive.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D2ABA56F2C5D72E100568230 /* json_struct.h in Headers */ = {isa = PBXBuildFile; fileRef = D2ABA56E2C5D72E100568230 /* json_struct.h */; };
-		D2B051E62C5DFC9900E5F41A /* DtaJson.h in Headers */ = {isa = PBXBuildFile; fileRef = D2B051E52C5DFC9900E5F41A /* DtaJson.h */; };
+		D2B051E62C5DFC9900E5F41A /* DtaJson.h in Headers */ = {isa = PBXBuildFile; fileRef = D2B051E52C5DFC9900E5F41A /* DtaJson.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2B9DEAC2C49F4BC00E6D7EE /* DtaMacOSNvmeDrive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2B9DEAA2C49F4BC00E6D7EE /* DtaMacOSNvmeDrive.cpp */; };
 		D2B9DEAD2C49F4BC00E6D7EE /* DtaMacOSNvmeDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D2B9DEAB2C49F4BC00E6D7EE /* DtaMacOSNvmeDrive.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2BDDC9D28A6369A00001E26 /* ReadMe.txt in Resources */ = {isa = PBXBuildFile; fileRef = D2BDDC9B28A6369A00001E26 /* ReadMe.txt */; };
@@ -545,45 +544,45 @@
 			files = (
 				D2803E232C45F19900ACE051 /* DtaSataDrive.h in Headers */,
 				D22369B928D686C400D7D851 /* sedutil.h in Headers */,
-				D2B051E62C5DFC9900E5F41A /* DtaJson.h in Headers */,
-				D27C8EB62B9027BF0006A38B /* ParseATIdentify.h in Headers */,
 				D24E866F2B1ADA420098FE03 /* ATAStructures.h in Headers */,
 				D271A1FF28054AFE00BF043A /* DtaLexicon.h in Headers */,
 				D271A1FE28054AFE00BF043A /* DtaConstants.h in Headers */,
 				D271A1FB28054AFE00BF043A /* DtaStructures.h in Headers */,
-				D29CBD372C41AB600049DAAF /* DtaOS.h in Headers */,
 				D2EA845228053B4C00A0F685 /* DtaDevOpal.h in Headers */,
 				D2A547332C448A9A0010F703 /* DtaDrive.h in Headers */,
-				D27C8EAE2B9027BE0006A38B /* db.h in Headers */,
 				D271A1FC28054AFE00BF043A /* DtaDev.h in Headers */,
 				D2EA844E28053B4C00A0F685 /* DtaDevOpal1.h in Headers */,
-				D275D3B52C4B15270083605E /* DtaNvmeDrive.h in Headers */,
 				D2B9DEAD2C49F4BC00E6D7EE /* DtaMacOSNvmeDrive.h in Headers */,
-				D29CBD392C41ACFC0049DAAF /* DtaMacOS.h in Headers */,
 				D2EA848428053B4D00A0F685 /* DtaDevGeneric.h in Headers */,
 				D2EA844A28053B4C00A0F685 /* DtaDevEnterprise.h in Headers */,
-				D27C8EB52B9027BF0006A38B /* InterfaceDeviceID.h in Headers */,
 				D2EA849128053B4D00A0F685 /* DtaHashPwd.h in Headers */,
 				D2EA84B228053B4E00A0F685 /* DtaCommand.h in Headers */,
 				D271A20028054AFE00BF043A /* DtaResponse.h in Headers */,
+				D2B051E62C5DFC9900E5F41A /* DtaJson.h in Headers */,
+				D27C8EB62B9027BF0006A38B /* ParseATIdentify.h in Headers */,
+				D29CBD372C41AB600049DAAF /* DtaOS.h in Headers */,
+				D27C8EAE2B9027BE0006A38B /* db.h in Headers */,
+				D275D3B52C4B15270083605E /* DtaNvmeDrive.h in Headers */,
+				D29CBD392C41ACFC0049DAAF /* DtaMacOS.h in Headers */,
+				D27C8EB52B9027BF0006A38B /* InterfaceDeviceID.h in Headers */,
 				D27CB0312C5586B90078E067 /* DtaAtaDrive.h in Headers */,
 				D27CB0322C5586B90078E067 /* SCSICmds_INQUIRY_Definitions.h in Headers */,
-				D2EA84AB28053B4E00A0F685 /* DtaEndianFixup.h in Headers */,
-				D2EA84AF28053B4E00A0F685 /* DtaHexDump.h in Headers */,
 				D275D3B32C4B14560083605E /* NVMeStructures.h in Headers */,
-				D22042022B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h in Headers */,
 				D27C8ECD2B903CAC0006A38B /* DtaMacOSSataDrive.h in Headers */,
 				D285034E2B94FCFE00877DA8 /* DtaMacOSBlockStorageDevice.h in Headers */,
+				D27C8EBE2B9027D50006A38B /* DtaMacOSConstants.h in Headers */,
+				D27CB0352C558B750078E067 /* DtaMacOSAtaDrive.h in Headers */,
+				D27C8EC82B902E8B0006A38B /* DtaMacOSScsiDrive.h in Headers */,
+				D27C8EB22B9027BF0006A38B /* ParseDiscovery0Features.h in Headers */,
+				D2EA84AB28053B4E00A0F685 /* DtaEndianFixup.h in Headers */,
+				D2EA84AF28053B4E00A0F685 /* DtaHexDump.h in Headers */,
+				D22042022B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h in Headers */,
 				D2803E252C45F19900ACE051 /* DtaBlockStorageDevice.h in Headers */,
 				D2EA849028053B4D00A0F685 /* DtaDevOpal2.h in Headers */,
 				D2EA849928053B4D00A0F685 /* DtaSession.h in Headers */,
 				D2EA84AA28053B4E00A0F685 /* DtaAnnotatedDump.h in Headers */,
 				D21944B12BC06D7400507A4B /* log.h in Headers */,
-				D27C8EBE2B9027D50006A38B /* DtaMacOSConstants.h in Headers */,
-				D27CB0352C558B750078E067 /* DtaMacOSAtaDrive.h in Headers */,
 				D2803E262C45F19900ACE051 /* DtaScsiDrive.h in Headers */,
-				D27C8EC82B902E8B0006A38B /* DtaMacOSScsiDrive.h in Headers */,
-				D27C8EB22B9027BF0006A38B /* ParseDiscovery0Features.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -686,7 +685,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1540;
+				LastUpgradeCheck = 1610;
 				ORGANIZATIONNAME = "Bright Plaza, Inc.";
 				TargetAttributes = {
 					D2E6FEA22935E67800DAB209 = {
@@ -793,6 +792,8 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/GitVersion.sh",
+				"$(SRCROOT)/MakeVersion.sh",
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Version.h",
@@ -909,7 +910,7 @@
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
@@ -1022,6 +1023,7 @@
 		D2763BE81F1273A50015B62C /* Debug Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1064,7 +1066,7 @@
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
@@ -1172,6 +1174,7 @@
 		D2763BF11F1273B40015B62C /* Release Bonjour Multistart */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -1364,7 +1367,7 @@
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
@@ -1489,7 +1492,7 @@
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
@@ -1614,7 +1617,7 @@
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
@@ -1740,7 +1743,7 @@
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
@@ -1858,7 +1861,7 @@
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
@@ -1976,7 +1979,7 @@
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
@@ -2097,7 +2100,7 @@
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
@@ -2219,7 +2222,7 @@
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_TIDY_BUGPRONE_REDUNDANT_BRANCH_CONDITION = YES;
@@ -2498,6 +2501,7 @@
 		D2EBA30D1F0549B7002F8780 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -2515,6 +2519,7 @@
 		D2EBA30E1F0549B7002F8780 /* Debug Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -2532,6 +2537,7 @@
 		D2EBA30F1F0549B7002F8780 /* Debug Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -2549,6 +2555,7 @@
 		D2EBA3101F0549B7002F8780 /* Debug Bonjour */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -2566,6 +2573,7 @@
 		D2EBA3111F0549B7002F8780 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -2583,6 +2591,7 @@
 		D2EBA3121F0549B7002F8780 /* Release Bonjour */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -2600,6 +2609,7 @@
 		D2EBA3131F0549B7002F8780 /* Release Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -2617,6 +2627,7 @@
 		D2EBA3141F0549B7002F8780 /* Release Bonjour and Bluetooth */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",

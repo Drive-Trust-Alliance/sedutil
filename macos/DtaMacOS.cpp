@@ -31,14 +31,12 @@
 #include "DtaHexDump.h"
 #include "NVMeStructures.h"
 
-namespace fs=std::__fs::filesystem;
-
 
 DtaOS * DtaOS::getDtaOS () { return new DtaMacOS(); }
 
 OSDEVICEHANDLE DtaMacOS::openDeviceHandle(const char * devref, bool & accessDenied){
     LOG(D4) << "openDeviceHandle(\"" << devref << "\", _)";
-    std::string bsdName = std::__fs::filesystem::path(devref).stem();
+    std::string bsdName = std::filesystem::path(devref).stem();
     if (bsdName.rfind("/dev/",0)==0)
         bsdName=bsdName.substr(5,bsdName.length());
     
