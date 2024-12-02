@@ -238,7 +238,7 @@ public:
           break;
 
         default:
-          LOG(E) << "Exiting DtaLinux::PerformATACommand_via_SAT because of unrecognized cmd=" << cmd << "?!" ;
+          LOG(E) << "Exiting PerformATACommand_via_SAT because of unrecognized cmd=" << cmd << "?!" ;
           return 0xff;
         }
 
@@ -271,20 +271,20 @@ public:
                                     &masked_status,
                                     timeout);
       if (result!=0) {
-        LOG(D4) << "DtaLinux::PerformATACommand_via_SAT: PerformSCSICommand returned " << result;
+        LOG(D4) << "PerformATACommand_via_SAT: PerformSCSICommand returned " << result;
         LOG(D4) << "sense after ";
         IFLOG(D4) DtaHexDump(&sense, senselen);
         return 0xff;
       }
 
-      LOG(D4) << "DtaLinux::PerformATACommand_via_SAT: PerformSCSICommand returned " << result;
+      LOG(D4) << "PerformATACommand_via_SAT: PerformSCSICommand returned " << result;
       LOG(D4) << "sense after ";
       IFLOG(D4) DtaHexDump(&sense, senselen);
 
       // check for successful target completion
       if (masked_status != GOOD)
         {
-          LOG(D4) << "DtaLinux::PerformATACommand_via_SAT: masked_status=" << masked_status << "=" << statusName(masked_status) << " != GOOD  cmd=" <<
+          LOG(D4) << "PerformATACommand_via_SAT: masked_status=" << masked_status << "=" << statusName(masked_status) << " != GOOD  cmd=" <<
             (cmd == TRUSTED_SEND    ? std::string("TRUSTED_SEND") :
              cmd == TRUSTED_RECEIVE ? std::string("TRUSTED_RECEIVE") :
              cmd == IDENTIFY_DEVICE ? std::string("IDENTIFY_DEVICE") :
@@ -296,7 +296,7 @@ public:
 
       if (! ((0x00 == sense[0]) && (0x00 == sense[1])) ||
           ((0x72 == sense[0]) && (0x0b == sense[1])) ) {
-        LOG(D4) << "DtaLinux::PerformATACommand_via_SAT: PerformATACommand disqualifying ATA response --"
+        LOG(D4) << "PerformATACommand_via_SAT: PerformATACommand disqualifying ATA response --"
                 << " sense[0]=" << HEXON(2) << (unsigned int)sense[0]
                 << " sense[1]=" << HEXON(2) << (unsigned int)sense[1];
         return 0xff; // not ATA response
@@ -304,7 +304,7 @@ public:
 
       LOG(D4) << "buffer after ";
       IFLOG(D4) DtaHexDump(buffer, dataLength);
-      LOG(D4) << "DtaLinux::PerformATACommand_via_SAT: PerformATACommand returning sense[11]=" << HEXON(2) << (unsigned int)sense[11];
+      LOG(D4) << "PerformATACommand_via_SAT: PerformATACommand returning sense[11]=" << HEXON(2) << (unsigned int)sense[11];
       return (sense[11]);
 
     }
