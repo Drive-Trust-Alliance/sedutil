@@ -208,15 +208,27 @@ DtaOS::dictionary * DtaLinux::getOSSpecificInformation(OSDEVICEHANDLE osDeviceHa
     std::string str_WWN(deviceProperties["ID_WWN"]);
     LOG(D3) << "ID_WWN is " << str_WWN;
     std::transform(str_WWN.begin(), str_WWN.end(), str_WWN.begin(), ::toupper);
+    LOG(D3) << "ID_WWN in uppercase is " << str_WWN;
+    // Various WWN hacks
+    size_t WWN_length=str_WWN.length();
+    size_t WWN_prefix_length=0;
+    // Might start with "0X"
     if (str_WWN.substr(0,2)=="0X") {
+        WWN_prefix_length=2;
       str_WWN=str_WWN.substr(2);
+    // Might start with "EUI."
     } else if (str_WWN.substr(0,4)=="EUI.") {
-      str_WWN=std::string("5")+str_WWN.substr(20,2*sizeof(device_info.worldWideName)-1);
+        WWN_prefix_length=4;
     }
+    size_t device_info_nybbles = 2*sizeof(device_info.worldWideName);
+    size_t padding_length =
+      min(0, device_info_nybbles - 1SW - (WWN_length - WWN_prefix_length)));
+    str_WWN = string(1, '5') + str_WWN.substr(WWN_prefix_length) + string(padding_length '0');
+    str_WWN = str_WWN.substr(0, device_info_nybbles);
     LOG(D3) << "str_WWN is " << str_WWN;
     LOG(D3) << "str_WWN.length()=" << str_WWN.length();
     LOG(D3) << "sizeof(device_info.worldWideName)=" << sizeof(device_info.worldWideName);
-    assert(str_WWN.length()==(2*sizeof(device_info.worldWideName)));
+    assert(str_WWN.length()==device_info_nybbles));
 
     unsigned char *dst=device_info.worldWideName;
     const unsigned char *str_src=reinterpret_cast<const unsigned char *>(str_WWN.c_str());
