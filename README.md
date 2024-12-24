@@ -44,6 +44,12 @@ line like this:
 git clone -c core.symlinks=true https://github.com/Drive-Trust-Alliance/sedutil
 ```
 
+Building under Arch Linux's minimalist environment requires the packages
+ - base-devel
+ - libnvme
+in addition to whatever you need to get going as a Linux installation, e.g. networking.
+
+
 Linux and Windows executables are available at https://github.com/Drive-Trust-Alliance/sedutil/wiki/Executable-Distributions
 
 If you are looking for the PSID revert function see linux/PSIDRevert_LINUX.txt or win32/PSIDRevert_WINDOWS.txt
