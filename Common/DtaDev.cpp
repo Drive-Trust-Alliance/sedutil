@@ -638,10 +638,11 @@ uint8_t DtaDev::diskScan()
 
 
     IFLOG(D1) {
-      string const padded_column_headers{string(left_pad, ' ') + column_header + string(right_pad, ' ')
-                                         + " SSC        Model Number       Firmware Locn   World Wide Name        Serial Number     Vendor      Manufacturer Name\n"};
-      string const padded_column_underlines{string(device_column_width, '-')
-                                            + " --- ------------ ------------ -------- -----  ----- ---- -----   ---------- ---------  -------  --------------- -------\n"};
+      string const header1{" SSC        Model Number       Firmware Locn   World Wide Name        Serial Number     Vendor      Manufacturer Name\n"};
+      string const header2{" --- ------------------------- -------- -----  ----------------   --------------------  -------  -----------------------\n"};
+
+      string const padded_column_headers   {padded_column_header    + header1};
+      string const padded_column_underlines{padded_column_underline + header2};
 
       fputs(padded_column_headers.c_str()    , Output2FILE::StreamStdout());
       fputs(padded_column_underlines.c_str() , Output2FILE::StreamStdout());

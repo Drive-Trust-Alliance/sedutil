@@ -48,6 +48,11 @@ DtaDev* DtaDev::getDtaDev(const char * devref,
                                 DtaDrive * drive,
                                 DTA_DEVICE_INFO & di,
                                 bool genericIfNotTPer) {
+  LOG(D4) << "DtaDev::getDtaDev("
+          << "devref="           << "\"" << devref << "\""                      << ", "
+          << "drive"                                                            << ", "
+          << "di="               << HEXON(8) << reinterpret_cast<intptr_t>(&di) << ", "
+          << "genericIfNotTPer=" << std::boolalpha << genericIfNotTPer          << ")" ;
   if (DTAERROR_SUCCESS == drive->discovery0(di)) {  // drive responds to most basic TRUSTED_RECEIVE
     LOG(D4) << "DtaDev::getDtaDev: discovery0 succeeded.";
     if (di.OPAL20)        return new DtaDevOpal2(devref, drive, di);
