@@ -124,5 +124,6 @@ uint8_t DtaDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
   }
   parseDiscovery0Features((uint8_t *)d0Response, disk_info);
   OS.free_aligned_MIN_BUFFER_LENGTH_buffer(d0Response);
+  LOG(D4) << "Acquiring Discovery 0 response succeeded.";
   return DTAERROR_SUCCESS;
 }

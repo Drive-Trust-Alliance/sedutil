@@ -500,13 +500,17 @@ uint8_t DtaDev::getDtaDev(const char * devref,
       // LOG(E) << "Invalid or unsupported device " << devref;
     }
     // LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
-    if (accessDenied)
+    if (accessDenied) {
+      LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_DEVICE_ACCESS_DENIED";
       return DTAERROR_DEVICE_ACCESS_DENIED;
-    else
+    } else {
+      LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_DEVICE_INVALID_OR_UNSUPPORTED";
       return DTAERROR_DEVICE_INVALID_OR_UNSUPPORTED;
+    }
   }
 
   dev =  getDtaDev(devref, drive, di, genericIfNotTPer) ;
+
   if (dev == NULL) {
 
     delete drive;
@@ -522,7 +526,7 @@ uint8_t DtaDev::getDtaDev(const char * devref,
       LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_DEVICE_ACCESS_DENIED";
       return DTAERROR_DEVICE_ACCESS_DENIED;
     } else {
-      LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
+      LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_DEVICE_INVALID_OR_UNSUPPORTED";
       return DTAERROR_DEVICE_INVALID_OR_UNSUPPORTED;
     }
   }
@@ -588,12 +592,12 @@ uint8_t DtaDev::diskScan()
 
   if (devRefs.size()!=0) {
 
-      
+
       if (outputFormat == sedutilJSON || outputFormat == sedutilJSONCompact) {
-          
+
 
           vector<ddipair>devs;
-          
+
           for (string& devref : devRefs) {
               LOG(D4) << std::endl << "Scanning \"" << devref << "\" ...";
               DtaDev* dev = NULL;
@@ -603,19 +607,19 @@ uint8_t DtaDev::diskScan()
                   delete dev;
               }
           }
- 
-          cout << JS::serializeStruct(devs, 
+
+          cout << JS::serializeStruct(devs,
                                       JS::SerializerOptions(outputFormat == sedutilJSON
-                                                                ? JS::SerializerOptions::Pretty 
-                                                                : JS::SerializerOptions::Compact)) 
+                                                                ? JS::SerializerOptions::Pretty
+                                                                : JS::SerializerOptions::Compact))
               << endl;
- 
+
           return DTAERROR_SUCCESS;
       }
 
 
-      
-      
+
+
       // Deal with device names being of various sizes in various OSes.  E.g. in Windows, a devRef might be
     // as long as "\\.\PhysicalDrive123" while on linux they might all be as short as "/dev/sda"
 
