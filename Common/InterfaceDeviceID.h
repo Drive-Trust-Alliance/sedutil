@@ -3,7 +3,7 @@
 //  BrightPlazaTPer
 //
 //  Created by Scott Marks on 9/7/22
-//  Copyright © 2022-2024 Bright Plaza Inc. All rights reserved.
+//  © 2015 Bright Plaza Inc. All rights reserved.
 //
 
 #include <stdint.h>

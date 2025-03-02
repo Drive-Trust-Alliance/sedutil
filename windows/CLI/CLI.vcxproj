@@ -30,6 +30,9 @@
     <ClCompile Include="..\..\Common\DtaDevOpal.cpp" />
     <ClCompile Include="..\..\Common\DtaDevOpal1.cpp" />
     <ClCompile Include="..\..\Common\DtaDevOpal2.cpp" />
+    <ClCompile Include="..\..\Common\DtaDevPyrite.cpp" />
+    <ClCompile Include="..\..\Common\DtaDevPyrite1.cpp" />
+    <ClCompile Include="..\..\Common\DtaDevPyrite2.cpp" />
     <ClCompile Include="..\..\Common\DtaDrive.cpp" />
     <ClCompile Include="..\..\Common\DtaHashPassword.cpp" />
     <ClCompile Include="..\..\Common\DtaHashPwd.cpp" />
@@ -40,6 +43,7 @@
     <ClCompile Include="..\..\Common\DtaSataDrive.cpp" />
     <ClCompile Include="..\..\Common\DtaScsiDrive.cpp" />
     <ClCompile Include="..\..\Common\DtaSession.cpp" />
+    <ClCompile Include="..\..\Common\DtaUsage.cpp" />
     <ClCompile Include="..\..\Common\InterfaceDeviceID.cpp" />
     <ClCompile Include="..\..\Common\log.cpp" />
     <ClCompile Include="..\..\Common\ParseATIdentify.cpp" />
@@ -91,6 +95,9 @@
     <ClInclude Include="..\..\Common\DtaDevOpal.h" />
     <ClInclude Include="..\..\Common\DtaDevOpal1.h" />
     <ClInclude Include="..\..\Common\DtaDevOpal2.h" />
+    <ClInclude Include="..\..\Common\DtaDevPyrite.h" />
+    <ClInclude Include="..\..\Common\DtaDevPyrite1.h" />
+    <ClInclude Include="..\..\Common\DtaDevPyrite2.h" />
     <ClInclude Include="..\..\Common\DtaDrive.h" />
     <ClInclude Include="..\..\Common\DtaEndianFixup.h" />
     <ClInclude Include="..\..\Common\DtaHashPassword.h" />
@@ -106,6 +113,7 @@
     <ClInclude Include="..\..\Common\DtaScsiDrive.h" />
     <ClInclude Include="..\..\Common\DtaSession.h" />
     <ClInclude Include="..\..\Common\DtaStructures.h" />
+    <ClInclude Include="..\..\Common\DtaUsage.h" />
     <ClInclude Include="..\..\Common\InterfaceDeviceID.h" />
     <ClInclude Include="..\..\Common\json_struct.h" />
     <ClInclude Include="..\..\Common\log.h" />

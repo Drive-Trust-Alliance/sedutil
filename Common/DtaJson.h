@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -73,7 +73,6 @@ JS_OBJ_EXT(DTA_DEVICE_INFO,
            OPAL20,
            OPAL10,
            Properties,
-           ANY_OPAL_SSC,
            OPALITE,
            PYRITE,
            PYRITE2,
@@ -180,5 +179,5 @@ JS_OBJ_EXT(DTA_DEVICE_INFO,
            fips,
            asmedia,
            enclosure);
-	
+
 #endif // !defined(__DTAJSON_H_INCLUDED__)

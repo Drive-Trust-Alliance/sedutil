@@ -3,7 +3,7 @@
 //  SedUserClient
 //
 //  Created by Jackie Marks on 9/21/15.
-//  Copyright © 2015-2024 Bright Plaza Inc. All rights reserved.
+//  © 2015 Bright Plaza Inc. All rights reserved.
 //
 
 

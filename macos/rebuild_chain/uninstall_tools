@@ -1,0 +1,8 @@
+#!/bin/bash
+# set -xv
+. chain_config
+cd ~                           && \
+test_select tools              && \
+. test_env                     && \
+uninstall_from_iso Debug       && \
+chain_continue

@@ -6,6 +6,20 @@ make
 ------------------------
 This will also build the PBA ignore it.
 
-If you get an errot building that says Version.h is missing
+If you get an error building that says Version.h is missing
 you need to make all. This is an issue with how autotools handles
-built sources and dependencies. 
+built sources and dependencies.
+
+You will need superuser privileges to run sedutil-cli in most cases, since it needs to
+read the device nodes.  Hence the building user should be able to `sudo`.
+
+An extended Bash command line that builds, tests slightly using --scan, and cleans up, 
+and which you can execute by `tail -7 BUILDING | sh`, is:
+
+autoreconf -i                     && \
+./configure --enable-silent-rules && \
+make                              && \
+sudo make install                 && \
+ls -al `which sedutil-cli`        && \
+sudo sedutil-cli -vv --scan       && \
+sudo make clean

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -46,9 +46,7 @@
 #include "DtaHexDump.h"
 
 
-
-
-
+const std::string DtaOS::name="Linux";
 DtaOS * DtaOS::getDtaOS () { return new DtaLinux(); }
 
 OSDEVICEHANDLE DtaLinux::openDeviceHandle(const char * devref, bool & accessDenied){
@@ -174,6 +172,8 @@ DtaOS::dictionary * DtaLinux::getOSSpecificInformation(OSDEVICEHANDLE osDeviceHa
   // Get device properties from `sd_device device`
   dictionary * pDeviceProperties = new dictionary;
   dictionary & deviceProperties = *pDeviceProperties;
+#define showProperty(k)  do { std::string & prop=deviceProperties[k]; \
+    LOG(D4) << k << " is " << (prop.empty() ? std::string("*** missing ***") : prop ); } while (0)
   // const char *value, *key;
   // FOREACH_DEVICE_PROPERTY(device, key, value) deviceProperties[key] = value ;
   const char *key, *value;
@@ -182,33 +182,77 @@ DtaOS::dictionary * DtaLinux::getOSSpecificInformation(OSDEVICEHANDLE osDeviceHa
        key = sd_device_get_property_next(device, &value))
     {
       deviceProperties[key] = value ;
+      IFLOG(D4) { showProperty(key); }
     }
 
   // Done with `sd_device device`
   sd_device_unref(device);
 
+  LOG(D4) << std::endl;
+  showProperty("ID_BUS");
+  showProperty("DEVPATH");
+  std::string bus=deviceProperties["ID_BUS"];
+  std::string devpath=deviceProperties["DEVPATH"];
+  LOG(D4) << std::endl;
+  LOG(D4) << "bus is " << bus ;
+  LOG(D4) << std::endl;
+
+
+  if (bus=="scsi") {
+    LOG(D3) << "device_info.devType = DEVICE_TYPE_SCSI because"
+            << " bus is scsi";
+    device_info.devType = DEVICE_TYPE_SCSI;
+  } else if (bus == "usb") {
+    if (deviceProperties["ID_USB_DRIVER"]=="uas") {
+      LOG(D3) << "device_info.devType = DEVICE_TYPE_SAS because"
+              << " bus is usb and ID_USB_DRIVER is uas";
+      device_info.devType = DEVICE_TYPE_SAS;
+    } else if (deviceProperties["ID_USB_DRIVER"]=="usb-storage") {
+      LOG(D3) << "device_info.devType = DEVICE_TYPE_USB because"
+              << " bus is usb and ID_USB_DRIVER is usb-storage";
+      device_info.devType = DEVICE_TYPE_USB;
+    }
+  } else if (bus == "ata") {
+    if (deviceProperties["ID_USB_DRIVER"]=="uas") {
+      LOG(D3) << "device_info.devType = DEVICE_TYPE_USB because"
+              << " bus is ata and ID_USB_DRIVER is uas";
+      device_info.devType = DEVICE_TYPE_USB;
+    } else {
+      LOG(D3) << "device_info.devType = DEVICE_TYPE_ATA because"
+              << " bus is ata and ID_USB_DRIVER is not uas";
+      device_info.devType = DEVICE_TYPE_ATA;
+    }
+  } else if (bus == "nvme"
+          || devpath.find("/nvme/") != std::string::npos) {
+    LOG(D3) << "device_info.devType = DEVICE_TYPE_NVME because"
+            << (bus == "nvme" ? std::string(" bus is nvme")
+                : std::string(" \"/nvme/\" is a substring of devpath=")+devpath);
+    device_info.devType = DEVICE_TYPE_NVME;
+  }
 
   // Copy device properties from `deviceProperties` into `device_info`
 #define getDeviceProperty(key,field)                                    \
   do                                                                    \
     if (1==deviceProperties.count(#key)) {                              \
       std::string deviceProperty(deviceProperties[#key]);               \
-      LOG(D3) << #key << " is " << deviceProperty;                      \
+      showProperty(#key);                                               \
       safecopy(device_info.field, sizeof(device_info.field), (uint8_t *)deviceProperty.c_str(), strlen(deviceProperty.c_str())); \
     } while (0)
 
-  LOG(D3) << "Device properties from os:";
+  LOG(D4) << "Device properties from linux:";
   getDeviceProperty(ID_SERIAL_SHORT,serialNum) ;
   getDeviceProperty(ID_MODEL,modelNum) ;
   getDeviceProperty(ID_REVISION,firmwareRev) ;
   getDeviceProperty(ID_VENDOR,vendorID) ;
 
 
+  std::string str_WWN("");
+  size_t WWN_length=0;
   if (1==deviceProperties.count("ID_WWN")) {
-    std::string str_WWN(deviceProperties["ID_WWN"]);
-    LOG(D3) << "ID_WWN is " << str_WWN;
+    str_WWN=deviceProperties["ID_WWN"];
+    LOG(D4) << "ID_WWN is " << str_WWN;
     std::transform(str_WWN.begin(), str_WWN.end(), str_WWN.begin(), ::toupper);
-    LOG(D3) << "ID_WWN in uppercase is " << str_WWN;
+    LOG(D4) << "ID_WWN in uppercase is " << str_WWN;
     // Various WWN hacks
     // Might start with "0X"
     if (str_WWN.substr(0,2)=="0X") {
@@ -216,27 +260,45 @@ DtaOS::dictionary * DtaLinux::getOSSpecificInformation(OSDEVICEHANDLE osDeviceHa
     // Might start with "EUI."
     } else if (str_WWN.substr(0,4)=="EUI.") {
         str_WWN=str_WWN.substr(4);
+    // Might start with "NVME."
+    } else if (str_WWN.substr(0,5)=="NVME.") {
+        str_WWN="";
     }
-    size_t WWN_length=str_WWN.length();
-    LOG(D3) << "str_WWN is " << str_WWN;
-    LOG(D3) << "str_WWN.length()=" << str_WWN.length();
+    WWN_length=str_WWN.length();
+  }
+  if (0 < WWN_length) {
+    LOG(D4) << "str_WWN is " << str_WWN;
+    LOG(D4) << "str_WWN.length()=" << str_WWN.length();
 
     size_t device_info_nybbles = 2 * sizeof(device_info.worldWideName);
-    LOG(D3) << "device_info_nybbles=" << device_info_nybbles;
+    LOG(D4) << "device_info_nybbles=" << device_info_nybbles;
 
-    intptr_t length_difference =  device_info_nybbles - 1 - WWN_length ;
-    LOG(D3) << "length_difference=" << length_difference;
 
-    if (0 < length_difference) {
-      str_WWN += std::string(length_difference, '0');
+    if (device_info.devType == DEVICE_TYPE_NVME)  {
+      intptr_t length_difference =  device_info_nybbles - WWN_length ;
+      LOG(D4) << "length_difference=" << length_difference;
+
+      if (0 < length_difference) {
+        str_WWN += std::string(length_difference, '0');
+      } else {
+        str_WWN = str_WWN.substr(-length_difference, device_info_nybbles );
+      }
     } else {
-      str_WWN = str_WWN.substr(-length_difference, device_info_nybbles - 1);
-    }
-    str_WWN = std::string(1, '5') + str_WWN;
+      intptr_t length_difference =  device_info_nybbles - 1 - WWN_length ;
+      LOG(D4) << "length_difference=" << length_difference;
 
-    LOG(D3) << "str_WWN is " << str_WWN;
-    LOG(D3) << "str_WWN.length()=" << str_WWN.length();
-    LOG(D3) << "sizeof(device_info.worldWideName)=" << sizeof(device_info.worldWideName);
+      if (0 < length_difference) {
+        str_WWN += std::string(length_difference, '0');
+      } else {
+        str_WWN = str_WWN.substr(-length_difference, device_info_nybbles - 1);
+      }
+      str_WWN =std::string(1, '5' ) + str_WWN;
+    }
+
+
+    LOG(D4) << "str_WWN is " << str_WWN;
+    LOG(D4) << "str_WWN.length()=" << str_WWN.length();
+    LOG(D4) << "sizeof(device_info.worldWideName)=" << sizeof(device_info.worldWideName);
     assert(str_WWN.length()==device_info_nybbles);
 
     unsigned char *dst=device_info.worldWideName;
@@ -257,6 +319,7 @@ DtaOS::dictionary * DtaLinux::getOSSpecificInformation(OSDEVICEHANDLE osDeviceHa
 
 
   // Special brute-force copy into `device_info.passwordSalt`
+  // serialNum is bigger so just copy the first part
   memcpy(device_info.passwordSalt, device_info.serialNum, sizeof(device_info.passwordSalt));
 
 
@@ -268,29 +331,6 @@ DtaOS::dictionary * DtaLinux::getOSSpecificInformation(OSDEVICEHANDLE osDeviceHa
   copyDeviceIdentificationField(vendorID,INQUIRY_VENDOR_IDENTIFICATION_Length);
   copyDeviceIdentificationField(modelNum,INQUIRY_PRODUCT_IDENTIFICATION_Length);
   copyDeviceIdentificationField(firmwareRev,INQUIRY_PRODUCT_REVISION_LEVEL_Length);
-
-  std::string bus=deviceProperties["ID_BUS"];
-  std::string devpath=deviceProperties["DEVPATH"];
-
-
-  if (bus=="scsi") {
-    device_info.devType = DEVICE_TYPE_SCSI;
-  } else if (bus == "usb") {
-    if (deviceProperties["ID_USB_DRIVER"]=="uas") {
-      device_info.devType = DEVICE_TYPE_SAS;
-      //    } else if (deviceProperties["ID_USB_DRIVER"]=="usb-storage") {
-      //      device_info.devType = DEVICE_TYPE_NVME;
-    }
-  } else if (bus == "ata") {
-    if (deviceProperties["ID_USB_DRIVER"]=="uas") {
-      device_info.devType = DEVICE_TYPE_USB;
-    } else {
-      device_info.devType = DEVICE_TYPE_ATA;
-    }
-  } else if (bus == "nvme"
-          || devpath.find("/nvme/") != std::string::npos) {
-    device_info.devType = DEVICE_TYPE_NVME;
-  }
 
   // Return properties dictionary both as in indication of success and for futher mischief
   return pDeviceProperties;
@@ -410,19 +450,6 @@ int DtaLinux::PerformSCSICommand(OSDEVICEHANDLE osDeviceHandle,
       DtaHexDump(buffer, bufferlen);
     }
 
-
-
-  LOG(D4) << "PerformSCSICommand kernResult=" << HEXON(8) << kernResult ;
-  IFLOG(D4) {
-    if (kernResult < 0) {
-      LOG(D4) << "cdb after returned " << HEXON(8) << kernResult << ":";
-      DtaHexDump(cdb, cdb_len);
-    } else {
-      LOG(D4) << "DtaLinux::PerformSCSICommand buffer after kernResult " << HEXON(8) << kernResult ;
-      DtaHexDump(buffer, bufferlen);
-    }
-  }
-
   return kernResult ;
 }
 
@@ -432,10 +459,11 @@ int DtaLinux::PerformSCSICommand(OSDEVICEHANDLE osDeviceHandle,
  * @param osDeviceHandle  OSDEVICEHANDLE of already-opened raw device file
  * @param cmd             NVMe command struct
  *
- * Returns the result of the os system call, as well as possibly setting *pmasked_status
+ * Returns the result of the os system call, as well as possibly setting *pstatus
  */
 int DtaLinux::PerformNVMeCommand(OSDEVICEHANDLE osDeviceHandle,
-                                 uint8_t * pcmd)
+                                 uint8_t * pcmd,
+                                 uint32_t * pstatus)
 {
   if (osDeviceHandle==INVALID_HANDLE_VALUE) {
     LOG(E) << "Nvme device not open";
@@ -470,6 +498,8 @@ int DtaLinux::PerformNVMeCommand(OSDEVICEHANDLE osDeviceHandle,
     }
   }
 
+  if (0 == kernResult)
+    (*pstatus) = cmd.result;
 
   return kernResult ;
 }

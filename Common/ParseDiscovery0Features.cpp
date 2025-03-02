@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -85,7 +85,6 @@ void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
     case FC_ENTERPRISE: /* Enterprise SSC */
       LOG(D2) << "Enterprise SSC Feature";
       di.Enterprise = 1;
-      di.ANY_OPAL_SSC = 1;
       di.Enterprise_rangeCrossing = body->enterpriseSSC.rangeCrossing;
       di.Enterprise_basecomID = SWAP16(body->enterpriseSSC.baseComID);
       di.Enterprise_numcomID = SWAP16(body->enterpriseSSC.numberComIDs);
@@ -93,7 +92,6 @@ void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
     case FC_OPALV100: /* Opal V1 */
       LOG(D2) << "Opal v1.0 SSC Feature";
       di.OPAL10 = 1;
-      di.ANY_OPAL_SSC = 1;
       di.OPAL10_basecomID = SWAP16(body->opalv100.baseComID);
       di.OPAL10_numcomIDs = SWAP16(body->opalv100.numberComIDs);
       break;
@@ -115,7 +113,6 @@ void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
     case FC_OPALV200: /* OPAL V200 */
       LOG(D2) << "Opal v2.0 SSC Feature";
       di.OPAL20 = 1;
-      di.ANY_OPAL_SSC = 1;
       di.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
       di.OPAL20_initialPIN = body->opalv200.initialPIN;
       di.OPAL20_revertedPIN = body->opalv200.revertedPIN;
@@ -127,22 +124,13 @@ void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
     case FC_PYRITE: /* PYRITE 0x302 */
       LOG(D2) << "Pyrite SSC Feature";
       di.PYRITE= 1;
-      di.ANY_OPAL_SSC = 1;
-      di.PYRITE_version = body->opalv200.version;
-      di.PYRITE_basecomID = SWAP16(body->opalv200.baseCommID);
-      di.PYRITE_initialPIN = body->opalv200.initialPIN;
-      di.PYRITE_revertedPIN = body->opalv200.revertedPIN;
-      di.PYRITE_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-      // temp patch ; use OPAL2 diskinfo if needed; need create pyrite class in the future
-      di.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
-      di.OPAL20_initialPIN = body->opalv200.initialPIN;
-      di.OPAL20_revertedPIN = body->opalv200.revertedPIN;
-      di.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-      di.OPAL20_numAdmins = 1; // SWAP16(body->opalv200.numlockingAdminAuth);
-      di.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
-      di.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
-      di.OPAL20_version = body->opalv200.version;
-      // does pyrite has data store. no feature set for data store default vaule 128K
+      di.PYRITE_version = body->pyritev100.version;
+      di.PYRITE_basecomID = SWAP16(body->pyritev100.baseCommID);
+      di.PYRITE_numcomIDs = SWAP16(body->pyritev100.numCommIDs);
+      di.PYRITE_initialPIN = body->pyritev100.initialPIN;
+      di.PYRITE_revertedPIN = body->pyritev100.revertedPIN;
+
+      // does pyrite have data store? no feature set for data store default vaule 128K
       di.DataStore = 1;
       di.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
       di.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
@@ -151,47 +139,45 @@ void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
     case FC_PYRITE2: /* PYRITE 2 0x303 */
       LOG(D2) << "Pyrite 2 SSC Feature";
       di.PYRITE2 = 1;
-      di.ANY_OPAL_SSC = 1;
-      di.PYRITE2_version = body->opalv200.version;
-      di.PYRITE2_basecomID = SWAP16(body->opalv200.baseCommID);
-      di.PYRITE2_initialPIN = body->opalv200.initialPIN;
-      di.PYRITE2_revertedPIN = body->opalv200.revertedPIN;
-      di.PYRITE2_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-      // temp patch ; use OPAL2 diskinfo if needed; need create pyrite class in the future
-      di.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
-      di.OPAL20_initialPIN = body->opalv200.initialPIN;
-      di.OPAL20_revertedPIN = body->opalv200.revertedPIN;
-      di.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-      di.OPAL20_numAdmins = 1; // SWAP16(body->opalv200.numlockingAdminAuth);
-      di.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
-      di.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
-      di.OPAL20_version = body->opalv200.version;
-      // does pyrite has data store. no feature set for data store default vaule 128K
-      di.DataStore = 1;
-      di.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
-      di.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
-      di.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
+      di.PYRITE2_version = body->pyritev200.version;
+      di.PYRITE2_basecomID = SWAP16(body->pyritev200.baseCommID);
+      di.PYRITE2_numcomIDs = SWAP16(body->pyritev200.numCommIDs);
+      di.PYRITE2_initialPIN = body->pyritev200.initialPIN;
+      di.PYRITE2_revertedPIN = body->pyritev200.revertedPIN;
+      // // temp patch ; use OPAL2 diskinfo if needed; need create pyrite class in the future
+      // di.OPAL20_basecomID = SWAP16(body->pyritev200.baseCommID);
+      // di.OPAL20_initialPIN = body->pyritev200.initialPIN;
+      // di.OPAL20_revertedPIN = body->pyritev200.revertedPIN;
+      // di.OPAL20_numcomIDs = SWAP16(body->pyritev200.numCommIDs);
+      // di.OPAL20_numAdmins = 1; // SWAP16(body->pyritev200.numlockingAdminAuth);
+      // di.OPAL20_numUsers = 2; // SWAP16(body->pyritev200.numlockingUserAuth);
+      // di.OPAL20_rangeCrossing = body->pyritev200.rangeCrossing;
+      // di.OPAL20_version = body->pyritev200.version;
+      // // does pyrite has data store. no feature set for data store default vaule 128K
+      // di.DataStore = 1;
+      // di.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
+      // di.DataStore_maxTableSize = 131072; //  10485760 (OPAL2); // SWAP32(body->datastore.maxSizeTables);
+      // di.DataStore_alignment = 1; //  SWAP32(body->datastore.tableSizeAlignment);
       break;
     case FC_RUBY: /* RUBY 0x304 */
       LOG(D2) << "Ruby SSC Feature";
       di.RUBY = 1;
-      di.ANY_OPAL_SSC = 1;
-      di.RUBY_version = body->opalv200.version;
-      di.RUBY_basecomID = SWAP16(body->opalv200.baseCommID);
-      di.RUBY_initialPIN = body->opalv200.initialPIN;
-      di.RUBY_revertedPIN = body->opalv200.revertedPIN;
-      di.RUBY_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-      di.RUBY_numAdmins = SWAP16(body->opalv200.numlockingAdminAuth);
-      di.RUBY_numUsers = SWAP16(body->opalv200.numlockingUserAuth);
+      di.RUBY_version = body->rubyv100.version;
+      di.RUBY_basecomID = SWAP16(body->rubyv100.baseCommID);
+      di.RUBY_initialPIN = body->rubyv100.initialPIN;
+      di.RUBY_revertedPIN = body->rubyv100.revertedPIN;
+      di.RUBY_numcomIDs = SWAP16(body->rubyv100.numCommIDs);
+      di.RUBY_numAdmins = SWAP16(body->rubyv100.numlockingAdminAuth);
+      di.RUBY_numUsers = SWAP16(body->rubyv100.numlockingUserAuth);
       // temp patch ; use OPAL2 diskinfo if needed; need create pyrite class in the future
-      di.OPAL20_basecomID = SWAP16(body->opalv200.baseCommID);
-      di.OPAL20_initialPIN = body->opalv200.initialPIN;
-      di.OPAL20_revertedPIN = body->opalv200.revertedPIN;
-      di.OPAL20_numcomIDs = SWAP16(body->opalv200.numCommIDs);
-      di.OPAL20_numAdmins = 1; // SWAP16(body->opalv200.numlockingAdminAuth);
-      di.OPAL20_numUsers = 2; // SWAP16(body->opalv200.numlockingUserAuth);
-      di.OPAL20_rangeCrossing = body->opalv200.rangeCrossing;
-      di.OPAL20_version = body->opalv200.version;
+      di.OPAL20_basecomID = SWAP16(body->rubyv100.baseCommID);
+      di.OPAL20_initialPIN = body->rubyv100.initialPIN;
+      di.OPAL20_revertedPIN = body->rubyv100.revertedPIN;
+      di.OPAL20_numcomIDs = SWAP16(body->rubyv100.numCommIDs);
+      di.OPAL20_numAdmins = 1; // SWAP16(body->rubyv100.numlockingAdminAuth);
+      di.OPAL20_numUsers = 2; // SWAP16(body->rubyv100.numlockingUserAuth);
+      di.OPAL20_rangeCrossing = body->rubyv100.rangeCrossing;
+      di.OPAL20_version = body->rubyv100.version;
       // does pyrite has data store. no feature set for data store default vaule 128K
       di.DataStore = 1;
       di.DataStore_maxTables = 1; //  SWAP16(body->datastore.maxTables);
@@ -220,22 +206,22 @@ void parseDiscovery0Features(const uint8_t * d0Response, DTA_DEVICE_INFO & di)
       di.DataRemoval_Mechanism = body->dataremoval.DataRemoval_Mechanism;
       di.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit5;
       di.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit5;
-      di.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit4;
-      di.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit4;
-      di.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit3;
-      di.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit3;
-      di.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit2;
-      di.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit2;
-      di.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit1;
-      di.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit1;
-      di.DataRemoval_TimeFormat_Bit5 = body->dataremoval.DataRemoval_TimeFormat_Bit0;
-      di.DataRemoval_Time_Bit5 = body->dataremoval.DataRemoval_Time_Bit0;
+      di.DataRemoval_TimeFormat_Bit4 = body->dataremoval.DataRemoval_TimeFormat_Bit4;
+      di.DataRemoval_Time_Bit4 = body->dataremoval.DataRemoval_Time_Bit4;
+      di.DataRemoval_TimeFormat_Bit3 = body->dataremoval.DataRemoval_TimeFormat_Bit3;
+      di.DataRemoval_Time_Bit3 = body->dataremoval.DataRemoval_Time_Bit3;
+      di.DataRemoval_TimeFormat_Bit2 = body->dataremoval.DataRemoval_TimeFormat_Bit2;
+      di.DataRemoval_Time_Bit2 = body->dataremoval.DataRemoval_Time_Bit2;
+      di.DataRemoval_TimeFormat_Bit1 = body->dataremoval.DataRemoval_TimeFormat_Bit1;
+      di.DataRemoval_Time_Bit1 = body->dataremoval.DataRemoval_Time_Bit1;
+      di.DataRemoval_TimeFormat_Bit0 = body->dataremoval.DataRemoval_TimeFormat_Bit0;
+      di.DataRemoval_Time_Bit0 = body->dataremoval.DataRemoval_Time_Bit0;
       break;
     default:
       if (FC_Min_Vendor_Specific <= featureCode) {
         // silently ignore vendor specific segments as there is no public doc on them
         di.VendorSpecific += 1;
-        LOG(D2) << "Vendor Specfic Feature Code " << std::hex << featureCode << std::dec;
+
       } else {
         di.Unknown += 1;
         LOG(D) << "Unknown Feature Code " << std::hex << featureCode << std::dec << "in Discovery0 response";

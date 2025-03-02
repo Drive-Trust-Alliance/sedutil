@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -177,14 +177,14 @@ int DtaToken::print(FILE *stream, uint32_t buflen)
     ret += fprintf(stream, "%u\t", m_TokenLength);
 
     // print out atom header
-    unsigned int len = min(m_HeaderLength, buflen);
+    uint32_t len = (uint32_t)bounded((uint32_t)0, m_HeaderLength, buflen);
     ret += fprintf(stream, "(");
-    for(unsigned int n=0; n<len; n++) ret += fprintf(stream, " %2.2X", uint32_t(m_token[n])&0XFF);
+    for(uint32_t n=0; n<len; n++) ret += fprintf(stream, " %2.2X", uint32_t(m_token[n])&0XFF);
     ret += fprintf(stream, " )");
     buflen -= len;
 
     // print out atom value
-    len = min(m_DataLength, buflen);
+    len = (uint32_t)bounded((uint32_t)0, m_DataLength, buflen);
 
     if (m_TokenType == TOKEN)
     {

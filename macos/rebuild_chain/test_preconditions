@@ -1,0 +1,5 @@
+#!/bin/bash
+# set -xv
+
+rm -f tracer.out
+start_chain_at_first_link

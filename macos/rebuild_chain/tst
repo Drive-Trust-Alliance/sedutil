@@ -1,0 +1,9 @@
+#!/bin/bash
+# set -xv
+
+source ./test_setup
+
+./test_preconditions
+
+./test_launchctl
+

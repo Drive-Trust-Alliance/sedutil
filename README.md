@@ -1,6 +1,6 @@
 ![alt tag](https://avatars0.githubusercontent.com/u/13870012?v=3&s=200)
 
-This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -38,16 +38,16 @@ do not need this parameter.
 Source code is available on GitHub at https://github.com/Drive-Trust-Alliance/sedutil
 Note: symlinks are used to point from Customizations to one of the Customizations.XXX folders,
 e.g. Customizations.OpenSource, so to make sure Windows git properly creates those
-symbolic links, run git as Administrator and use `-c core.symlinks=true` in a command 
+symbolic links, run git as Administrator and use `-c core.symlinks=true` in a command
 line like this:
 ```
-git clone -c core.symlinks=true https://github.com/Drive-Trust-Alliance/sedutil
+git clone -c core.symlinks=true --recurse-submodules https://github.com/Drive-Trust-Alliance/sedutil
 ```
 
 Building under Arch Linux's minimalist environment requires the packages
  - base-devel
  - libnvme
-in addition to whatever you need to get going as a Linux installation, e.g. networking.
+in addition to whatever you need to get going as a Linux installation, e.g. networking like iwctl.
 
 
 Linux and Windows executables are available at https://github.com/Drive-Trust-Alliance/sedutil/wiki/Executable-Distributions

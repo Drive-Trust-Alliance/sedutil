@@ -1,0 +1,30 @@
+#!/bin/bash
+# set -xv
+. chain_config
+
+declare result="$(osascript -e '
+try
+	set dialogResult to display dialog "Reboot?" buttons {"Cancel", "OK"} default button "Cancel" cancel button "Cancel" with title "Reboot now or cancel and continue?" with icon stop giving up after 15
+	if gave up of dialogResult then
+		set result to "gaveUp"
+	else
+		set result to button returned of dialogResult
+	end if
+on error number -128
+	set result to "Cancel"
+end try
+')"
+
+set -xv
+case "${result}" in
+    "OK")
+        true
+        ;;
+    "Cancel"|"gaveUp")
+        false
+        ;;
+    *)
+        echo "result was \"$result\"?!"
+        false
+        ;;
+esac

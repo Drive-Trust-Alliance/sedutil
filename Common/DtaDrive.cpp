@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
- This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+ This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
  This file is part of sedutil.
 
@@ -25,8 +25,14 @@ DtaDrive * DtaDrive::getDtaDrive(const char * devref,
                                  DTA_DEVICE_INFO &device_info,
                                  bool & accessDenied)
 {
+    LOG(D4) << "DtaDrive::getDtaDrive(\"" << devref << "\", device_info, accessDenied=" << std::boolalpha << accessDenied << ")";
     OSDEVICEHANDLE osDeviceHandle = OS.openDeviceHandle(devref, accessDenied);
     if (INVALID_HANDLE_VALUE==osDeviceHandle || accessDenied) {
+      LOG(D4) << "DtaDrive::getDtaDrive"
+              << " osDeviceHandle=" << HEXON(8) << osDeviceHandle
+              << " accessDenied=" << std::boolalpha << accessDenied
+              << " could not open device handle, returning NULL";
+
         return NULL;
     }
 
@@ -39,7 +45,7 @@ DtaDrive * DtaDrive::getDtaDrive(const char * devref,
     OS.closeDeviceHandle(osDeviceHandle);
 
     if (maybeDriveParameters == NULL) {
-        //      LOG(E) << "Failed to determine drive parameters for " << devref;
+        LOG(D4) << "Failed to determine drive parameters for " << devref;
         return NULL;
     }
 
@@ -99,7 +105,7 @@ DtaDrive * DtaDrive::getDtaDrive(const char * devref,
             break;
 
         case DEVICE_TYPE_OTHER:
-            //      LOG(E) << "Unimplemented device type " << devref;
+            LOG(D4) << "Unimplemented device type " << devref;
             break;
 
         default:
@@ -112,6 +118,7 @@ DtaDrive * DtaDrive::getDtaDrive(const char * devref,
 
 
 uint8_t DtaDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
+  LOG(D4) << "DtaDrive::discovery0";
   void * d0Response = OS.alloc_aligned_MIN_BUFFER_LENGTH_buffer();
   if (d0Response == NULL)
       return DTAERROR_COMMAND_ERROR;
@@ -119,11 +126,11 @@ uint8_t DtaDrive::discovery0(DTA_DEVICE_INFO & disk_info) {
 
   int lastRC = sendCmd(TRUSTED_RECEIVE, 0x01, 0x0001, d0Response, MIN_BUFFER_LENGTH);
   if ((lastRC ) != 0) {
-    LOG(D4) << "Acquiring Discovery 0 response failed " << lastRC;
+    LOG(D4) << "DtaDrive::discovery0:Acquiring Discovery 0 response failed " << lastRC;
     return DTAERROR_COMMAND_ERROR;
   }
   parseDiscovery0Features((uint8_t *)d0Response, disk_info);
   OS.free_aligned_MIN_BUFFER_LENGTH_buffer(d0Response);
-  LOG(D4) << "Acquiring Discovery 0 response succeeded.";
+  LOG(D4) << "DtaDrive::discovery0:Acquiring Discovery 0 response succeeded.";
   return DTAERROR_SUCCESS;
 }

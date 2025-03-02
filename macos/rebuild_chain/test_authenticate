@@ -1,0 +1,4 @@
+#!/bin/bash
+sudo -k
+authenticate
+sudo echo what

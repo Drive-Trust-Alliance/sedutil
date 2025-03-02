@@ -1,0 +1,7 @@
+#!/bin/bash
+# set -xv
+sedutil-cli --version             && \
+sudo sedutil-cli -vv --scan       && \
+exec /usr/local/bin/ratchet.sh
+
+

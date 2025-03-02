@@ -3,9 +3,19 @@ version="${1:-Release}"
 project="${2:-SED ToolBox}"
 pkg="${3:-DTATools}"
 
-attach_iso "${version}" "${project}"
-pkg="/Volumes/SED software by Drive Trust Alliance/${pkg}.pkg"
-[ -f "${pkg}" ] && open -W "${pkg}"
+
+attach_iso "${version}" "${project}" || \
+    die $? "Failed to attach_iso \"${version}\" \"${project}\""
+
+pkg_file="/Volumes/SED software by Drive Trust Alliance/${pkg}.pkg"
+[ -f "${pkg_file}" ] || \
+    die 63 "Can't find \"${pkg_file}\""
+
+declare -i result_code=0
+sudo /usr/sbin/installer -verbose -dumplog -pkg "${pkg_file}" -target /
+result_code=$?
+
 detach_iso "${version}" "${project}"
-exit $?
+
+exit $result_code
 

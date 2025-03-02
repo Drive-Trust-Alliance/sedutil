@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -20,7 +20,6 @@
 #pragma once
 #include "DtaOS.h"
 
-#define OSname Linux
 #define className DtaLinux
 #define Linux (*(static_cast<className *>(&OS)))
 
@@ -48,40 +47,40 @@ public:
   virtual void free_aligned_MIN_BUFFER_LENGTH_buffer (void * aligned_buffer);
 
 
-    /** Perform an ATA command using the current operating system HD interface
-     *
-     * @param osDeviceHandle    OSDEVICEHANDLE of already-opened raw device file
-     * @param cmd               ATACOMMAND opcode IDENTIFY, IF_SEND, or IF_RECV
-     * @param securityProtocol  security protocol ID per ATA command spec
-     * @param comID             communication channel ID per TCG spec
-     * @param buffer            address of data buffer
-     * @param bufferlen         data buffer len, also output transfer length
-     *
-     * Returns the result of the os system call
-     */
-    virtual int PerformATACommand_via_HD(OSDEVICEHANDLE osDeviceHandle,
-                                  ATACOMMAND cmd, uint8_t securityProtocol, uint16_t comID,
-                                  void * buffer,  unsigned int & bufferlen)
-    {
-#undef PerformATACommand_show
-#ifdef PerformATACommand_show
-        LOG(E) << "DtaLinux::PerformATACommand_via_HD((OSDEVICEHANDLE)" << HEXON( 8) << osDeviceHandle        << HEXOFF << ", "
-               <<                                    "(ATACOMMAND)"     << HEXON( 2) << (int)cmd                        << ", "
-               <<                                                          HEXON( 1) << (int)securityProtocol           << ", "
-               <<                                                          HEXON( 4) << comID                 << HEXOFF << ", "
-               <<                                                          HEXON(16) << buffer                << HEXOFF << ", "
-               <<                                                          HEXON( 4) << bufferlen             << HEXOFF << ")"
-        << " unimplemented!" << std::endl << std::endl;
-#else
-        (void)osDeviceHandle;
-        (void)cmd;
-        (void)securityProtocol;
-        (void)comID;
-        (void)buffer;
-        (void)bufferlen;
-#endif
-        return DTAERROR_FAILURE;
-    }
+  /** Perform an ATA command using the current operating system HD interface
+   *
+   * @param osDeviceHandle    OSDEVICEHANDLE of already-opened raw device file
+   * @param cmd               ATACOMMAND opcode IDENTIFY, IF_SEND, or IF_RECV
+   * @param securityProtocol  security protocol ID per ATA command spec
+   * @param comID             communication channel ID per TCG spec
+   * @param buffer            address of data buffer
+   * @param bufferlen         data buffer len, also output transfer length
+   *
+   * Returns the result of the os system call
+   */
+  virtual int PerformATACommand_via_HD(OSDEVICEHANDLE osDeviceHandle,
+                                       ATACOMMAND cmd, uint8_t securityProtocol, uint16_t comID,
+                                       void * buffer,  unsigned int & bufferlen)
+  {
+#undef PerformATACommand_via_HD_show
+#ifdef PerformATACommand_via_HD_show
+    LOG(E) << "DtaLinux::PerformATACommand_via_HD((OSDEVICEHANDLE)" << HEXON( 8) << osDeviceHandle        << HEXOFF << ", "
+           <<                                    "(ATACOMMAND)"     << HEXON( 2) << (int)cmd                        << ", "
+           <<                                                          HEXON( 1) << (int)securityProtocol           << ", "
+           <<                                                          HEXON( 4) << comID                 << HEXOFF << ", "
+           <<                                                          HEXON(16) << buffer                << HEXOFF << ", "
+           <<                                                          HEXON( 4) << bufferlen             << HEXOFF << ")"
+           << " unimplemented!" << std::endl << std::endl;
+#else //  PerformATACommand_via_HD_show
+    (void)osDeviceHandle;
+    (void)cmd;
+    (void)securityProtocol;
+    (void)comID;
+    (void)buffer;
+    (void)bufferlen;
+#endif //  PerformATACommand_via_HD_show
+    return DTAERROR_FAILURE;
+  }
 
 
 
@@ -119,5 +118,6 @@ public:
    * Returns the result of the os system call, as well as possibly setting *pmasked_status
    */
   virtual int PerformNVMeCommand(OSDEVICEHANDLE osDeviceHandle,
-                                 uint8_t * pcmd);
+                                 uint8_t * pcmd,
+                                 uint32_t *pstatus);
 };

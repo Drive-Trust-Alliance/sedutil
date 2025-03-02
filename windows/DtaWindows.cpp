@@ -1,21 +1,21 @@
 /* C:B**************************************************************************
- This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
- 
+ This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
+
  This file is part of sedutil.
- 
+
  sedutil is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
- 
+
  sedutil is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
- 
+
  You should have received a copy of the GNU General Public License
  along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
- 
+
  * C:E********************************************************************** */
 
 #include "log.h"
@@ -30,6 +30,7 @@
 //#include <winioctl.h>
 
 
+const std::string DtaOS::name="Windows";
 DtaOS * DtaOS::getDtaOS () { return new DtaWindows(); }
 
 OSDEVICEHANDLE DtaWindows::openDeviceHandle(const char * devref, bool & accessDenied){
@@ -48,12 +49,12 @@ OSDEVICEHANDLE DtaWindows::openDeviceHandle(const char * devref, bool & accessDe
         LOG(D4) << "Failed to open device handle for " << devref;
         accessDenied = (ERROR_ACCESS_DENIED == GetLastError());
     }
-    
+
     if (accessDenied) {
         closeDeviceHandle(osDeviceHandle);
         return INVALID_HANDLE_VALUE;
     }
-    
+
     return osDeviceHandle;
 }
 
@@ -225,8 +226,7 @@ DtaOS::dictionary* DtaWindows::getOSSpecificInformation(OSDEVICEHANDLE osDeviceH
 
 void * DtaWindows::alloc_aligned_MIN_BUFFER_LENGTH_buffer () {
     return _aligned_malloc( IO_BUFFER_ALIGNMENT,
-                           (((MIN_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT - 1)
-                             / IO_BUFFER_ALIGNMENT)
+                            (static_cast<size_t>(((MIN_BUFFER_LENGTH + IO_BUFFER_ALIGNMENT - 1) / IO_BUFFER_ALIGNMENT))
                               * IO_BUFFER_ALIGNMENT) );
 }
 
@@ -316,10 +316,11 @@ int DtaWindows::PerformSCSICommand(OSDEVICEHANDLE osDeviceHandle,
  * @param osDeviceHandle  OSDEVICEHANDLE of already-opened raw device file
  * @param pcmd             NVMe command struct
  *
- * Returns the result of the os system call, as well as possibly setting *pmasked_status
+ * Returns the result of the os system call, as well as possibly setting *pstatus
  */
 int DtaWindows::PerformNVMeCommand(OSDEVICEHANDLE osDeviceHandle,
-                                   uint8_t * pcmd)
+                                   uint8_t * pcmd,
+                                   uint32_t * /*pstatus*/)
 {
   if (osDeviceHandle==INVALID_HANDLE_VALUE) {
     LOG(E) << "Nvme device not open";

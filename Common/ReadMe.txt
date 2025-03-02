@@ -1,4 +1,4 @@
-This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 

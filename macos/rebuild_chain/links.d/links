@@ -1,0 +1,3 @@
+00-install_reboot_hook
+10-uninstall_tools
+20-build_drivers

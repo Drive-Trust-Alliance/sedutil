@@ -1,7 +1,7 @@
 Begin TestSuite.cmd
 MINGW64_NT-10.0 Desktop-Z170A 2.8.0(0.309/5/3) 2017-05-19 13:17 x86_64 Msys
 testing CLI/x64/Release/sedutil-cli.exe Mon, Aug 21, 2017 4:54:26 PM
-sedutil v1.15-23-gf95710e Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+sedutil v1.15-23-gf95710e © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 Scanning for Opal compliant disks
 \\.\PhysicalDrive0  2  Crucial_CT250MX200SSD1                   MU04    

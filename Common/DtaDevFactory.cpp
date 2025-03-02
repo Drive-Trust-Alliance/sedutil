@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -26,6 +26,8 @@
 
 #include "DtaDevOpal1.h"
 #include "DtaDevOpal2.h"
+#include "DtaDevPyrite1.h"
+#include "DtaDevPyrite2.h"
 #include "DtaDevEnterprise.h"
 #include "DtaDevGeneric.h"
 
@@ -52,18 +54,21 @@ DtaDev* DtaDev::getDtaDev(const char * devref,
           << "devref="           << "\"" << devref << "\""                      << ", "
           << "drive"                                                            << ", "
           << "di="               << HEXON(8) << reinterpret_cast<intptr_t>(&di) << ", "
-          << "genericIfNotTPer=" << std::boolalpha << genericIfNotTPer          << ")" ;
+          << "genericIfNotTPer=" << std::boolalpha << genericIfNotTPer          << ")"
+          << " (in " << __FILE__ << ")";
   if (DTAERROR_SUCCESS == drive->discovery0(di)) {  // drive responds to most basic TRUSTED_RECEIVE
-    LOG(D4) << "DtaDev::getDtaDev: discovery0 succeeded.";
-    if (di.OPAL20)        return new DtaDevOpal2(devref, drive, di);
-    if (di.OPAL10)        return new DtaDevOpal1(devref, drive, di);
-    if (di.Enterprise)    return new DtaDevEnterprise(devref, drive, di);
+    LOG(D4) << "DtaDev::getDtaDev discovery0 succeeded.";
+    if (di.OPAL20)     return new DtaDevOpal2(devref, drive, di);
+    if (di.OPAL10)     return new DtaDevOpal1(devref, drive, di);
+    if (di.PYRITE2)    return new DtaDevPyrite2(devref, drive, di);
+    if (di.PYRITE)     return new DtaDevPyrite1(devref, drive, di);
+    if (di.Enterprise) return new DtaDevEnterprise(devref, drive, di);
     //  if (di.RUBY) ...  etc.
-    LOG(D4) << "DtaDev::getDtaDev: no known SSC -- trying generic.";
+    LOG(D4) << "DtaDev::getDtaDev no known SSC -- trying generic.";
   } else {
-    LOG(D4) << "DtaDev::getDtaDev: discovery0 failed -- trying generic.";
+    LOG(D4) << "DtaDev::getDtaDev discovery0 failed -- trying generic.";
   }
   if (genericIfNotTPer) return new DtaDevGeneric(devref, drive, di);
-  LOG(D4) << "DtaDev::getDtaDev: generic failed -- returning NULL.";
+  LOG(D4) << "DtaDev::getDtaDev genericIfNotTper is false -- returning NULL.";
   return NULL;
 }

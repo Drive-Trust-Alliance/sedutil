@@ -7,17 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D214ABFA2D1DD82C001DA6D2 /* DtaConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = D214ABF92D1DD82C001DA6D2 /* DtaConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D214AC012D1DD84A001DA6D2 /* DtaDevPyrite1.h in Headers */ = {isa = PBXBuildFile; fileRef = D214ABFD2D1DD84A001DA6D2 /* DtaDevPyrite1.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D214AC022D1DD84A001DA6D2 /* DtaDevPyrite.h in Headers */ = {isa = PBXBuildFile; fileRef = D214ABFB2D1DD84A001DA6D2 /* DtaDevPyrite.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D214AC032D1DD84A001DA6D2 /* DtaDevPyrite2.h in Headers */ = {isa = PBXBuildFile; fileRef = D214ABFF2D1DD84A001DA6D2 /* DtaDevPyrite2.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D214AC042D1DD84A001DA6D2 /* DtaDevPyrite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D214ABFC2D1DD84A001DA6D2 /* DtaDevPyrite.cpp */; };
+		D214AC052D1DD84A001DA6D2 /* DtaDevPyrite2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D214AC002D1DD84A001DA6D2 /* DtaDevPyrite2.cpp */; };
+		D214AC062D1DD84A001DA6D2 /* DtaDevPyrite1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D214ABFE2D1DD84A001DA6D2 /* DtaDevPyrite1.cpp */; };
 		D21944B02BC06D1700507A4B /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D21944AF2BC06D1700507A4B /* log.cpp */; };
 		D21944B12BC06D7400507A4B /* log.h in Headers */ = {isa = PBXBuildFile; fileRef = D2EA843328053B4400A0F685 /* log.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D22042022B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h in Headers */ = {isa = PBXBuildFile; fileRef = D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D22369B928D686C400D7D851 /* sedutil.h in Headers */ = {isa = PBXBuildFile; fileRef = D2D1379E28B55C14003FD51F /* sedutil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D22C11BB2B38CBA3003825C7 /* DtaHashPassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D22C11BA2B38CBA3003825C7 /* DtaHashPassword.cpp */; };
+		D22E47282D5F396F001703D2 /* system.h in Headers */ = {isa = PBXBuildFile; fileRef = D22E47262D5F396F001703D2 /* system.h */; };
+		D22E47292D5F396F001703D2 /* system.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D22E47272D5F396F001703D2 /* system.cpp */; };
 		D24E866F2B1ADA420098FE03 /* ATAStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D24E866E2B1ADA420098FE03 /* ATAStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D263209A2937F65500F0927B /* oui_vendor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D26320982937F65500F0927B /* oui_vendor.cpp */; };
 		D263209B2937F65500F0927B /* oui_vendor.hpp in Headers */ = {isa = PBXBuildFile; fileRef = D26320992937F65500F0927B /* oui_vendor.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		D271A1FB28054AFE00BF043A /* DtaStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F528054AFD00BF043A /* DtaStructures.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D271A1FC28054AFE00BF043A /* DtaDev.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F628054AFD00BF043A /* DtaDev.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D271A1FE28054AFE00BF043A /* DtaConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F828054AFD00BF043A /* DtaConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D271A1FF28054AFE00BF043A /* DtaLexicon.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1F928054AFE00BF043A /* DtaLexicon.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D271A20028054AFE00BF043A /* DtaResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = D271A1FA28054AFE00BF043A /* DtaResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D27591BA28B579F1005B9081 /* DtaDevOpal2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D27591B928B579F1005B9081 /* DtaDevOpal2.cpp */; };
@@ -61,6 +69,8 @@
 		D2A06C9C28B5D8FE00C0DDB6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */; };
 		D2A06C9D28B5DC7900C0DDB6 /* cifra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D23F3DF928B57BB400741CC0 /* cifra.framework */; };
 		D2A547332C448A9A0010F703 /* DtaDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D2A547322C448A9A0010F703 /* DtaDrive.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D2A865FF2D2CD254009914D6 /* DtaUsage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2A865FE2D2CD254009914D6 /* DtaUsage.cpp */; };
+		D2A866012D2CD262009914D6 /* DtaUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = D2A866002D2CD262009914D6 /* DtaUsage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2B051E62C5DFC9900E5F41A /* DtaJson.h in Headers */ = {isa = PBXBuildFile; fileRef = D2B051E52C5DFC9900E5F41A /* DtaJson.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2B9DEAC2C49F4BC00E6D7EE /* DtaMacOSNvmeDrive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2B9DEAA2C49F4BC00E6D7EE /* DtaMacOSNvmeDrive.cpp */; };
 		D2B9DEAD2C49F4BC00E6D7EE /* DtaMacOSNvmeDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = D2B9DEAB2C49F4BC00E6D7EE /* DtaMacOSNvmeDrive.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -150,12 +160,21 @@
 
 /* Begin PBXFileReference section */
 		D20213EA2BF3FA5D0053A25B /* DTA */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DTA; path = ../..; sourceTree = "<group>"; };
+		D214ABF92D1DD82C001DA6D2 /* DtaConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaConstants.h; sourceTree = "<group>"; };
+		D214ABFB2D1DD84A001DA6D2 /* DtaDevPyrite.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaDevPyrite.h; sourceTree = "<group>"; };
+		D214ABFC2D1DD84A001DA6D2 /* DtaDevPyrite.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevPyrite.cpp; sourceTree = "<group>"; };
+		D214ABFD2D1DD84A001DA6D2 /* DtaDevPyrite1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaDevPyrite1.h; sourceTree = "<group>"; };
+		D214ABFE2D1DD84A001DA6D2 /* DtaDevPyrite1.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevPyrite1.cpp; sourceTree = "<group>"; };
+		D214ABFF2D1DD84A001DA6D2 /* DtaDevPyrite2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DtaDevPyrite2.h; sourceTree = "<group>"; };
+		D214AC002D1DD84A001DA6D2 /* DtaDevPyrite2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DtaDevPyrite2.cpp; sourceTree = "<group>"; };
 		D21944AF2BC06D1700507A4B /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = log.cpp; sourceTree = "<group>"; };
 		D22042012B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaAuthorizeSedutilExecution.h; sourceTree = "<group>"; };
 		D22C11B72B38CA74003825C7 /* os.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = os.h; path = ../../../macos/os.h; sourceTree = "<group>"; };
 		D22C11B82B38CA9E003825C7 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Version.h; path = ../Version.h; sourceTree = "<group>"; };
 		D22C11B92B38CAD8003825C7 /* DtaHashPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaHashPassword.h; path = ../../../Common/DtaHashPassword.h; sourceTree = "<group>"; };
 		D22C11BA2B38CBA3003825C7 /* DtaHashPassword.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DtaHashPassword.cpp; path = ../../../Common/DtaHashPassword.cpp; sourceTree = "<group>"; };
+		D22E47262D5F396F001703D2 /* system.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
+		D22E47272D5F396F001703D2 /* system.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = system.cpp; sourceTree = "<group>"; };
 		D23F3DF728B57BB400741CC0 /* sedutil.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sedutil.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D23F3DF928B57BB400741CC0 /* cifra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = cifra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D23F3E0C28B57E6800741CC0 /* SEDKernelInterface.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = SEDKernelInterface.framework; path = /Library/Frameworks/SEDKernelInterface.framework; sourceTree = "<absolute>"; };
@@ -210,6 +229,8 @@
 		D2A06C9528B5D88800C0DDB6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2A06C9B28B5D8FE00C0DDB6 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		D2A547322C448A9A0010F703 /* DtaDrive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaDrive.h; sourceTree = "<group>"; };
+		D2A865FE2D2CD254009914D6 /* DtaUsage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DtaUsage.cpp; path = ../../../Common/DtaUsage.cpp; sourceTree = "<group>"; };
+		D2A866002D2CD262009914D6 /* DtaUsage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DtaUsage.h; path = ../../../Common/DtaUsage.h; sourceTree = "<group>"; };
 		D2ABA56E2C5D72E100568230 /* json_struct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json_struct.h; sourceTree = "<group>"; };
 		D2B051E52C5DFC9900E5F41A /* DtaJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DtaJson.h; sourceTree = "<group>"; };
 		D2B9DEAA2C49F4BC00E6D7EE /* DtaMacOSNvmeDrive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DtaMacOSNvmeDrive.cpp; sourceTree = "<group>"; };
@@ -367,6 +388,10 @@
 		D2BD8F541F02016B00747F4A = {
 			isa = PBXGroup;
 			children = (
+				D22E47262D5F396F001703D2 /* system.h */,
+				D22E47272D5F396F001703D2 /* system.cpp */,
+				D2A866002D2CD262009914D6 /* DtaUsage.h */,
+				D2A865FE2D2CD254009914D6 /* DtaUsage.cpp */,
 				D22C11BA2B38CBA3003825C7 /* DtaHashPassword.cpp */,
 				D22C11B92B38CAD8003825C7 /* DtaHashPassword.h */,
 				D22C11B82B38CA9E003825C7 /* Version.h */,
@@ -390,6 +415,13 @@
 		D2D137A028B55C15003FD51F /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D214ABFB2D1DD84A001DA6D2 /* DtaDevPyrite.h */,
+				D214ABFC2D1DD84A001DA6D2 /* DtaDevPyrite.cpp */,
+				D214ABFD2D1DD84A001DA6D2 /* DtaDevPyrite1.h */,
+				D214ABFE2D1DD84A001DA6D2 /* DtaDevPyrite1.cpp */,
+				D214ABFF2D1DD84A001DA6D2 /* DtaDevPyrite2.h */,
+				D214AC002D1DD84A001DA6D2 /* DtaDevPyrite2.cpp */,
+				D214ABF92D1DD82C001DA6D2 /* DtaConstants.h */,
 				D2B051E52C5DFC9900E5F41A /* DtaJson.h */,
 				D2ABA56E2C5D72E100568230 /* json_struct.h */,
 				D27CB02D2C5586B90078E067 /* DtaAtaDrive.cpp */,
@@ -546,7 +578,6 @@
 				D22369B928D686C400D7D851 /* sedutil.h in Headers */,
 				D24E866F2B1ADA420098FE03 /* ATAStructures.h in Headers */,
 				D271A1FF28054AFE00BF043A /* DtaLexicon.h in Headers */,
-				D271A1FE28054AFE00BF043A /* DtaConstants.h in Headers */,
 				D271A1FB28054AFE00BF043A /* DtaStructures.h in Headers */,
 				D2EA845228053B4C00A0F685 /* DtaDevOpal.h in Headers */,
 				D2A547332C448A9A0010F703 /* DtaDrive.h in Headers */,
@@ -564,12 +595,14 @@
 				D27C8EAE2B9027BE0006A38B /* db.h in Headers */,
 				D275D3B52C4B15270083605E /* DtaNvmeDrive.h in Headers */,
 				D29CBD392C41ACFC0049DAAF /* DtaMacOS.h in Headers */,
+				D22E47282D5F396F001703D2 /* system.h in Headers */,
 				D27C8EB52B9027BF0006A38B /* InterfaceDeviceID.h in Headers */,
 				D27CB0312C5586B90078E067 /* DtaAtaDrive.h in Headers */,
 				D27CB0322C5586B90078E067 /* SCSICmds_INQUIRY_Definitions.h in Headers */,
 				D275D3B32C4B14560083605E /* NVMeStructures.h in Headers */,
 				D27C8ECD2B903CAC0006A38B /* DtaMacOSSataDrive.h in Headers */,
 				D285034E2B94FCFE00877DA8 /* DtaMacOSBlockStorageDevice.h in Headers */,
+				D214ABFA2D1DD82C001DA6D2 /* DtaConstants.h in Headers */,
 				D27C8EBE2B9027D50006A38B /* DtaMacOSConstants.h in Headers */,
 				D27CB0352C558B750078E067 /* DtaMacOSAtaDrive.h in Headers */,
 				D27C8EC82B902E8B0006A38B /* DtaMacOSScsiDrive.h in Headers */,
@@ -579,10 +612,14 @@
 				D22042022B1962FC00116D30 /* DtaAuthorizeSedutilExecution.h in Headers */,
 				D2803E252C45F19900ACE051 /* DtaBlockStorageDevice.h in Headers */,
 				D2EA849028053B4D00A0F685 /* DtaDevOpal2.h in Headers */,
+				D214AC032D1DD84A001DA6D2 /* DtaDevPyrite2.h in Headers */,
+				D214AC012D1DD84A001DA6D2 /* DtaDevPyrite1.h in Headers */,
+				D214AC022D1DD84A001DA6D2 /* DtaDevPyrite.h in Headers */,
 				D2EA849928053B4D00A0F685 /* DtaSession.h in Headers */,
 				D2EA84AA28053B4E00A0F685 /* DtaAnnotatedDump.h in Headers */,
 				D21944B12BC06D7400507A4B /* log.h in Headers */,
 				D2803E262C45F19900ACE051 /* DtaScsiDrive.h in Headers */,
+				D2A866012D2CD262009914D6 /* DtaUsage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -685,7 +722,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1610;
+				LastUpgradeCheck = 1620;
 				ORGANIZATIONNAME = "Bright Plaza, Inc.";
 				TargetAttributes = {
 					D2E6FEA22935E67800DAB209 = {
@@ -844,6 +881,7 @@
 				D27CB0302C5586B90078E067 /* DtaAtaDrive.cpp in Sources */,
 				D2EA848D28053B4D00A0F685 /* DtaDevGeneric.cpp in Sources */,
 				D2EA848C28053B4D00A0F685 /* DtaDevEnterprise.cpp in Sources */,
+				D22E47292D5F396F001703D2 /* system.cpp in Sources */,
 				D2EA844728053B4C00A0F685 /* DtaDevOpal.cpp in Sources */,
 				D2EA848528053B4D00A0F685 /* DtaDevOpal1.cpp in Sources */,
 				D2D8C41F2C40AF1A006595E2 /* DtaDrive.cpp in Sources */,
@@ -863,6 +901,10 @@
 				D27C8EB42B9027BF0006A38B /* ParseATIdentify.cpp in Sources */,
 				D27C8EB82B9027BF0006A38B /* ParseDiscovery0Features.cpp in Sources */,
 				D21944B02BC06D1700507A4B /* log.cpp in Sources */,
+				D214AC042D1DD84A001DA6D2 /* DtaDevPyrite.cpp in Sources */,
+				D214AC052D1DD84A001DA6D2 /* DtaDevPyrite2.cpp in Sources */,
+				D214AC062D1DD84A001DA6D2 /* DtaDevPyrite1.cpp in Sources */,
+				D2A865FF2D2CD254009914D6 /* DtaUsage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -991,7 +1033,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2015  Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1144,7 +1186,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2015  Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1447,7 +1489,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2015  Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1572,7 +1614,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2015  Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1698,7 +1740,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2015  Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1818,7 +1860,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2015  Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1936,7 +1978,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2015  Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2057,7 +2099,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2015  Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2177,7 +2219,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2015  Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2296,7 +2338,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2015, 2023 Bright Plaza, Inc.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2015  Bright Plaza, Inc.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (

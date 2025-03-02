@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -21,7 +21,6 @@
 #include "DtaNvmeDrive.h"
 #include "DtaHexDump.h"
 #include "NVMeStructures.h"
-
 
 DtaDrive *
 DtaNvmeDrive::getDtaNvmeDrive(const char * devref, DTA_DEVICE_INFO & device_info) {
@@ -46,7 +45,7 @@ DtaNvmeDrive::getDtaNvmeDrive(const char * devref, DTA_DEVICE_INFO & device_info
 
   if (! identifyUsingNvmeIdentify(osDeviceHandle, interfaceDeviceIdentification, device_info)) {
     device_info.devType = DEVICE_TYPE_OTHER;
-    // LOG(E) << "DtaNvmeDrive::getDtaNvmeDrive: Device " << devref << " is NOT Nvme?! -- file handle " << HEXON(2) << (size_t) osDeviceHandle;
+    // LOG(E) << "DtaNvmeDrive::getDtaNvmeDrive: Device " << devref << " is NOT Nvme?! -- file handle " << HEXON(8) << (size_t) osDeviceHandle;
     OS.closeDeviceHandle(osDeviceHandle);
     return NULL;
   }
@@ -55,55 +54,24 @@ DtaNvmeDrive::getDtaNvmeDrive(const char * devref, DTA_DEVICE_INFO & device_info
 }
 
 
-dictionary *
-DtaNvmeDrive::parseIdentifyResponse(const unsigned char * response,
-                                    InterfaceDeviceID & interfaceDeviceIdentification,
-                                    DTA_DEVICE_INFO & device_info)
-{
-  device_info.devType = DEVICE_TYPE_NVME;
-
-  const uint8_t *results = reinterpret_cast<const uint8_t *>(response);
-  results += 4;
-  safecopy(device_info.serialNum, sizeof(device_info.serialNum), results, sizeof(device_info.serialNum));
-  results += sizeof(device_info.serialNum);
-  safecopy(device_info.modelNum, sizeof(device_info.modelNum), results, sizeof(device_info.modelNum));
-  results += sizeof(device_info.modelNum);
-  safecopy(device_info.firmwareRev, sizeof(device_info.firmwareRev), results, sizeof(device_info.firmwareRev));
-
-  memcpy(interfaceDeviceIdentification, response, sizeof(InterfaceDeviceID));
-
-  // device is apparently a NVMe disk
-  return new dictionary
-    {
-      {"Device Type"       , "NVMe"                       },
-      {"Vendor ID"         , (const char *)device_info.vendorID    },
-      {"Model Number"      , (const char *)device_info.modelNum    },
-      {"Firmware Revision" , (const char *)device_info.firmwareRev },
-      {"Serial Number"     , (const char *)device_info.serialNum   },
-    };
-}
 
 
-
-
-
-/** Send an ioctl to the device using pass through. */
 uint8_t DtaNvmeDrive::sendCmd(ATACOMMAND cmd,
                               uint8_t protocol,
                               uint16_t comID,
                               void * buffer, unsigned int bufferlen)
 {
-  LOG(D1) << "Entering DtaNvmeDrive::sendCmd";
+  LOG(D4) << "Entering DtaNvmeDrive::sendCmd";
 
   struct nvme_admin_cmd nvme_cmd;
   memset(&nvme_cmd, 0, sizeof(nvme_cmd));
 
   if (TRUSTED_RECEIVE == cmd) {
-    LOG(D3) << "Nvme Security Receive Command";
+    LOG(D4) << "Nvme Security Receive Command";
     nvme_cmd.opcode = NVME_SECURITY_RECV;
   }
   else {
-    LOG(D3) << "Nvme Security Send Command";
+    LOG(D4) << "Nvme Security Send Command";
     nvme_cmd.opcode = NVME_SECURITY_SEND;
   }
 
@@ -112,18 +80,18 @@ uint8_t DtaNvmeDrive::sendCmd(ATACOMMAND cmd,
   nvme_cmd.data_len = bufferlen;
   nvme_cmd.addr = reinterpret_cast<__u64>(buffer);
 
-
-  int err = OS.PerformNVMeCommand(osDeviceHandle, reinterpret_cast<uint8_t *>(&nvme_cmd));
+  uint32_t result=0;
+  int err = OS.PerformNVMeCommand(osDeviceHandle, reinterpret_cast<uint8_t *>(&nvme_cmd), &result);
 
   if (err < 0)
     return static_cast<uint8_t>(errno);
   else if (err != 0) {
     //fprintf(stderr, "NVME Security Command Error:%d\n", err);
-    LOG(D3) << "NVME Security Command Error: " << err ;
+    LOG(D4) << "NVME Security Command Error: " << err ;
     IFLOG(D4) DtaHexDump(&nvme_cmd, sizeof(nvme_cmd));
+  } else {
+    LOG(D4) << "NVME Security Command Success:" << result;
   }
-  else
-    LOG(D3) << "NVME Security Command Success:" << nvme_cmd.result;
   //LOG(D4) << "NVMe command:";
   //IFLOG(D4) DtaHexDump(&nvme_cmd, sizeof(nvme_cmd));
   //LOG(D4) << "NVMe buffer @ " << buffer;
@@ -131,41 +99,274 @@ uint8_t DtaNvmeDrive::sendCmd(ATACOMMAND cmd,
   return static_cast<uint8_t>(err);
 }
 
+
+
+typedef dictionary * responseParser(const unsigned char * response,
+                                    InterfaceDeviceID & interfaceDeviceIdentification,
+                                    DTA_DEVICE_INFO & device_info);
+
+static
+dictionary *
+parseIdentifyControllerResponse(const unsigned char * response,
+                                InterfaceDeviceID & interfaceDeviceIdentification,
+                                DTA_DEVICE_INFO & device_info)
+{
+  const uint8_t *results = reinterpret_cast<const uint8_t *>(response);
+  results += 4;
+  safecopy(device_info.serialNum, sizeof(device_info.serialNum), results, sizeof(device_info.serialNum));
+  results += 20;
+  safecopy(device_info.modelNum, sizeof(device_info.modelNum), results, sizeof(device_info.modelNum));
+  results += 40;
+  safecopy(device_info.firmwareRev, sizeof(device_info.firmwareRev), results, sizeof(device_info.firmwareRev));
+
+  memcpy(interfaceDeviceIdentification, response, sizeof(InterfaceDeviceID));
+
+  // device is apparently a NVMe disk
+  return new dictionary
+    {
+      {"Vendor ID"         , (const char *)device_info.vendorID    },
+      {"Model Number"      , (const char *)device_info.modelNum    },
+      {"Firmware Revision" , (const char *)device_info.firmwareRev },
+      {"Serial Number"     , (const char *)device_info.serialNum   },
+    };
+}
+
+static
+bool _NvmeIdentify(const char * variant_name, uint32_t namespace_id, uint8_t subcommand, responseParser *parser,
+                   OSDEVICEHANDLE osDeviceHandle,
+                   InterfaceDeviceID & interfaceDeviceIdentification,
+                   DTA_DEVICE_INFO & device_info)
+{
+
+  uint8_t data[4096]; // per 5.1.13.1
+
+  struct nvme_admin_cmd cmd;
+
+  memset(&cmd, 0, sizeof(cmd));
+  memset(data, 0, sizeof(data));
+
+  LOG(D4) << "Nvme Identify Command -- " << variant_name
+          << " namespace " << HEXON(8) << namespace_id
+          << " subcommand "  << HEXON(2) << (uint32_t)subcommand;
+  cmd.opcode   = NVME_IDENTIFY;
+  cmd.nsid     = (uint32_t)namespace_id;
+  cmd.addr     = (uint64_t)&data;
+  cmd.data_len = (uint32_t)sizeof(data);
+  cmd.cdw10    = (uint32_t)subcommand;
+
+  uint32_t status;
+  int err;
+    
+  err = OS.PerformNVMeCommand(osDeviceHandle, reinterpret_cast<uint8_t *>(&cmd), &status);
+  if (err) {
+    device_info.devType = DEVICE_TYPE_OTHER;
+    LOG(D4)
+      << "Nvme Identify " << variant_name << "  error --  "
+      << " kernel status " << HEXON(4) << err
+      << " NVMe status " << HEXON(4) << status
+      << " errno " << HEXOFF << errno ;
+    if (errno==EINVAL) {
+      LOG(D4) << "errno==EINVAL -- NVMe status significant";
+    }
+    if (err==0x4002) {
+      LOG(D4) << "INVALID_FIELD: A reserved coded value or an unsupported value in a defined field(0x4002)";
+    }
+    LOG(D4)  << std::endl <<  std::endl;
+  }
+  if (err)
+    return false;
+
+  IFLOG(D4) {
+    LOG(D4) << "Nvme Identify " << variant_name << " success";
+    DtaHexDump(&data, (unsigned int)bounded((unsigned int)0x010, cmd.data_len, (unsigned int)0x200));
+  }
+
+  dictionary * responses = (*parser)(data,interfaceDeviceIdentification,device_info);
+  IFLOG(D4) {
+    LOG(D4) << variant_name << " responses:" ;
+    for (dictionary::iterator it = responses->begin(); it != responses->end(); it++)
+      LOG(D4) << it->first    // string (key)
+              << ':'
+              << it->second;  // string's value
+  }
+  delete responses;
+
+  return true;
+}
+
+
+/***
+static
+dictionary *
+parseActiveNamespaceIDsResponse(const unsigned char * data,
+                                InterfaceDeviceID & interfaceDeviceIdentification,
+                                DTA_DEVICE_INFO & device_info)
+{
+  const uint32_t activeID= ( * ( reinterpret_cast<const uint32_t *>(data) ) );
+  if ( 0 != activeID ) {
+    char aID[] = "00000000000";
+    sprintf(aID, "%d", activeID);
+    return new dictionary { { "Active Namespace ID" , aID } };
+  } else {
+    return new dictionary { };
+  }
+}
+***/
+
+static
+bool
+getNamespaceID(OSDEVICEHANDLE osDeviceHandle,uint32_t & namespace_id) {
+uint8_t data[4096]; // per 5.1.13.1
+
+  struct nvme_admin_cmd cmd;
+  int err;
+
+  memset(&cmd, 0, sizeof(cmd));
+  memset(data, 0, sizeof(data));
+
+  LOG(D4) << "getNamespaceID";
+  cmd.opcode   = NVME_IDENTIFY;
+  cmd.nsid     = NVME_NSID_NONE;
+  cmd.addr     = (uint64_t)&data;
+  cmd.data_len = (uint32_t)sizeof(data);
+  cmd.cdw10    = NVME_IDENTIFY_CNS_NS_ACTIVE_LIST;
+
+  uint32_t status;
+  err = OS.PerformNVMeCommand(osDeviceHandle, reinterpret_cast<uint8_t *>(&cmd), &status);
+
+  if (err) {
+    LOG(D4)
+      << "getNamespaceID  error --  "
+      << " kernel status " << HEXON(4) << err
+      << " NVMe status " << HEXON(4) << status
+      << " errno " << HEXOFF << errno ;
+    if (errno==EINVAL) {
+      LOG(D4) << "errno==EINVAL -- NVMe status significant";
+    }
+    if (err==0x4002) {
+      LOG(D4) << "INVALID_FIELD: A reserved coded value or an unsupported value in a defined field(0x4002)";
+    }
+    LOG(D4)  << std::endl <<  std::endl;
+    return false;
+  }
+
+  IFLOG(D4) {
+    LOG(D4) << "getNamespaceID NVMe Identify success";
+    DtaHexDump(&data, bounded((unsigned int)0x010, cmd.data_len, (unsigned int)0x200));
+  }
+
+  const uint32_t
+    * responses = reinterpret_cast<const uint32_t *>(data),
+    * begin = responses,
+    * end = begin + sizeof(data)/sizeof(uint32_t);
+
+  IFLOG(D4) {
+    LOG(D4) << " responses:" ;
+    for (const uint32_t * it = begin; it != end && 0!=*it; it++)
+      LOG(D4) << *it;
+  }
+
+  if (begin<end) {
+    namespace_id = *begin;
+    return true;
+  }
+
+  return false;
+}
+
+
+
+
+static
+bool
+getNamespaceInfo(OSDEVICEHANDLE osDeviceHandle,
+                 uint32_t namespace_id,
+                 DTA_DEVICE_INFO & device_info) {
+uint8_t data[4096]; // per 5.1.13.1
+
+  struct nvme_admin_cmd cmd;
+  int err;
+
+  memset(&cmd, 0, sizeof(cmd));
+  memset(data, 0, sizeof(data));
+
+  LOG(D4) << "getNamespaceInfo";
+  cmd.opcode   = NVME_IDENTIFY;
+  cmd.nsid     = namespace_id;
+  cmd.addr     = (uint64_t)&data;
+  cmd.data_len = (uint32_t)sizeof(data);
+  cmd.cdw10    = NVME_IDENTIFY_CNS_NS;
+
+  uint32_t status;
+  err = OS.PerformNVMeCommand(osDeviceHandle, reinterpret_cast<uint8_t *>(&cmd), &status);
+
+  if (err) {
+    LOG(D4)
+      << "getNamespaceInfo  error --  "
+      << " kernel status " << HEXON(4) << err
+      << " NVMe status " << HEXON(4) << status
+      << " errno " << HEXOFF << errno ;
+    if (errno==EINVAL) {
+      LOG(D4) << "errno==EINVAL -- NVMe status significant";
+    }
+    if (err==0x4002) {
+      LOG(D4) << "INVALID_FIELD: A reserved coded value or an unsupported value in a defined field(0x4002)";
+    }
+    LOG(D4)  << std::endl <<  std::endl;
+    return false;
+  }
+
+  IFLOG(D4) {
+    LOG(D4) << "getNamespaceInfo NVMe Identify success";
+    DtaHexDump(&data, (unsigned int)bounded((unsigned int)0x010, cmd.data_len, (unsigned int)0x200));
+  }
+
+  device_info.devSize = * (reinterpret_cast<uint64_t *>(data+48)) ;  // See Figure 114
+  safecopy(device_info.worldWideName, sizeof(device_info.worldWideName),
+           data+120, 8);  // See Figure 114
+  return true;
+}
+
+
+
 bool DtaNvmeDrive::identifyUsingNvmeIdentify(OSDEVICEHANDLE osDeviceHandle,
                                              InterfaceDeviceID & interfaceDeviceIdentification,
                                              DTA_DEVICE_INFO & device_info)
 {
   LOG(D4) << "Entering DtaNvmeDrive::identifyUsingNvmeIdentify";
 
-  uint8_t ctrl[4096];
 
-  struct nvme_admin_cmd cmd;
-  memset(&cmd, 0, sizeof(cmd));
-
-  LOG(D3) << "Nvme Identify Command";
-  cmd.opcode = NVME_IDENTIFY;
-  cmd.nsid = 0;
-  cmd.addr = (unsigned long long)&ctrl;
-  cmd.data_len = 4096;
-  cmd.cdw10 = 1;
-
-  int err = OS.PerformNVMeCommand(osDeviceHandle, reinterpret_cast<uint8_t *>(&cmd));
-
-  if (err) {
-    device_info.devType = DEVICE_TYPE_OTHER;
-    LOG(D4) << "Nvme Identify error. NVMe status " << err;
-    IFLOG(D4) DtaHexDump(&cmd, sizeof(cmd));
-    IFLOG(D4) DtaHexDump(&ctrl, sizeof(ctrl));
+  uint32_t namespace_id = 0;
+  if (!getNamespaceID(osDeviceHandle, namespace_id))
     return false;
-  }
 
-  dictionary * responses = parseIdentifyResponse(ctrl,interfaceDeviceIdentification,device_info);
+  LOG(D4) << "Active Namespace ID is " << namespace_id;
 
-  (void)responses; // TODO: Or make use of this here!
+  if (! getNamespaceInfo(osDeviceHandle, namespace_id, device_info))
+    return false;
 
-  delete responses;
+  LOG(D4) << "Device size is " << device_info.devSize;
+  LOG(D4) << "WWN is " << __HEXON(2) << std::uppercase
+          << (uint16_t)device_info.worldWideName[0]
+          << (uint16_t)device_info.worldWideName[1]
+          << (uint16_t)device_info.worldWideName[2]
+          << (uint16_t)device_info.worldWideName[3]
+          << (uint16_t)device_info.worldWideName[4]
+          << (uint16_t)device_info.worldWideName[5]
+          << (uint16_t)device_info.worldWideName[6]
+          << (uint16_t)device_info.worldWideName[7]
+    ;
+
+  if (! (_NvmeIdentify("Identify Controller", NVME_NSID_NONE, NVME_IDENTIFY_CONTROLLER_DATA_STRUCTURE,
+                         parseIdentifyControllerResponse,
+                         osDeviceHandle, interfaceDeviceIdentification, device_info)))
+    return false;
+
+
+  device_info.devType = DEVICE_TYPE_NVME;
   return true;
 }
+
 
 bool DtaNvmeDrive::identify(DTA_DEVICE_INFO& device_info)
 {

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -18,8 +18,15 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
 
+#if !(defined(DTAOPTIONS_INCLUDED_FOR_CODE) || defined(DTAOPTIONS_INCLUDED_FOR_USAGE))
+#define DTAOPTIONS_INCLUDED_FOR_CODE  // assume legacy code
+#endif
+
+#if defined(DTAOPTIONS_INCLUDED_FOR_CODE)
 #ifndef _DTAOPTIONS_H
 #define	_DTAOPTIONS_H
+
+
 #include <cstdint>
 
 #include "log.h"
@@ -193,4 +200,28 @@ typedef enum _sedutiloption {
 #define OPTION_IS(option_field) \
 	opts->option_field = ++i;
 
+#define SKIP_FIELDS(n) i += n;
+
+#define USAGE_IS(u)
+
 #endif /* _DTAOPTIONS_H */
+
+#elif defined(DTAOPTIONS_INCLUDED_FOR_USAGE)
+#define CHECKARGS(x)
+#define CHECKMAXARGS(x)
+#define BEGIN_OPTION(cmdstring,args)
+#define BEGIN_OPTION_MAX(cmdstring,args)
+#define END_OPTION
+#define TESTARG(literal,structfield,value)
+#define TESTOPTIONALARG(literal,structfield,value)
+#define ENDOPTIONALARGS
+#define TESTFAIL(msg)
+#define OPTION_IS(option_field)
+#define SKIP_FIELDS(n)
+
+#define USAGE_IS(u) u,
+
+
+#else
+#error DtaOptions.h must be #included with either #define DTAOPTIONS_INCLUDED_FOR_CODE or #define DTAOPTIONS_INCLUDED_FOR_USAGE
+#endif  // configuration

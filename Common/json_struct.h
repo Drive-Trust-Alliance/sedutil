@@ -6804,7 +6804,7 @@ namespace integer
 template <typename T>
 inline int to_buffer(T integer, char *buffer, int buffer_size, int *digits_truncated = nullptr)
 {
-  static_assert(std::is_integral<T>::value, "Tryint to convert non int to string");
+  static_assert(std::is_integral<T>::value, "Trying to convert non int to string");
   int chars_to_write = ft::count_chars(integer);
   char *target_buffer = buffer;
   bool negative = false;
@@ -6841,7 +6841,7 @@ inline int to_buffer(T integer, char *buffer, int buffer_size, int *digits_trunc
         remainder = -remainder;
     }
     integer /= 10;
-    target_buffer[chars_to_write - 1 - i] = '0' + char(remainder);
+    target_buffer[chars_to_write - 1 - i] = char('0' + remainder);
   }
 
   return chars_to_write + negative;
@@ -7028,21 +7028,17 @@ struct TypeHandlerIntType
     return Error::NoError;
   }
 
-  static inline void from(const T &from_type, Token &token, Serializer &serializer)
+  static inline void from(const T &from_type, Token & token, Serializer &serializer)
   {
-    char buf[40];
-    int digits_truncated;
-    int size = Internal::ft::integer::to_buffer(from_type, buf, sizeof(buf), &digits_truncated);
-    if (size <= 0 || digits_truncated)
-    {
-      fprintf(stderr, "error serializing int token\n");
-      return;
-    }
-
-    token.value_type = Type::Number;
-    token.value.data = buf;
-    token.value.size = size_t(size);
-    serializer.write(token);
+    std::string str_data = std::to_string(from_type);
+    size_t size = str_data.length();
+    Token t;
+    t.name = token.name ;
+    t.name_type = token.name_type;
+    t.value_type = Type::Number;
+    t.value.size = size;
+    t.value.data = str_data.c_str();
+    serializer.write(t);
   }
 };
 

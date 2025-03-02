@@ -1,0 +1,49 @@
+#!/bin/bash
+export CHAIN_DIR="${CHAIN_DIR-"$(realpath "$(dirname "$(realpath "${BASH_SOURCE-$0}")")")"}"
+
+ 
+function script_path() {
+    [ -z "${1}" ] && echo "$(realpath "${BASH_SOURCE-$0}")" || echo "${CHAIN_DIR}/${1}"
+}
+export -f script_path
+
+function loginscript_plist_for_step() {
+	local step=$1
+#        script="osascript $(script_path "${step}.scpt")"
+        script="/usr/local/bin/${step}.sh"
+        [ -f "${script}" ] || die 99 "Can't find ${script}"
+        [ -x "${script}" ] || die 99 "${script} is not executable"
+	cat <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+   <key>Label</key>
+   <string>com.user.loginscript</string>
+   <key>ProgramArguments</key><array><string>${script}</string></array><key>RunAtLoad</key>
+   <true/>
+</dict>
+</plist>
+EOF
+}
+export -f loginscript_plist_for_step
+
+export LOGINSCRIPT_PLIST="/Users/scott/Library/LaunchAgents/com.user.loginscript.plist"
+
+function install_loginscript_plist_for_step () {
+  plist_for_step "$1" > "${LOGINSCRIPT_PLIST}"
+}
+export -f install_loginscript_plist_for_step
+
+
+function uninstall_loginscript_plist () {
+  rm -f "${LOGINSCRIPT_PLIST}"
+}
+export -f uninstall_loginscript_plist
+
+function tracer () {
+logger $*
+echo $* >> ${CHAIN_DIR}/tracer.out
+}
+export -f tracer
+

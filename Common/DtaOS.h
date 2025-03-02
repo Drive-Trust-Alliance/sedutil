@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -19,6 +19,7 @@
    * C:E********************************************************************** */
 #pragma once
 
+#include <algorithm>
 #include <map>
 #include <string>
 #include <vector>
@@ -26,7 +27,7 @@
 #include "ATAStructures.h"
 #include "DtaStructures.h"
 #include "DtaHexDump.h"
-
+#include "system.h"
 
 /*
  *  SCSI Status codes
@@ -66,7 +67,7 @@ template <typename status_type> static inline std::string statusName(status_type
       CaseForStatus( RESERVATION_CONFLICT );
       CaseForStatus( COMMAND_TERMINATED   );
       CaseForStatus( QUEUE_FULL           );
-    default: return std::string("????");
+    default: return std::string("**-")+std::to_string(statusValue)+std::string("-**");
     }
 }
 #undef CaseForStatus
@@ -111,6 +112,17 @@ public:
     assert(pos != NULL);
     return *pos;
   }
+
+#ifdef __clang__
+  __attribute__((no_destroy))
+#endif
+  static const std::string name;
+
+  static std::string longNameAndVersion() {
+    std::string longNameCommand="uname -a";
+    std::string longName=system(longNameCommand);
+    return longName;
+  };  // TODO: does this work for Windows?  If so, promote to DTALinux.h
 
   // Drive handles and refs (strings in OS lexicon)
 
@@ -170,167 +182,168 @@ public:
 
 
 
-    // Stolen from sg.h in case we are not Linux ...
-  #if !defined(SG_DXFER_TO_DEV)
-  #define SG_DXFER_TO_DEV -2      /* e.g. a SCSI WRITE command */
-  #endif  // !defined(SG_DXFER_TO_DEV)
-  #if !defined(SG_DXFER_FROM_DEV)
-  #define SG_DXFER_FROM_DEV -3    /* e.g. a SCSI READ command */
-  #endif  // !defined(SG_DXFER_FROM_DEV)
+  // Stolen from sg.h in case we are not Linux ...
+#if !defined(SG_DXFER_TO_DEV)
+#define SG_DXFER_TO_DEV -2      /* e.g. a SCSI WRITE command */
+#endif  // !defined(SG_DXFER_TO_DEV)
+#if !defined(SG_DXFER_FROM_DEV)
+#define SG_DXFER_FROM_DEV -3    /* e.g. a SCSI READ command */
+#endif  // !defined(SG_DXFER_FROM_DEV)
 
-  #define PSC_TO_DEV   SG_DXFER_TO_DEV
-  #define PSC_FROM_DEV SG_DXFER_FROM_DEV
-
-
-    /** Perform an ATA command using the current operating system HD interface
-     *
-     * @param osDeviceHandle    OSDEVICEHANDLE of already-opened raw device file
-     * @param cmd               ATACOMMAND opcode IDENTIFY_DEVICE, TRUSTED_SEND, or TRUSTED_RECEIVE
-     * @param securityProtocol  security protocol ID per ATA command spec
-     * @param comID             communication channel ID per TCG spec
-     * @param buffer            address of data buffer
-     * @param bufferlen         data buffer len, also output transfer length
-     *
-     * Returns the result of the os system call
-     */
-    virtual int PerformATACommand_via_HD(OSDEVICEHANDLE osDeviceHandle,
-                                  ATACOMMAND cmd, uint8_t securityProtocol, uint16_t comID,
-                                  void * buffer,  unsigned int & bufferlen) = 0;
+#define PSC_TO_DEV   SG_DXFER_TO_DEV
+#define PSC_FROM_DEV SG_DXFER_FROM_DEV
 
 
-    /** Perform an ATA command using SCSI/ATA translation
-     *
-     * @param osDeviceHandle    OSDEVICEHANDLE of already-opened raw device file
-     * @param cmd               ATACOMMAND opcode IDENTIFY_DEVICE, TRUSTED_SEND, or TRUSTED_RECEIVE
-     * @param securityProtocol  security protocol ID per ATA command spec
-     * @param comID             communication channel ID per TCG spec
-     * @param buffer            address of data buffer
-     * @param bufferlen         data buffer len, also output transfer length
-     *
-     * Returns the result of the os system call
-     */
-    virtual int PerformATACommand_via_SAT(OSDEVICEHANDLE osDeviceHandle,
-                                  ATACOMMAND cmd, uint8_t securityProtocol, uint16_t comID,
-                                  void * buffer,  unsigned int & bufferlen)
-    {
-      uint8_t protocol;
-      int dxfer_direction;
-      unsigned int timeout;
-
-      switch (cmd)
-        {
-        case IDENTIFY_DEVICE:
-          timeout=600;  //  IDENTIFY sg.timeout = 600; // Sabrent USB-SATA adapter 1ms,6ms,20ms,60 NG, 600ms OK
-          protocol = PIO_DATA_IN;
-          dxfer_direction = PSC_FROM_DEV;
-          break;
-
-        case TRUSTED_RECEIVE:
-          timeout=60000;
-          protocol = PIO_DATA_IN;
-          dxfer_direction = PSC_FROM_DEV;
-          break;
-
-        case TRUSTED_SEND:
-          timeout=60000;
-          protocol = PIO_DATA_OUT;
-          dxfer_direction = PSC_TO_DEV;
-          break;
-
-        default:
-          LOG(E) << "Exiting PerformATACommand_via_SAT because of unrecognized cmd=" << cmd << "?!" ;
-          return 0xff;
-        }
+  /** Perform an ATA command using the current operating system HD interface
+   *
+   * @param osDeviceHandle    OSDEVICEHANDLE of already-opened raw device file
+   * @param cmd               ATACOMMAND opcode IDENTIFY_DEVICE, TRUSTED_SEND, or TRUSTED_RECEIVE
+   * @param securityProtocol  security protocol ID per ATA command spec
+   * @param comID             communication channel ID per TCG spec
+   * @param buffer            address of data buffer
+   * @param bufferlen         data buffer len, also output transfer length
+   *
+   * Returns the result of the os system call
+   */
+  virtual int PerformATACommand_via_HD(OSDEVICEHANDLE osDeviceHandle,
+                                       ATACOMMAND cmd, uint8_t securityProtocol, uint16_t comID,
+                                       void * buffer,  unsigned int & bufferlen) = 0;
 
 
-      CScsiCmdATAPassThrough_12 cdb;
-      uint8_t * cdbBytes=(uint8_t *)&cdb;  // We use direct byte pointer because bitfields are unreliable
-      cdbBytes[1] = static_cast<uint8_t>(protocol << 1);
-      cdbBytes[2] = static_cast<uint8_t>((protocol==PIO_DATA_IN ? 1 : 0) << 3 |  // TDir
-                                         1                               << 2 |  // ByteBlock
-                                         2                                       // TLength  10b => transfer length in Count
-                                         );
-      cdb.m_Features = static_cast<uint8_t>(securityProtocol);
-      cdb.m_Count = static_cast<uint8_t>(bufferlen/512);
-      cdb.m_LBA_Mid = comID & 0xFF;          // ATA lbaMid   / TRUSTED COMID low
-      cdb.m_LBA_High = (comID >> 8) & 0xFF;  // ATA lbaHigh  / TRUSTED COMID high
-      cdb.m_Command = static_cast<uint8_t>(cmd);
+  /** Perform an ATA command using SCSI/ATA translation
+   *
+   * @param osDeviceHandle    OSDEVICEHANDLE of already-opened raw device file
+   * @param cmd               ATACOMMAND opcode IDENTIFY_DEVICE, TRUSTED_SEND, or TRUSTED_RECEIVE
+   * @param securityProtocol  security protocol ID per ATA command spec
+   * @param comID             communication channel ID per TCG spec
+   * @param buffer            address of data buffer
+   * @param bufferlen         data buffer len, also output transfer length
+   *
+   * Returns the result of the os system call
+   */
+  virtual int PerformATACommand_via_SAT(OSDEVICEHANDLE osDeviceHandle,
+                                        ATACOMMAND cmd, uint8_t securityProtocol, uint16_t comID,
+                                        void * buffer,  unsigned int & bufferlen)
+  {
+    uint8_t protocol;
+    int dxfer_direction;
+    unsigned int timeout;
 
-      unsigned char sense[32];
-      unsigned char senselen=sizeof(sense);
-      memset(&sense, 0, senselen);
+    switch (cmd)
+      {
+      case IDENTIFY_DEVICE:
+        timeout=600;  //  IDENTIFY sg.timeout = 600; // Sabrent USB-SATA adapter 1ms,6ms,20ms,60 NG, 600ms OK
+        protocol = PIO_DATA_IN;
+        dxfer_direction = PSC_FROM_DEV;
+        break;
 
-      unsigned int dataLength = bufferlen;
-      SCSI_STATUS_CODE masked_status=GOOD;
+      case TRUSTED_RECEIVE:
+        timeout=60000;
+        protocol = PIO_DATA_IN;
+        dxfer_direction = PSC_FROM_DEV;
+        break;
 
-      int result=PerformSCSICommand(osDeviceHandle,
-                                    dxfer_direction,
-                                    cdbBytes, (unsigned char)sizeof(cdb),
-                                    buffer, dataLength,
-                                    sense, senselen,
-                                    &masked_status,
-                                    timeout);
-      if (result!=0) {
-        LOG(D4) << "PerformATACommand_via_SAT: PerformSCSICommand returned " << result;
+      case TRUSTED_SEND:
+        timeout=60000;
+        protocol = PIO_DATA_OUT;
+        dxfer_direction = PSC_TO_DEV;
+        break;
+
+      default:
+        LOG(E) << "Exiting PerformATACommand_via_SAT because of unrecognized cmd=" << cmd << "?!" ;
+        return 0xff;
+      }
+
+
+    CScsiCmdATAPassThrough_12 cdb;
+    uint8_t * cdbBytes=(uint8_t *)&cdb;  // We use direct byte pointer because bitfields are unreliable
+    cdbBytes[1] = static_cast<uint8_t>(protocol << 1);
+    cdbBytes[2] = static_cast<uint8_t>((protocol==PIO_DATA_IN ? 1 : 0) << 3 |  // TDir
+                                       1                               << 2 |  // ByteBlock
+                                       2                                       // TLength  10b => transfer length in Count
+                                       );
+    cdb.m_Features = static_cast<uint8_t>(securityProtocol);
+    cdb.m_Count = static_cast<uint8_t>(bufferlen/512);
+    cdb.m_LBA_Mid = comID & 0xFF;          // ATA lbaMid   / TRUSTED COMID low
+    cdb.m_LBA_High = (comID >> 8) & 0xFF;  // ATA lbaHigh  / TRUSTED COMID high
+    cdb.m_Command = static_cast<uint8_t>(cmd);
+
+    unsigned char sense[32];
+    unsigned char senselen=sizeof(sense);
+    memset(&sense, 0, senselen);
+
+    unsigned int dataLength = bufferlen;
+    SCSI_STATUS_CODE masked_status=GOOD;
+
+    int result=PerformSCSICommand(osDeviceHandle,
+                                  dxfer_direction,
+                                  cdbBytes, (unsigned char)sizeof(cdb),
+                                  buffer, dataLength,
+                                  sense, senselen,
+                                  &masked_status,
+                                  timeout);
+    if (result!=0) {
+      LOG(D4) << "PerformATACommand_via_SAT: PerformSCSICommand returned " << result;
+      LOG(D4) << "sense after ";
+      IFLOG(D4) DtaHexDump(&sense, senselen);
+      return 0xff;
+    }
+
+    LOG(D4) << "PerformATACommand_via_SAT: PerformSCSICommand returned " << result;
+    LOG(D4) << "sense after ";
+    IFLOG(D4) DtaHexDump(&sense, senselen);
+
+    // check for successful target completion
+    if (masked_status != GOOD)
+      {
+        LOG(D4) << "PerformATACommand_via_SAT: "
+                << "masked_status=" << masked_status << "=" << statusName(masked_status) << " != GOOD  "
+                << "cmd=" << (cmd == TRUSTED_SEND    ? std::string("TRUSTED_SEND") :
+                              cmd == TRUSTED_RECEIVE ? std::string("TRUSTED_RECEIVE") :
+                              cmd == IDENTIFY_DEVICE ? std::string("IDENTIFY_DEVICE") :
+                              std::to_string(cmd));
         LOG(D4) << "sense after ";
         IFLOG(D4) DtaHexDump(&sense, senselen);
         return 0xff;
       }
 
-      LOG(D4) << "PerformATACommand_via_SAT: PerformSCSICommand returned " << result;
-      LOG(D4) << "sense after ";
-      IFLOG(D4) DtaHexDump(&sense, senselen);
-
-      // check for successful target completion
-      if (masked_status != GOOD)
-        {
-          LOG(D4) << "PerformATACommand_via_SAT: masked_status=" << masked_status << "=" << statusName(masked_status) << " != GOOD  cmd=" <<
-            (cmd == TRUSTED_SEND    ? std::string("TRUSTED_SEND") :
-             cmd == TRUSTED_RECEIVE ? std::string("TRUSTED_RECEIVE") :
-             cmd == IDENTIFY_DEVICE ? std::string("IDENTIFY_DEVICE") :
-             std::to_string(cmd));
-          LOG(D4) << "sense after ";
-          IFLOG(D4) DtaHexDump(&sense, senselen);
-          return 0xff;
-        }
-
-      if (! ((0x00 == sense[0]) && (0x00 == sense[1])) ||
-          ((0x72 == sense[0]) && (0x0b == sense[1])) ) {
-        LOG(D4) << "PerformATACommand_via_SAT: PerformATACommand disqualifying ATA response --"
-                << " sense[0]=" << HEXON(2) << (unsigned int)sense[0]
-                << " sense[1]=" << HEXON(2) << (unsigned int)sense[1];
-        return 0xff; // not ATA response
-      }
-
-      LOG(D4) << "buffer after ";
-      IFLOG(D4) DtaHexDump(buffer, dataLength);
-      LOG(D4) << "PerformATACommand_via_SAT: PerformATACommand returning sense[11]=" << HEXON(2) << (unsigned int)sense[11];
-      return (sense[11]);
-
+    if (! ((0x00 == sense[0]) && (0x00 == sense[1])) ||
+        ((0x72 == sense[0]) && (0x0b == sense[1])) ) {
+      LOG(D4) << "PerformATACommand_via_SAT: PerformATACommand disqualifying ATA response --"
+              << " sense[0]=" << HEXON(2) << (unsigned int)sense[0]
+              << " sense[1]=" << HEXON(2) << (unsigned int)sense[1];
+      return 0xff; // not ATA response
     }
-;
+
+    //    LOG(D4) << "buffer after ";
+    //    IFLOG(D4) DtaHexDump(buffer, dataLength);
+    LOG(D4) << "PerformATACommand_via_SAT: PerformATACommand returning sense[11]=" << HEXON(2) << (unsigned int)sense[11];
+    return (sense[11]);
+
+  }
 
 
-    /*** Perform an ATA command using the current operating system interface
-     *
-     * @param osDeviceHandle    OSDEVICEHANDLE of already-opened raw device file
-     * @param scsiTranslated               bool using SCSI/ATA translation?
-     * @param cmd               ATACOMMAND opcode IDENTIFY_DEVICE, TRUSTED_SEND, or TRUSTED_RECEIVE
-     * @param securityProtocol  security protocol ID per ATA command spec
-     * @param comID             communication channel ID per TCG spec
-     * @param buffer            address of data buffer
-     * @param bufferlen         data buffer len, also output transfer length
-     *
-     * Returns the result of the os system call
-     */
-    virtual int PerformATACommand(OSDEVICEHANDLE osDeviceHandle, bool scsiTranslated,
-                                  ATACOMMAND cmd, uint8_t securityProtocol, uint16_t comID,
-                                  void * buffer,  unsigned int & bufferlen) {
-        return scsiTranslated
-          ? PerformATACommand_via_SAT(osDeviceHandle, cmd, securityProtocol, comID, buffer, bufferlen)
-          : PerformATACommand_via_HD(osDeviceHandle, cmd, securityProtocol, comID, buffer, bufferlen)
-        ;
-    }
+
+  /*** Perform an ATA command using the current operating system interface
+   *
+   * @param osDeviceHandle    OSDEVICEHANDLE of already-opened raw device file
+   * @param scsiTranslated               bool using SCSI/ATA translation?
+   * @param cmd               ATACOMMAND opcode IDENTIFY_DEVICE, TRUSTED_SEND, or TRUSTED_RECEIVE
+   * @param securityProtocol  security protocol ID per ATA command spec
+   * @param comID             communication channel ID per TCG spec
+   * @param buffer            address of data buffer
+   * @param bufferlen         data buffer len, also output transfer length
+   *
+   * Returns the result of the os system call
+   */
+  virtual int PerformATACommand(OSDEVICEHANDLE osDeviceHandle, bool scsiTranslated,
+                                ATACOMMAND cmd, uint8_t securityProtocol, uint16_t comID,
+                                void * buffer,  unsigned int & bufferlen) {
+    return scsiTranslated
+      ? PerformATACommand_via_SAT(osDeviceHandle, cmd, securityProtocol, comID, buffer, bufferlen)
+      : PerformATACommand_via_HD(osDeviceHandle, cmd, securityProtocol, comID, buffer, bufferlen)
+      ;
+  }
 
 
   /** Perform a SCSI command using the current operating system SCSI interface
@@ -362,10 +375,11 @@ public:
    * @param osDeviceHandle            OSDEVICEHANDLE osDeviceHandle of already-opened raw device file
    * @param cmd             NVMe command struct
    *
-   * Returns the result of the os system call, as well as possibly setting *pmasked_status
+   * Returns the result of the os system call, as well as possibly setting *pstatus
    */
   virtual int PerformNVMeCommand(OSDEVICEHANDLE osDeviceHandle,
-                                 uint8_t * cmd) = 0;
+                                 uint8_t * cmd,
+                                 uint32_t *pstatus) = 0;
 
 
 };
@@ -432,3 +446,7 @@ static inline void softcopy(T * dst, size_t dstsize, const T * src, size_t srcsi
     memset(dst+srcsize, fill, dstsize-srcsize);
   }
 }
+
+// Generic `bounded` function to avoid conflicts between `std::min`/`std::max` and Windows' `min`/`max` macros.
+template <typename T>
+static inline T bounded(T lower, T value, T upper) { return value < lower ? lower : upper < value ? upper : value; };

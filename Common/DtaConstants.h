@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -64,7 +64,7 @@
 #define DTAERROR_DEVICE_NOT_OPEN                        0xac
 #define DTAERROR_DEVICE_ACCESS_DENIED                   0xad
 #define DTAERROR_DEVICE_INVALID_OR_UNSUPPORTED          0xae
-#define DTAERROR_DEVICE_TYPE_UNKNOWN                    0xaf
+#define DTAERROR_DEVICE_NOT_A_TPER                      0xaf
 
 #define DTAERROR_FAILURE                                0xff
 

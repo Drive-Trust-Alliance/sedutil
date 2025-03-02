@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -30,7 +30,8 @@ DtaScsiDrive::getDtaScsiDrive(const char * devref, DTA_DEVICE_INFO & device_info
    return NULL;
   }
 
-  LOG(D4) << "Success opening device " << devref << " as file handle " << HEXON(4) << (size_t) osDeviceHandle;
+  LOG(D4) << "DtaScsiDrive::getDtaScsiDrive: "
+          << "Success opening device " << devref << " as file handle " << HEXON(2) << (size_t) osDeviceHandle;
 
 
   InterfaceDeviceID interfaceDeviceIdentification;
@@ -39,7 +40,7 @@ DtaScsiDrive::getDtaScsiDrive(const char * devref, DTA_DEVICE_INFO & device_info
   if (! identifyUsingSCSIInquiry(osDeviceHandle, interfaceDeviceIdentification, device_info)) {
     device_info.devType = DEVICE_TYPE_OTHER;
     // TODO:  Restore this comment once we sort out UAS vs internal SCSI
-    // LOG(E) << " Device " << devref << " is NOT Scsi?! -- file handle " << HEXON(2) << (size_t) osDeviceHandle;
+    // LOG(E) << " Device " << devref << " is NOT Scsi?! -- file handle " << HEXON(8) << (size_t) osDeviceHandle;
     OS.closeDeviceHandle(osDeviceHandle);
     return NULL;
   }
@@ -51,9 +52,12 @@ DtaScsiDrive::getDtaScsiDrive(const char * devref, DTA_DEVICE_INFO & device_info
 
 
 bool DtaScsiDrive::identifyUsingSCSIInquiry(OSDEVICEHANDLE osDeviceHandle,
-                                               InterfaceDeviceID & interfaceDeviceIdentification,
-                                               DTA_DEVICE_INFO & disk_info) {
+                                            InterfaceDeviceID & interfaceDeviceIdentification,
+                                            DTA_DEVICE_INFO & disk_info) {
+  LOG(D4) <<"DtaScsiDrive::identifyUsingSCSIInquiry(osDeviceHandle=" << HEXON(8) << ", ...)" ;
   if (!deviceIsStandardSCSI(osDeviceHandle, interfaceDeviceIdentification, disk_info)) {
+    LOG(D4) << "DtaScsiDrive::identifyUsingSCSIInquiry: "
+            << "Device is not standard SCSI, returning false";
     return false;
   }
 
@@ -166,6 +170,7 @@ bool DtaScsiDrive::deviceIsStandardSCSI(OSDEVICEHANDLE osDeviceHandle, Interface
       // Customization could use Inquiry characteristics
       if ( NULL != inquiryCharacteristics ) {
         IFLOG(D3) {
+          LOG(D3) << "DtaScsiDrive::deviceIsStandardSCSI(osDeviceHandle=" << HEXON(2) << osDeviceHandle << ", ...)";
           LOG(D3) << "inquiryCharacteristics for Scsi Device: ";
           for (dictionary::iterator it=inquiryCharacteristics->begin(); it!=inquiryCharacteristics->end(); it++)
             LOG(D3) << "  " << it->first << ":" << it->second << std::endl;
@@ -324,7 +329,7 @@ uint8_t DtaScsiDrive::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
       IFLOG(D4) DtaHexDump(cdb, sizeof (cdb));
       LOG(D4) << "sense after ";
       IFLOG(D4) DtaHexDump(sense, senselen);
-      LOG(D4) << "Masked_status = " << statusName(masked_status) << "!=GOOD "
+      LOG(D4) << "Masked_status=" << HEXON(2) << masked_status << HEXOFF << "=" << statusName(masked_status) << "!=GOOD "
               << "-- returning 0xff from DtaDevScsi::sendCmd";
       return 0xff;
     }

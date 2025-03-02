@@ -9,7 +9,8 @@ pkg="${3:-DTADriver}"
 attach_iso "${version}" "${project}" || die "Could not attach ${project} (${version}).iso"
 UNINSTALL="/Volumes/SED software by Drive Trust Alliance/UNINSTALL"
 echo Uninstalling ... will reboot ... && "${UNINSTALL}"
+result=$?
 echo detach_iso "${version}" "${project}"  NOT DONE
+exit $result
 
-exit $?
 

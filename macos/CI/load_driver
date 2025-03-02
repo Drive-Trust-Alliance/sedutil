@@ -1,3 +1,13 @@
 #!/bin/bash
 . driver_info
-asroot kmutil load -p "${DRIVER_BUNDLE_PATH}"
+
+declare load_output
+declare -i load_exit_code
+
+authenticate "Enter password to authorize 'kmutil load -p \"${DRIVER_BUNDLE_PATH}\"'"
+load_output="$(asroot kmutil load -p "${DRIVER_BUNDLE_PATH}" 2>&1)" ; load_exit_code=$?
+
+echo "${load_output}: ${DRIVER_BUNDLE_PATH}"
+
+exit $load_exit_code
+

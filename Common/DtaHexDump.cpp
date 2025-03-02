@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -17,20 +17,20 @@ You should have received a copy of the GNU General Public License
 along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 * C:E********************************************************************** */
-#include "os.h"
+#include "DtaHexDump.h"
+
+#if !NOHEXDUMP
+#include <cstring>
+#include <stdint.h>
 #include <stdio.h>
-#include <ctype.h>
 #include "log.h"
-#define NOHEXDUMP 0
-// TODO: NOHEXDUMP 1
-#if NOHEXDUMP
-void DtaHexDump(void *, unsigned int) {}
-#else
-void DtaHexDump(void * address, unsigned int length) {
+
+
+void __DtaHexDump(const char * tag, void * address, unsigned int length) {
 	uint8_t display[17];
 	uint8_t * cpos = (uint8_t *)address;
 	uint8_t * epos = cpos + length;
-	LOG(D1) << "Entering hexDump("<< std::hex << address <<", 0x" << std::hex << length << "):";
+        LOG(D4) << tag << "=" << std::hex << address <<" (length=0x" << std::hex << length << "):";
 	int rpos = 0;
 	int dpos = 0;
 	fprintf( stderr,"%04x ",rpos);

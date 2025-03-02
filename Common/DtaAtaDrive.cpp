@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -65,56 +65,57 @@ DtaAtaDrive::getDtaAtaDrive(const char* devref, DTA_DEVICE_INFO& di) {
 
 
 bool DtaAtaDrive::tryToIdentifyUsingATAIdentifyDevice_WithScsiTranslated(bool &scsiTranslated,
-                                                                                OSDEVICEHANDLE osDeviceHandle,
-                                                                                InterfaceDeviceID &interfaceDeviceIdentification,
-                                                                                DTA_DEVICE_INFO &disk_info,
-                                                                                dictionary **ppIdentifyCharacteristics,
-                                                                                void *identifyDeviceResponse,
-                                                                                unsigned int &dataLen)
+                                                                         OSDEVICEHANDLE osDeviceHandle,
+                                                                         InterfaceDeviceID &interfaceDeviceIdentification,
+                                                                         DTA_DEVICE_INFO &disk_info,
+                                                                         dictionary **ppIdentifyCharacteristics,
+                                                                         void *identifyDeviceResponse,
+                                                                         unsigned int &dataLen)
 {
-    LOG(D4) << "DtaAtaDrive::identifyUsingATAIdentifyDevice: invoking __identifyDevice --"
-            << " "
-            << "scsiTranslated=" << std::boolalpha << scsiTranslated
-            << " "
-            << "dataLen=" << HEXON(4) << dataLen ;
-    bool isATA = (0 == __identifyDevice(osDeviceHandle, scsiTranslated, identifyDeviceResponse, dataLen ));
+  LOG(D4) << "DtaAtaDrive::identifyUsingATAIdentifyDevice: invoking __identifyDevice --"
+          << " "
+          << "scsiTranslated=" << std::boolalpha << scsiTranslated
+          << " "
+          << "dataLen=" << HEXON(4) << dataLen ;
+  bool isATA = (0 == __identifyDevice(osDeviceHandle, scsiTranslated, identifyDeviceResponse, dataLen ));
 
-    if (isATA) {
-        LOG(D4) << "DtaAtaDrive::identifyUsingATAIdentifyDevice: __identifyDevice returned zero -- is ATA" ;
+  if (isATA) {
+    LOG(D4) << "DtaAtaDrive::identifyUsingATAIdentifyDevice: __identifyDevice returned zero -- is ATA" ;
 
-        if (0xA5==((uint8_t *)identifyDeviceResponse)[510]) {  // checksum is present
-            LOG(D4) << "DtaAtaDrive::identifyUsingATAIdentifyDevice:checksum flag seen ... computing checksum ..." ;
-            uint8_t checksum=0;
-            for (uint8_t * p = ((uint8_t *)identifyDeviceResponse),
-                 * end = ((uint8_t *)identifyDeviceResponse) + 512;
-                 p<end ;
-                 p++)
-                checksum=(uint8_t)(checksum+(*p));
-            if (checksum != 0) {
-                LOG(D1) << " *** IDENTIFY DEVICE response checksum failed *** !!!" ;
-            } else {
-                LOG(D4) << "DtaAtaDrive::identifyUsingATAIdentifyDevice:... checksum passed." ;
-            }
-        } else {
-            LOG(D4) << "DtaAtaDrive::identifyUsingATAIdentifyDevice:checksum flag not presend" ;
-        }
-        IFLOG(D4) {
-            LOG(D4) << "ATA IDENTIFY DEVICE response: dataLen=" << HEXON(4) << dataLen ;
-            DtaHexDump(identifyDeviceResponse, dataLen);
-        }
-
-        dictionary *pIdentifyCharacteristics =
-        parseATAIdentifyDeviceResponse(interfaceDeviceIdentification,
-                                       ((uint8_t *)identifyDeviceResponse),
-                                       disk_info);
-        if (ppIdentifyCharacteristics != NULL)
-            (*ppIdentifyCharacteristics) = pIdentifyCharacteristics;
-        else if (pIdentifyCharacteristics !=NULL)
-            delete pIdentifyCharacteristics;
+    if (0xA5==((uint8_t *)identifyDeviceResponse)[510]) {  // checksum is present
+      LOG(D4) << "DtaAtaDrive::identifyUsingATAIdentifyDevice:checksum flag seen ... computing checksum ..." ;
+      uint8_t checksum=0;
+      for (uint8_t * p = ((uint8_t *)identifyDeviceResponse),
+             * end = ((uint8_t *)identifyDeviceResponse) + 512;
+           p<end ;
+           p++)
+        checksum=(uint8_t)(checksum+(*p));
+      if (checksum != 0) {
+        LOG(D1) << " *** IDENTIFY DEVICE response checksum failed *** !!!" ;
+      } else {
+        LOG(D4) << "DtaAtaDrive::identifyUsingATAIdentifyDevice:... checksum passed." ;
+      }
     } else {
-        LOG(D4) << " __identifyDevice returned non-zero -- is not ATA with scsiTranslated=" << std::boolalpha << scsiTranslated ;
+      LOG(D4) << "DtaAtaDrive::identifyUsingATAIdentifyDevice:checksum flag not present" ;
     }
-    return isATA;
+
+    // IFLOG(D4) {
+    //   LOG(D4) << "ATA IDENTIFY DEVICE response: dataLen=" << HEXON(4) << dataLen ;
+    //   DtaHexDump(identifyDeviceResponse, dataLen);
+    // }
+
+    dictionary *pIdentifyCharacteristics =
+      parseATAIdentifyDeviceResponse(interfaceDeviceIdentification,
+                                     ((uint8_t *)identifyDeviceResponse),
+                                     disk_info);
+    if (ppIdentifyCharacteristics != NULL)
+      (*ppIdentifyCharacteristics) = pIdentifyCharacteristics;
+    else if (pIdentifyCharacteristics !=NULL)
+      delete pIdentifyCharacteristics;
+  } else {
+    LOG(D4) << " __identifyDevice returned non-zero -- is not ATA with scsiTranslated=" << std::boolalpha << scsiTranslated ;
+  }
+  return isATA;
 }
 
 bool DtaAtaDrive::identifyUsingATAIdentifyDevice(OSDEVICEHANDLE osDeviceHandle,
@@ -157,11 +158,11 @@ int DtaAtaDrive::__identifyDevice( OSDEVICEHANDLE osDeviceHandle, bool scsiTrans
 
   // LOG(D4) << " __identifyDevice about to OS.PerformATACommand" ;
   int result=OS.PerformATACommand(osDeviceHandle, scsiTranslated, IDENTIFY_DEVICE, 0, 0, buffer, dataLength);
-  IFLOG(D4) {
-    LOG(D4) << "__identifyDevice: result=" << result << " dataLength=" << HEXON(8) << dataLength ;
-    if (0==result)
-      DtaHexDump(buffer, dataLength);
-  }
+  // IFLOG(D4) {
+  //   LOG(D4) << "__identifyDevice: result=" << result << " dataLength=" << HEXON(8) << dataLength ;
+  //   if (0==result)
+  //     DtaHexDump(buffer, dataLength);
+  // }
   return result;
 }
 
@@ -220,26 +221,26 @@ uint8_t DtaAtaDrive::sendCmd(ATACOMMAND cmd, uint8_t securityProtocol, uint16_t 
 {
   LOG(D4) << "Entering DtaDevAta::sendCmd";
 
-  IFLOG(D4) {
-    LOG(D4) << "sendCmd: before";
-    if (cmd == TRUSTED_SEND) {
-      LOG(D4) << "bufferlen = 0x" << std::hex << bufferlen ;
-      DtaHexDump(buffer, bufferlen);
-    }
-  }
+  // IFLOG(D4) {
+  //   LOG(D4) << "sendCmd: before";
+  //   if (cmd == TRUSTED_SEND) {
+  //     LOG(D4) << "bufferlen = 0x" << std::hex << bufferlen ;
+  //     DtaHexDump(buffer, bufferlen);
+  //   }
+  // }
 
   /*
    * Do the IO
    */
   int result= PerformATACommand(cmd, securityProtocol, comID, buffer, bufferlen);
 
-  LOG(D4) << "sendCmd: after -- result = " << result ;
-  IFLOG(D4) {
-    if (0==result && cmd != TRUSTED_SEND) {
-      LOG(D4) << "bufferlen = 0x" << std::hex << bufferlen ;
-      DtaHexDump(buffer, bufferlen);
-    }
-  }
+  // LOG(D4) << "sendCmd: after -- result = " << result ;
+  // IFLOG(D4) {
+  //   if (0==result && cmd != TRUSTED_SEND) {
+  //     LOG(D4) << "bufferlen = 0x" << std::hex << bufferlen ;
+  //     DtaHexDump(buffer, bufferlen);
+  //   }
+  // }
 
   return static_cast<uint8_t>(result);
 }

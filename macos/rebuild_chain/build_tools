@@ -1,0 +1,8 @@
+#!/bin/bash
+# set -xv
+cd ~                           && \
+test_select tools              && \
+. ./test                       && \
+exec /usr/local/bin/ratchet.sh
+
+

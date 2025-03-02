@@ -1,0 +1,48 @@
+Entering /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/run_chain.sh
+Entering /Users/scott/bin/chain_links/step_chain_ratchet.sh
+Entering /Users/scott/bin/chain_links/run_link.sh
+CHAIN_DIR is "/Users/scott/preboot/DTA/sedutil/macos/rebuild_chain"
+link is /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/links.d/00-install_reboot_hook
+Entering chain_continue: CHAIN_AUTORUNS="yes"
+Entering /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/run_chain.sh
+Entering /Users/scott/bin/chain_links/step_chain_ratchet.sh
+Entering /Users/scott/bin/chain_links/run_link.sh
+CHAIN_DIR is "/Users/scott/preboot/DTA/sedutil/macos/rebuild_chain"
+link is /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/links.d/00-install_reboot_hook
+Entering chain_continue: CHAIN_AUTORUNS="yes"
+Entering /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/run_chain.sh
+Entering /Users/scott/bin/chain_links/step_chain_ratchet.sh
+Entering /Users/scott/bin/chain_links/run_link.sh
+CHAIN_DIR is "/Users/scott/preboot/DTA/sedutil/macos/rebuild_chain"
+link is /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/links.d/00-install_reboot_hook
+Entering chain_continue: CHAIN_AUTORUNS="yes"
+Entering /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/run_chain.sh
+Entering /Users/scott/bin/chain_links/step_chain_ratchet.sh
+Entering /Users/scott/bin/chain_links/run_link.sh
+CHAIN_DIR is "/Users/scott/preboot/DTA/sedutil/macos/rebuild_chain"
+link is /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/links.d/00-install_reboot_hook
+Entering chain_continue: CHAIN_AUTORUNS="yes"
+Entering /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/run_chain.sh
+Entering /Users/scott/bin/chain_links/step_chain_ratchet.sh
+Entering /Users/scott/bin/chain_links/run_link.sh
+CHAIN_DIR is "/Users/scott/preboot/DTA/sedutil/macos/rebuild_chain"
+link is /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/links.d/00-install_reboot_hook
+Entering chain_continue: CHAIN_AUTORUNS="yes"
+Entering /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/run_chain.sh
+Entering /Users/scott/bin/chain_links/step_chain_ratchet.sh
+Entering /Users/scott/bin/chain_links/run_link.sh
+CHAIN_DIR is "/Users/scott/preboot/DTA/sedutil/macos/rebuild_chain"
+link is /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/links.d/00-install_reboot_hook
+Entering chain_continue: CHAIN_AUTORUNS="yes"
+Entering /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/run_chain.sh
+Entering /Users/scott/bin/chain_links/step_chain_ratchet.sh
+Entering /Users/scott/bin/chain_links/run_link.sh
+CHAIN_DIR is "/Users/scott/preboot/DTA/sedutil/macos/rebuild_chain"
+link is /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/links.d/00-install_reboot_hook
+Entering chain_continue: CHAIN_AUTORUNS="yes"
+Entering /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/run_chain.sh
+Entering /Users/scott/bin/chain_links/step_chain_ratchet.sh
+Entering /Users/scott/bin/chain_links/run_link.sh
+CHAIN_DIR is "/Users/scott/preboot/DTA/sedutil/macos/rebuild_chain"
+link is /Users/scott/preboot/DTA/sedutil/macos/rebuild_chain/links.d/00-install_reboot_hook
+Entering chain_continue: CHAIN_AUTORUNS="yes"

@@ -1,0 +1,10 @@
+#!/bin/bash
+# set -xv
+
+launchctl load ./com.example_chain.ratchet.plist               && \
+launchctl start com.example_chain.ratchet                      && \
+sleep $sleepy_time                                             && \
+launchctl stop com.example_chain.ratchet                       && \
+launchctl unload ./com.example_chain.ratchet.plist             && \
+log show --process logger --last "${last_time}s"   |  tail +2
+

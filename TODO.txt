@@ -1,8 +1,32 @@
+Nonexistent devices somehow give "No such device" as well as "Invalid or unsupported device"
+
+OPALITE support?
+RUBY support?
+
+
+
+
+
+
+
+
+Future ideas
+------ -----
+
+
 DTA_DEVICE_INFO -> dictionary where non-present templates => swaths of missing zero entries
 could also leave out all-zero byte arrays
 intermediate step to producing nicer i.e. smaller jsonization
+(I think I'm proposing changing DTA_DEVICE_INFO to a string->whatever dictionary.  Or maybe
+layers: main dict -> SSC dicts -> values
 
-Nonexistent devices somehow give "No such device" as well as "Invalid or unsupported device"
+
+
+
+
+
+
+
 
 Cleaned-up architecture for v 2.0
 
@@ -26,3 +50,6 @@ libXXX could mean literally a Linux -lXXX lib, which would mean a MacOS framewor
 could mean just a top-level class header backed up by sub-classes and implementation files.
 Perhaps libsed could be a clever C wrapper of libdtadev using void * handles for the DtaDev * object pointers
 which would also simplify foreign-language interfacing for e.g. Python or Haskell.
+
+Important that libsed be packaged to be a single thing to be linked against by sedutil-cli and whatever.
+---------

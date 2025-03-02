@@ -2,7 +2,7 @@
 //  ParseATIdentify.cpp
 //
 //  Created by Scott Marks on 8 Sept 2022.
-//  Copyright © 2022 Bright Plaza Inc. All rights reserved.
+//  © 2022 Bright Plaza Inc. All rights reserved.
 //
 
 

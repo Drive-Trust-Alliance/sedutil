@@ -1,0 +1,19 @@
+#!/bin/bash
+set -xv
+
+export CHAIN_DIR="$(realpath "$(dirname "$(realpath "${BASH_SOURCE-$0}")")")"
+
+export sleepy_time=5
+export last_time=$((1+$sleepy_time))
+
+rm -f tracer.out
+
+source ${HOME}/bin/chain_links/utils
+export CHAIN_AUTOSTARTS=no
+export CHAIN_IS_CIRCULAR=no
+start_chain_at_first_link
+
+./test_launchctl
+
+./test_launchctl
+

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -18,9 +18,16 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
  * C:E********************************************************************** */
 
-#pragma once 
+#pragma once
 /** Print a hexdump of an area of memory
  * @param address Starting address for the dump
  * @param length  Length of the area to be dumped
  */
-void DtaHexDump(void * address, unsigned int length);
+#define NOHEXDUMP 0
+// TODO: NOHEXDUMP 1
+#if NOHEXDUMP
+void DtaHexDump(void *, unsigned int) {}
+#else
+#define DtaHexDump(address,length) __DtaHexDump(#address,address,length)
+void __DtaHexDump(const char * tag, void * address, unsigned int length);
+#endif

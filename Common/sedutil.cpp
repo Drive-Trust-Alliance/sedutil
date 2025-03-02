@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -29,6 +29,7 @@
 #include "log.h"
 #include "DtaOS.h"
 #include "DtaHashPwd.h"
+#define DTAOPTIONS_INCLUDED_FOR_CODE
 #include "DtaOptions.h"
 #include "DtaLexicon.h"
 #include "DtaDevGeneric.h"
@@ -47,9 +48,13 @@ static void isValidSEDDisk(const char * devname)
   uint8_t result = DtaDev::getDtaDev(devname, d, true);
   if (result == DTAERROR_SUCCESS && d->isPresent()) {
     printf("%s", devname);
-    if (d->isAnySSC())
-      printf(" SED %s%s%s ", (d->isOpal1() ? "1" : "-"),
-             (d->isOpal2() ? "2" : "-"), (d->isEprise() ? "E" : "-"));
+    if (d->isTPer())
+      printf(" SED %s%s%s%s%s ",
+             (d->isOpal1() ? "1" : "-"),
+             (d->isOpal2() ? "2" : "-"),
+             (d->isPyrite() ? "P" : "-"),
+             (d->isPyrite2() ? "Q" : "-"),
+             (d->isEprise() ? "E" : "-"));
     else
       printf("%s", " NO --- ");
     cout << d->getModelNum() << ":" << d->getFirmwareRev();
@@ -63,7 +68,7 @@ static uint8_t hashvalidate(char * password, char *devname)
 {
   vector <uint8_t> hash;
   DtaDev * d;
-  uint8_t result = DtaDev::getDtaDev(devname, d);
+  uint8_t result = DtaDev::getDtaDev(devname, d, false);  // only TPers
   if (result != DTAERROR_SUCCESS)
     return result;
   //bool saved_flag = d->no_hash_passwords;
@@ -305,6 +310,7 @@ int main(int argc, char * argv[])
   if (DTAERROR_SUCCESS!=result) {
     return result;
   }
+
   if (! authorize_sedutil_execution(argc, argv)) {
     return DTAERROR_AUTHORIZE_EXEC_FAILED;
   }
@@ -320,23 +326,34 @@ int main(int argc, char * argv[])
   }
 
   DtaDev *d = NULL;
-
   const char * devref=argv[opts.device];
-  result = DtaDev::getDtaDev(devref, d);
-  if (result == DTAERROR_SUCCESS && d!= NULL) {
-  // initialize instance variables no_hash_passwords and output_format
-    d->no_hash_passwords = opts.no_hash_passwords;
-    result = main_actions(argc, argv, d, opts);
-  } else if (result == DTAERROR_DEVICE_ACCESS_DENIED) {
+  result = DtaDev::getDtaDev(devref, d);  // TODO: genericIfNotTPer?
+
+  switch (result) {
+    case DTAERROR_SUCCESS:
+      if (d!=NULL) {
+        // initialize instance variables no_hash_passwords and output_format
+        d->no_hash_passwords = opts.no_hash_passwords;
+        result = main_actions(argc, argv, d, opts);
+      }
+      break;
+    case DTAERROR_DEVICE_ACCESS_DENIED:
       OS.errorNoAccess(devref);
-  } else if (result == DTAERROR_DEVICE_INVALID_OR_UNSUPPORTED) {
+      break;
+    case DTAERROR_DEVICE_INVALID_OR_UNSUPPORTED:
       LOG(E) << "sedutil:: Invalid or unsupported device: " << devref;
-  } else {
-    LOG(E) << "sedutil:: unexpected result " << (unsigned int)result
-           << " accessing device: " << devref;
+      break;
+    case DTAERROR_DEVICE_NOT_A_TPER:
+      LOG(E) << "sedutil:: Not a TPer: " << devref;
+      break;
+    default:
+      LOG(E) << "sedutil:: unexpected result " << (unsigned int)result
+             << " accessing device: " << devref;
   }
 
-  if (d != NULL ) delete d;
+  if (d!=NULL) {
+    delete d;
+  }
 
   return result;
 }

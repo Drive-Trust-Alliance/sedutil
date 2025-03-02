@@ -1,0 +1,2 @@
+#!/bin/bash
+./uninstall_reboot_hook

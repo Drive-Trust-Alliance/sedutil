@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -86,7 +86,7 @@ uint8_t DtaDev::isOpal2()
 }
 uint8_t DtaDev::isOpal1()
 {
-  LOG(D2) << "Entering DtaDev::isOpal1() " << (uint16_t)device_info.OPAL10;
+  LOG(D2) << "Entering DtaDev::isOpal1 " << (uint16_t)device_info.OPAL10;
   return device_info.OPAL10;
 }
 uint8_t DtaDev::isEprise()
@@ -94,11 +94,20 @@ uint8_t DtaDev::isEprise()
   LOG(D2) << "Entering DtaDev::isEprise " << (uint16_t) device_info.Enterprise;
   return device_info.Enterprise;
 }
-uint8_t DtaDev::isAnySSC()
+uint8_t DtaDev::isTPer()
 {
-  LOG(D2) << "Entering DtaDev::isAnySSC " << (uint16_t)device_info.ANY_OPAL_SSC;
-  return device_info.ANY_OPAL_SSC;
+  uint8_t result = ( device_info.Enterprise
+                   | device_info.OPAL10
+                   | device_info.OPAL20
+                   // | di.OPALITE    // TODO: implement OPALITE support
+                   | device_info.PYRITE
+                   | device_info.PYRITE2
+                   // | di.RUBY       // TODO: implement RUBY support
+                   );
+  LOG(D2) << "DtaDev::isTPer => " << (uint16_t)result;
+  return result;
 }
+
 uint8_t DtaDev::isPresent()
 {
   LOG(D2) << "Entering DtaDev::isPresent() " << (uint16_t) isOpen;
@@ -143,8 +152,7 @@ char *DtaDev::getSerialNum()
 }
 vector<uint8_t>DtaDev::getPasswordSalt()
 {
-  const uint8_t * b=device_info.passwordSalt;
-  return vector<uint8_t>(b,b+sizeof(device_info.passwordSalt));
+    return diDeviceFieldAsVector(device_info,passwordSalt);
 }
 DTA_DEVICE_TYPE DtaDev::getDevType()
 {
@@ -294,8 +302,8 @@ void DtaDev::puke()
   if (device_info.OPAL20) {
     cout << "OPAL 2." << ((device_info.OPAL20_version -1) & 0xf) << " function (" << HEXON(4) << FC_OPALV200 << ")" << HEXOFF << endl;
     cout << "    Base comID = " << HEXON(4) << device_info.OPAL20_basecomID << HEXOFF;
-    cout << ", Initial PIN = " << HEXON(2) << static_cast<uint32_t>(device_info.OPAL20_initialPIN) << HEXOFF;
-    cout << ", Reverted PIN = " << HEXON(2) << static_cast<uint32_t>(device_info.OPAL20_revertedPIN) << HEXOFF;
+    cout << ", Initial PIN = " << HEXON(1) << (uint16_t)device_info.OPAL20_initialPIN << HEXOFF;
+    cout << ", Reverted PIN = " << HEXON(1) << (uint16_t)device_info.OPAL20_revertedPIN << HEXOFF;
     cout << ", comIDs = " << device_info.OPAL20_numcomIDs;
     cout << endl;
     cout << "    Locking Admins = " << device_info.OPAL20_numAdmins;
@@ -306,8 +314,8 @@ void DtaDev::puke()
   if (device_info.OPALITE) {
     cout << "OPALITE 1." << ((device_info.OPALITE_version & 0xf) - 1) << " function (" << HEXON(4) << FC_OPALITE << ")" << HEXOFF << endl;
     cout << "    Base comID = " << HEXON(4) << device_info.OPALITE_basecomID << HEXOFF;
-    cout << ", Initial PIN = " << HEXON(2) << device_info.OPALITE_initialPIN << HEXOFF;
-    cout << ", Reverted PIN = " << HEXON(2) << device_info.OPALITE_revertedPIN << HEXOFF;
+    cout << ", Initial PIN = " << HEXON(1) << (uint16_t)device_info.OPALITE_initialPIN << HEXOFF;
+    cout << ", Reverted PIN = " << HEXON(1) << (uint16_t)device_info.OPALITE_revertedPIN << HEXOFF;
     cout << ", comIDs = " << device_info.OPALITE_numcomIDs;
     cout << "    Locking Admins = " << device_info.OPAL20_numAdmins;
     cout << ", Locking Users = " << device_info.OPAL20_numUsers;
@@ -316,8 +324,8 @@ void DtaDev::puke()
   if (device_info.PYRITE) {
     cout << "PYRITE 1." << ((device_info.PYRITE_version & 0xf) -1) << " function (" << HEXON(4) << FC_PYRITE << ")" << HEXOFF << endl;
     cout << "    Base comID = " << HEXON(4) << device_info.PYRITE_basecomID << HEXOFF;
-    cout << ", Initial PIN = " << HEXON(2) << device_info.PYRITE_initialPIN << HEXOFF;
-    cout << ", Reverted PIN = " << HEXON(2) << device_info.PYRITE_revertedPIN << HEXOFF;
+    cout << ", Initial PIN = " << HEXON(1) << (uint16_t)device_info.PYRITE_initialPIN << HEXOFF;
+    cout << ", Reverted PIN = " << HEXON(1) << (uint16_t)device_info.PYRITE_revertedPIN << HEXOFF;
     cout << ", comIDs = " << device_info.PYRITE_numcomIDs;
     cout << "    Locking Admins = " << device_info.OPAL20_numAdmins;
     cout << ", Locking Users = " << device_info.OPAL20_numUsers;
@@ -326,8 +334,8 @@ void DtaDev::puke()
   if (device_info.PYRITE2) {
     cout << "PYRITE 2." << ((device_info.PYRITE2_version & 0xf) - 1) << " function (" << HEXON(4) << FC_PYRITE << ")" << HEXOFF << endl;
     cout << "    Base comID = " << HEXON(4) << device_info.PYRITE2_basecomID << HEXOFF;
-    cout << ", Initial PIN = " << HEXON(2) << device_info.PYRITE2_initialPIN << HEXOFF;
-    cout << ", Reverted PIN = " << HEXON(2) << device_info.PYRITE2_revertedPIN << HEXOFF;
+    cout << ", Initial PIN = " << HEXON(1) << (uint16_t)device_info.PYRITE2_initialPIN << HEXOFF;
+    cout << ", Reverted PIN = " << HEXON(1) << (uint16_t) device_info.PYRITE2_revertedPIN << HEXOFF;
     cout << ", comIDs = " << device_info.PYRITE2_numcomIDs;
     cout << "    Locking Admins = " << device_info.OPAL20_numAdmins;
     cout << ", Locking Users = " << device_info.OPAL20_numUsers;
@@ -336,8 +344,8 @@ void DtaDev::puke()
   if (device_info.RUBY) {
     cout << "RUBY 1." << ((device_info.RUBY_version & 0xf) - 1) << " function (" << HEXON(4) << FC_RUBY << ")" << HEXOFF << endl;
     cout << "    Base comID = " << HEXON(4) << device_info.RUBY_basecomID << HEXOFF;
-    cout << ", Initial PIN = " << HEXON(2) << device_info.RUBY_initialPIN << HEXOFF;
-    cout << ", Reverted PIN = " << HEXON(2) << device_info.RUBY_revertedPIN << HEXOFF;
+    cout << ", Initial PIN = " << HEXON(1) << (uint16_t) device_info.RUBY_initialPIN << HEXOFF;
+    cout << ", Reverted PIN = " << HEXON(1) << (uint16_t) device_info.RUBY_revertedPIN << HEXOFF;
     cout << ", comIDs = " << device_info.RUBY_numcomIDs;
     cout << "    Locking Admins = " << device_info.OPAL20_numAdmins;
     cout << ", Locking Users = " << device_info.OPAL20_numUsers;
@@ -352,14 +360,14 @@ void DtaDev::puke()
   }
   if (device_info.DataRemoval) {
     cout << "DataRemoval 1." << ((device_info.DataRemoval_version & 0xf) - 1) << " function (" << HEXON(4) << FC_DataRemoval << ")" << HEXOFF << endl;
-    cout << "    DataRemoval OperationProcessing " << HEXON(2) << device_info.DataRemoval_OperationProcessing << HEXOFF;
-    cout << ", DataRemoval Machanisim " << HEXON(2) << device_info.DataRemoval_Mechanism << HEXOFF << endl;
-    cout << "    DataRemoval TimeFormat Bit 5 : " << HEXON(2) << device_info.DataRemoval_TimeFormat_Bit5 << " " << HEXON(4) << device_info.DataRemoval_Time_Bit5 << HEXOFF << endl;
-    cout << "    DataRemoval TimeFormat Bit 4 : " << HEXON(2) << device_info.DataRemoval_TimeFormat_Bit4 << " " << HEXON(4) << device_info.DataRemoval_Time_Bit4 << HEXOFF << endl;
-    cout << "    DataRemoval TimeFormat Bit 3 : " << HEXON(2) << device_info.DataRemoval_TimeFormat_Bit3 << " " << HEXON(4) << device_info.DataRemoval_Time_Bit3 << HEXOFF << endl;
-    cout << "    DataRemoval TimeFormat Bit 2 : " << HEXON(2) << device_info.DataRemoval_TimeFormat_Bit2 << " " << HEXON(4) << device_info.DataRemoval_Time_Bit2 << HEXOFF << endl;
-    cout << "    DataRemoval TimeFormat Bit 1 : " << HEXON(2) << device_info.DataRemoval_TimeFormat_Bit1 << " " << HEXON(4) << device_info.DataRemoval_Time_Bit1 << HEXOFF << endl;
-    cout << "    DataRemoval TimeFormat Bit 0 : " << HEXON(2) << device_info.DataRemoval_TimeFormat_Bit0 << " " << HEXON(4) << device_info.DataRemoval_Time_Bit0 << HEXOFF << endl;
+    cout << "    DataRemoval OperationProcessing " << HEXON(1) << (uint16_t)device_info.DataRemoval_OperationProcessing << HEXOFF;
+    cout << ", DataRemoval Mechanism " << HEXON(1) << (uint16_t) device_info.DataRemoval_Mechanism << HEXOFF << endl;
+    cout << "    DataRemoval TimeFormat Bit 5 : " << HEXON(1) << (uint16_t)device_info.DataRemoval_TimeFormat_Bit5 << " " << HEXON(4) << device_info.DataRemoval_Time_Bit5 << HEXOFF << endl;
+    cout << "    DataRemoval TimeFormat Bit 4 : " << HEXON(1) << (uint16_t)device_info.DataRemoval_TimeFormat_Bit4 << " " << HEXON(4) << device_info.DataRemoval_Time_Bit4 << HEXOFF << endl;
+    cout << "    DataRemoval TimeFormat Bit 3 : " << HEXON(1) << (uint16_t)device_info.DataRemoval_TimeFormat_Bit3 << " " << HEXON(4) << device_info.DataRemoval_Time_Bit3 << HEXOFF << endl;
+    cout << "    DataRemoval TimeFormat Bit 2 : " << HEXON(1) << (uint16_t)device_info.DataRemoval_TimeFormat_Bit2 << " " << HEXON(4) << device_info.DataRemoval_Time_Bit2 << HEXOFF << endl;
+    cout << "    DataRemoval TimeFormat Bit 1 : " << HEXON(1) << (uint16_t)device_info.DataRemoval_TimeFormat_Bit1 << " " << HEXON(4) << device_info.DataRemoval_Time_Bit1 << HEXOFF << endl;
+    cout << "    DataRemoval TimeFormat Bit 0 : " << HEXON(1) << (uint16_t)device_info.DataRemoval_TimeFormat_Bit0 << " " << HEXON(4) << device_info.DataRemoval_Time_Bit0 << HEXOFF << endl;
   }
 
 
@@ -485,7 +493,10 @@ uint8_t DtaDev::getDtaDev(const char * devref,
                           DtaDev * & dev,
                           bool genericIfNotTPer)
 {
-  // LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\")";
+  LOG(D4) << "DtaDev::getDtaDev("
+          << "devref=\"" << devref << "\",... , "
+          << "genericIfNotTPer="  << std::boolalpha << genericIfNotTPer
+          << ")";
   DTA_DEVICE_INFO di;
   memset(&di, 0, sizeof(di));
 
@@ -499,12 +510,14 @@ uint8_t DtaDev::getDtaDev(const char * devref,
       // LOG(E) << "(From DtaDev::getDtaDev)";
       // LOG(E) << "Invalid or unsupported device " << devref;
     }
-    // LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_COMMAND_ERROR";
     if (accessDenied) {
-      LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_DEVICE_ACCESS_DENIED";
+      LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_DEVICE_ACCESS_DENIED (#1)";
       return DTAERROR_DEVICE_ACCESS_DENIED;
+    } else if (drive == NULL ) {
+      LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_DEVICE_NOT_A_TPER (#1)";
+      return DTAERROR_DEVICE_NOT_A_TPER;
     } else {
-      LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_DEVICE_INVALID_OR_UNSUPPORTED";
+      LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_DEVICE_INVALID_OR_UNSUPPORTED (#1)";
       return DTAERROR_DEVICE_INVALID_OR_UNSUPPORTED;
     }
   }
@@ -523,10 +536,10 @@ uint8_t DtaDev::getDtaDev(const char * devref,
             << " returned NULL";
 
      if (accessDenied) {
-      LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_DEVICE_ACCESS_DENIED";
+      LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_DEVICE_ACCESS_DENIED (#2)";
       return DTAERROR_DEVICE_ACCESS_DENIED;
     } else {
-      LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_DEVICE_INVALID_OR_UNSUPPORTED";
+      LOG(D4) << "DtaDev::getDtaDev(devref=\"" << devref << "\") returning DTAERROR_DEVICE_INVALID_OR_UNSUPPORTED (#2)";
       return DTAERROR_DEVICE_INVALID_OR_UNSUPPORTED;
     }
   }
@@ -546,15 +559,14 @@ uint8_t DtaDev::getDtaDev(const char * devref,
 const unsigned long long DtaDev::getSize() { return device_info.devSize; }
 
 uint8_t DtaDev::sendCmd(ATACOMMAND cmd, uint8_t protocol, uint16_t comID,
-                          void * buffer, unsigned int bufferlen)
-{
-  if (!isOpen) return DTAERROR_DEVICE_NOT_OPEN; // drive open failed so this will too
-
-  if (NULL == drive)
-    {
-      LOG(E) << "DtaDev::sendCmd ERROR - unknown drive type";
-      return DTAERROR_DEVICE_TYPE_UNKNOWN;
-    }
+                          void * buffer, unsigned int bufferlen) {
+  if (!isOpen) {
+    return DTAERROR_DEVICE_NOT_OPEN; // drive open failed so this will too
+  }
+  if (NULL == drive) {
+      LOG(E) << "DtaDev::sendCmd ERROR - not a TPer";
+      return DTAERROR_DEVICE_NOT_A_TPER;
+  }
 
   return drive->sendCmd(cmd, protocol, comID, buffer, bufferlen);
 }
@@ -566,7 +578,7 @@ bool DtaDev::identify(DTA_DEVICE_INFO& di)
 }
 
 
-typedef struct ddipair{
+typedef struct ddipair {
     ddipair(string dr, DTA_DEVICE_INFO di) : devref(dr), device_info(di) {};
     string devref;
     DTA_DEVICE_INFO device_info;
@@ -592,6 +604,13 @@ uint8_t DtaDev::diskScan()
 
   if (devRefs.size()!=0) {
 
+    LOG(D4) << "Found " << devRefs.size() << " devRefs";
+    LOG(D4) << "outputFormat="
+            << (  outputFormat==sedutilNormal      ? "sedutilNormal"
+                : outputFormat==sedutilReadable    ? "sedutilReadable"
+                : outputFormat==sedutilJSON        ? "sedutilJSON"
+                : outputFormat==sedutilJSONCompact ? "sedutilJSONCompact"
+                : std::to_string(outputFormat) + "(***UNKNOWN***)"  ) ;
 
       if (outputFormat == sedutilJSON || outputFormat == sedutilJSONCompact) {
 
@@ -638,8 +657,8 @@ uint8_t DtaDev::diskScan()
 
 
     IFLOG(D1) {
-      string const header1{" SSC        Model Number       Firmware Locn   World Wide Name        Serial Number     Vendor      Manufacturer Name\n"};
-      string const header2{" --- ------------------------- -------- -----  ----------------   --------------------  -------  -----------------------\n"};
+      string const header1{"  SSC         Model Number       Firmware Locn   World Wide Name        Serial Number     Vendor      Manufacturer Name\n"};
+      string const header2{" ----- ------------------------- -------- -----  ----------------   --------------------  -------  -----------------------\n"};
 
       string const padded_column_headers   {padded_column_header    + header1};
       string const padded_column_underlines{padded_column_underline + header2};
@@ -666,13 +685,15 @@ uint8_t DtaDev::diskScan()
         //   ;
 
         fprintf(Output2FILE::StreamStdout(), "%-*s", (int)device_column_width, devref.c_str());
-        if (dev->isAnySSC()) {
-          fprintf(Output2FILE::StreamStdout(), " %s%s%s ",
+        if (dev->isTPer()) {
+          fprintf(Output2FILE::StreamStdout(), " %s%s%s%s%s ",
                   (dev->isOpal1()  ? "1" : " "),
                   (dev->isOpal2()  ? "2" : " "),
+                  (dev->isPyrite()  ? "P" : " "),
+                  (dev->isPyrite2()  ? "Q" : " "),
                   (dev->isEprise() ? "E" : " "));
         } else {
-          fprintf(Output2FILE::StreamStdout(), "%s", " No  ");
+          fprintf(Output2FILE::StreamStdout(), "%s", " No    ");
         }
 
         IFLOG(D1) {
@@ -720,4 +741,113 @@ DtaDev::~DtaDev()
     delete drive;
     drive = NULL;
   }
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////
+void SignalHandler(int signal)
+{
+  printf("Signal %d\n", signal);
+  throw "!Access Violation!";
+}
+
+////////////////////////////////////////////////////////////////////
+
+
+
+vector<uint8_t> hex2data_a(char * password)
+{
+  vector<uint8_t> h;
+  h.clear();
+  if ((false))
+    printf("strlen(password)=%d\n", (int)strlen(password));
+  /*
+    if (strlen(password) != 16)
+    {
+    //LOG(D) << "Hashed Password length isn't 64-byte, no translation";
+    h.clear();
+    for (uint16_t i = 0; i < (uint16_t)strnlen(password, 32); i++)
+    h.push_back(password[i]);
+    return h;
+    }
+  */
+
+  //printf("GUI hashed password=");
+  for (uint16_t i = 0; i < (uint16_t)strlen(password); i += 2)
+    {
+      h.push_back(
+                  (hex_digit_to_nybble(password[i])) * 10 +  // high 4-bit
+                  (hex_digit_to_nybble(password[i + 1]) & 0x0f)); // lo 4-bit
+    }
+  //for (uint16_t i = 0; i < (uint16_t)h.size(); i++)
+  //	printf("%02x", h[i]);
+  //printf("\n");
+  return h;
+}
+/*
+  OPAL_UID getUIDtoken(char * userid)
+  {
+  // translate UserN AdminN into <int8_t
+  uint8_t id;
+
+  if (!memcmp("User", userid, 4)) {// UserI UID
+  id = (uint8_t)(OPAL_UID::OPAL_USER1_UID) + atoi(&userid[4]) - 1;
+  IFLOG(D4) printf("UserN=%s enum=%d\n", userid, id);
+  return  (OPAL_UID)id;
+  }
+  else
+  {
+  id = (uint8_t)(OPAL_UID::OPAL_ADMIN1_UID) + atoi(&userid[4]) -1 ;
+  printf("AdminN=%s enum=%d\n", userid, id);
+  return  (OPAL_UID)id;
+  }
+  }
+*/
+
+vector<uint8_t> getUID(char * userid, vector<uint8_t> &auth2, vector<uint8_t> &auth3, uint8_t hu)
+{
+  // translate UserN AdminN into <int8_t
+  vector<uint8_t> auth;
+  ;
+  uint8_t id = 1;
+  auth.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+  auth2.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+  auth3.push_back(OPAL_SHORT_ATOM::BYTESTRING8);
+
+
+  if (!memcmp("User", userid, 4)) {// UserI UID
+    if (strnlen(userid, 6) == 5) {
+      id = (uint8_t)atoi(&userid[4]); // (uint8_t)atoi(argv[opts.dsnum])
+    }
+    else if (strnlen(userid, 6) == 6) {
+      id = ((uint8_t)atoi(&userid[4]));
+    }
+
+    //IFLOG(D4) printf("UserN : %s traslated id = %d\n", userid,id);
+    for (int i = 0; i < 7; i++) {
+      auth.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
+      auth2.push_back(OPALUID[OPAL_UID::OPAL_ADMIN1_UID][i]);
+      auth3.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID + (hu - 1)][i]);
+      //auth3.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]); // first 7-byte is all the same as OPAL_USER1_UID, the only difference is the 8th byte
+    }
+    auth.push_back(id);
+    auth2.push_back(1); // always admin1 or user1
+  }
+  else { // "Admin"
+    //IFLOG(D4) printf("AdminN %s\n", userid);
+    id = (uint8_t)atoi(&userid[5]);
+    for (int i = 0; i < 7; i++) {
+      auth.push_back(OPALUID[OPAL_UID::OPAL_ADMIN1_UID][i]);
+      auth2.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
+      auth3.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID+(hu-1)][i]);
+      //auth3.push_back(OPALUID[OPAL_UID::OPAL_USER1_UID][i]);
+    }
+    auth.push_back(id); // AdminN
+    auth2.push_back(1); // always admin1
+  }
+  //auth.push_back(id);
+  //auth2.push_back(1); // always admin1 or user1
+  auth3.push_back(hu); // always audit user
+  return auth;
 }

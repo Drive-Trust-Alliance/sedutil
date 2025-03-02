@@ -1,0 +1,5 @@
+#!/bin/bash
+# set -xv
+
+. chain_config
+. "${CHAIN_LINKS_LIB}/utils"

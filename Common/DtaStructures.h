@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-   This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+   This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
    This file is part of sedutil.
 
@@ -258,6 +258,7 @@ typedef struct _Discovery0PYRITE {
   uint16_t featureCode; /* 0x0302 */
   uint8_t reserved_v : 4;
   uint8_t version : 4;
+
   uint8_t length;
   uint16_t baseCommID;
   uint16_t numCommIDs;
@@ -459,6 +460,10 @@ typedef enum DTA_DEVICE_TYPE {
   DEVICE_TYPE_OTHER,
 } DTA_DEVICE_TYPE;
 
+#undef diDeviceFieldAsVector
+#define diDeviceFieldAsVector(di,field)  (vector<uint8_t>((uint8_t *)di.field,(uint8_t *)di.field+sizeof(di.field)))
+
+
 static inline
 const char * DtaDevTypeName(DTA_DEVICE_TYPE type)
 {
@@ -481,13 +486,12 @@ typedef struct _DTA_DEVICE_INFO {
   uint8_t TPer;
   uint8_t Locking;
   uint8_t Geometry;
-  uint8_t Enterprise;
   uint8_t SingleUser;
   uint8_t DataStore;
-  uint8_t OPAL20;
-  uint8_t OPAL10;
   uint8_t Properties;
-  uint8_t ANY_OPAL_SSC;
+  uint8_t Enterprise;
+  uint8_t OPAL10;
+  uint8_t OPAL20;
   uint8_t OPALITE;
   uint8_t PYRITE;
   uint8_t PYRITE2;
@@ -625,7 +629,7 @@ typedef struct _DTA_DEVICE_INFO {
   uint8_t physicalInterconnectLocation[15];
   uint8_t physicalInterconnectLocationNull;  // make physical Interconnect Location a cstring
 
-  uint8_t passwordSalt[20];             // copy of serialNum before polishing -- bytes, not a cstring
+  uint8_t passwordSalt[20];             // copy of first part of serialNum before polishing -- bytes, not a cstring
 
   uint8_t fips; // FIPS Approval mode
   uint8_t asmedia;

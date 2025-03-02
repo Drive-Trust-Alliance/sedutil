@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
-This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
 This file is part of sedutil.
 
@@ -34,40 +34,6 @@ extern "C" {
 #include "DtaHashPassword.h"
 
 
-// credit
-// https://www.codeproject.com/articles/99547/hex-strings-to-raw-data-and-back
-//
-
-inline unsigned char hex_digit_to_nybble(char ch)
-{
-	switch (ch)
-	{
-	case '0': return 0x0;
-	case '1': return 0x1;
-	case '2': return 0x2;
-	case '3': return 0x3;
-	case '4': return 0x4;
-	case '5': return 0x5;
-	case '6': return 0x6;
-	case '7': return 0x7;
-	case '8': return 0x8;
-	case '9': return 0x9;
-	case 'a':
-	case 'A': return 0xa;
-	case 'b':
-	case 'B': return 0xb;
-	case 'c':
-	case 'C': return 0xc;
-	case 'd':
-	case 'D': return 0xd;
-	case 'e':
-	case 'E': return 0xe;
-	case 'f':
-	case 'F': return 0xf;
-	default: return 0xff;  // throw std::invalid_argument();
-	}
-}
-
 static
 vector<uint8_t> hex2data(char * password)
 {
@@ -96,7 +62,7 @@ vector<uint8_t> hex2data(char * password)
 	return h;
 }
 
-// hex data to asci Upper case 
+// hex data to asci Upper case
 inline unsigned char hex_nibble_to_ascii(uint8_t ch)
 {
 	switch (ch)
@@ -123,7 +89,7 @@ inline unsigned char hex_nibble_to_ascii(uint8_t ch)
 
 void data2ascii(vector<uint8_t> &h , vector<uint8_t> &password)
 {
-	// 32-byte hash hex to 64 byte ascii 
+	// 32-byte hash hex to 64 byte ascii
 	for (uint16_t i = 0; i < h.size(); i += 1)
 	{
 		password.push_back(hex_nibble_to_ascii((h[i] >> 4) & 0x0f));
@@ -150,7 +116,7 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
 	IFLOG(D4) fprintf(Output2FILE::Stream(), "d->translate_req = %d\n", d->translate_req);
 	if (d->no_hash_passwords) {
 		if (d->translate_req) { // host-hashed password, convert 64-byte ascii into 32-byte data ???????
-			hash = hex2data(password); 
+			hash = hex2data(password);
 		}
 		else {
 			hash.clear();
@@ -192,7 +158,7 @@ void DtaHashPwd(vector<uint8_t> &hash, char * password, DtaDev * d, unsigned int
 	IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
 	IFLOG(D4) fprintf(Output2FILE::Stream(), "salt as string =%s", salt.data());
     IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
-    
+
     IFLOG(D4) fprintf(Output2FILE::Stream(), "Hashed password size = %llu",(unsigned long long)hash.size());
     IFLOG(D4) fprintf(Output2FILE::Stream(), "\n");
     IFLOG(D4) fprintf(Output2FILE::Stream(), "hashed password:\n");

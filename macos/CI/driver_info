@@ -1,4 +1,8 @@
 #!/bin/bash
 DRIVER_BUNDLE_PATH=/Library/Extensions/BrightPlazaTPer.kext
-DRIVER_BUNDLE_IDENTIFIER="$(plutil -extract "CFBundleIdentifier" raw "${DRIVER_BUNDLE_PATH}/Contents/Info.plist")"
-
+if [ -d "${DRIVER_BUNDLE_PATH}" ]
+then
+    DRIVER_BUNDLE_IDENTIFIER="$(plutil -extract "CFBundleIdentifier" raw "${DRIVER_BUNDLE_PATH}/Contents/Info.plist")"
+else
+    DRIVER_BUNDLE_IDENTIFIER='***none***'
+fi

@@ -1,5 +1,5 @@
 /* C:B**************************************************************************
- This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+ This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
  This file is part of sedutil.
 
@@ -30,7 +30,7 @@ class DtaCommand;
 class DtaSession;
 
 /* C:B**************************************************************************
- This software is Copyright (c) 2014-2024 Bright Plaza Inc. <drivetrust@drivetrust.com>
+ This software is © 2014 Bright Plaza Inc. <drivetrust@drivetrust.com>
 
  This file is part of sedutil.
 
@@ -90,7 +90,7 @@ public:
     /** Does the device conform to the OPAL Enterprise SSC */
     uint8_t isEprise();
     /** Does the device conform to ANY TCG storage SSC */
-    uint8_t isAnySSC();
+    uint8_t isTPer();
     /** Is the MBREnabled flag set */
     uint8_t MBREnabled();
     /** Is the MBRDone flag set */
@@ -700,4 +700,44 @@ static inline std::vector<uint8_t> vUID(OPAL_UID uid)
     std::vector<uint8_t> v(9);
     set8(v,OPALUID[uid]);
     return v;
+}
+
+extern std::vector<uint8_t> getUID(char * userid, std::vector<uint8_t> &auth2, std::vector<uint8_t> &auth3, uint8_t hu);
+
+
+
+
+// from DtaHashPwd.cpp
+// credit
+// https://www.codeproject.com/articles/99547/hex-strings-to-raw-data-and-back
+//
+
+inline unsigned char hex_digit_to_nybble(char ch)
+{
+  switch (ch)
+    {
+    case '0': return 0x0;
+    case '1': return 0x1;
+    case '2': return 0x2;
+    case '3': return 0x3;
+    case '4': return 0x4;
+    case '5': return 0x5;
+    case '6': return 0x6;
+    case '7': return 0x7;
+    case '8': return 0x8;
+    case '9': return 0x9;
+    case 'a': return 0xa;
+    case 'A': return 0xa;
+    case 'b': return 0xb;
+    case 'B': return 0xb;
+    case 'c': return 0xc;
+    case 'C': return 0xc;
+    case 'd': return 0xd;
+    case 'D': return 0xd;
+    case 'e': return 0xe;
+    case 'E': return 0xe;
+    case 'f': return 0xf;
+    case 'F': return 0xf;
+    default: return 0xff;  // throw invalid_argument();
+    }
 }

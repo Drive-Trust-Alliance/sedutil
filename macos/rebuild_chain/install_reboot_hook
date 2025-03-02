@@ -1,0 +1,7 @@
+#!/bin/bash
+# set -xv
+
+. chain_config
+install_loginscript_plist 
+chain_continue
+

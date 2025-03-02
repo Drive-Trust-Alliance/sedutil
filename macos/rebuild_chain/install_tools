@@ -1,0 +1,9 @@
+#!/bin/bash
+# set -xv
+cd ~                         && \
+test_select tools            && \
+. test_env                   && \
+install_from_iso Debug       && \
+exec /usr/local/bin/ratchet.sh
+
+

@@ -1,0 +1,10 @@
+#!/bin/bash
+set -xv
+
+cd "$(dirname "$(realpath "${BASH_SOURCE-$0}")")"
+
+source ./test_setup
+
+./test_preconditions
+
+run_chain
