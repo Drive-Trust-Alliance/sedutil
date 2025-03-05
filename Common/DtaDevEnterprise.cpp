@@ -601,7 +601,9 @@ uint8_t DtaDevEnterprise::listLockingRanges(char * password, int16_t rangeid)
 	char *pwd = NULL;
 
 	// if (NULL == password) { LOG(E) << "password NULL"; }
-	if ((password == NULL) || (*password == '\0')) {
+	if (rangeid == 0) {
+		pwd = NULL;
+	} else if ((password == NULL) || (*password == '\0')) {
 
 		if ((lastRC = getDefaultPassword()) != 0) {
 			LOG(E) << __func__ << ": unable to retrieve MSID";
@@ -633,7 +635,7 @@ uint8_t DtaDevEnterprise::listLockingRanges(char * password, int16_t rangeid)
     //** BandMaster0 UID of Table 28 Locking SP Authority table, p. 70 of Enterprise SSC rev 3.00
     vector<uint8_t> user;
     user.clear();
-    set8(user, OPALUID[ENTERPRISE_BANDMASTER0_UID]);
+    set8(user, OPALUID[(rangeid == 0) ? ENTERPRISE_LOCKINGSP_UID : ENTERPRISE_BANDMASTER0_UID]);
 
     //** Global_Range UID of Table 33 Locking SP Locking table, p. 84 of Enterprise SSC rev 3.00
     vector<uint8_t> table;
