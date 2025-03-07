@@ -143,9 +143,11 @@ void DtaLinux::errorNoAccess(const char* devref) {
 
 
 
-// systemd 251+ has sd_my_device_new_from_devname(),
-// but systemd 248+ has sd_device_new_from_stat_rdev().
-static int my_device_new_from_devname(sd_device **ret, const char *devname) {
+// Use C++ SFINAE to create sd_device_new_from_devname if it doesn't exist.
+// systemd 251+ has sd_device_new_from_devname(),
+// systemd 248+ has sd_device_new_from_stat_rdev().
+template <typename SD_DEVICE>
+static int sd_device_new_from_devname(SD_DEVICE **ret, const char *devname) {
     struct stat st;
 
     if (stat(devname, &st) < 0)
@@ -173,7 +175,7 @@ DtaOS::dictionary * DtaLinux::getOSSpecificInformation(OSDEVICEHANDLE osDeviceHa
 
   // Get the `sd_device` to extract properties
   __attribute__((cleanup(sd_device_unrefp))) sd_device *device = NULL;
-  r = my_device_new_from_devname(&device, devref);
+  r = sd_device_new_from_devname(&device, devref);
   if (r < 0) {
     errno = -r;
     fprintf(stderr, "Failed to allocate sd_device: %m\n");
