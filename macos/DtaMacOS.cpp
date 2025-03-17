@@ -158,7 +158,7 @@ std::vector<std::string> DtaMacOS::generateDtaDriveDevRefs()
   closedir(dir);
 
   std::sort(devrefs.begin(),devrefs.end(),
-            [](std::string &d1, std::string &d2){ // 9 == strlen("/dev/disk")
+            [](std::string d1, std::string d2){ // 9 == strlen("/dev/disk")
       return std::stoi(d1.substr(9,std::string::npos)) < std::stoi(d2.substr(9,std::string::npos));
   });
 
