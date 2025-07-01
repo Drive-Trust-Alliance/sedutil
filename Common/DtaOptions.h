@@ -44,6 +44,7 @@ typedef struct _DTA_OPTIONS {
 	uint8_t lrlength;		/** the length in blocks of a lockingrange */
 
 	bool no_hash_passwords; /** global parameter, disables hashing of passwords */
+    bool hex_passwords; /** global parameter, all incoming passwords are treated as hex-encoded */
 	sedutiloutput output_format;
 } DTA_OPTIONS;
 /** Print a usage message */
@@ -96,6 +97,8 @@ typedef enum _sedutiloption {
 	validatePBKDF2,
 	objDump,
     printDefaultPassword,
+    printPasswordHash,
+    prepareForS3Sleep,
 	rawCmd,
 
 } sedutiloption;
