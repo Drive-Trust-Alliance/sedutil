@@ -1,0 +1,50 @@
+#!/bin/bash
+
+function die {
+echo An error has occurred!  Please fix this and start over!
+exit 99
+}
+
+set -x
+. isogrubconf
+
+## Checkout defined GRUB2 version and build it for UEFI x86-64.
+
+## This can pretty obviously be overridden/skipped if all the correct packages of a sufficiently
+## recent GRUB2 are installed on the build host - YMMV.
+
+git clone $GRUBGIT || die
+mv grub $GRUBVER
+cd $GRUBVER
+git checkout --quiet $GRUBVER
+
+# Put a copy of the bootstrap output into (new) buildlog file for reference but also print to screen
+set +x
+echo -e "\nRunning bootstrap in $GRUBVER directory\n" 
+echo -e "\nRunning bootstrap in $GRUBVER directory\n=-=-=-=-=-=\n" > ${GRUBVER}-buildlog
+set -x
+./bootstrap | tee -a ${GRUBVER}-buildlog
+
+## Put a copy of the configure output into buildlog file for reference but also print to screen
+set +x
+echo -e "\nRunning configure in $GRUBVER directory\n" 
+echo -e "\nRunning configure in $GRUBVER directory\n=-=-=-=-=-=\n" >> ${GRUBVER}-buildlog
+set -x
+./configure --with-platform=efi | tee -a ${GRUBVER}-buildlog
+
+## Add build results to buildlog file but print errors to screen
+set +x
+echo -e "\nBuilding $GRUBVER\n=-=-=-=-=-=\n" >> ${GRUBVER}-buildlog 
+echo Building $GRUBVER - output will go to ${GRUBVER}-buildlog 
+echo -e "\tand only warnings/errors will be printed.\n"
+set -x
+make all >> ${GRUBVER}-buildlog
+
+## Wrap up
+set +x
+cd ..
+echo 
+echo "Done (unless fatal errors occurred above - some compile-time warnings in GRUB are expected)."
+echo "Binaries should be in ${GRUBVER}/ for use in building Rescue64 UEFI ISO"
+echo "      with EFI-flavored modules in ${GRUBVER}/grub-core/ ."
+
