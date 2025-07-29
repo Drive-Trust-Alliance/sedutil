@@ -1,37 +1,109 @@
-#!/bin/bash
-set -x
+#!/bin/sh
 # Build a custom UEFI linux based PBA image
-## define releases for tools
-. conf
-VERSIONINFO=`git describe --dirty`  || VERSIONINFO=tarball
-BUILDTYPE=UEFI64
-BUILDIMG=${BUILDTYPE}-${VERSIONINFO}.img
 
-## check that everything is available
-[  -f scratch/${SYSLINUX}/efi64/efi/syslinux.efi ] || { echo " prereqs are not available "; exit 1; }
-[  -f scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64 ] || { echo " prereqs are not available "; exit 1; }
-[  -f scratch/buildroot/64bit/images/bzImage ] || { echo " prereqs are not available "; exit 1; }
-[  -f scratch/buildroot/64bit/images/rootfs.cpio.xz ] || { echo " prereqs are not available "; exit 1; }
-[  -f scratch/buildroot/64bit/target/sbin/linuxpba  ] || { echo " prereqs are not available "; exit 1; }
-[  -f scratch/buildroot/64bit/target/sbin/sedutil-cli  ] || { echo " prereqs are not available "; exit 1; }
-[  -f buildroot/syslinux.cfg ] || { echo " prereqs are not available "; exit 1; }
-  
-# Start fresh
-sudo rm -rf ${BUILDTYPE} ; mkdir ${BUILDTYPE} ; cd ${BUILDTYPE}
-# make an image file
-dd if=/dev/zero of=${BUILDIMG} bs=1M count=32
-(echo "n";echo "";echo "";echo "";echo "ef00";echo w;echo Y) | gdisk ${BUILDIMG}
-LOOPDEV=`sudo losetup --show -f -o 1048576 ${BUILDIMG}`
-sudo mkfs.vfat $LOOPDEV -n ${BUILDTYPE}
-sudo mkdir image
-sudo mount $LOOPDEV image
-sudo chmod 777 image
-sudo mkdir -p image/EFI/boot
-sudo cp ../scratch/${SYSLINUX}/efi64/efi/syslinux.efi image/EFI/boot/bootx64.efi
-sudo cp ../scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64 image/EFI/boot/
-sudo cp ../scratch/buildroot/64bit/images/bzImage image/EFI/boot/
-sudo cp ../scratch/buildroot/64bit/images/rootfs.cpio.xz image/EFI/boot/
-sudo cp ../buildroot/syslinux.cfg image/EFI/boot/
-sudo umount image
-sudo losetup -d $LOOPDEV
-gzip ${BUILDIMG}
+set -eu ${TRACE+-x}
+
+## User configuration #########################################################
+#BOOTLOADER_DIR=EFI/Microsoft/Boot
+#BOOTLOADER_FILE=bootmgfw.efi
+BOOTLOADER_DIR=EFI/boot
+BOOTLOADER_FILE=bootx64.efi
+
+## Internal configuration #####################################################
+. ./conf
+VERSIONINFO=$(git describe --dirty --broken --tags --always || echo tarball)
+BUILDTYPE=UEFI64
+BUILDIMG=${BUILDTYPE}-$(printf '%s' "$VERSIONINFO" | tr '/' '-').img
+IMAGE_DIR=$BUILDTYPE/image
+TARGET_DIR=$IMAGE_DIR/$BOOTLOADER_DIR
+
+EFI_FILE="scratch/${SYSLINUX}/efi64/efi/syslinux.efi"
+IMAGE_FILES="scratch/${SYSLINUX}/efi64/com32/elflink/ldlinux/ldlinux.e64
+    scratch/buildroot/64bit/images/bzImage
+    scratch/buildroot/64bit/images/rootfs.cpio.xz
+    scratch/buildroot/64bit/target/sbin/linuxpba
+    scratch/buildroot/64bit/target/sbin/sedutil-cli
+    buildroot/syslinux.cfg"
+
+## Exit handlers ##############################################################
+rm_temporaries() {
+    rm ${VERBOSE+-v} -rf -- "$BUILDTYPE" "$BUILDIMG"
+}
+
+detach_lo_device() {
+    sudo losetup ${VERBOSE+-v} --detach "$LOOPDEV"
+}
+
+unmount_image() {
+    sudo umount ${VERBOSE+-v} -- "$IMAGE_DIR"
+}
+
+## Argument parsing ###########################################################
+print_help() {
+    cat <<EOT
+DESCRIPTION:
+    Build a custom UEFI linux based PBA image
+
+USAGE:
+    $0 [-h] [-d <dir>] [-n <name>]
+
+    -h	This help
+    -d	Bootloader directory. Default: EFI/boot
+    -n	Bootloader name. Default: bootx64.efi
+
+    To be able to boot on some variants of hardware change
+    bootloader direcory to 'EFI/Microsoft/Boot' and name to 'bootmgfw.efi'
+
+    Set following environment variables to any value in order to control this script:
+
+    VERBOSE	Run every command in verbose mode (if available)
+    TRACE	Print each executed statement
+EOT
+}
+
+parse_argv() {
+    while getopts hd:n: name; do
+        case $name in
+            h) print_help; exit 0;;
+            d) BOOTLOADER_DIR=$OPTARG ;;
+            n) BOOTLOADER_FILE=$OPTARG ;;
+            *) echo 'Unhandled argument' >&2; exit 1
+        esac
+    done
+}
+
+## Main #######################################################################
+check_availability() {
+    for f in $EFI_FILE $IMAGE_FILES; do
+        if [ ! -f "$f" ]; then
+            echo " prereqs are not available "
+            exit 1
+        fi
+    done
+}
+
+create_image() {
+    mkdir ${VERBOSE+-v} -- "$BUILDTYPE"
+    trap 'rm_temporaries' EXIT
+    truncate -s32M "$BUILDIMG"
+    sgdisk -n0:0:0 -t0:ef00 "$BUILDIMG"
+    LOOPDEV=$(sudo losetup ${VERBOSE+-v} --partscan --show --find "$BUILDIMG")
+    trap 'detach_lo_device; rm_temporaries' EXIT
+    sudo mkfs.vfat ${VERBOSE+-v} -n "$BUILDTYPE" -- "${LOOPDEV}p1"
+    mkdir ${VERBOSE+-v} -- "$IMAGE_DIR"
+    sudo mount ${VERBOSE+-v} -- "${LOOPDEV}p1" "$IMAGE_DIR"
+    trap 'unmount_image; detach_lo_device; rm_temporaries' EXIT
+    sudo install ${VERBOSE+-v} -D -- "$EFI_FILE" "${TARGET_DIR}/$BOOTLOADER_FILE"
+    # shellcheck disable=SC2086
+    sudo install ${VERBOSE+-v} -D -- $IMAGE_FILES "$TARGET_DIR"
+    sync
+    gzip -k ${VERBOSE+-v} "$BUILDIMG"
+}
+
+main() {
+    parse_argv "$@"
+    check_availability
+    create_image
+}
+
+main "$@"
