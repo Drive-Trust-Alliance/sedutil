@@ -58,34 +58,24 @@ char getch(void)
   return getch_(0);
 }
 
-string GetPassPhrase(const char *prompt, bool show_asterisk)
+string GetPassPhrase()
 {
-  const char BACKSPACE=127;
-  const char RETURN=10;
+  FILE* uuid_file;
+  char ch;
   string password;
-  unsigned char ch=0;
-  LOG(D4) << "Enter GetPassPhrase" << endl;
-  printf("\n\n%s",prompt);
-  while((ch=getch_())!=RETURN)
-    {
-//      LOG(I) << "key value" << (uint16_t) ch << endl;
-       if(ch==BACKSPACE)
-         {
-            if(password.length()!=0)
-              {
-                 if(show_asterisk)
-                 printf("\b \b");
-                 password.resize(password.length()-1);
-              }
-         }
-       else if(ch!=27) // ignore 'escape' key
-         {
-             password+=ch;
-             if(show_asterisk)
-                 printf("*");
-         }
+  uuid_file = fopen("/sys/devices/virtual/dmi/id/product_uuid", "r");
+  if(uuid_file) {
+    int len = 0;
+    while((ch = fgetc(uuid_file)) != EOF && ch != '\n' && len < 100) {
+      if(ch >= 'A' && ch <= 'Z') {
+        ch += 32;
+      }
+      password += ch;
+      ++len;
     }
-
+  } else {
+    printf("Cannot open\n");
+  }
   return password;
 }
 
