@@ -1,5 +1,6 @@
 /* C:B**************************************************************************
 This software is Copyright 2014-2017 Bright Plaza Inc. <drivetrust@drivetrust.com>
+This software is Copyright 2023 Nutanix, Inc. <opensource@nutanix.com>
 
 This file is part of sedutil.
 
@@ -243,14 +244,28 @@ uint8_t DtaDevOpal::listLockingRanges(char * password, int16_t rangeid)
 		return DTAERROR_NO_LOCKING_INFO;
 	}
 	LOG(I) << "Locking Range Configuration for " << dev;
-	uint32_t numRanges = response.getUint32(4) + 1;
-	for (uint32_t i = 0; i < numRanges; i++){
-		if(0 != i) LR[8] = i & 0xff;
+	uint32_t maxRange = response.getUint32(4);
+	uint32_t startRange = 0;
+	if (rangeid >= 0) {
+		uint32_t u_rangeid = static_cast<uint32_t>(rangeid);
+		if (u_rangeid <= maxRange) {
+			startRange = maxRange = u_rangeid;
+		} else {
+			LOG(E) << "Requested Range " << u_rangeid <<
+				" is higher than max supported " << maxRange;
+			delete session;
+			return DTAERROR_UNSUPORTED_LOCKING_RANGE;
+		}
+	}
+	for (uint32_t i = startRange; i <= maxRange; i++){
+		if(0 != i) {
+			LR[8] = i & 0xff;
+			LR[6] = 0x03;  // non global ranges are 00000802000300nn
+		}
 		if ((lastRC = getTable(LR, _OPAL_TOKEN::RANGESTART, _OPAL_TOKEN::WRITELOCKED)) != 0) {
 			delete session;
 			return lastRC;
 		}
-		LR[6] = 0x03;  // non global ranges are 00000802000300nn 
 		LOG(I) << "LR" << i << " Begin " << response.getUint64(4) <<
 			" for " << response.getUint64(8);
 		LOG(I)	<< "            RLKEna =" << (response.getUint8(12) ? " Y " : " N ") <<
