@@ -22,10 +22,15 @@
 #include "log.h"
 
 #include <algorithm>
+#include <cctype>
+#include <cstdlib>
+#include <fstream>
+#include <set>
 
 #include <linux/fs.h>
 #include <fcntl.h>
 #include <dirent.h>
+#include <unistd.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 
@@ -85,112 +90,263 @@ void DtaLinux::closeDeviceHandle(OSDEVICEHANDLE osDeviceHandle){
 }
 
 
+/** List the entries of a sysfs directory, without "." and "..".
+ *
+ * A directory that is not there is not an error: a box with no NVMe driver
+ * loaded has no /sys/class/nvme at all.
+ */
+static std::vector<std::string> sysfsEntries(const std::string & dir)
+{
+  std::vector<std::string> entries;
+
+  DIR * d = opendir(dir.c_str());
+  if (d == NULL) {
+    LOG(D2) << "Not scanning " << dir << ": " << strerror(errno);
+    return entries;
+  }
+
+  struct dirent * e;
+  while (NULL != (e = readdir(d)))
+    if (e->d_name[0] != '.')   // sysfs has no dotfiles, so this is "." and ".." only
+      entries.push_back(e->d_name);
+  closedir(d);
+
+  return entries;
+}
+
+/** True if `path' is a directory with at least one entry in it. */
+static bool sysfsHasEntries(const std::string & path)
+{
+  DIR * d = opendir(path.c_str());
+  if (d == NULL)
+    return false;
+
+  bool found = false;
+  struct dirent * e;
+  while (!found && NULL != (e = readdir(d)))
+    found = (e->d_name[0] != '.');
+  closedir(d);
+
+  return found;
+}
+
+/** Read the first line of a sysfs attribute file, without its newline. */
+static bool readSysfsAttribute(const std::string & path, std::string & value)
+{
+  std::ifstream f(path.c_str());
+  if (!f.is_open() || !std::getline(f, value))
+    return false;
+
+  while (!value.empty() && (value.back() == '\r' || value.back() == ' '))
+    value.pop_back();
+
+  return true;
+}
+
+/** Read one KEY=value property out of a sysfs `uevent' file. */
+static bool readUeventProperty(const std::string & dir, const char * key, std::string & value)
+{
+  std::ifstream f((dir + "/uevent").c_str());
+  if (!f.is_open())
+    return false;
+
+  const std::string prefix = std::string(key) + "=";
+  std::string line;
+  while (std::getline(f, line))
+    if (0 == line.compare(0, prefix.length(), prefix)) {
+      value = line.substr(prefix.length());
+      while (!value.empty() && value.back() == '\r')
+        value.pop_back();
+      return true;
+    }
+
+  return false;
+}
+
+/** Read a sysfs SCSI-ish `device/type' attribute.
+ *
+ * Absent is a legitimate answer, and a common one: NVMe namespaces, virtio-blk
+ * and mmcblk all have a `device' link but no `type' under it.
+ */
+static bool readSysfsDeviceType(const std::string & devicedir, long & type)
+{
+  std::string value;
+  if (!readSysfsAttribute(devicedir + "/type", value))
+    return false;
+
+  char * end = NULL;
+  const long parsed = strtol(value.c_str(), &end, 10);
+  if (end == value.c_str() || *end != '\0')
+    return false;
+
+  type = parsed;
+  return true;
+}
+
+/** Turn a sysfs node into the /dev path the kernel says it has. */
+static std::string devrefForSysfsNode(const std::string & dir, const std::string & sysfsName)
+{
+  std::string devname;
+  if (!readUeventProperty(dir, "DEVNAME", devname) || devname.empty()) {
+    // Should not happen for the classes we walk; fall back to the sysfs name,
+    // which spells '/' as '!'.
+    devname = sysfsName;
+    std::replace(devname.begin(), devname.end(), '!', '/');
+    LOG(D2) << dir << "/uevent has no DEVNAME, assuming /dev/" << devname;
+  }
+  return std::string("/dev/") + devname;
+}
+
+/** Order device names the way a human reads them.
+ *
+ * Runs of digits compare as numbers, so nvme2 comes before nvme10.  A run of
+ * letters that reaches the end of the name compares by length first, so sdz
+ * comes before sdaa -- the kernel hands out sd suffixes as a counter, not as
+ * dictionary words.
+ */
+static bool devrefNaturalLess(const std::string & a, const std::string & b)
+{
+  size_t i = 0, j = 0;
+
+  while (i < a.length() && j < b.length()) {
+    const bool aDigit = (0 != isdigit(static_cast<unsigned char>(a[i])));
+    const bool bDigit = (0 != isdigit(static_cast<unsigned char>(b[j])));
+    if (aDigit != bDigit)
+      return aDigit;
+
+    size_t ei = i;
+    while (ei < a.length() && aDigit == (0 != isdigit(static_cast<unsigned char>(a[ei])))) ei++;
+    size_t ej = j;
+    while (ej < b.length() && bDigit == (0 != isdigit(static_cast<unsigned char>(b[ej])))) ej++;
+
+    if (aDigit) {
+      // Compare as numbers: ignore leading zeroes, then more digits means bigger.
+      size_t si = i; while (si + 1 < ei && a[si] == '0') si++;
+      size_t sj = j; while (sj + 1 < ej && b[sj] == '0') sj++;
+      if ((ei - si) != (ej - sj))
+        return (ei - si) < (ej - sj);
+      const int c = a.compare(si, ei - si, b, sj, ej - sj);
+      if (c != 0)
+        return c < 0;
+    } else {
+      if (ei == a.length() && ej == b.length() && (ei - i) != (ej - j))
+        return (ei - i) < (ej - j);
+      const int c = a.compare(i, ei - i, b, j, ej - j);
+      if (c != 0)
+        return c < 0;
+    }
+
+    i = ei;
+    j = ej;
+  }
+
+  return (a.length() - i) < (b.length() - j);
+}
+
+/** SCSI peripheral device type 0, "direct-access block device" -- a disk.
+ *
+ * Tape is 1, CD-ROM is 5 and SCSI enclosures are 13; none of those are SEDs.
+ */
+#define SCSI_TYPE_DIRECT_ACCESS 0
+
 std::vector<std::string> DtaLinux::generateDtaDriveDevRefs()
 {
   std::vector<std::string> devrefs;
 
-  DIR *dir = opendir("/dev");
-  if (dir==NULL) {
-    LOG(E) << "Can't read /dev ?!";
+  // Read /sys/block instead of /dev to find the devices. Relying on
+  // names or major/minor numbers in /dev is not reliable.
+  DIR * sysblock = opendir("/sys/block");
+  if (sysblock == NULL) {
+    LOG(E) << "Cannot read /sys/block: " << strerror(errno) << " -- is /sys mounted?";
+    LOG(E) << "No drives can be enumerated.";
     return devrefs;
   }
+  closedir(sysblock);
 
-  struct dirent *dirent;
-  while (NULL != (dirent=readdir(dir))) {
-    std::string devref=std::string("/dev/")+dirent->d_name;
+  std::set<std::string> seen;
+#define addCandidate(devref, why)                               \
+  do {                                                          \
+    const std::string candidate(devref);                        \
+    if (seen.insert(candidate).second) {                        \
+      LOG(D2) << "Scanning " << candidate << " -- " << why;     \
+      devrefs.push_back(candidate);                             \
+    }                                                           \
+  } while (0)
 
-    struct stat s;
-    stat(devref.c_str(), &s);
-    const unsigned long device_type=s.st_rdev >> 8;
-    const unsigned char device_part=s.st_rdev & 0x000F;
-    typedef enum _rdev_type {
-/*
-    sed -En 's/^[[:space:]]+([[:digit:]]+)[[:space:]]block[[:space:]]+SCSI disk devices[[:space:]]\(([[:digit:]]+)-([[:digit:]]+)\)/      SCSI_DRIVE_\2_\3 = \1,/p' kernel.org/admin-guide/devices.txt
-*/
-      SCSI_DRIVE_0_15    =   8,
-      SCSI_DRIVE_16_31   =  65,
-      SCSI_DRIVE_32_47   =  66,
-      SCSI_DRIVE_48_63   =  67,
-      SCSI_DRIVE_64_79   =  68,
-      SCSI_DRIVE_80_95   =  69,
-      SCSI_DRIVE_96_111  =  70,
-      SCSI_DRIVE_112_127 =  71,
-      SCSI_DRIVE_128_143 = 128,
-      SCSI_DRIVE_144_159 = 129,
-      SCSI_DRIVE_160_175 = 130,
-      SCSI_DRIVE_176_191 = 131,
-      SCSI_DRIVE_192_207 = 132,
-      SCSI_DRIVE_208_223 = 133,
-      SCSI_DRIVE_224_239 = 134,
-      SCSI_DRIVE_240_255 = 135,
+  // Address the controller (/dev/nvme0), not the namespace (/dev/nvme0n1):
+  // identity comes from an NVMe admin passthru, which is always permitted on
+  // the controller and increasingly restricted on the namespace, and one
+  // physical drive then yields exactly one row.
+  for (const std::string & name : sysfsEntries("/sys/class/nvme")) {
+    const std::string dir = "/sys/class/nvme/" + name;
 
-
-
-      VIRT_DRIVE         = 253,
-
-      NVME_DRIVE         = 259,
-    } rdev_type;
-
-    LOG(D4) << devref
-            << " st_ino:" << HEXON(4) << s.st_ino
-            << " st_dev:" << HEXON(4) << s.st_dev
-            << " st_rdev:" << HEXON(4) << s.st_rdev
-            << " device type (st_rdev>>8):" << HEXON(2) << (s.st_rdev>>8)
-            << " device part (st_rdev&0xF):" << HEXON(1) << (s.st_rdev & 0x000F)
-            << (device_part==0
-                ? (device_type==rdev_type::SCSI_DRIVE_0_15    ? " SCSI" :
-		   device_type==rdev_type::SCSI_DRIVE_16_31   ? " SCSI" :
-		   device_type==rdev_type::SCSI_DRIVE_32_47   ? " SCSI" :
-		   device_type==rdev_type::SCSI_DRIVE_48_63   ? " SCSI" :
-		   device_type==rdev_type::SCSI_DRIVE_64_79   ? " SCSI" :
-		   device_type==rdev_type::SCSI_DRIVE_80_95   ? " SCSI" :
-		   device_type==rdev_type::SCSI_DRIVE_96_111  ? " SCSI" :
-		   device_type==rdev_type::SCSI_DRIVE_112_127 ? " SCSI" :
-		   device_type==rdev_type::SCSI_DRIVE_128_143 ? " SCSI" :
-		   device_type==rdev_type::SCSI_DRIVE_144_159 ? " SCSI" :
-		   device_type==rdev_type::SCSI_DRIVE_160_175 ? " SCSI" :
-		   device_type==rdev_type::SCSI_DRIVE_176_191 ? " SCSI" :
-		   device_type==rdev_type::SCSI_DRIVE_192_207 ? " SCSI" :
-		   device_type==rdev_type::SCSI_DRIVE_208_223 ? " SCSI" :
-		   device_type==rdev_type::SCSI_DRIVE_224_239 ? " SCSI" :
-		   device_type==rdev_type::SCSI_DRIVE_240_255 ? " SCSI" :
-                   device_type==rdev_type::VIRT_DRIVE ? " VIRT" :
-                   device_type==rdev_type::NVME_DRIVE ? " NVMe" :
-                   "")
-                : "")
-      ;
-
-    if (device_part==0 &&
-        (device_type==rdev_type::SCSI_DRIVE_0_15    ||
-         device_type==rdev_type::SCSI_DRIVE_16_31   ||
-         device_type==rdev_type::SCSI_DRIVE_32_47   ||
-         device_type==rdev_type::SCSI_DRIVE_48_63   ||
-         device_type==rdev_type::SCSI_DRIVE_64_79   ||
-         device_type==rdev_type::SCSI_DRIVE_80_95   ||
-         device_type==rdev_type::SCSI_DRIVE_96_111  ||
-         device_type==rdev_type::SCSI_DRIVE_112_127 ||
-         device_type==rdev_type::SCSI_DRIVE_128_143 ||
-         device_type==rdev_type::SCSI_DRIVE_144_159 ||
-         device_type==rdev_type::SCSI_DRIVE_160_175 ||
-         device_type==rdev_type::SCSI_DRIVE_176_191 ||
-         device_type==rdev_type::SCSI_DRIVE_192_207 ||
-         device_type==rdev_type::SCSI_DRIVE_208_223 ||
-         device_type==rdev_type::SCSI_DRIVE_224_239 ||
-         device_type==rdev_type::SCSI_DRIVE_240_255 ||
-
-         device_type==rdev_type::VIRT_DRIVE         ||
-
-         device_type==rdev_type::NVME_DRIVE         )) {
-      // LOG(E) << devref << " accepted."
-      //   ;
-      devrefs.push_back(devref);
+    // Reject only what is definitively not a drive: NVMe-oF discovery
+    // controllers and NVMe 2.0 administrative controllers.
+    //
+    // Do NOT require "io" here.  The kernel prints "reserved" whenever
+    // Identify Controller byte 111 (CNTRLTYPE) reads 0, and that field only
+    // exists as of NVMe 1.4 -- so every older drive reports 0 and shows up as
+    // "reserved".
+    std::string cntrltype;
+    if (readSysfsAttribute(dir + "/cntrltype", cntrltype)
+        && (cntrltype == "discovery" || cntrltype == "admin")) {
+      LOG(D2) << "Not scanning " << dir << ": cntrltype is " << cntrltype;
+      continue;
     }
 
+    addCandidate(devrefForSysfsNode(dir, name), "NVMe controller " << name);
   }
 
-  closedir(dir);
+  // /sys/block lists whole disks only -- partitions live underneath their
+  // parent -- so partitions need no filtering.  loop, ram, zram, dm-, md, nbd
+  // and zd have no `device' link at all; virtio-blk, mmcblk and NVMe
+  // namespaces have one but no `type' under it.  All of them drop out here.
+  for (const std::string & name : sysfsEntries("/sys/block")) {
+    const std::string dir = "/sys/block/" + name;
+    const std::string devicedir = dir + "/device";
 
-  std::sort(devrefs.begin(),devrefs.end());
+    long type;
+    if (!readSysfsDeviceType(devicedir, type)) {
+      LOG(D2) << "Not scanning " << dir << ": no readable " << devicedir << "/type";
+      continue;
+    }
+    if (type != SCSI_TYPE_DIRECT_ACCESS) {
+      LOG(D2) << "Not scanning " << dir << ": device type is " << type
+              << ", not " << SCSI_TYPE_DIRECT_ACCESS << " (direct access)";
+      continue;
+    }
+
+    addCandidate(devrefForSysfsNode(dir, name), "direct-access block device " << name);
+  }
+
+  // Nothing on a plain SAS box matches here -- every disk has a block node,
+  // and the sg-only nodes are the enclosures, which type 13 excludes.
+  for (const std::string & name : sysfsEntries("/sys/class/scsi_generic")) {
+    const std::string dir = "/sys/class/scsi_generic/" + name;
+    const std::string devicedir = dir + "/device";
+
+    long type;
+    if (!readSysfsDeviceType(devicedir, type)) {
+      LOG(D2) << "Not scanning " << dir << ": no readable " << devicedir << "/type";
+      continue;
+    }
+    if (type != SCSI_TYPE_DIRECT_ACCESS) {
+      LOG(D2) << "Not scanning " << dir << ": device type is " << type
+              << ", not " << SCSI_TYPE_DIRECT_ACCESS << " (direct access)";
+      continue;
+    }
+    if (sysfsHasEntries(devicedir + "/block")) {
+      LOG(D2) << "Not scanning " << dir << ": already covered by its block device";
+      continue;
+    }
+
+    addCandidate(devrefForSysfsNode(dir, name), "direct-access SCSI device " << name
+                 << " with no block node");
+  }
+
+#undef addCandidate
+
+  std::sort(devrefs.begin(), devrefs.end(), devrefNaturalLess);
 
   return devrefs;
 }
@@ -233,8 +389,9 @@ DtaOS::dictionary * DtaLinux::getOSSpecificInformation(OSDEVICEHANDLE osDeviceHa
   device_info.devSize = 0;
   r = ioctl(handleDescriptor(osDeviceHandle), BLKGETSIZE64, &device_info.devSize);
   if (r < 0) {
-    errno = -r;
-    fprintf(stderr, "Failed to get device size: %m for device %s osDeviceHandle 0x%16p\n", devref, osDeviceHandle);
+    // Expected on anything that is not a block device -- an NVMe controller
+    // char device always fails here -- and device_info.devSize is never read.
+    LOG(D4) << "Failed to get device size for " << devref << ": " << strerror(errno);
   }
 
   // Get the `sd_device` to extract properties
@@ -305,6 +462,17 @@ DtaOS::dictionary * DtaLinux::getOSSpecificInformation(OSDEVICEHANDLE osDeviceHa
             << (bus == "nvme" ? std::string(" bus is nvme")
                 : std::string(" \"/nvme/\" is a substring of devpath=")+devpath);
     device_info.devType = DEVICE_TYPE_NVME;
+  } else if (bus.empty() && deviceProperties["SUBSYSTEM"] == "scsi_generic") {
+    // udev's persistent-storage rules run on block devices, so an sg node has
+    // no ID_BUS at all.  Without this a HBA-claimed disk reached by its sg
+    // node falls through to DEVICE_TYPE_OTHER and is dropped.
+    long type;
+    if (readSysfsDeviceType("/sys" + devpath + "/device", type)
+        && type == SCSI_TYPE_DIRECT_ACCESS) {
+      LOG(D3) << "device_info.devType = DEVICE_TYPE_SCSI because"
+              << " it is the scsi_generic node of a direct-access device";
+      device_info.devType = DEVICE_TYPE_SCSI;
+    }
   }
 
   // Copy device properties from `deviceProperties` into `device_info`
