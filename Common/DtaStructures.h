@@ -29,6 +29,8 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 #define FC_SINGLEUSER 0x0201
 #define FC_OPALV100   0x0200
 #define FC_OPALV200   0x0203
+#define FC_BLOCKSIDAUTH   0x0402
+
 /** The Discovery 0 Header. As defined in
 * Opal SSC Documentation
 */
@@ -183,6 +185,24 @@ typedef struct _Discovery0SingleUserMode {
     uint32_t reserved04;
 } Discovery0SingleUserMode;
 
+typedef struct _Discovery0BlockSIDAuthentication {
+    uint16_t featureCode; /* 0x0402 */
+    uint8_t reserved_v: 4;
+    uint8_t version: 4;
+    uint8_t length;
+
+    uint8_t sidValueState: 1;
+    uint8_t sidBlockedState: 1;
+    uint8_t reserved01: 6;
+
+    uint8_t hardwareReset: 1;
+    uint8_t reserved02: 7;
+
+    uint16_t reserved03;
+    uint32_t reserved04;
+    uint32_t reserved05;
+} Discovery0BlockSIDAuthentication;
+
 /** Additonal Datastores feature .
  */
 typedef struct _Discovery0DatastoreTable {
@@ -229,6 +249,7 @@ union Discovery0Features {
     Discovery0OPALV200 opalv200;
 	Discovery0OpalV100 opalv100;
     Discovery0DatastoreTable datastore;
+    Discovery0BlockSIDAuthentication blockSIDAuthentication;
 };
 
 /** ComPacket (header) for transmissions. */
@@ -294,6 +315,7 @@ typedef struct _OPAL_DiskInfo {
 	uint8_t OPAL10 : 1;
 	uint8_t Properties : 1;
 	uint8_t ANY_OPAL_SSC : 1;
+    uint8_t BlockSIDAuthentication: 1;
     // values ONLY VALID IF FUNCTION ABOVE IS TRUE!!!!!
     uint8_t TPer_ACKNACK : 1;
     uint8_t TPer_async : 1;
@@ -318,6 +340,9 @@ typedef struct _OPAL_DiskInfo {
     uint8_t SingleUser_all : 1;
     uint8_t SingleUser_policy : 1;
     uint32_t SingleUser_lockingObjects;
+    uint8_t BlockSIDAuthentication_SIDValueState: 1;
+    uint8_t BlockSIDAuthentication_SIDBlockedState: 1;
+    uint8_t BlockSIDAuthentication_HardwareReset: 1;
     uint16_t DataStore_maxTables;
     uint32_t DataStore_maxTableSize;
     uint32_t DataStore_alignment;

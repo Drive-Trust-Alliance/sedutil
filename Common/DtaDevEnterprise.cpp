@@ -1306,7 +1306,6 @@ uint8_t DtaDevEnterprise::setSIDPassword(char * oldpassword, char * newpassword,
 			LOG(E) << "Unable to create session object ";
 			return DTAERROR_OBJECT_CREATE_FAILED;
 		}
-		session->dontHashPwd();
 		if (!hasholdpwd) session->dontHashPwd();
 		if ((lastRC = session->start(OPAL_UID::OPAL_ADMINSP_UID, oldpassword, user)) != 0) {
 			delete session;

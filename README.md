@@ -20,7 +20,7 @@ along with sedutil.  If not, see <http://www.gnu.org/licenses/>.
 
 sedutil - The Drive Trust Alliance Self Encrypting Drive Utility
 
-This program and it's accompanying Pre-Boot Authorization image allow
+This program and its accompanying Pre-Boot Authorization image allow
 you to enable the locking in SED's that comply with the TCG OPAL 2.00
 standard on bios machines.   
 
@@ -42,3 +42,8 @@ Linux and Windows executables are available at https://github.com/Drive-Trust-Al
 If you are looking for the PSID revert function see linux/PSIDRevert_LINUX.txt or win32/PSIDRevert_WINDOWS.txt
 
 PLEASE SEE CONTRIBUTING if you would like to make a code contribution.
+
+If you are reporting a bug via an Issue or Pull request, 
+if at all possible please donate an instance of the hardware manifesting the issue you are reporting
+(but not already bricked)
+to the maintenance effort.
