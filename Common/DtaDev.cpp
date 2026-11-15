@@ -109,14 +109,17 @@ DTA_DEVICE_TYPE DtaDev::getDevType()
 void DtaDev::discovery0()
 {
     LOG(D1) << "Entering DtaDev::discovery0()";
-	uint8_t lastRC;
+
+    uint8_t lastRC;
     void * d0Response = NULL;
     uint8_t * epos, *cpos;
     Discovery0Header * hdr;
+    uint32_t d0Len;
     Discovery0Features * body;
-	d0Response = discovery0buffer + IO_BUFFER_ALIGNMENT;
-	d0Response = (void *)((uintptr_t)d0Response & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
-	memset(d0Response, 0, MIN_BUFFER_LENGTH);
+
+    d0Response = discovery0buffer + IO_BUFFER_ALIGNMENT;
+    d0Response = (void *)((uintptr_t)d0Response & (uintptr_t)~(IO_BUFFER_ALIGNMENT - 1));
+    memset(d0Response, 0, MIN_BUFFER_LENGTH);
     if ((lastRC = sendCmd(IF_RECV, 0x01, 0x0001, d0Response, MIN_BUFFER_LENGTH)) != 0) {
         LOG(D) << "Send D0 request to device failed " << (uint16_t)lastRC;
         return;
@@ -126,6 +129,13 @@ void DtaDev::discovery0()
     hdr = (Discovery0Header *) d0Response;
     LOG(D3) << "Dumping D0Response";
     IFLOG(D3) DtaHexDump(hdr, SWAP32(hdr->length));
+
+    d0Len = SWAP32(hdr->length);
+    if (d0Len == 0 || d0Len > sizeof(d0Response)) {
+        LOG(D1) << "Invalid Discovery0 response length: " << d0Len;
+        return;
+    }
+
     epos = epos + SWAP32(hdr->length);
     cpos = cpos + 48; // TODO: check header version
 
