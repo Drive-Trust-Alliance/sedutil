@@ -131,12 +131,15 @@ void DtaDev::discovery0()
     IFLOG(D3) DtaHexDump(hdr, SWAP32(hdr->length));
 
     d0Len = SWAP32(hdr->length);
-    if (d0Len == 0 || d0Len > sizeof(d0Response)) {
+    // The length field counts the bytes after itself, so the whole response is d0Len + 4;
+    // it must cover the 48-byte header and fit the MIN_BUFFER_LENGTH bytes we received.
+    // (d0Response is a void *, so sizeof(d0Response) is the pointer's size, not the buffer's.)
+    if (d0Len < 48 - 4 || d0Len > MIN_BUFFER_LENGTH - 4) {
         LOG(D1) << "Invalid Discovery0 response length: " << d0Len;
         return;
     }
 
-    epos = epos + SWAP32(hdr->length);
+    epos = epos + d0Len;
     cpos = cpos + 48; // TODO: check header version
 
     do {
